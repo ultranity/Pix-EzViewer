@@ -69,6 +69,7 @@ import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.AnimationView
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -851,7 +852,7 @@ class PictureXAdapter(
             //bundle.putLongArray("illustidlist", arrayList.toLongArray())
             //bundle.putLong("illustid", id)
             bundle.putInt("position", position)
-            bundle.putParcelableArrayList("illustslist",it as ArrayList<out Illust>)
+            DataHolder.setIllustsList(it)
             val intent = Intent(mContext, PictureActivity::class.java)
             intent.putExtras(bundle)
             mContext.startActivity(intent)

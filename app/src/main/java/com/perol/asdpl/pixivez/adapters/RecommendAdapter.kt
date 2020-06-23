@@ -49,6 +49,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -78,7 +79,7 @@ class RecommendAdapter(
             //}
             //bundle.putLongArray("illustidlist", illustlist)
             bundle.putInt("position", position)
-            bundle.putParcelableArrayList("illustslist",this.data as ArrayList<out Illust>)
+            DataHolder.setIllustsList(this.data as ArrayList<Illust>)
             val intent = Intent(context, PictureActivity::class.java)
             intent.putExtras(bundle)
             if (PxEZApp.animationEnable) {

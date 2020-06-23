@@ -39,6 +39,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
 import io.reactivex.disposables.CompositeDisposable
@@ -101,7 +102,7 @@ class TrendTagFragment : Fragment() {
                     val arrayList = ArrayList<Illust>(1)
                     arrayList.add(it.trend_tags[position].illust)
                     bundle.putInt("position", position)
-                    bundle.putParcelableArrayList("illustslist",arrayList)
+                    DataHolder.setIllustsList(arrayList)
                     val intent2 = Intent(requireActivity(), PictureActivity::class.java)
                     intent2.putExtras(bundle)
                     startActivity(intent2)

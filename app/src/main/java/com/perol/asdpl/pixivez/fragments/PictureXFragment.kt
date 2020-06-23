@@ -208,7 +208,6 @@ class PictureXFragment : BaseFragment() {
             pictureXAdapter?.setProgressComplete(it)
         })
 
-
     }
 
     var hasMoved = false
@@ -256,7 +255,7 @@ class PictureXFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getLong(ARG_ILLUSTID)
-            param2 = it.getParcelable(ARG_ILLUSTOBJ)?:null
+            param2 = it.getParcelable(ARG_ILLUSTOBJ)
         }
         initViewModel()
     }
@@ -272,6 +271,7 @@ class PictureXFragment : BaseFragment() {
                 lifecycleOwner = this@PictureXFragment
             }
         }
+        position = param2?.meta_pages?.size?: 1
         return rootBinding.root
     }
 

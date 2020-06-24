@@ -49,6 +49,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -136,6 +137,10 @@ class SettingFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("storepath1")!!.apply {
             setDefaultValue(PxEZApp.storepath)
             summary = PxEZApp.storepath
+        }
+        findPreference<Preference>("filesaveformat")!!.apply {
+            setDefaultValue(PxEZApp.saveformat)
+            summary = PxEZApp.saveformat
         }
         findPreference<Preference>("version")!!.apply {
             try {
@@ -287,8 +292,16 @@ class SettingFragment : PreferenceFragmentCompat() {
                     )
                 }
             }
-            "saveformat" -> {
-
+            "filesaveformat" -> {
+                if (requireContext().allPermissionsGranted(storagePermissions)) {
+                    showCustomViewDialog()
+                } else {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        storagePermissions,
+                        REQUEST_CODE_PERMISSIONS
+                    )
+                }
             }
             "version" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -333,11 +346,44 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         return super.onPreferenceTreeClick(preference)
     }
+    private fun showCustomViewDialog() {
+        // Setup custom view content
+        val binding = CustomformatviewBinding.inflate(layoutInflater)
+        val descTable = binding.formatDescTable
+        val sampleTable = binding.formatSampleTable
+        val Input = binding.customizedformat
+        Input.setText(PxEZApp.saveformat)
+        val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
+        dialog.show {
+            title(R.string.saveformat)
+            customView(view = binding.root, scrollable = true, horizontalPadding = true)
+            positiveButton(R.string.save) { dialog ->
+                PxEZApp.saveformat = "$Input"
+                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                    putString("filesaveformat", PxEZApp.saveformat)
+                }
+                findPreference<Preference>("filesaveformat")!!.apply {
+                    summary = "$Input"
+                }
+            }
+            negativeButton(android.R.string.cancel)
+            lifecycleOwner(this@SettingFragment)
+        }
+        val InputEditable = Input.editableText
+        for (i in 1..descTable.childCount-1)
+            descTable.getChildAt(i).setOnClickListener {
+                InputEditable.insert(Input.selectionStart,it.tag.toString())
+            }
+        for (i in 1 until sampleTable.childCount)
+            sampleTable.getChildAt(i).setOnClickListener {
+                Input.setText(it.tag.toString())
+            }
+    }
 
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory=File(PxEZApp.storepath),allowFolderCreation = true) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
                     PreferenceManager.getDefaultSharedPreferences(activity).apply {

@@ -60,69 +60,42 @@ data class IllustD(
 
 object Works {
 
-
-    fun imageDownloadWithFile(illust: Illust, file: File, part: Int?) {
+    fun parseSaveFormat(illust: Illust, part: Int?): String {
         var url = ""
-        val title = illust.title.toLegal()
-        val userName = illust.user.name.toLegal()
-        val userid = illust.user.id
-        val illustid = illust.id
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
-        val saveformat = pre.getString(
-            "saveformat",
-            "0"
-        )?.toInt()
-            ?: 0
-        val needCreateFold = pre.getBoolean("needcreatefold", false)
-        var type = ".png"
-        var filename = "${illustid}_p$part$type"
+        //var filename = "${illustid}_p$part$type"
+        var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
+            .replace("{userid}", illust.user.id.toString())
+            .replace("{user}", illust.user.name.toLegal())
+            .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (saveformat) {
-                0 -> {
-                    filename = "${illustid}_$part$type"
-                }
-                1 -> {
-                    filename = "${illustid}_p$part$type"
-                }
-                2 -> {
-                    filename = "${userid}_${illustid}_$part$type"
-                }
-                3 -> {
-                    filename = "${illustid}_${title}_$part$type"
-                }
-                4 -> {
-                    filename = "${illustid}(${userid})_${title}_$part$type"
-                }
-            }
+            filename = filename.replace("{part}", part.toString())
         } else {
             url = illust.meta_single_page.original_image_url!!
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (saveformat) {
-                0 -> {
-                    filename = "$illustid$type"
-                }
-                1 -> {
-                    filename = "$illustid$type"
-                }
-                2 -> {
-                    filename = "${userid}_$illustid$type"
-                }
-                3 -> {
-                    filename = "${illustid}_${title}$type"
-                }
-                4 -> {
-                    filename = "${illustid}(${userid})_${title}$type"
-                }
-            }
+            filename = filename.replace("_p{part}", "")
+                .replace("_{part}", "")
+                .replace("{part}", "")
         }
+        val type = when {
+            url.contains("png") -> {
+                ".png"
+            }
+            url.contains("jpeg") -> {
+                ".jpeg"
+            }
+            else -> ".jpg"
+        }
+        return filename.replace("{type}", type)
+    }
+
+    fun imageDownloadWithFile(illust: Illust, file: File, part: Int?) {
+        val name = illust.user.name.toLegal()
+        val userid = illust.user.id
+        val filename = parseSaveFormat(illust, part)
+        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
+        val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
-            "${PxEZApp.storepath}/${userName}_${userid}"
+            "${PxEZApp.storepath}/${name}_${userid}"
         } else PxEZApp.storepath
         val targetFile = File(path, filename)
         try {
@@ -177,71 +150,21 @@ object Works {
     }
 
     fun imgD(illust: Illust, part: Int?) {
-        var url = ""
+        var url = if (part != null && illust.meta_pages.isNotEmpty())
+                        illust.meta_pages[part].image_urls.original
+                     else
+                        illust.meta_single_page.original_image_url!!
+        val name = illust.user.name.toLegal()
         val title = illust.title.toLegal()
-        val userName = illust.user.name.toLegal()
-        val userid = illust.user.id
-        val illustid = illust.id
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-        val format = pre.getString(
-            "saveformat",
-            "0"
-        )?.toInt()
-            ?: 0
+        val filename = parseSaveFormat(illust, part)
 
-        var type = ".png"
-        var filename = "${illustid}_p$part$type"
-        if (part != null && illust.meta_pages.isNotEmpty()) {
-            url = illust.meta_pages[part].image_urls.original
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (format) {
-                0 -> {
-                    filename = "${illustid}_$part$type"
-                }
-                1 -> {
-                    filename = "${illustid}_p$part$type"
-                }
-                2 -> {
-                    filename = "${userid}_${illustid}_$part$type"
-                }
-                3 -> {
-                    filename = "${illustid}_${title}_$part$type"
-                }
-                4 -> {
-                    filename = "${illustid}(${userid})_${title}_$part$type"
-                }
-            }
-        } else {
-            url = illust.meta_single_page.original_image_url!!
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (format) {
-                0 -> {
-                    filename = "$illustid$type"
-                }
-                1 -> {
-                    filename = "$illustid$type"
-                }
-                2 -> {
-                    filename = "${userid}_$illustid$type"
-                }
-                3 -> {
-                    filename = "${illustid}_${title}$type"
-                }
-                4 -> {
-                    filename = "${illustid}(${userid})_${title}$type"
-                }
-            }
-        }
+        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
-            "${PxEZApp.storepath}/${userName}_${illust.user.id}"
+            "${PxEZApp.storepath}/${name}_${illust.user.id}"
         } else PxEZApp.storepath
         val targetFile = File(path, filename)
-        if (targetFile.exists() || (format == 4 && File(path, "${illustid}_${title}_$part$type").exists())) {
+        if (targetFile.exists()) {
             Toasty.normal(
                 PxEZApp.instance,
                 PxEZApp.instance.getString(R.string.alreadysaved),
@@ -252,10 +175,10 @@ object Works {
         val illustD = IllustD(
             id = illust.id,
             preview = illust.image_urls.square_medium,
-            userName = illust.user.name,
+            userName = name,
             userId = illust.user.id,
             userAvatar = illust.user.profile_image_urls.medium,
-            title = illust.title,
+            title = title,
             url = url
         )
         val targetPath = "${PxEZApp.instance.cacheDir}${File.separator}${filename}"

@@ -64,9 +64,9 @@ class PxEZApp : Application() {
             val sourceFile = File(it.filePath)
 
             val needCreateFold = pre.getBoolean("needcreatefold", false)
-            val userName = illustD.userName?.toLegal()
+            val name = illustD.userName?.toLegal()
             val path = if (needCreateFold) {
-                "$storepath/${userName}_${illustD.userId}"
+                "$storepath/${name}_${illustD.userId}"
             } else storepath
             val targetFile = File(path, sourceFile.name)
             sourceFile.copyTo(targetFile, overwrite = true)
@@ -185,9 +185,9 @@ class PxEZApp : Application() {
         language = pre.getString("language", "0")?.toInt() ?: 0
         storepath = pre.getString(
             "storepath1",
-            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
-        )
-            ?: Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
+            Environment.getExternalStorageDirectory().absolutePath!! + File.separator + "PxEz"
+        )!!
+        saveformat = pre.getString("filesaveformat","{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
             CrashHandler.getInstance().init(this)
         }

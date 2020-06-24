@@ -84,11 +84,9 @@ class PictureXFragment : BaseFragment() {
     }
 
     override fun onDestroy() {
-        if (pictureXAdapter != null) {
-            pictureXAdapter?.setListener { }
-            pictureXAdapter?.setViewCommentListen { }
-            pictureXAdapter?.setUserPicLongClick { }
-        }
+        pictureXAdapter?.setListener { }
+        pictureXAdapter?.setViewCommentListen { }
+        pictureXAdapter?.setUserPicLongClick { }
         super.onDestroy()
 
     }
@@ -216,7 +214,7 @@ class PictureXFragment : BaseFragment() {
 
             pictureXAdapter?.setProgressComplete(it)
         })
-
+        pictureXAdapter?.notifyDataSetChanged()
     }
 
     var hasMoved = false

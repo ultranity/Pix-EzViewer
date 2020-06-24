@@ -11,7 +11,7 @@
             app:key="about_feedback_email"
             app:title="Email"
             app:enableCopying="true"
-            app:summary="PxEzFeedBack@outlook.com"/>
+            app:summary="Pix-Ez@outlook.com"/>
         <Preference
             app:key="about_feedback_telegram"
             app:title="Telegram"

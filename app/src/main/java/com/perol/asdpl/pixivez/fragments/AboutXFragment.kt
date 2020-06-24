@@ -42,7 +42,7 @@ class AboutXFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "about_feedback_email" -> {
-                val emailurl = "PxEzFeedBack@outlook.com"
+                val emailurl = "Pix-Ez@outlook.com"
                 val email = Intent(Intent.ACTION_SEND)
                 email.type = "message/rfc822"
                 email.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailurl))

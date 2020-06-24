@@ -23,7 +23,7 @@
 
 **解决方法：**
 
-去 [GitHub 本项目 Release 页面](https://github.com/Notsfsssf/Pix-EzViewer/releases) 下载完整 APK。你也可以卸载残缺应用之后从 Google Play 重新安装一次。**本应用是免费应用，如果您付费购买，请立即请求退款并打差评！**
+去 [GitHub 本项目 Release 页面](https://github.com/ultranity/Pix-EzViewerreleases) 下载完整 APK。你也可以卸载残缺应用之后从 Google Play 重新安装一次。**本应用是免费应用，如果您付费购买，请立即请求退款并打差评！**
 
 如果你是分享者 且 你的朋友没有访问 Google Play 的能力，请分享 Release 页面的 APK，或者让你的朋友到这里来自己下载。
 
@@ -33,7 +33,7 @@
 
 请尝试以下步骤：
 
-1. 确保应用是最新的，去 [GitHub 本项目主页](https://github.com/Notsfsssf/Pix-EzViewer/) 下载最新版本。
+1. 确保应用是最新的，去 [GitHub 本项目主页](https://github.com/ultranity/Pix-EzViewer) 下载最新版本。
 2. 已是最新版，则用户名或者密码必定有错，请仔细核对
 
 PS：用户名、密码指的是 pixiv 的账号密码，而不是 GitHub 的
@@ -71,7 +71,7 @@ PS：用户名、密码指的是 pixiv 的账号密码，而不是 GitHub 的
 
    例如这样：
 
-   ![未解锁](https://raw.githubusercontent.com/Notsfsssf/Pix-EzViewer/master/help/Not-Unlocked.jpg)
+   ![未解锁](https://raw.githubusercontent.com/ultranity/Pix-EzViewermaster/help/Not-Unlocked.jpg)
 
 **解决方法：**
 

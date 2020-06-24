@@ -42,7 +42,7 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 
 对于普通用户，**如果在使用过程中有任何疑问，请先参考我们的 [常见问题](/help/README.md) 页进行快速自查。**
 
-如果你的问题不在上述页面范围内，你可以通过 Email (PxEzFeedBack@outlook.com) 或 [GitHub Issues](https://github.com/ultranity/Pix-EzViewer/issues) 或 下面的聊天群 提交反馈。
+如果你的问题不在上述页面范围内，你可以通过 Email (Pix-Ez@outlook.com) 或 [GitHub Issues](https://github.com/ultranity/Pix-EzViewer/issues) 或 下面的聊天群 提交反馈。
 
 ![](https://img.shields.io/badge/PR-welcome-blue.svg)
 

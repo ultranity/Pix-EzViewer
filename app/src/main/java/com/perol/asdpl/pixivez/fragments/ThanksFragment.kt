@@ -154,7 +154,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "support" -> startActivityByUri("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
-            /*  "pr" -> startActivityByUri("https://github.com/Notsfsssf/Pix-EzViewer/pulls")*/
+            /*  "pr" -> startActivityByUri("https://github.com/ultranity/Pix-EzViewerpulls")*/
             "thanks" -> {
                 val thanksDialog = ThanksDialog()
                 thanksDialog.show(childFragmentManager)

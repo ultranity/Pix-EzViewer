@@ -127,7 +127,7 @@
     <string name="navigation_drawer_open">ナビゲーションドロワーを開く</string>
     <string name="navigation_drawer_close">ナビゲーションドロワーを閉じる</string>
     <string name="nav_header_title">PxEz</string>
-    <string name="nav_header_subtitle">PxEzFeedBack@outlook.com</string>
+    <string name="nav_header_subtitle">Pix-Ez@outlook.com</string>
     <string name="nav_header_desc">ナビゲーションヘッダー</string>
     <string name="title_activity_illust_recom">IllustRecomActivity</string>
     <string name="title_activity_fling">FlingActivity</string>

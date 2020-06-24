@@ -46,8 +46,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.bugly.Bugly
-import kotlinx.coroutines.delay
-import okhttp3.internal.waitMillis
+import com.tencent.bugly.beta.Beta
 import java.io.File
 
 
@@ -196,9 +195,10 @@ class PxEZApp : Application() {
         } else {
             resources.configuration.locale.language
         }
-        if (!BuildConfig.ISGOOGLEPLAY)
+        if (!BuildConfig.ISGOOGLEPLAY) {
             Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
-
+            Beta.enableHotfix = false
+        }
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityCollector.collect(activity)

@@ -52,9 +52,9 @@ class HelloMRecomModel : BaseViewModel() {
         }, {}, {}).add()
     }
     fun onLoadMoreBannerRequested() {
-        retrofitRepository.getNext(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            addillusts.value = it.illusts as ArrayList<Illust>?
+        retrofitRepository.getNextPixivisionArticles(nextPixivisonUrl.value!!).subscribe({
+            nextPixivisonUrl.value = it.next_url
+            addbanners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
         }, {}, {}).add()
     }
 

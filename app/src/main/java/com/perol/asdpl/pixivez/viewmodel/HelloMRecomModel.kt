@@ -24,15 +24,48 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.RecommendResponse
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
-    var retrofitRepository = RetrofitRepository.getInstance()
+    val illusts = MutableLiveData<ArrayList<Illust>>()
+    val addillusts = MutableLiveData<ArrayList<Illust>>()
+    var oldBanner = false
+    val banners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
+    val addbanners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
+    var nextUrl = MutableLiveData<String>()
+    var nextPixivisonUrl = MutableLiveData<String>()
+    private var retrofitRepository = RetrofitRepository.getInstance()
     fun firstRxGet(): Observable<RecommendResponse> = retrofitRepository.getRecommend()
     fun onLoadMoreRxRequested(nextUrl: String) = retrofitRepository.getNext(nextUrl)
     fun getBanner(): Observable<SpotlightResponse> = retrofitRepository.getPixivison("all")
     fun onLoadMoreBannerRequested(nextUrl: String) = retrofitRepository.getNextPixivisionArticles(nextUrl)
+
+    fun onLoadMorePicRequested() {
+        retrofitRepository.getNext(nextUrl.value!!).subscribe({
+            nextUrl.value = it.next_url
+            addillusts.value = it.illusts as ArrayList<Illust>?
+        }, {}, {}).add()
+    }
+    fun onLoadMoreBannerRequested() {
+        retrofitRepository.getNext(nextUrl.value!!).subscribe({
+            nextUrl.value = it.next_url
+            addillusts.value = it.illusts as ArrayList<Illust>?
+        }, {}, {}).add()
+    }
+
+    fun OnRefreshListener() {
+        retrofitRepository.getRecommend().subscribe({
+            nextUrl.value = it.next_url
+            illusts.value = it.illusts as ArrayList<Illust>?
+        }, {}, {}).add()
+        retrofitRepository.getPixivison("all").subscribe({
+            nextPixivisonUrl.value = it.next_url
+            banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
+        }, {}, {}).add()
+    }
 }

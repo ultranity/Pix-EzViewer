@@ -253,15 +253,16 @@ class PictureXFragment : BaseFragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 (recyclerview.layoutManager as LinearLayoutManager).run {
-                    /*Log.d("test", "onScrolled: "+
+                    Log.d("test", "onScrolled: "+
                             findFirstCompletelyVisibleItemPosition().toString()+" "+
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
-                            findLastVisibleItemPosition().toString()+" "+position)*/
+                            findLastVisibleItemPosition().toString()+" "+position)
                     if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position ) {
                         constraintLayout_fold.visibility = View.INVISIBLE
-                    } else
+                    } else if (findFirstVisibleItemPosition() > position && findLastVisibleItemPosition() < position ) {
                         constraintLayout_fold.visibility = View.VISIBLE
+                    }
                 }
 
                 }

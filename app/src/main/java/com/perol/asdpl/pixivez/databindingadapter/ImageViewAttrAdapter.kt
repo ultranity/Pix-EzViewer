@@ -47,7 +47,7 @@ fun loadImage(imageView: ImageView, url: String?) {
                       else
                             url)
                 .circleCrop()
-                .placeholder(R.mipmap.ic_noimage_round)
+                .placeholder(R.drawable.black_background)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,

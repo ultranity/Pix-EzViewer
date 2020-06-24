@@ -224,6 +224,7 @@ class UserMActivity : RinkActivity() {
 
 
         }
+        //supportPostponeEnterTransition ();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

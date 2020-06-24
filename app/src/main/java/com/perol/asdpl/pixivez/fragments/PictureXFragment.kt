@@ -26,9 +26,12 @@ package com.perol.asdpl.pixivez.fragments
 
 
 import TagsBookMarkDialog
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +52,7 @@ import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import kotlinx.android.synthetic.main.fragment_picture_x.*
 import kotlinx.coroutines.runBlocking
@@ -174,7 +178,15 @@ class PictureXFragment : BaseFragment() {
                 imageViewUser_picX.setOnClickListener { ot ->
                     val intent = Intent(context, UserMActivity::class.java)
                     intent.putExtra("data", it.user.id)
-                    startActivity(intent)
+
+                    if (PxEZApp.animationEnable) {
+                        val options = ActivityOptions.makeSceneTransitionAnimation(
+                            context as Activity,
+                            Pair.create(imageViewUser_picX, "UserImage")
+                        )
+                        startActivity(intent, options.toBundle())
+                    } else
+                        startActivity(intent)
                 }
                 fab.show()
 

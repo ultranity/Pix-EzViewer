@@ -21,33 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.adapters
 
-package com.perol.asdpl.pixivez.adapters;
+import android.view.View
+import android.widget.ImageView
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.GlideApp
 
-import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
-
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.perol.asdpl.pixivez.R;
-import com.perol.asdpl.pixivez.responses.Illust;
-import com.perol.asdpl.pixivez.services.GlideApp;
-
-import java.util.List;
-
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
-
-public class UserSearchIllustAdapter extends BaseQuickAdapter<Illust, BaseViewHolder> {
-
-    public UserSearchIllustAdapter(int layoutResId, @Nullable List<Illust> data) {
-        super(layoutResId, data);
-    }
-
-    @Override
-    protected void convert(BaseViewHolder helper, Illust item) {
-        ImageView imageView = (ImageView) helper.getView(R.id.imageview_usersearchillust);
-        GlideApp.with(imageView.getContext()).load(item.getImage_urls().getSquare_medium()).transition(withCrossFade()).into(imageView);
+class UserSearchIllustAdapter(
+    layoutResId: Int,
+    data: MutableList<Illust>?
+) : BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
+    override fun convert(
+        helper: BaseViewHolder,
+        item: Illust
+    ) {
+        val mainimage = helper.getView<View>(R.id.imageview_usersearchillust) as ImageView
+        GlideApp.with(mainimage.context).load(item.image_urls.square_medium)
+            .transition(DrawableTransitionOptions.withCrossFade()).into(mainimage)
     }
 }

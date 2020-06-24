@@ -24,8 +24,11 @@
 
 package com.perol.asdpl.pixivez.adapters
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.util.Pair
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -37,6 +40,7 @@ import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
 
 class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
     BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data?.toMutableList()) {
@@ -65,11 +69,17 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
         }
         userImage.setOnClickListener {
             val intent = Intent(context, UserMActivity::class.java)
-            val userid = item.userid.toLong()
-
-            intent.putExtra("data", userid)
+            intent.putExtra("data", item.userid.toLong())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+
+            if (PxEZApp.animationEnable) {
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    context as Activity,
+                    Pair.create(userImage, "UserImage")
+                )
+                context.startActivity(intent, options.toBundle())
+            } else
+                context.startActivity(intent)
         }
     }
 }

@@ -24,32 +24,62 @@
 
 package com.perol.asdpl.pixivez.databindingadapter
 
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentActivity
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.GlideApp
 
 @BindingAdapter("userUrl")
 fun loadImage(imageView: ImageView, url: String?) {
     if (url != null)
-        if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
-            GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
-        } else
+
             GlideApp.with(imageView.context)
-                    .load(url)
-                    .placeholder(R.mipmap.ic_noimage)
-                    .circleCrop()
-                    .error(R.mipmap.ic_noimage)
-                    .into(imageView)
+                .load(if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png"))
+                            GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
+                      else
+                            url)
+                .circleCrop()
+                .placeholder(R.mipmap.ic_noimage_round)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
+                        return false
+                    }
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
+                        return false
+                    }
+                })
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.mipmap.ic_noimage_round)
+                .transition(withCrossFade()).into(imageView)
 }
 
 @BindingAdapter("url")
 fun GlideLoadImage(imageView: ImageView, url: String?) {
     if (url != null)
-        GlideApp.with(imageView.context).load(url).transition(withCrossFade()).error(R.drawable.chobi01).placeholder(R.drawable.chobi01).into(imageView)
+        GlideApp.with(imageView.context).load(url).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).error(R.drawable.chobi01).placeholder(R.drawable.chobi01).into(imageView)
     else {
-        GlideApp.with(imageView).load(R.drawable.chobi01).into(imageView)
+        GlideApp.with(imageView).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
     }
 }
 

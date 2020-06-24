@@ -207,7 +207,15 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             runBlocking {
                 val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
                 intent.putExtra("data", AppDataRepository.getUser().userid)
-                startActivity(intent)
+
+                if (PxEZApp.animationEnable) {
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        this@HelloMActivity,
+                        Pair.create(currentUserimageview, "UserImage")
+                    )
+                    startActivity(intent, options.toBundle())
+                } else
+                    startActivity(intent)
             }
         }
 

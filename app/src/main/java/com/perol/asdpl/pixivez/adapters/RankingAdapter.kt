@@ -213,7 +213,15 @@ class RankingAdapter(
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", item.user.id)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+
+            if (PxEZApp.animationEnable) {
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    context as Activity,
+                    Pair.create(imageViewUser, "UserImage")
+                )
+                context.startActivity(intent, options.toBundle())
+            } else
+                context.startActivity(intent)
         }
         imageViewUser.setOnLongClickListener {
             val id = item.user.id
@@ -234,7 +242,7 @@ class RankingAdapter(
         }
         imageViewUser.setTag(R.id.tag_first, item.user.profile_image_urls.medium)
 
-        GlideApp.with(imageViewUser.context).load(item.user.profile_image_urls.medium).circleCrop()
+        GlideApp.with(imageViewUser.context).load(item.user.profile_image_urls.medium).circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(object : ImageViewTarget<Drawable>(imageViewUser) {
                 override fun setResource(resource: Drawable?) {
                     imageViewUser.setImageDrawable(resource)
@@ -263,8 +271,8 @@ class RankingAdapter(
             val isr18 = tags.contains("R-18") || tags.contains("R-18G")
             if (isr18) {
                 GlideApp.with(mainimage.context)
-                    .load(ContextCompat.getDrawable(context, R.drawable.h))
-                    .placeholder(R.drawable.h).into(mainimage)
+                    .load(R.drawable.h)
+                    .into(mainimage)
             } else {
                 GlideApp.with(mainimage.context).load(loadUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

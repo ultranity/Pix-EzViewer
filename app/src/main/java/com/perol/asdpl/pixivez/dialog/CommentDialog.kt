@@ -25,11 +25,14 @@
 package com.perol.asdpl.pixivez.dialog
 
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Pair
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -52,6 +55,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.IllustCommentsResponse
 import com.perol.asdpl.pixivez.services.AppApiPixivService
+import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -100,7 +104,7 @@ class CommentDialog : DialogFragment() {
             }
             appApiPixivService!!.getIllustComments(Authorization!!, id!!)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .retryWhen(ReFreshFunction(context!!))
+            .retryWhen(ReFreshFunction(requireContext()))
             .subscribe(object : Observer<IllustCommentsResponse> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
@@ -138,7 +142,15 @@ class CommentDialog : DialogFragment() {
                                 "data",
                                 illustCommentsResponse.comments[position].user.id
                             )
-                            startActivity(intent)
+
+                            if (PxEZApp.animationEnable) {
+                                val options = ActivityOptions.makeSceneTransitionAnimation(
+                                    context as Activity,
+                                    Pair.create(view, "UserImage")
+                                )
+                                startActivity(intent, options.toBundle())
+                            } else
+                                startActivity(intent)
                         }
                         if (view.id == R.id.repley_to_hit) {
                             Parent_comment_id = illustCommentsResponse.comments[position].id
@@ -290,8 +302,8 @@ class CommentDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bundle = arguments
         id = bundle!!.getLong("id")
-        val builder = MaterialAlertDialogBuilder(activity!!)
-        val inflater = activity!!.layoutInflater
+        val builder = MaterialAlertDialogBuilder(requireActivity())
+        val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_comment, null)
         recyclerviewPicture = view.findViewById(R.id.recyclerview_picture)
         edittextComment = view.findViewById(R.id.edittext_comment)

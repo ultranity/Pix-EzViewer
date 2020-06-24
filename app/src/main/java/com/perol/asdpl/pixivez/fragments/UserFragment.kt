@@ -25,8 +25,10 @@
 package com.perol.asdpl.pixivez.fragments
 
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,7 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.fragment_user.*
 
@@ -68,10 +71,19 @@ class UserFragment : LazyFragment() {
                 userViewModel.getNextUsers(userViewModel.nexturl.value!!)
 
         }
-        userShowAdapter.setOnItemClickListener { _, _, position ->
+        userShowAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(requireActivity().applicationContext, UserMActivity::class.java)
             intent.putExtra("data", userShowAdapter.data[position].user.id)
-            startActivity(intent)
+
+            if (PxEZApp.animationEnable) {
+                val userImage = view.findViewById<View>(R.id.imageview_usershow)
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    requireActivity(),
+                    Pair.create(userImage, "UserImage")
+                )
+                startActivity(intent, options.toBundle())
+            } else
+                startActivity(intent)
         }
     }
 

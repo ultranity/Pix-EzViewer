@@ -31,6 +31,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -243,6 +244,7 @@ class PictureXFragment : BaseFragment() {
         }
         imageButton.setOnClickListener {
             recyclerview.scrollToPosition(position)
+            constraintLayout_fold.visibility = View.INVISIBLE
         }
         val linearLayoutManager = LinearLayoutManager(requireActivity())
         recyclerview.layoutManager = linearLayoutManager
@@ -254,11 +256,19 @@ class PictureXFragment : BaseFragment() {
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == position || linearLayoutManager.findFirstCompletelyVisibleItemPosition() == position || linearLayoutManager.findFirstVisibleItemPosition() == position || linearLayoutManager.findLastVisibleItemPosition() == position) {
-                    constraintLayout_fold.visibility = View.INVISIBLE
-                } else
-                    constraintLayout_fold.visibility = View.VISIBLE
-            }
+                (recyclerview.layoutManager as LinearLayoutManager).run {
+                    /*Log.d("test", "onScrolled: "+
+                            findFirstCompletelyVisibleItemPosition().toString()+" "+
+                            findLastCompletelyVisibleItemPosition().toString()+" "+
+                            findFirstVisibleItemPosition().toString() +" "+
+                            findLastVisibleItemPosition().toString()+" "+position)*/
+                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position ) {
+                        constraintLayout_fold.visibility = View.INVISIBLE
+                    } else
+                        constraintLayout_fold.visibility = View.VISIBLE
+                }
+
+                }
         })
 
     }

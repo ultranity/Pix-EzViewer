@@ -255,6 +255,9 @@ class PxEZApp : Application() {
         var storepath = ""
 
         @JvmStatic
+        var saveformat = ""
+
+        @JvmStatic
         var locale = "zh"
 
         @JvmStatic

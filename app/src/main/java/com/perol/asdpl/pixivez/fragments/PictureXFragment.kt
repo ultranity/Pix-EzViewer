@@ -31,7 +31,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+//import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -253,14 +253,14 @@ class PictureXFragment : BaseFragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 (recyclerview.layoutManager as LinearLayoutManager).run {
-                    Log.d("test", "onScrolled: "+
+                    /*Log.d("test", "onScrolled: "+
                             findFirstCompletelyVisibleItemPosition().toString()+" "+
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
-                            findLastVisibleItemPosition().toString()+" "+position)
+                            findLastVisibleItemPosition().toString()+" "+position)*/
                     if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position ) {
                         constraintLayout_fold.visibility = View.INVISIBLE
-                    } else if (findFirstVisibleItemPosition() > position && findLastVisibleItemPosition() < position ) {
+                    } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position ) {
                         constraintLayout_fold.visibility = View.VISIBLE
                     }
                 }

@@ -279,7 +279,7 @@ class CommentDialog : DialogFragment() {
         params.gravity = Gravity.BOTTOM
         params.width = WindowManager.LayoutParams.MATCH_PARENT
         window.attributes = params
-        val color = ContextCompat.getColor(activity!!, android.R.color.transparent)
+        val color = ContextCompat.getColor(requireActivity(), android.R.color.transparent)
         window.setBackgroundDrawable(ColorDrawable(color))
     }
 

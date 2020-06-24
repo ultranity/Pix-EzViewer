@@ -35,13 +35,6 @@ class HelloMMyViewModel : BaseViewModel() {
     val bookmarknum = MutableLiveData<Illust>()
     val nexturl = MutableLiveData<String>()
 
-    fun firstget() {
-        retrofitRespository.getFollowIllusts("public").subscribe({
-            nexturl.value = it.next_url
-            illusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
-    }
-
     fun onLoadMoreRequested() {
         retrofitRespository.getNext(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
@@ -58,7 +51,7 @@ class HelloMMyViewModel : BaseViewModel() {
 
     fun OnItemChildLongClick(id: Illust) {
         if (id.is_bookmarked) {
-            retrofitRespository.postUnlikeIllust(id.id.toLong())!!.subscribe({
+            retrofitRespository.postUnlikeIllust(id.id).subscribe({
                 bookmarknum.value = id
             }, {}, {}).add()
         } else {

@@ -74,7 +74,7 @@
                     app:layout_scrollFlags="scroll">
 
                     <ImageView
-                        android:id="@+id/imageview_useruserimage"
+                        android:id="@+id/imageview_userimage"
                         userUrl="@{user.user.profile_image_urls.medium}"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
@@ -82,7 +82,8 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:transitionName="userimage"
+                        android:transitionName="UserImage"
+                        app:cardCornerRadius="40dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,14 +91,14 @@
                         android:id="@+id/textview_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignStart="@id/imageview_useruserimage"
+                        android:layout_alignStart="@id/imageview_userimage"
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="8dp"
                         android:layout_marginBottom="8dp"
                         android:gravity="center"
                         android:text="@{user.user.name}"
-                        app:layout_constraintBottom_toBottomOf="@+id/imageview_useruserimage"
-                        app:layout_constraintStart_toEndOf="@+id/imageview_useruserimage" />
+                        app:layout_constraintBottom_toBottomOf="@+id/imageview_userimage"
+                        app:layout_constraintStart_toEndOf="@+id/imageview_userimage" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

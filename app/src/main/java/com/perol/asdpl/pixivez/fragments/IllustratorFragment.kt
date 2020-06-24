@@ -99,7 +99,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             viewModel!!.onRefresh(param1!!, restrict, param2!!)
         }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
-            val intent = Intent(activity!!.applicationContext, UserMActivity::class.java)
+            val intent = Intent(requireActivity().applicationContext, UserMActivity::class.java)
             val userid = viewModel!!.userpreviews.value!![position].user.id
             intent.putExtra("data", userid)
             startActivity(intent)

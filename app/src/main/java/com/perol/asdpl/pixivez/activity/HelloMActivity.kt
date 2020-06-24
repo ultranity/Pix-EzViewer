@@ -26,12 +26,15 @@ package com.perol.asdpl.pixivez.activity
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
+import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -52,6 +55,7 @@ import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.android.synthetic.main.app_bar_hello_m.*
 import kotlinx.coroutines.runBlocking
@@ -193,17 +197,17 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         supportFragmentManager.beginTransaction()
             .replace(R.id.content_view, getFragmentContent(position)).commit()
         val view = nav_view.inflateHeaderView(R.layout.nav_header_hello_m)
-        val imageview = view.findViewById<ImageView>(R.id.imageView)
+        val currentUserimageview = view.findViewById<ImageView>(R.id.imageView)
         val headtext = view.findViewById<TextView>(R.id.headtext)
         val textView = view.findViewById<TextView>(R.id.textView)
         var nowNum = PreferenceManager.getDefaultSharedPreferences(this).getInt("usernum", 0)
         if (nowNum >= allUser!!.size) {
             nowNum = 0
         }
-        GlideApp.with(imageview.context)
+        GlideApp.with(currentUserimageview.context)
             .load(allUser!![nowNum].userimage)
-            .circleCrop().into(imageview)
-        imageview.setOnClickListener {
+            .circleCrop().into(currentUserimageview)
+        currentUserimageview.setOnClickListener {
             runBlocking {
                 val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
                 intent.putExtra("data", AppDataRepository.getUser().userid)
@@ -275,7 +279,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     0 -> {
-
                     }
                     1 -> {
                     }

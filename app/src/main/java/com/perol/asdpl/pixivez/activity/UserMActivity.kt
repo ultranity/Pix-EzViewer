@@ -168,7 +168,7 @@ class UserMActivity : RinkActivity() {
             true
         }
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
-        imageview_useruserimage.setOnClickListener {
+        imageview_userimage.setOnClickListener {
             disposables.add(viewModel.isuser(id).subscribe({
                 var array = resources.getStringArray(R.array.user_profile)
                 if (!it) {

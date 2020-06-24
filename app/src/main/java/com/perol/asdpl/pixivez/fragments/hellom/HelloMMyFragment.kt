@@ -72,26 +72,26 @@ class HelloMMyFragment : BaseFragment() {
             rankingAdapter.notifyDataSetChanged()
         }
     }
-    lateinit var rankingAdapter: RecommendAdapter
-    var viewmodel: HelloMMyViewModel? = null
+    private lateinit var rankingAdapter: RecommendAdapter
+    lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
-    fun lazyLoad() {
+    private fun lazyLoad() {
         viewmodel = ViewModelProvider(this).get(HelloMMyViewModel::class.java)
-        viewmodel!!.addillusts.observe(this, Observer {
+        viewmodel.addillusts.observe(this, Observer {
             if (it != null) {
                 rankingAdapter.addData(it)
             }
         })
-        viewmodel!!.illusts.observe(this, Observer {
+        viewmodel.illusts.observe(this, Observer {
             swiperefresh_mym.isRefreshing = false
             rankingAdapter.setNewData(it)
         })
-        viewmodel!!.bookmarknum.observe(this, Observer {
+        viewmodel.bookmarknum.observe(this, Observer {
             if (it != null) {
-                viewmodel!!.OnItemChildLongClick(it)
+                viewmodel.OnItemChildLongClick(it)
             }
         })
-        viewmodel!!.nexturl.observe(this, Observer {
+        viewmodel.nexturl.observe(this, Observer {
             if (it == null) {
                 rankingAdapter.loadMoreEnd()
             } else {
@@ -127,10 +127,10 @@ class HelloMMyFragment : BaseFragment() {
         recyclerview_mym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerview_mym.adapter = rankingAdapter
         swiperefresh_mym.setOnRefreshListener {
-            viewmodel!!.OnRefreshListener(restrict)
+            viewmodel.OnRefreshListener(restrict)
         }
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
-            viewmodel!!.onLoadMoreRequested()
+            viewmodel.onLoadMoreRequested()
         }
         spinner_mmy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -145,7 +145,7 @@ class HelloMMyFragment : BaseFragment() {
                         restrict = "private"
                     }
                 }
-                viewmodel!!.OnRefreshListener(restrict)
+                viewmodel.OnRefreshListener(restrict)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -156,12 +156,17 @@ class HelloMMyFragment : BaseFragment() {
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_hellomth)?.getTabAt(0)
             ?.view?.setOnClickListener {
             if ((System.currentTimeMillis() - exitTime) > 3000) {
+                /*Toast.makeText(
+                    PxEZApp.instance,
+                    getString(R.string.back_to_the_top),
+                    Toast.LENGTH_SHORT
+                ).show()*/
                 exitTime = System.currentTimeMillis()
             } else {
                 recyclerview_mym.smoothScrollToPosition(0)
             }
-
         }
+        swiperefresh_mym.isRefreshing = true
     }
 
     companion object {

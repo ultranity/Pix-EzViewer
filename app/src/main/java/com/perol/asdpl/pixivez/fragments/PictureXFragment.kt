@@ -194,9 +194,7 @@ class PictureXFragment : BaseFragment() {
             }
         })
         pictureXViewModel.aboutPics.observe(this, Observer {
-            if (pictureXAdapter != null) {
                 pictureXAdapter?.setRelativeNow(it)
-            }
         })
         pictureXViewModel.likeIllust.observe(this, Observer {
             if (it != null) {
@@ -212,9 +210,7 @@ class PictureXFragment : BaseFragment() {
             pictureXAdapter?.setUserPicColor(it)
         })
         pictureXViewModel.progress.observe(this, Observer {
-            if (pictureXAdapter != null) {
                 pictureXAdapter?.setProgress(it)
-            }
         })
         pictureXViewModel.downloadGifSuccess.observe(this, Observer {
 

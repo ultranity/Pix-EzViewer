@@ -17,13 +17,25 @@
 - [ ] R18单独文件夹；
 - [ ] 下载管理修复：restart后UI更新只移除任务，需要重新进入
 - [ ] 搜索记录tag长按删除卡顿优化-后台线程
+- [ ] 去除部分平台兼容代码和实际无用的GMS，安装包体积可以降到10MB
 
 # 更新日志：
+## 1.5.6W:
+- [x] fix: 自定义图片保存格式模板界面夜间模式背景异常
+- [x] fix: constraintLayout_fold正确显示
+- [x] fix: banner 加载更多
+- [x] fix？: 尝试解决PagerAdapter出现IllegalStateException
+- [x] update: 安装包体积优化（12MB,去除部分平台兼容代码和实际无用的GMS可以降到10MB？）
+- [x] update: 强制关闭Bugly热更新避免部分机型bug
+- [x] update&fix: 下载按钮夜间模式颜色可见度提升
 ## 1.5.6R:
+- [x] update: 新的反馈邮箱：Pix-Ez@outlook.com
 - [x] fix&update: 启动加载优化，解决部分环境下首页持续刷新中问题，首页加载速度X2+
 - [x] fix&update: 图片详情横栏在部分复杂情况下的正确隐藏
 - [x] feature: 自定义图片保存格式模板（覆盖旧设置，有改动的需要重设）
 - [x] feature: 新顶栏banner点击后变色
+- [x] feature: 画师推荐展示的的预览图片可点击进入
+- [x] update: 安装包体积优化
 - [x] update: 阴影调整
 - [x] update: 画师详情页面相关过渡动画优化
 - [x] update: 用户头像缓存策略优化

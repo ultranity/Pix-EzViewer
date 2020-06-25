@@ -65,7 +65,7 @@ object Works {
         //var filename = "${illustid}_p$part$type"
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
-            .replace("{user}", illust.user.name.toLegal())
+            .replace("{name}", illust.user.name.toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original
@@ -92,7 +92,7 @@ object Works {
         val name = illust.user.name.toLegal()
         val userid = illust.user.id
         val filename = parseSaveFormat(illust, part)
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
+        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
             "${PxEZApp.storepath}/${name}_${userid}"
@@ -158,7 +158,7 @@ object Works {
         val title = illust.title.toLegal()
         val filename = parseSaveFormat(illust, part)
 
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
+        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
             "${PxEZApp.storepath}/${name}_${illust.user.id}"
@@ -223,7 +223,7 @@ object Works {
                     filename = "${name}_p$part$type"
                 }
                 2 -> {
-                    filename = "${user}_${name}_$part$type"
+                    filename = "${name}_${name}_$part$type"
                 }
                 3 -> {
                     filename = "${name}_${title}_$part$type"
@@ -242,7 +242,7 @@ object Works {
                     filename = "$name$type"
                 }
                 2 -> {
-                    filename = "${user}_$name$type"
+                    filename = "${name}_$name$type"
                 }
                 3 -> {
                     filename = "${name}_${title}$type"

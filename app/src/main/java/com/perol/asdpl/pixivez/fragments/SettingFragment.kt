@@ -358,12 +358,12 @@ class SettingFragment : PreferenceFragmentCompat() {
             title(R.string.saveformat)
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
             positiveButton(R.string.save) { dialog ->
-                PxEZApp.saveformat = "$Input"
+                PxEZApp.saveformat = "${Input.text}"
                 PreferenceManager.getDefaultSharedPreferences(activity).apply {
                     putString("filesaveformat", PxEZApp.saveformat)
                 }
                 findPreference<Preference>("filesaveformat")!!.apply {
-                    summary = "$Input"
+                    summary = PxEZApp.saveformat
                 }
             }
             negativeButton(android.R.string.cancel)

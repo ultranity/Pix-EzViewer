@@ -20,6 +20,10 @@
 - [ ] 去除部分平台兼容代码和实际无用的GMS，安装包体积可以降到10MB
 
 # 更新日志：
+## 1.5.6B:
+- [x] fix: 图片分享
+- [x] fix: 自定义文件格式保存
+- [x] fix: nullable layoutMananger 
 ## 1.5.6W:
 - [x] fix: 自定义图片保存格式模板界面夜间模式背景异常
 - [x] fix: constraintLayout_fold正确显示

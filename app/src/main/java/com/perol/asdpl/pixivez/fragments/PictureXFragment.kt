@@ -150,7 +150,7 @@ class PictureXFragment : BaseFragment() {
                             //                        activity?.supportStartPostponedEnterTransition()
                             if (!hasMoved) {
                                 recyclerview?.scrollToPosition(0)
-                                (recyclerview?.layoutManager as LinearLayoutManager)?.scrollToPositionWithOffset(
+                                (recyclerview?.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
                                     0,
                                     0
                                 )

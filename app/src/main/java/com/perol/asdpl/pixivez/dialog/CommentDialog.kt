@@ -134,7 +134,7 @@ class CommentDialog : DialogFragment() {
                         val dialog = builder.create()
                         dialog.show()
                     }
-                    commentAdapter!!.addChildClickViewIds(R.id.commentuserimage, R.id.repley_to_hit)
+                    commentAdapter!!.addChildClickViewIds(R.id.commentuserimage, R.id.reply_to_hit)
                     commentAdapter!!.setOnItemChildClickListener { adapter, view, position ->
                         if (view.id == R.id.commentuserimage) {
                             val intent = Intent(context, UserMActivity::class.java)
@@ -152,7 +152,7 @@ class CommentDialog : DialogFragment() {
                             } else
                                 startActivity(intent)
                         }
-                        if (view.id == R.id.repley_to_hit) {
+                        if (view.id == R.id.reply_to_hit) {
                             Parent_comment_id = illustCommentsResponse.comments[position].id
                             edittextComment.hint =
                                 "回复:" + illustCommentsResponse.comments[position].user.name

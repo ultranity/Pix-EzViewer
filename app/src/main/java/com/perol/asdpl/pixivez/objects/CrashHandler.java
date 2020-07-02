@@ -75,7 +75,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     private static final String CRASH_REPORTER_EXTENSION = ".cr";
 
-    private static Object syncRoot = new Object();
+    private static final Object syncRoot = new Object();
 
     /**
      * 保证只有一个CrashHandler实例
@@ -199,8 +199,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private void sendCrashReportsToServer(Context ctx) {
         String[] crFiles = getCrashReportFiles(ctx);
         if (crFiles != null && crFiles.length > 0) {
-            TreeSet<String> sortedFiles = new TreeSet<String>();
-            sortedFiles.addAll(Arrays.asList(crFiles));
+            TreeSet<String> sortedFiles = new TreeSet<String>(Arrays.asList(crFiles));
             for (String fileName : sortedFiles) {
                 File cr = new File(ctx.getFilesDir(), fileName);
                 postReport(cr);
@@ -221,11 +220,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     private String[] getCrashReportFiles(Context ctx) {
         File filesDir = ctx.getFilesDir();
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(CRASH_REPORTER_EXTENSION);
-            }
-        };
+        FilenameFilter filter = (dir, name) -> name.endsWith(CRASH_REPORTER_EXTENSION);
         return filesDir.list(filter);
     }
 
@@ -233,9 +228,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 保存错误信息到文件中
      *
      * @param ex
-     * @return
      */
-    private String saveCrashInfoToFile(Throwable ex) {
+    private void saveCrashInfoToFile(Throwable ex) {
         Writer info = new StringWriter();
         PrintWriter printWriter = new PrintWriter(info);
         ex.printStackTrace(printWriter);
@@ -260,11 +254,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             mDeviceCrashInfo.store(trace, "");
             trace.flush();
             trace.close();
-            return fileName;
         } catch (Exception e) {
             Log.e(TAG, "an error occured while writing report file...", e);
         }
-        return null;
     }
 
     /**

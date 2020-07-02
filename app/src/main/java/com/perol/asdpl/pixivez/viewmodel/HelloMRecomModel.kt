@@ -64,7 +64,8 @@ class HelloMRecomModel : BaseViewModel() {
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
         retrofitRepository.getPixivison("all").subscribe({
-            nextPixivisonUrl.value = it.next_url
+            if(!oldBanner)
+                nextPixivisonUrl.value = it.next_url
             banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
         }, {}, {}).add()
     }

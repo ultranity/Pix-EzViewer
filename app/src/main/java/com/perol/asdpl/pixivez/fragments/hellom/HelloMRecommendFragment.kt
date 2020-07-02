@@ -125,8 +125,6 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         })
         viewmodel.banners.observe(this, Observer {
-            swiperefresh_recom.isRefreshing = false
-
             if(viewmodel.oldBanner)
             {
                 val arrayList = ArrayList<String>()
@@ -308,7 +306,6 @@ class HelloMRecommendFragment : BaseFragment() {
         }
 
         return inflater.inflate(R.layout.fragment_recommend, container, false)
-
     }
 
     companion object {

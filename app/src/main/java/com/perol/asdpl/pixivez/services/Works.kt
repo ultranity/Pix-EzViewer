@@ -85,6 +85,7 @@ object Works {
             }
             else -> ".jpg"
         }
+        if(PxEZApp.R18Folder && illust.x_restrict.equals(1)) filename = "R18-$filename"
         return filename.replace("{type}", type)
     }
 

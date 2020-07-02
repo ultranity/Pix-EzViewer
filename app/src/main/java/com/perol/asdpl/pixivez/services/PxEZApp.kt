@@ -64,10 +64,10 @@ class PxEZApp : Application() {
 
             val needCreateFold = pre.getBoolean("needcreatefold", false)
             val name = illustD.userName?.toLegal()
-            val path = if (needCreateFold) {
-                "$storepath/${name}_${illustD.userId}"
-            } else storepath
-            val targetFile = File(path, sourceFile.name)
+            val targetFile = File("$storepath/" +
+                    (if (R18Folder && sourceFile.name.startsWith("R18-")) R18FolderPath else "") +
+                    if (needCreateFold) "${name}_${illustD.userId}" else "",
+                sourceFile.name.removePrefix("R18-"))
             sourceFile.copyTo(targetFile, overwrite = true)
             MediaScannerConnection.scanFile(
                 this,
@@ -181,6 +181,8 @@ class PxEZApp : Application() {
             )!!.toInt()
         )
         animationEnable = pre.getBoolean("animation", true)
+        R18Folder = pre.getBoolean("R18Folder", false)
+        R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
         language = pre.getString("language", "0")?.toInt() ?: 0
         storepath = pre.getString(
             "storepath1",
@@ -256,6 +258,12 @@ class PxEZApp : Application() {
     companion object {
         @JvmStatic
         var storepath = ""
+
+        @JvmStatic
+        var R18Folder: Boolean = false
+
+        @JvmStatic
+        var R18FolderPath = "xrestrict"
 
         @JvmStatic
         var saveformat = ""

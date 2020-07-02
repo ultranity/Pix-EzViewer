@@ -44,6 +44,7 @@ import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.files.folderChooser
+import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -142,6 +143,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             setDefaultValue(PxEZApp.saveformat)
             summary = PxEZApp.saveformat
         }
+        findPreference<Preference>("R18Folder")!!.summary = PxEZApp.R18FolderPath
         findPreference<Preference>("version")!!.apply {
             try {
                 // ---get the package info---
@@ -190,6 +192,10 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<SwitchPreference>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.animationEnable = newValue as Boolean
+            true
+        }
+        findPreference<SwitchPreference>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.R18Folder = newValue as Boolean
             true
         }
     }
@@ -302,6 +308,30 @@ class SettingFragment : PreferenceFragmentCompat() {
                         REQUEST_CODE_PERMISSIONS
                     )
                 }
+            }
+            "R18Folder" -> {
+                if(PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
+                    MaterialDialog(requireContext()).show {
+                        title(R.string.block_tag)
+                        message(R.string.R18_folder)
+                        input (prefill = PxEZApp.R18FolderPath,hint = "xRestrict/"){ dialog, text ->
+                            PxEZApp.R18FolderPath =
+                                if (text.isBlank())
+                                    "xRestrict/"
+                                else
+                                    text.toString().removePrefix("/").removeSuffix("/")+"/"
+                        }
+                        positiveButton(R.string.save) { dialog ->
+                            PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                                putString("R18FolderPath", PxEZApp.R18FolderPath)
+                            }
+                            findPreference<Preference>("R18Folder")!!.apply {
+                                summary = PxEZApp.R18FolderPath
+                            }
+                        }
+                        negativeButton(android.R.string.cancel)
+                        lifecycleOwner(this@SettingFragment)
+                    }
             }
             "version" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {

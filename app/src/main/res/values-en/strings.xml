@@ -111,7 +111,7 @@
     <string name="focus">focus</string>
     <string name="unfocus">unfocus</string>
     <string name="title_activity_fullscreen2">FullscreenActivity2</string>
-    <string name="support">912756674@qq.com</string>
+    <string name="current_developer">current developer</string>
     <string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们，以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
@@ -288,4 +288,5 @@
     <string name="action_apply">apply</string>
     <string name="title_change_icon">change icon</string>
     <string name="title_theme_color">theme color</string>
+    <string name="click">click</string>
 </resources>

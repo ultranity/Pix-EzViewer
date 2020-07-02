@@ -111,7 +111,6 @@
     <string name="focus">關注</string>
     <string name="unfocus">未關注</string>
     <string name="title_activity_fullscreen2">FullscreenActivity2</string>
-    <string name="support">912756674@qq.com</string>
     <string name="thanks">感謝腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61幫助我測試的弹幕委员会的熱心你群群友們，以及提供會員帳號的果干辣，還有積極提供建議的吸血姬，逢田梨香子的老公,吃猫的咸鱼等熱心用戶們</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
@@ -290,4 +289,5 @@
     <string name="save_zip">儲存zip</string>
     <string name="already_going_on">已在進行</string>
     <string name="save_zip_success">儲存zip成功</string>
+    <string name="click">點擊</string>
 </resources>

@@ -58,4 +58,4 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 
 |                             国内                             |                             国外                             |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [点此](https://github.com/Notsfsssf/Pix-EzViewer/blob/master/donation/README.md) | <a href='https://ko-fi.com/W7W5YU4B' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> |
+| [点此](https://github.com/ultranity/Pix-EzViewer/blob/master/donation/README.md) | <a href='https://ko-fi.com/W7W5YU4B' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> |

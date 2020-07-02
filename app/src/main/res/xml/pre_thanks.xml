@@ -7,7 +7,7 @@
         <Preference
             android:title="支持"
             app:key="support"
-            app:summary="如果你觉得这个应用还不错，评分支持一下吧" />
+            app:summary="如果你觉得这个应用还不错，支持一下吧" />
         <Preference
             android:title="贡献"
             app:key="pr"
@@ -55,15 +55,16 @@
         android:title="捐赠"
         app:isPreferenceVisible="false">
         <Preference
-            android:title="支付宝"
+            android:title="当前开发者"
+            app:key="ultranity"
+            app:selectable="true"
             app:enableCopying="true"
-            app:key="alipay"
-            app:selectable="true"
-            app:summary="@string/support" />
+            app:summary="@string/click" />
         <Preference
-            android:title="微信"
-            app:key="wepay"
+            android:title="原作者"
+            app:key="Notsfsssf"
             app:selectable="true"
-            app:summary="click" />
+            app:enableCopying="true"
+            app:summary="@string/support_Notsfsssf" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -165,8 +165,10 @@
     <string name="Title_desc">插画标题</string>
     <string name="Painter_id_desc">画师ID</string>
     <string name="Painter_Name_desc">画师昵称</string>
+    <string name="Painter_Account_desc">画师账号</string>
     <string name="Which_part_desc">第几张(单张不显示,前为"_"或"_p"一并省略)</string>
     <string name="type_desc">原图格式(通常为.jpg或.png,不建议修改)</string>
+    <string name="tag_desc">标签(前5个，用_连接)</string>
     <string name="savepath">保存路径</string>
     <string name="secondpath">第二路径</string>
     <string name="startpage">初始页面</string>
@@ -231,6 +233,7 @@
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="reply_title">Default reply action</string>
+    <string name="reply_to">回复</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
@@ -272,6 +275,8 @@
     <string name="title_activity_search_r">SearchRActivity</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="needstatusbar">异形屏：图片详情状态栏不沉浸</string>
+    <string name="refreshTab">tab自动刷新</string>
+    <string name="refreshTab_summary">首页等切换后不保留先前状态，节省内存</string>
     <string name="changeicons">更换图标</string>
     <string name="supporttitle">支持</string>
     <string name="viewreport">查看报告</string>

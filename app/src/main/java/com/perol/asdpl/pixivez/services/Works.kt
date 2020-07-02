@@ -62,10 +62,12 @@ object Works {
 
     fun parseSaveFormat(illust: Illust, part: Int?): String {
         var url = ""
-        //var filename = "${illustid}_p$part$type"
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
             .replace("{name}", illust.user.name.toLegal())
+            .replace("{account}", illust.user.account.toLegal())
+            .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
+            .replace("{tags}", illust.tags.joinToString("_", limit = 5) { it.name }.toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original

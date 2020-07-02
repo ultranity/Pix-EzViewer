@@ -8,18 +8,38 @@
 - [ ] blocktags 独立view
 - [ ] 新的布局极简布局，save、like 按钮合并为点击+长按
 - [ ] pixiv画廊（登陆页面背景）
+- [ ] 加入更多自定义命名格式
+- [ ] 批量下载
+- [ ] 卡片单击、双击、三击（or长按？）完成下载图片，下载+收藏，下载+收藏+关注 
 - [ ] 顶栏等尺寸细节调整
 - [-] 瀑布流间距调整
 - [ ] 瀑布流性能优化
 - [ ] 更多图标（可开关）
 - [ ] 画师TAB栏改为顶部展示卡片+详情
 - [!] 允许用户使用pixivc等中转站api
-- [ ] R18单独文件夹；
+- [ ] R18等tag单独文件夹；
 - [ ] 下载管理修复：restart后UI更新只移除任务，需要重新进入
 - [ ] 搜索记录tag长按删除卡顿优化-后台线程
 - [ ] 去除部分平台兼容代码和实际无用的GMS，安装包体积可以降到10MB
 
 # 更新日志：
+## 1.5.7R:
+- [] feature: tab切换时保留内容不刷新（设置内可关闭）
+- [] feature: R18独立保存文件夹（可设置名称）
+- [] feature&update: 更多命名自定义字符串
+- [] feature&update: fade 过渡动画
+- [] feature&update: 恢复未完成任务时自动刷新
+- [] fix: lateinit property pixiVisionAdapter has not been initialized
+- [] fix: onTaskFail null 安全
+- [] fix: onTaskComplete file not found 检查
+- [] update&fix: stack DataHolder
+- [] update: 评论样式调整
+- [] update: crash Handler 优化
+- [] update: bugly 设置优化
+- [] update: 说明及 readme 明确只支持android5.0+
+- [] update: 进一步使用webp优化apk体积
+- [] update: 代码优化
+
 ## 1.5.6B:
 - [x] fix: 图片分享
 - [x] fix: 自定义文件格式保存
@@ -37,6 +57,7 @@
 - [x] fix&update: 启动加载优化，解决部分环境下首页持续刷新中问题，首页加载速度X2+
 - [x] fix&update: 图片详情横栏在部分复杂情况下的正确隐藏
 - [x] feature: 自定义图片保存格式模板（覆盖旧设置，有改动的需要重设）
+- [x] feature: 保存路径自动设置初始路径
 - [x] feature: 新顶栏banner点击后变色
 - [x] feature: 画师推荐展示的的预览图片可点击进入
 - [x] update: 安装包体积优化

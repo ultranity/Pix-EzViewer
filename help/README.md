@@ -11,7 +11,11 @@
 
 ## 1. 为什么第一次一打开 / 刚登录就白屏 + “程序出错，即将退出”？
 
-应用使用了 Android App Bundle 来分发（具体原理看[这里](https://developer.android.com/guide/app-bundle)）；简单的来说，对于不同的设备，Google Play 会在下载时分发一个主 APK + 若干个资源 APK，以减少下载体积。
+第一种可能：
+    系统版本低于5.0（如4.4），okhttp3、bugly、aria2等多个库不兼容
+
+第二种可能：
+    应用使用了 Android App Bundle 来分发（具体原理看[这里](https://developer.android.com/guide/app-bundle)）；简单的来说，对于不同的设备，Google Play 会在下载时分发一个主 APK + 若干个资源 APK，以减少下载体积。
 
 你（你的朋友）可能属于以下任一情形：
 

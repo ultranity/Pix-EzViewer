@@ -152,10 +152,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
-
+    private val fragments = Array<Fragment?>(3) {null}
+    private var curFragment :Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         var allUser: ArrayList<UserEntity>? = null
         runBlocking {
             allUser = ArrayList(AppDataRepository.getAllUser())
@@ -189,13 +189,25 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
-        initView()
-        val position =
-            PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt()
-                ?: 0
-        tablayout_hellom.getTabAt(position)!!.select()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.content_view, getFragmentContent(position)).commit()
+        initView() //Listener
+        val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
+        if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
+            tablayout_hellom.getTabAt(position)!!.select()
+            getFragmentContent(position).let {
+                fragments[position] = it
+                //supportFragmentManager.fragments.forEach(){ it ->
+                //    supportFragmentManager.beginTransaction().remove(it).commit()
+                //}
+                supportFragmentManager.beginTransaction().add(R.id.content_view, it).commit()
+                curFragment = it
+            }
+        }else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
+            getFragmentContent(position).let {
+                supportFragmentManager.beginTransaction().replace(R.id.content_view, it).commit()
+            }
+        else{
+            curFragment = supportFragmentManager.findFragmentById(R.id.content_view)
+        }
         val view = nav_view.inflateHeaderView(R.layout.nav_header_hello_m)
         val currentUserimageview = view.findViewById<ImageView>(R.id.imageView)
         val headtext = view.findViewById<TextView>(R.id.headtext)
@@ -248,7 +260,8 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     }
 
     fun getFragmentContent(position: Int): Fragment {
-        return when (position) {
+        if(fragments[position] == null)
+            return when (position) {
             0 -> {
                 HelloMainFragment.newInstance("s", "s")
             }
@@ -262,10 +275,12 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 HelloMThFragment.newInstance("d", "c")
             }
         }
+        else
+            return fragments[position]!!
     }
 
     private fun initView() {
-/*        viewpager_hellom.adapter = HelloMViewPagerAdapter(supportFragmentManager, this.lifecycle)
+        /*        viewpager_hellom.adapter = HelloMViewPagerAdapter(supportFragmentManager, this.lifecycle)
         TabLayoutMediator(tablayout_hellom, viewpager_hellom) { tab, position ->
             viewpager_hellom.setCurrentItem(tab.position, true)
         }.attach()*/
@@ -285,8 +300,27 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     else -> {
                     }
                 }
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.content_view, getFragmentContent(tab.position)).commit()
+                when {
+                    curFragment == null -> {
+                        getFragmentContent(tab.position).let {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.content_view, it).commit()
+                        }
+                    }
+                    fragments[tab.position] == null -> {
+                        getFragmentContent(tab.position).let {
+                            fragments[tab.position] = it
+                            supportFragmentManager.beginTransaction().hide(curFragment!!)
+                                .add(R.id.content_view, it).commit()
+                            curFragment = it
+                        }
+
+                    }
+                    else -> {
+                        supportFragmentManager.beginTransaction().hide(curFragment!!).show(fragments[tab.position]!!).commit()
+                        curFragment = fragments[tab.position]!!
+                    }
+                }
             }
 
         })

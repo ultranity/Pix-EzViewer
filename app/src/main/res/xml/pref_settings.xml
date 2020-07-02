@@ -72,6 +72,11 @@
             app:key="needstatusbar"
             app:title="@string/needstatusbar" />
         <SwitchPreference
+            app:key="refreshTab"
+            app:defaultValue="true"
+            app:title="@string/refreshTab"
+            app:summary="@string/refreshTab_summary"/>
+        <SwitchPreference
             android:summary="@string/animation_summary"
             app:defaultValue="true"
             app:key="animation"

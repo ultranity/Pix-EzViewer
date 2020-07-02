@@ -8,14 +8,15 @@ import kotlin.collections.set
 
 class DataHolder {
     companion object{
-        private var illustsList: ArrayList<Illust>? = ArrayList<Illust>()
+        private var illustsList: Stack<ArrayList<Illust>?> = Stack<ArrayList<Illust>?>()
 
         fun getIllustsList(): ArrayList<Illust>? {
-            return this.illustsList
+            return if (this.illustsList.empty()) null
+                     else this.illustsList.pop()
         }
 
         fun setIllustsList(illustList: ArrayList<Illust>) {
-            this.illustsList = illustList
+            this.illustsList.push(illustList)
         }
     }
 

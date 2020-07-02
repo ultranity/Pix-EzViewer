@@ -38,7 +38,7 @@ class ThemeDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
 
-            val inflater = requireActivity().layoutInflater;
+            val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_theme, null)
             val switchMaterial = view.findViewById<SwitchMaterial>(R.id.switchmaterial)
             switchMaterial.apply {

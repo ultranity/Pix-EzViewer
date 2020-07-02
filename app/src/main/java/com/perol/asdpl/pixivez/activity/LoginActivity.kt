@@ -153,14 +153,14 @@ class LoginActivity : RinkActivity() {
             val view = layoutInflater.inflate(R.layout.new_dialog_user_help, null)
             val webView = view.findViewById(R.id.web_user_help) as TextView
             // obtain an instance of Markwon
-            val markwon = Markwon.create(this);
+            val markwon = Markwon.create(this)
 
-            val node = markwon.parse(markdownShot);
+            val node = markwon.parse(markdownShot)
 
-            val markdown = markwon.render(node);
+            val markdown = markwon.render(node)
 
             // use it on a TextView
-            markwon.setParsedMarkdown(webView, markdown);
+            markwon.setParsedMarkdown(webView, markdown)
             builder.setPositiveButton(android.R.string.ok) { _, _ ->
 
             }

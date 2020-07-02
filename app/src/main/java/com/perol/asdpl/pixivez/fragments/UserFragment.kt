@@ -88,7 +88,7 @@ class UserFragment : LazyFragment() {
     }
 
     private var param1: String? = null
-    lateinit var userShowAdapter: UserShowAdapter;
+    lateinit var userShowAdapter: UserShowAdapter
     lateinit var userViewModel: UserViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

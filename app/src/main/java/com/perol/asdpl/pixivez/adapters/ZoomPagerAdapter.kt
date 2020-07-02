@@ -104,7 +104,7 @@ class ZoomPagerAdapter(
                 }
             })
         photoView.setOnTouchListener { v, event ->
-            return@setOnTouchListener gestureDetector.onTouchEvent(event);
+            return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
         GlideApp.with(context).asFile().load(arrayList[position])
             .into(object : CustomTarget<File>() {

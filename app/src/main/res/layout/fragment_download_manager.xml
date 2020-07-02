@@ -19,6 +19,6 @@
                     android:id="@+id/progress_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </FrameLayout>
 </layout>

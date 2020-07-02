@@ -35,7 +35,7 @@ import kotlin.collections.ArrayList
 
 fun Calendar?.generateDateString(): String? {
     if (this == null) {
-        return this;
+        return this
     }
     return "${this.get(Calendar.YEAR)}-${this.get(Calendar.MONTH) + 1}-${this.get(Calendar.DATE)}"
 }

@@ -78,12 +78,12 @@ class UserMActivity : RinkActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            val selectedImage = data.data;
-            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA);
-            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null);
+            val selectedImage = data.data
+            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
+            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)
             c!!.moveToFirst()
-            val columnIndex = c.getColumnIndex(filePathColumns[0]);
-            val imagePath = c.getString(columnIndex);
+            val columnIndex = c.getColumnIndex(filePathColumns[0])
+            val imagePath = c.getString(columnIndex)
             Toasty.info(this, "Uploading", Toast.LENGTH_SHORT).show()
             disposables.add(viewModel.tryToChangeProfile(imagePath).subscribe({
                 Toasty.info(this, "Upload Success,Plz re-enter this page", Toast.LENGTH_SHORT)
@@ -91,7 +91,7 @@ class UserMActivity : RinkActivity() {
             }, {
                 it.printStackTrace()
             }, {}))
-            c.close();
+            c.close()
         }
     }
 

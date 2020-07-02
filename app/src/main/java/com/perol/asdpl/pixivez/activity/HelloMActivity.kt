@@ -145,7 +145,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 applicationContext,
                 getString(R.string.again_to_exit),
                 Toast.LENGTH_SHORT
-            ).show();
+            ).show()
             exitTime = System.currentTimeMillis()
         } else {
             finish()

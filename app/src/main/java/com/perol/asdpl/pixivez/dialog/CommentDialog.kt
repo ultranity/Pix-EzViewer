@@ -80,7 +80,7 @@ class CommentDialog : DialogFragment() {
     private var id: Long? = null
     private var Parent_comment_id = 1
     private var appApiPixivService: AppApiPixivService? = null
-    var compositeDisposable = CompositeDisposable();
+    var compositeDisposable = CompositeDisposable()
     private var callback: Callback? = null
     var nextUrl: String? = null
     fun show(fragmentManager: FragmentManager) {

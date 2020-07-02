@@ -52,7 +52,7 @@ import java.io.File
 
 class PxEZApp : Application() {
     private val objectMapper by lazy { ObjectMapper().registerKotlinModule() }
-    lateinit var pre: SharedPreferences;
+    lateinit var pre: SharedPreferences
 
     @Download.onTaskComplete
     fun taskComplete(task: DownloadTask?) {

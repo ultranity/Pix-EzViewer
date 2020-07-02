@@ -40,8 +40,8 @@ class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManag
 
 
     override fun getItem(position: Int) = when (position) {
-        0 -> HelloMRecommendFragment.newInstance("", "");
-        else -> HelloRecomUserFragment.newInstance("", "");
+        0 -> HelloMRecommendFragment.newInstance("", "")
+        else -> HelloRecomUserFragment.newInstance("", "")
     }
 
     override fun getCount() = 2

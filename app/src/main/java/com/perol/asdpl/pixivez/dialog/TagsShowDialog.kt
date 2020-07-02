@@ -118,8 +118,8 @@ class TagsShowDialog : DialogFragment() {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io()).subscribe({
                                 nexturl = it.next_url
-                                val x = ArrayList<String>();
-                                tagsShowAdapter.counts.clear()
+                                val x = ArrayList<String>()
+                            tagsShowAdapter.counts.clear()
                                 it.bookmark_tags.map { ot ->
                                     x.add(ot.name)
 

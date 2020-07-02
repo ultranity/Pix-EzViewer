@@ -45,7 +45,7 @@ import kotlinx.android.synthetic.main.content_search_result.*
 
 
 class SearchResultActivity : RinkActivity() {
-    lateinit var searchword: String;
+    lateinit var searchword: String
 
     lateinit var binding: ActivitySearchResultBinding
     var arrayList = ArrayList<Fragment>()

@@ -200,7 +200,7 @@ class DownLoadManagerFragment : Fragment() {
                 }).start()
             }
             R.id.action_cancel -> {
-                Aria.download(this).removeAllTask(false);
+                Aria.download(this).removeAllTask(false)
             }
             R.id.action_finished_cancel -> {
                 Thread(Runnable {
@@ -232,7 +232,7 @@ class DownLoadManagerFragment : Fragment() {
 
     @Download.onTaskCancel
     fun onTaskCancel(task: DownloadTask) {
-        task?.let {
+        task.let {
             var index = -1
             for (i in downloadTaskAdapter.data.indices) {
                 if (downloadTaskAdapter.data[i].id == task.downloadEntity.id) {
@@ -272,7 +272,7 @@ class DownLoadManagerFragment : Fragment() {
         refreshSingle(task)
     }
     @Download.onTaskFail
-    fun onTaskFail(task: DownloadTask) {
+    fun onTaskFail(task: DownloadTask?) {
         refreshSingle(task)
     }
 

@@ -77,7 +77,7 @@ class SaucenaoActivity : RinkActivity() {
         fab.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
             startActivityForResult(intent, IMAGE)
 
@@ -112,21 +112,21 @@ class SaucenaoActivity : RinkActivity() {
             )
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build();
+            .build()
         ssl.isChecked = false
         api = service.create(SaucenaoService::class.java)
 
         if (intent != null) {
-            val action = intent.action;
-            val type = intent.type;
+            val action = intent.action
+            val type = intent.type
             if (action != null && type != null)
                 if (action == Intent.ACTION_SEND && type.startsWith("image/")) {
                     val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
 
                     if (uri != null) {
                         val parcelFileDescriptor =
-                            contentResolver.openFileDescriptor(uri, "r");
-                        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor;
+                            contentResolver.openFileDescriptor(uri, "r")
+                        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
                         val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
                         parcelFileDescriptor.close()
                         val file = File(cacheDir, Date().time.toString() + ".jpg")
@@ -198,7 +198,7 @@ class SaucenaoActivity : RinkActivity() {
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
-        val body = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
+        val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         builder.addFormDataPart("file", file.name, body)
         api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
@@ -212,7 +212,7 @@ class SaucenaoActivity : RinkActivity() {
         val arrayList = ArrayList<Long>()
         runBlocking {
             val doc = Jsoup.parse(string)
-            val el = doc.select("a[href]");
+            val el = doc.select("a[href]")
             for (i in el.indices) {
                 val string = el[i].attr("href")
                 Log.d("w", string)
@@ -256,14 +256,14 @@ class SaucenaoActivity : RinkActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            val selectedImage = data.data;
-            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA);
-            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null);
-            c!!.moveToFirst();
-            val columnIndex = c.getColumnIndex(filePathColumns[0]);
-            val imagePath = c.getString(columnIndex);
-            trytosearch(imagePath);
-            c.close();
+            val selectedImage = data.data
+            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
+            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)
+            c!!.moveToFirst()
+            val columnIndex = c.getColumnIndex(filePathColumns[0])
+            val imagePath = c.getString(columnIndex)
+            trytosearch(imagePath)
+            c.close()
         }
     }
 }

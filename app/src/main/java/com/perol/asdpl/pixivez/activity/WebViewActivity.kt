@@ -35,7 +35,6 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_web_view.*
 import java.io.ByteArrayInputStream
-import java.util.*
 
 
 class WebViewActivity : RinkActivity() {
@@ -77,8 +76,8 @@ class WebViewActivity : RinkActivity() {
                             "application/javascript",
                             "UTF-8",
                             ByteArrayInputStream("".toByteArray())
-                        );
-                    return webResourceResponse;
+                        )
+                    return webResourceResponse
                 }
                 return super.shouldInterceptRequest(view, request)
             }

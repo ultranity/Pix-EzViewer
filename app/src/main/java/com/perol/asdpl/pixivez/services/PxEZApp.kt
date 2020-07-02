@@ -196,8 +196,11 @@ class PxEZApp : Application() {
             resources.configuration.locale.language
         }
         if (!BuildConfig.ISGOOGLEPLAY) {
-            Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
+            Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog;
             Beta.enableHotfix = false
+            //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
+            Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
         }
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

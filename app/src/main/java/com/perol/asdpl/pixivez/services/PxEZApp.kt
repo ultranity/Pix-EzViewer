@@ -61,27 +61,27 @@ class PxEZApp : Application() {
             val illustD = objectMapper.readValue(extendField, IllustD::class.java)
             val title = illustD.title
             val sourceFile = File(it.filePath)
-
-            val needCreateFold = pre.getBoolean("needcreatefold", false)
-            val name = illustD.userName?.toLegal()
-            val targetFile = File("$storepath/" +
-                    (if (R18Folder && sourceFile.name.startsWith("R18-")) R18FolderPath else "") +
-                    if (needCreateFold) "${name}_${illustD.userId}" else "",
-                sourceFile.name.removePrefix("R18-"))
-            sourceFile.copyTo(targetFile, overwrite = true)
-            MediaScannerConnection.scanFile(
-                this,
-                arrayOf(targetFile.path),
-                arrayOf(
-                    MimeTypeMap.getSingleton()
-                        .getMimeTypeFromExtension(targetFile.extension)
-                )
-            ) { _, _ ->
-
+            if(sourceFile.isFile){
+                val needCreateFold = pre.getBoolean("needcreatefold", false)
+                val name = illustD.userName?.toLegal()
+                val targetFile = File("$storepath/" +
+                        (if (R18Folder && sourceFile.name.startsWith("R18-")) R18FolderPath else "") +
+                        if (needCreateFold) "${name}_${illustD.userId}" else "",
+                    sourceFile.name.removePrefix("R18-"))
+                sourceFile.copyTo(targetFile, overwrite = true)
+                MediaScannerConnection.scanFile(
+                    this,
+                    arrayOf(targetFile.path),
+                    arrayOf(
+                        MimeTypeMap.getSingleton()
+                            .getMimeTypeFromExtension(targetFile.extension)
+                    )
+                ) { _, _ ->
+                }
+                sourceFile.delete()
+                Toasty.success(this, "${title}${getString(R.string.savesuccess)}", Toast.LENGTH_SHORT)
+                    .show()
             }
-            sourceFile.delete()
-            Toasty.success(this, "${title}${getString(R.string.savesuccess)}", Toast.LENGTH_SHORT)
-                .show()
         }
     }
 

@@ -38,6 +38,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.responses.Tag
 import java.io.File
 
 fun String.toLegal(): String {
@@ -59,7 +60,14 @@ data class IllustD(
 )
 
 object Works {
-
+    public inline fun check(it: Tag, illust: Illust): String? {
+        return if (!illust.title.contains(it.name)
+                and
+                !illust.tags.any { ot-> ot.name.contains(it.name) })
+            it.name
+        else
+            null
+    }
     fun parseSaveFormat(illust: Illust, part: Int?): String {
         var url = ""
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
@@ -67,7 +75,23 @@ object Works {
             .replace("{name}", illust.user.name.toLegal())
             .replace("{account}", illust.user.account.toLegal())
             .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
-            .replace("{tags}", illust.tags.joinToString("_", limit = 5) { it.name }.toLegal())
+            .replace("{tags}", illust.tags.mapNotNull{
+                    if (!illust.title.contains(it.name)
+                        and
+                        !illust.tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
+                        it.name
+                    else
+                        null
+                }.distinct().joinToString("_", limit = 5).toLegal())
+            .replace("{tagst}", illust.tags.mapNotNull{
+                it.translated_name?:(
+                        if (!illust.title.contains(it.name)
+                            and
+                            !illust.tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
+                            it.name
+                        else
+                            null)
+            }.distinct().joinToString("#", limit = 5).toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original
@@ -78,6 +102,9 @@ object Works {
                 .replace("_{part}", "")
                 .replace("{part}", "")
         }
+        if(PxEZApp.R18Folder && illust.x_restrict.equals(1))
+            filename = "？$filename"
+
         val type = when {
             url.contains("png") -> {
                 ".png"
@@ -87,7 +114,6 @@ object Works {
             }
             else -> ".jpg"
         }
-        if(PxEZApp.R18Folder && illust.x_restrict.equals(1)) filename = "R18-$filename"
         return filename.replace("{type}", type)
     }
 

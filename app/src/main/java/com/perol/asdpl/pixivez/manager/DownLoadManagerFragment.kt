@@ -194,10 +194,11 @@ class DownLoadManagerFragment : Fragment() {
                             Thread.sleep(500)
                         }
                     }
+                }).start().also {
                     val taskList = Aria.download(this).taskList
                     if (taskList?.isNotEmpty() == true)
                         downloadTaskAdapter.setNewData(taskList.asReversed())
-                }).start()
+                }
             }
             R.id.action_cancel -> {
                 Aria.download(this).removeAllTask(false)

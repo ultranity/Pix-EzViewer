@@ -30,15 +30,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
 import kotlinx.android.synthetic.main.fragment_hello_mmy.*
 import kotlinx.coroutines.runBlocking
@@ -98,7 +102,14 @@ class HelloMMyFragment : BaseFragment() {
                 rankingAdapter.loadMoreComplete()
             }
         })
-
+        viewmodel.hideBookmarked.observe(this, Observer {
+            if (it != null) {
+                PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
+                    "hide_bookmark_item_in_mmy", it
+                ).apply()
+                rankingAdapter.hideBookmarked = it
+            }
+        })
     }
 
 
@@ -116,14 +127,23 @@ class HelloMMyFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        rankingAdapter = RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags)
         return inflater.inflate(R.layout.fragment_hello_mmy, container, false)
     }
 
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewmodel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+            .getBoolean(
+                "hide_bookmark_item_in_mmy", false
+            )
+        rankingAdapter = RecommendAdapter(
+            R.layout.view_recommand_item,
+            null,
+            isR18on,
+            blockTags,
+            viewmodel.hideBookmarked.value!!
+        )
         recyclerview_mym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerview_mym.adapter = rankingAdapter
         swiperefresh_mym.setOnRefreshListener {
@@ -132,7 +152,15 @@ class HelloMMyFragment : BaseFragment() {
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
-        spinner_mmy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
+        rankingAdapter.addHeaderView(headerView)
+        headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
+            isChecked = viewmodel.hideBookmarked.value!!
+            setOnCheckedChangeListener { compoundButton, state ->
+                viewmodel.hideBookmarked.value = state
+            }
+        }
+        headerView.findViewById<Spinner>(R.id.spinner_mmy).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when (position) {
                     0 -> {

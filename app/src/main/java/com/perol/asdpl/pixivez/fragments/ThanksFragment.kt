@@ -204,7 +204,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
     }
     private fun support(){
         val view = requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_ultranity, null)
-        MaterialAlertDialogBuilder(activity).setTitle("截图后点击跳转扫描").setView(view).setNegativeButton(R.string.wechat)
+        MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.support_popup_title)).setView(view).setNegativeButton(R.string.wechat)
         { _,_->
             gotoWeChat()
         }.setPositiveButton(R.string.ali)

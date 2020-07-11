@@ -70,7 +70,7 @@ class HistoryMActivity : RinkActivity() {
         }
         historyAdapter.setOnItemLongClickListener { _, _, i ->
             MaterialAlertDialogBuilder(this)
-                    .setTitle("Delete?").setPositiveButton("OK") { _, j ->
+                    .setTitle(getString(R.string.history_delete_confirm_title)).setPositiveButton(R.string.ok) { _, j ->
                         historyMViewModel!!.deleteSelect(i)
                     }.show()
             true

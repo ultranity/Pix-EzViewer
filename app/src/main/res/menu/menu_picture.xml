@@ -28,14 +28,14 @@
     <item
         android:id="@+id/action_jump"
         android:icon="@drawable/ic_action_expand"
-        android:title="share"
+        android:title="@string/share"
         android:visible="false"
         app:iconTint="?android:textColorPrimary"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share_black"
-        android:title="share"
+        android:title="@string/share"
         app:iconTint="?android:textColorPrimary"
         app:showAsAction="ifRoom" />
 

@@ -34,7 +34,6 @@ import android.os.Environment
 import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -88,7 +87,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     }
                 }
                 if (reRequest) {
-                    Toast.makeText(this, "未获得授权，请自行到系统设置进行授权", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
                 }
             }
             else -> {
@@ -365,9 +364,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     private fun clean() {
         val normalDialog = MaterialAlertDialogBuilder(this)
-        normalDialog.setMessage("这将清理全部的缓存")
+        normalDialog.setMessage(getString(R.string.cache_clear_message))
         normalDialog.setPositiveButton(
-            "确定"
+            getString(R.string.ok)
         ) { _, _ ->
             Thread(Runnable {
                 GlideApp.get(applicationContext).clearDiskCache()

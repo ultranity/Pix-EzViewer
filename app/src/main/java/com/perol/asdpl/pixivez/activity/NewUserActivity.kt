@@ -104,7 +104,7 @@ class NewUserActivity : RinkActivity() {
                                             }
 
                                             override fun onComplete() {
-                                                Toast.makeText(applicationContext, "登录成功", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(applicationContext, getString(R.string.login_success), Toast.LENGTH_LONG).show()
                                                 val intent = Intent(applicationContext, HelloMActivity::class.java)
                                                 startActivity(intent)
                                                 finish()

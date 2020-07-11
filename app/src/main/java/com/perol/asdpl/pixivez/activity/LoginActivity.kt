@@ -279,7 +279,7 @@ class LoginActivity : RinkActivity() {
                                     ) {
                                         getString(R.string.error_invalid_account_password)
                                     } else {
-                                        "其他错误，检查接入点APN是否为Net而不是Wap,检查网络是否通畅\n${errMsg}"
+                                        getString(R.string.error_unknown) + "\n" + errMsg
                                     }
 
                                 Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
@@ -298,7 +298,7 @@ class LoginActivity : RinkActivity() {
                     }
 
                     override fun onComplete() {
-                        Toast.makeText(applicationContext, "登录成功", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, getString(R.string.login_success), Toast.LENGTH_LONG).show()
                         val intent = Intent(this@LoginActivity, HelloMActivity::class.java).apply {
                             // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
                             flags =

@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
 android:layout_alignParentStart="true"
             android:layout_alignBaseline="@id/imageview_bookmark"
-            android:hint="private" />
+            android:hint="@string/private_" />
 
 
         <Button
@@ -62,7 +62,7 @@ android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="LIKE" />
+            android:text="@string/like" />
     </RelativeLayout>
 </LinearLayout>
 

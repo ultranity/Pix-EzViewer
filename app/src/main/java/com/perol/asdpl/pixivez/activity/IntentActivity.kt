@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.activity
 
 import android.content.Intent
 import android.os.Bundle
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.Toasty
 
 class IntentActivity : RinkActivity() {
@@ -52,7 +53,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, "wrong id")
+                    Toasty.error(this, getString(R.string.wrong_id))
                 }
                 return
             }
@@ -68,7 +69,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, "wrong id")
+                        Toasty.error(this, getString(R.string.wrong_id))
                     }
                 }
                 if (segment[segment.size - 2] == "u") {
@@ -80,7 +81,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, "wrong id")
+                        Toasty.error(this, getString(R.string.wrong_id))
                     }
                 }
                 if (segment[segment.size - 2] == "i") {
@@ -97,7 +98,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, "wrong id")
+                        Toasty.error(this, getString(R.string.wrong_id))
                     }
                 }
             }
@@ -113,7 +114,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, "wrong id")
+                    Toasty.error(this, getString(R.string.wrong_id))
                 }
             }
             uri.getQueryParameter("id")?.let {
@@ -122,7 +123,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, "wrong id")
+                    Toasty.error(this, getString(R.string.wrong_id))
                 }
             }
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
@@ -133,7 +134,7 @@ class IntentActivity : RinkActivity() {
                         UserMActivity.start(this, it)
                         finish()
                     } catch (e: Exception) {
-                        Toasty.error(this, "wrong id")
+                        Toasty.error(this, getString(R.string.wrong_id))
                     }
                 }
 

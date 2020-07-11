@@ -12,19 +12,19 @@
             app:key="me0"
             app:icon="@drawable/ultranity"
             app:title="Ultranity"
-            android:summary="编写开发调试(当前维护者)"
+            android:summary="@string/ultranity_subtext"
             />
         <Preference
             app:key="me"
             app:icon="@drawable/xinobu"
             app:title="Perol_Notsf"
-            android:summary="编写开发调试(原作者)"
+            android:summary="@string/notsf_subtext2"
             />
         <Preference
             app:key="me1"
             app:title="Right Now"
             app:icon="@drawable/rightnow"
-            android:summary="主界面,主Icon设计"
+            android:summary="@string/rightnow_subtext"
             />
         <Preference
             app:key="icons"
@@ -39,10 +39,10 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
         <SwitchPreference
-            android:summaryOn="H是可以的！ԅ(¯﹃¯ԅ) "
+            android:summaryOn="@string/h_is_ok"
             app:defaultValue="false"
             app:key="r18on"
-            app:summaryOff="H是不行的！ (￣^￣) "
+            app:summaryOff="@string/h_not_ok"
             app:title="@string/_18" />
         <SwitchPreference
             app:key="disableproxy"
@@ -55,7 +55,7 @@
             app:title="@string/unfinished_task" />
         <SwitchPreference
             app:defaultValue="true"
-            app:summary="play版本不生效"
+            app:summary="@string/autocheck_subtext"
             app:key="autocheck"
             app:title="@string/auto_check_update" />
         <SwitchPreference
@@ -68,7 +68,7 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="UI">
         <SwitchPreference
-            android:summary="——v——"
+            android:summary="@string/needstatusbar_subtext"
             app:key="needstatusbar"
             app:title="@string/needstatusbar" />
         <SwitchPreference

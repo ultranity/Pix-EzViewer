@@ -7,7 +7,7 @@
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share"
-        android:title="share"
+        android:title="@string/share"
         app:iconTint="?android:textColorPrimaryInverse"
         app:showAsAction="ifRoom" />
     <item

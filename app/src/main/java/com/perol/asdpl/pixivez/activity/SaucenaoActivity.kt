@@ -138,7 +138,7 @@ class SaucenaoActivity : RinkActivity() {
                             out.flush()
                             out.close()
                         }
-                        Toasty.success(this, "解析成功正在上传", Toast.LENGTH_SHORT).show()
+                        Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT).show()
                         val builder = MultipartBody.Builder()
                         builder.setType(MultipartBody.FORM)
 //                        val baos = ByteArrayOutputStream();
@@ -167,7 +167,7 @@ class SaucenaoActivity : RinkActivity() {
                                 {
                                     Toasty.success(
                                         PxEZApp.instance,
-                                        "上传成功，正在进行匹配",
+                                        getString(R.string.saucenao_upload_success),
                                         Toast.LENGTH_SHORT
                                     )
                                         .show()
@@ -177,7 +177,7 @@ class SaucenaoActivity : RinkActivity() {
                                     tryToParseHtml(it.string())
                                 },
                                 {
-                                    Toasty.error(PxEZApp.instance, "服务器或本地发生错误" + it.message).show()
+                                    Toasty.error(PxEZApp.instance, getString(R.string.saucenao_upload_error) + it.message).show()
                                     if (file.exists()) {
                                         file.delete()
                                     }
@@ -194,7 +194,7 @@ class SaucenaoActivity : RinkActivity() {
 
     lateinit var api: SaucenaoService
     fun trytosearch(path: String) {
-        Toasty.success(this, "解析成功正在上传", Toast.LENGTH_SHORT).show()
+        Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT).show()
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -202,9 +202,9 @@ class SaucenaoActivity : RinkActivity() {
         builder.addFormDataPart("file", file.name, body)
         api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Toasty.success(this, "上传成功，正在进行匹配", Toast.LENGTH_SHORT).show()
+                Toasty.success(this, getString(R.string.saucenao_upload_success), Toast.LENGTH_SHORT).show()
                 tryToParseHtml(it.string())
-            }, { Toasty.error(this, "服务器或本地发生错误" + it.message).show() }, {
+            }, { Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show() }, {
             })
     }
 

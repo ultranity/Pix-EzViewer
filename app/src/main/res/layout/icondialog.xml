@@ -32,7 +32,7 @@
 
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="更改为第1个"
+            android:text="@string/change_to_first"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

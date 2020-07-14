@@ -32,8 +32,7 @@
                 android:layout_height="68dp"
                 android:layout_gravity="bottom"
                 android:background="?android:attr/colorBackground"
-                android:visibility="invisible"
-                tools:targetApi="m">
+                android:visibility="invisible">
 
                 <ImageButton
                     android:id="@+id/imageButton"
@@ -84,7 +83,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:text="@{illust.user.name}"
-                    android:textColor="?android:attr/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageViewUser_picX"
                     app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -122,8 +121,6 @@
                 android:layout_height="match_parent"
                 android:background="?attr/colorSurface"
                 android:visibility="gone"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -158,12 +155,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="?android:attr/colorBackgroundFloating"
+            app:backgroundTint="?attr/colorBackgroundFloating"
             app:layout_anchor="@+id/frameLayout"
             android:visibility="gone"
             app:layout_anchorGravity="end|bottom"
-            app:tint="@null"
-            tools:targetApi="m" />
+            app:tint="@null"/>
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

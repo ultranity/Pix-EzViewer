@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,13 +32,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
 import com.perol.asdpl.pixivez.adapters.RankingAdapter
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
@@ -133,12 +133,12 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 blockTags)
         }
         searchIllustAdapter.apply {
-            val view = LayoutInflater.from(requireContext()).inflate(
+            val searchResultHeaderView = LayoutInflater.from(requireContext()).inflate(
                 R.layout.search_result_header, null
             )
-            view.findViewById<Spinner>(R.id.spinner_result).onItemSelectedListener =
+            searchResultHeaderView.findViewById<Spinner>(R.id.spinner_result).onItemSelectedListener =
                 this@SearchIllustFragment
-            setHeaderView(view)
+            setHeaderView(searchResultHeaderView)
         }
         searchtext.text = param1
         recyclerview_illust.adapter = searchIllustAdapter
@@ -247,7 +247,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
 
     private fun lazyLoad() {
-        viewModel = ViewModelProviders.of(this).get(IllustfragmentViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(IllustfragmentViewModel::class.java)
 
         viewModel.illusts.observe(this, Observer {
             updateillust(it)
@@ -267,7 +267,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         viewModel.hideBookmarked.observe(this, Observer {
             if (it != null) {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
-                    UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, it
+                    "hide_bookmark_item_in_search", it
                 ).apply()
                 searchIllustAdapter.hideBookmarked = it
             }

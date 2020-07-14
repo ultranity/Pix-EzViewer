@@ -40,6 +40,8 @@ class PicturePagerAdapter(
         fragments?.get(position), fragments2?.get(position)
     )
 
-    override fun getCount() = fragments2?.size ?: fragments?.size ?: 0
+    override fun getCount(): Int {
+        return   fragments2?.size ?: fragments?.size ?: 0
+    }
 
 }

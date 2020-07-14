@@ -4,7 +4,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -49,7 +49,7 @@ class TagsBookMarkDialog : DialogFragment() {
                 }
             }
             pictureXViewModel =
-                ViewModelProviders.of(requireParentFragment()).get(PictureXViewModel::class.java)
+                ViewModelProvider(requireParentFragment()).get(PictureXViewModel::class.java)
             pictureXViewModel.tags.observe(this, Observer {
                 tagsAdapter.setNewData(it.tags)
             })

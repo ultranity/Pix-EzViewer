@@ -75,7 +75,7 @@ class RankingAdapter(
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     init {
-        this.setOnItemClickListener { adapter, view, position ->
+        setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             //bundle.putLong("illustid", this.data[position].id)
             //val illustlist = LongArray(this.data.count())

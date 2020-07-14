@@ -159,8 +159,8 @@ class DownloadTaskAdapter() :
         progress.progress = item.currentProgress.toInt()
         binding.progressFont.text = "${item.currentProgress.toInt()}/${item.fileSize.toInt()}"
         try {
-            val illust = objectMapper.readValue(item.str, IllustD::class.java)
-            helper.setText(R.id.title, illust.title)
+            val illustD = objectMapper.readValue(item.str, IllustD::class.java)
+            helper.setText(R.id.title, illustD.title)
             helper.setText(R.id.status, item.state.toIEntityString())
         } catch (e: Exception) {
 

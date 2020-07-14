@@ -230,11 +230,11 @@ class RetrofitRepository {
     fun postLikeIllustWithTags(
         int: Long,
         string: String,
-        arrayList: ArrayList<String>
+        tagList: ArrayList<String>?
     ): Observable<ResponseBody> =
             Observable.just(1).flatMap {
                 resetToken()
-                appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, arrayList)
+                appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, tagList)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
 
 

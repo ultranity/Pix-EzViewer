@@ -66,9 +66,9 @@ class PxEZApp : Application() {
                 val needCreateFold = pre.getBoolean("needcreatefold", false)
                 val name = illustD.userName?.toLegal()
                 val targetFile = File("$storepath/" +
-                        (if (R18Folder && sourceFile.name.startsWith("R18-")) R18FolderPath else "") +
+                        (if (R18Folder && sourceFile.name.startsWith("？")) R18FolderPath else "") +
                         if (needCreateFold) "${name}_${illustD.userId}" else "",
-                    sourceFile.name.removePrefix("R18-"))
+                    sourceFile.name.removePrefix("？"))
                 sourceFile.copyTo(targetFile, overwrite = true)
                 MediaScannerConnection.scanFile(
                     this,

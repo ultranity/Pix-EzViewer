@@ -7,7 +7,7 @@
 
 **经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)**
 
-**目前建议优先通过本repo提交issue进行反馈**
+**，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md),目前建议优先通过本repo提交issue进行反馈**
 
 一个支持免代理直连及查看动图的第三方 Pixiv Android 客户端。（Android 5.0+）
 

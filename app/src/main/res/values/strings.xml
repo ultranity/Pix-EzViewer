@@ -112,6 +112,7 @@
     <string name="unfocus">未关注</string>
     <string name="title_activity_fullscreen2">FullscreenActivity2</string>
     <string name="click">点击请我喝杯咖啡</string>
+    <string name="support_string">反馈邮箱：Pix-Ez@outlook.com\n欢迎通过github 反馈及star\n也可以通过关于页面跳转请我喝杯咖啡</string>
     <string name="current_developer">当前开发者</string>
     <string name="support_Notsfsssf" translatable="false">912756674@qq.com</string>
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>

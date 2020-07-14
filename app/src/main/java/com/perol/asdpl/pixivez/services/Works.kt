@@ -61,38 +61,13 @@ data class IllustD(
 )
 
 object Works {
-    public inline fun check(it: Tag, illust: Illust): String? {
-        return if (!illust.title.contains(it.name)
-                and
-                !illust.tags.any { ot-> ot.name.contains(it.name) })
-            it.name
-        else
-            null
-    }
     fun parseSaveFormat(illust: Illust, part: Int?): String {
         var url = ""
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
-            .replace("{name}", illust.user.name.toLegal())
+            .replace("{name}", illust.user.name.let{ if (it.length>8) it.substringBeforeLast("@") else it}.toLegal())
             .replace("{account}", illust.user.account.toLegal())
             .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
-            .replace("{tags}", illust.tags.mapNotNull{
-                    if (!illust.title.contains(it.name)
-                        and
-                        !illust.tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
-                        it.name
-                    else
-                        null
-                }.distinct().joinToString("_", limit = 5).toLegal())
-            .replace("{tagst}", illust.tags.mapNotNull{
-                it.translated_name?:(
-                        if (!illust.title.contains(it.name)
-                            and
-                            !illust.tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
-                            it.name
-                        else
-                            null)
-            }.distinct().joinToString("#", limit = 5).toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original
@@ -180,7 +155,7 @@ object Works {
     }
 
     fun imgD(illust: Illust, part: Int?) {
-        var url = if (part != null && illust.meta_pages.isNotEmpty())
+        val url = if (part != null && illust.meta_pages.isNotEmpty())
                         illust.meta_pages[part].image_urls.original
                      else
                         illust.meta_single_page.original_image_url!!

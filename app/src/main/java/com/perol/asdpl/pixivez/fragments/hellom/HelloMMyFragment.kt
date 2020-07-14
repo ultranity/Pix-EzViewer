@@ -31,13 +31,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
@@ -46,6 +44,7 @@ import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
 import kotlinx.android.synthetic.main.fragment_hello_mmy.*
+import kotlinx.android.synthetic.main.header_mmy.*
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -153,15 +152,13 @@ class HelloMMyFragment : BaseFragment() {
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
-        val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
-        rankingAdapter.addHeaderView(headerView)
-        headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
+        swith_hidebookmarked.apply {
             isChecked = viewmodel.hideBookmarked.value!!
             setOnCheckedChangeListener { compoundButton, state ->
                 viewmodel.hideBookmarked.value = state
             }
         }
-        headerView.findViewById<Spinner>(R.id.spinner_mmy).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinner_mmy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when (position) {
                     0 -> {

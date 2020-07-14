@@ -279,7 +279,7 @@ class PictureXFragment : BaseFragment() {
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
                             findLastVisibleItemPosition().toString()+" "+position)*/
-                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position ) {
+                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position -1) {
                         constraintLayout_fold.visibility = View.INVISIBLE
                     } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position ) {
                         constraintLayout_fold.visibility = View.VISIBLE

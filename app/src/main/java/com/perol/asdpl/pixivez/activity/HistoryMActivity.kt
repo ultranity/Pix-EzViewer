@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +30,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -78,7 +79,7 @@ class HistoryMActivity : RinkActivity() {
     }
 
     private fun initData() {
-        historyMViewModel = ViewModelProviders.of(this).get(HistoryMViewModel::class.java)
+        historyMViewModel = ViewModelProvider(this).get(HistoryMViewModel::class.java)
 
         historyMViewModel!!.illustBeans.observe(this, Observer {
             illustBeans(it)

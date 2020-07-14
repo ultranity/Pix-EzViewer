@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,7 +34,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
@@ -90,7 +91,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerview_illustrator.adapter = userShowAdapter
-        recyclerview_illustrator.layoutManager = LinearLayoutManager(activity!!.applicationContext, RecyclerView.VERTICAL, false)
+        recyclerview_illustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
         spinner_illustrator.onItemSelectedListener = this
         userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel!!.onLoadMore(viewModel!!.nexturl.value!!)
@@ -107,7 +108,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     fun lazyLoad() {
-        viewModel = ViewModelProviders.of(this).get(IllustratorViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(IllustratorViewModel::class.java)
         viewModel!!.userpreviews.observe(this, Observer {
             userpreviews(it)
         })

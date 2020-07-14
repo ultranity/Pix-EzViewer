@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +32,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsTextAdapter
@@ -73,7 +74,7 @@ class SearchRActivityFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         tagsTextViewModel =
-            ViewModelProviders.of(requireActivity()).get(TagsTextViewModel::class.java)
+            ViewModelProvider(requireActivity()).get(TagsTextViewModel::class.java)
         tagsTextViewModel.tags.observe(viewLifecycleOwner, Observer {
             tagsTextAdapter.setNewData(it.toMutableList())
             tags.clear()

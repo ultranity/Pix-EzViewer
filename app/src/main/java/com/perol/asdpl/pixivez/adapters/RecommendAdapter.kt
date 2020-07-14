@@ -48,6 +48,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
@@ -98,11 +99,38 @@ class RecommendAdapter(
             } else
                 ContextCompat.startActivity(context, intent, null)
         }
-
-
+        setOnItemLongClickListener { adapter, view, position ->
+            //show detail of illust
+            (adapter.data as ArrayList<Illust?>).get(position)?.let{
+                val detailstring =
+                    "id: " + it.id.toString() +
+                            "caption: " + it.caption.toString() + "create_date: " + it.create_date.toString() +
+                            "width: " + it.width.toString() + "height: " + it.height.toString() +
+                            //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
+                            "user: " + it.user.name +
+                            "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
+                            "total_bookmarks: " + it.total_bookmarks.toString() +
+                            "total_view: " + it.total_view.toString() +
+                            "user account: " + it.user.account + "\n" +
+                            "tools: " + it.tools.toString() + "\n" +
+                            "type: " + it.type + "\n" +
+                            "page_count: " + it.page_count.toString() + "\n" +
+                            "visible: " + it.visible.toString() + "\n" +
+                            "is_muted: " + it.is_muted.toString() + "\n" +
+                            "sanity_level: " + it.sanity_level.toString() + "\n" +
+                            "restrict: " + it.restrict.toString() + "\n" +
+                            "x_restrict: " + it.x_restrict.toString()
+                MaterialAlertDialogBuilder(context as Activity)
+                    .setMessage(detailstring)
+                    .setTitle("Detail")
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                    }
+                    .create().show()
+            }
+            true
+        }
     }
 
-    @SuppressLint("InflateParams")
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))

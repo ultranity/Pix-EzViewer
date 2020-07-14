@@ -325,6 +325,7 @@
     <string name="create_separate_folder">创建单独文件夹</string>
     <string name="create_R18_folder">创建单独R18文件夹</string>
     <string name="R18_folder">单独R18文件夹名称\n（默认xRestrict/）</string>
+    <string name="R18_private">自动私密收藏</string>
     <string name="refresh_token">刷新身份信息</string>
     <string name="translate">翻译</string>
     <string name="back_to_the_top">双击回顶</string>

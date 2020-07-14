@@ -115,6 +115,10 @@
             app:key="R18Folder"
             app:defaultValue="false"
             app:title="@string/create_R18_folder"/>
+        <SwitchPreference
+            app:key="R18Private"
+            app:defaultValue="true"
+            app:title="@string/R18_private"/>
         <Preference
             app:key="filesaveformat"
             app:title="@string/filesaveformat"/>

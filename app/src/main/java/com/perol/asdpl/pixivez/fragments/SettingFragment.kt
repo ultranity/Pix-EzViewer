@@ -199,6 +199,10 @@ class SettingFragment : PreferenceFragmentCompat() {
             PxEZApp.R18Folder = newValue as Boolean
             true
         }
+        findPreference<SwitchPreference>("R18Private")!!.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.R18Private = newValue as Boolean
+            true
+        }
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

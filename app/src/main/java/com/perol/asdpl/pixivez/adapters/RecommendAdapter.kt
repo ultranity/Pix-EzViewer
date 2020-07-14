@@ -197,7 +197,12 @@ class RecommendAdapter(
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
-                retrofit.postLikeIllust(item.id)!!.subscribe({
+                val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
+                    "private"
+                } else {
+                    "public"
+                }
+                retrofit.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
                     textView.setTextColor(
                         ContextCompat.getColor(context, badgeTextColor)
                     )

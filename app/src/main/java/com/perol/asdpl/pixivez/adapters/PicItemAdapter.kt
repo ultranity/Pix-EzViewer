@@ -29,6 +29,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnLoadMoreListener
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 
 // basic Adapter for image item
@@ -56,5 +57,63 @@ abstract class PicItemAdapter(
 
     fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener, recyclerView: RecyclerView?) {
         this.loadMoreModule?.setOnLoadMoreListener(onLoadMoreListener)
+    }
+
+    /*override fun addData(newData: Collection<Illust>) {
+        /*super.addData(newData.mapNotNull {
+            if(hideBookmarked) {
+                if(it.is_bookmarked) null else it
+            } else if (blockTags.isNotEmpty()) {
+                if (blockTags.intersect(it.tags.map { it.name }).isNotEmpty())
+                    null else it
+            }
+            else
+                it
+        })*/
+        super.addData(
+            newData.apply {
+                if (hideBookmarked) {
+                    filter {
+                        !it.is_bookmarked
+                    }
+                }
+            }.apply {
+                if (blockTags.isNotEmpty()) {
+                    filter{
+                        !blockTags.intersect(it.tags.map { it.name }).isNotEmpty()
+                    }
+                }
+            }
+        )
+    }
+
+    override fun setNewData(newData: MutableList<Illust>?) {
+        super.setNewData(
+            newData?.apply {
+                if (hideBookmarked) {
+                    mapNotNull {
+                        if(it.is_bookmarked)
+                            null
+                        else
+                            it
+                    }
+                }
+            }?.apply {
+                if (blockTags.isNotEmpty()) {
+                    mapNotNull{
+                        if (blockTags.intersect(it.tags.map { it.name }).isNotEmpty())
+                            null
+                        else
+                            it
+                    }
+                }
+            }
+        )
+    }*/
+    override fun addData(newData: Collection<Illust>) {
+        super.addData(newData)
+        DataHolder.pictureAdapter?.notifyDataSetChanged().also{
+            DataHolder.pictureAdapter=null
+        }
     }
 }

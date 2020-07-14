@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import androidx.viewpager.widget.PagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
 import java.lang.ref.WeakReference
 import java.util.*
@@ -33,6 +34,7 @@ import kotlin.collections.set
 class DataHolder {
     companion object{
         private var illustsList: Stack<ArrayList<Illust>?> = Stack<ArrayList<Illust>?>()
+        public var pictureAdapter: PagerAdapter? = null
 
         fun getIllustsList(): ArrayList<Illust>? {
             return if (this.illustsList.empty()) null

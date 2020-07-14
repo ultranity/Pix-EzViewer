@@ -108,6 +108,7 @@ class RecommendAdapter(
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
+        this.loadMoreModule?.preLoadNumber = 12
     }
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (hideBookmarked && item.is_bookmarked){

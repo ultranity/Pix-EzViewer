@@ -176,7 +176,7 @@ class UserMessageFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mParam1 = arguments!!.getSerializable(ARG_PARAM1) as UserDetailResponse
+            mParam1 = requireArguments().getSerializable(ARG_PARAM1) as UserDetailResponse
 
         }
     }

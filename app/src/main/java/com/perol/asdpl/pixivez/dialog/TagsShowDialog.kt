@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +27,7 @@ package com.perol.asdpl.pixivez.dialog
 
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -44,7 +46,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
 
-
+//UserBookMarkFragment
 class TagsShowDialog : DialogFragment() {
 
     fun show(fragmentManager: FragmentManager) {
@@ -56,6 +58,22 @@ class TagsShowDialog : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         callback = null
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        val tabLayout = getDialog()?.findViewById<TabLayout>(R.id.tablayout_tagsshow)
+        if (tabLayout != null) {
+            callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
+                "public"
+            } else {
+                "private"
+            })
+        }
+        super.onCancel(dialog)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
     }
 
     interface Callback {
@@ -78,11 +96,11 @@ class TagsShowDialog : DialogFragment() {
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerview_tags)
         val all = dialogView.findViewById<ConstraintLayout>(R.id.all)
 //        val viewPager = dialogView.findViewById<ViewPager>(R.id.viewpager)
-        val tagLayOut = dialogView.findViewById<TabLayout>(R.id.tablayout_tagsshow)
-        val tagsShowAdapter = TagsShowAdapter(R.layout.view_tagsshow_item, arrayList, arrayList1!!)
+        val tabLayout = dialogView.findViewById<TabLayout>(R.id.tablayout_tagsshow)
+        val tagsShowAdapter = TagsShowAdapter(R.layout.view_tagsshow_item, tagList, countList!!)
         recyclerView.adapter = tagsShowAdapter
         tagsShowAdapter.setOnItemClickListener { adapter, view, position ->
-            callback!!.onClick(tagsShowAdapter.data[position], if (tagLayOut.selectedTabPosition == 0) {
+            callback!!.onClick(tagsShowAdapter.data[position], if (tabLayout.selectedTabPosition == 0) {
                 "public"
             } else {
                 "private"
@@ -90,14 +108,14 @@ class TagsShowDialog : DialogFragment() {
             this.dismiss()
         }
         all.setOnClickListener {
-            callback!!.onClick("", if (tagLayOut.selectedTabPosition == 0) {
+            callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
                 "public"
             } else {
                 "private"
             })
             this.dismiss()
         }
-        tagLayOut.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
             }
 
@@ -120,6 +138,14 @@ class TagsShowDialog : DialogFragment() {
                                 nexturl = it.next_url
                                 val x = ArrayList<String>()
                             tagsShowAdapter.counts.clear()
+                            if (it.bookmark_tags.isNullOrEmpty()){
+                                callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
+                                    "public"
+                                } else {
+                                    "private"
+                                })
+                                this@TagsShowDialog.dismiss()
+                            }
                                 it.bookmark_tags.map { ot ->
                                     x.add(ot.name)
 

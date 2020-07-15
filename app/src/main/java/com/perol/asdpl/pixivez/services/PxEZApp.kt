@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,9 +66,9 @@ class PxEZApp : Application() {
                 val needCreateFold = pre.getBoolean("needcreatefold", false)
                 val name = illustD.userName?.toLegal()
                 val targetFile = File("$storepath/" +
-                        (if (R18Folder && sourceFile.name.startsWith("R18-")) R18FolderPath else "") +
+                        (if (R18Folder && sourceFile.name.startsWith("？")) R18FolderPath else "") +
                         if (needCreateFold) "${name}_${illustD.userId}" else "",
-                    sourceFile.name.removePrefix("R18-"))
+                    sourceFile.name.removePrefix("？"))
                 sourceFile.copyTo(targetFile, overwrite = true)
                 MediaScannerConnection.scanFile(
                     this,
@@ -130,48 +131,6 @@ class PxEZApp : Application() {
                     Thread.sleep(550)
                 }
             }
-            /*
-        if(Aria.download(this).allNotCompleteTask.isNotEmpty())
-        {
-            MaterialDialog(this).show {
-                title(R.string.unfinished_task_title)
-                message(R.string.unfinished_task_content)
-                negativeButton(android.R.string.cancel)
-                positiveButton(android.R.string.ok) {
-                    Aria.download(this).allNotCompleteTask?.forEach {
-                        //Aria.download(this).load(it.id).resume()
-                        val illustD = objectMapper.readValue(it.str, IllustD::class.java)
-                        val fileName = it.fileName
-                        val targetPath =
-                            "${PxEZApp.instance.cacheDir}${File.separator}${fileName}"
-                        Aria.download(PxEZApp.instance)
-                            .load(it.url) //读取下载地址
-                            .setFilePath(targetPath) //设置文件保存的完整路径
-                            .ignoreFilePathOccupy()
-                            .setExtendField(Works.mapper.writeValueAsString(illustD))
-                            .option(Works.option)
-                            .create()
-                    }
-                }
-            }
-        }
-        */
-            /*Aria.download(this).taskList?.forEach {
-            if(it.isComplete)
-                Aria.download(this).load(it.id).cancel()
-            else
-            {
-                Aria.download(this).load(it.id).cancel(true)
-                val illustD = objectMapper.readValue(it.str, IllustD::class.java)
-                Aria.download(PxEZApp.instance)
-                    .load(it.url) //读取下载地址
-                    .setFilePath(it.filePath) //设置文件保存的完整路径
-                    .ignoreFilePathOccupy()
-                    .setExtendField(Works.mapper.writeValueAsString(illustD))
-                    .option(Works.option)
-                    .create()
-            }
-        }*/
         }).start()
         instance = this
         AppCompatDelegate.setDefaultNightMode(
@@ -181,12 +140,13 @@ class PxEZApp : Application() {
             )!!.toInt()
         )
         animationEnable = pre.getBoolean("animation", true)
+        R18Private = pre.getBoolean("R18Private", true)
         R18Folder = pre.getBoolean("R18Folder", false)
         R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
         language = pre.getString("language", "0")?.toInt() ?: 0
         storepath = pre.getString(
             "storepath1",
-            Environment.getExternalStorageDirectory().absolutePath!! + File.separator + "PxEz"
+            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
         )!!
         saveformat = pre.getString("filesaveformat","{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
@@ -276,9 +236,13 @@ class PxEZApp : Application() {
 
         @JvmStatic
         var animationEnable: Boolean = false
+
+        @JvmStatic
+        var R18Private: Boolean = true
         lateinit var instance: PxEZApp
         var autochecked = false
 
         private const val TAG = "PxEZApp"
     }
 }
+

@@ -33,10 +33,12 @@ import android.graphics.Color
 import android.os.Bundle
 //import android.util.Log
 import android.util.Pair
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -51,6 +53,7 @@ import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -174,6 +177,26 @@ class PictureXFragment : BaseFragment() {
                     imageViewUser_picX.setBorderColor(Color.YELLOW)
                 //else
                 //    imageViewUser_picX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+                imageViewUser_picX.setOnLongClickListener { ot->
+                    val id = it.user.id
+                    val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
+                    if (it.user.is_followed) {
+                        retrofitRespository.postunfollowUser(id).subscribe({ pt->
+                            val typedValue = TypedValue()
+                            requireContext().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+                            val colorPrimary = typedValue.resourceId
+                            it.user.is_followed = false
+                            imageViewUser_picX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+                        }, {}, {}
+                        )
+                    } else {
+                        retrofitRespository.postfollowUser(id, "public").subscribe({ pt->
+                            it.user.is_followed = true
+                            imageViewUser_picX.setBorderColor(Color.YELLOW)
+                        }, {}, {})
+                    }
+                    true
+                }
                 imageViewUser_picX.setOnClickListener { ot ->
                     val intent = Intent(context, UserMActivity::class.java)
                     intent.putExtra("data", it.user.id)
@@ -256,7 +279,7 @@ class PictureXFragment : BaseFragment() {
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
                             findLastVisibleItemPosition().toString()+" "+position)*/
-                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position ) {
+                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position -1) {
                         constraintLayout_fold.visibility = View.INVISIBLE
                     } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position ) {
                         constraintLayout_fold.visibility = View.VISIBLE

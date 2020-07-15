@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,7 +34,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -139,7 +140,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     private fun lazyLoad() {
-        viewmodel = ViewModelProviders.of(this).get(UserBookMarkViewModel::class.java)
+        viewmodel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
         this.viewactivity = activity as UserMActivity
 
         viewmodel!!.nexturl.observe(this, Observer {

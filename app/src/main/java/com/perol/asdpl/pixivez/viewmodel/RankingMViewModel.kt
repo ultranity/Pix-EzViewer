@@ -57,7 +57,7 @@ class RankingMViewModel : BaseViewModel() {
 
     fun onItemChildLongClick(id: Illust) {
         if (id.is_bookmarked) {
-            retrofitRespository.postUnlikeIllust(id.id)!!.subscribe({
+            retrofitRespository.postUnlikeIllust(id.id).subscribe({
                 bookmarknum.value = id
             }, {}, {}).add()
         } else {

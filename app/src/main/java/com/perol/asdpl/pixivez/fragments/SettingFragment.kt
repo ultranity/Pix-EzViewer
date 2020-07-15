@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -196,6 +197,10 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<SwitchPreference>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.R18Folder = newValue as Boolean
+            true
+        }
+        findPreference<SwitchPreference>("R18Private")!!.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.R18Private = newValue as Boolean
             true
         }
     }

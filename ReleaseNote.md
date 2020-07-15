@@ -1,4 +1,7 @@
 # TODO
+- [ ] 加入更多自定义命名格式（连接符号等）
+- [ ] 批量下载
+- [ ] 批量识别pid重命名本地图片
 - [ ] 用户页FAB位置移动至顶栏
 - [ ] 用户页顶栏图片不隐藏/详情页显示
 - [ ] 下载管理增加：全部暂停
@@ -8,8 +11,6 @@
 - [ ] blocktags 独立view
 - [ ] 新的布局极简布局，save、like 按钮合并为点击+长按
 - [ ] pixiv画廊（登陆页面背景）
-- [ ] 加入更多自定义命名格式
-- [ ] 批量下载
 - [ ] 卡片单击、双击、三击（or长按？）完成下载图片，下载+收藏，下载+收藏+关注 
 - [ ] 顶栏等尺寸细节调整
 - [-] 瀑布流间距调整
@@ -17,28 +18,42 @@
 - [ ] 更多图标（可开关）
 - [ ] 画师TAB栏改为顶部展示卡片+详情
 - [!] 允许用户使用pixivc等中转站api
-- [ ] R18等tag单独文件夹；
+- [ ] tag单独文件夹
 - [ ] 下载管理修复：restart后UI更新只移除任务，需要重新进入
 - [ ] 搜索记录tag长按删除卡顿优化-后台线程
 - [ ] 去除部分平台兼容代码和实际无用的GMS，安装包体积可以降到10MB
-
+- [ ] F-Droid 分发
+- [] feature&update: 更多命名自定义字符串（tags,tag#,tag5,tagst)
 # 更新日志：
+## 1.5.8R:
+- [x] feature: 动态页面加入屏蔽已收藏图片功能(开关切换)
+- [x] feature: R18自动私密收藏
+- [x] feature: 预加载增强
+- [x] feature: 折叠布局中长按头像收藏
+- [x] feature: 图片卡片长按显示更多信息
+- [x] feature&update: tags等命名规则保存策略优化，尽可能储存更多信息
+- [x] update: 收藏分类切换优化
+- [x] update: 背景颜色优化（夜间模式）
+- [x] update: 收藏分类切换优化
+- [x] update&fix: stack DataHolder notifyDataSetChanged 修复网络较差时飞速滑动列表导致异步加载不一致error（很难达成的复现条件，嗯）
+- [x] fix: 下载列表重复刷新闪退
+- [x] update: 其他优化调整
 ## 1.5.7R:
-- [] feature: tab切换时保留内容不刷新（设置内可关闭）
-- [] feature: R18独立保存文件夹（可设置名称）
-- [] feature&update: 更多命名自定义字符串
-- [] feature&update: fade 过渡动画
-- [] feature&update: 恢复未完成任务时自动刷新
-- [] fix: lateinit property pixiVisionAdapter has not been initialized
-- [] fix: onTaskFail null 安全
-- [] fix: onTaskComplete file not found 检查
-- [] update&fix: stack DataHolder
-- [] update: 评论样式调整
-- [] update: crash Handler 优化
-- [] update: bugly 设置优化
-- [] update: 说明及 readme 明确只支持android5.0+
-- [] update: 进一步使用webp优化apk体积
-- [] update: 代码优化
+- [x] feature: tab切换时可选择保留内容不刷新（设置内切换）
+- [x] feature: R18独立保存文件夹（在保存路径下创建，可设置名称）
+- [x] feature&update: 更多命名自定义字符串（tag，R18，account)
+- [x] feature&update: fade in/out过渡动画
+- [x] feature&update: 恢复未完成任务时自动刷新
+- [x] update: 评论样式调整
+- [x] update: crash Handler 代码优化
+- [x] update: bugly 设置优化
+- [x] update: 说明及 readme 明确只支持android5.0+
+- [x] update: 进一步使用webp优化apk体积
+- [x] update: 代码优化
+- [x] update&fix: stack DataHolder
+- [x] fix: lateinit property pixiVisionAdapter has not been initialized
+- [x] fix: onTaskFail null 安全
+- [x] fix: onTaskComplete file not found 检查
 
 ## 1.5.6B:
 - [x] fix: 图片分享

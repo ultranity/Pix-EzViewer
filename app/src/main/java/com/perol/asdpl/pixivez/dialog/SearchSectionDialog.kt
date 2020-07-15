@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +35,7 @@ import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -61,7 +62,7 @@ class SearchSectionDialog : DialogFragment() {
             null
         )
         val viewModel =
-            ViewModelProviders.of(requireParentFragment()).get(IllustfragmentViewModel::class.java)
+            ViewModelProvider(requireParentFragment()).get(IllustfragmentViewModel::class.java)
         var searchTargeti = viewModel.searchTarget.value
         val first = view.findViewById<TabLayout>(R.id.tablayout_search_target).apply {
             clearOnTabSelectedListeners()

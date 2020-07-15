@@ -7,9 +7,21 @@
 
 **经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)**
 
-**目前建议优先通过本repo提交issue进行反馈**
+**，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md),目前建议优先通过本repo提交issue进行反馈**
 
 一个支持免代理直连及查看动图的第三方 Pixiv Android 客户端。（Android 5.0+）
+
+## 1.功能特性
+* aria下载加速
+* 多种自定义文件命名方式（保存tags等信息）
+* 夜间模式
+* 多用户切换
+* GIF播放、保存
+* 查看\添加\回复评论
+* Pixiv特辑
+* R80显示（需自行到官网开启），自动私密收藏，独立下载文件夹
+* 隐藏已收藏图片
+* …… 更多特性请下载体验
 
 如果你觉得这个应用还不错，[点此](https://github.com/Notsfsssf/Pix-EzViewer#支持) 支持一下吧！
 

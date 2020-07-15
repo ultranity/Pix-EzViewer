@@ -41,7 +41,7 @@ class UserMPagerAdapter(
 
     override fun getItemPosition(`object`: Any): Int {
         return if (`object`.javaClass.name == "com.perol.asdpl.pixivez.fragments.UserIllustFragment") {
-            FragmentStatePagerAdapter.POSITION_NONE
+            POSITION_NONE
         } else super.getItemPosition(`object`)
     }
 /*    override fun getItemCount() = 4

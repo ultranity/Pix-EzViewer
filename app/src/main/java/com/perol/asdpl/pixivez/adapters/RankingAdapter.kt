@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -48,6 +49,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
@@ -73,7 +75,7 @@ class RankingAdapter(
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     init {
-        this.setOnItemClickListener { adapter, view, position ->
+        setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             //bundle.putLong("illustid", this.data[position].id)
             //val illustlist = LongArray(this.data.count())
@@ -105,6 +107,36 @@ class RankingAdapter(
             } else
                 ContextCompat.startActivity(context, intent, null)
         }
+        setOnItemLongClickListener { adapter, view, position ->
+            //show detail of illust
+            (adapter.data as ArrayList<Illust?>).get(position)?.let{
+                val detailstring =
+                        "id: " + it.id.toString() +
+                        "caption: " + it.caption.toString() + "create_date: " + it.create_date.toString() +
+                        "width: " + it.width.toString() + "height: " + it.height.toString() +
+                        //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
+                        "user: " + it.user.name +
+                        "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
+                        "total_bookmarks: " + it.total_bookmarks.toString() +
+                        "total_view: " + it.total_view.toString() +
+                        "user account: " + it.user.account + "\n" +
+                        "tools: " + it.tools.toString() + "\n" +
+                        "type: " + it.type + "\n" +
+                        "page_count: " + it.page_count.toString() + "\n" +
+                        "visible: " + it.visible.toString() + "\n" +
+                        "is_muted: " + it.is_muted.toString() + "\n" +
+                        "sanity_level: " + it.sanity_level.toString() + "\n" +
+                        "restrict: " + it.restrict.toString() + "\n" +
+                        "x_restrict: " + it.x_restrict.toString()
+                MaterialAlertDialogBuilder(context as Activity)
+                    .setMessage(detailstring)
+                    .setTitle("Detail")
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                    }
+                    .create().show()
+            }
+            true
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -113,6 +145,7 @@ class RankingAdapter(
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
+        this.loadMoreModule?.preLoadNumber = 12
     }
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (hideBookmarked && item.is_bookmarked){
@@ -175,7 +208,12 @@ class RankingAdapter(
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
-                retrofit.postLikeIllust(item.id)!!.subscribe({
+                val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
+                    "private"
+                } else {
+                    "public"
+                }
+                retrofit.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
                     textView.setTextColor(
                         ContextCompat.getColor(context, badgeTextColor)
                     )

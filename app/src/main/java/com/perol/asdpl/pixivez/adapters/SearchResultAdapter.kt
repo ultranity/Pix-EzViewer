@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +33,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.perol.asdpl.pixivez.R
 
 
-class SearchResultAdapter(var context: Context, fm: FragmentManager, private var arrayList: ArrayList<Fragment>) : FragmentPagerAdapter(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class SearchResultAdapter(var context: Context, fm: FragmentManager, private var arrayList: ArrayList<Fragment>) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getCount(): Int = arrayList.size
 
 

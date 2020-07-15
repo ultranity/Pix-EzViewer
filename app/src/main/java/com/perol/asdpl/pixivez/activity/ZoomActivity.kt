@@ -75,7 +75,7 @@ class ZoomActivity : RinkActivity() {
 
             override fun onPageSelected(position: Int) {
                 viewpage_zoom.tag = position
-                textview_zoom.text = "${position + 1}/${str!!.size}"
+                textview_zoom.text = "${position + 1}/${str.size}"
             }
 
             override fun onPageScrollStateChanged(state: Int) {

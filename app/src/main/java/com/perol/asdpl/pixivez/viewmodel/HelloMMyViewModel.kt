@@ -34,6 +34,7 @@ class HelloMMyViewModel : BaseViewModel() {
     val addillusts = MutableLiveData<ArrayList<Illust>>()
     val bookmarknum = MutableLiveData<Illust>()
     val nexturl = MutableLiveData<String>()
+    val hideBookmarked = MutableLiveData<Boolean>()
 
     fun onLoadMoreRequested() {
         retrofitRespository.getNext(nexturl.value!!).subscribe({

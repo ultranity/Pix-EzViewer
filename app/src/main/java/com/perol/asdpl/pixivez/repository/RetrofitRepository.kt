@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -230,11 +231,11 @@ class RetrofitRepository {
     fun postLikeIllustWithTags(
         int: Long,
         string: String,
-        arrayList: ArrayList<String>
+        tagList: ArrayList<String>?
     ): Observable<ResponseBody> =
             Observable.just(1).flatMap {
                 resetToken()
-                appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, arrayList)
+                appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, tagList)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
 
 

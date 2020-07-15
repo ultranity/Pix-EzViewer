@@ -96,6 +96,8 @@
 
     <string name="focus">关注</string>
     <string name="click">点击请我喝杯咖啡</string>
+    <string name="support_string">反馈邮箱：Pix-Ez@outlook.com\n欢迎通过github 反馈及star\n也可以通过关于页面跳转请我喝杯咖啡</string>
+    <string name="current_developer">当前开发者</string>
     <string name="support_Notsfsssf" translatable="false">912756674@qq.com</string>
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>
     <string name="support_popup_title">截图后点击跳转扫描</string>
@@ -151,7 +153,7 @@
     <string name="viewcomment">查看评论</string>
     <string name="aboutpic">相关图片</string>
     <string name="illustid">插画ID</string>
-    <string name="searchhistory">搜索历史</string>
+    <string name="searchhistory">搜索历史（长按删除）</string>
     <string name="clearhistory">清空历史</string>
     <string name="hottags">热门标签</string>
     <string name="newwork">新作</string>
@@ -260,6 +262,7 @@
     <string name="create_separate_folder">创建单独文件夹</string>
     <string name="create_R18_folder">创建单独R18文件夹</string>
     <string name="R18_folder">单独R18文件夹名称\n（默认xRestrict/）</string>
+    <string name="R18_private">自动私密收藏</string>
     <string name="refresh_token">刷新身份信息</string>
     <string name="translate">翻译</string>
     <string name="back_to_the_top">双击回顶</string>

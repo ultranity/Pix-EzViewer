@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +32,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.TrendTagFragment
@@ -76,8 +77,8 @@ class SearchRActivity : RinkActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        tagsTextViewModel = ViewModelProviders.of(this).get(TagsTextViewModel::class.java)
-        trendTagViewModel = ViewModelProviders.of(this).get(TrendTagViewModel::class.java)
+        tagsTextViewModel = ViewModelProvider(this).get(TagsTextViewModel::class.java)
+        trendTagViewModel = ViewModelProvider(this).get(TrendTagViewModel::class.java)
         searchRActivityFragment = SearchRActivityFragment()
         trendTagFragment = TrendTagFragment.newInstance()
         val transaction = supportFragmentManager.beginTransaction().apply {

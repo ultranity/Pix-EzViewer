@@ -116,8 +116,7 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
     fun setPreviewImage(bitmap: Bitmap) {
         val canvas = holder.lockCanvas()
         if (canvas != null) {
-            val targetBitmap = bitmap
-            targetBitmap?.let {
+            bitmap.let {
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                 val react = RectF(
                     this@AnimationView.left.toFloat(),

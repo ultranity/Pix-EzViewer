@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +42,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
@@ -119,7 +120,7 @@ class UserMActivity : RinkActivity() {
         window.statusBarColor = Color.TRANSPARENT
 
         id = intent.getLongExtra("data", 1)
-        viewModel = ViewModelProviders.of(this).get(UserMViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(UserMViewModel::class.java)
         viewModel.getData(id)
         viewModel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(HIDE_BOOKMARK_ITEM, false)
         viewModel.userDetail.observe(this, Observer {

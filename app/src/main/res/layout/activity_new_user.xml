@@ -14,7 +14,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="150dp"
-        android:hint="用户名"
+        android:hint="@string/username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,7 @@ style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="创建"
+        android:text="@string/account_create_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_username" />
@@ -37,7 +37,7 @@ style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="推荐官网自行注册"
+        android:text="@string/account_create_recommed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_login" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,7 @@
                     android:layout_marginTop="8dp"
                     android:textColor="?attr/colorSurface"
                     android:textIsSelectable="true"
-                    android:text="搜索结果"
+                    android:text="@string/search_results"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

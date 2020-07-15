@@ -30,7 +30,7 @@
             android:title="@string/appsetting" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
 
             <item

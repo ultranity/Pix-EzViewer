@@ -3,7 +3,7 @@
     <item
         android:id="@+id/menu_language"
         android:icon="@drawable/ic_action_share_setting"
-        android:title="language" />
+        android:title="Language" />
     <item
         android:id="@+id/menu_crash"
         android:icon="@drawable/ic_action_share_setting"

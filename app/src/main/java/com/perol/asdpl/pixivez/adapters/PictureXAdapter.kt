@@ -741,7 +741,7 @@ class PictureXAdapter(
                                         } else {
                                             Toasty.info(
                                                 PxEZApp.instance,
-                                                mContext.getString(R.string.already_going_on),
+                                                mContext.getString(R.string.already_encoding),
                                                 Toast.LENGTH_LONG
                                             ).show()
                                         }

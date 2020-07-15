@@ -75,7 +75,7 @@
                         android:layout_margin="@dimen/dp_10"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="使用SSL"
+                        android:text="@string/use_ssl"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

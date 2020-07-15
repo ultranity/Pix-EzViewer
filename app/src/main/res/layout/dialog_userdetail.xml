@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="关注用户" />
+        android:text="@string/following" />
     <TextView
         android:id="@+id/textview_guanzhuzhe"
         android:layout_width="80dp"
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="好P友" />
+        android:text="@string/goodpfriend" />
     <TextView
         android:id="@+id/textview_haoPyou"
         android:layout_width="80dp"
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="关注者" />
+        android:text="@string/followers" />
 
     <TextView
         android:id="@+id/textview_hold"

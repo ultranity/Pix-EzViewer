@@ -85,9 +85,9 @@ class UserMActivity : RinkActivity() {
             c!!.moveToFirst()
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
-            Toasty.info(this, "Uploading", Toast.LENGTH_SHORT).show()
+            Toasty.info(this, getString(R.string.uploading), Toast.LENGTH_SHORT).show()
             disposables.add(viewModel.tryToChangeProfile(imagePath).subscribe({
-                Toasty.info(this, "Upload Success,Plz re-enter this page", Toast.LENGTH_SHORT)
+                Toasty.info(this, getString(R.string.upload_success), Toast.LENGTH_SHORT)
                     .show()
             }, {
                 it.printStackTrace()
@@ -182,7 +182,7 @@ class UserMActivity : RinkActivity() {
                                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val clip: ClipData = ClipData.newPlainText("simple text", shareLink)
                             clipboard.setPrimaryClip(clip)
-                            Toasty.info(this@UserMActivity, "copied", Toast.LENGTH_SHORT).show()
+                            Toasty.info(this@UserMActivity, getString(R.string.copied), Toast.LENGTH_SHORT).show()
                         }
                         1 -> {
                             runBlocking {
@@ -208,7 +208,7 @@ class UserMActivity : RinkActivity() {
                                     }
                                 }
 
-                                Toasty.info(this@UserMActivity, "Saved", Toast.LENGTH_SHORT)
+                                Toasty.info(this@UserMActivity, getString(R.string.saved), Toast.LENGTH_SHORT)
                                     .show()
                             }
                         }
@@ -262,6 +262,6 @@ class UserMActivity : RinkActivity() {
         val textIntent = Intent(Intent.ACTION_SEND)
         textIntent.type = "text/plain"
         textIntent.putExtra(Intent.EXTRA_TEXT, "https://www.pixiv.net/member.php?id=$id")
-        startActivity(Intent.createChooser(textIntent, "分享"))
+        startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
     }
 }

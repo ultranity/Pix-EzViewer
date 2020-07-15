@@ -85,7 +85,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:minHeight="0dp"
-                android:text="save" />
+                android:text="@string/save" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/like"
@@ -94,7 +94,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:minHeight="0dp"
-                android:text="LIKE"
+                android:text="@string/like"
                 android:textColor="?attr/colorPrimary" />
         </LinearLayout>
     </LinearLayout>

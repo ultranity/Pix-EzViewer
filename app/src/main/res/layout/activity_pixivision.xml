@@ -36,7 +36,7 @@
         android:layout_marginEnd="25dp"
 
         android:textColor="@color/dark"
-        android:text="PIXIV为不甘于沉闷生活的人提供的创作型媒体！"
+        android:text="@string/pixivision_desc"
         android:layout_gravity="bottom|center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

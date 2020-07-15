@@ -411,7 +411,8 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
         for (i in 1 until sampleTable.childCount)
             sampleTable.getChildAt(i).setOnClickListener {
-                Input.setText(it.tag.toString())
+                InputEditable.clear()
+                InputEditable.insert(0,it.tag.toString())
             }
     }
 

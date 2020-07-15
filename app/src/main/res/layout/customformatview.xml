@@ -355,13 +355,13 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="2dp"
-                android:tag="{illustid}({userid})_{title}_[{tags}]_{part}{type}">
+                android:tag="{illustid}({userid}_{name})_{title}_[{tags}]_{part}{type}">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"
-                    android:text="归档:id(userid)_title_[tags]_part"
+                    android:text="归档:id(userid_name)_title_[tags]_part"
                     android:textColor="?android:textColorSecondary" />
             </TableRow>
         </TableLayout>

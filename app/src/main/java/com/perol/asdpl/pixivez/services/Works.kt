@@ -62,12 +62,30 @@ data class IllustD(
 
 object Works {
     fun parseSaveFormat(illust: Illust, part: Int?): String {
-        var url = ""
+        val url: String
+        val tags = illust.tags
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
             .replace("{name}", illust.user.name.let{ if (it.length>8) it.substringBeforeLast("@") else it}.toLegal())
             .replace("{account}", illust.user.account.toLegal())
             .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
+            .replace("{tags}", tags.mapNotNull{
+                if (!illust.title.contains(it.name)
+                    and
+                    !tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
+                    it.name
+                else
+                    null
+            }.distinct().joinToString("_", limit = 5).toLegal())
+            .replace("{tagst}", tags.mapNotNull{
+                it.translated_name?:(
+                        if (!illust.title.contains(it.name)
+                            and
+                            !tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
+                            it.name
+                        else
+                            null)
+            }.distinct().joinToString("#", limit = 5).toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[part].image_urls.original

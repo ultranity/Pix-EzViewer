@@ -7,3 +7,5 @@ captures/
 *.jks
 .DS_Store
 local.properties
+.project
+*.log

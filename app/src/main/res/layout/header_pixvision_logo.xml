@@ -27,7 +27,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="25dp"
-        android:text="@string/pixiv_subtext2"
+        android:text="@string/pixivision_desc2"
         android:textAlignment="center"
         android:textColor="@color/dark"
         android:textSize="16sp" />

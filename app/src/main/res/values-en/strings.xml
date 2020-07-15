@@ -205,4 +205,18 @@
     <string name="autocheck_subtext">No effect on Play version</string>
     <string name="h_is_ok">H is ok! ԅ(¯﹃¯ԅ)</string>
     <string name="h_not_ok">H not ok! (￣^￣)</string>
+    <string name="support_string">Feedback: by github or Email: Pix-Ez@outlook.com</string>
+    <string name="current_developer">Current developer</string>
+    <string name="Which_part_desc">pic No.</string>
+    <string name="savefirst">Save preview</string>
+    <string name="animation_summary">Disable to save mem usage</string>
+    <string name="refreshTab_summary">Enable to save mem usage</string>
+    <string name="show_user_img_searchr">show Artist avatar in search</string>
+    <string name="show_user_img_bookmarked">show Artist avatar in bookmark view</string>
+    <string name="show_user_img_main">show Artist avatar in Home</string>
+    <string name="new_banner">new banner format (slider)</string>
+    <string name="R18_private">Mark as private when bookmark R-18 pic</string>
+    <string name="pixivision_desc">PIXIV: a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
+    <string name="change_to_first">change to first</string>
+    <string name="account_create_recommed">please register at pixiv.net</string>
 </resources>

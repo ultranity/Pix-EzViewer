@@ -96,7 +96,7 @@
 
     <string name="focus">关注</string>
     <string name="click">点击请我喝杯咖啡</string>
-    <string name="support_string">反馈邮箱：Pix-Ez@outlook.com\n欢迎通过github 反馈及star\n也可以通过关于页面跳转请我喝杯咖啡</string>
+    <string name="support_string">反馈邮箱：Pix-Ez@outlook.com 欢迎通过github 反馈及star 也可以通过关于页面跳转请我喝杯咖啡</string>
     <string name="current_developer">当前开发者</string>
     <string name="support_Notsfsssf" translatable="false">912756674@qq.com</string>
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>
@@ -299,7 +299,7 @@
     <string name="username">用户名</string>
     <string name="account_create_button">创建</string>
     <string name="account_create_recommed">推荐官网自行注册</string>
-    <string name="pixiv_subtext">PIXIV为不甘于沉闷生活的人提供的创作型媒体！</string>
+    <string name="pixivision_desc">PIXIV为不甘于沉闷生活的人提供的创作型媒体！</string>
     <string name="use_ssl">使用SSL</string>
     <string name="search_results">搜索结果</string>
     <string name="attention">关注</string>
@@ -312,7 +312,7 @@
     <string name="followers">关注者</string>
     <string name="empty">EMPTY</string>
     <string name="advices">advices</string>
-    <string name="pixiv_subtext2">为不甘于沉闷生活的人提供的\n创作型媒体！</string>
+    <string name="pixivision_desc2">为不甘于沉闷生活的人提供的\n创作型媒体！</string>
     <string name="change_to_first">更改为第1个</string>
     <string name="notsf_subtext">开发,测试,发布</string>
     <string name="private_">private</string>

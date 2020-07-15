@@ -25,13 +25,19 @@
 - [ ] F-Droid 分发
 - [] feature&update: 更多命名自定义字符串（tags,tag#,tag5,tagst)
 # 更新日志：
+## 1.5.8W&1.5.8B:
+- [x] fix: 部分设置下下载闪退
+- [x] update: 更新样式
+- [x] update&fix：自定义文件名中的模板示例选择后可修改
+- [x] merge&update: 英文翻译补充及清理修复，感谢@namazso
+
 ## 1.5.8R:
 - [x] feature: 动态页面加入屏蔽已收藏图片功能(开关切换)
 - [x] feature: R18自动私密收藏
 - [x] feature: 预加载增强
 - [x] feature: 折叠布局中长按头像收藏
 - [x] feature: 图片卡片长按显示更多信息
-- [x] feature&update: tags等命名规则保存策略优化，尽可能储存更多信息
+- [x] feature&update: 保存规则及策略优化，画师名称过长时删除无关后缀，tags去重，连接符改为#，尽可能储存更多信息
 - [x] update: 收藏分类切换优化
 - [x] update: 背景颜色优化（夜间模式）
 - [x] update: 收藏分类切换优化

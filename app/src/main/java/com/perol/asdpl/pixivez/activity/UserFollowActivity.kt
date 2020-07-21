@@ -33,21 +33,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
-import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.ListUserResponse
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
-import com.perol.asdpl.pixivez.services.AppApiPixivService
-import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_user_follow.*
 import kotlinx.coroutines.runBlocking
-import okhttp3.ResponseBody
 
 class UserFollowActivity : RinkActivity() {
 
@@ -55,11 +49,8 @@ class UserFollowActivity : RinkActivity() {
     private var userListAdapter: UserListAdapter? = null
     private var Next_url: String? = null
     private var recyclerviewusersearch: RecyclerView? = null
-    private var restClient: RestClient? = null
-    private var sharedPreferencesServices: SharedPreferencesServices? = null
-    private var Authorization: String? = null
     private var linearLayoutManager: LinearLayoutManager? = null
-    private var appApiPixivService: AppApiPixivService? = null
+    private val retrofitRepository  = RetrofitRepository.getInstance()
     private val username: String? = null
     private var bundle: Bundle? = null
     private var userid: Long = 0
@@ -101,30 +92,17 @@ class UserFollowActivity : RinkActivity() {
     }
 
     private fun initFollowData() {
-
-        restClient = RestClient()
-        sharedPreferencesServices = SharedPreferencesServices(applicationContext)
-        runBlocking {
-            Authorization = AppDataRepository.getUser().Authorization
-        }
         spinner.setVisibility(View.GONE)
-
         linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-        appApiPixivService = restClient!!.retrofitAppApi
-                .create(AppApiPixivService::class.java)
-
         recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
         recyclerviewusersearch!!.layoutManager = linearLayoutManager
-        //        appApiPixivService.getUserFollower(Authorization,userid)
-        Observable.just(1).flatMap {
-            if (isfollower!!) {
-                appApiPixivService!!.getUserFollower(Authorization!!, userid)
 
-            } else
-                appApiPixivService!!.getUserFollowing(Authorization!!, userid, restrict)
-        }.observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : Observer<SearchUserResponse> {
+
+        val users =     if (isfollower!!) {
+                            retrofitRepository!!.getUserFollower(userid)
+                        } else
+                            retrofitRepository!!.getUserFollowing(userid, restrict)
+        users.subscribe(object : Observer<SearchUserResponse> {
                     override fun onSubscribe(d: Disposable) {
 
                     }
@@ -166,25 +144,11 @@ class UserFollowActivity : RinkActivity() {
 
                         userShowAdapter!!.loadMoreModule?.setOnLoadMoreListener {
                             if (Next_url != null) {
-                                appApiPixivService!!.getNextUser(Authorization!!, Next_url!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-                                    .subscribe(object : Observer<SearchUserResponse> {
-                                        override fun onSubscribe(d: Disposable) {
-
+                                retrofitRepository.getNextUser(Next_url!!)
+                                    .subscribe{
+                                            Next_url = it.next_url
+                                            userShowAdapter!!.addData(it.user_previews)
                                         }
-
-                                        override fun onNext(searchUserResponse: SearchUserResponse) {
-                                            Next_url = searchUserResponse.next_url
-                                            userShowAdapter!!.addData(searchUserResponse.user_previews)
-                                        }
-
-                                        override fun onError(e: Throwable) {
-                                            userShowAdapter!!.loadMoreModule?.loadMoreFail()
-                                        }
-
-                                        override fun onComplete() {
-                                            userShowAdapter!!.loadMoreModule?.loadMoreComplete()
-                                        }
-                                    })
                             } else {
                                 userShowAdapter!!.loadMoreModule?.loadMoreEnd()
                             }
@@ -203,29 +167,15 @@ class UserFollowActivity : RinkActivity() {
     }
 
     private fun initIllustData() {
-
-        restClient = RestClient()
-        sharedPreferencesServices = SharedPreferencesServices(applicationContext)
-        runBlocking {
-            Authorization = AppDataRepository.getUser().Authorization
-        }
         spinner.setVisibility(View.GONE)
-
         linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-        appApiPixivService = restClient!!.retrofitAppApi
-            .create(AppApiPixivService::class.java)
-
         recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
         recyclerviewusersearch!!.layoutManager = linearLayoutManager
-        Observable.just(1).flatMap {
-            appApiPixivService!!.getIllustBookmarkUsers(Authorization!!, illust_id)
-        }.observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
+        retrofitRepository.getIllustBookmarkUsers(illust_id)
             .subscribe(object : Observer<ListUserResponse> {
                 override fun onSubscribe(d: Disposable) {
 
                 }
-
                 override fun onNext(listUserResponse: ListUserResponse) {
                     Illustdata = listUserResponse
                     Next_url = listUserResponse.next_url
@@ -233,28 +183,17 @@ class UserFollowActivity : RinkActivity() {
                     recyclerviewusersearch!!.adapter = userListAdapter
                     userListAdapter!!.setNewData(listUserResponse.users)
                     userListAdapter!!.loadMoreModule?.setOnLoadMoreListener {
-                        if (Next_url != null) {
-                            appApiPixivService!!.getNextIllustBookmarkUsers(Authorization!!, Next_url!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-                                .subscribe(object : Observer<ListUserResponse> {
-                                    override fun onSubscribe(d: Disposable) {
-
-                                    }
-
-                                    override fun onNext(searchUserResponse: ListUserResponse) {
-                                        Next_url = searchUserResponse.next_url
-                                        userListAdapter!!.addData(searchUserResponse.users)
-                                    }
-
-                                    override fun onError(e: Throwable) {
-                                        userListAdapter!!.loadMoreModule?.loadMoreFail()
-                                    }
-
-                                    override fun onComplete() {
-                                        userListAdapter!!.loadMoreModule?.loadMoreComplete()
-                                    }
-                                })
-                        } else {
+                        if (Next_url == null) {
                             userListAdapter!!.loadMoreModule?.loadMoreEnd()
+                        }
+                        else {
+                            retrofitRepository.getIllustBookmarkUsers(illust_id,
+                                Next_url!!.substringAfter("offset=").toInt())
+                                .subscribe {
+                                Illustdata = it
+                                Next_url = it.next_url
+                                userListAdapter!!.addData(it.users)
+                            }
                         }
                     }
                 }
@@ -267,11 +206,10 @@ class UserFollowActivity : RinkActivity() {
 
                 }
             })
-
     }
+
     private fun againrefresh() {
-        appApiPixivService!!.getUserFollowing(Authorization!!, userid, restrict).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+        retrofitRepository.getUserFollowing(userid, restrict)
                 .subscribe(object : Observer<SearchUserResponse> {
                     override fun onSubscribe(d: Disposable) {
 

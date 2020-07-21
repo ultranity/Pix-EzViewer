@@ -197,6 +197,13 @@ class RetrofitRepository {
         appApiPixivService.getFollowIllusts(Authorization, restrict)
     }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
 
+    fun getIllustBookmarkUsers(illust_id: Long,offset: Int = 0): Observable<ListUserResponse> {
+        return Observable.just(1).flatMap {
+            resetToken()
+            appApiPixivService.getIllustBookmarkUsers(Authorization, illust_id, offset)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+
+    }
     fun getSearchUser(string: String): Observable<SearchUserResponse>? {
         return Observable.just(1).flatMap {
             resetToken()

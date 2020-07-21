@@ -100,7 +100,7 @@ class IllustfragmentViewModel : BaseViewModel() {
 
     fun onLoadMoreListen() {
         if (nexturl.value != null) {
-            retrofitRespository.getNext(nexturl.value!!).subscribe({
+            retrofitRespository.getNextIllustRecommended(nexturl.value!!).subscribe({
                 addIllusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
             }, {}, {}).add()

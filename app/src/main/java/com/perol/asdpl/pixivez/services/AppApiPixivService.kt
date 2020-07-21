@@ -225,7 +225,7 @@ interface AppApiPixivService {
     ): Observable<RecommendResponse>
 
     @GET
-    fun getNext(
+    fun getNextIllustRecommended(
         @Header("Authorization") paramString1: String,
         @Url paramString2: String
     ): Observable<RecommendResponse>

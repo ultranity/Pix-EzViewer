@@ -178,10 +178,10 @@ class RetrofitRepository {
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
     }
 
-    fun getNext(string: String): Observable<RecommendResponse> {
+    fun getNextIllustRecommended(string: String): Observable<RecommendResponse> {
         return Observable.just(1).flatMap {
             resetToken()
-            appApiPixivService.getNext(Authorization, string)
+            appApiPixivService.getNextIllustRecommended(Authorization, string)
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
     }
 

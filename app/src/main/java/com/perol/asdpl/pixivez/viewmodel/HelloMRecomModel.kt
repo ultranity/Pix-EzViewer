@@ -41,12 +41,12 @@ class HelloMRecomModel : BaseViewModel() {
     var nextPixivisonUrl = MutableLiveData<String>()
     private var retrofitRepository = RetrofitRepository.getInstance()
     fun firstRxGet(): Observable<RecommendResponse> = retrofitRepository.getRecommend()
-    fun onLoadMoreRxRequested(nextUrl: String) = retrofitRepository.getNext(nextUrl)
+    fun onLoadMoreRxRequested(nextUrl: String) = retrofitRepository.getNextIllustRecommended(nextUrl)
     fun getBanner(): Observable<SpotlightResponse> = retrofitRepository.getPixivison("all")
     fun onLoadMoreBannerRequested(nextUrl: String) = retrofitRepository.getNextPixivisionArticles(nextUrl)
 
     fun onLoadMorePicRequested() {
-        retrofitRepository.getNext(nextUrl.value!!).subscribe({
+        retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()

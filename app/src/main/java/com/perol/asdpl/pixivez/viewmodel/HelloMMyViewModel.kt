@@ -37,7 +37,7 @@ class HelloMMyViewModel : BaseViewModel() {
     val hideBookmarked = MutableLiveData<Boolean>()
 
     fun onLoadMoreRequested() {
-        retrofitRespository.getNext(nexturl.value!!).subscribe({
+        retrofitRespository.getNextIllustRecommended(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()

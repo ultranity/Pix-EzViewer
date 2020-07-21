@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.BlockActivity
+import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PictureXAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
@@ -89,6 +90,7 @@ class PictureXFragment : BaseFragment() {
     override fun onDestroy() {
         pictureXAdapter?.setListener { }
         pictureXAdapter?.setViewCommentListen { }
+        pictureXAdapter?.setBookmarkedUserListen { }
         pictureXAdapter?.setUserPicLongClick { }
         super.onDestroy()
 
@@ -165,6 +167,13 @@ class PictureXFragment : BaseFragment() {
                             val commentDialog =
                                 CommentDialog.newInstance(pictureXViewModel.illustDetail.value!!.id)
                             commentDialog.show(childFragmentManager)
+                        }
+                        it.setBookmarkedUserListen  {
+                            val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
+                            val bundle = Bundle()
+                            bundle.putLong("illust_id", pictureXViewModel.illustDetail.value!!.id)
+                            intent.putExtras(bundle)
+                            startActivity(intent)
                         }
                         it.setUserPicLongClick {
                             pictureXViewModel.likeUser()

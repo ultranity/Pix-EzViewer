@@ -2,7 +2,6 @@
  * MIT License
  *
  * Copyright (c) 2020 ultranity
- * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +22,29 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.activity
+package com.perol.asdpl.pixivez.responses;
 
-import android.os.Bundle
-import com.perol.asdpl.pixivez.R
+import java.util.List;
 
 
-class UserShowActivity : RinkActivity() {
+public class ListUserResponse {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_show)
+    private String next_url;
+    private List<UserBean> users;
 
+    public String getNext_url() {
+        return next_url;
+    }
+
+    public void setNext_url(String next_url) {
+        this.next_url = next_url;
+    }
+
+    public List<UserBean> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserBean> users) {
+        this.users = users;
     }
 }

@@ -62,10 +62,7 @@ import com.bumptech.glide.request.target.Target
 import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
-import com.perol.asdpl.pixivez.activity.SearchRActivity
-import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.activity.ZoomActivity
+import com.perol.asdpl.pixivez.activity.*
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.AnimationView
@@ -108,6 +105,7 @@ class PictureXAdapter(
     val imageUrls = ArrayList<String>()
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
+    private lateinit var mBookmarkedUserListen: () -> Unit
     private lateinit var mUserPicLongClick: () -> Unit
     fun setUserPicLongClick(listener: () -> Unit) {
         this.mUserPicLongClick = listener
@@ -120,6 +118,9 @@ class PictureXAdapter(
 
     fun setViewCommentListen(listener: () -> Unit) {
         this.mViewCommentListen = listener
+    }
+    fun setBookmarkedUserListen(listener: () -> Unit) {
+        this.mBookmarkedUserListen = listener
     }
 
     init {
@@ -175,11 +176,14 @@ class PictureXAdapter(
         private val imageViewUser = itemView.findViewById<NiceImageView>(R.id.imageViewUser_picX)
         private val imageButtonDownload =
             itemView.findViewById<ImageButton>(R.id.imagebutton_download)
+        private val bookmarkedUserNum =
+            itemView.findViewById<TextView>(R.id.bookmarked_user_num)
 
         fun updateWithPage(
             mContext: Context,
             illust: Illust,
             mViewCommentListen: () -> Unit,
+            mBookmarkedUserListen: () -> Unit,
             mUserPicLongClick: () -> Unit
         ) {
             binding.illust = illust
@@ -214,7 +218,9 @@ class PictureXAdapter(
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }
-
+            bookmarkedUserNum.setOnClickListener {
+                mBookmarkedUserListen.invoke()
+            }
             //google translate app btn click listener
             val intent = Intent()
                 .setType("text/plain")
@@ -784,7 +790,7 @@ class PictureXAdapter(
 
             }
             is DetailViewHolder ->
-                holder.updateWithPage(mContext, data, mViewCommentListen, mUserPicLongClick)
+                holder.updateWithPage(mContext, data, mViewCommentListen,mBookmarkedUserListen, mUserPicLongClick)
             is RelativeHolder -> {
 //            aboutPictureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
                 holder.updateWithPage(relativePictureAdapter, mContext)

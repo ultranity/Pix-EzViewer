@@ -31,11 +31,13 @@ import android.widget.AdapterView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.responses.ListUserResponse
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import io.reactivex.Observable
@@ -45,10 +47,12 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_user_follow.*
 import kotlinx.coroutines.runBlocking
+import okhttp3.ResponseBody
 
 class UserFollowActivity : RinkActivity() {
 
     private var userShowAdapter: UserShowAdapter? = null
+    private var userListAdapter: UserListAdapter? = null
     private var Next_url: String? = null
     private var recyclerviewusersearch: RecyclerView? = null
     private var restClient: RestClient? = null
@@ -59,7 +63,9 @@ class UserFollowActivity : RinkActivity() {
     private val username: String? = null
     private var bundle: Bundle? = null
     private var userid: Long = 0
+    private var illust_id: Long = 0
     private var restrict = "public"
+    private var Illustdata: ListUserResponse? = null
     private var data: SearchUserResponse? = null
     private var pastdata: SearchUserResponse? = null
     internal var isfollower: Boolean? = false
@@ -68,13 +74,23 @@ class UserFollowActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_user_follow)
-        bundle = this.intent.extras
-        userid = bundle!!.getLong("user")
-        isfollower = bundle!!.getBoolean("isfollower", false)
         setSupportActionBar(toolbar_userfollow)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setTitle("关注")
-        initdata()
+        bundle = this.intent.extras
+        if(bundle!!.containsKey("illust_id")) {
+            illust_id = bundle!!.getLong("illust_id")
+            supportActionBar!!.setTitle(R.string.bookmark)
+            textView8.text =  getString(R.string.bookmark)
+            initIllustData()
+        }
+        else{
+            userid = bundle!!.getLong("user")
+            isfollower = bundle!!.getBoolean("isfollower", false)
+            supportActionBar!!.setTitle(R.string.following)
+            textView8.text =   getString(R.string.following)
+            initFollowData()
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -84,7 +100,7 @@ class UserFollowActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initdata() {
+    private fun initFollowData() {
 
         restClient = RestClient()
         sharedPreferencesServices = SharedPreferencesServices(applicationContext)
@@ -186,6 +202,73 @@ class UserFollowActivity : RinkActivity() {
 
     }
 
+    private fun initIllustData() {
+
+        restClient = RestClient()
+        sharedPreferencesServices = SharedPreferencesServices(applicationContext)
+        runBlocking {
+            Authorization = AppDataRepository.getUser().Authorization
+        }
+        spinner.setVisibility(View.GONE)
+
+        linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
+        appApiPixivService = restClient!!.retrofitAppApi
+            .create(AppApiPixivService::class.java)
+
+        recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
+        recyclerviewusersearch!!.layoutManager = linearLayoutManager
+        Observable.just(1).flatMap {
+            appApiPixivService!!.getIllustBookmarkUsers(Authorization!!, illust_id)
+        }.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : Observer<ListUserResponse> {
+                override fun onSubscribe(d: Disposable) {
+
+                }
+
+                override fun onNext(listUserResponse: ListUserResponse) {
+                    Illustdata = listUserResponse
+                    Next_url = listUserResponse.next_url
+                    userListAdapter = UserListAdapter(R.layout.view_usershow_item)
+                    recyclerviewusersearch!!.adapter = userListAdapter
+                    userListAdapter!!.setNewData(listUserResponse.users)
+                    userListAdapter!!.loadMoreModule?.setOnLoadMoreListener {
+                        if (Next_url != null) {
+                            appApiPixivService!!.getNextIllustBookmarkUsers(Authorization!!, Next_url!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                                .subscribe(object : Observer<ListUserResponse> {
+                                    override fun onSubscribe(d: Disposable) {
+
+                                    }
+
+                                    override fun onNext(searchUserResponse: ListUserResponse) {
+                                        Next_url = searchUserResponse.next_url
+                                        userListAdapter!!.addData(searchUserResponse.users)
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        userListAdapter!!.loadMoreModule?.loadMoreFail()
+                                    }
+
+                                    override fun onComplete() {
+                                        userListAdapter!!.loadMoreModule?.loadMoreComplete()
+                                    }
+                                })
+                        } else {
+                            userListAdapter!!.loadMoreModule?.loadMoreEnd()
+                        }
+                    }
+                }
+
+                override fun onError(e: Throwable) {
+
+                }
+
+                override fun onComplete() {
+
+                }
+            })
+
+    }
     private fun againrefresh() {
         appApiPixivService!!.getUserFollowing(Authorization!!, userid, restrict).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())

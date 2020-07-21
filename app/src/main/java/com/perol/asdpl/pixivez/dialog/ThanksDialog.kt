@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +41,10 @@ class ThanksDialog : DialogFragment() {
     }
 
     val array = listOf(
+        "**涛",
+        "**涵",
+        "C*a",
+        "*蒂",
         "Leajen",
         "欣殿",
         "风间仓平",
@@ -297,14 +302,11 @@ class ThanksDialog : DialogFragment() {
         "*雪",
         "*姐",
         "*果",
-        "*鸟"
-        ,
-        "*起"
-        ,
+        "*鸟",
+        "*起",
         "*眼",
         "*阖",
-        "l*o"
-        ,
+        "l*o",
         "*』",
         "Y*i",
         "S*a",

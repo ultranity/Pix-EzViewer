@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -68,7 +69,7 @@ class TrendTagViewModel : BaseViewModel() {
     fun resethistory() {
         appDatabase.searchhistoryDao().getSearchHistory().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    searchhistroy.value = it
+                    searchhistroy.value = it.asReversed()
                 }, {}, {}).add()
     }
 

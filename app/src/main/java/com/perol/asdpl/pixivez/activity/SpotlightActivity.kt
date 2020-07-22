@@ -36,9 +36,8 @@ import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
-import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -47,7 +46,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_spotlight.*
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
@@ -58,7 +56,7 @@ import java.util.regex.Pattern
 // pixvision
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
-    private var appApiPixivService: AppApiPixivService? = null
+    private val retrofitRepository  = RetrofitRepository.getInstance()
     private var sharedPreferencesServices: SharedPreferencesServices? = null
     private var spotlightAdapter: SpotlightAdapter? = null
     private val list = ArrayList<Spotlight>()
@@ -83,8 +81,6 @@ class SpotlightActivity : RinkActivity() {
             intent.data = content_url
             startActivity(intent)
         })
-        val restClient = RestClient()
-        appApiPixivService = restClient.retrofitAppApi.create(AppApiPixivService::class.java)
         val local = when (PxEZApp.language) {
             1 -> {
                 Locale.ENGLISH
@@ -156,12 +152,7 @@ class SpotlightActivity : RinkActivity() {
             num = 0
             for (id in reurls) {
                 num += 1
-                var Authorization: String = ""
-                runBlocking {
-                    Authorization = AppDataRepository.getUser().Authorization
-                }
-
-                appApiPixivService!!.getIllust(Authorization, id.toLong()).subscribeOn(Schedulers.io())
+                retrofitRepository.getIllust(id.toLong())
                         .subscribe(object : Observer<IllustDetailResponse> {
                             override fun onSubscribe(d: Disposable) {
 

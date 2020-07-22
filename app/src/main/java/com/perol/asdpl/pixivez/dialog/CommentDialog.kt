@@ -50,21 +50,13 @@ import com.google.android.material.textfield.TextInputEditText
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.CommentAdapter
-import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.objects.ReFreshFunction
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustCommentsResponse
-import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.annotations.Nullable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 
@@ -80,7 +72,7 @@ class CommentDialog : DialogFragment() {
     private var commentAdapter: CommentAdapter? = null
     private var id: Long? = null
     private var Parent_comment_id = 1
-    private var appApiPixivService: AppApiPixivService? = null
+    private val retrofitRepository  = RetrofitRepository.getInstance()
     var compositeDisposable = CompositeDisposable()
     private var callback: Callback? = null
     var nextUrl: String? = null
@@ -94,18 +86,7 @@ class CommentDialog : DialogFragment() {
     }
 
     private fun getData() {
-
-        val restClient = RestClient()
-        appApiPixivService = restClient.retrofitAppApi.create(AppApiPixivService::class.java)
-
-
-        Observable.just(1).flatMap {
-            runBlocking {
-                Authorization = AppDataRepository.getUser().Authorization
-            }
-            appApiPixivService!!.getIllustComments(Authorization!!, id!!)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .retryWhen(ReFreshFunction(requireContext()))
+        retrofitRepository.getIllustComments(id!!)
             .subscribe(object : Observer<IllustCommentsResponse> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
@@ -162,17 +143,10 @@ class CommentDialog : DialogFragment() {
                     nextUrl = illustCommentsResponse.next_url
                     commentAdapter?.loadMoreModule?.setOnLoadMoreListener {
                         if (!nextUrl.isNullOrBlank()) {
-                            Observable.just(1).flatMap {
 
-                                runBlocking {
-                                    Authorization = AppDataRepository.getUser().Authorization
-                                }
-                                appApiPixivService!!.getIllustCommentsNext(
-                                    Authorization!!,
-                                    nextUrl!!
-                                )
-                            }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                .retryWhen(ReFreshFunction(context!!)).subscribe({
+                            retrofitRepository!!.getNextIllustComments(
+                                nextUrl!!
+                            ).subscribe({
                                     commentAdapter?.addData(it.comments)
                                     nextUrl = it.next_url
                                     commentAdapter?.loadMoreModule?.loadMoreComplete()
@@ -204,28 +178,21 @@ class CommentDialog : DialogFragment() {
     }
 
     fun commit() {
-        appApiPixivService!!
+        retrofitRepository!!
             .postIllustComment(
-                Authorization!!,
                 id!!,
                 edittextComment.text.toString(),
                 if (Parent_comment_id == 1) null else Parent_comment_id
             )
-            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : Observer<ResponseBody> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
                 }
 
                 override fun onNext(responseBody: ResponseBody) {
-                    Observable.just(1).flatMap {
-                        var Authorization: String = ""
-                        runBlocking {
-                            Authorization = AppDataRepository.getUser().Authorization
-                        }
-                        appApiPixivService!!.getIllustComments(Authorization, id!!)
-                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .retryWhen(ReFreshFunction(context!!))
+                    retrofitRepository!!.getIllustComments(
+                        id!!
+                    )
                         .subscribe(object : Observer<IllustCommentsResponse> {
                             override fun onSubscribe(d: Disposable) {
                                 compositeDisposable.add(d)
@@ -290,7 +257,7 @@ class CommentDialog : DialogFragment() {
 
     }
 
-    override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initbind()
     }

@@ -39,12 +39,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsShowAdapter
-import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.services.AppApiPixivService
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.runBlocking
 
 //UserBookMarkFragment
 class TagsShowDialog : DialogFragment() {
@@ -82,8 +79,7 @@ class TagsShowDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val restClient = RestClient()
-        val appApiPixivService = restClient.retrofitAppApi.create(AppApiPixivService::class.java)
+        val retrofitRepository  = RetrofitRepository.getInstance()
 
         val bundle = arguments
         val inflater = LayoutInflater.from(activity)
@@ -123,12 +119,8 @@ class TagsShowDialog : DialogFragment() {
             }
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
-                var Authorization: String = ""
-                runBlocking {
-                    Authorization = AppDataRepository.getUser().Authorization
-                }
                 if (p0 != null)
-                    appApiPixivService.getIllustBookmarkTags(Authorization, id, if (p0.position == 0) {
+                    retrofitRepository.getIllustBookmarkTags(id, if (p0.position == 0) {
                         "public"
                     } else {
                         "private"
@@ -159,11 +151,7 @@ class TagsShowDialog : DialogFragment() {
         })
         tagsShowAdapter.loadMoreModule?.setOnLoadMoreListener {
             if (!nexturl.isNullOrBlank()) {
-                var Authorization: String = ""
-                runBlocking {
-                    Authorization = AppDataRepository.getUser().Authorization
-                }
-                appApiPixivService.getNexttags(Authorization, nexturl!!)
+                retrofitRepository.getNextTags( nexturl!!)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(

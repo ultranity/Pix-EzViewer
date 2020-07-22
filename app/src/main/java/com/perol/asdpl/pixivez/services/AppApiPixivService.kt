@@ -31,6 +31,7 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -55,12 +56,6 @@ interface AppApiPixivService {
         @Query("restrict") paramString2: String
     ): Observable<BookMarkTagsResponse>
 
-    @GET
-    fun getNexttags(
-        @Header("Authorization") paramString1: String,
-        @Url paramString2: String
-    ): Observable<BookMarkTagsResponse>
-
     @GET("/v1/spotlight/articles?filter=for_android")
     fun getPixivisionArticles(
         @Header("Authorization") paramString1: String,
@@ -69,12 +64,6 @@ interface AppApiPixivService {
 
     @GET("/v1/user/recommended?filter=for_android")
     fun getUserRecommended(@Header("Authorization") paramString: String): Observable<SearchUserResponse>
-
-    @GET
-    fun getNextPixivisionArticles(
-        @Header("Authorization") paramString1: String,
-        @Url paramString2: String
-    ): Observable<SpotlightResponse>
 
     @Streaming
     @GET
@@ -224,11 +213,6 @@ interface AppApiPixivService {
         @Query("illust_id") paramLong: Long
     ): Observable<RecommendResponse>
 
-    @GET
-    fun getNextIllustRecommended(
-        @Header("Authorization") paramString1: String,
-        @Url paramString2: String
-    ): Observable<RecommendResponse>
 
     @FormUrlEncoded
     @POST("/v2/user/browsing-history/illust/add")
@@ -264,11 +248,6 @@ interface AppApiPixivService {
         @Query("illust_id") illust_id: Long,
         @Query("offset") offset: Int? = 0
     ): Observable<ListUserResponse>
-    @GET
-    fun getNextIllustBookmarkUsers(
-        @Header("Authorization") token: String,
-        @Url nextUrl: String
-    ): Observable<ListUserResponse>
 
     @GET("/v1/illust/comments")
     fun getIllustComments(
@@ -302,23 +281,8 @@ interface AppApiPixivService {
 
 
     @GET
-    fun getNextUserIllusts(
+    fun getNext(
         @Header("Authorization") paramString1: String,
         @Url paramString2: String
-    ): Observable<IllustNext>
-
-
-    @GET
-    fun getNextUser(
-        @Header("Authorization") paramString1: String,
-        @Url paramString2: String
-    ): Observable<SearchUserResponse>
-
-    @GET
-    fun getIllustCommentsNext(
-        @Header("Authorization") paramString1: String,
-        @Url nextUrl: String
-    ): Observable<IllustCommentsResponse>
-
-
+    ): Observable<ResponseBody>
 }

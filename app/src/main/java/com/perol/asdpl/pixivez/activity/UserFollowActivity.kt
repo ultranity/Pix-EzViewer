@@ -99,9 +99,9 @@ class UserFollowActivity : RinkActivity() {
 
 
         val users =     if (isfollower!!) {
-                            retrofitRepository!!.getUserFollower(userid)
+                            retrofitRepository.getUserFollower(userid)
                         } else
-                            retrofitRepository!!.getUserFollowing(userid, restrict)
+                            retrofitRepository.getUserFollowing(userid, restrict)
         users.subscribe(object : Observer<SearchUserResponse> {
                     override fun onSubscribe(d: Disposable) {
 
@@ -148,6 +148,7 @@ class UserFollowActivity : RinkActivity() {
                                     .subscribe{
                                             Next_url = it.next_url
                                             userShowAdapter!!.addData(it.user_previews)
+                                            userShowAdapter!!.loadMoreModule?.loadMoreComplete()
                                         }
                             } else {
                                 userShowAdapter!!.loadMoreModule?.loadMoreEnd()
@@ -187,12 +188,14 @@ class UserFollowActivity : RinkActivity() {
                             userListAdapter!!.loadMoreModule?.loadMoreEnd()
                         }
                         else {
-                            retrofitRepository.getIllustBookmarkUsers(illust_id,
-                                Next_url!!.substringAfter("offset=").toInt())
+                            //retrofitRepository.getIllustBookmarkUsers(illust_id,
+                            //    Next_url!!.substringAfter("offset=").toInt())
+                            retrofitRepository.getNext<ListUserResponse>(Next_url!!)
                                 .subscribe {
                                 Illustdata = it
                                 Next_url = it.next_url
                                 userListAdapter!!.addData(it.users)
+                                userListAdapter!!.loadMoreModule?.loadMoreComplete()
                             }
                         }
                     }

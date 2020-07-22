@@ -31,29 +31,23 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
-import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ReFreshFunction
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
-import com.perol.asdpl.pixivez.services.AppApiPixivService
-import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_pixivision.*
 import kotlinx.coroutines.runBlocking
 
 class PixivsionActivity : RinkActivity() {
 
 
-    lateinit var appApiPixivService: AppApiPixivService
     lateinit var sharedPreferencesServices: SharedPreferencesServices
     private var Authorization: String? = null
     private var Nexturl: String? = null
     private var data: SpotlightResponse? = null
+    private val retrofitRepository  = RetrofitRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +56,6 @@ class PixivsionActivity : RinkActivity() {
         setSupportActionBar(toobar_pixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
-        runBlocking {
-            Authorization = AppDataRepository.getUser().Authorization
-        }
         initbind()
     }
 
@@ -79,16 +70,7 @@ class PixivsionActivity : RinkActivity() {
     }
 
     private fun initbind() {
-
-        val restClient = RestClient()
-        appApiPixivService = restClient.pixivisionAppApi.create(AppApiPixivService::class.java)
-        Observable.just(1).flatMap {
-            runBlocking {
-                Authorization = AppDataRepository.getUser().Authorization
-            }
-            appApiPixivService.getPixivisionArticles(Authorization!!, "all")
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .retryWhen(ReFreshFunction(applicationContext))
+            retrofitRepository.getPixivison("all")
                 .subscribe(object : Observer<SpotlightResponse> {
                     override fun onSubscribe(d: Disposable) {
 
@@ -101,16 +83,9 @@ class PixivsionActivity : RinkActivity() {
                         recyclerview_pixivision.layoutManager = LinearLayoutManager(applicationContext)
                         recyclerview_pixivision.adapter = pixiviSionAdapter
                         pixiviSionAdapter.loadMoreModule?.setOnLoadMoreListener {
-                            Observable.just(1).flatMap {
-                                runBlocking {
-                                    Authorization = AppDataRepository.getUser().Authorization
-                                }
-                                appApiPixivService.getNextPixivisionArticles(
-                                    Authorization!!,
+                                retrofitRepository.getNextPixivisionArticles(
                                     Nexturl!!
                                 )
-                            }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                    .retryWhen(ReFreshFunction(applicationContext))
                                     .subscribe(object : Observer<SpotlightResponse> {
                                         override fun onSubscribe(d: Disposable) {
 

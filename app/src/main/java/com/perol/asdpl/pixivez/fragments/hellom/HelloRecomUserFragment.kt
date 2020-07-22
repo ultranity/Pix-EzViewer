@@ -91,7 +91,9 @@ class HelloRecomUserFragment : BaseFragment() {
             adapter = userShowAdapter
             layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         }
-        userShowAdapter.loadMoreModule?.setOnLoadMoreListener { viewmodel!!.getNext() }
+        userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
+            viewmodel!!.getNext()
+        }
         swipe.setOnRefreshListener {
             viewmodel!!.reData()
 

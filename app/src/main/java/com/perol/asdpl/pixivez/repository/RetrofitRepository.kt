@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.repository
 
+import com.google.gson.Gson
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ReFreshFunction
@@ -58,7 +59,7 @@ class RetrofitRepository {
 
     }
 
-    private fun resetToken() {
+    fun resetToken() {
         runBlocking {
             try {
                 Authorization = AppDataRepository.getUser().Authorization
@@ -70,45 +71,39 @@ class RetrofitRepository {
     fun getLikeIllust(userid: Long, pub: String, tag: String?) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getLikeIllust(Authorization, userid, pub, tag)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getIllustBookmarkTags(userid: Long, pub: String) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getIllustBookmarkTags(Authorization, userid, pub)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-
-    fun getNextUserIllusts(nexturl: String) = Observable.just(1).flatMap {
-        resetToken()
-        appApiPixivService.getNextUserIllusts(Authorization, nexturl)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getUserIllusts(id: Long, type: String) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getUserIllusts(Authorization, id, type)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getIllustRecommended(id: Long) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getIllustRecommended(Authorization, id)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getIllustRanking(mode: String, pickdata: String?) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getIllustRanking(Authorization, mode, pickdata)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-
-    fun create(observable: Observable<Any>): Observable<Any>? {
-        return Observable.just(1).flatMap {
-            resetToken()
-            observable
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-    }
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getSearchAutoCompleteKeywords(newText: String): Observable<PixivResponse> {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getSearchAutoCompleteKeywords(Authorization, newText)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
 
     }
@@ -117,19 +112,33 @@ class RetrofitRepository {
         resetToken()
         appApiPixivService.getPixivisionArticles(Authorization, category)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .retryWhen(reFreshFunction)
+        .retryWhen(reFreshFunction)
 
     fun getRecommend() = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getRecommend(Authorization)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .retryWhen(reFreshFunction)
+        .retryWhen(reFreshFunction)
 
-    fun getSearchIllustPreview(word: String, sort: String, search_target: String?, bookmark_num: Int?, duration: String?): Observable<SearchIllustResponse> {
+    fun getSearchIllustPreview(
+        word: String,
+        sort: String,
+        search_target: String?,
+        bookmark_num: Int?,
+        duration: String?
+    ): Observable<SearchIllustResponse> {
         return Observable.just(1).flatMap {
             resetToken()
-            appApiPixivService.getSearchIllustPreview(word, sort, search_target, bookmark_num, duration, Authorization)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+            appApiPixivService.getSearchIllustPreview(
+                word,
+                sort,
+                search_target,
+                bookmark_num,
+                duration,
+                Authorization
+            )
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
     }
 
@@ -152,7 +161,8 @@ class RetrofitRepository {
                 bookmark_num,
                 Authorization
             )
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
     }
 
@@ -168,63 +178,101 @@ class RetrofitRepository {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getUserFollower(Authorization, long)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     fun getUserFollowing(long: Long, restrict: String): Observable<SearchUserResponse> {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getUserFollowing(Authorization, long, restrict)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-    }
-
-    fun getNextIllustRecommended(string: String): Observable<RecommendResponse> {
-        return Observable.just(1).flatMap {
-            resetToken()
-            appApiPixivService.getNextIllustRecommended(Authorization, string)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-    }
-
-    fun getNextPixivisionArticles(string: String): Observable<SpotlightResponse> {
-        return Observable.just(1).flatMap {
-            resetToken()
-            appApiPixivService.getNextPixivisionArticles(Authorization, string)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     fun getFollowIllusts(restrict: String) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getFollowIllusts(Authorization, restrict)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
-    fun getIllustBookmarkUsers(illust_id: Long,offset: Int = 0): Observable<ListUserResponse> {
+    fun getIllustBookmarkUsers(illust_id: Long, offset: Int = 0): Observable<ListUserResponse> {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getIllustBookmarkUsers(Authorization, illust_id, offset)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
     }
+
     fun getSearchUser(string: String): Observable<SearchUserResponse>? {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getSearchUser(Authorization, string)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
-
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
-    fun getNextUser(string: String): Observable<SearchUserResponse> {
+    fun getIllustComments(illust_id: Long): Observable<IllustCommentsResponse> {
         return Observable.just(1).flatMap {
             resetToken()
-            appApiPixivService.getNextUser(Authorization, string)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+            appApiPixivService.getIllustComments(Authorization, illust_id)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
+    fun postIllustComment(
+        illust_id: Long,
+        comment: String,
+        parent_comment_id: Int?
+    ): Observable<ResponseBody> {
+        return Observable.just(1).flatMap {
+            resetToken()
+            appApiPixivService.postIllustComment(
+                Authorization,
+                illust_id,
+                comment,
+                parent_comment_id
+            )
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+    }
+
+    fun create(observable: Observable<Any>): Observable<Any>? {
+        return Observable.just(1).flatMap {
+            resetToken()
+            observable
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+    }
+
+    inline fun <reified T> getNext(url: String): Observable<T> =
+        Observable.just(1).flatMap {
+            resetToken()
+            appApiPixivService.getNext(Authorization, url).flatMap {
+                Observable.just(Gson().fromJson(it.string(), T::class.java))
+            }
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+
+    fun getNextUser(url: String): Observable<SearchUserResponse> = getNext(url)
+
+    fun getNextTags(url: String): Observable<BookMarkTagsResponse> = getNext(url)
+
+    fun getNextUserIllusts(url: String): Observable<IllustNext> = getNext(url)
+
+    fun getNextIllustRecommended(url: String): Observable<RecommendResponse> = getNext(url)
+
+    fun getNextIllustComments(url: String): Observable<IllustCommentsResponse> = getNext(url)
+
+    fun getNextPixivisionArticles(url: String): Observable<SpotlightResponse> = getNext(url)
 
     fun postLikeIllust(int: Long): Observable<ResponseBody>? {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.postLikeIllust(Authorization, int.toLong(), "public", null)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
     }
 
@@ -232,7 +280,8 @@ class RetrofitRepository {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getIllustTrendTags(Authorization)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     fun postLikeIllustWithTags(
@@ -240,17 +289,19 @@ class RetrofitRepository {
         string: String,
         tagList: ArrayList<String>?
     ): Observable<ResponseBody> =
-            Observable.just(1).flatMap {
-                resetToken()
-                appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, tagList)
-            }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        Observable.just(1).flatMap {
+            resetToken()
+            appApiPixivService.postLikeIllust(Authorization, int.toLong(), string, tagList)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
 
 
     fun getIllust(long: Long): Observable<IllustDetailResponse> {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.getIllust(Authorization, long)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     suspend fun getIllustCor(long: Long): IllustDetailResponse? {
@@ -278,50 +329,55 @@ class RetrofitRepository {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.postUnlikeIllust(Authorization, long)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     fun postfollowUser(long: Long, restrict: String): Observable<ResponseBody> {
         return Observable.just(1).flatMap {
             resetToken()
             appApiPixivService.postFollowUser(Authorization, long, restrict)
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
     }
 
     fun postunfollowUser(long: Long) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.postUnfollowUser(Authorization, long)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getUgoiraMetadata(long: Long) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getUgoiraMetadata(Authorization, long)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getGIFFile(string: String) = Observable.just(1).flatMap {
         resetToken()
         gifApiPixivService.getGIFFile(string)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getBookmarkDetail(long: Long) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getLikeIllustDetail(Authorization, long)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getUserDetail(userid: Long) = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getUserDetail(Authorization, userid)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
     fun getUserRecommanded() = Observable.just(1).flatMap {
         resetToken()
         appApiPixivService.getUserRecommended(Authorization)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        .retryWhen(reFreshFunction)
 
-    fun getUserRecommandedUrl(url: String) = Observable.just(1).flatMap {
-        resetToken()
-        appApiPixivService.getNextUser(Authorization, url)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).retryWhen(reFreshFunction)
+    fun getUserRecommandedUrl(url: String) = getNext<SearchUserResponse>(url)
 
     companion object {
         private var instance: RetrofitRepository? = null

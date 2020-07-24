@@ -241,7 +241,8 @@
     <string name="join_download_queue">加入下载队列</string>
     <string name="again_to_exit">再按一次返回键退出</string>
     <string name="dark_mode">深色主题</string>
-    <string name="restart_now">立即重启</string>
+    <string name="restart_now">立即生效</string>
+    <string name="restart">重启</string>
     <string name="account_management">账号管理</string>
     <string name="auto_check_update">自动检查更新</string>
     <string name="bookmark_private">悄悄收藏</string>
@@ -274,6 +275,7 @@
     <string name="thread_num">线程数</string>
     <string name="task_setting">任务设置</string>
     <string name="all_resume">全部恢复</string>
+    <string name="all_stop">全部暂停</string>
     <string name="all_cancel">清空列队</string>
     <string name="finished_cancel">移除已完成任务</string>
     <string name="unfinished_task">下载未完成的任务</string>

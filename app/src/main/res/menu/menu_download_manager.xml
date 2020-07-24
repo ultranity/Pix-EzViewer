@@ -19,9 +19,21 @@
         app:iconTint="?android:textColorPrimaryInverse"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_cancel"
+        android:id="@+id/action_stop"
+        android:icon="@drawable/ic_action_share_setting"
+        app:iconTint="?android:textColorPrimaryInverse"
+        android:title="@string/all_stop"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_restart"
         android:icon="@drawable/ic_action_share_setting"
         app:iconTint="?android:textColorPrimaryInverse"
         android:title="@string/all_cancel"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_action_share_setting"
+        app:iconTint="?android:textColorPrimaryInverse"
+        android:title="@string/restart"
         app:showAsAction="never" />
 </menu>

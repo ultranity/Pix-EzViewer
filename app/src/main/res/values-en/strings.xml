@@ -94,6 +94,7 @@
     <string name="again_to_exit">Again to exit</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="restart_now">Restart Now</string>
+    <string name="restart">Restart</string>
     <string name="account_management">Accounts</string>
     <string name="auto_check_update">Auto check update</string>
     <string name="bookmark_private">private</string>
@@ -218,5 +219,6 @@
     <string name="R18_private">Mark as private when bookmark R-18 pic</string>
     <string name="pixivision_desc">PIXIV: a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
     <string name="change_to_first">change to first</string>
+    <string name="all_stop">Stop All</string>
     <string name="account_create_recommed">please register at pixiv.net</string>
 </resources>

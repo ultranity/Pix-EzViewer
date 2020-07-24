@@ -94,7 +94,13 @@ class DownloadTaskAdapter() :
                             Aria.download(context).load(data[position].id).resume()
                         }
                         3 -> {
+                            Aria.download(context).stopAllTask()
+                        }
+                        4 -> {
                             Aria.download(context).load(data[position].id).cancel(true)
+                        }
+                        5 -> {
+                            PxEZApp.ActivityCollector.recreate()
                         }
                     }
                     val taskList = Aria.download(this).taskList

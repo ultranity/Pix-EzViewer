@@ -98,6 +98,7 @@
     <string name="again_to_exit">再次點擊返回鍵以退出</string>
     <string name="dark_mode">深色主題</string>
     <string name="restart_now">立即重新啟動</string>
+    <string name="restart">重新啟動</string>
     <string name="account_management">賬號管理</string>
     <string name="auto_check_update">自動檢查更新</string>
     <string name="bookmark_private">私密收藏</string>
@@ -126,4 +127,5 @@
     <string name="already_encoding">已在進行</string>
     <string name="save_zip_success">儲存zip成功</string>
     <string name="click">點擊</string>
+    <string name="all_stop">全部暂停</string>
 </resources>

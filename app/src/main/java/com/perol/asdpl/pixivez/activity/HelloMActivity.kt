@@ -191,21 +191,21 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         checkAndRequestPermissions(permissionList)
         initView() //Listener
         val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
-        if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
-            tablayout_hellom.getTabAt(position)!!.select()
-            getFragmentContent(position).let {
-                fragments[position] = it
-                //supportFragmentManager.fragments.forEach(){ it ->
-                //    supportFragmentManager.beginTransaction().remove(it).commit()
-                //}
-                supportFragmentManager.beginTransaction().add(R.id.content_view, it).commit()
-                curFragment = it
-            }
-        }else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
             getFragmentContent(position).let {
                 supportFragmentManager.beginTransaction().replace(R.id.content_view, it).commit()
             }
-        else{
+        else if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
+            tablayout_hellom.getTabAt(position)!!.select()
+            getFragmentContent(position).let {
+                supportFragmentManager.beginTransaction().add(R.id.content_view, it).commit()
+                    curFragment = it
+                    fragments[position] = it
+                    //supportFragmentManager.fragments.forEach(){ it ->
+                    //    supportFragmentManager.beginTransaction().remove(it).commit()
+                    //}
+            }
+        } else {
             curFragment = supportFragmentManager.findFragmentById(R.id.content_view)
         }
         val view = nav_view.inflateHeaderView(R.layout.nav_header_hello_m)

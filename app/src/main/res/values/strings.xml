@@ -157,7 +157,7 @@
     <string name="illustid">插画ID</string>
     <string name="searchhistory">搜索历史（长按删除）</string>
     <string name="clearhistory">清空历史</string>
-    <string name="hottags">热门标签</string>
+    <string name="hottags">热门标签（长按试试~）</string>
     <string name="newwork">新作</string>
     <string name="oldwork">旧作</string>
     <string name="part">部分</string>
@@ -222,7 +222,7 @@
     <string name="feed_back">反馈</string>
     <string name="title_activity_search_r">SearchRActivity</string>
     <string name="title_activity_setting">SettingActivity</string>
-    <string name="needstatusbar">异形屏：图片详情状态栏不沉浸</string>
+    <string name="needstatusbar">异形屏：详情状态栏不沉浸</string>
     <string name="refreshTab">tab自动刷新</string>
     <string name="refreshTab_summary">首页等切换后不保留先前状态，节省内存</string>
     <string name="changeicons">更换图标</string>

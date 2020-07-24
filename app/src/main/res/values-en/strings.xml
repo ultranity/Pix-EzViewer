@@ -42,9 +42,9 @@
     <string name="viewcomment">show comment</string>
     <string name="aboutpic">relative</string>
     <string name="illustid">illust id</string>
-    <string name="searchhistory">search history</string>
+    <string name="searchhistory">search history (long click to delete)</string>
     <string name="clearhistory">clear history</string>
-    <string name="hottags">hot tags</string>
+    <string name="hottags">hot tags(try long click ~)</string>
     <string name="newwork">new</string>
     <string name="oldwork">old</string>
     <string name="part">part</string>

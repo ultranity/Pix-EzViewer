@@ -46,6 +46,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.dialog.ThanksDialog
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
@@ -159,68 +160,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
 //            }
 //        }
     }
-    private fun gotoWeChat() {
-        val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")
-        intent.setPackage("com.tencent.mm")
-        intent.putExtra("LauncherUI.From.Scaner.Shortcut", true)
-        intent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-        )
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "你好像没有安装微信", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private fun gotoAliPay() {
-        val uri =
-            Uri.parse("alipayqr://platformapi/startapp?saId=10000007")
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        intent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-        )
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "你好像没有安装支付宝", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private fun sendPictureStoredBroadcast(file: File) {
-        runBlocking {
-            val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            MediaScannerConnection.scanFile(
-                PxEZApp.instance, arrayOf(path.absolutePath), arrayOf(
-                    MimeTypeMap.getSingleton()
-                        .getMimeTypeFromExtension(
-                            file.extension
-                        )
-                )
-            ) { _, _ ->
-            }
-        }
-    }
-    private fun support(){
-        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_ultranity, null)
-        MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.support_popup_title)).setView(view).setNegativeButton(R.string.wechat)
-        { _,_->
-            gotoWeChat()
-        }.setPositiveButton(R.string.ali)
-        { _,_->
-            val clipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip: ClipData = ClipData.newPlainText("simple text",
-                String(Base64.decode("I+e7meaIkei9rOi0piPplb/mjInlpI3liLbmraTmnaHmtojmga/vvIzljrvmlK/ku5jlrp3pppbp\n" +
-                        "obXov5vooYzmkJzntKLnspjotLTljbPlj6/nu5nmiJHovazotKZUaFlXMlhqNzBTdyM=\n",Base64.DEFAULT)
-                )
-            )
-            clipboard.setPrimaryClip(clip)
-            //Toasty.info(requireContext(), "copied", Toast.LENGTH_SHORT).show()
-            gotoAliPay()
-        }.show()
-    }
+
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             //"support" -> startActivityByUri("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
@@ -250,8 +190,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
 //                    lifecycleOwner(this@ThanksFragment)
 //                }
             }
-            "support" ->   support()
-            "ultranity" -> support()
+            "support" ->    SupportDialog().show(parentFragmentManager, "supportdialog")
+            "ultranity" ->  SupportDialog().show(parentFragmentManager, "supportdialog")
             "Notsfsssf" -> {
                 val view = requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_notsfsssf, null)
                 MaterialAlertDialogBuilder(activity).setView(view).setPositiveButton(android.R.string.ok) { _, _ ->

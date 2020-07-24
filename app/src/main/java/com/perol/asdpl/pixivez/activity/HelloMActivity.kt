@@ -48,10 +48,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMDynamicsFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMainFragment
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
+import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -60,6 +62,8 @@ import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.android.synthetic.main.app_bar_hello_m.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -237,8 +241,19 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
         headtext.text = allUser!![nowNum].username
         textView.text = allUser!![nowNum].useremail
+
+        val calendar = Calendar.getInstance()
+        if ((calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
+            - SharedPreferencesServices.getInstance()
+                .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 140))
+            >= 8*24) {
+            SupportDialog().show(this.supportFragmentManager, "supportdialog")
+        }
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
 
     private fun checkAndRequestPermissions(permissionList: ArrayList<String>) {
         val list = ArrayList(permissionList)

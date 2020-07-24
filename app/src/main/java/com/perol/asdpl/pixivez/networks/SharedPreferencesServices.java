@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -67,6 +68,10 @@ public class SharedPreferencesServices {
         return sp.getString(key, null);
     }
 
+    public String getString(String key, String defValue) {
+        return sp.getString(key, defValue);
+    }
+
     public void setBoolean(String key, boolean value) {
         sp.edit().putBoolean(key, value).apply();
     }
@@ -75,11 +80,19 @@ public class SharedPreferencesServices {
         return sp.getBoolean(key, false);
     }
 
+    public boolean getBoolean(String key, boolean value) {
+        return sp.getBoolean(key, value);
+    }
+
     public void setInt(String key, int value) {
         sp.edit().putInt(key, value).apply();
     }
 
     public int getInt(String key) {
         return sp.getInt(key, 0);
+    }
+
+    public int getInt(String key, int value) {
+        return sp.getInt(key, value);
     }
 }

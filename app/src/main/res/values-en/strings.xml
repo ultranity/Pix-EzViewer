@@ -134,6 +134,7 @@
     <string name="click">click</string>
     <string name="ali">AliPay</string>
     <string name="wechat">WeChat</string>
+    <string name="support_text">"Your support will motivate me to\n equip this app with more useful features~"</string>
     <string name="support_popup_title">Support via..</string>
     <string name="filesaveformat">Filename format</string>
     <string name="filesaveformatstring">Enter format string:</string>

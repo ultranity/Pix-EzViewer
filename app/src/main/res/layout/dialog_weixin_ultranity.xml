@@ -2,26 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <ImageView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:src="@drawable/ali_pay" />
+        android:layout_height="200dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ali_pay" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/weixin_pay" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView15"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/support_ultranity"
-        android:textSize="14sp" />
-
-    <ImageView
+        android:text="@string/support_text"
+        android:textSize="18sp"
+        android:padding="8dp"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/textView16"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:src="@drawable/weixin_pay" />
-
+        android:layout_height="wrap_content"
+        android:text="@string/summary_thanks"
+        android:textSize="18sp"/>
 </LinearLayout>

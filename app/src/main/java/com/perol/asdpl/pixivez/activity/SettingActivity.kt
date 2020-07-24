@@ -34,12 +34,15 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
+import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.fragments.AboutXFragment
 import com.perol.asdpl.pixivez.fragments.SettingFragment
 import com.perol.asdpl.pixivez.fragments.ThanksFragment
+import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.content_setting.*
+import java.util.*
 
 class SettingActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -103,4 +106,19 @@ class SettingActivity : RinkActivity() {
         })
     }
 
+    override fun onBackPressed() {
+        val calendar = Calendar.getInstance()
+        if ((calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
+                -SharedPreferencesServices.getInstance()
+                    .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 100)
+             )>= 5*24) {
+            SupportDialog().show(this.supportFragmentManager, "supportdialog")
+        }
+        else {
+            SharedPreferencesServices.getInstance()
+                .setInt("lastsupport",
+                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 12)
+            super.onBackPressed()
+        }
+    }
 }

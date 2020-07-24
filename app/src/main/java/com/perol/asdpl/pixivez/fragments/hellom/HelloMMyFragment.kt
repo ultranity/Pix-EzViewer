@@ -31,11 +31,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
@@ -44,7 +46,6 @@ import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
 import kotlinx.android.synthetic.main.fragment_hello_mmy.*
-import kotlinx.android.synthetic.main.header_mmy.*
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -152,13 +153,15 @@ class HelloMMyFragment : BaseFragment() {
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
-        swith_hidebookmarked.apply {
+        val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
+        rankingAdapter.addHeaderView(headerView)
+        headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = viewmodel.hideBookmarked.value!!
             setOnCheckedChangeListener { compoundButton, state ->
                 viewmodel.hideBookmarked.value = state
             }
         }
-        spinner_mmy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        headerView.findViewById<Spinner>(R.id.spinner_mmy).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when (position) {
                     0 -> {
@@ -181,17 +184,17 @@ class HelloMMyFragment : BaseFragment() {
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_hellomth)?.getTabAt(0)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                /*Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show()*/
-                exitTime = System.currentTimeMillis()
-            } else {
-                recyclerview_mym.smoothScrollToPosition(0)
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    /*Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()*/
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    recyclerview_mym.smoothScrollToPosition(0)
+                }
             }
-        }
         swiperefresh_mym.isRefreshing = true
     }
 
@@ -207,11 +210,11 @@ class HelloMMyFragment : BaseFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                HelloMMyFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
+            HelloMMyFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
                 }
+            }
     }
 }

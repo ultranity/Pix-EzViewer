@@ -6,8 +6,6 @@
     android:orientation="vertical"
     tools:context=".fragments.hellom.HelloMMyFragment">
 
-        <include layout="@layout/header_mmy" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh_mym"
         android:layout_width="match_parent"

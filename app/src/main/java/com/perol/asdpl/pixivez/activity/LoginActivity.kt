@@ -35,10 +35,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
+//import com.afollestad.materialdialogs.MaterialDialog
+//import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+//import com.google.android.gms.common.ConnectionResult
+//import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.BuildConfig
@@ -52,7 +52,6 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.ErrorResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
 import com.perol.asdpl.pixivez.services.OAuthSecureService
-import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.UserEntity
 import io.noties.markwon.Markwon
 import io.reactivex.Observer
@@ -62,7 +61,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.*

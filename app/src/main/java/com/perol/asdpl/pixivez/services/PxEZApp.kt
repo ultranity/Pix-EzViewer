@@ -41,7 +41,7 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
+//import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
@@ -95,11 +95,11 @@ class PxEZApp : Application() {
 
     override fun onCreate() {
         //https://developer.android.com/guide/app-bundle/sideload-check#missing_splits
-        if (BuildConfig.ISGOOGLEPLAY)
+        /*if (BuildConfig.ISGOOGLEPLAY)
             if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
                 // Skip app initialization.
                 return
-            }
+            }*/
         super.onCreate()
         pre = PreferenceManager.getDefaultSharedPreferences(this)
         Aria.init(this)

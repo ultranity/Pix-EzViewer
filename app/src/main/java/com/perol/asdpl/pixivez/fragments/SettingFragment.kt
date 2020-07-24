@@ -399,7 +399,9 @@ class SettingFragment : PreferenceFragmentCompat() {
         val descTable = binding.formatDescTable
         val sampleTable = binding.formatSampleTable
         val Input = binding.customizedformat
+        val tagSeparator = binding.tagSeparator
         Input.setText(PxEZApp.saveformat)
+        tagSeparator.setText(PxEZApp.TagSeparator)
         val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
         dialog.show {
             title(R.string.saveformat)
@@ -411,6 +413,10 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
                 findPreference<Preference>("filesaveformat")!!.apply {
                     summary = PxEZApp.saveformat
+                }
+                PxEZApp.TagSeparator = "${tagSeparator.text}"
+                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                    putString("TagSeparator", PxEZApp.TagSeparator)
                 }
             }
             negativeButton(android.R.string.cancel)

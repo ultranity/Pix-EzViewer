@@ -150,6 +150,7 @@ class PxEZApp : Application() {
         R18Private = pre.getBoolean("R18Private", true)
         R18Folder = pre.getBoolean("R18Folder", false)
         R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
+        TagSeparator = pre.getString("TagSeparator", "#")!!
         language = pre.getString("language", "0")?.toInt() ?: 0
         storepath = pre.getString(
             "storepath1",
@@ -248,6 +249,9 @@ class PxEZApp : Application() {
         var R18Private: Boolean = true
         lateinit var instance: PxEZApp
         var autochecked = false
+
+        @JvmStatic
+        var TagSeparator: String = "#"
 
         private const val TAG = "PxEZApp"
     }

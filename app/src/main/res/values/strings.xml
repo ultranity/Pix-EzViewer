@@ -143,7 +143,8 @@
     <string name="Painter_Account_desc">画师账号</string>
     <string name="Which_part_desc">第几张(单张不显示,前为"_"或"_p"一并省略)</string>
     <string name="type_desc">原图格式(通常为.jpg或.png,不建议修改)</string>
-    <string name="tag_desc">标签(前5个，用_连接)</string>
+    <string name="tag_desc">标签(自动去重，用连接符连接)</string>
+    <string name="tag_separator">标签连接符：</string>
     <string name="savepath">保存路径</string>
     <string name="startpage">初始页面</string>
     <string name="try_to_login">尝试登录中</string>

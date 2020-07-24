@@ -142,7 +142,8 @@
     <string name="Painter_id_desc">artist ID</string>
     <string name="Painter_Name_desc">artist name</string>
     <string name="Painter_Account_desc">artist account</string>
-    <string name="tag_desc">tags</string>
+    <string name="tag_desc">tags(with automatic de duplication)</string>
+    <string name="tag_separator">tag separator</string>
     <string name="type_desc">extension (like .jpg / .png)</string>
     <string name="create_R18_folder">Separate R-18 folder</string>
     <string name="R18_folder">Custom R-18 folder\n (default: xRestrict/)</string>

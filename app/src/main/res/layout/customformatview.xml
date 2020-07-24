@@ -365,5 +365,31 @@
                     android:textColor="?android:textColorSecondary" />
             </TableRow>
         </TableLayout>
+
+
+        <TextView
+            android:id="@+id/textView8"
+            android:textSize="14dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:text="@string/tag_separator"
+            android:textColor="?android:textColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/format_sample_table"
+            app:layout_constraintTop_toBottomOf="@+id/format_sample_table" />
+
+        <EditText
+            android:id="@+id/tag_separator"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="text"
+            android:text=""
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/format_sample_table"
+            app:layout_constraintStart_toEndOf="@+id/textView8"
+            app:layout_constraintTop_toBottomOf="@+id/format_sample_table"
+            tools:ignore="Autofill,HardcodedText,LabelFor" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -54,6 +54,10 @@
             app:summaryOn="@string/resume_unfinished_task_on"
             app:title="@string/unfinished_task" />
         <SwitchPreference
+            app:key="ShowDownloadToast"
+            app:defaultValue="true"
+            app:title="@string/show_download_toast"/>
+        <SwitchPreference
             app:defaultValue="true"
             app:summary="@string/autocheck_subtext"
             app:key="autocheck"

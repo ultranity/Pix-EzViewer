@@ -211,6 +211,10 @@ class SettingFragment : PreferenceFragmentCompat() {
             PxEZApp.R18Private = newValue as Boolean
             true
         }
+        findPreference<SwitchPreference>("ShowDownloadToast")!!.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.ShowDownloadToast = newValue as Boolean
+            true
+        }
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

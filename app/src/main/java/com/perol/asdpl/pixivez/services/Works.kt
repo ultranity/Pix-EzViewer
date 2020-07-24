@@ -124,11 +124,14 @@ object Works {
         try {
             file.copyTo(targetFile, overwrite = true)
             file.delete()
-            Toasty.success(
-                PxEZApp.instance,
-                PxEZApp.instance.resources.getString(R.string.savesuccess)+"!",
-                Toast.LENGTH_SHORT
-            ).show()
+            if(PxEZApp.ShowDownloadToast)
+            {
+                Toasty.success(
+                    PxEZApp.instance,
+                    PxEZApp.instance.resources.getString(R.string.savesuccess)+"!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             MediaScannerConnection.scanFile(
                 PxEZApp.instance,
                 arrayOf(targetFile.path),
@@ -144,7 +147,9 @@ object Works {
     }
 
     fun imageDownloadAll(illust: Illust) {
-        TToast.startDownload(PxEZApp.instance)
+        if(PxEZApp.ShowDownloadToast) {
+            TToast.startDownload(PxEZApp.instance)
+        }
 
         if (illust.meta_pages.isEmpty()) {
             imgD(illust, null)

@@ -26,7 +26,10 @@
 package com.perol.asdpl.pixivez.databindingadapter
 
 import android.graphics.drawable.Drawable
+import android.media.MediaScannerConnection
+import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.load.DataSource
@@ -34,9 +37,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.io.File
 
 @BindingAdapter("userUrl")
 fun loadImage(imageView: ImageView, url: String?) {
@@ -77,8 +88,46 @@ fun loadImage(imageView: ImageView, url: String?) {
 
 @BindingAdapter("url")
 fun GlideLoadImage(imageView: ImageView, url: String?) {
-    if (url != null)
-        GlideApp.with(imageView.context).load(url).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).error(R.drawable.chobi01).placeholder(R.drawable.chobi01).into(imageView)
+    if (url != null){
+        imageView.setOnClickListener {
+            MaterialAlertDialogBuilder(imageView.context).setMessage(url).setPositiveButton(R.string.download) { _, _ ->
+                runBlocking {
+                    var file: File
+                    withContext(Dispatchers.IO) {
+                        val f = GlideApp.with(imageView).asFile()
+                            .load(url)
+                            .submit()
+                        file = f.get()
+                        val target = File(
+                            PxEZApp.storepath,
+                            "user_${url.substringAfterLast("/")}"
+                        )
+                        file.copyTo(target, overwrite = true)
+                        MediaScannerConnection.scanFile(
+                            PxEZApp.instance, arrayOf(target.path), arrayOf(
+                                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                    target.extension
+                                )
+                            )
+                        ) { _, _ ->
+
+                        }
+                    }
+
+                    Toasty.info(imageView.context, "Saved", Toast.LENGTH_SHORT).show()
+                }
+            }.create().show()
+        }
+        GlideApp.with(imageView.context).load(url)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .transition(withCrossFade())
+            .error(R.drawable.chobi01).placeholder(R.drawable.chobi01)
+            .into(object : ImageViewTarget<Drawable>(imageView) {
+                override fun setResource(resource: Drawable?) {
+                    imageView.setImageDrawable(resource)
+                }
+            })
+    }
     else {
         GlideApp.with(imageView).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
     }

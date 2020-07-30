@@ -2,6 +2,7 @@
 <!--
   ~ MIT License
   ~
+  ~ Copyright (c) 2020 ultranity
   ~ Copyright (c) 2019 Perol_Notsfsssf
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -62,6 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
                     android:fitsSystemWindows="true"
+                    android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.7" />

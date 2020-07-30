@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -37,6 +38,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
+import com.perol.asdpl.pixivez.databindingadapter.GlideLoadImage
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
@@ -67,7 +69,9 @@ class UserMessageFragment : Fragment() {
             textView_tacomment!!.text = mParam1!!.user.comment
         else
             textView_tacomment!!.text = "~"
+        GlideLoadImage(imageview_user_bg,mParam1!!.profile.background_image_url)
         val mInflater = LayoutInflater.from(requireActivity())
+        textView_user_id!!.text = mParam1!!.user.id.toString()
         textView_fans!!.text = mParam1!!.profile.total_mypixiv_users.toString()
         textView_fans!!.setOnClickListener {
             val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
@@ -80,7 +84,7 @@ class UserMessageFragment : Fragment() {
         textView5!!.text = mParam1!!.profile.total_follow_users.toString()
         textView5!!.setOnClickListener { BreaktoUserFollow(mParam1!!.user.id.toLong()) }
         val strings = ArrayList<String>()
-        strings.add("twitter")
+        strings.add("twitter@" + mParam1!!.profile.twitter_account)
         strings.add("pawoo")
         strings.add("ta的作品" + mParam1!!.profile.total_illusts)
         strings.add("ta的收藏" + mParam1!!.profile.total_illust_bookmarks_public)

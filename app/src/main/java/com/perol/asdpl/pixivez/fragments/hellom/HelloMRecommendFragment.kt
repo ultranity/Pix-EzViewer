@@ -112,6 +112,7 @@ class HelloMRecommendFragment : BaseFragment() {
         viewmodel.illusts.observe(this, Observer {
             swiperefresh_recom.isRefreshing = false
             rankingAdapter.setNewData(it)
+            recyclerview_recom?.smoothScrollToPosition(0)
         })
         viewmodel.addillusts.observe(this, Observer {
             if (it != null) {

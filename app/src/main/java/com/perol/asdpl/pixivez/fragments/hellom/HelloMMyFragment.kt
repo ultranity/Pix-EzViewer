@@ -90,6 +90,7 @@ class HelloMMyFragment : BaseFragment() {
         viewmodel.illusts.observe(this, Observer {
             swiperefresh_mym.isRefreshing = false
             rankingAdapter.setNewData(it)
+            recyclerview_mym?.smoothScrollToPosition(0)
         })
         viewmodel.bookmarknum.observe(this, Observer {
             if (it != null) {

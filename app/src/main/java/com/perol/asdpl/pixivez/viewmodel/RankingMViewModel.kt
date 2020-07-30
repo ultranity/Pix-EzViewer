@@ -30,27 +30,27 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 
 class RankingMViewModel : BaseViewModel() {
-    val retrofitRespository = RetrofitRepository.getInstance()
+    val retrofitRepository = RetrofitRepository.getInstance()
     val nexturl = MutableLiveData<String>()
     val addillusts = MutableLiveData<ArrayList<Illust>>()
     val illusts = MutableLiveData<ArrayList<Illust>>()
     val bookmarknum = MutableLiveData<Illust>()
     fun first(mode: String, picdata: String?) {
-        retrofitRespository.getIllustRanking(mode, picdata).subscribe({
+        retrofitRepository.getIllustRanking(mode, picdata).subscribe({
             nexturl.value = it.next_url
             illusts.value = ArrayList<Illust>(it.illusts)
         }, { it.printStackTrace() }, {}).add()
     }
 
     fun onRefresh(mode: String, picdata: String?) {
-        retrofitRespository.getIllustRanking(mode, picdata).subscribe({
+        retrofitRepository.getIllustRanking(mode, picdata).subscribe({
             nexturl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
     }
 
     fun onLoadMore() {
-        retrofitRespository.getNextIllustRecommended(nexturl.value!!).subscribe({
+        retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
@@ -58,18 +58,18 @@ class RankingMViewModel : BaseViewModel() {
 
     fun onItemChildLongClick(id: Illust) {
         if (id.is_bookmarked) {
-            retrofitRespository.postUnlikeIllust(id.id).subscribe({
+            retrofitRepository.postUnlikeIllust(id.id).subscribe({
                 bookmarknum.value = id
             }, {}, {}).add()
         } else {
-            retrofitRespository.postLikeIllust(id.id)!!.subscribe({
+            retrofitRepository.postLikeIllust(id.id)!!.subscribe({
                 bookmarknum.value = id
             }, {}, {}).add()
         }
     }
 
     fun datePick(mode: String, pickDate: String?) {
-        retrofitRespository.getIllustRanking(mode, pickDate).subscribe({
+        retrofitRepository.getIllustRanking(mode, pickDate).subscribe({
             nexturl.value = it.next_url
             illusts.value = ArrayList<Illust>(it.illusts)
         }, {}, {}).add()

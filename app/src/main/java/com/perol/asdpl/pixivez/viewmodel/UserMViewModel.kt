@@ -38,13 +38,13 @@ import okhttp3.ResponseBody
 import java.io.File
 
 class UserMViewModel : BaseViewModel() {
-    var retrofitRespository = RetrofitRepository.getInstance()
+    var retrofitRepository = RetrofitRepository.getInstance()
     var userDetail = MutableLiveData<UserDetailResponse>()
     var isfollow = MutableLiveData<Boolean>()
     var hideBookmarked = MutableLiveData(false)
 
     fun getData(userid: Long) {
-        retrofitRespository.getUserDetail(userid).subscribe({
+        retrofitRepository.getUserDetail(userid).subscribe({
             userDetail.value = it
             isfollow.value = it.user.isIs_followed
         }, {
@@ -54,11 +54,11 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabclick(userid: Long) {
         if (isfollow.value!!) {
-            retrofitRespository.postunfollowUser(userid).subscribe({
+            retrofitRepository.postunfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
         } else {
-            retrofitRespository.postfollowUser(userid, "public").subscribe({
+            retrofitRepository.postfollowUser(userid, "public").subscribe({
                 isfollow.value = true
             }, {}, {}).add()
         }
@@ -66,10 +66,10 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabLongClick(userid: Long) {
         if (isfollow.value!!)
-            retrofitRespository.postunfollowUser(userid).subscribe({
+            retrofitRepository.postunfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
-        else retrofitRespository.postfollowUser(userid, "private").subscribe({
+        else retrofitRepository.postfollowUser(userid, "private").subscribe({
             isfollow.value = true
         }, {}, {}).add()
     }
@@ -90,7 +90,7 @@ class UserMViewModel : BaseViewModel() {
         builder.setType(MultipartBody.FORM)
         val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         builder.addFormDataPart("profile_image", file.name, body)
-        return retrofitRespository.postUserProfileEdit(builder.build().part(0))
+        return retrofitRepository.postUserProfileEdit(builder.build().part(0))
     }
 
 }

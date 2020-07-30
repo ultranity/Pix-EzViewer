@@ -38,7 +38,7 @@ import io.reactivex.schedulers.Schedulers
 class TrendTagViewModel : BaseViewModel() {
     var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     var searchhistroy = MutableLiveData<List<SearchHistoryEntity>>()
-    var retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
+    var retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
 
     init {
         resethistory()
@@ -77,7 +77,7 @@ class TrendTagViewModel : BaseViewModel() {
         appDatabase.searchhistoryDao().deletehistory()
     }
 
-    fun getIllustTrendTags() = retrofitRespository.getIllustTrendTags()
+    fun getIllustTrendTags() = retrofitRepository.getIllustTrendTags()
     fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity) = Observable.create<Int> {
         appDatabase.searchhistoryDao().deleteHistoryEntity(searchHistoryEntity)
         it.onNext(1)

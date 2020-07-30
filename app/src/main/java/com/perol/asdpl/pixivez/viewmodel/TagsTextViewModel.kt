@@ -35,11 +35,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class TagsTextViewModel : BaseViewModel() {
-    val retrofitRespository = RetrofitRepository.getInstance()
+    val retrofitRepository = RetrofitRepository.getInstance()
     var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     val tags = MutableLiveData<List<Tags>>()
     fun onQueryTextChange(newText: String) {
-        retrofitRespository.getSearchAutoCompleteKeywords(newText).subscribe({
+        retrofitRepository.getSearchAutoCompleteKeywords(newText).subscribe({
             tags.value = it.tags
         }, {}).add()
     }

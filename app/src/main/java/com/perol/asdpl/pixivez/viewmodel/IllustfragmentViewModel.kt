@@ -48,7 +48,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     var isPreview = false
     var illusts = MutableLiveData<ArrayList<Illust>>()
     var addIllusts = MutableLiveData<ArrayList<Illust>>()
-    var retrofitRespository = RetrofitRepository.getInstance()
+    var retrofitRepository = RetrofitRepository.getInstance()
     var nexturl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
@@ -62,7 +62,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     val endDate = MutableLiveData<Calendar>()
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefresh.value = true
-        retrofitRespository.getSearchIllustPreview(word, sort, search_target, null, duration)
+        retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
             .subscribe({
                 illusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
@@ -82,7 +82,7 @@ class IllustfragmentViewModel : BaseViewModel() {
         if (isPreview) {
             setPreview(word, sortT[sort.value!!], searchTargetT[searchTarget.value!!], null)
         } else
-            retrofitRespository.getSearchIllust(
+            retrofitRepository.getSearchIllust(
                 word,
                 sortT[sort.value!!],
                 searchTargetT[searchTarget.value!!],
@@ -101,7 +101,7 @@ class IllustfragmentViewModel : BaseViewModel() {
 
     fun onLoadMoreListen() {
         if (nexturl.value != null) {
-            retrofitRespository.getNextIllustRecommended(nexturl.value!!).subscribe({
+            retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
                 addIllusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
             }, {}, {}).add()

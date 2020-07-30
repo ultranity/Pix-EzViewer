@@ -189,9 +189,9 @@ class PictureXFragment : BaseFragment() {
                 //    imageViewUser_picX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
                 imageViewUser_picX.setOnLongClickListener { ot->
                     val id = it.user.id
-                    val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
+                    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
                     if (it.user.is_followed) {
-                        retrofitRespository.postunfollowUser(id).subscribe({ pt->
+                        retrofitRepository.postunfollowUser(id).subscribe({ pt->
                             val typedValue = TypedValue()
                             requireContext().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
                             val colorPrimary = typedValue.resourceId
@@ -200,7 +200,7 @@ class PictureXFragment : BaseFragment() {
                         }, {}, {}
                         )
                     } else {
-                        retrofitRespository.postfollowUser(id, "public").subscribe({ pt->
+                        retrofitRepository.postfollowUser(id, "public").subscribe({ pt->
                             it.user.is_followed = true
                             imageViewUser_picX.setBorderColor(Color.YELLOW)
                         }, {}, {})

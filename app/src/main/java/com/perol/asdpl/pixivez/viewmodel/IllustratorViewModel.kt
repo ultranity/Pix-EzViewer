@@ -29,7 +29,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 
 class IllustratorViewModel : BaseViewModel() {
-    val retrofitRespository = RetrofitRepository.getInstance()
+    val retrofitRepository = RetrofitRepository.getInstance()
     val userpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>>()
     val adduserpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>>()
     val nexturl = MutableLiveData<String>()
@@ -41,12 +41,12 @@ class IllustratorViewModel : BaseViewModel() {
 
     fun first(long: Long, restrict: String, param2: Boolean) {
         if (param2) {
-            retrofitRespository.getUserFollowing(long, restrict).subscribe({
+            retrofitRepository.getUserFollowing(long, restrict).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
             }, {}, {}).add()
         } else {
-            retrofitRespository.getUserFollower(long).subscribe({
+            retrofitRepository.getUserFollower(long).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
             }, {}, {}).add()
@@ -54,7 +54,7 @@ class IllustratorViewModel : BaseViewModel() {
     }
 
     fun onLoadMore(string: String) {
-        retrofitRespository.getNextUser(string).subscribe({
+        retrofitRepository.getNextUser(string).subscribe({
             adduserpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
             nexturl.value = it.next_url
         }, {}, {}).add()
@@ -62,13 +62,13 @@ class IllustratorViewModel : BaseViewModel() {
 
     fun onRefresh(long: Long, restrict: String, param2: Boolean) {
         if (param2) {
-            retrofitRespository.getUserFollowing(long, restrict).subscribe({
+            retrofitRepository.getUserFollowing(long, restrict).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
                 refreshcomplete.value = !refreshcomplete.value!!
             }, {}, {}).add()
         } else {
-            retrofitRespository.getUserFollower(long).subscribe({
+            retrofitRepository.getUserFollower(long).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
                 refreshcomplete.value = !refreshcomplete.value!!

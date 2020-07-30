@@ -32,17 +32,17 @@ import io.reactivex.Observable
 class UserViewModel : BaseViewModel() {
     var users = MutableLiveData<SearchUserResponse>()
 
-    var retrofitRespository = RetrofitRepository.getInstance()
+    var retrofitRepository = RetrofitRepository.getInstance()
     var nexturl = MutableLiveData<String>()
     fun getNextUsers(word: String) {
-        retrofitRespository.getNextUser(word).subscribe({
+        retrofitRepository.getNextUser(word).subscribe({
             users.value = it
             nexturl.value = it.next_url
         }, {}, {}).add()
     }
 
     fun getSearchUser(word: String) {
-        val c = retrofitRespository.create(retrofitRespository.getSearchUser(word) as Observable<Any>) as Observable<SearchUserResponse>
+        val c = retrofitRepository.create(retrofitRepository.getSearchUser(word) as Observable<Any>) as Observable<SearchUserResponse>
         c.subscribe(
                 {
                     users.value = it

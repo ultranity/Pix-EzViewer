@@ -40,7 +40,7 @@ import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
-    val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
+    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     val aboutPics = MutableLiveData<ArrayList<Illust>>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()
@@ -72,13 +72,13 @@ class PictureXViewModel : BaseViewModel() {
 
     }
 
-    fun loadGif(id: Long) = retrofitRespository.getUgoiraMetadata(id)
+    fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)
 
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"
         val file = File(zipPath)
         progress.value = ProgressInfo(0, 0)
-        retrofitRespository.getGIFFile(medium).subscribe({ response ->
+        retrofitRepository.getGIFFile(medium).subscribe({ response ->
             val inputStream = response.byteStream()
             Observable.create<Int> { ob ->
                 val output = file.outputStream()
@@ -139,7 +139,7 @@ class PictureXViewModel : BaseViewModel() {
                     )
             }).start()
         } else {
-            retrofitRespository.getIllust(toLong).subscribe({
+            retrofitRepository.getIllust(toLong).subscribe({
                 illustDetail.value = it!!.illust
                 likeIllust.value = it.illust.is_bookmarked
                 Observable.just(1).observeOn(Schedulers.io()).subscribe { ot ->
@@ -167,7 +167,7 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun getRelative(long: Long) {
-        disposables.add(retrofitRespository.getIllustRecommended(long).subscribe({
+        disposables.add(retrofitRepository.getIllustRecommended(long).subscribe({
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
         }, {}, {}))
@@ -175,8 +175,8 @@ class PictureXViewModel : BaseViewModel() {
 
     fun fabClick() {
         val id = illustDetail.value!!.id
-        val postUnlikeIllust = retrofitRespository.postUnlikeIllust(id)
-        val postLikeIllust = retrofitRespository.postLikeIllust(id)
+        val postUnlikeIllust = retrofitRepository.postUnlikeIllust(id)
+        val postLikeIllust = retrofitRepository.postLikeIllust(id)
         if (illustDetail.value!!.is_bookmarked) {
             postUnlikeIllust.subscribe({
                 likeIllust.value = false
@@ -194,7 +194,7 @@ class PictureXViewModel : BaseViewModel() {
 
     fun fabOnLongClick() {
         if (illustDetail.value != null)
-            retrofitRespository
+            retrofitRepository
                 .getBookmarkDetail(illustDetail.value!!.id)
                 .subscribe(
                     { tags.value = it.bookmark_detail }
@@ -220,13 +220,13 @@ class PictureXViewModel : BaseViewModel() {
                 "private"
             }
 
-            retrofitRespository.postLikeIllustWithTags(toLong, string, arrayList).subscribe({
+            retrofitRepository.postLikeIllustWithTags(toLong, string, arrayList).subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
             }, {}, {}).add()
 
         } else {
-            retrofitRespository.postUnlikeIllust(toLong)
+            retrofitRepository.postUnlikeIllust(toLong)
                 .subscribe({
                     likeIllust.value = false
                     illustDetail.value!!.is_bookmarked = false
@@ -237,12 +237,12 @@ class PictureXViewModel : BaseViewModel() {
     fun likeUser() {
         val id = illustDetail.value!!.user.id
         if (!illustDetail.value!!.user.is_followed) {
-            retrofitRespository.postfollowUser(id, "public").subscribe({
+            retrofitRepository.postfollowUser(id, "public").subscribe({
                 followUser.value = true
                 illustDetail.value!!.user.is_followed = true
             }, {}, {}).add()
         } else {
-            retrofitRespository.postunfollowUser(id).subscribe({
+            retrofitRepository.postunfollowUser(id).subscribe({
                 followUser.value = false
                 illustDetail.value!!.user.is_followed = false
             }, {}, {}

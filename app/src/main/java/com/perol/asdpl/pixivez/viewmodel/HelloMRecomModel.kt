@@ -26,10 +26,12 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.RecommendResponse
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
+import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
@@ -64,6 +66,7 @@ class HelloMRecomModel : BaseViewModel() {
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
+        oldBanner = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true)
         retrofitRepository.getPixivison("all").subscribe({
             if(!oldBanner)
                 nextPixivisonUrl.value = it.next_url

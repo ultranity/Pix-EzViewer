@@ -2,12 +2,17 @@ package com.perol.asdpl.pixivez.dialog
 
 import android.app.Dialog
 import android.content.*
+import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Base64
 import android.webkit.MimeTypeMap
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,13 +26,23 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.*
 
+
 class SupportDialog : DialogFragment() {
 
     val ThanksArray = listOf(
-        "**涛",
-        "**涵",
+        "**涛:支持功能开发\n本地识别图片pid批量重命名 进度50%",
+        "*蒂",
         "C*a",
-        "*蒂"
+        "H*m",
+        "Y*H",
+        "**A",
+        "**涵",
+        "*喵",
+        "*宋",
+        "*恒",
+        "*苦",
+        "*枣",
+        "*少"
     )
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")
@@ -79,12 +94,24 @@ class SupportDialog : DialogFragment() {
             SharedPreferencesServices.getInstance().setInt("lastsupport",
                 calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY))
 
+            val totaldownloadcount = SharedPreferencesServices.getInstance().getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size?:0)
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_thanks, null)
             val re = view.findViewById<RecyclerView>(R.id.list)
+            val msg = it.layoutInflater.inflate(R.layout.dialog_weixin_ultranity, null)
+            val static = msg.findViewById<TextView>(R.id.textStatic)
+            val spannableString = SpannableString(getString(R.string.support_static).format(totaldownloadcount))
+            val colorSpan = ForegroundColorSpan(Color.parseColor("#F44336"))
+            spannableString.setSpan(
+                colorSpan,
+                getString(R.string.support_static).length - 6,
+                spannableString.length,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+            )
+            static.text = spannableString
             re.adapter = ThanksAdapter(R.layout.simple_list_item, ThanksArray).apply {
-                setHeaderView(it.layoutInflater.inflate(R.layout.dialog_weixin_ultranity, null))
+                setHeaderView(msg)
             }
             re.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 

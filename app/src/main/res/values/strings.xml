@@ -102,6 +102,7 @@
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>
     <string name="support_text">"PixEz对您有帮助吗？\n 您的支持将鼓励我持续开发~\n 可以通过邮箱发送信息认领捐赠！\n 截图后点击跳转扫描"</string>
     <string name="support_popup_title">支持开发者：</string>
+    <string name="support_static">粗略统计，您使用PixEz收图张数已达：%1$s !</string>
     <string name="ali">跳转到支付宝</string>
     <string name="wechat" >跳转到微信</string>
     <string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们,以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>

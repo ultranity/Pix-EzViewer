@@ -111,7 +111,7 @@ class SettingActivity : RinkActivity() {
         if ((calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
                 -SharedPreferencesServices.getInstance()
                     .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 100)
-             )>= 5*24) {
+             )>= 6*24) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         }
         else {

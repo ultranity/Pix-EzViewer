@@ -5,7 +5,7 @@
         android:key="Support"
         android:title="Support">
         <Preference
-            android:title="支持"
+            android:title="@string/supporttitle"
             app:key="support"
             app:summary="如果你觉得这个应用还不错，支持一下吧" />
         <Preference
@@ -55,7 +55,7 @@
         android:title="捐赠"
         app:isPreferenceVisible="false">
         <Preference
-            android:title="当前开发者"
+            android:title="@string/current_developer"
             app:key="ultranity"
             app:selectable="true"
             app:enableCopying="true"

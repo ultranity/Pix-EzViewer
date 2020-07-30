@@ -136,6 +136,7 @@
     <string name="wechat">WeChat</string>
     <string name="support_text">"Your support will motivate me to\n equip this app with more useful features~"</string>
     <string name="support_popup_title">Support via..</string>
+    <string name="support_static">The No. of pics you have collected is: %1$s !</string>
     <string name="filesaveformat">Filename format</string>
     <string name="filesaveformatstring">Enter format string:</string>
     <string name="Illust_id_desc">illust ID</string>

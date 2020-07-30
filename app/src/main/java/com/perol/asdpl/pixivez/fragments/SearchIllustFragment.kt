@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.fragments
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,6 +39,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
 import com.perol.asdpl.pixivez.adapters.RankingAdapter
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
@@ -299,8 +301,19 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private fun updateillust(it: ArrayList<Illust>?) {
         if (it != null) {
             searchIllustAdapter.setNewData(it)
+            if(it.size == 0){
+                param1!!.toLongOrNull()?.let {
+                    val bundle = Bundle()
+                    val arrayList = LongArray(1)
+                    arrayList[0] = it
+                    bundle.putLongArray("illustidlist", arrayList)
+                    bundle.putLong("illustid", it)
+                    val intent = Intent(requireActivity(), PictureActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
+            }
         }
-
     }
 
     companion object {

@@ -72,7 +72,6 @@ class IllustfragmentViewModel : BaseViewModel() {
             }, {}).add()
     }
 
-
     fun firstSetData(word: String) {
         isRefresh.value = true
         if ((startDate.value != null || endDate.value != null) && (startDate.value != null && endDate.value != null) && startDate.value!!.timeInMillis >= endDate.value!!.timeInMillis) {

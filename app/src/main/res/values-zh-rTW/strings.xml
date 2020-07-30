@@ -7,7 +7,7 @@
 
     <string name="focus">關注</string>
     <string name="thanks">感謝腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61幫助我測試的弹幕委员会的熱心你群群友們，以及提供會員帳號的果干辣，還有積極提供建議的吸血姬，逢田梨香子的老公,吃猫的咸鱼等熱心用戶們</string>
-    <string name="title_activity_saucenao">SaucenaoActivity</string>
+    <string name="title_activity_saucenao">Saucenao Search</string>
     <string name="title_activity_search_result">SearchResultActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

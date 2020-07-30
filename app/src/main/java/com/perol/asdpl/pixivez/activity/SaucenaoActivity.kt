@@ -230,6 +230,7 @@ class SaucenaoActivity : RinkActivity() {
 
         if (arrayList.isNotEmpty()) {
             val it = arrayList.toLongArray()
+            Toasty.success(this, "id: "+it[0].toString(), Toast.LENGTH_LONG).show()
             bundle.putLongArray("illustidlist", it)
             bundle.putLong("illustid", it[0])
             val intent2 = Intent(applicationContext, PictureActivity::class.java)

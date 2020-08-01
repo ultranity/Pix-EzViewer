@@ -41,7 +41,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_account.*
 import kotlinx.coroutines.runBlocking
 
-class AccountActivity : AppCompatActivity() {
+class AccountActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()

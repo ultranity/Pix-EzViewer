@@ -42,10 +42,10 @@
         tools:context=".activity.UserMActivity">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:fitsSystemWindows="true"
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
             >
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"

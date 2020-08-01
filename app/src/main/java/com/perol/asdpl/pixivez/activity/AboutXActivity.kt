@@ -31,7 +31,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import kotlinx.android.synthetic.main.activity_about_x.*
 
-class AboutXActivity : AppCompatActivity() {
+class AboutXActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

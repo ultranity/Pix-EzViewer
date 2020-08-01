@@ -8,6 +8,7 @@
     tools:context="com.perol.asdpl.pixivez.activity.BlockActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
+        android:fitsSystemWindows="true"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"

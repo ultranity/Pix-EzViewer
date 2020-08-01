@@ -8,6 +8,7 @@
     tools:context="com.perol.asdpl.pixivez.activity.SettingActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

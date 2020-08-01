@@ -25,6 +25,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -34,6 +35,8 @@ abstract class RinkActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LanguageUtil.setLanguage(this, PxEZApp.language)
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     }
 }
 

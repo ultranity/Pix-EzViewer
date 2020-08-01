@@ -51,7 +51,7 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_theme.*
 
-class ThemeActivity : AppCompatActivity() {
+class ThemeActivity : RinkActivity() {
     class ThemeFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pre_theme)

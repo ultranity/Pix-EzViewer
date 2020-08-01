@@ -25,10 +25,10 @@
         android:textSize="15dp" />
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:fitsSystemWindows="true"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar

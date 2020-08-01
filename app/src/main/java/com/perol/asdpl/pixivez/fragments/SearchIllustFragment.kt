@@ -147,7 +147,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         recyclerview_illust.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         fab.setOnClickListener {
-            val builder = MaterialAlertDialogBuilder(activity)
+            val builder = MaterialAlertDialogBuilder(requireActivity())
             val arrayList = arrayOfNulls<String>(starnum.size)
             for (i in starnum.indices) {
                 if (starnum[i] == 0)

@@ -87,7 +87,7 @@ class TagsShowDialog : DialogFragment() {
         val countList = bundle.getIntegerArrayList("counts")
         val id = bundle.getLong("id")
         var nexturl = bundle.getString("nexturl")
-        val builder = MaterialAlertDialogBuilder(activity)
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         val dialogView = inflater.inflate(R.layout.view_tagsshow, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerview_tags)
         val all = dialogView.findViewById<ConstraintLayout>(R.id.all)

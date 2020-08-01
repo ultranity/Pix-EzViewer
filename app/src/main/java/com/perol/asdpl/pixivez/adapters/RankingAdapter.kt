@@ -75,77 +75,133 @@ class RankingAdapter(
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     init {
-        setOnItemClickListener { adapter, view, position ->
-            val bundle = Bundle()
-            //bundle.putLong("illustid", this.data[position].id)
-            //val illustlist = LongArray(this.data.count())
-            //for (i in this.data.indices) {
-            //    illustlist[i] = this.data[i].id
-            //}
-            //bundle.putParcelable("illust", this.data[position])
-            bundle.putInt("position", position)
-            DataHolder.setIllustsList(this.data as ArrayList<Illust>)
-            //  bundle.putParcelable(this.data[position].id.toString(), this.data[position])
-            val intent = Intent(context, PictureActivity::class.java)
-            intent.putExtras(bundle)
-            if (PxEZApp.animationEnable) {
-                val mainimage = view.findViewById<View>(R.id.item_img)
-                val title = view.findViewById<TextView>(R.id.textview_title)
-                //if (singleLine) title.maxLines = 1
-                val userImage = view.findViewById<View>(R.id.imageview_user)
-
-                val options = ActivityOptions.makeSceneTransitionAnimation(
-                    context as Activity,
-                    Pair.create(
-                        mainimage,
-                        "mainimage"
-                    ),
-                    Pair.create(title, "title"),
-                    Pair.create(userImage, "userimage")
-                )
-                ContextCompat.startActivity(context, intent, options.toBundle())
-            } else
-                ContextCompat.startActivity(context, intent, null)
-        }
-        setOnItemLongClickListener { adapter, view, position ->
-            //show detail of illust
-            (adapter.data as ArrayList<Illust?>).get(position)?.let{
-                val detailstring =
-                        "id: " + it.id.toString() +
-                        "caption: " + it.caption.toString() + "create_date: " + it.create_date.toString() +
-                        "width: " + it.width.toString() + "height: " + it.height.toString() +
-                        //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
-                        "user: " + it.user.name +
-                        "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
-                        "total_bookmarks: " + it.total_bookmarks.toString() +
-                        "total_view: " + it.total_view.toString() +
-                        "user account: " + it.user.account + "\n" +
-                        "tools: " + it.tools.toString() + "\n" +
-                        "type: " + it.type + "\n" +
-                        "page_count: " + it.page_count.toString() + "\n" +
-                        "visible: " + it.visible.toString() + "\n" +
-                        "is_muted: " + it.is_muted.toString() + "\n" +
-                        "sanity_level: " + it.sanity_level.toString() + "\n" +
-                        "restrict: " + it.restrict.toString() + "\n" +
-                        "x_restrict: " + it.x_restrict.toString()
-                MaterialAlertDialogBuilder(context as Activity)
-                    .setMessage(detailstring)
-                    .setTitle("Detail")
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
+        if (PxEZApp.CollectMode == 2) {
+            setOnItemClickListener { adapter, view, position ->
+                (adapter.data as ArrayList<Illust?>).get(position)?.let {
+                    val item = it
+                    Works.imageDownloadAll(item)
+                    if (!item.is_bookmarked){
+                        retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
+                        view.findViewById<MaterialButton>(R.id.like).setTextColor(
+                                ContextCompat.getColor(context, badgeTextColor)
+                            )
+                            item.is_bookmarked = true
+                        }, {}, {})
                     }
-                    .create().show()
+
+                    if (!item.user.is_followed) {
+                        retrofitRepository.postfollowUser(item.user.id, "public").subscribe({
+                            item.user.is_followed = true
+                            view.findViewById<NiceImageView>(R.id.imageview_user).setBorderColor(ContextCompat.getColor(context, badgeTextColor)) // Color.YELLOW
+
+                        }, {}, {})
+                    }
+                }
             }
-            true
+            setOnItemLongClickListener { adapter, view, position ->
+                val bundle = Bundle()
+                bundle.putInt("position", position)
+                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                val intent = Intent(context, PictureActivity::class.java)
+                intent.putExtras(bundle)
+                if (PxEZApp.animationEnable) {
+                    val mainimage = view.findViewById<View>(R.id.item_img)
+                    val title = view.findViewById<TextView>(R.id.textview_title)
+                    val userImage = view.findViewById<View>(R.id.imageview_user)
+
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        context as Activity,
+                        Pair.create(
+                            mainimage,
+                            "mainimage"
+                        ),
+                        Pair.create(title, "title"),
+                        Pair.create(userImage, "userimage")
+                    )
+                    ContextCompat.startActivity(context, intent, options.toBundle())
+                } else
+                    ContextCompat.startActivity(context, intent, null)
+                true
+            }
+        }
+        else {
+            setOnItemClickListener { adapter, view, position ->
+                val bundle = Bundle()
+                //bundle.putLong("illustid", this.data[position].id)
+                //val illustlist = LongArray(this.data.count())
+                //for (i in this.data.indices) {
+                //    illustlist[i] = this.data[i].id
+                //}
+                //bundle.putParcelable("illust", this.data[position])
+                bundle.putInt("position", position)
+                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                //  bundle.putParcelable(this.data[position].id.toString(), this.data[position])
+                val intent = Intent(context, PictureActivity::class.java)
+                intent.putExtras(bundle)
+                if (PxEZApp.animationEnable) {
+                    val mainimage = view.findViewById<View>(R.id.item_img)
+                    val title = view.findViewById<TextView>(R.id.textview_title)
+                    //if (singleLine) title.maxLines = 1
+                    val userImage = view.findViewById<View>(R.id.imageview_user)
+
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        context as Activity,
+                        Pair.create(
+                            mainimage,
+                            "mainimage"
+                        ),
+                        Pair.create(title, "title"),
+                        Pair.create(userImage, "userimage")
+                    )
+                    ContextCompat.startActivity(context, intent, options.toBundle())
+                } else
+                    ContextCompat.startActivity(context, intent, null)
+            }
+            setOnItemLongClickListener { adapter, view, position ->
+                //show detail of illust
+                (adapter.data as ArrayList<Illust?>).get(position)?.let {
+                    val detailstring =
+                        "id: " + it.id.toString() +
+                                "caption: " + it.caption.toString() + "create_date: " + it.create_date.toString() +
+                                "width: " + it.width.toString() + "height: " + it.height.toString() +
+                                //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
+                                "user: " + it.user.name +
+                                "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
+                                "total_bookmarks: " + it.total_bookmarks.toString() +
+                                "total_view: " + it.total_view.toString() +
+                                "user account: " + it.user.account + "\n" +
+                                "tools: " + it.tools.toString() + "\n" +
+                                "type: " + it.type + "\n" +
+                                "page_count: " + it.page_count.toString() + "\n" +
+                                "visible: " + it.visible.toString() + "\n" +
+                                "is_muted: " + it.is_muted.toString() + "\n" +
+                                "sanity_level: " + it.sanity_level.toString() + "\n" +
+                                "restrict: " + it.restrict.toString() + "\n" +
+                                "x_restrict: " + it.x_restrict.toString()
+                    MaterialAlertDialogBuilder(context as Activity)
+                        .setMessage(detailstring)
+                        .setTitle("Detail")
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                        }
+                        .create().show()
+                }
+                true
+            }
         }
     }
 
-    @SuppressLint("InflateParams")
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
+
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+        colorPrimary = typedValue.resourceId
+        context.theme.resolveAttribute(R.attr.badgeTextColor, typedValue, true)
+        badgeTextColor = typedValue.resourceId
     }
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (hideBookmarked && item.is_bookmarked){
@@ -185,8 +241,22 @@ class RankingAdapter(
         val colorPrimary = typedValue.resourceId
         context.theme.resolveAttribute(R.attr.badgeTextColor, typedValue, true)
         val badgeTextColor = typedValue.resourceId
-        helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-            Works.imageDownloadAll(item)
+        if (PxEZApp.CollectMode == 1) {
+            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                Works.imageDownloadAll(item)
+                if (!item.is_bookmarked){
+                    retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
+                        helper.getView<MaterialButton>(R.id.like).setTextColor(
+                            ContextCompat.getColor(context, badgeTextColor)
+                        )
+                        item.is_bookmarked = true
+                    }, {}, {})
+                }
+            }
+        }else{
+            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                Works.imageDownloadAll(item)
+            }
         }
         helper.setText(R.id.textview_title, item.title)
         if (!singleLine) helper.setText(R.id.textview_context, item.user.name)
@@ -199,11 +269,10 @@ class RankingAdapter(
             }
         )
 
-        helper.getView<MaterialButton>((R.id.like)).setOnClickListener { v ->
+        helper.getView<MaterialButton>(R.id.like).setOnClickListener { v ->
             val textView = v as Button
-            val retrofit = RetrofitRepository.getInstance()
             if (item.is_bookmarked) {
-                retrofit.postUnlikeIllust(item.id).subscribe({
+                retrofitRepository.postUnlikeIllust(item.id).subscribe({
                     textView.setTextColor(ContextCompat.getColor(context, colorPrimary))
                     item.is_bookmarked = false
                 }, {}, {})
@@ -213,7 +282,7 @@ class RankingAdapter(
                 } else {
                     "public"
                 }
-                retrofit.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
+                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
                     textView.setTextColor(
                         ContextCompat.getColor(context, badgeTextColor)
                     )
@@ -263,14 +332,13 @@ class RankingAdapter(
         }
         imageViewUser.setOnLongClickListener {
             val id = item.user.id
-            val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
             if (!item.user.is_followed) {
-                retrofitRespository.postfollowUser(id, "public").subscribe({
+                retrofitRepository.postfollowUser(id, "public").subscribe({
                     item.user.is_followed = true
                     imageViewUser.setBorderColor(ContextCompat.getColor(context, badgeTextColor)) // Color.YELLOW
                 }, {}, {})
             } else {
-                retrofitRespository.postunfollowUser(id).subscribe({
+                retrofitRepository.postunfollowUser(id).subscribe({
                     item.user.is_followed = false
                     imageViewUser.setBorderColor(ContextCompat.getColor(context, colorPrimary))
                 }, {}, {}

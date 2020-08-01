@@ -31,7 +31,9 @@ import com.chad.library.adapter.base.listener.OnLoadMoreListener
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.PxEZApp
 
 // basic Adapter for image item
 //TODO: reuse more code
@@ -42,8 +44,10 @@ abstract class PicItemAdapter(
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     abstract var hideBookmarked: Boolean
+    var colorPrimary: Int = 0
+    open var badgeTextColor: Int = 0
     abstract var blockTags: List<String>
-
+    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     fun loadMoreEnd() {
         this.loadMoreModule?.loadMoreEnd()
     }
@@ -54,6 +58,14 @@ abstract class PicItemAdapter(
 
     fun loadMoreFail() {
         this.loadMoreModule?.loadMoreFail()
+    }
+
+    fun x_restrict(item: Illust): String{
+        return if (PxEZApp.R18Private && item.x_restrict == 1) {
+            "private"
+        } else {
+            "public"
+        }
     }
 
     fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener, recyclerView: RecyclerView?) {

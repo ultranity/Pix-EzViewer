@@ -61,4 +61,9 @@
         <item>RESUME</item>
         <item>CANCEL</item>
     </string-array>
+    <string-array name="CollectMode">
+        <item>Normal</item>
+        <item>Auto Like when download</item>
+        <item>click to download+like+follow, Long click to pic details</item>
+    </string-array>
 </resources>

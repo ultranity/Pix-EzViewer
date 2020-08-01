@@ -230,6 +230,7 @@
     <string name="supporttitle">支持</string>
     <string name="viewreport">查看报告</string>
     <string name="needtorestart">重启应用生效</string>
+    <string name="collectmode">收图模式</string>
     <string name="animation">更多动画</string>
     <string name="animation_summary">关闭可节省转场动画的运存</string>
     <string name="show_user_img_searchr">搜索页面显示用户头像</string>

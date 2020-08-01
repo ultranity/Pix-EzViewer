@@ -39,14 +39,21 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
         <SwitchPreference
+            app:key="disableproxy"
+            app:title="@string/proxy" />
+        <SwitchPreference
             android:summaryOn="@string/h_is_ok"
             app:defaultValue="false"
             app:key="r18on"
             app:summaryOff="@string/h_not_ok"
             app:title="@string/_18" />
-        <SwitchPreference
-            app:key="disableproxy"
-            app:title="@string/proxy" />
+        <ListPreference
+            app:key="CollectMode"
+            android:entries="@array/CollectMode"
+            android:entryValues="@array/CollectMode_value"
+            app:defaultValue= "0"
+            app:title="@string/collectmode"
+            app:useSimpleSummaryProvider="true"/>
         <SwitchPreference
             app:defaultValue="true"
             app:key="resume_unfinished_task"
@@ -57,18 +64,6 @@
             app:key="ShowDownloadToast"
             app:defaultValue="true"
             app:title="@string/show_download_toast"/>
-        <SwitchPreference
-            app:defaultValue="true"
-            app:summary="@string/autocheck_subtext"
-            app:key="autocheck"
-            app:title="@string/auto_check_update" />
-        <SwitchPreference
-            android:key="crashreport"
-            app:defaultValue="true"
-            app:title="@string/crash_report" />
-        <Preference
-            app:key="viewreport"
-            android:title="@string/viewreport"/>
     </PreferenceCategory>
     <PreferenceCategory app:title="UI">
         <SwitchPreference
@@ -148,5 +143,14 @@
             app:title="Language" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="DEV">
+        <SwitchPreference
+            android:key="crashreport"
+            app:defaultValue="true"
+            app:title="@string/crash_report" />
+        <Preference
+            app:key="viewreport"
+            android:title="@string/viewreport"/>
+    </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

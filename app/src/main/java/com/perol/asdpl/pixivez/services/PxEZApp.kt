@@ -148,6 +148,7 @@ class PxEZApp : Application() {
         )
         animationEnable = pre.getBoolean("animation", true)
         ShowDownloadToast = pre.getBoolean("ShowDownloadToast", true)
+        CollectMode = pre.getString("CollectMode", "0")?.toInt() ?: 0
         R18Private = pre.getBoolean("R18Private", true)
         R18Folder = pre.getBoolean("R18Folder", false)
         R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
@@ -251,6 +252,10 @@ class PxEZApp : Application() {
 
         @JvmStatic
         var ShowDownloadToast: Boolean = true
+
+        @JvmStatic
+        var CollectMode: Int = 0
+
         lateinit var instance: PxEZApp
         var autochecked = false
 

@@ -88,6 +88,7 @@
     <string name="supporttitle">Support</string>
     <string name="viewreport">View report</string>
     <string name="needtorestart">Need to restart the app</string>
+    <string name="collectmode">Collect Mode</string>
     <string name="animation">Animation</string>
     <string name="download_progress">Downloads</string>
     <string name="join_download_queue">Join download queue</string>

@@ -215,6 +215,14 @@ class SettingFragment : PreferenceFragmentCompat() {
             PxEZApp.ShowDownloadToast = newValue as Boolean
             true
         }
+        findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.CollectMode = (newValue as String).toInt()
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.restart_now) {
+                PxEZApp.ActivityCollector.recreate()
+            }.show()
+            true
+        }
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

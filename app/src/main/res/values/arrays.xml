@@ -107,4 +107,14 @@
         <item>恢复</item>
         <item>取消</item>
     </string-array>
+    <string-array name="CollectMode">
+        <item>普通</item>
+        <item>二连：下载自动收藏图片</item>
+        <item>三连：单击收藏+下载+关注,长按进入详情</item>
+    </string-array>
+    <string-array name="CollectMode_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

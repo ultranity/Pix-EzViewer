@@ -127,7 +127,8 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         })
         viewmodel.banners.observe(this, Observer {
-            if(viewmodel.oldBanner)
+            if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                    .getBoolean("use_new_banner",true))
             {
                 val arrayList = ArrayList<String>()
                 it.map {
@@ -144,7 +145,8 @@ class HelloMRecommendFragment : BaseFragment() {
                     )
                 }
                 banner.start()
-            } else {
+            }
+            else {
                 pixiVisionAdapter.setNewData(it)
                 pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
                     val intent = Intent(context, WebViewActivity::class.java)
@@ -205,7 +207,8 @@ class HelloMRecommendFragment : BaseFragment() {
             viewmodel.onLoadMorePicRequested()
         }
 
-        if(viewmodel.oldBanner){
+        if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                .getBoolean("use_new_banner",true)){
             banner = bannerView.findViewById<Banner>(R.id.banner)
             banner.setImageLoader(object : ImageLoader() {
                 override fun displayImage(context: Context, path: Any?, imageView: ImageView?) {
@@ -275,8 +278,8 @@ class HelloMRecommendFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         rankingAdapter =
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_main",true)){
-
+            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                    .getBoolean("show_user_img_main",true)){
                 RankingAdapter(
                     R.layout.view_ranking_item_mid,
                     null,
@@ -292,15 +295,14 @@ class HelloMRecommendFragment : BaseFragment() {
                     blockTags,
                     hideBookmarked = false)
             }
-        if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true)){
-            viewmodel.oldBanner = false
+        if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                .getBoolean("use_new_banner",true)){
             bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
             pixiVisionAdapter = PixiVisionAdapter(
                 R.layout.view_pixivision_item_small,
                 null,
                 requireActivity())
         } else {
-            viewmodel.oldBanner = true
             bannerView = inflater.inflate(R.layout.header_recom, container, false)
         }
         rankingAdapter.apply {

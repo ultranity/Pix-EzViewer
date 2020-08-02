@@ -42,7 +42,12 @@ class SupportDialog : DialogFragment() {
         "*恒",
         "*苦",
         "*枣",
-        "*少"
+        "*少：小白条沉浸",
+        "*菟",
+        "*心",
+        "*手",
+        "*面",
+        "*土"
     )
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")

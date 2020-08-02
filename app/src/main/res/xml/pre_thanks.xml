@@ -56,7 +56,7 @@
         app:isPreferenceVisible="false">
         <Preference
             android:title="@string/current_developer"
-            app:key="ultranity"
+            app:key="Ultranity"
             app:selectable="true"
             app:enableCopying="true"
             app:summary="@string/click" />

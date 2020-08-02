@@ -191,7 +191,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
 //                }
             }
             "support" ->    SupportDialog().show(parentFragmentManager, "supportdialog")
-            "ultranity" ->  SupportDialog().show(parentFragmentManager, "supportdialog")
+            "Ultranity" ->  SupportDialog().show(parentFragmentManager, "supportdialog")
             "Notsfsssf" -> {
                 val view = requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_notsfsssf, null)
                 MaterialAlertDialogBuilder(requireActivity()).setView(view).setPositiveButton(android.R.string.ok) { _, _ ->

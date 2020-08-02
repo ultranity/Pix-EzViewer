@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -32,11 +33,21 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 
 // base activity with i18n support
 abstract class RinkActivity : AppCompatActivity() {
+    fun getNavigationBarHeight(): Int {
+        val resourceId: Int = this.getResources().getIdentifier("navigation_bar_height", "dimen", "android")
+        val height: Int = this.getResources().getDimensionPixelSize(resourceId)
+        //Log.v("dbg", "Navi height:$height")
+        return height
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LanguageUtil.setLanguage(this, PxEZApp.language)
-        window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        if(getNavigationBarHeight()<88) {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            //window.decorView.fitsSystemWindows = true
+            window.navigationBarColor = Color.TRANSPARENT
+        }
     }
 }
 

@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.perol.asdpl.pixivez.activity.UserFollowActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:fitsSystemWindows="true"
         android:id="@+id/toolbar_userfollow"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/MyToolbar"
         android:layout_marginStart="0dp"
+        android:background="?attr/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

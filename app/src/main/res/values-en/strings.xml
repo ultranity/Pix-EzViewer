@@ -224,6 +224,8 @@
     <string name="pixivision_desc">PIXIV: a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
     <string name="change_to_first">change to first</string>
     <string name="all_stop">Stop All</string>
+    <string name="clipboard_detected">Pid in clipboard detected</string>
+    <string name="jumpto">open: </string>
     <string name="account_create_recommed">please register at pixiv.net</string>
     <string name="show_download_toast">Show Download Ttoast</string>
 </resources>

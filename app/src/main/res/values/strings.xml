@@ -332,6 +332,8 @@
     <string name="notsf_subtext2">编写开发调试(原作者)</string>
     <string name="rightnow_subtext">主界面,主Icon设计</string>
     <string name="autocheck_subtext">play版本不生效</string>
+    <string name="clipboard_detected">检测到剪切板pid</string>
+    <string name="jumpto">跳转至:</string>
     <string name="h_is_ok">H是可以的！ԅ(¯﹃¯ԅ)</string>
     <string name="h_not_ok">H是不行的！ (￣^￣)</string>
 </resources>

@@ -251,6 +251,38 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        this.window.decorView.post(Runnable {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = clipboard.primaryClip
+            if (null != clipData && clipData.itemCount > 0) {
+                //for (item in 0 until clipData.itemCount){
+                //    val content = item.text.toString()
+                //}
+                //clipboard.addPrimaryClipChangedListener {
+                val item = Regex("""\d{7,8}""")
+                    .find(clipData.getItemAt(0).text.toString())
+                    ?.value?.toLongOrNull()
+                item?.let {
+                    val pre =PreferenceManager.getDefaultSharedPreferences(this)
+                    if (it==pre.getLong("lastclip",-1))
+                        return@Runnable
+                    MaterialDialog(this).show {
+                        title(R.string.clipboard_detected)
+                        message(R.string.jumpto)
+                        input(prefill = it.toString(), inputType = InputType.TYPE_CLASS_NUMBER)
+                        positiveButton(android.R.string.ok) { mt ->
+                            pre.edit().putLong("lastclip",it).apply()
+                            PictureActivity.startSingle(this@HelloMActivity, it)
+                        }
+                        negativeButton(android.R.string.cancel)
+                    }
+                }
+                //}
+            }
+        })
+    }
     override fun onStart() {
         super.onStart()
     }

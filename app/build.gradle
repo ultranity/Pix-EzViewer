@@ -200,11 +200,10 @@ dependencies {
     //implementation 'com.google.android.play:core:1.7.2'
     //implementation 'com.google.android.gms:play-services-wallet:18.0.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0.rc1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0.rc1'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0.rc1'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0.rc1'
-//  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
+    //implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0.rc1'
+    //implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0.rc1'
+    //implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0.rc1'
+    //implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0.rc1'
 
 
 }

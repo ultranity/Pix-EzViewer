@@ -39,8 +39,7 @@ import androidx.preference.PreferenceManager
 import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.google.gson.Gson
 //import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
@@ -52,14 +51,13 @@ import java.io.File
 
 
 class PxEZApp : Application() {
-    private val objectMapper by lazy { ObjectMapper().registerKotlinModule() }
     lateinit var pre: SharedPreferences
 
     @Download.onTaskComplete
     fun taskComplete(task: DownloadTask?) {
         task?.let {
             val extendField = it.extendField
-            val illustD = objectMapper.readValue(extendField, IllustD::class.java)
+            val illustD = Gson().fromJson(extendField, IllustD::class.java)
             val title = illustD.title
             val sourceFile = File(it.filePath)
             if(sourceFile.isFile){
@@ -128,11 +126,11 @@ class PxEZApp : Application() {
                 //Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
                     Aria.download(this).load(it.id).cancel(true)
-                    val illustD = objectMapper.readValue(it.str, IllustD::class.java)
+                    val illustD = Gson().fromJson(it.str, IllustD::class.java)
                     Aria.download(this).load(it.url)
                         .setFilePath(it.filePath) //设置文件保存的完整路径
                         .ignoreFilePathOccupy()
-                        .setExtendField(Works.mapper.writeValueAsString(illustD))
+                        .setExtendField(Gson().toJson(illustD))
                         .option(Works.option)
                         .create()
                     Thread.sleep(550)

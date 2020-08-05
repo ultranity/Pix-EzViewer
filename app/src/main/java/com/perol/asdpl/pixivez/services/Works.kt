@@ -32,14 +32,11 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.responses.Tag
 import java.io.File
 
 fun String.toLegal(): String {
@@ -49,7 +46,6 @@ fun String.toLegal(): String {
         .replace("\"", "\'\'").replace("<", "＜").replace(">", "＞")
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class IllustD(
     var id: Long = 0,
     var preview: String? = null,
@@ -173,9 +169,6 @@ object Works {
                 ).addHeader("referer", "https://app-api.pixiv.net/")
             }
     }
-    val mapper by lazy {
-        ObjectMapper().registerKotlinModule()
-    }
 
     fun imgD(illust: Illust, part: Int?) {
         val url = if (part != null && illust.meta_pages.isNotEmpty())
@@ -214,7 +207,7 @@ object Works {
             .load(url) //读取下载地址
             .setFilePath(targetPath) //设置文件保存的完整路径
             .ignoreFilePathOccupy()
-            .setExtendField(mapper.writeValueAsString(illustD))
+            .setExtendField(Gson().toJson(illustD))
             .option(option)
             .create()
 

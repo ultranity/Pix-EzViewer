@@ -46,8 +46,7 @@ import com.arialyy.aria.core.download.DownloadEntity
 import com.arialyy.aria.core.task.DownloadTask
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.databinding.FragmentDownloadManagerBinding
@@ -64,12 +63,12 @@ class DownloadTaskAdapter() :
     init {
         this.setOnItemClickListener { adapter, view, position ->
             val item = data[position]
-            val illust = objectMapper.readValue(item.str, IllustD::class.java)
+            val illust = Gson().fromJson(item.str, IllustD::class.java)
             PictureActivity.startSingle(context, id = illust.id)
         }
         this.setOnItemLongClickListener { adapter, view, position ->
             val item = data[position]
-            val illustD = objectMapper.readValue(item.str, IllustD::class.java)
+            val illustD = Gson().fromJson(item.str, IllustD::class.java)
             MaterialDialog(context).show {
                 title(text = illustD.title)
                 listItems(R.array.download_task_choice) { _, index, string ->
@@ -82,7 +81,7 @@ class DownloadTaskAdapter() :
                                 .load(item.url) //读取下载地址
                                 .setFilePath(targetPath) //设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
-                                .setExtendField(Works.mapper.writeValueAsString(illustD))
+                                .setExtendField(Gson().toJson(illustD))
                                 .option(Works.option)
                                 .create()
 
@@ -145,7 +144,6 @@ class DownloadTaskAdapter() :
         }
     }
 
-    val objectMapper = ObjectMapper().registerKotlinModule()
     override fun convert(helper: BaseViewHolder, item: DownloadEntity, payloads: List<Any>) {
         val dataPayload = payloads
         val binding = helper.getBinding<ItemDownloadTaskBinding>()!!
@@ -165,7 +163,7 @@ class DownloadTaskAdapter() :
         progress.progress = item.currentProgress.toInt()
         binding.progressFont.text = "${item.currentProgress.toInt()}/${item.fileSize.toInt()}"
         try {
-            val illustD = objectMapper.readValue(item.str, IllustD::class.java)
+            val illustD = Gson().fromJson(item.str, IllustD::class.java)
             helper.setText(R.id.title, illustD.title)
             helper.setText(R.id.status, item.state.toIEntityString())
         } catch (e: Exception) {
@@ -211,15 +209,14 @@ class DownLoadManagerFragment : Fragment() {
                     // wait for resumeAllTask
                     Thread.sleep(2000)
                     // restart other failed task
-                    val objectMapper = ObjectMapper().registerKotlinModule()
                     Aria.download(this).allNotCompleteTask?.forEach {
                         if(it.state == 0) {
                             Aria.download(this).load(it.id).cancel(true)
-                            val illustD = objectMapper.readValue(it.str, IllustD::class.java)
+                            val illustD = Gson().fromJson(it.str, IllustD::class.java)
                             Aria.download(this).load(it.url)
                                 .setFilePath(it.filePath) //设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
-                                .setExtendField(Works.mapper.writeValueAsString(illustD))
+                                .setExtendField(Gson().toJson(illustD))
                                 .option(Works.option)
                                 .create()
                             Thread.sleep(500)

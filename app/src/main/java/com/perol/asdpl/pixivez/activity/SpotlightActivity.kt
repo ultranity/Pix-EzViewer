@@ -35,7 +35,6 @@ import com.perol.asdpl.pixivez.adapters.SpotlightAdapter
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.Spotlight
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -65,7 +64,6 @@ class SpotlightActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_spotlight)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         getData()

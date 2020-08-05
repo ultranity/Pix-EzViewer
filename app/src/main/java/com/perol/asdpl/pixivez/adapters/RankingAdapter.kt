@@ -32,7 +32,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -54,6 +53,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -92,7 +92,8 @@ class RankingAdapter(
                     if (!item.user.is_followed) {
                         retrofitRepository.postfollowUser(item.user.id, "public").subscribe({
                             item.user.is_followed = true
-                            view.findViewById<NiceImageView>(R.id.imageview_user).setBorderColor(ContextCompat.getColor(context, badgeTextColor)) // Color.YELLOW
+                            view.findViewById<NiceImageView>(R.id.imageview_user)
+                                .setBorderColor(badgeTextColor) // Color.YELLOW
 
                         }, {}, {})
                     }
@@ -196,13 +197,8 @@ class RankingAdapter(
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
-
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
-        colorPrimary = typedValue.resourceId
-        context.theme.resolveAttribute(R.attr.badgeTextColor, typedValue, true)
-        badgeTextColor = typedValue.resourceId
     }
+
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (hideBookmarked && item.is_bookmarked){
             helper.itemView.visibility = View.GONE
@@ -236,11 +232,6 @@ class RankingAdapter(
                 width = LinearLayout.LayoutParams.MATCH_PARENT
             }
         }
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
-        val colorPrimary = typedValue.resourceId
-        context.theme.resolveAttribute(R.attr.badgeTextColor, typedValue, true)
-        val badgeTextColor = typedValue.resourceId
         if (PxEZApp.CollectMode == 1) {
             helper.getView<MaterialButton>(R.id.save).setOnClickListener {
                 Works.imageDownloadAll(item)
@@ -260,12 +251,12 @@ class RankingAdapter(
         }
         helper.setText(R.id.textview_title, item.title)
         if (!singleLine) helper.setText(R.id.textview_context, item.user.name)
-        //helper.setTextColor(R.id.textview_context, ContextCompat.getColor(context, colorPrimary))
+        //helper.setTextColor(R.id.textview_context, colorPrimary))
         helper.setTextColor(
             R.id.like, if (item.is_bookmarked) {
-                ContextCompat.getColor(context, badgeTextColor)
+                badgeTextColor
             } else {
-                ContextCompat.getColor(context, colorPrimary)
+                colorPrimary
             }
         )
 
@@ -273,7 +264,7 @@ class RankingAdapter(
             val textView = v as Button
             if (item.is_bookmarked) {
                 retrofitRepository.postUnlikeIllust(item.id).subscribe({
-                    textView.setTextColor(ContextCompat.getColor(context, colorPrimary))
+                    textView.setTextColor(colorPrimary)
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
@@ -284,7 +275,7 @@ class RankingAdapter(
                 }
                 retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
                     textView.setTextColor(
-                        ContextCompat.getColor(context, badgeTextColor)
+                        badgeTextColor
                     )
                     item.is_bookmarked = true
                 }, {}, {})
@@ -313,9 +304,9 @@ class RankingAdapter(
         mainimage.setTag(R.id.tag_first, item.image_urls.medium)
         val imageViewUser = helper.getView<NiceImageView>(R.id.imageview_user)
         if (item.user.is_followed)
-            imageViewUser.setBorderColor(ContextCompat.getColor(context, badgeTextColor)) // Color.YELLOW
+            imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
         else
-            imageViewUser.setBorderColor(ContextCompat.getColor(context, colorPrimary))
+            imageViewUser.setBorderColor(colorPrimary)
         imageViewUser.setOnClickListener {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", item.user.id)
@@ -335,12 +326,12 @@ class RankingAdapter(
             if (!item.user.is_followed) {
                 retrofitRepository.postfollowUser(id, "public").subscribe({
                     item.user.is_followed = true
-                    imageViewUser.setBorderColor(ContextCompat.getColor(context, badgeTextColor)) // Color.YELLOW
+                    imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
                 }, {}, {})
             } else {
                 retrofitRepository.postunfollowUser(id).subscribe({
                     item.user.is_followed = false
-                    imageViewUser.setBorderColor(ContextCompat.getColor(context, colorPrimary))
+                    imageViewUser.setBorderColor(colorPrimary)
                 }, {}, {}
                 )
             }

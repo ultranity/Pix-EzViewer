@@ -30,7 +30,9 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnLoadMoreListener
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -44,8 +46,8 @@ abstract class PicItemAdapter(
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     abstract var hideBookmarked: Boolean
-    var colorPrimary: Int = 0
-    open var badgeTextColor: Int = 0
+    var colorPrimary: Int = ThemeUtil.getColor(context, R.attr.colorPrimary)
+    open var badgeTextColor: Int = ThemeUtil.getColor(context,R.attr.badgeTextColor)
     abstract var blockTags: List<String>
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     fun loadMoreEnd() {

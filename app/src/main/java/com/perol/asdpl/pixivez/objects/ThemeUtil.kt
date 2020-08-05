@@ -24,7 +24,11 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import android.content.Context
+import android.content.res.Resources
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.R
 
@@ -42,6 +46,12 @@ class ThemeUtil {
                 R.style.AppThemeBase_red,
                 R.style.AppThemeBase_now
         )
+
+        fun getColor(context: Context, resId:Int): Int {
+            val typedValue = TypedValue()
+            context.theme.resolveAttribute(resId, typedValue, true)
+            return ContextCompat.getColor(context, typedValue.resourceId)
+        }
 
         @JvmStatic
         fun themeInit(activity: AppCompatActivity) {

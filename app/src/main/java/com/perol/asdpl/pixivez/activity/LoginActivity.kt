@@ -41,12 +41,11 @@ import android.widget.Toast
 //import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
-import com.perol.asdpl.pixivez.BuildConfig
+//import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.ErrorResponse
@@ -99,7 +98,6 @@ class LoginActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_login)
         val window = window
 //        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)

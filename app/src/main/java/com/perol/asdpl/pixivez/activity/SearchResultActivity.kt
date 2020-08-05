@@ -40,7 +40,6 @@ import com.perol.asdpl.pixivez.adapters.SearchResultAdapter
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
 import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
 import com.perol.asdpl.pixivez.fragments.UserFragment
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import kotlinx.android.synthetic.main.activity_search_result.*
 import kotlinx.android.synthetic.main.content_search_result.*
 
@@ -52,7 +51,6 @@ class SearchResultActivity : RinkActivity() {
     var arrayList = ArrayList<Fragment>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search_result)
         binding.lifecycleOwner = this
         setSupportActionBar(toolbar)

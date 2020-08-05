@@ -47,7 +47,6 @@ import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_theme.*
 
@@ -146,7 +145,6 @@ class ThemeActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_theme)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

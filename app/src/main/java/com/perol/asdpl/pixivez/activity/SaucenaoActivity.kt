@@ -38,7 +38,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -69,7 +68,6 @@ class SaucenaoActivity : RinkActivity() {
     private val IMAGE = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         val binding = DataBindingUtil.setContentView<ActivitySaucenaoBinding>(
             this,
             R.layout.activity_saucenao

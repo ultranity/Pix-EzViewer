@@ -39,7 +39,6 @@ import com.perol.asdpl.pixivez.fragments.AboutXFragment
 import com.perol.asdpl.pixivez.fragments.SettingFragment
 import com.perol.asdpl.pixivez.fragments.ThanksFragment
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import kotlinx.android.synthetic.main.activity_setting.*
 import kotlinx.android.synthetic.main.content_setting.*
 import java.util.*
@@ -66,7 +65,6 @@ class SettingActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_setting)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

@@ -54,7 +54,6 @@ import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMainFragment
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -170,7 +169,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             finish()
             return
         }
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.app_bar_hello_m)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)

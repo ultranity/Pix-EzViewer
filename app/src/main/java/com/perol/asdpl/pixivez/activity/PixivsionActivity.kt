@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import io.reactivex.Observer
@@ -51,7 +50,6 @@ class PixivsionActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_pixivision)
         setSupportActionBar(toobar_pixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

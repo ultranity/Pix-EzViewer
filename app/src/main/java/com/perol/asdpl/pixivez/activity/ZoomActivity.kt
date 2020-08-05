@@ -25,8 +25,6 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.view.MenuItem
 import android.view.View
 import androidx.viewpager.widget.ViewPager

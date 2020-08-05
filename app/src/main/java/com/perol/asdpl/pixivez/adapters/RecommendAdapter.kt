@@ -75,13 +75,14 @@ class RecommendAdapter(
                 (this.data as ArrayList<Illust?>).get(position)?.let {
                     val item = it
                     Works.imageDownloadAll(item)
-                    if (!item.is_bookmarked){
-                        retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
-                            view.findViewById<MaterialButton>(R.id.like).setTextColor(
-                                ContextCompat.getColor(context, badgeTextColor)
-                            )
-                            item.is_bookmarked = true
-                        }, {}, {})
+                    if (!item.is_bookmarked) {
+                        retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
+                            .subscribe({
+                                view.findViewById<MaterialButton>(R.id.like).setTextColor(
+                                    badgeTextColor
+                                )
+                                item.is_bookmarked = true
+                            }, {}, {})
                     }
                     if (!item.user.is_followed) {
                         retrofitRepository.postfollowUser(item.user.id, "public").subscribe({
@@ -174,17 +175,12 @@ class RecommendAdapter(
         }
     }
 
-        override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-            super.onAttachedToRecyclerView(recyclerView)
-            addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
-            animationEnable = true
-            setAnimationWithDefault(AnimationType.ScaleIn)
-            this.loadMoreModule?.preLoadNumber = 12
-            val typedValue = TypedValue()
-            context.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
-            colorPrimary = typedValue.resourceId
-            context.theme.resolveAttribute(R.attr.badgeTextColor, typedValue, true)
-            badgeTextColor = typedValue.resourceId
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
+        animationEnable = true
+        setAnimationWithDefault(AnimationType.ScaleIn)
+        this.loadMoreModule?.preLoadNumber = 12
 
         }
 
@@ -227,7 +223,7 @@ class RecommendAdapter(
                     if (!item.is_bookmarked) {
                         retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
                             helper.getView<MaterialButton>(R.id.like).setTextColor(
-                                ContextCompat.getColor(context, badgeTextColor)
+                                badgeTextColor
                             )
                             item.is_bookmarked = true
                         }, {}, {})
@@ -239,36 +235,36 @@ class RecommendAdapter(
                 }
             }
 
-            helper.setText(R.id.title, item.title)
-            helper.setTextColor(
-                R.id.like, if (item.is_bookmarked) {
-                    ContextCompat.getColor(context, badgeTextColor)
-                } else {
-                    ContextCompat.getColor(context, colorPrimary)
-                }
-            )
-
-            helper.getView<MaterialButton>((R.id.like)).setOnClickListener { v ->
-                val textView = v as Button
-                if (item.is_bookmarked) {
-                    retrofitRepository.postUnlikeIllust(item.id).subscribe({
-                        textView.setTextColor(ContextCompat.getColor(context, colorPrimary))
-                        item.is_bookmarked = false
-                    }, {}, {})
-                } else {
-                    val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
-                        "private"
-                    } else {
-                        "public"
-                    }
-                    retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
-                        textView.setTextColor(
-                            ContextCompat.getColor(context, badgeTextColor)
-                        )
-                        item.is_bookmarked = true
-                    }, {}, {})
-                }
+        helper.setText(R.id.title, item.title)
+        helper.setTextColor(
+            R.id.like, if (item.is_bookmarked) {
+                badgeTextColor
+            } else {
+                colorPrimary
             }
+        )
+
+        helper.getView<MaterialButton>((R.id.like)).setOnClickListener { v ->
+            val textView = v as Button
+            if (item.is_bookmarked) {
+                retrofitRepository.postUnlikeIllust(item.id).subscribe({
+                    textView.setTextColor(colorPrimary)
+                    item.is_bookmarked = false
+                }, {}, {})
+            } else {
+                val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
+                    "private"
+                } else {
+                    "public"
+                }
+                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
+                    textView.setTextColor(
+                        badgeTextColor
+                    )
+                    item.is_bookmarked = true
+                }, {}, {})
+            }
+        }
 
             val constraintLayout =
                 helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)

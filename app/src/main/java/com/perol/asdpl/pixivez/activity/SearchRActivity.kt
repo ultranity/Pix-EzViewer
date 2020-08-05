@@ -37,7 +37,6 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.TrendTagFragment
 import com.perol.asdpl.pixivez.fragments.TrendTagViewModel
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
 import kotlinx.android.synthetic.main.activity_search_r.*
 
@@ -72,7 +71,6 @@ class SearchRActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_search_r)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

@@ -37,7 +37,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.HistoryAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityHistoryMBinding
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.sql.IllustBeanEntity
 import com.perol.asdpl.pixivez.viewmodel.HistoryMViewModel
 import kotlinx.android.synthetic.main.activity_history_m.*
@@ -48,7 +47,6 @@ class HistoryMActivity : RinkActivity() {
     private var historyMViewModel: HistoryMViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         activityHistoryMBinding = DataBindingUtil.setContentView(this, R.layout.activity_history_m)
         initView()
         initData()

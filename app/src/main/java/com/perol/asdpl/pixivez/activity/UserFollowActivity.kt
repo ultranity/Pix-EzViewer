@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.ListUserResponse
@@ -63,7 +62,6 @@ class UserFollowActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_user_follow)
         setSupportActionBar(toolbar_userfollow)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

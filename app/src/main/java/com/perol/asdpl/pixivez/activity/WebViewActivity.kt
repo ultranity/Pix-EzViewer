@@ -31,7 +31,6 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_web_view.*
 import java.io.ByteArrayInputStream
@@ -40,7 +39,6 @@ import java.io.ByteArrayInputStream
 class WebViewActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ThemeUtil.themeInit(this)
         setContentView(R.layout.activity_web_view)
         val local = when (PxEZApp.language) {
             1 -> {

@@ -50,7 +50,6 @@ import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.fragments.UserMessageFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -104,7 +103,6 @@ class UserMActivity : RinkActivity() {
 
     lateinit var viewModel: UserMViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeUtil.themeInit(this)
         super.onCreate(savedInstanceState)
         val binding =
             DataBindingUtil.setContentView<ActivityUserMBinding>(this, R.layout.activity_user_m)

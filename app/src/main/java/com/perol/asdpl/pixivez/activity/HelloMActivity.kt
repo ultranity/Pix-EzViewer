@@ -28,10 +28,13 @@ package com.perol.asdpl.pixivez.activity
 import android.Manifest
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
+import android.text.InputType
 import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
@@ -44,6 +47,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout

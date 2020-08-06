@@ -50,7 +50,7 @@ class PixiVisionAdapter(
         val imageView =
             helper.getView<ImageView>(R.id.imageView_pixivision)
         GlideApp.with(context).load(item.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.color.halftrans)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(R.color.halftrans)
             .transition(DrawableTransitionOptions.withCrossFade()).into(imageView)
     }
     @SuppressLint("InflateParams")

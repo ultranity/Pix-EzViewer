@@ -58,6 +58,10 @@ data class IllustD(
 
 object Works {
     fun parseSaveFormat(illust: Illust, part: Int?): String {
+        return parseSaveFormat(illust, part, PxEZApp.saveformat,PxEZApp.TagSeparator,PxEZApp.R18Folder )
+    }
+
+    fun parseSaveFormat(illust: Illust, part: Int?,saveformat: String, TagSeparator: String,R18Folder:Boolean): String {
         val url: String
         val tags = illust.tags
         var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
@@ -84,7 +88,8 @@ object Works {
             }.distinct().joinToString("#", limit = 5).toLegal())
             .replace("{title}", illust.title.toLegal())
         if (part != null && illust.meta_pages.isNotEmpty()) {
-            url = illust.meta_pages[part].image_urls.original
+            url = illust.meta_pages[if (part< illust.meta_pages.size-1) part
+                                            else  illust.meta_pages.size-1 ].image_urls.original
             filename = filename.replace("{part}", part.toString())
         } else {
             url = illust.meta_single_page.original_image_url!!
@@ -92,7 +97,7 @@ object Works {
                 .replace("_{part}", "")
                 .replace("{part}", "")
         }
-        if(PxEZApp.R18Folder && illust.x_restrict.equals(1))
+        if(R18Folder && illust.x_restrict.equals(1))
             filename = "？$filename"
 
         val type = when {

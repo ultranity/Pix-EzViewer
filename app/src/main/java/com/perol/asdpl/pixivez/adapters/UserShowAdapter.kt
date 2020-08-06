@@ -107,7 +107,7 @@ class UserShowAdapter(layoutResId: Int) :
         recyclerView.adapter = userSearchillustAdapter
         username.text = item.user.name
         GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.ALL).transition(withCrossFade()).into(userImage)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
 
     }
 }

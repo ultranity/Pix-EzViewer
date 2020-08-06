@@ -81,7 +81,7 @@ fun loadImage(imageView: ImageView, url: String?) {
                         return false
                     }
                 })
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .error(R.mipmap.ic_noimage_round)
                 .transition(withCrossFade()).into(imageView)
 }

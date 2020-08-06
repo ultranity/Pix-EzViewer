@@ -83,7 +83,7 @@ class RankingAdapter(
                     if (!item.is_bookmarked){
                         retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
                         view.findViewById<MaterialButton>(R.id.like).setTextColor(
-                                ContextCompat.getColor(context, badgeTextColor)
+                                badgeTextColor
                             )
                             item.is_bookmarked = true
                         }, {}, {})
@@ -339,7 +339,7 @@ class RankingAdapter(
         }
         imageViewUser.setTag(R.id.tag_first, item.user.profile_image_urls.medium)
 
-        GlideApp.with(imageViewUser.context).load(item.user.profile_image_urls.medium).circleCrop().diskCacheStrategy(DiskCacheStrategy.ALL)
+        GlideApp.with(imageViewUser.context).load(item.user.profile_image_urls.medium).circleCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(object : ImageViewTarget<Drawable>(imageViewUser) {
                 override fun setResource(resource: Drawable?) {
                     imageViewUser.setImageDrawable(resource)

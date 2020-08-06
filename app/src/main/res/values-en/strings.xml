@@ -228,4 +228,5 @@
     <string name="jumpto">open: </string>
     <string name="account_create_recommed">please register at pixiv.net</string>
     <string name="show_download_toast">Show Download Ttoast</string>
+    <string name="length_filter_desc"><![CDATA[Only < 50]]></string>
 </resources>

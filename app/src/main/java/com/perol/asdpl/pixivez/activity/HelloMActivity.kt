@@ -58,6 +58,7 @@ import com.perol.asdpl.pixivez.fragments.hellom.HelloMDynamicsFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMainFragment
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
+import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -113,7 +114,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             R.id.nav_cache_clean -> {
                 clean()
             }
-            R.id.nav_manage -> {
+            R.id.nav_settings -> {
                 val intent = Intent(applicationContext, SettingActivity::class.java)
                 startActivity(intent)
             }
@@ -124,6 +125,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             R.id.nav_history -> {
                 val intent = Intent(applicationContext, HistoryMActivity::class.java)
                 startActivity(intent)
+            }
+
+            R.id.nav_rename -> {
+                startActivity(Intent(this, ImgManagerActivity::class.java))
             }
 
             R.id.nav_progress -> {

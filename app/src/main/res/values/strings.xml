@@ -118,6 +118,7 @@
     <string name="nav_header_title">PxEz</string>
     <string name="nav_header_subtitle">Pix-Ez@outlook.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="img_manager">图片管理</string>
     <string name="checkupdate">检查更新</string>
     <string name="_18">隐藏遮罩</string>
     <string name="picturequality">图片质量</string>
@@ -336,4 +337,5 @@
     <string name="jumpto">跳转至:</string>
     <string name="h_is_ok">H是可以的！ԅ(¯﹃¯ԅ)</string>
     <string name="h_not_ok">H是不行的！ (￣^￣)</string>
+    <string name="length_filter_desc">忽略长名称文件</string>
 </resources>

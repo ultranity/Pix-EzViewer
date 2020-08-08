@@ -66,7 +66,7 @@ class HelloMRecomModel : BaseViewModel() {
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
         retrofitRepository.getPixivison("all").subscribe({
-            if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
+            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
                 nextPixivisonUrl.value = it.next_url
             banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
         }, {}, {}).add()

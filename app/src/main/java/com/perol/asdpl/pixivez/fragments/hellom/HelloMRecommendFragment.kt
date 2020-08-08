@@ -120,11 +120,11 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         })
         viewmodel.nextUrl.observe(this, Observer {
-            if (it == null) {
-                rankingAdapter.loadMoreEnd()
-            } else {
-                rankingAdapter.loadMoreComplete()
-            }
+                if (it == null) {
+                    rankingAdapter.loadMoreEnd()
+                } else {
+                    rankingAdapter.loadMoreComplete()
+                }
         })
         viewmodel.banners.observe(this, Observer {
             if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
@@ -168,10 +168,12 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         })
         viewmodel.nextPixivisonUrl.observe(this, Observer {
-            if (it == null) {
-                pixiVisionAdapter.loadMoreModule?.loadMoreEnd()
-            } else {
-                pixiVisionAdapter.loadMoreModule?.loadMoreComplete()
+            if (::pixiVisionAdapter.isInitialized) {
+                if (it == null) {
+                    pixiVisionAdapter.loadMoreModule?.loadMoreEnd()
+                } else {
+                    pixiVisionAdapter.loadMoreModule?.loadMoreComplete()
+                }
             }
         })
     }

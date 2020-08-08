@@ -84,7 +84,6 @@ class DownloadTaskAdapter() :
                                 .setExtendField(Gson().toJson(illustD))
                                 .option(Works.option)
                                 .create()
-
                         }
                         1 -> {
                             Aria.download(context).load(data[position].id).stop()
@@ -93,13 +92,7 @@ class DownloadTaskAdapter() :
                             Aria.download(context).load(data[position].id).resume()
                         }
                         3 -> {
-                            Aria.download(context).stopAllTask()
-                        }
-                        4 -> {
                             Aria.download(context).load(data[position].id).cancel(true)
-                        }
-                        5 -> {
-                            PxEZApp.ActivityCollector.recreate()
                         }
                     }
                     val taskList = Aria.download(this).taskList
@@ -222,11 +215,12 @@ class DownLoadManagerFragment : Fragment() {
                             Thread.sleep(500)
                         }
                     }
-                }).start().also {
-                    val taskList = Aria.download(this).taskList
-                    if (taskList?.isNotEmpty() == true)
-                        downloadTaskAdapter.setNewData(taskList.asReversed())
-                }
+                    activity?.runOnUiThread{
+                        val taskList = Aria.download(this).taskList
+                        if (taskList?.isNotEmpty() == true)
+                            downloadTaskAdapter.setNewData(taskList.asReversed())
+                    }
+                }).start()
             }
             R.id.action_cancel -> {
                 Aria.download(this).removeAllTask(false)
@@ -237,6 +231,13 @@ class DownLoadManagerFragment : Fragment() {
                         Aria.download(this).load(it.id).cancel(true)
                     }
                 }).start()
+            }
+            R.id.action_stop -> {
+            Aria.download(context).stopAllTask()
+            }
+
+            R.id.action_restart -> {
+                PxEZApp.ActivityCollector.recreate()
             }
         }
         val taskList = Aria.download(this).taskList

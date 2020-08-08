@@ -30,6 +30,7 @@ buildscript {
 
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.3.0"
+        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.18'
     }
 }
 allprojects {

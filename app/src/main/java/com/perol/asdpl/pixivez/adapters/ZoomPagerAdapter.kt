@@ -40,11 +40,15 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.networks.ProgressInterceptor
+import com.perol.asdpl.pixivez.networks.ProgressListener
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.Works
+import kotlinx.android.synthetic.main.activity_zoom.*
 import java.io.File
 
 class ZoomPagerAdapter(
@@ -95,6 +99,8 @@ class ZoomPagerAdapter(
         val view = layoutInflater.inflate(R.layout.view_pager_zoom, container, false)
         val photoView = view.findViewById<SubsamplingScaleImageView>(R.id.photoview_zoom)
         photoView.isEnabled = true
+        val progressBar = view.findViewById<CircleProgressBar>(R.id.progressbar_origin)
+        val button_origin = view.findViewById<MaterialButton>(R.id.button_origin)
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val dm = DisplayMetrics()
         wm.defaultDisplay.getMetrics(dm)
@@ -133,7 +139,6 @@ class ZoomPagerAdapter(
         photoView.setOnTouchListener { v, event ->
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
-        val button_origin = view.findViewById<MaterialButton>(R.id.button_origin)
 
         GlideApp.with(context).asFile().load(origin!![position]).apply( RequestOptions().onlyRetrieveFromCache(true))
             .into(object : CustomTarget<File>() {
@@ -159,10 +164,17 @@ class ZoomPagerAdapter(
                     button_origin.visibility =View.GONE
                     photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
+                    progressBar.visibility = View.GONE
                 }
             })
         button_origin.setOnClickListener {
             button_origin.visibility =View.GONE
+            progressBar.visibility =View.VISIBLE
+            ProgressInterceptor.addListener(origin!![position],object: ProgressListener {
+                override fun onProgress(progress: Int){
+                    progressBar.progress = progress
+                }
+            })
             GlideApp.with(context).asFile().load(origin!![position])
                 .into(object : CustomTarget<File>() {
                     override fun onLoadCleared(placeholder: Drawable?) {
@@ -170,7 +182,9 @@ class ZoomPagerAdapter(
                     override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                         photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                         resourceFile = resource
+                        progressBar.visibility = View.GONE
                         //Log.d("origin","load from net")
+                        ProgressInterceptor.removeListener(origin!![position])
                     }
                 })
         }

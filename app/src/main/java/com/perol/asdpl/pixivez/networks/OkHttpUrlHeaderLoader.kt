@@ -24,17 +24,24 @@
 
 package com.perol.asdpl.pixivez.networks
 
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.*
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
+import okhttp3.OkHttpClient
 import java.io.InputStream
 
 
 class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     private val modelCache = ModelCache<String, GlideUrl>(250)
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<String, InputStream> {
-        return OkHttpUrlLoader(multiFactory.build(GlideUrl::class.java, InputStream::class.java), modelCache)
+
+        //添加拦截器到Glide
+        val builder = OkHttpClient.Builder()
+        builder.addInterceptor(ProgressInterceptor())
+        val okHttpClient = builder.build()
+        return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
     }
 
 
@@ -42,7 +49,7 @@ class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     }
 }
 
-class OkHttpUrlLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, modelCache: ModelCache<String, GlideUrl>) : BaseGlideUrlLoader<String>(concreteLoader, modelCache) {
+class OkHttpUrlHeaderLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, modelCache: ModelCache<String, GlideUrl>) : BaseGlideUrlLoader<String>(concreteLoader, modelCache) {
     override fun getUrl(model: String, width: Int, height: Int, options: Options?): String {
         return model
     }
@@ -61,5 +68,12 @@ class OkHttpUrlLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, modelC
                 .build()
     }
 
-
+    override fun buildLoadData(
+        model: String,
+        width: Int,
+        height: Int,
+        options: Options
+    ): ModelLoader.LoadData<InputStream>? {
+        return super.buildLoadData(model, width, height, options)
+    }
 }

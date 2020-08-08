@@ -14,6 +14,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.dinuscxj.progressbar.CircleProgressBar
+        android:id="@+id/progressbar_origin"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:progress_stroke_width="3dp"
+        app:style="solid_line" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_origin"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

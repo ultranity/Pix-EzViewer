@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.adapters
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -54,7 +53,6 @@ import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -197,6 +195,9 @@ class RankingAdapter(
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
+
+        colorPrimary =ThemeUtil.getColor(context, R.attr.colorPrimary)
+        badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
     }
 
     override fun convert(helper: BaseViewHolder, item: Illust) {
@@ -238,7 +239,7 @@ class RankingAdapter(
                 if (!item.is_bookmarked){
                     retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
                         helper.getView<MaterialButton>(R.id.like).setTextColor(
-                            ContextCompat.getColor(context, badgeTextColor)
+                                badgeTextColor
                         )
                         item.is_bookmarked = true
                     }, {}, {})
@@ -300,8 +301,8 @@ class RankingAdapter(
                 helper.setText(R.id.textview_num, "CoM")
             }
         }
-        val mainimage = helper.getView<ImageView>(R.id.item_img)
-        mainimage.setTag(R.id.tag_first, item.image_urls.medium)
+        val mainImage = helper.getView<ImageView>(R.id.item_img)
+        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
         val imageViewUser = helper.getView<NiceImageView>(R.id.imageview_user)
         if (item.user.is_followed)
             imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
@@ -367,43 +368,43 @@ class RankingAdapter(
         if (!R18on) {
             val isr18 = tags.contains("R-18") || tags.contains("R-18G")
             if (isr18) {
-                GlideApp.with(mainimage.context)
+                GlideApp.with(mainImage.context)
                     .load(R.drawable.h)
-                    .into(mainimage)
+                    .into(mainImage)
             } else {
-                GlideApp.with(mainimage.context).load(loadUrl)
+                GlideApp.with(mainImage.context).load(loadUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .transition(withCrossFade()).placeholder(R.color.halftrans)
-                    .into(object : ImageViewTarget<Drawable>(mainimage) {
+                    .into(object : ImageViewTarget<Drawable>(mainImage) {
                         override fun setResource(resource: Drawable?) {
-                            mainimage.setImageDrawable(resource)
+                            mainImage.setImageDrawable(resource)
                         }
 
                         override fun onResourceReady(
                             resource: Drawable,
                             transition: Transition<in Drawable>?
                         ) {
-                            if (mainimage.getTag(R.id.tag_first) === item.image_urls.medium) {
+                            if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
                                 super.onResourceReady(resource, transition)
                             }
                         }
                     })
             }
         } else {
-            GlideApp.with(mainimage.context).load(loadUrl).transition(withCrossFade())
+            GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(R.color.halftrans)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(ContextCompat.getDrawable(mainimage.context, R.drawable.ai))
-                .into(object : ImageViewTarget<Drawable>(mainimage) {
+                .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))
+                .into(object : ImageViewTarget<Drawable>(mainImage) {
                     override fun setResource(resource: Drawable?) {
-                        mainimage.setImageDrawable(resource)
+                        mainImage.setImageDrawable(resource)
                     }
 
                     override fun onResourceReady(
                         resource: Drawable,
                         transition: Transition<in Drawable>?
                     ) {
-                        if (mainimage.getTag(R.id.tag_first) === item.image_urls.medium) {
+                        if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
                             super.onResourceReady(resource, transition)
                         }
 

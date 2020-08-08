@@ -31,7 +31,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -51,6 +50,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -113,8 +113,7 @@ class RecommendAdapter(
                     ContextCompat.startActivity(context, intent, null)
                 true
             }
-        }
-        else {
+        } else {
             setOnItemClickListener { adapter, view, position ->
                 val bundle = Bundle()
                 //bundle.putLong("illustid", this@RecommendAdapter.data[position].id)
@@ -181,59 +180,61 @@ class RecommendAdapter(
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
+        colorPrimary =ThemeUtil.getColor(context, R.attr.colorPrimary)
+        badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
+    }
 
+    override fun convert(helper: BaseViewHolder, item: Illust) {
+        if (hideBookmarked && item.is_bookmarked) {
+            helper.itemView.visibility = View.GONE
+            helper.itemView.layoutParams.apply {
+                height = 0
+                width = 0
+            }
+            return
         }
-
-        override fun convert(helper: BaseViewHolder, item: Illust) {
-            if (hideBookmarked && item.is_bookmarked){
-                helper.itemView.visibility = View.GONE
-                helper.itemView.layoutParams.apply {
-                    height = 0
-                    width = 0
-                }
-                return
+        val tags = item.tags.map {
+            it.name
+        }
+        var needBlock = false
+        for (i in blockTags) {
+            if (tags.contains(i)) {
+                needBlock = true
+                break
             }
-            val tags = item.tags.map {
-                it.name
+        }
+        if (blockTags.isNotEmpty() && tags.isNotEmpty() && needBlock) {
+            helper.itemView.visibility = View.GONE
+            helper.itemView.layoutParams.apply {
+                height = 0
+                width = 0
             }
-            var needBlock = false
-            for (i in blockTags) {
-                if (tags.contains(i)) {
-                    needBlock = true
-                    break
-                }
+            return
+        } else {
+            helper.itemView.visibility = View.VISIBLE
+            helper.itemView.layoutParams.apply {
+                height = LinearLayout.LayoutParams.WRAP_CONTENT
+                width = LinearLayout.LayoutParams.MATCH_PARENT
             }
-            if (blockTags.isNotEmpty() && tags.isNotEmpty() && needBlock) {
-                helper.itemView.visibility = View.GONE
-                helper.itemView.layoutParams.apply {
-                    height = 0
-                    width = 0
-                }
-                return
-            } else {
-                helper.itemView.visibility = View.VISIBLE
-                helper.itemView.layoutParams.apply {
-                    height = LinearLayout.LayoutParams.WRAP_CONTENT
-                    width = LinearLayout.LayoutParams.MATCH_PARENT
-                }
-            }
-            if (PxEZApp.CollectMode == 1) {
-                helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                    Works.imageDownloadAll(item)
-                    if (!item.is_bookmarked) {
-                        retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
+        }
+        if (PxEZApp.CollectMode == 1) {
+            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                Works.imageDownloadAll(item)
+                if (!item.is_bookmarked) {
+                    retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
+                        .subscribe({
                             helper.getView<MaterialButton>(R.id.like).setTextColor(
                                 badgeTextColor
                             )
                             item.is_bookmarked = true
                         }, {}, {})
-                    }
-                }
-            }else {
-                helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                    Works.imageDownloadAll(item)
                 }
             }
+        } else {
+            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                Works.imageDownloadAll(item)
+            }
+        }
 
         helper.setText(R.id.title, item.title)
         helper.setTextColor(
@@ -244,7 +245,7 @@ class RecommendAdapter(
             }
         )
 
-        helper.getView<MaterialButton>((R.id.like)).setOnClickListener { v ->
+        helper.getView<MaterialButton>(R.id.like).setOnClickListener { v ->
             val textView = v as Button
             if (item.is_bookmarked) {
                 retrofitRepository.postUnlikeIllust(item.id).subscribe({
@@ -266,79 +267,78 @@ class RecommendAdapter(
             }
         }
 
-            val constraintLayout =
-                helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
-            when (item.type) {
-                "illust" -> if (item.meta_pages.isEmpty()) {
-                    constraintLayout.visibility = View.INVISIBLE
-                } else if (item.meta_pages.isNotEmpty()) {
-                    constraintLayout.visibility = View.VISIBLE
-                    helper.setText(R.id.textview_num, item.meta_pages.size.toString())
-                }
-                "ugoira" -> {
-                    constraintLayout.visibility = View.VISIBLE
-                    helper.setText(R.id.textview_num, "Gif")
-                }
-                else -> {
-                    constraintLayout.visibility = View.VISIBLE
-                    helper.setText(R.id.textview_num, "CoM")
-                }
+        val constraintLayout =
+            helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
+        when (item.type) {
+            "illust" -> if (item.meta_pages.isEmpty()) {
+                constraintLayout.visibility = View.INVISIBLE
+            } else if (item.meta_pages.isNotEmpty()) {
+                constraintLayout.visibility = View.VISIBLE
+                helper.setText(R.id.textview_num, item.meta_pages.size.toString())
             }
-            val imageView = helper.getView<ImageView>(R.id.item_img)
-            imageView.setTag(R.id.tag_first, item.image_urls.medium)
-            val needSmall = item.height > 1500 || item.height > 1500
-            val loadUrl = if (needSmall) {
-                item.image_urls.square_medium
+            "ugoira" -> {
+                constraintLayout.visibility = View.VISIBLE
+                helper.setText(R.id.textview_num, "Gif")
+            }
+            else -> {
+                constraintLayout.visibility = View.VISIBLE
+                helper.setText(R.id.textview_num, "CoM")
+            }
+        }
+        val mainImage = helper.getView<ImageView>(R.id.item_img)
+        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
+        val needSmall = item.height > 1500 || item.height > 1500
+        val loadUrl = if (needSmall) {
+            item.image_urls.square_medium
+        } else {
+            item.image_urls.medium
+        }
+
+        if (!R18on) {
+            val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+            if (isr18) {
+                GlideApp.with(mainImage.context)
+                    .load(ContextCompat.getDrawable(context, R.drawable.h))
+                    .placeholder(R.drawable.h).into(mainImage)
             } else {
-                item.image_urls.medium
-            }
-
-            if (!R18on) {
-                val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-                if (isr18) {
-                    GlideApp.with(imageView.context)
-                        .load(ContextCompat.getDrawable(context, R.drawable.h))
-                        .placeholder(R.drawable.h).into(imageView)
-                } else {
-                    GlideApp.with(imageView.context).load(loadUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .transition(withCrossFade()).placeholder(R.color.halftrans)
-                        .into(object : ImageViewTarget<Drawable>(imageView) {
-                            override fun setResource(resource: Drawable?) {
-                                imageView.setImageDrawable(resource)
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable,
-                                transition: Transition<in Drawable>?
-                            ) {
-                                if (imageView.getTag(R.id.tag_first) === item.image_urls.medium) {
-                                    super.onResourceReady(resource, transition)
-                                }
-                            }
-                        })
-                }
-            } 
-            else {
-                GlideApp.with(imageView.context).load(loadUrl).transition(withCrossFade())
-                    .placeholder(R.color.halftrans)
+                GlideApp.with(mainImage.context).load(loadUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(ContextCompat.getDrawable(imageView.context, R.drawable.ai))
-                    .into(object : ImageViewTarget<Drawable>(imageView) {
+                    .transition(withCrossFade()).placeholder(R.color.halftrans)
+                    .into(object : ImageViewTarget<Drawable>(mainImage) {
                         override fun setResource(resource: Drawable?) {
-                            imageView.setImageDrawable(resource)
+                            mainImage.setImageDrawable(resource)
                         }
 
                         override fun onResourceReady(
                             resource: Drawable,
                             transition: Transition<in Drawable>?
                         ) {
-                            if (imageView.getTag(R.id.tag_first) === item.image_urls.medium) {
+                            if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
                                 super.onResourceReady(resource, transition)
                             }
-
                         }
                     })
             }
+        } else {
+            GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
+                .placeholder(R.color.halftrans)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))
+                .into(object : ImageViewTarget<Drawable>(mainImage) {
+                    override fun setResource(resource: Drawable?) {
+                        mainImage.setImageDrawable(resource)
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
+                            super.onResourceReady(resource, transition)
+                        }
+
+                    }
+                })
         }
+    }
 }

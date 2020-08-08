@@ -46,8 +46,8 @@ abstract class PicItemAdapter(
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     abstract var hideBookmarked: Boolean
-    var colorPrimary: Int = ThemeUtil.getColor(context, R.attr.colorPrimary)
-    open var badgeTextColor: Int = ThemeUtil.getColor(context,R.attr.badgeTextColor)
+    var colorPrimary: Int = R.color.colorPrimary
+    var badgeTextColor: Int = R.color.yellow
     abstract var blockTags: List<String>
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     fun loadMoreEnd() {

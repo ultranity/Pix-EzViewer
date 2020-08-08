@@ -114,7 +114,7 @@ fun getListData(path: String, picOnly:Boolean=true, withFolder:Boolean=true, sho
             if (it.isDirectory// 文件夹
                 && it.canRead()//是否可读
             ) {
-                if (withFolder)
+                if (!withFolder)
                     return@mapNotNull null
                 // 获取文件夹目录结构
                 item.icon = R.drawable.ic_action_folder.toString()//图标

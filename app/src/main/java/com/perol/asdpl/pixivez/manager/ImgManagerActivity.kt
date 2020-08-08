@@ -105,7 +105,8 @@ class ImgManagerActivity : RinkActivity() {
     }
 
     private fun reset() {
-        GlideApp.with(this).load(R.drawable.ic_action_search).into(fab_start)
+        getInfo = false
+        GlideApp.with(this).load(R.drawable.ic_action_search).thumbnail(0.5f).into(fab_start)
         viewModel.task?.forEach {
             it.file.checked = false
         }

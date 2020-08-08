@@ -98,47 +98,51 @@ class ImgManagerViewModel : BaseViewModel() {
             File(path.value+File.separatorChar+"rename.log")
                 .writeText(Gson().toJson(task))
             taskmap.clear()
-            adapter.notifyDataSetChanged()
-        }.observeOn(AndroidSchedulers.mainThread()).subscribe ({rt->
-            //Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
-            val preIndex = files!!.indexOf(rt.file)
-            if (preIndex>=layoutManager.findFirstVisibleItemPosition()
-                &&preIndex<=layoutManager.findLastVisibleItemPosition()) {
-                adapter.notifyItemChanged(preIndex)
+                AndroidSchedulers.mainThread().scheduleDirect({
+                    adapter.notifyDataSetChanged()},100,TimeUnit.MICROSECONDS).add()
             }
-        },{
-            Log.e("imgMgr", "error$it")
-        },{}).add()
+            .observeOn(AndroidSchedulers.mainThread()).subscribe ({rt->
+                //Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
+                val preIndex = files!!.indexOf(rt.file)
+                if (preIndex>=layoutManager.findFirstVisibleItemPosition()
+                    &&preIndex<=layoutManager.findLastVisibleItemPosition()) {
+                    adapter.notifyItemChanged(preIndex)
+                }
+            },{
+                Log.e("imgMgr", "error$it")
+            },{}).add()
     }
     fun rename(it:renameTask) {
         val orig = File(it.file.path)
         val tar = "${orig.parent}${File.separator}${it.file.target}"
         it.file.name = it.file.target!!
-        File(it.file.path).renameTo(File(it.file.target!!))
+        File(it.file.path).renameTo(File(tar))
         val preIndex = files!!.indexOf(it.file)
-        if (preIndex >= layoutManager.findFirstVisibleItemPosition()
-            && preIndex <= layoutManager.findLastVisibleItemPosition()
-        ) {
-            adapter.notifyItemChanged(preIndex)
-        }
+        AndroidSchedulers.mainThread().scheduleDirect {
+            if (preIndex >= layoutManager.findFirstVisibleItemPosition()
+                && preIndex <= layoutManager.findLastVisibleItemPosition()
+            ) {
+                adapter.notifyItemChanged(preIndex)
+            }
+        }.add()
     }
 
     fun renameAll(){
-        Thread( Runnable {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                task?.parallelStream()?.filter {
-                    it.file.checked
-                }?.forEach{
-                    rename(it)
-                }
+    Thread( Runnable {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            task?.parallelStream()?.filter {
+                it.file.checked
+            }?.forEach{
+                rename(it)
             }
-            else{
-                task?.filter {
-                    it.file.checked
-                }?.forEach{
-                    rename(it)
-                }
+        }
+        else{
+            task?.filter {
+                it.file.checked
+            }?.forEach{
+                rename(it)
             }
-        }).start()
+        }
+    }).start()
     }
 }

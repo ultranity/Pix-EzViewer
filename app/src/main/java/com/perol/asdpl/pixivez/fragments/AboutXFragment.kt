@@ -30,8 +30,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.mikepenz.aboutlibraries.LibsBuilder
+//import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.services.PxEZApp
 
 
 class AboutXFragment : PreferenceFragmentCompat() {
@@ -69,7 +71,12 @@ class AboutXFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
             }
             "about_rate_license" -> {
-                startActivity(Intent(activity, OssLicensesMenuActivity::class.java))
+                LibsBuilder()
+                    .withFields(R.string::class.java.fields)
+                    .withAboutIconShown(true)
+                    .withAboutVersionShown(true)
+                    .withAboutDescription(PxEZApp.instance.getString(R.string.support_string))
+                    .start(requireActivity())
             }
         }
         return super.onPreferenceTreeClick(preference)

@@ -24,10 +24,12 @@ buildscript {
     dependencies {
 
         classpath 'com.android.tools.build:bundletool:0.13.4'
-        classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+
+        //classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
+        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.3.0"
     }
 }
 allprojects {

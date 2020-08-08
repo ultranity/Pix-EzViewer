@@ -33,14 +33,14 @@ import com.google.gson.Gson
 import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.objects.ReFreshFunction
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.viewmodel.BaseViewModel
-import io.reactivex.Flowable
+import com.tencent.mmkv.MMKV
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_img_manager.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -76,24 +76,32 @@ class ImgManagerViewModel : BaseViewModel() {
                 }
             return@map it
         }.subscribeOn(Schedulers.io().add()*/
-
+        val kv=MMKV.defaultMMKV(MMKV.MULTI_PROCESS_MODE,null)
         val taskmap = HashMap<Long,renameTask>()
         Observable.fromIterable(task).subscribeOn(Schedulers.io()).filter {
             (!length_filter ||it.file.name.length<50) && it.pid != null
-        }.flatMap {
-            taskmap[it.pid!!] = it
-            retrofitRepository.getIllust(it.pid)
-        }.subscribeOn(Schedulers.io()).map{ rt->
-            //Log.d("imgMgr","get"+this+"p"+it.part)
-            val it = taskmap[rt.illust.id]!!
-            it.file.illust = rt.illust
-            it.file.target = Works.parseSaveFormat(rt.illust,it.part?.toInt(),saveformat,TagSeparator,false)
-            it.file.checked = (it.file.target != it.file.name)
-            //Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
-            if(rename_once)
-                rename(it)
-            it
-        }.doFinally {
+            }.flatMap { it ->
+                taskmap[it.pid!!] = it
+                if (kv.containsKey(it.pid.toString()))
+                    Observable.just(kv.decodeParcelable(it.pid.toString(),Illust::class.java))
+                else
+                    retrofitRepository.getIllust(it.pid).flatMap{
+                        kv.encode(it.illust.id.toString(),it.illust)
+                        Observable.just(it.illust)
+                    }
+            }.subscribeOn(Schedulers.io())
+            .map{ rt->
+                //Log.d("imgMgr","get"+this+"p"+it.part)
+            val it = taskmap[rt.id]!!
+                it.file.illust = rt
+                it.file.target = Works.parseSaveFormat(rt,it.part?.toInt(),saveformat,TagSeparator,false)
+                it.file.checked = (it.file.target != it.file.name)
+                //Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
+                if(rename_once)
+                    rename(it)
+                it
+            }
+            .doFinally {
             //Log.d("imgMgr","all")
             File(path.value+File.separatorChar+"rename.log")
                 .writeText(Gson().toJson(task))

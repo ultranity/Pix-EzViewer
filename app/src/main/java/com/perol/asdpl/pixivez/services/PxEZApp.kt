@@ -48,7 +48,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.bugly.Bugly
 import com.tencent.bugly.beta.Beta
 import java.io.File
-
+import com.tencent.mmkv.MMKV
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences
@@ -172,6 +172,8 @@ class PxEZApp : Application() {
             Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
         }
+        if(pre.getBoolean("infoCache", true))
+            MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityCollector.collect(activity)

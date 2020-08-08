@@ -215,8 +215,6 @@ object Works {
             .setExtendField(Gson().toJson(illustD))
             .option(option)
             .create()
-
-
     }
 
 /*

@@ -16,7 +16,7 @@ buildscript {
         maven {
             url "https://maven.aliyun.com/repository/central"
         }
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
         jcenter()
         google()
 
@@ -43,7 +43,7 @@ allprojects {
         maven {
             url "https://maven.aliyun.com/repository/central"
         }
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
         jcenter()
         google()
     }

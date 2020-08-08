@@ -36,7 +36,6 @@ import java.util.*
 
 // zoom pic for viewing when clicked
 class ZoomActivity : RinkActivity() {
-    lateinit var str: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +54,16 @@ class ZoomActivity : RinkActivity() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         toolbar.setNavigationOnClickListener { finish() }
         val intent = intent
-        val bundle = intent.extras
-        str = bundle!!.getStringArrayList("url")!!
-        val illust = bundle.getParcelable<Illust>("illust")
+        val bundle = intent.extras!!
+        val illust = bundle.getParcelable<Illust>("illust")!!
         val num = bundle.getInt("num", 0)
-        val zoomPagerAdapter = ZoomPagerAdapter(this, str, illust)
-        textview_zoom.text = "1/${str.size}"
+        val zoomPagerAdapter = ZoomPagerAdapter(this, illust)
+        val size =
+            if (illust.meta_pages.isEmpty())
+                1
+            else
+                illust.meta_pages.size
+        textview_zoom.text = "1/${size}"
         viewpage_zoom.adapter = zoomPagerAdapter
         viewpage_zoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -73,7 +76,7 @@ class ZoomActivity : RinkActivity() {
 
             override fun onPageSelected(position: Int) {
                 viewpage_zoom.tag = position
-                textview_zoom.text = "${position + 1}/${str.size}"
+                textview_zoom.text = "${position + 1}/${size}"
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -81,8 +84,6 @@ class ZoomActivity : RinkActivity() {
             }
         })
         viewpage_zoom.currentItem = num
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -22,7 +22,7 @@
         android:singleLine="true"
         android:text="1/1"
         android:textColor="@color/white"
-        android:textSize="15dp" />
+        android:textSize="15sp" />
 
     <com.google.android.material.appbar.AppBarLayout
             android:fitsSystemWindows="true"

@@ -25,45 +25,72 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.Works
 import java.io.File
-import java.util.*
-
 
 class ZoomPagerAdapter(
     val context: Context,
-    private val arrayList: ArrayList<String>,
-    val illust: Illust?
+    val illust: Illust
 ) : PagerAdapter() {
-
+    private var origin:List<String>? = null
+    private var preview:List<String>? = null
     override fun getCount(): Int {
-        return arrayList.size
+        return if (illust.meta_pages.isEmpty())
+                1
+            else
+                illust.meta_pages.size
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object`
     }
 
-
     @SuppressLint("ClickableViewAccessibility")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val large = PreferenceManager.getDefaultSharedPreferences(context).getString(
+                "quality",
+                "0"
+            )!!.toInt() != 0
+        if (illust.meta_pages.isEmpty()) {
+            origin = listOf(illust.meta_single_page.original_image_url!!)
+
+        if(large)
+            preview = listOf(illust.image_urls.large)
+        else
+            preview= listOf(illust.image_urls.medium)
+        } else {
+            origin = illust.meta_pages.map { it.image_urls.original }
+
+            if(large){
+                preview = illust.meta_pages.map {
+                    it.image_urls.large
+                }
+            }
+            else {
+                preview = illust.meta_pages.map {
+                    it.image_urls.medium
+                }
+            }
+        }
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.view_pager_zoom, container, false)
         val photoView = view.findViewById<SubsamplingScaleImageView>(R.id.photoview_zoom)
@@ -106,15 +133,47 @@ class ZoomPagerAdapter(
         photoView.setOnTouchListener { v, event ->
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
-        GlideApp.with(context).asFile().load(arrayList[position])
+        val button_origin = view.findViewById<MaterialButton>(R.id.button_origin)
+
+        GlideApp.with(context).asFile().load(origin!![position]).apply( RequestOptions().onlyRetrieveFromCache(true))
             .into(object : CustomTarget<File>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    //super.onLoadFailed(errorDrawable)
+                    GlideApp.with(context).asFile()
+                        .load(preview!![position])
+                        .apply( RequestOptions().onlyRetrieveFromCache(true))
+                        .into(object : CustomTarget<File>() {
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                            }
+                            override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                                //Log.d("origin","load preview")
+                                photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                                resourceFile = resource
+                            }
+                        })
+                }
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    //Log.d("origin","from cache")
+                    button_origin.visibility =View.GONE
                     photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
                 }
             })
+        button_origin.setOnClickListener {
+            button_origin.visibility =View.GONE
+            GlideApp.with(context).asFile().load(origin!![position])
+                .into(object : CustomTarget<File>() {
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                        photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                        resourceFile = resource
+                        //Log.d("origin","load from net")
+                    }
+                })
+        }
         container.addView(view)
         return view
     }

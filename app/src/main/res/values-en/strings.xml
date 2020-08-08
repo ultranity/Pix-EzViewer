@@ -18,6 +18,7 @@
 
     <string name="_18">Show R-18 image previews</string>
     <string name="picturequality">Picture quality</string>
+    <string name="origin">show origin</string>
     <string name="searchsource">SauceNAO</string>
     <string name="cleancatche">Clear cache</string>
     <string name="historyrecord">History</string>

@@ -137,7 +137,6 @@ class PictureXAdapter(
                     data.meta_pages.map {
                         imageUrls.add(it.image_urls.medium)
                     }
-
                 }
             }
             else -> {
@@ -597,15 +596,6 @@ class PictureXAdapter(
                         val intent = Intent(mContext, ZoomActivity::class.java)
                         val bundle = Bundle()
                         bundle.putInt("num", position)
-                        val arrayList = ArrayList<String>()
-                        if (data.meta_pages.isEmpty()) {
-                            arrayList.add(data.meta_single_page.original_image_url!!)
-                        } else {
-                            data.meta_pages.map {
-                                arrayList.add(it.image_urls.original)
-                            }
-                        }
-                        bundle.putStringArrayList("url", arrayList)
                         bundle.putParcelable(
                             "illust",
                             pictureXViewModel.illustDetail.value
@@ -685,6 +675,7 @@ class PictureXAdapter(
                                                 file1.parentFile.mkdirs()
                                             }
                                             val ob = encodingGif()
+                                            //TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
                                             if (ob != null) {
                                                 ob.subscribe({
                                                     runBlocking {

@@ -60,6 +60,37 @@ android {
             buildConfigField("Boolean", "ISGOOGLEPLAY", "false")
         }
     }
+    sourceSets{
+        main{
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+        bugly{
+            manifest.srcFile 'src/bugly/AndroidManifest.xml'
+        }
+    }
+    splits {
+        // Configures multiple APKs based on screen density.
+        density {
+            // Configures multiple APKs based on screen density.
+            enable false
+            // Specifies a list of screen densities Gradle should not create multiple APKs for.
+            exclude "mdpi", "hdpi", "ldpi", "xhdpi", "xxxhdpi"
+            // Specifies a list of compatible screen size settings for the manifest.
+            //compatibleScreens 'small','normal', 'large', 'xlarge'
+        }
+        // Configures multiple APKs based on ABI.
+        abi {
+            // Enables building multiple APKs per ABI.
+            enable true
+            // By default all ABIs are included, so use reset() and include to specify
+            reset()
+            // Specifies a list of ABIs that Gradle should create APKs for.
+            include "x86", 'armeabi-v7a', 'arm64-v8a'
+
+            // Specifies that we do not want to also generate a universal APK that includes all ABIs.
+            universalApk true
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
@@ -69,7 +100,23 @@ android {
             //buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
         }
         debug{
-            //buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
+            //applicationIdSuffix ".debug"
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            packagingOptions {
+                exclude "lib/mips/libRSSupport.so"
+                exclude 'lib/arm64-v8a/libRSSupport.so'
+                exclude 'lib/armeabi-v7a/librsjni.so'
+                exclude 'lib/x86/libRSSupport.so'
+                exclude 'lib/x86_64/libRSSupport.so'
+                exclude 'lib/armeabi-v7a/libRSSupport.so'
+                exclude 'lib/arm64-v8a/librsjni.so'
+                exclude 'lib/x86/librsjni.so'
+                exclude 'lib/x86_64/librsjni.so'
+            }
         }
     }
     buildFeatures{

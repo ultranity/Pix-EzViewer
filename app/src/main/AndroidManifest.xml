@@ -22,7 +22,7 @@
 
         <activity
             android:name=".activity.ImgDActivity"
-            android:label="@string/title_activity_img_d"
+            android:label="ImgDActivity"
             android:theme="@style/AppThemeBase.NoActionBar" />
         <activity android:name=".manager.ImgManagerActivity" />
         <activity android:name=".activity.BlockActivity" />

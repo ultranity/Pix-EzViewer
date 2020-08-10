@@ -129,7 +129,7 @@ fun GlideLoadImage(imageView: ImageView, url: String?) {
             })
     }
     else {
-        GlideApp.with(imageView).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
+        GlideApp.with(imageView.context).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
     }
 }
 

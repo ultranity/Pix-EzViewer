@@ -99,6 +99,7 @@ class PxEZApp : Application() {
                 return
             }*/
         super.onCreate()
+        //LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
         Aria.init(this)
         Aria.download(this).register()
@@ -166,7 +167,7 @@ class PxEZApp : Application() {
             resources.configuration.locale.language
         }
         if (!BuildConfig.ISGOOGLEPLAY) {
-            Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog;
+            Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
             Beta.enableHotfix = false
             //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
             Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

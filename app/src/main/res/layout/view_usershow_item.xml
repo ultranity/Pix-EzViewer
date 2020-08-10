@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="0dp"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="0dp"
+        app:cardCornerRadius="4dp"
         app:cardElevation="5dp"
         app:cardMaxElevation="5dp"
         app:cardPreventCornerOverlap="true"

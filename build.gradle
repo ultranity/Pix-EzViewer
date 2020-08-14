@@ -28,8 +28,13 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
-        classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
-        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.3.0"
+        if (getGradle().getStartParameter().getTaskRequests()
+                .toString().contains("Play")){
+            classpath 'com.google.android.gms:oss-licenses-plugin:0.10.2'
+        }
+        else{
+            classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.3.0"
+        }
         classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.18'
     }
 }

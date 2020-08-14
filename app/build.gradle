@@ -29,8 +29,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 apply plugin: 'AndResGuard'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+if (getGradle().getStartParameter().getTaskRequests()
+        .toString().contains("Play")){
+    apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+}else{
+    apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+}
 android {
 
     compileSdkVersion 29
@@ -56,16 +60,15 @@ android {
             buildConfigField("Boolean", "ISGOOGLEPLAY", "true")
         }
         libre{
+            //Warning: not fully tested
             dimension "version"
             buildConfigField("Boolean", "ISGOOGLEPLAY", "false")
+            applicationIdSuffix ".libre"
         }
     }
     sourceSets{
-        main{
-            manifest.srcFile 'src/main/AndroidManifest.xml'
-        }
         bugly{
-            manifest.srcFile 'src/bugly/AndroidManifest.xml'
+            java.srcDir('src/libre/java')
         }
     }
     splits {
@@ -96,7 +99,7 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             //buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
         }
         debug{

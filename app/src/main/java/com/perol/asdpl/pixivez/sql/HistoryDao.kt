@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -57,6 +58,9 @@ abstract class SearchHistoryDao {
 
     @Query("DELETE FROM history")
     abstract fun deletehistory()
+
+    @Query("DELETE FROM history WHERE word = (:word)")
+    abstract fun deleteHistory(word: String)
 
     @Delete
     abstract fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity)

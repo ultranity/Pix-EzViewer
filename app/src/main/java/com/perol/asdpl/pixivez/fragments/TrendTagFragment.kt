@@ -112,39 +112,29 @@ class TrendTagFragment : Fragment() {
             }
         }, {}))
         viewModel.searchhistroy.observe(viewLifecycleOwner, Observer { it ->
-
-            val arrayList = ArrayList<String>()
             chipgroup.removeAllViews()
             it.forEach {
-                arrayList.add(it.word)
                 chipgroup.addView(getChip(it))
             }
 
-            if (arrayList.isNotEmpty()) textView_clearn.visibility = View.VISIBLE
+            if (it.isNotEmpty()) textView_clearn.visibility = View.VISIBLE
             else textView_clearn.visibility = View.GONE
-
-
         })
     }
 
-    private fun getChip(searchHistoryEntity: SearchHistoryEntity): Chip {
+    private fun getChip(word: String): Chip {
         val chip = Chip(activity)
         val paddingDp = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 5f,
             resources.displayMetrics
         ).toInt()
-        chip.text = searchHistoryEntity.word
+        chip.text = word
         chip.setOnClickListener {
-            upToPage(searchHistoryEntity.word)
+            upToPage(word)
         }
         chip.setOnLongClickListener {
-            viewModel.deleteHistoryEntity(searchHistoryEntity).subscribe({
-                viewModel.resethistory()
-            }, {
-
-            }, {
-
-            })
+            chip.visibility = View.GONE
+            viewModel.deleteHistory(word)
             true
         }
         return chip

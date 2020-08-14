@@ -323,7 +323,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             1 -> {
                 HelloMDynamicsFragment.newInstance("d")
             }
-            3 -> {
+            2 -> {
                 HelloMThFragment.newInstance("d", "c")
             }
             else -> {

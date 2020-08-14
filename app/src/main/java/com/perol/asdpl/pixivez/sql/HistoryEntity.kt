@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,7 +34,7 @@ class SearchHistoryEntity constructor(@ColumnInfo(name = "word") var word: Strin
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
 }
-
+/*
 @Entity(tableName = "downillusts")
 class DownIllustsEntity constructor(
         @ColumnInfo(name = "userid")
@@ -68,7 +69,7 @@ class DownUserEntity constructor(
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
 }
-
+*/
 @Entity(tableName = "illusthistory")
 class IllustBeanEntity(
         @PrimaryKey(autoGenerate = true)

@@ -238,35 +238,6 @@ class RetrofitRepository {
             .retryWhen(reFreshFunction)
     }
 
-    fun create(observable: Observable<Any>): Observable<Any>? {
-        return Observable.just(1).flatMap {
-            resetToken()
-            observable
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen(reFreshFunction)
-    }
-
-    inline fun <reified T> getNext(url: String): Observable<T> =
-        Observable.just(1).flatMap {
-            resetToken()
-            appApiPixivService.getNext(Authorization, url).flatMap {
-                Observable.just(Gson().fromJson(it.string(), T::class.java))
-            }
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen(reFreshFunction)
-
-    fun getNextUser(url: String): Observable<SearchUserResponse> = getNext(url)
-
-    fun getNextTags(url: String): Observable<BookMarkTagsResponse> = getNext(url)
-
-    fun getNextUserIllusts(url: String): Observable<IllustNext> = getNext(url)
-
-    fun getNextIllustRecommended(url: String): Observable<RecommendResponse> = getNext(url)
-
-    fun getNextIllustComments(url: String): Observable<IllustCommentsResponse> = getNext(url)
-
-    fun getNextPixivisionArticles(url: String): Observable<SpotlightResponse> = getNext(url)
-
     fun postLikeIllust(int: Long): Observable<ResponseBody>? {
         return Observable.just(1).flatMap {
             resetToken()
@@ -371,11 +342,44 @@ class RetrofitRepository {
     }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
         .retryWhen(reFreshFunction)
 
-    fun getUserRecommanded() = Observable.just(1).flatMap {
-        resetToken()
-        appApiPixivService.getUserRecommended(Authorization)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-        .retryWhen(reFreshFunction)
+    fun getUserRecommanded() =Request(appApiPixivService.getUserRecommended(Authorization))
+
+    private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
+        return Observable.just(1).flatMap {
+            resetToken()
+            observable
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+    }
+
+    fun create(observable: Observable<Any>): Observable<Any>? {
+        return Observable.just(1).flatMap {
+            resetToken()
+            observable
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+    }
+
+    inline fun <reified T> getNext(url: String): Observable<T> =
+        Observable.just(1).flatMap {
+            resetToken()
+            appApiPixivService.getUrl(Authorization, url).flatMap {
+                Observable.just(Gson().fromJson(it.string(), T::class.java))
+            }
+        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+            .retryWhen(reFreshFunction)
+
+    fun getNextUser(url: String): Observable<SearchUserResponse> = getNext(url)
+
+    fun getNextTags(url: String): Observable<BookMarkTagsResponse> = getNext(url)
+
+    fun getNextUserIllusts(url: String): Observable<IllustNext> = getNext(url)
+
+    fun getNextIllustRecommended(url: String): Observable<RecommendResponse> = getNext(url)
+
+    fun getNextIllustComments(url: String): Observable<IllustCommentsResponse> = getNext(url)
+
+    fun getNextPixivisionArticles(url: String): Observable<SpotlightResponse> = getNext(url)
 
     fun getUserRecommandedUrl(url: String) = getNext<SearchUserResponse>(url)
 

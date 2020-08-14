@@ -281,8 +281,8 @@ interface AppApiPixivService {
 
 
     @GET
-    fun getNext(
+    fun getUrl(
         @Header("Authorization") paramString1: String,
-        @Url paramString2: String
+        @Url url: String
     ): Observable<ResponseBody>
 }

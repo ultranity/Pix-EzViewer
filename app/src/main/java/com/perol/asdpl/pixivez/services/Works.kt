@@ -63,30 +63,40 @@ object Works {
 
     fun parseSaveFormat(illust: Illust, part: Int?,saveformat: String, TagSeparator: String,R18Folder:Boolean): String {
         val url: String
-        val tags = illust.tags
-        var filename  = PxEZApp.saveformat.replace("{illustid}", illust.id.toString())
+        val tag = if (saveformat.contains("{tag")) {
+            illust.tags.mapNotNull {
+                if (!illust.title.contains(it.name)
+                    and
+                    !illust.tags.minusElement(it).any { ot -> ot.name.contains(it.name) }
+                )
+                    it
+                else
+                    null
+            }
+        }
+        else
+            null
+        var filename  = saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
             .replace("{name}", illust.user.name.let{ if (it.length>8) it.substringBeforeLast("@") else it}.toLegal())
             .replace("{account}", illust.user.account.toLegal())
             .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
-            .replace("{tags}", tags.mapNotNull{
-                if (!illust.title.contains(it.name)
-                    and
-                    !tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
-                    it.name
-                else
-                    null
-            }.distinct().joinToString("_", limit = 5).toLegal())
-            .replace("{tagst}", tags.mapNotNull{
-                it.translated_name?:(
-                        if (!illust.title.contains(it.name)
-                            and
-                            !tags.minusElement(it).any { ot-> ot.name.contains(it.name) })
-                            it.name
-                        else
-                            null)
-            }.distinct().joinToString("#", limit = 5).toLegal())
             .replace("{title}", illust.title.toLegal())
+                //!illust.title.contains(it.name)
+        if (saveformat.contains("{tag")) {
+            filename = filename.replace("{tagsm}", tag!!.map { it.translated_name + "_" + it.name }
+                                                            .distinct().sortedBy { it.length }
+                                                            .joinToString(TagSeparator, limit = 8).take(110 - filename.length).toLegal())
+                .replace("{tagso}", tag.map { it.name }
+                            .distinct().sortedBy { it.length }
+                            .joinToString(TagSeparator).take(110 - filename.length).toLegal())
+                .replace("{tags}", tag.map {
+                        it.translated_name?.let { ot ->
+                            if (ot.length < it.name.length * 2.5) ot else it.name
+                        } ?: it.name
+                    }.distinct().sortedBy { it.length }
+                        .joinToString(TagSeparator).take(110 - filename.length).toLegal())
+        }
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[if (part< illust.meta_pages.size-1) part
                                             else  illust.meta_pages.size-1 ].image_urls.original

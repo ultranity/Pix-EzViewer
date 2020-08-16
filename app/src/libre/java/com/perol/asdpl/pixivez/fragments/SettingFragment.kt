@@ -55,7 +55,6 @@ import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.tencent.bugly.beta.Beta
 import java.io.File
 import java.io.FilenameFilter
 
@@ -307,8 +306,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                     } catch (e: Exception) {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
-                } else
-                    Beta.checkUpgrade()
+                }
             }
             "storepath1" -> {
 //                startActivityForResult(Intent(activity, PathProviderActivity::class.java), 887)

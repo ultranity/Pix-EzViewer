@@ -166,13 +166,13 @@ class PxEZApp : Application() {
         } else {
             resources.configuration.locale.language
         }
-        if (!BuildConfig.ISGOOGLEPLAY) {
-            Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
-            Beta.enableHotfix = false
-            //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
-            Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
-        }
+
+        Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
+        Beta.enableHotfix = false
+        //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
+        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
+
         if(pre.getBoolean("infoCache", true))
             MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

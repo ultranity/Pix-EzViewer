@@ -18,15 +18,31 @@
 - [ ] F-Droid 分发
 - [ ] tag单独文件夹
 - [] feature&update: 更多命名自定义字符串（tags,tag#,tag5,tagst)
+- [ ] feature&update:  侧滑功能
 
 ## 1.7.0R:
-- [ ] feature: 批量识别pid重命名本地图片
 - [ ] feature:  画师作品页面筛选整合
-- [ ] feature:  识别剪切板首位pid自动跳转
-- [ ] feature:  一键下载？
+- [ ] feature:  一键下载
+- [ ] feature:  下载信息导出
+- [ ] feature:  MMKV缓存
+- [ ] feature:  gif保存时设置命名格式
+- [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
-
+## 1.6.5R:
+- [x] feature: 图片管理-批量识别pid重命名本地图片(初步)
+- [x] feature:  识别剪切板首位pid自动跳转 #22
+- [x] fix: 设置主题时状态栏沉浸颜色错误 #23
+- [x] fix: 下载管理部分功能修复
+- [x] fix: banner选项切换后立即重启导致bug #26
+- [x] feature&update: tags保存规则优化
+- [x] update: 列表底栏留空优化
+- [x] update: 依赖升级及精简
+- [x] update: 启用R8代码压缩
+- [x] update: 启用ResGuard资源压缩
+- [x] update: 启用flavour #7
+- [x] update：捐赠列表
+ 
 ## 1.6.3R:
 - [x] feature: 收图模式：保存自动收藏|单击三连长按进入详情
 - [x] feature: 搜索尝试自动识别纯数字pid跳转

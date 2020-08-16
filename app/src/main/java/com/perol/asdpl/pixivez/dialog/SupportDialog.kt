@@ -30,14 +30,14 @@ import java.util.*
 class SupportDialog : DialogFragment() {
 
     val ThanksArray = listOf(
-        "**涛:支持功能开发\n本地识别图片pid批量重命名 进度50%",
+        "**涛 x20",
         "*蒂",
         "C*a",
         "H*m",
         "Y*H",
         "**A",
         "**涵",
-        "*喵",
+        "*喵 x2",
         "*宋",
         "*恒",
         "*苦",
@@ -47,7 +47,24 @@ class SupportDialog : DialogFragment() {
         "*心",
         "*手",
         "*面",
-        "*土"
+        "*土",
+        "L*Q",
+        "C*g",
+        "*J",
+        "*m",
+        "*毛",
+        "*🍁",
+        "*。 x2",
+        "*梦",
+        "*苦",
+        "v*t",
+        "*奇",
+        "**豪",
+        "*政",
+        "**信",
+        "*泰",
+        "*磊",
+        "*江"
     )
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")
@@ -96,10 +113,10 @@ class SupportDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val calendar = Calendar.getInstance()
-            SharedPreferencesServices.getInstance().setInt("lastsupport",
+            val sharedPreferencesServices = SharedPreferencesServices.getInstance()
+            sharedPreferencesServices.setInt("lastsupport",
                 calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY))
-
-            val totaldownloadcount = SharedPreferencesServices.getInstance().getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size?:0)
+            val totaldownloadcount = sharedPreferencesServices.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size?:0)
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_thanks, null)
@@ -124,7 +141,9 @@ class SupportDialog : DialogFragment() {
                     .setView(view).setNegativeButton(R.string.wechat)
                     { _,_->
                         gotoWeChat()
-                        SharedPreferencesServices.getInstance().setInt("supports", SharedPreferencesServices.getInstance().getInt("supports" ) +1 )
+                        sharedPreferencesServices.setInt("lastsupport",
+                            calendar.get(Calendar.DAY_OF_YEAR)*100+500+calendar.get(Calendar.HOUR_OF_DAY))
+                        sharedPreferencesServices.setInt("supports", sharedPreferencesServices.getInt("supports" ) +1 )
                     }
                     .setPositiveButton(R.string.ali)
                     { _,_->
@@ -138,7 +157,9 @@ class SupportDialog : DialogFragment() {
                     )
                     clipboard.setPrimaryClip(clip)
                     gotoAliPay()
-                        SharedPreferencesServices.getInstance().setInt("supports", SharedPreferencesServices.getInstance().getInt("supports" ) +1 )
+                    sharedPreferencesServices.setInt("lastsupport",
+                        calendar.get(Calendar.DAY_OF_YEAR)*100+500+calendar.get(Calendar.HOUR_OF_DAY))
+                    sharedPreferencesServices.setInt("supports", sharedPreferencesServices.getInt("supports" ) +1 )
                 }.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

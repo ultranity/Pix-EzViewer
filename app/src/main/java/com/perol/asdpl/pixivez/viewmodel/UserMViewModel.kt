@@ -74,7 +74,7 @@ class UserMViewModel : BaseViewModel() {
         }, {}, {}).add()
     }
 
-    fun isuser(id: Long) = Single.create<Boolean> { it ->
+    fun isuser(id: Long) = Single.create<Boolean> {
         launchUI {
             val pt = AppDataRepository.getUser()
             val isuser = id == pt.userid

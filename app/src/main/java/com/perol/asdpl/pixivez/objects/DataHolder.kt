@@ -34,7 +34,7 @@ import kotlin.collections.set
 class DataHolder {
     companion object{
         private var illustsList: Stack<ArrayList<Illust>?> = Stack<ArrayList<Illust>?>()
-        public var pictureAdapter: PagerAdapter? = null
+        var pictureAdapter: PagerAdapter? = null
 
         fun getIllustsList(): ArrayList<Illust>? {
             return if (this.illustsList.empty()) null

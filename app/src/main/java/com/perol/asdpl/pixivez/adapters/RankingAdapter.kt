@@ -75,7 +75,7 @@ class RankingAdapter(
     init {
         if (PxEZApp.CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
-                (adapter.data as ArrayList<Illust?>).get(position)?.let {
+                (adapter.data as ArrayList<Illust?>)[position]?.let {
                     val item = it
                     Works.imageDownloadAll(item)
                     if (!item.is_bookmarked){
@@ -158,10 +158,10 @@ class RankingAdapter(
             }
             setOnItemLongClickListener { adapter, view, position ->
                 //show detail of illust
-                (adapter.data as ArrayList<Illust?>).get(position)?.let {
+                (adapter.data as ArrayList<Illust?>)[position]?.let {
                     val detailstring =
                         "id: " + it.id.toString() +
-                                "caption: " + it.caption.toString() + "create_date: " + it.create_date.toString() +
+                                "caption: " + it.caption + "create_date: " + it.create_date +
                                 "width: " + it.width.toString() + "height: " + it.height.toString() +
                                 //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
                                 "user: " + it.user.name +

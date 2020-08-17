@@ -394,7 +394,7 @@ class PictureXAdapter(
 
         }
 
-        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_relative)
+        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_relative)!!
 
     }
 
@@ -529,7 +529,7 @@ class PictureXAdapter(
                                 }
                                 val mSelectedItems =
                                     ArrayList<Int>()  // Where we track the selected items
-                                val builder = MaterialAlertDialogBuilder(mContext as Activity)
+                                val builder = MaterialAlertDialogBuilder(mContext)
                                 val showlist = ArrayList<String>()
                                 for (i in list.indices) {
                                     showlist.add(i.toString())

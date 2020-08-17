@@ -80,7 +80,7 @@ abstract class IllustHistoryDao {
     @Query("SELECT * FROM illusthistory WHERE illustid=:illustid")
     abstract fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
 
-    @Delete()
+    @Delete
     abstract fun deleteOne(query: IllustBeanEntity)
 }
 

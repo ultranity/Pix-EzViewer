@@ -42,7 +42,6 @@ import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.trend_tag_fragment.*
 

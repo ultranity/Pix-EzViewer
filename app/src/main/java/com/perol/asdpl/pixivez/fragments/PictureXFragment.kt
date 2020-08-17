@@ -130,26 +130,26 @@ class PictureXFragment : BaseFragment() {
     private fun initViewModel() {
 
         pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
-        pictureXViewModel.illustDetail.observe(this, Observer {
+        pictureXViewModel.illustDetail.observe(this, Observer { it ->
             progress_view.visibility = View.GONE
             if (it != null) {
-                val tags = it.tags.map {
-                    it.name
+                val tags = it.tags.map {rt ->
+                    rt.name
                 }
                 for (i in tags) {
                     if (blockTags.contains(i)) {
                         jump_button.setOnClickListener {
                             startActivity(Intent(requireActivity(), BlockActivity::class.java))
                         }
-                        blocktag_textview.text = "${i}"
+                        blocktag_textview.text = "$i"
                         block_view.visibility = View.VISIBLE
                     }
                 }
                 rootBinding.illust = it
 
-                if (it.meta_pages.isNotEmpty())
-                    position = it.meta_pages.size
-                else position = 1
+                position = if (it.meta_pages.isNotEmpty())
+                    it.meta_pages.size
+                else 1
                 pictureXAdapter =
                     PictureXAdapter(pictureXViewModel, it, requireContext()).also {
                         it.setListener {
@@ -265,7 +265,7 @@ class PictureXFragment : BaseFragment() {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            val tagsBookMarkDialog = TagsBookMarkDialog();
+            val tagsBookMarkDialog = TagsBookMarkDialog()
             tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog::class.java.name)
             true
         }

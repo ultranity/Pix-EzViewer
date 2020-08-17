@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -57,9 +58,9 @@ class NewUserActivity : RinkActivity() {
         oAuthSecureService =
             restClient!!.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
         sharedPreferencesServices = SharedPreferencesServices(applicationContext)
-        button_login.setOnClickListener(View.OnClickListener {
+        button_login.setOnClickListener({
             if (edittext_username.text.toString().isNotBlank()) {
-                accountPixivService!!.createProvisionalAccount(edittext_username.getText().toString(), "pixiv_android_app_provisional_account", Authorization)
+                accountPixivService!!.createProvisionalAccount(edittext_username.text.toString(), "pixiv_android_app_provisional_account", Authorization)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io()).subscribe(object : Observer<PixivAccountsResponse> {
                             override fun onSubscribe(d: Disposable) {}

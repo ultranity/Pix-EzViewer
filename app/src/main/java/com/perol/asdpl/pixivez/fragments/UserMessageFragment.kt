@@ -188,9 +188,8 @@ class UserMessageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_user_message, container, false)
 
-        return view
+        return inflater.inflate(R.layout.fragment_user_message, container, false)
     }
 
 
@@ -206,7 +205,7 @@ class UserMessageFragment : Fragment() {
     companion object {
         // TODO: Rename parameter arguments, choose names that match
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private val ARG_PARAM1 = "param1"
+        private const val ARG_PARAM1 = "param1"
 
         /**
          * Use this factory method to create a new instance of

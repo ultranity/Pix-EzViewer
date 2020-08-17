@@ -144,7 +144,7 @@ class CommentDialog : DialogFragment() {
                     commentAdapter?.loadMoreModule?.setOnLoadMoreListener {
                         if (!nextUrl.isNullOrBlank()) {
 
-                            retrofitRepository!!.getNextIllustComments(
+                            retrofitRepository.getNextIllustComments(
                                 nextUrl!!
                             ).subscribe({
                                     commentAdapter?.addData(it.comments)
@@ -178,7 +178,7 @@ class CommentDialog : DialogFragment() {
     }
 
     fun commit() {
-        retrofitRepository!!
+        retrofitRepository
             .postIllustComment(
                 id!!,
                 edittextComment.text.toString(),
@@ -190,7 +190,7 @@ class CommentDialog : DialogFragment() {
                 }
 
                 override fun onNext(responseBody: ResponseBody) {
-                    retrofitRepository!!.getIllustComments(
+                    retrofitRepository.getIllustComments(
                         id!!
                     )
                         .subscribe(object : Observer<IllustCommentsResponse> {

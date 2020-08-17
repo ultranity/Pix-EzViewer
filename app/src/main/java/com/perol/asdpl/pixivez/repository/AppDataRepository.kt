@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +35,7 @@ import kotlinx.coroutines.withContext
 class AppDataRepository {
     companion object {
         private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
         suspend fun getUser(): UserEntity {
             val result = withContext(Dispatchers.IO) {
                 appDatabase.userDao().getUsers()

@@ -76,7 +76,7 @@ class PxEZApp : Application() {
                 }
                 sourceFile.delete()
 
-                if(PxEZApp.ShowDownloadToast) {
+                if(ShowDownloadToast) {
                     Toasty.success(
                         this,
                         "${title}${getString(R.string.savesuccess)}",

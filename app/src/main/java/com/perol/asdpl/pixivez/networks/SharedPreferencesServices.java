@@ -33,8 +33,8 @@ import com.perol.asdpl.pixivez.services.PxEZApp;
 
 public class SharedPreferencesServices {
 
-    private SharedPreferences sp;
-    private String FILE_NAME = "userinfo";
+    private final SharedPreferences sp;
+    private final String FILE_NAME = "userinfo";
 
     public SharedPreferencesServices(Context context) {
         sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);

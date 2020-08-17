@@ -80,9 +80,9 @@ class TrendTagViewModel : BaseViewModel() {
     fun getIllustTrendTags() = retrofitRepository.getIllustTrendTags()
     fun deleteHistory(word: String) = Observable.just(1).subscribeOn(Schedulers.io()).map{
         appDatabase.searchhistoryDao().deleteHistory(word)
-    }.observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }.observeOn(AndroidSchedulers.mainThread()).subscribe()!!
 
-    fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity) = Observable.create<Int> {
+    fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity): Observable<Int> = Observable.create<Int> {
         appDatabase.searchhistoryDao().deleteHistoryEntity(searchHistoryEntity)
         it.onNext(1)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

@@ -4,10 +4,10 @@ package com.perol.asdpl.pixivez.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -16,7 +16,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
-import kotlinx.android.synthetic.main.activity_block.*
 import kotlinx.android.synthetic.main.fragment_block_tag.*
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus

@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +31,7 @@ import java.io.File
 
 class UnzipUtil {
     companion object {
-        val TAG = "ZIP"
+        const val TAG = "ZIP"
 
         @Throws(Exception::class)
         fun UnZipFolder(file: File, outPathString: String) {

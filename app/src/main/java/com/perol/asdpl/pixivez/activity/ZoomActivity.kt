@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +33,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.ZoomPagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
 import kotlinx.android.synthetic.main.activity_zoom.*
-import java.util.*
 
 // zoom pic for viewing when clicked
 class ZoomActivity : RinkActivity() {

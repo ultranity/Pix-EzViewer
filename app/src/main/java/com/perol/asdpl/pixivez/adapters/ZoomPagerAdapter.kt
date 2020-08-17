@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -48,7 +49,6 @@ import com.perol.asdpl.pixivez.networks.ProgressListener
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.Works
-import kotlinx.android.synthetic.main.activity_zoom.*
 import java.io.File
 
 class ZoomPagerAdapter(
@@ -77,20 +77,19 @@ class ZoomPagerAdapter(
         if (illust.meta_pages.isEmpty()) {
             origin = listOf(illust.meta_single_page.original_image_url!!)
 
-        if(large)
-            preview = listOf(illust.image_urls.large)
-        else
-            preview= listOf(illust.image_urls.medium)
+            preview = if(large)
+                listOf(illust.image_urls.large)
+            else
+                listOf(illust.image_urls.medium)
         } else {
             origin = illust.meta_pages.map { it.image_urls.original }
 
-            if(large){
-                preview = illust.meta_pages.map {
+            preview = if(large){
+                illust.meta_pages.map {
                     it.image_urls.large
                 }
-            }
-            else {
-                preview = illust.meta_pages.map {
+            } else {
+                illust.meta_pages.map {
                     it.image_urls.medium
                 }
             }

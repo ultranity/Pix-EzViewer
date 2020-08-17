@@ -37,7 +37,6 @@ import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_pixivision.*
-import kotlinx.coroutines.runBlocking
 
 class PixivsionActivity : RinkActivity() {
 

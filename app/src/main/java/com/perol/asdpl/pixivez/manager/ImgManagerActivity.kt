@@ -179,7 +179,7 @@ class ImgManagerActivity : RinkActivity() {
                 lifecycleOwner(this@ImgManagerActivity)
             }
             val InputEditable = Input.editableText
-            for (i in 1..descTable.childCount - 1)
+            for (i in 1 until descTable.childCount)
                 descTable.getChildAt(i).setOnClickListener {
                     InputEditable.insert(Input.selectionStart, it.tag.toString())
                 }
@@ -199,7 +199,7 @@ class ImgManagerActivity : RinkActivity() {
                 if (pid != null) {
                     val bundle = Bundle()
                     val arrayList = LongArray(1)
-                    arrayList[0] = (pid!!)
+                    arrayList[0] = (pid)
                     bundle.putLongArray("illustidlist", arrayList)
                     bundle.putLong("illustid", arrayList[0])
                     val intent2 = Intent(applicationContext, PictureActivity::class.java)

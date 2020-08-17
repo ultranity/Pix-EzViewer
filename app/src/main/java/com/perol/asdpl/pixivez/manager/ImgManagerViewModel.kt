@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.objects.FileInfo
-import com.perol.asdpl.pixivez.objects.ReFreshFunction
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -51,7 +50,7 @@ class renameTask constructor(fileInfo:FileInfo){
 
 }
 class ImgManagerViewModel : BaseViewModel() {
-    val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+    val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     var path =MutableLiveData<String>()
     var saveformat = pre.getString("ImgManagerSaveFormat",PxEZApp.saveformat)!!
@@ -94,7 +93,7 @@ class ImgManagerViewModel : BaseViewModel() {
                 //Log.d("imgMgr","get"+this+"p"+it.part)
             val it = taskmap[rt.id]!!
                 it.file.illust = rt
-                it.file.target = Works.parseSaveFormat(rt,it.part?.toInt(),saveformat,TagSeparator,false)
+                it.file.target = Works.parseSaveFormat(rt, it.part,saveformat,TagSeparator,false)
                 it.file.checked = (it.file.target != it.file.name)
                 //Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
                 if(rename_once)

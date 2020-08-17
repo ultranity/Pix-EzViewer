@@ -429,7 +429,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             lifecycleOwner(this@SettingFragment)
         }
         val InputEditable = Input.editableText
-        for (i in 1..descTable.childCount-1)
+        for (i in 1 until descTable.childCount)
             descTable.getChildAt(i).setOnClickListener {
                 InputEditable.insert(Input.selectionStart,it.tag.toString())
             }

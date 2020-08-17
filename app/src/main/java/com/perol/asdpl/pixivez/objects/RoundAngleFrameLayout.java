@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,8 +46,8 @@ public class RoundAngleFrameLayout extends FrameLayout {
     private float bottomLeftRadius;
     private float bottomRightRadius;
 
-    private Paint roundPaint;
-    private Paint imagePaint;
+    private final Paint roundPaint;
+    private final Paint imagePaint;
 
     public RoundAngleFrameLayout(Context context) {
         this(context, null);

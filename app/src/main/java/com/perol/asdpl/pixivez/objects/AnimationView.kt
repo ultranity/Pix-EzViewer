@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,6 +33,7 @@ import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import java.util.*
+import kotlin.math.max
 
 //Pixiv动图的帧动画解决方案，如果需要拿去用把Copyright带上或者提一下我的id吧，研究了挺久的
 class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
@@ -142,7 +144,7 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
                     i++
                     if (i == drawPool.count()) i = 0
                     Thread.sleep(
-                        Math.max(
+                        max(
                             0,
                             delayTime - duration
                         )

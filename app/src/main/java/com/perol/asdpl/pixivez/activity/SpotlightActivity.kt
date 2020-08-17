@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,12 +28,10 @@ package com.perol.asdpl.pixivez.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SpotlightAdapter
-import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
@@ -72,7 +71,7 @@ class SpotlightActivity : RinkActivity() {
     private fun getData() {
         val intent = intent
         url = intent.getStringExtra("url")
-        textView_test.setOnClickListener(View.OnClickListener {
+        textView_test.setOnClickListener({
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
             val content_url = Uri.parse(url)
@@ -123,7 +122,7 @@ class SpotlightActivity : RinkActivity() {
                             stringBuilder.append(element.text())
 
                         }
-                        textView_test.setText(stringBuilder)
+                        textView_test.text = stringBuilder
                         for (string in urls) {
                             if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
                                 reurls.add(Integer.valueOf(string.replace("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=", "")))
@@ -198,7 +197,7 @@ class SpotlightActivity : RinkActivity() {
                         recyclerview_spotlight.layoutManager =
                             LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
 
-                        recyclerview_spotlight.setAdapter(spotlightAdapter)
+                        recyclerview_spotlight.adapter = spotlightAdapter
                         recyclerview_spotlight.isNestedScrollingEnabled = false
                     }
                 })

@@ -98,7 +98,7 @@ class SupportDialog : DialogFragment() {
     }
     private fun sendPictureStoredBroadcast(file: File) {
         runBlocking {
-            val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             MediaScannerConnection.scanFile(
                 PxEZApp.instance, arrayOf(path.absolutePath), arrayOf(
                     MimeTypeMap.getSingleton()

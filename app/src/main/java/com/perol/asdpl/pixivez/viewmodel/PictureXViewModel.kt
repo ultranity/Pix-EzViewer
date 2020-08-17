@@ -72,7 +72,7 @@ class PictureXViewModel : BaseViewModel() {
 
     }
 
-    fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)
+    fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)!!
 
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"

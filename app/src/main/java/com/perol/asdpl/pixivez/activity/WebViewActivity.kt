@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -69,13 +70,11 @@ class WebViewActivity : RinkActivity() {
                         "platform.twitter.com"
                     ) || request.url.host!!.equals("www.google-analytics.com")
                 ) {
-                    val webResourceResponse =
-                        WebResourceResponse(
-                            "application/javascript",
-                            "UTF-8",
-                            ByteArrayInputStream("".toByteArray())
-                        )
-                    return webResourceResponse
+                    return WebResourceResponse(
+                        "application/javascript",
+                        "UTF-8",
+                        ByteArrayInputStream("".toByteArray())
+                    )
                 }
                 return super.shouldInterceptRequest(view, request)
             }

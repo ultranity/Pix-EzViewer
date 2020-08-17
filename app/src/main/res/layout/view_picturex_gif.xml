@@ -27,5 +27,5 @@
         android:layout_marginLeft="2dp"
         android:alpha="0.9"
         android:src="@drawable/ic_action_play"
-        android:tint="@color/white" />
+        app:tint="@color/white" />
 </FrameLayout>

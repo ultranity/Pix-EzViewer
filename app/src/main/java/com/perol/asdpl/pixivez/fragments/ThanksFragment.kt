@@ -25,15 +25,10 @@
 
 package com.perol.asdpl.pixivez.fragments
 
-import android.content.*
+import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.util.Base64
-import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -48,9 +43,6 @@ import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.dialog.ThanksDialog
-import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.coroutines.runBlocking
-import java.io.File
 
 
 class ThanksFragment : PreferenceFragmentCompat() {

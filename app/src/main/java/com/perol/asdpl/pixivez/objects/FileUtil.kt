@@ -1,3 +1,26 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 ultranity
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE
+ */
 package com.perol.asdpl.pixivez.objects
 
 import android.os.Environment
@@ -41,11 +64,11 @@ class FileInfo(file: File) {
 
     val ext:String
         get() {
-            if (name.contains(".")) {
+            return if (name.contains(".")) {
                 val dot = name.lastIndexOf(".")// 123.abc.txt
-                return name.substring(dot + 1)
+                name.substring(dot + 1)
             } else {
-                return ""
+                ""
             }
         }
     val pid:String
@@ -85,7 +108,7 @@ object FileUtil{
  * @return
  */
 fun getListData(path: String, picOnly:Boolean=true, withFolder:Boolean=true, showParent:Boolean=true): MutableList<FileInfo> {
-    var list = ArrayList<FileInfo>()//用来存储便利之后每一个文件中的信息
+    val list = ArrayList<FileInfo>()//用来存储便利之后每一个文件中的信息
     val pfile = File(path)// 兴建实例化文件对象
     if (!pfile.exists()) {// 判断路径是否存在
     //如果没有这个文件目录。那么这里去创建
@@ -105,7 +128,7 @@ fun getListData(path: String, picOnly:Boolean=true, withFolder:Boolean=true, sho
         list.add(parent)
     }
     val files: Array<File>? = pfile.listFiles()//文件对象数组 // 该文件对象下所属的所有文件和文件夹列表
-    if (files != null && files.size > 0) {// 非空验证
+    if (files != null && files.isNotEmpty()) {// 非空验证
         list.addAll(files.mapNotNull {
             val item = FileInfo(it)
             if (it.isHidden) {

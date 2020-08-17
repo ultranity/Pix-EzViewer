@@ -9,21 +9,16 @@ import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import kotlinx.coroutines.runBlocking
-import okhttp3.*
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.jsoup.HttpStatusException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.security.cert.X509Certificate
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.X509TrustManager
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 
 
 object ApiClient {

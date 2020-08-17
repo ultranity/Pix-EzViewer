@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -66,7 +67,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 程序的Context对象
      */
     private Context mContext;
-    private Properties mDeviceCrashInfo = new Properties();
+    private final Properties mDeviceCrashInfo = new Properties();
     private static final String VERSION_NAME = "versionName";
     private static final String VERSION_CODE = "versionCode";
     private static final String STACK_TRACE = "STACK_TRACE";

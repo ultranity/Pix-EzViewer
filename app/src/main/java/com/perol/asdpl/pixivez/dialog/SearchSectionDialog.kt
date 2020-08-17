@@ -48,7 +48,7 @@ class SearchSectionDialog : DialogFragment() {
         show(fragmentManager, "LongHoldDialogFragment")
     }
 
-    val tms = Calendar.getInstance()
+    val tms = Calendar.getInstance()!!
     val thisMonth01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
     val halfYear01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
 
@@ -190,8 +190,6 @@ class SearchSectionDialog : DialogFragment() {
                 viewModel.firstSetData(word)
         }
 
-        val dialog = builder.create()
-
-        return dialog
+        return builder.create()
     }
 }

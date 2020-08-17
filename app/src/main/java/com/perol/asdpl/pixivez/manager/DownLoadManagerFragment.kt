@@ -58,7 +58,7 @@ import org.jetbrains.annotations.NotNull
 import java.io.File
 
 
-class DownloadTaskAdapter() :
+class DownloadTaskAdapter :
     BaseQuickAdapter<DownloadEntity, BaseViewHolder>(R.layout.item_download_task) {
     init {
         this.setOnItemClickListener { adapter, view, position ->
@@ -138,10 +138,9 @@ class DownloadTaskAdapter() :
     }
 
     override fun convert(helper: BaseViewHolder, item: DownloadEntity, payloads: List<Any>) {
-        val dataPayload = payloads
         val binding = helper.getBinding<ItemDownloadTaskBinding>()!!
-        if (dataPayload.isNotEmpty()) {
-            val thatItem = dataPayload[0] as DownloadEntity
+        if (payloads.isNotEmpty()) {
+            val thatItem = payloads[0] as DownloadEntity
             val progress = helper.getView<ProgressBar>(R.id.progress)
             progress.max = thatItem.fileSize.toInt()
             progress.progress = thatItem.currentProgress.toInt()

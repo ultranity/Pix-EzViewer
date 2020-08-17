@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +42,7 @@ import java.util.List;
 
 public class CommentAdapter extends BaseQuickAdapter<IllustCommentsResponse.CommentsBean, BaseViewHolder> implements LoadMoreModule {
 
-    private Context context;
+    private final Context context;
 
     public CommentAdapter(int layoutResId, @Nullable List<IllustCommentsResponse.CommentsBean> data, Context context) {
         super(layoutResId, data);

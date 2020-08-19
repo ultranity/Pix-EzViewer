@@ -118,7 +118,7 @@ class PxEZApp : Application() {
         Thread(Runnable {
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
-                Aria.download(this).load(it.id).cancel(true)
+                Aria.download(this).load(it.id).cancel()
             }
             if( pre.getBoolean("resume_unfinished_task",true)
                 //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()

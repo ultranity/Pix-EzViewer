@@ -55,24 +55,35 @@ data class IllustD(
     var title: String? = null,
     var url: String
 )
+fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit:Int): String {
+    var result = tags.mapNotNull {
+        if (!title.contains(it)
+            and
+            !tags.minusElement(it).any { ot -> ot.contains(it) }
+        )
+            it
+        else
+            null
+    }
+        .joinToString(TagSeparator)
+        .toLegal()
+    var size = result.toByteArray().size
+    while (size > blimit){
+        result = result.dropLast((size - blimit+2)/3)
+        size = result.toByteArray().size
+    }
 
+    return result
+}
 object Works {
-    fun parseSaveFormat(illust: Illust, part: Int?): String {
+    fun parseSaveFormat(illust: Illust, part: Int?=null): String {
         return parseSaveFormat(illust, part, PxEZApp.saveformat,PxEZApp.TagSeparator,PxEZApp.R18Folder )
     }
 
     fun parseSaveFormat(illust: Illust, part: Int?,saveformat: String, TagSeparator: String,R18Folder:Boolean): String {
         val url: String
         val tag = if (saveformat.contains("{tag")) {
-            illust.tags.mapNotNull {
-                if (!illust.title.contains(it.name)
-                    and
-                    !illust.tags.minusElement(it).any { ot -> ot.name.contains(it.name) }
-                )
-                    it
-                else
-                    null
-            }
+            illust.tags
         }
         else
             null
@@ -83,20 +94,6 @@ object Works {
             .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
             .replace("{title}", illust.title.toLegal())
                 //!illust.title.contains(it.name)
-        if (saveformat.contains("{tag")) {
-            filename = filename.replace("{tagsm}", tag!!.map { it.translated_name + "_" + it.name }
-                                                            .distinct().sortedBy { it.length }
-                                                            .joinToString(TagSeparator, limit = 8).take(110 - filename.length).toLegal())
-                .replace("{tagso}", tag.map { it.name }
-                            .distinct().sortedBy { it.length }
-                            .joinToString(TagSeparator).take(110 - filename.length).toLegal())
-                .replace("{tags}", tag.map {
-                        it.translated_name?.let { ot ->
-                            if (ot.length < it.name.length * 2.5) ot else it.name
-                        } ?: it.name
-                    }.distinct().sortedBy { it.length }
-                        .joinToString(TagSeparator).take(110 - filename.length).toLegal())
-        }
         if (part != null && illust.meta_pages.isNotEmpty()) {
             url = illust.meta_pages[if (part< illust.meta_pages.size-1) part
                                             else  illust.meta_pages.size-1 ].image_urls.original
@@ -119,7 +116,26 @@ object Works {
             }
             else -> ".jpg"
         }
-        return filename.replace("{type}", type)
+        filename = filename.replace("{type}", type)
+        if (saveformat.contains("{tagsm")) {
+            filename = filename.replace("{tagsm}", tag!!.map { it.translated_name + "_" + it.name }
+                .distinct().sortedBy { it.length }
+                .joinToString(TagSeparator, limit = 8).take(110 - filename.length).toLegal())
+        }
+        else if (saveformat.contains("{tagso")) {
+            filename = filename.replace("{tagso}", tag!!.map { it.name }
+                    .distinct().sortedBy { it.length }
+                    .joinToString(TagSeparator).take(110 - filename.length).toLegal())
+        }else if (saveformat.contains("{tags")) {
+            val tags =tag!!.map {
+                it.translated_name?.let { ot ->
+                    if (ot.length < it.name.length * 2.5) ot else it.name
+                } ?: it.name
+            }.distinct().sortedBy { it.length }
+            filename = filename.replace("{tags}",
+                byteLimit(tags, illust.title, TagSeparator,253 - filename.toByteArray().size))
+        }
+        return filename
     }
 
     fun imageDownloadWithFile(illust: Illust, file: File, part: Int?) {

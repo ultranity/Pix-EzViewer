@@ -68,20 +68,16 @@ class DownloadTaskAdapter :
         }
         this.setOnItemLongClickListener { adapter, view, position ->
             val item = data[position]
-            val illustD = Gson().fromJson(item.str, IllustD::class.java)
             MaterialDialog(context).show {
-                title(text = illustD.title)
+                title(text = item.fileName)
                 listItems(R.array.download_task_choice) { _, index, string ->
                     when (index) {
                         0 -> {
-                            val fileName = item.fileName
-                            val targetPath =
-                                "${PxEZApp.instance.cacheDir}${File.separator}${fileName}"
                             Aria.download(PxEZApp.instance)
                                 .load(item.url) //读取下载地址
-                                .setFilePath(targetPath) //设置文件保存的完整路径
+                                .setFilePath(item.filePath) //设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
-                                .setExtendField(Gson().toJson(illustD))
+                                .setExtendField(item.str)
                                 .option(Works.option)
                                 .create()
                         }
@@ -92,7 +88,7 @@ class DownloadTaskAdapter :
                             Aria.download(context).load(data[position].id).resume()
                         }
                         3 -> {
-                            Aria.download(context).load(data[position].id).cancel(true)
+                            Aria.download(context).load(data[position].id).cancel()
                         }
                     }
                     val taskList = Aria.download(this).taskList

@@ -113,9 +113,7 @@ class PictureXViewModel : BaseViewModel() {
 
         }, {}, {}).add()
     }
-
-    fun firstGet(toLong: Long, param2: Illust?) {
-        if(param2 != null) {
+    fun firstGet(param2: Illust){
             illustDetail.value = param2
             likeIllust.value = param2.is_bookmarked
             Thread(Runnable {
@@ -138,32 +136,33 @@ class PictureXViewModel : BaseViewModel() {
                         )
                     )
             }).start()
-        } else {
-            retrofitRepository.getIllust(toLong).subscribe({
-                illustDetail.value = it!!.illust
-                likeIllust.value = it.illust.is_bookmarked
-                Observable.just(1).observeOn(Schedulers.io()).subscribe { ot ->
-                    val ee = appDatabase.illusthistoryDao().getHistoryOne(it.illust.id)
-                    if (ee.isNotEmpty()) {
-                        appDatabase.illusthistoryDao().deleteOne(ee[0])
-                        appDatabase.illusthistoryDao().insert(
-                            IllustBeanEntity(
-                                null,
-                                it.illust.image_urls.square_medium,
-                                it.illust.id
-                            )
-                        )
-                    } else
-                        appDatabase.illusthistoryDao().insert(
-                            IllustBeanEntity(
-                                null,
-                                it.illust.image_urls.square_medium,
-                                it.illust.id
-                            )
-                        )
-                }
-            }, {}, {}).add()
         }
+
+    fun firstGet(toLong: Long) {
+        retrofitRepository.getIllust(toLong).subscribe({
+            illustDetail.value = it!!.illust
+            likeIllust.value = it.illust.is_bookmarked
+            Observable.just(1).observeOn(Schedulers.io()).subscribe { ot ->
+                val ee = appDatabase.illusthistoryDao().getHistoryOne(it.illust.id)
+                if (ee.isNotEmpty()) {
+                    appDatabase.illusthistoryDao().deleteOne(ee[0])
+                    appDatabase.illusthistoryDao().insert(
+                        IllustBeanEntity(
+                            null,
+                            it.illust.image_urls.square_medium,
+                            it.illust.id
+                        )
+                    )
+                } else
+                    appDatabase.illusthistoryDao().insert(
+                        IllustBeanEntity(
+                            null,
+                            it.illust.image_urls.square_medium,
+                            it.illust.id
+                        )
+                    )
+            }
+        }, {}, {}).add()
     }
 
     fun getRelative(long: Long) {

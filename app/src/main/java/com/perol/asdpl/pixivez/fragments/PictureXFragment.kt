@@ -85,7 +85,10 @@ class PictureXFragment : BaseFragment() {
     override fun loadData() {
 //        val item = activity?.intent?.extras
 //        val illust = item?.getParcelable<Illust>(param1.toString())
-        pictureXViewModel.firstGet(param1!!,param2)
+        if (param2 != null)
+            pictureXViewModel.firstGet(param2!!)
+        else
+            pictureXViewModel.firstGet(param1!!)
     }
 
     override fun onDestroy() {

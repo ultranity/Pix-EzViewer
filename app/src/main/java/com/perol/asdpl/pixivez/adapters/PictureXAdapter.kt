@@ -461,7 +461,7 @@ class PictureXAdapter(
         ITEM_TYPE_GIF,
     }
 
-    private val path2: String = PxEZApp.storepath + "/" + data.id + ".gif"
+    private val path2: String = PxEZApp.storepath + "/" + Works.parseSaveFormat(data).substringBeforeLast(".") + ".gif"
     override fun getItemCount() = imageUrls.size + 3
 
 
@@ -695,6 +695,7 @@ class PictureXAdapter(
 
                                                         }
                                                         isEncoding = false
+                                                        File(path).delete()
                                                         Toast.makeText(
                                                             PxEZApp.instance,
                                                             R.string.savegifsuccess,
@@ -745,10 +746,11 @@ class PictureXAdapter(
                                         }
                                     }
                                     else -> {
+                                        val zipPath: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".zip"
                                         val file1 = File(zipPath)
                                         if (file1.exists()) {
                                             file1.copyTo(
-                                                File(PxEZApp.storepath, "${data.id}.zip"),
+                                                File(PxEZApp.storepath, "${Works.parseSaveFormat(data).substringBeforeLast(".")}.zip"),
                                                 overwrite = true
                                             )
                                             Toasty.info(
@@ -793,12 +795,10 @@ class PictureXAdapter(
     var isEncoding = false
 
     private val path: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".gif"
-    private val zipPath: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".zip"
-    private val path3: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".ojbk"
     private fun encodingGif(): Observable<Int>? {
-
-        val file1 = File(path3)
-        if (file1.exists()) {
+        val pathOk: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".ojbk"
+        val fileOk = File(pathOk)
+        if (fileOk.exists()) {
             return null
         }
         val parentPath = PxEZApp.instance.cacheDir.path + "/" + data.id
@@ -832,7 +832,7 @@ class PictureXAdapter(
 
             }
             gifEncoder.close()
-            file1.mkdirs()
+            fileOk.mkdirs()
             it.onNext(1)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 

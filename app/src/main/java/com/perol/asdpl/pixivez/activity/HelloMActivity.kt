@@ -48,6 +48,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
@@ -263,33 +264,37 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         super.onResume()
         this.window.decorView.post(Runnable {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clipData = clipboard.primaryClip
+            if (!clipboard.hasPrimaryClip())
+                return@Runnable
+            val clipData =  clipboard.primaryClip
             if (null != clipData && clipData.itemCount > 0) {
                 //for (item in 0 until clipData.itemCount){
                 //    val content = item.text.toString()
                 //}
                 //clipboard.addPrimaryClipChangedListener {
-                val item = Regex("""\d{7,8}""")
-                    .find(clipData.getItemAt(0).text.toString())
-                    ?.value?.toLongOrNull()
-                item?.let {
-                    val pre =PreferenceManager.getDefaultSharedPreferences(this)
-                    if (it==pre.getLong("lastclip",-1))
-                        return@Runnable
-                    MaterialDialog(this).show {
-                        title(R.string.clipboard_detected)
-                        message(R.string.jumpto)
-                        input(prefill = it.toString(), inputType = InputType.TYPE_CLASS_NUMBER)
-                        positiveButton(android.R.string.ok) { mt ->
-                            pre.edit().putLong("lastclip",it).apply()
-                            PictureActivity.startSingle(this@HelloMActivity, it)
-                        }
-                        neutralButton(R.string.not_this_one){ mt ->
-                            pre.edit().putLong("lastclip",it).apply()
-                        }
-                        negativeButton(android.R.string.cancel)
+                val text = clipData.getItemAt(0)?.text ?: return@Runnable
+                var item = Regex("""\d{7,8}""")
+                    .find(text)
+                    ?.value?.toLongOrNull()?: return@Runnable
+
+                val pre =PreferenceManager.getDefaultSharedPreferences(this)
+                if (item==pre.getLong("lastclip",-1))
+                    return@Runnable
+                MaterialDialog(this).show {
+                    title(R.string.clipboard_detected)
+                    message(R.string.jumpto)
+                    input(prefill = item.toString(), inputType = InputType.TYPE_CLASS_NUMBER)
+                    positiveButton(android.R.string.ok) {
+                        item = this.getInputField().text.toString().toLongOrNull()?:return@positiveButton
+                        pre.edit().putLong("lastclip",item).apply()
+                        PictureActivity.startSingle(this@HelloMActivity, item)
                     }
+                    neutralButton(R.string.not_this_one){
+                        pre.edit().putLong("lastclip",item).apply()
+                    }
+                    negativeButton(android.R.string.cancel)
                 }
+
                 //}
             }
         })

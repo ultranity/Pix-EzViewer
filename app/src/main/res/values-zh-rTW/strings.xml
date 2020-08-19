@@ -128,4 +128,5 @@
     <string name="save_zip_success">儲存zip成功</string>
     <string name="click">點擊</string>
     <string name="all_stop">全部暂停</string>
+    <string name="not_this_one">识别错误</string>
 </resources>

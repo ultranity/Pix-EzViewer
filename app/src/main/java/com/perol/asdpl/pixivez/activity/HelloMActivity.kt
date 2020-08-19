@@ -284,6 +284,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                             pre.edit().putLong("lastclip",it).apply()
                             PictureActivity.startSingle(this@HelloMActivity, it)
                         }
+                        neutralButton(R.string.not_this_one){ mt ->
+                            pre.edit().putLong("lastclip",it).apply()
+                        }
                         negativeButton(android.R.string.cancel)
                     }
                 }

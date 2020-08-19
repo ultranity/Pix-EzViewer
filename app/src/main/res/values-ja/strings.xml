@@ -117,4 +117,5 @@
     <string name="save_zip">save zip</string>
     <string name="already_encoding">It\'s already going on</string>
     <string name="save_zip_success">save zip success</string>
+    <string name="not_this_one">not this one</string>
 </resources>

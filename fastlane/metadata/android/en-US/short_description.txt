@@ -1,0 +1,1 @@
+ A third-party Pixiv Android client. (Android 5.0+)

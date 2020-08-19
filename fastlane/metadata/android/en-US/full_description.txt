@@ -1,0 +1,11 @@
+ A third-party Pixiv Android client. (Android 5.0+)  with:
+ * anti dns-polution support 
+ * aria download speed up
+ * custom file naming (save the information such as tags) 
+ * one-click gather mode
+ * night mode switch 
+ * multi-user support
+ * GIF play 
+ * save, view, add, reply comments 
+ * pid detaction
+ * other enhancements

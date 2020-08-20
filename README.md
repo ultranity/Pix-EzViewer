@@ -1,4 +1,7 @@
 # PixEz 阅读器
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a030ea8419b84907aeed53472abdcd91)](https://app.codacy.com/manual/ultranity/Pix-EzViewer?utm_source=github.com&utm_medium=referral&utm_content=ultranity/Pix-EzViewer&utm_campaign=Badge_Grade_Dashboard)
+
 ![](https://github.com/Notsfsssf/Pix-EzViewer/raw/master/app/src/main/res/mipmap-xxhdpi/ic_launcherep.png)
 
 ![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)

@@ -1,8 +1,9 @@
-# PixEz 阅读器
-![](https://github.com/Notsfsssf/Pix-EzViewer/raw/master/app/src/main/res/mipmap-xxhdpi/ic_launcherep.png)
+#  PixEz 阅读器 ![PixEz](https://github.com/Notsfsssf/Pix-EzViewer/raw/master/app/src/main/res/mipmap-xxhdpi/ic_launcherep.png)
 
-![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)
-
+[![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)](https://github.com/ultranity/Pix-EzViewer/releases/latest)
+ [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a030ea8419b84907aeed53472abdcd91)](https://app.codacy.com/manual/ultranity/Pix-EzViewer?utm_source=github.com&utm_medium=referral&utm_content=ultranity/Pix-EzViewer&utm_campaign=Badge_Grade_Dashboard)
+[![Downloads](https://img.shields.io/github/downloads/ultranity/Pix-EzViewer/total?color=FFAA11)](https://github.com/ultranity/Pix-EzViewer/releases)
+ 
 **!原作者[Notsfsssf](https://github.com/Notsfsssf)因学业及flutter android版PixEz开发原因停止维护**
 
 **经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)**

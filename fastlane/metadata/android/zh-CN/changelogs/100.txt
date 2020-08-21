@@ -1,0 +1,13 @@
+## 1.6.5R:
+- [x] feature: 图片管理-批量识别pid重命名本地图片(初步)
+- [x] feature:  识别剪切板首位pid自动跳转 #22
+- [x] fix: 设置主题时状态栏沉浸颜色错误 #23
+- [x] fix: 下载管理部分功能修复
+- [x] fix: banner选项切换后立即重启导致bug #26
+- [x] feature&update: tags保存规则优化
+- [x] update: 列表底栏留空优化
+- [x] update: 依赖升级及精简
+- [x] update: 启用R8代码压缩
+- [x] update: 启用ResGuard资源压缩
+- [x] update: 启用flavour #7
+- [x] update：捐赠列表

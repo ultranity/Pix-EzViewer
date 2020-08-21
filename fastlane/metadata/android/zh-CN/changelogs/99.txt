@@ -1,0 +1,12 @@
+## 1.6.3R:
+- [x] feature: 收图模式：保存自动收藏|单击三连长按进入详情
+- [x] feature: 搜索尝试自动识别纯数字pid跳转
+- [x] feature: SauceNao 搜图时 toast pid
+- [x] feature: 小白条悬浮沉浸@*少
+- [x] feature: 用户页顶栏图片点击下载
+- [x] feature: 用户详情页展示更多信息+完整展示背景
+- [x] update: 去除部分平台兼容代码和实际无用的GMS，精简体积
+- [x] update&fix：内部重启加载时首页自动回顶
+- [x] update&fix：pixivion设置修改重启
+- [x] update&fix：代码清理调整
+- [x] update：捐赠列表

@@ -25,10 +25,18 @@
 - [ ] feature:  一键下载
 - [ ] feature:  下载信息导出
 - [ ] feature:  MMKV缓存
-- [ ] feature:  gif保存时设置命名格式
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
+## 1.6.7R:
+- [x] feature:  gif保存时设置命名格式
+- [x] feature:  下载列表长按显示实际文件名
+- [x] feature&update:  剪切板pid识别允许忽略
+- [x] feature&fix:  tags保存截取255字节长度 #27
+- [x] fix: 剪切板首位pid识别null
+- [x] update: 减少不必要文件读写
+- [x] update: 其他代码优化
+
 ## 1.6.5R:
 - [x] feature: 图片管理-批量识别pid重命名本地图片(初步)
 - [x] feature:  识别剪切板首位pid自动跳转 #22

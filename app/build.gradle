@@ -42,8 +42,8 @@ android {
         applicationId "com.perol.asdpl.play.pixivez"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 100
-        versionName "1.6.5R"
+        versionCode 101
+        versionName "1.6.7R"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -102,7 +102,6 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable true
             packagingOptions {
                 exclude "lib/mips/libRSSupport.so"

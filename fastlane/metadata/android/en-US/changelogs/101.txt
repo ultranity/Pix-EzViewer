@@ -1,0 +1,8 @@
+## 1.6.7R:
+- [x] feature: gif set naming format when saving
+- [x] feature: Download List long press to display actual file name
+- [x] feature & update:  hide button for clipboard PID  wrong recognition
+- [x] feature & fix: retain tags to limit filename in 255 bytes of length
+- [x] fix: clipboard first PID identify null
+- [x] update: reduce unnecessary file read and write
+- [x] update: other code optimization

@@ -1,15 +1,15 @@
-# PixEz 阅读器
-![](https://github.com/Notsfsssf/Pix-EzViewer/raw/master/app/src/main/res/mipmap-xxhdpi/ic_launcherep.png)
+#  PixEz 阅读器 ![PixEz](https://github.com/Notsfsssf/Pix-EzViewer/raw/master/app/src/main/res/mipmap-xxhdpi/ic_launcherep.png)
 
-![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)
-
+一个支持免代理直连 + 多种额外特性功能优化的第三方 Pixiv android 客户端 。（Android 5.0+）
+ >A third-party Pixiv Android client with modern design and many other enhancements. (Android 5.0+)
+ 
+[![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)](https://github.com/ultranity/Pix-EzViewer/releases/latest)
+ [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a030ea8419b84907aeed53472abdcd91)](https://app.codacy.com/manual/ultranity/Pix-EzViewer?utm_source=github.com&utm_medium=referral&utm_content=ultranity/Pix-EzViewer&utm_campaign=Badge_Grade_Dashboard)
+[![Downloads](https://img.shields.io/github/downloads/ultranity/Pix-EzViewer/total?color=FFAA11)](https://github.com/ultranity/Pix-EzViewer/releases)
+ 
 **!原作者[Notsfsssf](https://github.com/Notsfsssf)因学业及flutter android版PixEz开发原因停止维护**
 
-**经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)**
-
-**，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md),目前建议优先通过本repo提交issue进行反馈**
-
-一个支持免代理直连及查看动图的第三方 Pixiv Android 客户端。（Android 5.0+）
+**经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md),目前建议优先通过本repo提交issue进行反馈**
 
 ## 1.功能特性
 * aria下载加速

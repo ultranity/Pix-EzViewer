@@ -99,21 +99,14 @@ android {
         }
         debug{
             //applicationIdSuffix ".debug"
-            minifyEnabled true
+            minifyEnabled false
             zipAlignEnabled true
-            shrinkResources true
+            shrinkResources false
             debuggable true
-            packagingOptions {
-                exclude "lib/mips/libRSSupport.so"
-                exclude 'lib/arm64-v8a/libRSSupport.so'
-                exclude 'lib/armeabi-v7a/librsjni.so'
-                exclude 'lib/x86/libRSSupport.so'
-                exclude 'lib/x86_64/libRSSupport.so'
-                exclude 'lib/armeabi-v7a/libRSSupport.so'
-                exclude 'lib/arm64-v8a/librsjni.so'
-                exclude 'lib/x86/librsjni.so'
-                exclude 'lib/x86_64/librsjni.so'
-            }
+            //packagingOptions {
+            //    exclude 'lib/*/libRSSupport.so'
+            //    exclude 'lib/*/librsjni.so'
+            //}
         }
     }
     buildFeatures{

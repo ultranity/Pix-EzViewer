@@ -98,11 +98,14 @@ object Works {
             url = illust.meta_pages[if (part< illust.meta_pages.size-1) part
                                             else  illust.meta_pages.size-1 ].image_urls.original
             filename = filename.replace("{part}", part.toString())
-        } else {
-            url = illust.meta_single_page.original_image_url!!
+        } else if(illust.meta_single_page.original_image_url != null) {
+            url = illust.meta_single_page.original_image_url
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
+        }
+        else{
+            url = ""
         }
         if(R18Folder && illust.x_restrict.equals(1))
             filename = "？$filename"

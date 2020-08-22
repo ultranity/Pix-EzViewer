@@ -168,7 +168,8 @@ class PictureXAdapter(
 
     class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    )
+        : RecyclerView.ViewHolder(binding.root) {
         private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
         private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
         private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
@@ -461,7 +462,6 @@ class PictureXAdapter(
         ITEM_TYPE_GIF,
     }
 
-    private val path2: String = PxEZApp.storepath + "/" + Works.parseSaveFormat(data).substringBeforeLast(".") + ".gif"
     override fun getItemCount() = imageUrls.size + 3
 
 
@@ -656,6 +656,7 @@ class PictureXAdapter(
                         }
                     }).into(holder.itemView.preview)
                 previewImageView = holder.itemView.preview
+                val path2 = PxEZApp.storepath + "/" + Works.parseSaveFormat(data).substringBeforeLast(".") + ".gif"
                 imageViewGif!!.setOnLongClickListener {
                     if (gifProgressBar?.visibility != View.VISIBLE) {
                         MaterialDialog(mContext).show {

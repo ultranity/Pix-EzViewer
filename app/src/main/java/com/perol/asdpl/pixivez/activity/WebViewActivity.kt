@@ -84,22 +84,26 @@ class WebViewActivity : RinkActivity() {
                 request: WebResourceRequest
             ): Boolean {
                 val segment = request.url.pathSegments
-                if (segment.size == 2) {
-                    if (segment[0] == "artworks") {
-                        val id = segment[1].toLong()
-                        val bundle = Bundle()
-                        val arrayList = LongArray(1)
-                        arrayList[0] = id
-                        bundle.putLongArray("illustidlist", arrayList)
-                        bundle.putLong("illustid", id)
-                        val intent = Intent(this@WebViewActivity, PictureActivity::class.java)
-                        intent.putExtras(bundle)
-                        startActivity(intent)
-                        return true
-                    }
-
+                if (segment.contains("artworks")) {
+                    val id = segment[segment.indexOf("artworks")+1].toLong()
+                    val bundle = Bundle()
+                    val arrayList = LongArray(1)
+                    arrayList[0] = id
+                    bundle.putLongArray("illustidlist", arrayList)
+                    bundle.putLong("illustid", id)
+                    val intent = Intent(this@WebViewActivity, PictureActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                    return true
                 }
-                if (segment.size == 1 && request.url.toString().contains("/member.php?id=")) {
+                else if(segment.contains("users")){
+                    val userId = segment[segment.indexOf("users")+1].toLong()
+                    val intent = Intent(this@WebViewActivity, UserMActivity::class.java)
+                    intent.putExtra("data", userId.toLong())
+                    startActivity(intent)
+                    return true
+                }
+                else if (segment.size == 1 && request.url.toString().contains("/member.php?id=")) {
                     val userId = request.url.getQueryParameter("id")
                     val intent = Intent(this@WebViewActivity, UserMActivity::class.java)
                     intent.putExtra("data", userId?.toLong())

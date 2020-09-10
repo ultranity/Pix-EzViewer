@@ -47,7 +47,7 @@ class ThemeUtil {
                 R.style.AppThemeBase_now
         )
         var colorPrimary:Int?=null
-        var badgeTextColor:Int?=null
+        var badgeTextColor:Int = R.color.yellow
         fun getColor(context: Context, resId:Int): Int {
             val typedValue = TypedValue()
             context.theme.resolveAttribute(resId, typedValue, true)

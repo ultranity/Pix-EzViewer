@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_private"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

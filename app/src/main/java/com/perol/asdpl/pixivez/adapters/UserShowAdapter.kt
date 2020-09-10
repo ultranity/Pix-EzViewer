@@ -44,10 +44,12 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.shehuan.niv.NiceImageView
 import java.util.ArrayList
 
 
@@ -78,9 +80,14 @@ class UserShowAdapter(layoutResId: Int) :
         val userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
         //        helper.addOnClickListener(R.id.cardview_recommand).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
         val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
-        val userImage = helper.getView<View>(R.id.imageview_usershow) as ImageView
-        val username = helper.getView<View>(R.id.textview_usershowname) as TextView
-
+        val userImage = helper.getView<NiceImageView>(R.id.imageview_usershow)
+        val username = helper.getView<TextView>(R.id.textview_usershowname)
+        val colorPrimary = ThemeUtil.getColor(context, R.attr.colorPrimary)
+        val badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
+        if (item.user.isIs_followed)
+            userImage.setBorderColor(badgeTextColor) // Color.YELLOW
+        else
+            userImage.setBorderColor(colorPrimary)
         recyclerView.layoutManager = linearLayoutManager
         userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()

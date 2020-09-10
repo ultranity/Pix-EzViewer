@@ -23,10 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <com.shehuan.niv.NiceImageView
                 android:id="@+id/imageview_usershow"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                app:border_color='?attr/colorPrimary'
+                app:border_width="3.3dp"
+                app:is_circle="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"

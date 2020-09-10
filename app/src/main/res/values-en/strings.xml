@@ -1,5 +1,18 @@
 <resources>
     <string name="app_name">Pix-EzViewer</string>
+    <string name="app_help">
+        "0. This is a free app. If you pay for it, please immediately ask for a refund and make a negative comment! \n"
+        "Be sure to install and update in the store or project address, There may be problems with the installation package provided by the third party and it is not up to date.\n"
+        "1. Long press on the picture details page to save the selected picture, and long press the head portrait to quickly follow the author, please provide application rights.\n"
+        "2. Most buttons have intuitive long press special operations (such as setting tags when like any pictures), or hiding them in the menu, you can try more\n"
+        "3. When browsing a moving picture, click the middle 0% progress bar to start downloading. After playing, press and hold to save the composition. The memory cost of the synthesis process is quite large, and occasional crashes are inevitable.\n"
+        "4. If the animation cannot be played, please exit the page or clear the cache and try again, which will generally work.\n"
+        "5. This is a personal development application, For feedback, please send an email to the mailbox marked on the settings page or GitHub to submit the issue. Your energy and ability are limited. Please do not use extreme methods for feedback. Be considerate of developers, and welcome to jointly develop the design.\n"
+        "6. If you encounter the problem of flashback after the update, please try to clear the application data and update to the latest version, and feed back the error message or log to the developer, In most cases, this is effective.\n"
+        "7. the main switch of R limit is in the official website, if you find illustration without permission, you can open the switch by yourself. The developer can not provide help to this\n"
+        "8. The in-app account registration support has been suspended, please register on the official website.\n"
+        "9. This application does not collect unnecessary information except for crash information\n"
+    </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <item name="tag_first" type="id"></item>
@@ -231,4 +244,6 @@
     <string name="show_download_toast">Show Download Ttoast</string>
     <string name="length_filter_desc"><![CDATA[Only < 50]]></string>
     <string name="not_this_one">not this one</string>
+    <string name="I_know">OK, I know</string>
+    <string name="read_it">please read it</string>
 </resources>

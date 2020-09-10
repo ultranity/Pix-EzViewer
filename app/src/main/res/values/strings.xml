@@ -1,5 +1,18 @@
 <resources>
     <string name="app_name">Pix-EzViewer</string>
+    <string name="app_help">
+        "0.本应用是免费应用，如果您付费购买，请立即请求退款并打差评！\n"
+        "请务必确保在商店或者项目地址内安装与更新,第三方提供的安装包可能存在问题且不是最新\n"
+        "1.在图片详情页长按可以保存选定图片，长按头像快速关注作者，请提供应用权限\n"
+        "2.大多数按钮设有有符合直觉的长按特殊操作（如图片收藏时打tag），或者藏在菜单里，可以多尝试\n"
+        "3.浏览动图时，点击中间0%进度条开始下载,完毕播放后长按进行合成保存，合成过程内存开销相当之大,偶发崩溃不可避免\n"
+        "4.若播放动图无法播放,请退出页面或者清除缓存后重试,这一般会起作用\n"
+        "5.这是一个个人开发的应用,反馈请发邮件到设置页标注的邮箱或GitHub提交issue,个人精力和能力是有限的,请不要使用极端方式进行反馈,体谅开发者,也欢迎共同开发设计\n"
+        "6.遇到更新后闪退的问题,请尝试清除应用数据并更新到最新版,将提示错误信息或日志反馈给开发者,多数情况下这是有效的\n"
+        "7.R限制总开关在官网里，遇到无权限访问的插画，自行至网页开启，开发者不提供帮助服务，开发者并不是老好人\n"
+        "8.新账户注册支持已暂停，请自行官网注册\n"
+        "9.本应用不收集除崩溃信息以外的非必要信息"
+    </string>
     <string name="large_text" translatable="false">
         "Material is the metaphor.\n\n"
 
@@ -340,4 +353,6 @@
     <string name="h_not_ok">H是不行的！ (￣^￣)</string>
     <string name="length_filter_desc">忽略长名称文件</string>
     <string name="not_this_one">识别错了</string>
+    <string name="I_know">我已知晓</string>
+    <string name="read_it">请务必读完</string>
 </resources>

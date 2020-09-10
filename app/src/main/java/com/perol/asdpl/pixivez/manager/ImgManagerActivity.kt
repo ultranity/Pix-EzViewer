@@ -47,6 +47,7 @@ import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_img_manager.*
+import kotlinx.android.synthetic.main.fragment_recom_user.*
 import java.io.File
 
 
@@ -92,6 +93,20 @@ class ImgManagerActivity : RinkActivity() {
                 }
             }).start()
         })
+        swiperefresh.setOnRefreshListener {
+            Thread(Runnable {
+                viewModel.files = FileUtil.getGroupList(
+                    viewModel.path.value!!
+                )
+                //.filter{it.isPic()}.toMutableList()
+                viewModel.task = viewModel.files!!.map { renameTask(it) }
+                runOnUiThread {
+                    img_count.text = viewModel.files!!.size.toString()
+                    swiperefresh.isRefreshing = false
+                    ImgManagerAdapter.setNewData(viewModel.files)
+                }
+            }).start()
+        }
         swith_filter.isChecked = true
         swith_filter.setOnCheckedChangeListener { compoundButton, state ->
             //viewModel.length_filter= state
@@ -101,6 +116,10 @@ class ImgManagerActivity : RinkActivity() {
             //viewModel.rename_once = state
             reset()
         }
+    }
+
+    fun loadData(){
+
     }
 
     private fun reset() {
@@ -149,7 +168,6 @@ class ImgManagerActivity : RinkActivity() {
                 lifecycleOwner(this@ImgManagerActivity)
             }
         }
-
         fab_settings.setOnClickListener {
             // Setup custom view content
             val binding = CustomformatviewBinding.inflate(layoutInflater)

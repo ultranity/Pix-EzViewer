@@ -91,7 +91,7 @@ class ImgManagerViewModel : BaseViewModel() {
             }.subscribeOn(Schedulers.io())
             .map{ rt->
                 //Log.d("imgMgr","get"+this+"p"+it.part)
-            val it = taskmap[rt.id]!!
+                val it = taskmap[rt.id]!!
                 it.file.illust = rt
                 it.file.target = Works.parseSaveFormat(rt, it.part,saveformat,TagSeparator,false)
                 it.file.checked = (it.file.target != it.file.name)

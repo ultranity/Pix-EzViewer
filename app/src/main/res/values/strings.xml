@@ -352,6 +352,7 @@
     <string name="h_is_ok">H是可以的！ԅ(¯﹃¯ԅ)</string>
     <string name="h_not_ok">H是不行的！ (￣^￣)</string>
     <string name="length_filter_desc">忽略长名称文件</string>
+    <string name="all_rename">不确认直接重命名</string>
     <string name="not_this_one">识别错了</string>
     <string name="I_know">我已知晓</string>
     <string name="read_it">请务必读完</string>

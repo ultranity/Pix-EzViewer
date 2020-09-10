@@ -34,6 +34,11 @@
                     app:titleTextColor="?android:attr/textColorPrimaryInverse" />
             </com.google.android.material.appbar.AppBarLayout>
 
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView3"
                 android:layout_width="match_parent"
@@ -80,7 +85,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <Switch
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/ssl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -34,6 +34,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -46,19 +47,21 @@ import com.perol.asdpl.pixivez.services.SaucenaoService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_saucenao.*
+import kotlinx.android.synthetic.main.activity_saucenao.fab
+import kotlinx.android.synthetic.main.activity_saucenao.webview
+import kotlinx.android.synthetic.main.activity_web_view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import okhttp3.Dns
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.File
+import java.io.IOException
 import java.net.InetAddress
 import java.util.*
 import kotlin.collections.ArrayList
@@ -89,7 +92,21 @@ class SaucenaoActivity : RinkActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val builder1 = OkHttpClient.Builder()
-        builder1.addInterceptor(httpLoggingInterceptor).dns(object : Dns {
+        builder1.addInterceptor(object : Interceptor {
+            @Throws(IOException::class)
+            override fun intercept(chain: Interceptor.Chain): Response {
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .removeHeader("User-Agent")
+                    .addHeader(
+                        "User-Agent",
+                        "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                    )
+                    .addHeader("referer", "https://app-api.pixiv.net/")
+                val request = requestBuilder.build()
+                return chain.proceed(request)
+            }
+        }).addInterceptor(httpLoggingInterceptor).dns(object : Dns {
             override fun lookup(hostname: String): List<InetAddress> {
                 val list = ArrayList<InetAddress>()
                 try {
@@ -234,13 +251,21 @@ class SaucenaoActivity : RinkActivity() {
             val intent2 = Intent(applicationContext, PictureActivity::class.java)
             intent2.putExtras(bundle)
             startActivity(intent2)
-        } else GlideApp.with(this).load(
-            ContextCompat.getDrawable(
-                this,
-                R.drawable.buzhisuocuo
-            )
-        ).into(imageview)
+        }
+        else {
+            GlideApp.with(this).load(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.buzhisuocuo
+                )
+            ).into(imageview)
 
+            webview.loadDataWithBaseURL("https://saucenao.com", string,"text/html","UTF-8","")
+            webview.settings.blockNetworkImage = false
+            //webview.settings.javaScriptEnabled = true
+            webview.settings.userAgentString
+            webview.visibility = View.VISIBLE
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

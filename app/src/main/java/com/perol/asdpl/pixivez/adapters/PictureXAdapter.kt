@@ -656,7 +656,8 @@ class PictureXAdapter(
                         }
                     }).into(holder.itemView.preview)
                 previewImageView = holder.itemView.preview
-                val path2 = PxEZApp.storepath + "/" + Works.parseSaveFormat(data).substringBeforeLast(".") + ".gif"
+                val path2 = PxEZApp.storepath + "/" + if(PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "" +
+                        Works.parseSaveFormat(data).substringBeforeLast(".").removePrefix("？") + ".gif"
                 imageViewGif!!.setOnLongClickListener {
                     if (gifProgressBar?.visibility != View.VISIBLE) {
                         MaterialDialog(mContext).show {

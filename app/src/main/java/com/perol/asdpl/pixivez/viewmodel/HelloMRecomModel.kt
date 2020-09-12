@@ -61,14 +61,15 @@ class HelloMRecomModel : BaseViewModel() {
     }
 
     fun OnRefreshListener() {
-        retrofitRepository.getRecommend().subscribe({
+        retrofitRepository.getRecommend().doAfterTerminate {
+            retrofitRepository.getPixivison("all").subscribe({
+                if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
+                    nextPixivisonUrl.value = it.next_url
+                banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
+            }, {}, {}).add()
+        }.subscribe({
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
-        retrofitRepository.getPixivison("all").subscribe({
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
-                nextPixivisonUrl.value = it.next_url
-            banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
         }, {}, {}).add()
     }
 }

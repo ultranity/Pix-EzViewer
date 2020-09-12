@@ -120,6 +120,8 @@ class ImgManagerViewModel : BaseViewModel() {
             },{}).add()
     }
     fun rename(it:renameTask) {
+        if(it.file.name == it.file.target || it.file.target == null)
+            return
         val orig = File(it.file.path)
         val tar = "${orig.parent}${File.separator}${it.file.target}"
         it.file.name = it.file.target!!
@@ -135,21 +137,20 @@ class ImgManagerViewModel : BaseViewModel() {
     }
 
     fun renameAll(){
-    Thread( Runnable {
+    Thread {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             task?.parallelStream()?.filter {
                 it.file.checked
-            }?.forEach{
+            }?.forEach {
                 rename(it)
             }
-        }
-        else{
+        } else {
             task?.filter {
                 it.file.checked
-            }?.forEach{
+            }?.forEach {
                 rename(it)
             }
         }
-    }).start()
+    }.start()
     }
 }

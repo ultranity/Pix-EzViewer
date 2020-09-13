@@ -28,6 +28,17 @@
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
+## 1.6.9R:
+- [x] feature: 画师列表增加关注指示
+- [x] feature: saucenao搜图失败时打开结果页
+- [x] fix: pixivision跳转失效
+- [x] fix: 图片管理刷新
+- [x] fix: 图片管理无效重命名
+- [x] fix: gif保存命名
+- [x] update: 帮助说明
+- [x] update: 捐赠记录
+- [x] update: 加载速度优化
+
 ## 1.6.7R:
 - [x] feature:  gif保存时设置命名格式
 - [x] feature:  下载列表长按显示实际文件名

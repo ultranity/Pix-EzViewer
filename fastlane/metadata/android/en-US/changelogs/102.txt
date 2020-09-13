@@ -1,0 +1,9 @@
+## 1.6.9R:
+-[x] feature: add following indication in artist list
+- [x] feature: sauceNao open result page when image search fails
+- [x] fix: pixivision url jump failure
+- [x] fix: image management refresh
+- [x] fix: invalid image management file rename
+- [x] fix: gif save name
+- [x] update: loading speed optimization
+- [x] update: help description, donation record

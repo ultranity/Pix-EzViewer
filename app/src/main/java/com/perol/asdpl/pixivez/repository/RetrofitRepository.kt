@@ -56,7 +56,7 @@ class RetrofitRepository {
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         resetToken()
         reFreshFunction = ReFreshFunction.getInstance()
-
+        reFreshFunction.reFreshToken()
     }
 
     fun resetToken() {

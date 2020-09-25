@@ -107,7 +107,7 @@ object ApiClient {
                 .addHeader("Authorization", Authorization)
                 .addHeader("Accept-Language", "${local.language}_${local.country}")
                 .addHeader("App-OS", "Android")
-                .addHeader("App-OS-Version", "${android.os.Build.VERSION.RELEASE}")
+                .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
                 .header("App-Version", "5.0.166")
                 .addHeader("X-Client-Time", isoDate)
                 .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))

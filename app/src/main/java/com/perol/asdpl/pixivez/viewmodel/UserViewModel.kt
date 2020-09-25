@@ -42,8 +42,7 @@ class UserViewModel : BaseViewModel() {
     }
 
     fun getSearchUser(word: String) {
-        val c = retrofitRepository.create(retrofitRepository.getSearchUser(word) as Observable<Any>) as Observable<SearchUserResponse>
-        c.subscribe(
+        retrofitRepository.getSearchUser(word).subscribe(
                 {
                     users.value = it
                     nexturl.value = it.next_url

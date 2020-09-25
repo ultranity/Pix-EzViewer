@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -111,23 +112,11 @@ class RestClient {
 
     private val gson = GsonBuilder()
         .create()
-    val retrofitAppApi: Retrofit
-        get() =retrofit {
-                    baseUrl("https://app-api.pixiv.net")
-                    .client(okHttpClient("app-api.pixiv.net"))
-                }
+    val retrofitAppApi = buildRetrofit("https://app-api.pixiv.net",okHttpClient("app-api.pixiv.net"))
 
-    val pixivisionAppApi: Retrofit
-        get() = retrofit {
-                    baseUrl("https://app-api.pixiv.net/")
-                    .client(pixivOkHttpClient)
-                }
+    val pixivisionAppApi = buildRetrofit("https://app-api.pixiv.net/",pixivOkHttpClient)
 
-    val retrofitAccount: Retrofit
-        get() = retrofit {
-                    baseUrl("https://accounts.pixiv.net/")
-                    .client(okHttpClient("accounts.pixiv.net"))
-                }
+    val retrofitAccount = buildRetrofit("https://accounts.pixiv.net/",okHttpClient("accounts.pixiv.net"))
     private val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
@@ -153,50 +142,50 @@ class RestClient {
     }
 
     private fun okHttpClient(host:String): OkHttpClient {
-            val httpLoggingInterceptor =
-                HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        Log.d("GlideInterceptor", message)
-                    }
-                }).apply {
-                    level =
-                        if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        val httpLoggingInterceptor =
+            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    Log.d("GlideInterceptor", message)
                 }
-            val builder = OkHttpClient.Builder()
+            }).apply {
+                level =
+                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            }
+        val builder = OkHttpClient.Builder()
 
-            builder.addInterceptor(object : Interceptor {
+        builder.addInterceptor(object : Interceptor {
 
-                @Throws(IOException::class)
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val ISO8601DATETIMEFORMAT =
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
-                    val isoDate = ISO8601DATETIMEFORMAT.format(Date())
-                    val original = chain.request()
-                    val requestBuilder = original.newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader(
-                            "User-Agent",
-                            "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                        )
-                        .addHeader("Accept-Language", "${local.language}_${local.country}")
-                        .addHeader("App-OS", "Android")
-                        .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
-                        .header("App-Version", "5.0.166")
-                        .addHeader("X-Client-Time", isoDate)
-                        .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
-                        .addHeader("Host", host)
-                    val request = requestBuilder.build()
-                    return chain.proceed(request)
-                }
-            })
+            @Throws(IOException::class)
+            override fun intercept(chain: Interceptor.Chain): Response {
+                val ISO8601DATETIMEFORMAT =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
+                val isoDate = ISO8601DATETIMEFORMAT.format(Date())
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .removeHeader("User-Agent")
+                    .addHeader(
+                        "User-Agent",
+                        "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                    )
+                    .addHeader("Accept-Language", "${local.language}_${local.country}")
+                    .addHeader("App-OS", "Android")
+                    .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
+                    .header("App-Version", "5.0.166")
+                    .addHeader("X-Client-Time", isoDate)
+                    .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
+                    .addHeader("Host", host)
+                val request = requestBuilder.build()
+                return chain.proceed(request)
+            }
+        })
 //                .addInterceptor(httpLoggingInterceptor)
-            proxySocket(builder)
-            builder.connectTimeout(30L, TimeUnit.SECONDS)
-                .readTimeout(30L, TimeUnit.SECONDS)
-                .writeTimeout(30L, TimeUnit.SECONDS)
-            return builder
-                .build()
-        }
+        proxySocket(builder)
+        builder.connectTimeout(30L, TimeUnit.SECONDS)
+            .readTimeout(30L, TimeUnit.SECONDS)
+            .writeTimeout(30L, TimeUnit.SECONDS)
+        return builder
+            .build()
+    }
 
     private fun proxySocket(builder: OkHttpClient.Builder) {
         if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean(
@@ -221,9 +210,15 @@ class RestClient {
 
     fun getRetrofitGIF(): Retrofit {
         return retrofit{
-                baseUrl("https://oauth.secure.pixiv.net/")
+            baseUrl("https://oauth.secure.pixiv.net/")
                 .client(imageHttpClient)
-                }
+        }
+    }
+
+    private fun buildRetrofit(baseUrl:String, client: OkHttpClient)
+            = retrofit {
+                baseUrl(baseUrl)
+                .client(client)
     }
 
     private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
@@ -234,11 +229,7 @@ class RestClient {
     }
 
     fun getRetrofitOauthSecure(): Retrofit {
-        return retrofit {
-            baseUrl("https://210.140.131.188")
-            .client(okHttpClient("oauth.secure.pixiv.net"))
-        }
+        return buildRetrofit("https://210.140.131.188",okHttpClient("oauth.secure.pixiv.net"))
     }
-
 
 }

@@ -1,4 +1,5 @@
 <resources>
+    <item name="tag_first" type="id" />
     <string name="app_name">Pix-EzViewer</string>
     <string name="app_help">
         "0.本应用是免费应用，如果您付费购买，请立即请求退款并打差评！\n"
@@ -102,12 +103,11 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <item name="tag_first" type="id"></item>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="title_activity_login" translatable="false">LoginActivity</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 
-    <string name="focus">关注</string>
+    <string name="follow">关注</string>
     <string name="click">点击请我喝杯咖啡</string>
     <string name="support_string">反馈邮箱：Pix-Ez@outlook.com 欢迎通过github 反馈及star 也可以通过关于页面跳转请我喝杯咖啡</string>
     <string name="current_developer">当前开发者</string>
@@ -119,18 +119,18 @@
     <string name="ali">跳转到支付宝</string>
     <string name="wechat" >跳转到微信</string>
     <string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们,以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
-    <string name="add_widget">Add widget</string>
-    <string name="title_activity_saucenao">Saucenao Search</string>
-    <string name="configure">Configure</string>
-    <string name="title_activity_search_result">SearchResultActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">PxEz</string>
-    <string name="nav_header_subtitle">Pix-Ez@outlook.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="add_widget" translatable="false">Add widget</string>
+    <string name="title_activity_saucenao" translatable="false">Saucenao Search</string>
+    <string name="configure" translatable="false">Configure</string>
+    <string name="title_activity_search_result" translatable="false">SearchResultActivity</string>
+    <string name="title_home" translatable="false">Home</string>
+    <string name="title_dashboard" translatable="false">Dashboard</string>
+    <string name="title_notifications" translatable="false">Notifications</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">PxEz</string>
+    <string name="nav_header_subtitle" translatable="false">Pix-Ez@outlook.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="img_manager">图片管理</string>
     <string name="checkupdate">检查更新</string>
     <string name="_18">隐藏遮罩</string>
@@ -202,19 +202,18 @@
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="sync_header" translatable="false">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="signature_title" translatable="false">Your signature</string>
+    <string name="reply_title" translatable="false">Default reply action</string>
     <string name="reply_to">回复</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="sync_title" translatable="false">Sync email periodically</string>
+    <string name="attachment_title" translatable="false">Download incoming attachments</string>
+    <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails</string>
+    <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
     <string name="illust">插画</string>
     <string name="manga">漫画</string>
     <string name="abouts">关于</string>
@@ -236,8 +235,8 @@
     <string name="savegifsuccesserr">保存动图失败</string>
     <string name="crash_report">报告</string>
     <string name="feed_back">反馈</string>
-    <string name="title_activity_search_r">SearchRActivity</string>
-    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_search_r" translatable="false">SearchRActivity</string>
+    <string name="title_activity_setting" translatable="false">SettingActivity</string>
     <string name="needstatusbar">异形屏：详情状态栏不沉浸</string>
     <string name="refreshTab">tab自动刷新</string>
     <string name="refreshTab_summary">首页等切换后不保留先前状态，节省内存</string>
@@ -284,12 +283,13 @@
     <string name="R18_folder">单独R18文件夹名称\n（默认xRestrict/）</string>
     <string name="R18_private">自动私密收藏</string>
     <string name="refresh_token">刷新身份信息</string>
+    <string name="refresh_token_fail">刷新身份信息失败</string>
     <string name="translate">翻译</string>
     <string name="back_to_the_top">双击回顶</string>
     <string name="add_to_block_tag_list">添加到屏蔽标签列表</string>
     <string name="block_tag">屏蔽标签</string>
-    <string name="block_face"><![CDATA[>_<]]></string>
-    <string name="title_activity_manager_settings">Settings</string>
+    <string name="block_face" translatable="false"><![CDATA[>_<]]></string>
+    <string name="title_activity_manager_settings">设置</string>
     <string name="max_task_num">最大任务数</string>
     <string name="thread_num">线程数</string>
     <string name="task_setting">任务设置</string>
@@ -306,8 +306,8 @@
     <string name="permission_denied">未获得授权，请自行到系统设置进行授权</string>
     <string name="cache_clear_message">这将清理全部的缓存</string>
     <string name="ok">确定</string>
-    <string name="history_delete_confirm_title">Delete?</string>
-    <string name="wrong_id">wrong id</string>
+    <string name="history_delete_confirm_title">删除？</string>
+    <string name="wrong_id">id错误</string>
     <string name="error_unknown">其他错误，检查接入点APN是否为Net而不是Wap,检查网络是否通畅</string>
     <string name="login_success">登录成功</string>
     <string name="share">分享</string>
@@ -316,7 +316,7 @@
     <string name="saucenao_upload_error">服务器或本地发生错误</string>
     <string name="uploading">Uploading</string>
     <string name="upload_success">Upload Success,Plz re-enter this page</string>
-    <string name="copied">copied</string>
+    <string name="copied">Copied</string>
     <string name="saved">Saved</string>
     <string name="username">用户名</string>
     <string name="account_create_button">创建</string>
@@ -325,23 +325,23 @@
     <string name="use_ssl">使用SSL</string>
     <string name="search_results">搜索结果</string>
     <string name="attention">关注</string>
-    <string name="customformat_token">Name</string>
+    <string name="customformat_token">Token</string>
     <string name="customformat_result">Result（点击自动填入）</string>
-    <string name="post_comment">send</string>
+    <string name="post_comment" translatable="false">send</string>
     <string name="summary_thanks">非常感谢你们的支持:</string>
-    <string name="dark">Dark</string>
+    <string name="dark" translatable="false">Dark</string>
     <string name="following">关注用户</string>
     <string name="followers">关注者</string>
-    <string name="empty">EMPTY</string>
-    <string name="advices">advices</string>
+    <string name="empty" translatable="false">EMPTY</string>
+    <string name="advices" translatable="false">advices</string>
     <string name="pixivision_desc2">为不甘于沉闷生活的人提供的\n创作型媒体！</string>
     <string name="change_to_first">更改为第1个</string>
     <string name="notsf_subtext">开发,测试,发布</string>
-    <string name="private_">private</string>
-    <string name="like">LIKE</string>
-    <string name="state">State</string>
+    <string name="private_" translatable="false">private</string>
+    <string name="like" translatable="false">LIKE</string>
+    <string name="state" translatable="false">State</string>
     <string name="loading">正在加载...</string>
-    <string name="communicate">Communicate</string>
+    <string name="communicate" translatable="false">Communicate</string>
     <string name="needstatusbar_subtext">——v——</string>
     <string name="ultranity_subtext">编写开发调试(当前维护者)</string>
     <string name="notsf_subtext2">编写开发调试(原作者)</string>

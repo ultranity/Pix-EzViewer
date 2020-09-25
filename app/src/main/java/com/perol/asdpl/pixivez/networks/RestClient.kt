@@ -82,24 +82,7 @@ class RestClient {
 
 
         })
-        if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean(
-                "disableproxy",
-                false
-            )
-        ) {
-            builder.sslSocketFactory(RubySSLSocketFactory(), object : X509TrustManager {
-                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun getAcceptedIssuers(): Array<X509Certificate> {
-                    return arrayOf()
-                }
-            }).hostnameVerifier(HostnameVerifier { p0, p1 -> true })
-            builder.dns(httpsDns)
-        }
+        proxySocket(builder)
 
         return@lazy builder.build()
     }
@@ -129,34 +112,22 @@ class RestClient {
     private val gson = GsonBuilder()
         .create()
     val retrofitAppApi: Retrofit
-        get() {
-            return Retrofit.Builder()
-                .baseUrl("https://app-api.pixiv.net")
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-        }
+        get() =retrofit {
+                    baseUrl("https://app-api.pixiv.net")
+                    .client(okHttpClient("app-api.pixiv.net"))
+                }
 
     val pixivisionAppApi: Retrofit
-        get() {
-            return Retrofit.Builder()
-                .baseUrl("https://app-api.pixiv.net/")
-                .client(pixivOkHttpClient)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-        }
+        get() = retrofit {
+                    baseUrl("https://app-api.pixiv.net/")
+                    .client(pixivOkHttpClient)
+                }
 
     val retrofitAccount: Retrofit
-        get() {
-            return Retrofit.Builder()
-                .baseUrl("https://accounts.pixiv.net/")
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-        }
+        get() = retrofit {
+                    baseUrl("https://accounts.pixiv.net/")
+                    .client(okHttpClient("accounts.pixiv.net"))
+                }
     private val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
@@ -181,8 +152,7 @@ class RestClient {
         return ""
     }
 
-    private val okHttpClient: OkHttpClient
-        get() {
+    private fun okHttpClient(host:String): OkHttpClient {
             val httpLoggingInterceptor =
                 HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
@@ -210,33 +180,17 @@ class RestClient {
                         )
                         .addHeader("Accept-Language", "${local.language}_${local.country}")
                         .addHeader("App-OS", "Android")
-                        .addHeader("App-OS-Version", "${android.os.Build.VERSION.RELEASE}")
+                        .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
                         .header("App-Version", "5.0.166")
                         .addHeader("X-Client-Time", isoDate)
                         .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
+                        .addHeader("Host", host)
                     val request = requestBuilder.build()
                     return chain.proceed(request)
                 }
             })
 //                .addInterceptor(httpLoggingInterceptor)
-            if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean(
-                    "disableproxy",
-                    false
-                )
-            ) {
-                builder.sslSocketFactory(RubySSLSocketFactory(), object : X509TrustManager {
-                    override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                    }
-
-                    override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return arrayOf()
-                    }
-                }).hostnameVerifier(HostnameVerifier { p0, p1 -> true })
-                builder.dns(RubyHttpDns())
-            }
+            proxySocket(builder)
             builder.connectTimeout(30L, TimeUnit.SECONDS)
                 .readTimeout(30L, TimeUnit.SECONDS)
                 .writeTimeout(30L, TimeUnit.SECONDS)
@@ -244,23 +198,46 @@ class RestClient {
                 .build()
         }
 
+    private fun proxySocket(builder: OkHttpClient.Builder) {
+        if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean(
+                "disableproxy",
+                false
+            )
+        ) {
+            builder.sslSocketFactory(RubySSLSocketFactory(), object : X509TrustManager {
+                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
+                }
+
+                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            }).hostnameVerifier(HostnameVerifier { p0, p1 -> true })
+            builder.dns(httpsDns)
+        }
+    }
 
     fun getRetrofitGIF(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://oauth.secure.pixiv.net/")
-            .client(imageHttpClient)
+        return retrofit{
+                baseUrl("https://oauth.secure.pixiv.net/")
+                .client(imageHttpClient)
+                }
+    }
+
+    private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
+        return Retrofit.Builder().apply(block)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     fun getRetrofitOauthSecure(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://oauth.secure.pixiv.net/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+        return retrofit {
+            baseUrl("https://210.140.131.188")
+            .client(okHttpClient("oauth.secure.pixiv.net"))
+        }
     }
 
 

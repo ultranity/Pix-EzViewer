@@ -1,0 +1,6 @@
+## 1.7.0R:
+- [x] fix: socket is closed 登陆失败
+- [x] update & fix: 部分翻译
+- [x] update: 初始加载速度优化
+- [x] fix: 尝试修复后台休眠过长失去连接
+- [x] update: 捐赠记录

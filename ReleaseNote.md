@@ -20,7 +20,7 @@
 - [] feature&update: 更多命名自定义字符串（tags,tag#,tag5,tagst)
 - [ ] feature&update:  侧滑功能
 
-## 1.7.0R:
+## 1.8.0R:
 - [ ] feature:  画师作品页面筛选整合
 - [ ] feature:  一键下载
 - [ ] feature:  下载信息导出
@@ -28,6 +28,13 @@
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
+## 1.7.0R:
+- [x] fix: socket is closed 登陆失败
+- [x] update & fix: 部分翻译
+- [x] update: 初始加载速度优化
+- [x] fix: 尝试修复后台休眠过长失去连接
+- [x] update: 捐赠记录
+
 ## 1.6.9R:
 - [x] feature: 画师列表增加关注指示
 - [x] feature: saucenao搜图失败时打开结果页

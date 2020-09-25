@@ -36,7 +36,7 @@ class SupportDialog : DialogFragment() {
         "H*m",
         "Y*H",
         "**A",
-        "**涵",
+        "**涵 x2",
         "*喵 x2",
         "*宋",
         "*恒",
@@ -92,7 +92,27 @@ class SupportDialog : DialogFragment() {
         "*帅",
         "**——",
         "**辉",
-        "**帅"
+        "**帅",
+        "*N",
+        "*年",
+        "*孑",
+        "C*.",
+        "a*e",
+        "*中",
+        "*?",
+        ".*.",
+        "N*o",
+        "混*r",
+        "*辰",
+        "*奔",
+        "*放",
+        "**——",
+        "*俊",
+        "**强",
+        "**林",
+        "**益",
+        "*辰",
+        "**涛"
     )
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")

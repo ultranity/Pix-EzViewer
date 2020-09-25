@@ -1,0 +1,6 @@
+## 1.7.0R:
+- [x] fix: socket is closed login failure
+- [x] try fix: lost connection when hibernation too long
+- [x] update & fix: translations
+- [x] update: init loading speed optimization
+- [x] update: donation record

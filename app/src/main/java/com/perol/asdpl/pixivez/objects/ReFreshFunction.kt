@@ -53,7 +53,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private var oAuthSecureService: OAuthSecureService? = null
     private var i = 0
     private val maxRetries = 4
-    private var retryCount = 0
+    private var retryCount = -1
     var refreshing = false
 
     constructor(context: Context) : super() {
@@ -75,18 +75,18 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                 return@Function Observable.error<Any>(throwable)
             } else if (throwable is HttpException) {
                 if (throwable.response()!!.code() == 400) {
-                    if (++retryCount <= maxRetries) {
-                        if (refreshing && retryCount <= maxRetries)
+                    retryCount++
+                        if (refreshing && retryCount <= maxRetries-1)
                             return@Function Observable.timer(
                                 (4500 - retryCount*1000).toLong(),
                                 TimeUnit.MILLISECONDS
                             )
-                        else
+                        else if (retryCount <= maxRetries)
                             return@Function reFreshToken()
-                    } else
-                        return@Function Observable.error<Any>(throwable)
-
-
+                        else{
+                            retryCount = 0
+                            return@Function Observable.error<Any>(throwable)
+                        }
                 } else if (throwable.response()!!.code() == 404) {
                     if (i == 0) {
                         Log.d("d", throwable.response()!!.message())
@@ -106,7 +106,6 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     }
 
     fun reFreshToken(): ObservableSource<*> {
-        lastRefresh = System.currentTimeMillis()
         refreshing = true
         var userEntity: UserEntity? = null
 //                        TToast.retoken(PxEZApp.instance)
@@ -118,6 +117,11 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     }
 
     private fun reFreshToken(it: UserEntity): ObservableSource<*> {
+        Toasty.info(
+            PxEZApp.instance,
+            PxEZApp.instance.getString(R.string.refresh_token),
+            Toast.LENGTH_SHORT
+        ).show()
         SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthToken(
             client_id, client_secret, "refresh_token", it.Refresh_token,
@@ -140,12 +144,6 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                     userEntity.Id = it.Id
                     runBlocking {
                         AppDataRepository.updateUser(userEntity)
-                        Toasty.info(
-                                PxEZApp.instance,
-                        PxEZApp.instance.getString(R.string.refresh_token),
-                        Toast.LENGTH_SHORT
-                        ).show()
-                        refreshing = false
                     }
                 }.doOnError {
                     Toasty.info(
@@ -153,13 +151,12 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                         PxEZApp.instance.getString(R.string.refresh_token_fail),
                         Toast.LENGTH_SHORT
                     ).show()
-                refreshing = false
+                }.doFinally {
+                    refreshing = false
                 }
     }
 
     companion object {
-        @Volatile
-        private var lastRefresh: Long = System.currentTimeMillis()
         @Volatile
         private var instance: ReFreshFunction? = null
 

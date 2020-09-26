@@ -56,7 +56,7 @@ class RetrofitRepository {
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         resetToken()
         reFreshFunction = ReFreshFunction.getInstance()
-        val init = Observable.just(1).flatMap{reFreshFunction.reFreshToken()}.subscribe {}
+        val init = Observable.just(1).flatMap{reFreshFunction.reFreshToken()}.subscribe({}, {}, {})
     }
 
     fun resetToken() {

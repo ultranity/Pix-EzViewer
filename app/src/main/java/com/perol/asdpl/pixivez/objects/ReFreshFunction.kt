@@ -37,6 +37,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.UserEntity
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
@@ -53,8 +54,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private var oAuthSecureService: OAuthSecureService? = null
     private var i = 0
     private val maxRetries = 4
-    private var retryCount = -1
-    var refreshing = false
+    private var retryCount = 0
 
     constructor(context: Context) : super() {
         this.oAuthSecureService =
@@ -78,7 +78,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                     retryCount++
                         if (refreshing && retryCount <= maxRetries-1)
                             return@Function Observable.timer(
-                                (4500 - retryCount*1000).toLong(),
+                                (3600 - retryCount*600).toLong(),
                                 TimeUnit.MILLISECONDS
                             )
                         else if (retryCount <= maxRetries)
@@ -117,17 +117,12 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     }
 
     private fun reFreshToken(it: UserEntity): ObservableSource<*> {
-        Toasty.info(
-            PxEZApp.instance,
-            PxEZApp.instance.getString(R.string.refresh_token),
-            Toast.LENGTH_SHORT
-        ).show()
         SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthToken(
             client_id, client_secret, "refresh_token", it.Refresh_token,
             it.Device_token, true
-        )
-                .subscribeOn(Schedulers.io()).doOnNext { pixivOAuthResponse ->
+        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { pixivOAuthResponse ->
                     val user = pixivOAuthResponse.response.user
                     val userEntity = UserEntity(
                         user.profile_image_urls.px_170x170,
@@ -144,6 +139,15 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                     userEntity.Id = it.Id
                     runBlocking {
                         AppDataRepository.updateUser(userEntity)
+                        Toasty.info(
+                            PxEZApp.instance,
+                            PxEZApp.instance.getString(R.string.refresh_token),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                Observable.timer(2000, TimeUnit.MILLISECONDS)
+                    .subscribe {
+                        refreshing = false
                     }
                 }.doOnError {
                     Toasty.info(
@@ -151,12 +155,14 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                         PxEZApp.instance.getString(R.string.refresh_token_fail),
                         Toast.LENGTH_SHORT
                     ).show()
+                refreshing = false
                 }.doFinally {
-                    refreshing = false
                 }
     }
 
     companion object {
+        @Volatile
+        var refreshing = false
         @Volatile
         private var instance: ReFreshFunction? = null
 

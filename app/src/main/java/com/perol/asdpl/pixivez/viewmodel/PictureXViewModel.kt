@@ -56,13 +56,13 @@ class PictureXViewModel : BaseViewModel() {
             Observable.create<Int> { ob ->
                 UnzipUtil.UnZipFolder(
                     file,
-                    PxEZApp.instance.cacheDir.path + "/" + illustDetail.value!!.id
+                    PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
                 )
                 ob.onNext(1)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
                 downloadGifSuccess.value = true
             }, {
-                File(PxEZApp.instance.cacheDir.path + "/" + illustDetail.value!!.id).deleteRecursively()
+                File(PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id).deleteRecursively()
                 file.delete()
                 reDownLoadGif(medium)
             }, {}).add()
@@ -101,7 +101,7 @@ class PictureXViewModel : BaseViewModel() {
                 println("+++++++++")
                 UnzipUtil.UnZipFolder(
                     file,
-                    PxEZApp.instance.cacheDir.path + "/" + illustDetail.value!!.id
+                    PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
                 )
                 ob.onNext(1)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({

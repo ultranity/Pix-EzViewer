@@ -656,7 +656,7 @@ class PictureXAdapter(
                         }
                     }).into(holder.itemView.preview)
                 previewImageView = holder.itemView.preview
-                val path2 = PxEZApp.storepath + "/" + if(PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "" +
+                val path2 = PxEZApp.storepath + File.separatorChar + (if(PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "") +
                         Works.parseSaveFormat(data).substringBeforeLast(".").removePrefix("？") + ".gif"
                 imageViewGif!!.setOnLongClickListener {
                     if (gifProgressBar?.visibility != View.VISIBLE) {
@@ -748,11 +748,11 @@ class PictureXAdapter(
                                         }
                                     }
                                     else -> {
-                                        val zipPath: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".zip"
+                                        val zipPath: String = PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".zip"
                                         val file1 = File(zipPath)
                                         if (file1.exists()) {
                                             file1.copyTo(
-                                                File(PxEZApp.storepath, "${Works.parseSaveFormat(data).substringBeforeLast(".")}.zip"),
+                                                File(path2.substringBeforeLast(".")+".zip"),
                                                 overwrite = true
                                             )
                                             Toasty.info(
@@ -796,14 +796,14 @@ class PictureXAdapter(
 
     var isEncoding = false
 
-    private val path: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".gif"
+    private val path: String = PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".gif"
     private fun encodingGif(): Observable<Int>? {
-        val pathOk: String = PxEZApp.instance.cacheDir.toString() + "/" + data.id + ".ojbk"
+        val pathOk: String = PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".ojbk"
         val fileOk = File(pathOk)
         if (fileOk.exists()) {
             return null
         }
-        val parentPath = PxEZApp.instance.cacheDir.path + "/" + data.id
+        val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
         val parentFile = File(parentPath)
         val listFiles = parentFile.listFiles()
         if (listFiles == null || listFiles.isEmpty()) {
@@ -891,7 +891,7 @@ class PictureXAdapter(
     fun setProgressComplete(it: Boolean) {
         gifProgressBar?.visibility = View.GONE
         previewImageView?.visibility = View.GONE
-        val parentPath = PxEZApp.instance.cacheDir.path + "/" + data.id
+        val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
         val parentFile = File(parentPath)
         val listFiles = parentFile.listFiles()!!
         listFiles.sortWith(Comparator { o1, o2 -> o1.name.compareTo(o2.name) })

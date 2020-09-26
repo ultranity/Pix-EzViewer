@@ -28,12 +28,13 @@
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
-## 1.7.0R:
+## 1.7.1R & 1.7.1R:
 - [x] fix: socket is closed 登陆失败
 - [x] update & fix: 部分翻译
 - [x] update: 初始加载速度优化
 - [x] fix: 尝试修复后台休眠过长失去连接
 - [x] update: 捐赠记录
+- [x] fix: gif 不保存
 
 ## 1.6.9R:
 - [x] feature: 画师列表增加关注指示

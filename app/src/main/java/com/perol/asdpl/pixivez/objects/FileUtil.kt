@@ -115,7 +115,7 @@ fun getListData(path: String, picOnly:Boolean=true, withFolder:Boolean=true, sho
         pfile.mkdirs()
     }
 
-    if(showParent){
+    if(showParent && pfile.parentFile != null){
         val parent = FileInfo(pfile.parentFile!!)
         // 获取文件夹目录结构
         parent.icon = R.drawable.ic_action_folder.toString()//图标

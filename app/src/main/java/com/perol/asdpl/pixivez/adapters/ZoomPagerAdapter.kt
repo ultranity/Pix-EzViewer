@@ -76,30 +76,23 @@ class ZoomPagerAdapter(
             )!!.toInt() != 0
         if (illust.meta_pages.isEmpty()) {
             origin = listOf(illust.meta_single_page.original_image_url!!)
-
             preview = if(large)
-                listOf(illust.image_urls.large)
-            else
-                listOf(illust.image_urls.medium)
+                        listOf(illust.image_urls.large)
+                    else
+                        listOf(illust.image_urls.medium)
         } else {
             origin = illust.meta_pages.map { it.image_urls.original }
-
-            preview = if(large){
-                illust.meta_pages.map {
-                    it.image_urls.large
-                }
-            } else {
-                illust.meta_pages.map {
-                    it.image_urls.medium
-                }
-            }
+            preview = if(large)
+                        illust.meta_pages.map {it.image_urls.large}
+                    else
+                        illust.meta_pages.map {it.image_urls.medium}
         }
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.view_pager_zoom, container, false)
         val photoView = view.findViewById<SubsamplingScaleImageView>(R.id.photoview_zoom)
         photoView.isEnabled = true
         val progressBar = view.findViewById<CircleProgressBar>(R.id.progressbar_origin)
-        val button_origin = view.findViewById<MaterialButton>(R.id.button_origin)
+        //val buttonOrigin = view.findViewById<MaterialButton>(R.id.button_origin)
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val dm = DisplayMetrics()
         wm.defaultDisplay.getMetrics(dm)
@@ -160,14 +153,14 @@ class ZoomPagerAdapter(
                 }
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                     //Log.d("origin","from cache")
-                    button_origin.visibility =View.GONE
+                    //buttonOrigin.visibility =View.GONE
                     photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
                     progressBar.visibility = View.GONE
                 }
             })
-        button_origin.setOnClickListener {
-            button_origin.visibility =View.GONE
+        //buttonOrigin.setOnClickListener {
+        //    buttonOrigin.visibility =View.GONE
             progressBar.visibility =View.VISIBLE
             ProgressInterceptor.addListener(origin!![position],object: ProgressListener {
                 override fun onProgress(progress: Int){
@@ -186,7 +179,7 @@ class ZoomPagerAdapter(
                         ProgressInterceptor.removeListener(origin!![position])
                     }
                 })
-        }
+        //}
         container.addView(view)
         return view
     }

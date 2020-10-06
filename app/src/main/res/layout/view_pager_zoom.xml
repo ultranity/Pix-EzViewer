@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:text="@string/origin"
+        android:visibility="gone"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/photoview_zoom"
         app:layout_constraintEnd_toEndOf="parent"

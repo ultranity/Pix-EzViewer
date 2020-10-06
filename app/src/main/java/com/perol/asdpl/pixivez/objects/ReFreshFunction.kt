@@ -46,6 +46,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.math.pow
 
 class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String? = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
@@ -53,7 +54,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
     private var oAuthSecureService: OAuthSecureService? = null
     private var i = 0
-    private val maxRetries = 4
+    private val maxRetries = 3
     private var retryCount = 0
 
     constructor(context: Context) : super() {
@@ -70,15 +71,15 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     override fun apply(throwableObservable: Observable<Throwable>): ObservableSource<*> {
         return throwableObservable.flatMap(Function<Throwable, ObservableSource<*>> { throwable ->
             if (throwable is TimeoutException || throwable is SocketTimeoutException
-                || throwable is ConnectException
-            ) {
+                    || throwable is ConnectException) {
                 return@Function Observable.error<Any>(throwable)
             } else if (throwable is HttpException) {
                 if (throwable.response()!!.code() == 400) {
                     retryCount++
+                    Log.d("init","400 retryCount $retryCount refreshing $refreshing")
                         if (refreshing && retryCount <= maxRetries-1)
                             return@Function Observable.timer(
-                                (3600 - retryCount*600).toLong(),
+                                (2000*(0.8).pow(retryCount)).toLong(),
                                 TimeUnit.MILLISECONDS
                             )
                         else if (retryCount <= maxRetries)
@@ -117,6 +118,12 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     }
 
     private fun reFreshToken(it: UserEntity): ObservableSource<*> {
+            Toasty.info(
+                PxEZApp.instance,
+                "reFreshToken",
+                Toast.LENGTH_SHORT
+            ).show()
+        Log.d("init","reFreshToken")
         SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthToken(
             client_id, client_secret, "refresh_token", it.Refresh_token,
@@ -144,8 +151,9 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                             PxEZApp.instance.getString(R.string.refresh_token),
                             Toast.LENGTH_SHORT
                         ).show()
+                        Log.d("init","reFreshToken end")
                     }
-                Observable.timer(2000, TimeUnit.MILLISECONDS)
+                Observable.timer(200, TimeUnit.MILLISECONDS)
                     .subscribe {
                         refreshing = false
                     }

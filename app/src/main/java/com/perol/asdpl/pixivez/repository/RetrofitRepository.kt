@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.repository
 
+import android.util.Log
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
@@ -46,23 +47,43 @@ class RetrofitRepository {
     var restClient = RestClient()
     var appApiPixivService: AppApiPixivService
     var sharedPreferencesServices: SharedPreferencesServices
+    //@Volatile
     var Authorization: String = ""
+        /*get() {
+            var newAuthorization = field
+            runBlocking {
+                try {
+                    newAuthorization = AppDataRepository.getUser().Authorization
+                    field = newAuthorization
+                    } catch (e: Exception) {
+                }
+            }
+            Log.d("init Auth", "$field  $newAuthorization")
+            return newAuthorization
+        }*/
     var gifApiPixivService: AppApiPixivService
     var reFreshFunction: ReFreshFunction
-
     init {
         appApiPixivService = restClient.retrofitAppApi.create(AppApiPixivService::class.java)
         gifApiPixivService = restClient.getRetrofitGIF().create(AppApiPixivService::class.java)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
-        resetToken()
+        //resetToken()
         reFreshFunction = ReFreshFunction.getInstance()
-        val init = Observable.just(1).flatMap{reFreshFunction.reFreshToken()}.subscribe({}, {}, {})
+        val init = Observable.just(1).flatMap{
+            //Log.d("init", "Observable init $Authorization")
+            reFreshFunction.reFreshToken()
+        }.subscribe({
+            resetToken()
+            Log.d("init","Observable inited $Authorization")}, {}, {})
+
+        Log.d("init","RetrofitRepository inited $Authorization")
     }
 
     fun resetToken() {
         runBlocking {
             try {
                 Authorization = AppDataRepository.getUser().Authorization
+                Log.d("init",Authorization)
             } catch (e: Exception) {
             }
         }
@@ -91,7 +112,7 @@ class RetrofitRepository {
         bookmark_num: Int?,
         duration: String?
     ): Observable<SearchIllustResponse> {
-        return Request(appApiPixivService.getSearchIllustPreview(word ,sort ,search_target ,bookmark_num ,duration ,Authorization))
+        return Request(appApiPixivService.getSearchIllustPreview(Authorization, word ,sort ,search_target ,bookmark_num ,duration))
 
     }
 
@@ -102,7 +123,7 @@ class RetrofitRepository {
         start_date: String?,
         end_date: String?,
         bookmark_num: Int?
-    ): Observable<SearchIllustResponse> = Request(appApiPixivService.getSearchIllust(word, sort, search_target ,start_date ,end_date ,bookmark_num ,Authorization))
+    ): Observable<SearchIllustResponse> = Request(appApiPixivService.getSearchIllust(Authorization, word, sort, search_target ,start_date ,end_date ,bookmark_num))
 
     fun postUserProfileEdit(part: MultipartBody.Part): Observable<ResponseBody> = Request(appApiPixivService.postUserProfileEdit(Authorization, part))
 
@@ -171,11 +192,12 @@ class RetrofitRepository {
 
     fun getUserDetail(userid: Long): Observable<UserDetailResponse> = Request(appApiPixivService.getUserDetail(Authorization, userid))
 
-    fun getUserRecommanded() =Request(appApiPixivService.getUserRecommended(Authorization))
+    fun getUserRecommanded() = Request(appApiPixivService.getUserRecommended(Authorization))
 
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
         return Observable.just(1).flatMap {
-            resetToken()
+            //resetToken()
+            Log.d("init","Request")
             observable
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen(reFreshFunction)

@@ -30,7 +30,9 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.BuildConfig
+import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -110,8 +112,7 @@ class RestClient {
         }
 
 
-    private val gson = GsonBuilder()
-        .create()
+    private val gson = GsonBuilder().create()
     val retrofitAppApi = buildRetrofit("https://app-api.pixiv.net",okHttpClient("app-api.pixiv.net"))
 
     val pixivisionAppApi = buildRetrofit("https://app-api.pixiv.net/",pixivOkHttpClient)
@@ -161,6 +162,14 @@ class RestClient {
                     SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
                 val isoDate = ISO8601DATETIMEFORMAT.format(Date())
                 val original = chain.request()
+                var Authorization = ""
+                runBlocking {
+                    try {
+                        Authorization = AppDataRepository.getUser().Authorization
+                    } catch (e: Exception) {
+                    }
+                }
+                //Log.d("init","Request $Authorization and ${original.header("Authorization")}")
                 val requestBuilder = original.newBuilder()
                     .removeHeader("User-Agent")
                     .addHeader(
@@ -168,6 +177,7 @@ class RestClient {
                         "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                     )
                     .addHeader("Accept-Language", "${local.language}_${local.country}")
+                    .header("Authorization", Authorization)
                     .addHeader("App-OS", "Android")
                     .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
                     .header("App-Version", "5.0.166")
@@ -193,17 +203,8 @@ class RestClient {
                 false
             )
         ) {
-            builder.sslSocketFactory(RubySSLSocketFactory(), object : X509TrustManager {
-                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun getAcceptedIssuers(): Array<X509Certificate> {
-                    return arrayOf()
-                }
-            }).hostnameVerifier(HostnameVerifier { p0, p1 -> true })
+            builder.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
+                .hostnameVerifier { p0, p1 -> true }
             builder.dns(httpsDns)
         }
     }

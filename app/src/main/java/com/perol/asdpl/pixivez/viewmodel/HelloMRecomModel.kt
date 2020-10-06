@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
@@ -61,6 +62,7 @@ class HelloMRecomModel : BaseViewModel() {
     }
 
     fun OnRefreshListener() {
+        Log.d("init","gettingRecommend")
         retrofitRepository.getRecommend().doAfterTerminate {
             retrofitRepository.getPixivison("all").subscribe({
                 if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
@@ -68,6 +70,7 @@ class HelloMRecomModel : BaseViewModel() {
                 banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
             }, {}, {}).add()
         }.subscribe({
+            Log.d("init","getRecommend")
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()

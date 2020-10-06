@@ -88,11 +88,10 @@ class RankingAdapter(
                     }
 
                     if (!item.user.is_followed) {
-                        retrofitRepository.postfollowUser(item.user.id, "public").subscribe({
+                        retrofitRepository.postfollowUser(item.user.id, x_restrict(item)).subscribe({
                             item.user.is_followed = true
                             view.findViewById<NiceImageView>(R.id.imageview_user)
                                 .setBorderColor(badgeTextColor) // Color.YELLOW
-
                         }, {}, {})
                     }
                 }
@@ -269,12 +268,7 @@ class RankingAdapter(
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
-                val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
-                    "private"
-                } else {
-                    "public"
-                }
-                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
+                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
                     textView.setTextColor(
                         badgeTextColor
                     )

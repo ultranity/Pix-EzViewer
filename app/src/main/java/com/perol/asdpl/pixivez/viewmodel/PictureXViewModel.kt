@@ -174,8 +174,13 @@ class PictureXViewModel : BaseViewModel() {
 
     fun fabClick() {
         val id = illustDetail.value!!.id
+        val x_restrict = if (PxEZApp.R18Private && illustDetail.value!!.x_restrict == 1) {
+            "private"
+        } else {
+            "public"
+        }
         val postUnlikeIllust = retrofitRepository.postUnlikeIllust(id)
-        val postLikeIllust = retrofitRepository.postLikeIllust(id)
+        val postLikeIllust = retrofitRepository.postLikeIllustWithTags(id, x_restrict, null)
         if (illustDetail.value!!.is_bookmarked) {
             postUnlikeIllust.subscribe({
                 likeIllust.value = false
@@ -184,7 +189,7 @@ class PictureXViewModel : BaseViewModel() {
 
             }, {}, {}).add()
         } else {
-            postLikeIllust!!.subscribe({
+            postLikeIllust.subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
             }, {}, {}).add()

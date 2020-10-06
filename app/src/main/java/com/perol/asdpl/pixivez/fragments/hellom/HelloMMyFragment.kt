@@ -92,11 +92,6 @@ class HelloMMyFragment : BaseFragment() {
             rankingAdapter.setNewData(it)
             recyclerview_mym?.smoothScrollToPosition(0)
         })
-        viewmodel.bookmarknum.observe(this, Observer {
-            if (it != null) {
-                viewmodel.OnItemChildLongClick(it)
-            }
-        })
         viewmodel.nexturl.observe(this, Observer {
             if (it == null) {
                 rankingAdapter.loadMoreEnd()

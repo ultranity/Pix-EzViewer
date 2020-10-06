@@ -108,11 +108,6 @@ class RankingMFragment : BaseFragment() {
             swiperefresh_rankingm.isRefreshing = false
             rankingAdapter.setNewData(it)
         })
-        viewmodel!!.bookmarknum.observe(this, Observer {
-            if (it != null) {
-                viewmodel!!.onItemChildLongClick(it)
-            }
-        })
         viewmodel!!.nexturl.observe(this, Observer {
             if (it == null) {
                 rankingAdapter.loadMoreEnd()

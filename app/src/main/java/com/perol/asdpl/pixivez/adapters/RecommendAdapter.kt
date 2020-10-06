@@ -85,7 +85,7 @@ class RecommendAdapter(
                             }, {}, {})
                     }
                     if (!item.user.is_followed) {
-                        retrofitRepository.postfollowUser(item.user.id, "public").subscribe({
+                        retrofitRepository.postfollowUser(item.user.id, x_restrict(item)).subscribe({
                             item.user.is_followed = true
                         }, {}, {})
                     }
@@ -253,15 +253,8 @@ class RecommendAdapter(
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
-                val x_restrict = if (PxEZApp.R18Private && item.x_restrict == 1) {
-                    "private"
-                } else {
-                    "public"
-                }
-                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict, null).subscribe({
-                    textView.setTextColor(
-                        badgeTextColor
-                    )
+                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
+                    textView.setTextColor(badgeTextColor)
                     item.is_bookmarked = true
                 }, {}, {})
             }
@@ -290,9 +283,10 @@ class RecommendAdapter(
         val needSmall = item.height > 1500 || item.height > 1500
         val loadUrl = if (needSmall) {
             item.image_urls.square_medium
-        } else {
-            item.image_urls.medium
         }
+                      else {
+                            item.image_urls.medium
+                        }
 
         if (!R18on) {
             val isr18 = tags.contains("R-18") || tags.contains("R-18G")
@@ -319,7 +313,8 @@ class RecommendAdapter(
                         }
                     })
             }
-        } else {
+        }
+        else {
             GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(R.color.halftrans)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

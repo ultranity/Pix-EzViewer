@@ -34,7 +34,6 @@ class RankingMViewModel : BaseViewModel() {
     val nexturl = MutableLiveData<String>()
     val addillusts = MutableLiveData<ArrayList<Illust>>()
     val illusts = MutableLiveData<ArrayList<Illust>>()
-    val bookmarknum = MutableLiveData<Illust>()
     fun first(mode: String, picdata: String?) {
         retrofitRepository.getIllustRanking(mode, picdata).subscribe({
             nexturl.value = it.next_url
@@ -54,18 +53,6 @@ class RankingMViewModel : BaseViewModel() {
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {}).add()
-    }
-
-    fun onItemChildLongClick(id: Illust) {
-        if (id.is_bookmarked) {
-            retrofitRepository.postUnlikeIllust(id.id).subscribe({
-                bookmarknum.value = id
-            }, {}, {}).add()
-        } else {
-            retrofitRepository.postLikeIllust(id.id)!!.subscribe({
-                bookmarknum.value = id
-            }, {}, {}).add()
-        }
     }
 
     fun datePick(mode: String, pickDate: String?) {

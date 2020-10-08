@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -37,19 +38,37 @@ class IntentActivity : RinkActivity() {
         // setContentView(R.layout.activity_intent);
         val uri = intent.data
         if (uri != null) {
+            val scheme = uri.scheme
             val segment = uri.pathSegments
-
+            //pixiv://illusts/
+            if (scheme != null){
+                if (scheme.contains("pixiv")) {
+                    val host = uri.host
+                    if (!host.isNullOrBlank()) {
+                        if (host.contains("users")) {
+                            try {
+                                UserMActivity.start(this, segment[0].toLong())
+                                finish()
+                            } catch (e: Exception) {
+                                Toasty.error(this, getString(R.string.wrong_id))
+                            }
+                        }
+                        if (host.contains("illusts")) {
+                                try {
+                                    openIllust(segment[0].toLong())
+                                    finish()
+                                    return
+                                } catch (e: Exception) {
+                                    Toasty.error(this, getString(R.string.wrong_id))
+                                }
+                        }
+                    }
+                }
+            }
             if (uri.path?.contains("artworks") == true) {
                 val id = segment[segment.size - 1].toLong()
-                val bundle = Bundle()
-                val arrayList = LongArray(1)
                 try {
-                    arrayList[arrayList.size - 1] = id
-                    bundle.putLongArray("illustidlist", arrayList)
-                    bundle.putLong("illustid", id)
-                    val intent2 = Intent(this, PictureActivity::class.java)
-                    intent2.putExtras(bundle)
-                    startActivity(intent2)
+                    openIllust(id)
                     finish()
                     return
                 } catch (e: Exception) {
@@ -86,15 +105,8 @@ class IntentActivity : RinkActivity() {
                 }
                 if (segment[segment.size - 2] == "i") {
                     val id = segment[segment.size - 1].toLong()
-                    val bundle = Bundle()
-                    val arrayList = LongArray(1)
                     try {
-                        arrayList[0] = id
-                        bundle.putLongArray("illustidlist", arrayList)
-                        bundle.putLong("illustid", id)
-                        val intent2 = Intent(this, PictureActivity::class.java)
-                        intent2.putExtras(bundle)
-                        startActivity(intent2)
+                        openIllust(id)
                         finish()
                         return
                     } catch (e: Exception) {
@@ -103,14 +115,8 @@ class IntentActivity : RinkActivity() {
                 }
             }
             uri.getQueryParameter("illust_id")?.let {
-                val bundle = Bundle()
-                val arrayList = longArrayOf(it.toLong())
                 try {
-                    bundle.putLongArray("illustidlist", arrayList)
-                    bundle.putLong("illustid", it.toLong())
-                    val intent2 = Intent(this, PictureActivity::class.java)
-                    intent2.putExtras(bundle)
-                    startActivity(intent2)
+                    openIllust(it.toLong())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -144,6 +150,16 @@ class IntentActivity : RinkActivity() {
         }
 
 
+    }
+
+    private fun openIllust(id: Long) {
+        val bundle = Bundle()
+        val arrayList = longArrayOf(id.toLong())
+        bundle.putLongArray("illustidlist", arrayList)
+        bundle.putLong("illustid", id)
+        val intent2 = Intent(this, PictureActivity::class.java)
+        intent2.putExtras(bundle)
+        startActivity(intent2)
     }
 
 

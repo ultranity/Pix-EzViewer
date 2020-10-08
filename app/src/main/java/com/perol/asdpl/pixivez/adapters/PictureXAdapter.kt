@@ -38,10 +38,10 @@ import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.util.Log
 import android.util.Pair
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,11 +65,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.*
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.AnimationView
-import com.perol.asdpl.pixivez.objects.TToast
-import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -95,6 +91,7 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 
@@ -188,14 +185,13 @@ class PictureXAdapter(
             mUserPicLongClick: () -> Unit
         ) {
             binding.illust = illust
-            captionTextView.autoLinkMask = Linkify.WEB_URLS
-            val typedValue = TypedValue()
-            mContext.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
-            val colorPrimary = typedValue.resourceId
+            //captionTextView.autoLinkMask = Linkify.WEB_URLS
+            val colorPrimary = ThemeUtil.getColor(mContext, R.attr.colorPrimary)
+            val badgeTextColor= ThemeUtil.getColor(mContext,R.attr.badgeTextColor)
             if (illust.user.is_followed)
-                imageViewUser.setBorderColor(Color.YELLOW)
+                imageViewUser.setBorderColor(badgeTextColor)
             else
-                imageViewUser.setBorderColor(ContextCompat.getColor(mContext, colorPrimary))
+                imageViewUser.setBorderColor(colorPrimary)
             imageViewUser.setOnLongClickListener {
                 mUserPicLongClick.invoke()
                 true
@@ -216,6 +212,9 @@ class PictureXAdapter(
                 binding.html = Html.fromHtml(illust.caption)
             else
                 binding.html = Html.fromHtml("~")
+            Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
+            Log.d("url", captionTextView.urls.toString())
+            captionTextView.movementMethod = LinkMovementMethod.getInstance()
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }

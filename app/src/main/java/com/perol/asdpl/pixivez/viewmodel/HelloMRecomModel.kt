@@ -73,6 +73,8 @@ class HelloMRecomModel : BaseViewModel() {
             Log.d("init","getRecommend")
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            Log.d("init","getRecommend fail $it")
+        }, {}).add()
     }
 }

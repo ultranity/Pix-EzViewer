@@ -59,7 +59,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class UserIllustFragment : BaseFragment() {
     override fun loadData() {
-        viewmodel.first(param1!!, param2!!)
+        viewModel.first(param1!!, param2!!)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -69,7 +69,7 @@ class UserIllustFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            recommendAdapter.hideBookmarked = viewactivity.viewModel.hideBookmarked.value!!
+            recommendAdapter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
             recommendAdapter.blockTags = blockTags
             recommendAdapter.notifyDataSetChanged()
         }
@@ -77,10 +77,10 @@ class UserIllustFragment : BaseFragment() {
 
     fun lazyLoad() {
         recommendAdapter.loadMoreModule?.setOnLoadMoreListener {
-            viewmodel.onLoadMoreListener()
+            viewModel.onLoadMoreListener()
         }
         mrefreshlayout.setOnRefreshListener {
-            viewmodel.onRefreshListener(param1!!, param2!!)
+            viewModel.onRefreshListener(param1!!, param2!!)
         }
         mrecyclerview.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -98,24 +98,24 @@ class UserIllustFragment : BaseFragment() {
             param1 = it.getLong(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewmodel = ViewModelProvider(this).get(UserMillustViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(UserMillustViewModel::class.java)
 
-        viewmodel.nexturl.observe(this, Observer {
+        viewModel.nexturl.observe(this, Observer {
             if (it.isNullOrEmpty()) {
                 recommendAdapter.loadMoreEnd()
             } else {
                 recommendAdapter.loadMoreComplete()
             }
         })
-        viewactivity = activity as UserMActivity
-        viewmodel.data.observe(this, Observer {
+        viewActivity = activity as UserMActivity
+        viewModel.data.observe(this, Observer {
             if (it != null) {
                 mrefreshlayout.isRefreshing = false
                 recommendAdapter.setNewData(it.toMutableList())
             }
 
         })
-        viewmodel.adddata.observe(this, Observer {
+        viewModel.adddata.observe(this, Observer {
             if (it != null) {
                 recommendAdapter.addData(it)
                 recommendAdapter.loadMoreComplete()
@@ -128,10 +128,10 @@ class UserIllustFragment : BaseFragment() {
         lazyLoad()
     }
 
-    lateinit var viewmodel: UserMillustViewModel
-    lateinit var viewactivity: UserMActivity
+    lateinit var viewModel: UserMillustViewModel
+    private lateinit var viewActivity: UserMActivity
 
-    lateinit var recommendAdapter: RecommendAdapter
+    private lateinit var recommendAdapter: RecommendAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -143,7 +143,7 @@ class UserIllustFragment : BaseFragment() {
             isR18on,
             blockTags,
             PreferenceManager.getDefaultSharedPreferences(requireActivity())
-                .getBoolean(UserMActivity.HIDE_BOOKMARK_ITEM, false)
+                .getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
         )
 
         return inflater.inflate(R.layout.fragment_user_illust, container, false)

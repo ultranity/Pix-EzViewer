@@ -104,7 +104,7 @@ class HelloMMyFragment : BaseFragment() {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
                     "hide_bookmark_item_in_mmy", it
                 ).apply()
-                rankingAdapter.hideBookmarked = it
+                rankingAdapter.hideBookmarked = if(it) 1 else 0
             }
         })
     }
@@ -139,7 +139,7 @@ class HelloMMyFragment : BaseFragment() {
             null,
             isR18on,
             blockTags,
-            viewmodel.hideBookmarked.value!!
+            if(viewmodel.hideBookmarked.value!!) 1 else 0
         )
         recyclerview_mym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerview_mym.adapter = rankingAdapter

@@ -34,6 +34,7 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
@@ -244,6 +245,19 @@ object Works {
             .setExtendField(Gson().toJson(illustD))
             .option(option)
             .create()
+    }
+
+    fun isDownloaded(illust: Illust): Boolean {
+        return isDownloaded2(illust)|| isDownloaded3(illust)
+    }
+    private val fileList by lazy{FileUtil.getGroupList(PxEZApp.storepath).map{ it.pid.toLongOrNull() }}
+    fun isDownloaded2(illust: Illust): Boolean {
+        return fileList.contains(illust.id)
+    }
+
+    private val ListLog by lazy{FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")}
+    fun isDownloaded3(illust: Illust): Boolean {
+        return ListLog?.contains(illust.id.toInt())?:false
     }
 
 /*

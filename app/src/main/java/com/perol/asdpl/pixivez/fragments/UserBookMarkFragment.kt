@@ -70,11 +70,11 @@ private const val ARG_PARAM2 = "param2"
 class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     @SuppressLint("InflateParams")
     override fun loadData() {
-        viewmodel!!.first(param1!!, pub).doOnSuccess {
+        viewModel!!.first(param1!!, pub).doOnSuccess {
             if (it) {
                 val view = layoutInflater.inflate(R.layout.header_bookmark, null)
                 val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
-                recommendAdapter.addHeaderView(view)
+                picItemAdapter.addHeaderView(view)
                 imagebutton.setOnClickListener {
                     showTagDialog()
                 }
@@ -87,8 +87,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        savedInstanceState
-        recommendAdapter =
+        picItemAdapter =
             if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_bookmarked",true)){
                 RankingAdapter(
                     R.layout.view_ranking_item,
@@ -96,26 +95,28 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                     isR18on,
                     blockTags,
                     singleLine = false,
-                    hideBookmarked = viewactivity.viewModel.hideBookmarked.value!!)
+                    viewActivity.viewModel.hideBookmarked.value!!,
+                    viewActivity.viewModel.hideDownloaded.value!!)
             } else{
                 RecommendAdapter(
                     R.layout.view_recommand_item,
                     null,
                     isR18on,
                     blockTags,
-                    hideBookmarked = viewactivity.viewModel.hideBookmarked.value!!)
+                    viewActivity.viewModel.hideBookmarked.value!!,
+                    viewActivity.viewModel.hideDownloaded.value!!)
             }
 
 
         mrecyclerview.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        mrecyclerview.adapter = recommendAdapter
-        recommendAdapter.loadMoreModule?.setOnLoadMoreListener {
-            viewmodel!!.onLoadMoreListener()
+        mrecyclerview.adapter = picItemAdapter
+        picItemAdapter.loadMoreModule?.setOnLoadMoreListener {
+            viewModel!!.onLoadMoreListener()
         }
 
         mrefreshlayout.setOnRefreshListener {
-            viewmodel!!.onRefreshListener(param1!!, pub, null)
+            viewModel!!.onRefreshListener(param1!!, pub, null)
         }
         requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
             ?.view?.setOnClickListener {
@@ -130,7 +131,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     override fun onClick(string: String, public: String) {
-        viewmodel!!.onRefreshListener(
+        viewModel!!.onRefreshListener(
             param1!!, public, if (string.isNotBlank()) {
                 string
             } else {
@@ -140,30 +141,30 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     private fun lazyLoad() {
-        viewmodel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
-        this.viewactivity = activity as UserMActivity
+        viewModel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
+        this.viewActivity = activity as UserMActivity
 
-        viewmodel!!.nexturl.observe(this, Observer {
+        viewModel!!.nexturl.observe(this, Observer {
             if (it.isNullOrEmpty()) {
-                recommendAdapter.loadMoreEnd()
+                picItemAdapter.loadMoreEnd()
             } else {
-                recommendAdapter.loadMoreComplete()
+                picItemAdapter.loadMoreComplete()
             }
         })
-        viewmodel!!.data.observe(this, Observer {
+        viewModel!!.data.observe(this, Observer {
             if (it != null) {
                 mrefreshlayout.isRefreshing = false
-                recommendAdapter.setNewData(it.toMutableList())
+                picItemAdapter.setNewData(it.toMutableList())
             }
 
         })
-        viewmodel!!.adddata.observe(this, Observer {
+        viewModel!!.adddata.observe(this, Observer {
             if (it != null) {
-                recommendAdapter.addData(it)
-                recommendAdapter.loadMoreComplete()
+                picItemAdapter.addData(it)
+                picItemAdapter.loadMoreComplete()
             }
         })
-        viewmodel!!.tags.observe(this, Observer {
+        viewModel!!.tags.observe(this, Observer {
 
         })
 
@@ -187,24 +188,24 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     private var pub = "public"
 
-    var viewmodel: UserBookMarkViewModel? = null
-    private lateinit var viewactivity: UserMActivity
+    var viewModel: UserBookMarkViewModel? = null
+    private lateinit var viewActivity: UserMActivity
 
 
     private fun showTagDialog() {
         val arrayList = ArrayList<String>()
         val arrayList1 = ArrayList<Int>()
-        if (viewmodel!!.tags.value != null) {
+        if (viewModel!!.tags.value != null) {
             val tagsShowDialog = TagsShowDialog()
             tagsShowDialog.callback = this
-            for (i in viewmodel!!.tags.value!!.bookmark_tags) {
+            for (i in viewModel!!.tags.value!!.bookmark_tags) {
                 arrayList.add(i.name)
                 arrayList1.add(i.count)
             }
             val bundle = Bundle()
             bundle.putStringArrayList("tags", arrayList)
             bundle.putIntegerArrayList("counts", arrayList1)
-            bundle.putString("nexturl", viewmodel!!.tags.value!!.next_url)
+            bundle.putString("nexturl", viewModel!!.tags.value!!.next_url)
             bundle.putLong("id", param1!!)
             tagsShowDialog.arguments = bundle
             tagsShowDialog.show(childFragmentManager)
@@ -221,15 +222,19 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 it.name
             }
             val id = AppDataRepository.getUser().userid
-                recommendAdapter.hideBookmarked =
+                picItemAdapter.hideBookmarked =
                     if (param1 != id) {
-                        viewactivity.viewModel.hideBookmarked.value!!
+                        viewActivity.viewModel.hideBookmarked.value!!
+                    } else 0
+                picItemAdapter.hideDownloaded =
+                    if (param1 == id) {
+                        viewActivity.viewModel.hideDownloaded.value!!
                     } else false
-            recommendAdapter.blockTags = blockTags
-            recommendAdapter.notifyDataSetChanged()
+            picItemAdapter.blockTags = blockTags
+            picItemAdapter.notifyDataSetChanged()
         }
     }
-    private lateinit var recommendAdapter: PicItemAdapter
+    private lateinit var picItemAdapter: PicItemAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

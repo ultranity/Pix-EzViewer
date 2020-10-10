@@ -26,10 +26,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.os.Bundle
@@ -64,8 +61,10 @@ import java.io.File
 
 class UserMActivity : RinkActivity() {
     companion object {
-        const val HIDE_BOOKMARK_ITEM = "hide_bookmark_item"
-        const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search"
+        const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
+        const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
+        const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
+        lateinit var menuD:Menu
         fun start(context: Context, id: Long) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
@@ -102,6 +101,7 @@ class UserMActivity : RinkActivity() {
     }
 
     lateinit var viewModel: UserMViewModel
+    lateinit var pre: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding =
@@ -119,16 +119,21 @@ class UserMActivity : RinkActivity() {
 
         id = intent.getLongExtra("data", 1)
         viewModel = ViewModelProvider(this).get(UserMViewModel::class.java)
+        pre = PreferenceManager.getDefaultSharedPreferences(this)
         viewModel.getData(id)
-        viewModel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(HIDE_BOOKMARK_ITEM, false)
+        viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
+        viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
         viewModel.userDetail.observe(this, Observer {
             if (it != null) {
                 fab.show()
                 disposables.add(viewModel.isuser(id).subscribe({
                     if (it) { //用户自己
                         fab.hide()
-                        viewModel.hideBookmarked.value = false
+                        viewModel.hideBookmarked.value = 0
                         mviewpager.currentItem = 2
+                        menuD.getItem(1).isVisible = false
+                        menuD.getItem(2).isVisible = true
+                        menuD.getItem(2).isEnabled = true
                     }
                 }, {}))
 
@@ -229,8 +234,15 @@ class UserMActivity : RinkActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_userx, menu)
-        menu.getItem(1).isChecked = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-            HIDE_BOOKMARK_ITEM, false
+        menu.getItem(1).isChecked = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)%2 != 0
+        if(viewModel.hideBookmarked.value!! > 1) {
+                menu.getItem(1).title = getString(R.string.only_bookmarked)
+        }
+        menuD = menu
+        menu.getItem(2).isVisible = false
+        menu.getItem(2).isEnabled = false
+        menu.getItem(2).isChecked = pre.getBoolean(
+            HIDE_DOWNLOADED_ITEM, false
         )
         return true
     }
@@ -240,10 +252,25 @@ class UserMActivity : RinkActivity() {
             android.R.id.home -> finishAfterTransition()
             R.id.action_share -> share()
             R.id.action_hideBookmarked -> {
-                viewModel.hideBookmarked.value = !item.isChecked
+                val pre = PreferenceManager.getDefaultSharedPreferences(this)
+                when(viewModel.hideBookmarked.value) {
+                    3->{
+                        item.title = getString(R.string.hide_bookmarked)
+                    }
+                    1->{
+                        item.title = getString(R.string.only_bookmarked)
+                    }
+                }
+                viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!!+1)%4
+                item.isChecked = !item.isChecked
+                pre.edit().putInt( HIDE_BOOKMARKED_ITEM, (viewModel.hideBookmarked.value!!)).apply()
+                EventBus.getDefault().post(AdapterRefreshEvent())
+            }
+            R.id.action_hideDownloaded -> {
+                viewModel.hideDownloaded.value = !item.isChecked
                 item.isChecked = !item.isChecked
                 PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
-                    HIDE_BOOKMARK_ITEM, item.isChecked
+                    HIDE_DOWNLOADED_ITEM, item.isChecked
                 ).apply()
                 EventBus.getDefault().post(AdapterRefreshEvent())
             }

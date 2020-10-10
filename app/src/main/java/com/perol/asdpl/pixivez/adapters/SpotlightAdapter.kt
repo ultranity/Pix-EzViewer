@@ -54,7 +54,7 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
         val userImage = helper.getView<ImageView>(R.id.imageview_user)
         val mainImage = helper.getView<ImageView>(R.id.item_img)
         helper.setText(R.id.textview_context, item.username)
-                .setText(R.id.textview_title, item.title)
+                .setText(R.id.title, item.title)
         GlideApp.with(mainImage.context).load(item.pictureurl).error(R.drawable.ai).transition(withCrossFade()).into(mainImage)
         GlideApp.with(userImage.context).load(item.userpic).transition(withCrossFade()).circleCrop().into(userImage)
         mainImage.setOnClickListener {

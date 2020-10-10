@@ -28,21 +28,11 @@ package com.perol.asdpl.pixivez.adapters
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.bumptech.glide.request.target.ImageViewTarget
-import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
@@ -50,9 +40,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.util.ArrayList
@@ -63,9 +51,10 @@ import java.util.ArrayList
 class RecommendAdapter(
     layoutResId: Int,
     data: List<Illust>?,
-    private val R18on: Boolean,
+    override var R18on: Boolean,
     override var blockTags: List<String>,
-    override var hideBookmarked: Boolean = false
+    override var hideBookmarked: Int = 0,
+    override var hideDownloaded: Boolean = false
 ) :
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 
@@ -176,164 +165,9 @@ class RecommendAdapter(
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
-        animationEnable = true
-        setAnimationWithDefault(AnimationType.ScaleIn)
-        this.loadMoreModule?.preLoadNumber = 12
-        colorPrimary =ThemeUtil.getColor(context, R.attr.colorPrimary)
-        badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
     }
 
     override fun convert(helper: BaseViewHolder, item: Illust) {
-        if (hideBookmarked && item.is_bookmarked) {
-            helper.itemView.visibility = View.GONE
-            helper.itemView.layoutParams.apply {
-                height = 0
-                width = 0
-            }
-            return
-        }
-        val tags = item.tags.map {
-            it.name
-        }
-        var needBlock = false
-        for (i in blockTags) {
-            if (tags.contains(i)) {
-                needBlock = true
-                break
-            }
-        }
-        if (blockTags.isNotEmpty() && tags.isNotEmpty() && needBlock) {
-            helper.itemView.visibility = View.GONE
-            helper.itemView.layoutParams.apply {
-                height = 0
-                width = 0
-            }
-            return
-        } else {
-            helper.itemView.visibility = View.VISIBLE
-            helper.itemView.layoutParams.apply {
-                height = LinearLayout.LayoutParams.WRAP_CONTENT
-                width = LinearLayout.LayoutParams.MATCH_PARENT
-            }
-        }
-        if (PxEZApp.CollectMode == 1) {
-            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                Works.imageDownloadAll(item)
-                if (!item.is_bookmarked) {
-                    retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
-                        .subscribe({
-                            helper.getView<MaterialButton>(R.id.like).setTextColor(
-                                badgeTextColor
-                            )
-                            item.is_bookmarked = true
-                        }, {}, {})
-                }
-            }
-        } else {
-            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                Works.imageDownloadAll(item)
-            }
-        }
-
-        helper.setText(R.id.title, item.title)
-        helper.setTextColor(
-            R.id.like, if (item.is_bookmarked) {
-                badgeTextColor
-            } else {
-                colorPrimary
-            }
-        )
-
-        helper.getView<MaterialButton>(R.id.like).setOnClickListener { v ->
-            val textView = v as Button
-            if (item.is_bookmarked) {
-                retrofitRepository.postUnlikeIllust(item.id).subscribe({
-                    textView.setTextColor(colorPrimary)
-                    item.is_bookmarked = false
-                }, {}, {})
-            } else {
-                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
-                    textView.setTextColor(badgeTextColor)
-                    item.is_bookmarked = true
-                }, {}, {})
-            }
-        }
-
-        val constraintLayout =
-            helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
-        when (item.type) {
-            "illust" -> if (item.meta_pages.isEmpty()) {
-                constraintLayout.visibility = View.INVISIBLE
-            } else if (item.meta_pages.isNotEmpty()) {
-                constraintLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, item.meta_pages.size.toString())
-            }
-            "ugoira" -> {
-                constraintLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, "Gif")
-            }
-            else -> {
-                constraintLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, "CoM")
-            }
-        }
-        val mainImage = helper.getView<ImageView>(R.id.item_img)
-        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
-        val needSmall = item.height > 1500 || item.height > 1500
-        val loadUrl = if (needSmall) {
-            item.image_urls.square_medium
-        }
-                      else {
-                            item.image_urls.medium
-                        }
-
-        if (!R18on) {
-            val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-            if (isr18) {
-                GlideApp.with(mainImage.context)
-                    .load(ContextCompat.getDrawable(context, R.drawable.h))
-                    .placeholder(R.drawable.h).into(mainImage)
-            } else {
-                GlideApp.with(mainImage.context).load(loadUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .transition(withCrossFade()).placeholder(R.color.halftrans)
-                    .into(object : ImageViewTarget<Drawable>(mainImage) {
-                        override fun setResource(resource: Drawable?) {
-                            mainImage.setImageDrawable(resource)
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
-                        ) {
-                            if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
-                                super.onResourceReady(resource, transition)
-                            }
-                        }
-                    })
-            }
-        }
-        else {
-            GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
-                .placeholder(R.color.halftrans)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))
-                .into(object : ImageViewTarget<Drawable>(mainImage) {
-                    override fun setResource(resource: Drawable?) {
-                        mainImage.setImageDrawable(resource)
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        transition: Transition<in Drawable>?
-                    ) {
-                        if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
-                            super.onResourceReady(resource, transition)
-                        }
-
-                    }
-                })
-        }
+        super.convert(helper, item)
     }
 }

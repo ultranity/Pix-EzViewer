@@ -166,6 +166,7 @@
 	<string name="R18_folder">Custom R-18 folder\n (default: xRestrict/)</string>
 	<string name="R18_private">Mark as private when bookmark R-18 pic</string>
 	<string name="refresh_token">Refreshing token..</string>
+	<string name="refresh_token_fail">Refresh token failed</string>
 	<string name="translate">Translate</string>
 	<string name="back_to_the_top">Double-click back to the top</string>
 	<string name="add_to_block_tag_list">Add to block tag list</string>
@@ -208,9 +209,7 @@
 	<string name="attention">Follow</string>
 	<string name="customformat_token">Token</string>
 	<string name="customformat_result">Result (click to insert)</string>
-	<string name="post_comment">Post</string>
 	<string name="summary_thanks">Thanks to:</string>
-	<string name="dark">Dark</string>
 	<string name="following">Following</string>
 	<string name="followers">Followers</string>
 	<string name="empty">Empty</string>
@@ -218,11 +217,7 @@
 	<string name="pixivision_desc2">a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
 	<string name="change_to_first">change to first</string>
 	<string name="notsf_subtext">Development, testing, release</string>
-	<string name="private_">private</string>
-	<string name="like">LIKE</string>
-	<string name="state">State</string>
 	<string name="loading">Loading...</string>
-	<string name="communicate">Communicate</string>
 	<string name="needstatusbar_subtext">For notched screens</string>
 	<string name="ultranity_subtext">Current maintainer</string>
 	<string name="notsf_subtext2">Original author</string>
@@ -237,5 +232,6 @@
 	<string name="not_this_one">not this one</string>
 	<string name="I_know">OK, I know</string>
 	<string name="read_it">please read it</string>
-    <string name="refresh_token_fail">Refresh token failed</string>
+	<string name="hide_downloaded">Hidden Downloaded</string>
+	<string name="only_bookmarked">Bookmarked Only</string>
 </resources>

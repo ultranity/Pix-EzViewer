@@ -32,6 +32,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -112,11 +113,20 @@ class SearchSectionDialog : DialogFragment() {
             isChecked = viewModel.endDate.value != null && viewModel.startDate.value != null
 
         }
-        var hideBookmarked = viewModel.hideBookmarked.value
-        val toggleShow= view.findViewById<ToggleButton>(R.id.toggleShow).apply {
-            isChecked = hideBookmarked == true
+        var hideBookmarked = viewModel.hideBookmarked.value!!
+        val toggleShowTitle = view.findViewById<TextView>(R.id.toggleShowTitle)
+        val toggleShow = view.findViewById<ToggleButton>(R.id.toggleShow).apply {
+            isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
-                hideBookmarked = isChecked
+                when(hideBookmarked) {
+                    3->{
+                        toggleShowTitle.text = getString(R.string.hide_bookmarked)
+                    }
+                    1->{
+                        toggleShowTitle.text = getString(R.string.only_bookmarked)
+                    }
+                }
+                hideBookmarked = (hideBookmarked+1)%4
             }
         }
         val button = view.findViewById<Button>(R.id.pick_button).apply {

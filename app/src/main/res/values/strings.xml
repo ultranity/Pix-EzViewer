@@ -356,4 +356,6 @@
     <string name="not_this_one">识别错了</string>
     <string name="I_know">我已知晓</string>
     <string name="read_it">请务必读完</string>
+    <string name="hide_downloaded">隐藏已下载图片</string>
+    <string name="only_bookmarked">只显示已收藏</string>
 </resources>

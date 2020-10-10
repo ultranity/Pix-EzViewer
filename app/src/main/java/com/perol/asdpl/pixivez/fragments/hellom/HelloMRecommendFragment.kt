@@ -288,14 +288,14 @@ class HelloMRecommendFragment : BaseFragment() {
                     isR18on,
                     blockTags,
                     singleLine = true,
-                    hideBookmarked = false)
-            } else{
+                    hideBookmarked = 0)
+            } else {
                 RecommendAdapter(
                     R.layout.view_recommand_item,
                     null,
                     isR18on,
                     blockTags,
-                    hideBookmarked = false)
+                    hideBookmarked = 0)
             }
         if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
                 .getBoolean("use_new_banner",true)){

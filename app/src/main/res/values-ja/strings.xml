@@ -166,6 +166,7 @@
 	<string name="R18_folder">R18別々のフォルダ名\ n（デフォルトxRestrict /）</string>
 	<string name="R18_private">自動プライベートコレクション</string>
 	<string name="refresh_token">トークンを更新</string>
+	<string name="refresh_token_fail">"トークンを更新エラーが発生しました "</string>
 	<string name="translate">翻訳</string>
 	<string name="back_to_the_top">ダブルタップしてホームに戻る</string>
 	<string name="add_to_block_tag_list">タグをブロックリストに追加</string>
@@ -210,7 +211,6 @@
 	<string name="customformat_result">結果（自動的に記入します）</string>
 	<string name="post_comment">送信</string>
 	<string name="summary_thanks">ご協力ありがとうございます：</string>
-	<string name="dark">闇</string>
 	<string name="following">ユーザー懸念</string>
 	<string name="followers">フォロワー</string>
 	<string name="empty">空の</string>
@@ -218,9 +218,6 @@
 	<string name="pixivision_desc2">これは、\ n型メディアの作成を提供するために、鈍い人々の生活に不本意です！</string>
 	<string name="change_to_first">最初のものを変更</string>
 	<string name="notsf_subtext">開発、テスト、リリース</string>
-	<string name="private_">private</string>
-	<string name="like">LIKE</string>
-	<string name="state">状態</string>
 	<string name="loading">読み込んでいます…</string>
 	<string name="communicate">伝えます</string>
 	<string name="needstatusbar_subtext">ノッチ付きスクリーン用</string>
@@ -237,5 +234,6 @@
 	<string name="not_this_one">認識エラー</string>
 	<string name="I_know">もう知っている</string>
 	<string name="read_it">必ずお読みください</string>
-	<string name="refresh_token_fail">"トークンを更新エラーが発生しました "</string>
+	<string name="hide_downloaded">非表示画像をダウンロード</string>
+	<string name="only_bookmarked">唯一のコレクションを表示</string>
 </resources>

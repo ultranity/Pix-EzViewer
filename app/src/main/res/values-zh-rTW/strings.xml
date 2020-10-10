@@ -169,6 +169,7 @@
 	<string name="R18_folder">單獨R18文件夾名稱\n（默認xRestrict/）</string>
 	<string name="R18_private">自動私密收藏</string>
 	<string name="refresh_token">重新載入 token</string>
+	<string name="refresh_token_fail">重新載入 token失敗</string>
 	<string name="translate">翻譯</string>
 	<string name="back_to_the_top">雙擊返回頂部</string>
 	<string name="add_to_block_tag_list">添加到屏蔽標簽列表</string>
@@ -240,5 +241,6 @@
 	<string name="not_this_one">識別錯誤</string>
 	<string name="I_know">我已知曉</string>
 	<string name="read_it">請務必讀完</string>
-	<string name="refresh_token_fail">重新載入 token失敗</string>
+	<string name="hide_downloaded">隱藏已下載圖片</string>
+	<string name="only_bookmarked">只顯示已收藏</string>
 </resources>

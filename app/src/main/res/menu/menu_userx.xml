@@ -16,6 +16,11 @@
         android:title="@string/hide_bookmarked"
         app:showAsAction="collapseActionView" />
     <item
+        android:id="@+id/action_hideDownloaded"
+        android:checkable="true"
+        android:title="@string/hide_downloaded"
+        app:showAsAction="collapseActionView" />
+    <item
         android:id="@+id/action_download"
         android:title="Σ( ° △ °|||)︴"
         app:showAsAction="collapseActionView" />

@@ -41,7 +41,8 @@ class UserMViewModel : BaseViewModel() {
     var retrofitRepository = RetrofitRepository.getInstance()
     var userDetail = MutableLiveData<UserDetailResponse>()
     var isfollow = MutableLiveData<Boolean>()
-    var hideBookmarked = MutableLiveData(false)
+    var hideBookmarked = MutableLiveData(0)
+    var hideDownloaded = MutableLiveData(false)
 
     fun getData(userid: Long) {
         retrofitRepository.getUserDetail(userid).subscribe({
@@ -77,8 +78,7 @@ class UserMViewModel : BaseViewModel() {
     fun isuser(id: Long) = Single.create<Boolean> {
         launchUI {
             val pt = AppDataRepository.getUser()
-            val isuser = id == pt.userid
-            it.onSuccess(isuser)
+            it.onSuccess(id == pt.userid)
         }
 
     }

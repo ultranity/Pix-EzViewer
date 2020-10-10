@@ -1,0 +1,10 @@
+
+## 1.7.4R:
+-[x] fix: socket is closed home page loading failure and other network problems #38 #40
+-[x] feature: enlarge the interface and automatically load the original image
+-[x] feature: link jump (illust/user) in description #39
+-[x] feature: the painter interface only displays the selected items
+-[x] feature: the search interface only displays the collected items
+-[x] feature: personal collection records hidden downloaded
+-[x] fix: automatic private collection
+-[x] update: donation record

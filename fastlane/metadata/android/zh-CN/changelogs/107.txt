@@ -1,0 +1,9 @@
+## 1.7.4R:
+- [x] fix: socket is closed 首页加载失败等网络问题 #38 #40
+- [x] feature: 放大界面自动加载原图
+- [x] feature: 描述中支持illust/user跳转 #39
+- [x] feature: 画师界面只显示已收藏 #20
+- [x] feature: 搜索界面只显示已收藏
+- [x] feature: 个人收藏记录隐藏已下载
+- [x] fix: 自动私密收藏
+- [x] update: 捐赠记录

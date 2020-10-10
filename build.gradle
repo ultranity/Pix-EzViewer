@@ -2,7 +2,7 @@
 
 buildscript {
 
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.4.10'
 
     repositories {
         /*
@@ -23,7 +23,7 @@ buildscript {
     dependencies {
 
         classpath 'com.android.tools.build:bundletool:0.13.4'
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
@@ -34,7 +34,7 @@ buildscript {
         else{
             classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.3.0"
         }
-        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.18'
+        //classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.18'
     }
 }
 allprojects {

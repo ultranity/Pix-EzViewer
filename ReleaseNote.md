@@ -28,7 +28,17 @@
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
-## 1.7.1R & 1.7.1R:
+## 1.7.4R~1.7.2R:
+- [x] fix: socket is closed 首页加载失败等网络问题 #38 #40
+- [x] feature: 放大界面自动加载原图
+- [x] feature: 描述中支持illust/user跳转 #39
+- [x] feature: 画师界面只显示已收藏 #20
+- [x] feature: 搜索界面只显示已收藏
+- [x] feature: 个人收藏记录隐藏已下载
+- [x] fix: 自动私密收藏
+- [x] update: 捐赠记录
+
+## 1.7.1R & 1.7.0R:
 - [x] fix: socket is closed 登陆失败
 - [x] update & fix: 部分翻译
 - [x] update: 初始加载速度优化

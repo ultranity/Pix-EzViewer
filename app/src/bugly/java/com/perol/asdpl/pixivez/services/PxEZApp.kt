@@ -118,6 +118,7 @@ class PxEZApp : Application() {
         Thread(Runnable {
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
+                if((System.currentTimeMillis() - it.completeTime) > 10*60*1000 )
                 Aria.download(this).load(it.id).cancel()
             }
             if( pre.getBoolean("resume_unfinished_task",true)

@@ -28,6 +28,7 @@ package com.perol.asdpl.pixivez.objects
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
@@ -43,6 +44,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.net.ConnectException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -101,6 +103,13 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                     return@Function Observable.error<Any>(throwable)
                 }
             }
+            else if (throwable is SocketException){
+                Toasty.warning(
+                    PxEZApp.instance,
+                    "连接状态异常 $throwable",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             return@Function Observable.error<Any>(throwable)
         })
 
@@ -152,6 +161,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.d("init","reFreshToken end")
+                        PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putLong("lastRefresh",System.currentTimeMillis()).apply()
                     }
                 Observable.timer(200, TimeUnit.MILLISECONDS)
                     .subscribe {

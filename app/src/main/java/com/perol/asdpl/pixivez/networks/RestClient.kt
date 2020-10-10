@@ -67,6 +67,7 @@ class RestClient {
             Locale.SIMPLIFIED_CHINESE
         }
     }
+    private val disableProxy by lazy { PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false)}
     private val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(object : Interceptor {
@@ -113,11 +114,11 @@ class RestClient {
 
 
     private val gson = GsonBuilder().create()
-    val retrofitAppApi = buildRetrofit("https://app-api.pixiv.net",okHttpClient("app-api.pixiv.net"))
+    val retrofitAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",okHttpClient("app-api.pixiv.net"))
 
-    val pixivisionAppApi = buildRetrofit("https://app-api.pixiv.net/",pixivOkHttpClient)
+    val pixivisionAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",pixivOkHttpClient)
 
-    val retrofitAccount = buildRetrofit("https://accounts.pixiv.net/",okHttpClient("accounts.pixiv.net"))
+    val retrofitAccount = buildRetrofit(if(disableProxy) "https://accounts.pixiv.net" else "https://210.140.131.219",okHttpClient("accounts.pixiv.net"))
     private val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
@@ -169,7 +170,7 @@ class RestClient {
                     } catch (e: Exception) {
                     }
                 }
-                //Log.d("init","Request $Authorization and ${original.header("Authorization")}")
+                Log.d("init","Request $Authorization and ${original.header("Authorization")}")
                 val requestBuilder = original.newBuilder()
                     .removeHeader("User-Agent")
                     .addHeader(
@@ -190,9 +191,9 @@ class RestClient {
         })
 //                .addInterceptor(httpLoggingInterceptor)
         proxySocket(builder)
-        builder.connectTimeout(30L, TimeUnit.SECONDS)
-            .readTimeout(30L, TimeUnit.SECONDS)
-            .writeTimeout(30L, TimeUnit.SECONDS)
+        builder.connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
         return builder
             .build()
     }
@@ -230,7 +231,7 @@ class RestClient {
     }
 
     fun getRetrofitOauthSecure(): Retrofit {
-        return buildRetrofit("https://210.140.131.188",okHttpClient("oauth.secure.pixiv.net"))
+        return buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",okHttpClient("oauth.secure.pixiv.net"))
     }
 
 }

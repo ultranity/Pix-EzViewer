@@ -35,6 +35,7 @@
 - [x] feature: 画师界面只显示已收藏 #20
 - [x] feature: 搜索界面只显示已收藏
 - [x] feature: 个人收藏记录隐藏已下载
+- [x] feature: 启动时保留十分钟内的已下载记录
 - [x] fix: 自动私密收藏
 - [x] update: 捐赠记录
 

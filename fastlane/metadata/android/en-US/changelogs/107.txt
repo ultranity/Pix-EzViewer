@@ -1,10 +1,11 @@
 
 ## 1.7.4R:
 -[x] fix: socket is closed home page loading failure and other network problems #38 #40
--[x] feature: enlarge the interface and automatically load the original image
+-[x] feature: automatically load the original image in zoomed pic
 -[x] feature: link jump (illust/user) in description #39
--[x] feature: the painter interface only displays the selected items
--[x] feature: the search interface only displays the collected items
--[x] feature: personal collection records hidden downloaded
+-[x] feature: options to only displays the liked items in artist activity #20
+-[x] feature: options to only displays the liked items when search
+-[x] feature: hide downloaded  pics in personal collection records
+-[x] feature: Keep downloaded records in last 10 minutes when start
 -[x] fix: automatic private collection
 -[x] update: donation record

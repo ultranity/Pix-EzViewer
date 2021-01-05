@@ -13,7 +13,6 @@
         "8. The in-app account registration support has been suspended, please register on the official website.\n"
         "9. This application does not collect unnecessary information except for crash information\n"
     </string>
-	<string name="follow">focus</string>
 	<string name="click">click</string>
 	<string name="support_string">Feedback: via GitHub or by email: Pix-Ez@outlook.com</string>
 	<string name="current_developer">Current developer</string>

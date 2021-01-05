@@ -13,7 +13,6 @@
         "8. 新規アカウントの登録サポートが一時停止されました。公式ウェブサイトでご自分で登録してください \ n"
         "9. このアプリケーションは、クラッシュ情報以外の重要でない情報を収集しません"
 	</string>
-	<string name="follow">follow</string>
 	<string name="click">click</string>
 	<string name="support_string">フィードバックEメール：githubの星を経由してPix-Ez@outlook.com歓迎のフィードバックは、ページにジャンプすることができます私にコーヒーを喜ば</string>
 	<string name="current_developer">現在の開発</string>
@@ -217,7 +216,6 @@
 	<string name="change_to_first">最初のものを変更</string>
 	<string name="notsf_subtext">開発、テスト、リリース</string>
 	<string name="loading">読み込んでいます…</string>
-	<string name="communicate">伝えます</string>
 	<string name="needstatusbar_subtext">ノッチ付きスクリーン用</string>
 	<string name="ultranity_subtext">開発とデバッグの調製（現在の保守）</string>
 	<string name="notsf_subtext2">開発とデバッグの調製（原作者）</string>

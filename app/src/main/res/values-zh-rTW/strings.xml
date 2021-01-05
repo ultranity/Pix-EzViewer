@@ -13,7 +13,6 @@
         "8. 新賬戶註冊支持已暫停，請自行官網註冊 \n"
         "9. 本應用不收集除崩潰信息以外的非必要信息"
 	</string>
-	<string name="follow">關注</string>
 	<string name="click">點擊</string>
 	<string name="support_string">反饋郵箱：Pix-Ez@outlook.com 歡迎通過github 反饋及star 也可以通過關於頁面跳轉請我喝杯咖啡</string>
 	<string name="current_developer">當前開發者</string>
@@ -224,7 +223,6 @@
 	<string name="like">喜歡</string>
 	<string name="state">州</string>
 	<string name="loading">正在加載…</string>
-	<string name="communicate">通信</string>
 	<string name="needstatusbar_subtext">——v——</string>
 	<string name="ultranity_subtext">編寫開發調試(當前維護者)</string>
 	<string name="notsf_subtext2">編寫開發調試(原作者)</string>

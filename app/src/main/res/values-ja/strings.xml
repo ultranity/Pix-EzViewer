@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_help">
 		"0. このアプリケーションは無料です。お支払いいただいた場合は、すぐに払い戻しをリクエストし、否定的なレビューを行ってください！\ n"
         "ストアまたはプロジェクトのアドレスにインストールして更新してください。サードパーティから提供されたインストールパッケージに問題がある可能性があり、最新のものではありません \ n"
@@ -23,8 +22,7 @@
 	<string name="support_static">ラフ統計は、あなたは、枚数の近景に達しPixEz：％1 $ sの！</string>
 	<string name="ali">アリペイへジャンプ</string>
 	<string name="wechat">微信へジャンプ</string>
-	<string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们，以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
-	<string name="add_widget">ウィジェットを追加</string>
+    <string name="add_widget">ウィジェットを追加</string>
 	<string name="configure">設定</string>
 	<string name="img_manager">ピクチャー</string>
 	<string name="checkupdate">確認</string>
@@ -236,4 +234,8 @@
 	<string name="read_it">必ずお読みください</string>
 	<string name="hide_downloaded">非表示画像をダウンロード</string>
 	<string name="only_bookmarked">唯一のコレクションを表示</string>
+    <string name="dark">闇</string>
+	<string name="like">好む</string>
+	<string name="private_">民間</string>
+	<string name="state">プログレス</string>
 </resources>

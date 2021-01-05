@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_help">
-        "0. This is a free app. If you pay for it, please immediately ask for a refund and make a negative comment! \n"
-        "Be sure to install and update in the store or project address, There may be problems with the installation package provided by the third party and it is not up to date.\n"
-        "1. Long press on the picture details page to save the selected picture, and long press the head portrait to quickly follow the author, please provide application rights.\n"
+        "0. This is a free app. If you paid for it, please immediately ask for a refund and make a negative comment! \n"
+        "Make sure to install and update from the store or the GitHub releases, third party packages might be problematic or out-of-date.\n"
+        "1. Long press on the picture details page to save the selected picture, and long press the head portrait to quickly follow the author, please provide storage access for saving.\n"
         "2. Most buttons have intuitive long press special operations (such as setting tags when like any pictures), or hiding them in the menu, you can try more\n"
-        "3. When browsing a moving picture, click the middle 0% progress bar to start downloading. After playing, press and hold to save the composition. The memory cost of the synthesis process is quite large, and occasional crashes are inevitable.\n"
-        "4. If the animation cannot be played, please exit the page or clear the cache and try again, which will generally work.\n"
-        "5. This is a personal development application, For feedback, please send an email to the mailbox marked on the settings page or GitHub to submit the issue. Your energy and ability are limited. Please do not use extreme methods for feedback. Be considerate of developers, and welcome to jointly develop the design.\n"
-        "6. If you encounter the problem of flashback after the update, please try to clear the application data and update to the latest version, and feed back the error message or log to the developer, In most cases, this is effective.\n"
-        "7. the main switch of R limit is in the official website, if you find illustration without permission, you can open the switch by yourself. The developer can not provide help to this\n"
+        "3. When browsing a moving picture, click the middle 0% progress bar to start downloading. After playing, press and hold to save the composition. The memory cost of the conversion process is quite large, and occasional crashes are to be expected.\n"
+        "4. If the animation cannot be played, please exit the page or clear the cache and try again, which will usually work.\n"
+        "5. This is a personal project, for feedback please send an email to the address displayed on the settings page or submit an issue on GitHub. Your energy and ability are limited. Please do not use extreme methods for feedback. Be considerate of developers, and you're welcome to join development and design.\n"
+        "6. If you encounter the problem of flashback after the update, please try to clear the application data and update to the latest version. Also send a feedback with the error message or log to the developer, this is usually effective.\n"
+        "7. The main switch of R limit is in the official website, if you find illustration without permission, you can open the switch by yourself. The developer can not provide help to this\n"
         "8. The in-app account registration support has been suspended, please register on the official website.\n"
         "9. This application does not collect unnecessary information except for crash information\n"
     </string>
 	<string name="follow">focus</string>
 	<string name="click">click</string>
-	<string name="support_string">Feedback: by github or Email: Pix-Ez@outlook.com</string>
+	<string name="support_string">Feedback: via GitHub or by email: Pix-Ez@outlook.com</string>
 	<string name="current_developer">Current developer</string>
-	<string name="support_text">"Your support will motivate me to\n equip this app with more useful features~"</string>
+	<string name="support_text">Your support will motivate me to equip this app with more useful features~</string>
 	<string name="support_popup_title">Support via..</string>
 	<string name="support_static">The No. of pics you have collected is: %1$s !</string>
 	<string name="ali">AliPay</string>
 	<string name="wechat">WeChat</string>
-	<string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们，以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
 	<string name="add_widget">Add widget</string>
 	<string name="configure">Configure</string>
 	<string name="img_manager">Pictures</string>
-	<string name="checkupdate">Check</string>
+	<string name="checkupdate">Check for updates</string>
 	<string name="_18">Show R-18 image previews</string>
 	<string name="picturequality">Picture quality</string>
-	<string name="origin">show origin</string>
+	<string name="origin">Show original</string>
 	<string name="searchsource">SauceNAO</string>
 	<string name="cleancatche">Clear cache</string>
 	<string name="historyrecord">History</string>
@@ -53,9 +51,9 @@
 	<string name="Painter_id_desc">artist ID</string>
 	<string name="Painter_Name_desc">artist name</string>
 	<string name="Painter_Account_desc">artist account</string>
-	<string name="Which_part_desc">pic No.</string>
+	<string name="Which_part_desc">picture # (omitted if single)</string>
 	<string name="type_desc">extension (like .jpg / .png)</string>
-	<string name="tag_desc">tags(with automatic de duplication)</string>
+	<string name="tag_desc">tags (automatically deduplicated)</string>
 	<string name="tag_separator">tag separator</string>
 	<string name="savepath">Save path</string>
 	<string name="startpage">Initial page</string>
@@ -66,9 +64,9 @@
 	<string name="viewcomment">show comment</string>
 	<string name="aboutpic">relative</string>
 	<string name="illustid">illust id</string>
-	<string name="searchhistory">search history (long click to delete)</string>
+	<string name="searchhistory">search history (long press to delete)</string>
 	<string name="clearhistory">clear history</string>
-	<string name="hottags">hot tags(try long click ~)</string>
+	<string name="hottags">hot tags (try long press~)</string>
 	<string name="newwork">new</string>
 	<string name="oldwork">old</string>
 	<string name="part">part</string>
@@ -96,7 +94,6 @@
 	<string name="privates">Private</string>
 	<string name="messages_header">Messages</string>
 	<string name="sync_header">Sync</string>
-	<string name="signature_title">Your signature</string>
 	<string name="reply_title">Default reply action</string>
 	<string name="reply_to">Reply</string>
 	<string name="illust">Illust</string>
@@ -114,7 +111,7 @@
 	<string name="prompt_password">Password</string>
 	<string name="action_sign_in">Sign in or register</string>
 	<string name="action_sign_in_short">Sign in</string>
-	<string name="add">Add</string>
+	<string name="add">Add account</string>
 	<string name="logoutallaccount">Log out of all accounts?</string>
 	<string name="savegifsuccess">Saved ugoira</string>
 	<string name="savegifsuccesserr">Ugoira save error</string>
@@ -122,25 +119,25 @@
 	<string name="feed_back">Feedback</string>
 	<string name="needstatusbar">Status bar</string>
 	<string name="refreshTab">Automatic tab refresh</string>
-	<string name="refreshTab_summary">Enable to save mem usage</string>
+	<string name="refreshTab_summary">Enable to reduce memory usage</string>
 	<string name="changeicons">Change icons</string>
 	<string name="supporttitle">Support</string>
 	<string name="viewreport">View report</string>
-	<string name="needtorestart">Need to restart the app</string>
-	<string name="collectmode">Collect Mode</string>
+	<string name="needtorestart">Restart needed to apply!</string>
+	<string name="collectmode">Collection mode</string>
 	<string name="animation">Animation</string>
-	<string name="animation_summary">Disable to save mem usage</string>
-	<string name="show_user_img_searchr">show Artist avatar in search</string>
+	<string name="animation_summary">Disable to reduce memory usage</string>
+	<string name="show_user_img_searchr">Show artist avatar in search</string>
 	<string name="show_user_img_searchr_summary">Large style card, can save some memory on close</string>
-	<string name="show_user_img_bookmarked">show Artist avatar in bookmark view</string>
+	<string name="show_user_img_bookmarked">Show artist avatar in bookmark view</string>
 	<string name="show_user_img_bookmarked_summary">Large style card, can save some memory on close</string>
-	<string name="show_user_img_main">show Artist avatar in Home</string>
+	<string name="show_user_img_main">Show artist avatar in home</string>
 	<string name="show_user_img_main_summary">Large style card, can save some memory on close</string>
-	<string name="new_banner">new banner format (slider)</string>
+	<string name="new_banner">New banner format (slider)</string>
 	<string name="banner_summary">Adaptive sliding banner, reduce interaction level</string>
 	<string name="download_progress">Downloads</string>
-	<string name="join_download_queue">Join download queue</string>
-	<string name="again_to_exit">Again to exit</string>
+	<string name="join_download_queue">Added to download queue</string>
+	<string name="again_to_exit">Press again to exit</string>
 	<string name="dark_mode">Dark Mode</string>
 	<string name="restart_now">Restart Now</string>
 	<string name="restart">Restart</string>
@@ -152,19 +149,19 @@
 	<string name="end_date">End Date</string>
 	<string name="choice_date">Choice Date</string>
 	<string name="hide_bookmarked">Hide bookmarked pic</string>
-	<string name="summary">In JAVA new to learn when doing official documents, groping completed the client, as a matter of personal ability, a lot of shame BUG, ​​optimization problem in improving the application process, I get a lot of </string>
+	<string name="summary">When I first came into contact with Java, I learned from the official docs while developing, and groped to complete this client. Because of my skills there were many embarrassing bugs and optimization problems. In the process of improving this application, I got a lot developer experience and relatively profound lessons have also been helped and supported by many people.</string>
 	<string name="title_change_theme">Change accent</string>
-	<string name="title_save_path">save path</string>
-	<string name="title_change_icon">change icon</string>
+	<string name="title_save_path">Save path</string>
+	<string name="title_change_icon">Change icons</string>
 	<string name="title_theme_color">Accent color</string>
-	<string name="action_apply">apply</string>
-	<string name="action_select">select</string>
-	<string name="action_change">change</string>
+	<string name="action_apply">Apply</string>
+	<string name="action_select">Select</string>
+	<string name="action_change">Change</string>
 	<string name="create_painter_folder">Separate folder for each artist</string>
 	<string name="create_separate_folder">Per-artist folders</string>
 	<string name="create_R18_folder">Separate R-18 folder</string>
 	<string name="R18_folder">Custom R-18 folder\n (default: xRestrict/)</string>
-	<string name="R18_private">Mark as private when bookmark R-18 pic</string>
+	<string name="R18_private">Mark as private when bookmarking R-18 pictures</string>
 	<string name="refresh_token">Refreshing token..</string>
 	<string name="refresh_token_fail">Refresh token failed</string>
 	<string name="translate">Translate</string>
@@ -172,17 +169,16 @@
 	<string name="add_to_block_tag_list">Add to block tag list</string>
 	<string name="block_tag">Blocked tags</string>
 	<string name="title_activity_manager_settings">Settings</string>
-	<string name="max_task_num">Max task num</string>
-	<string name="thread_num">thread num</string>
-	<string name="task_setting">Task Setting</string>
-	<string name="all_resume">Resume All</string>
-	<string name="all_stop">Stop All</string>
+	<string name="max_task_num">Max task count</string>
+	<string name="thread_num">Thread count</string>
+	<string name="task_setting">Settings</string>
+	<string name="all_resume">Resume all</string>
+	<string name="all_stop">Stop all</string>
 	<string name="all_cancel">Clear queue</string>
 	<string name="finished_cancel">Remove finished</string>
-	<string name="unfinished_task">Resume unfinished task</string>
-	<string name="show_download_toast">Show Download Ttoast</string>
-	<string name="resume_unfinished_task_on">Resume unfinished task when start</string>
-	<string name="resume_unfinished_task_off">Keep unfinished task but not resume</string>
+	<string name="unfinished_task">Resume unfinished tasks</string>
+	<string name="show_download_toast">Show download toast</string>
+	<string name="resume_unfinished_task_off">Keep, but do not resume</string>
 	<string name="already_encoding">Already encoding</string>
 	<string name="save_zip_success">Zip saved</string>
 	<string name="permission_denied">Permission denied, please enable it in system settings</string>
@@ -213,7 +209,7 @@
 	<string name="following">Following</string>
 	<string name="followers">Followers</string>
 	<string name="empty">Empty</string>
-	<string name="advices">advices</string>
+	<string name="advices">Suggestions</string>
 	<string name="pixivision_desc2">a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
 	<string name="change_to_first">change to first</string>
 	<string name="notsf_subtext">Development, testing, release</string>
@@ -234,4 +230,11 @@
 	<string name="read_it">please read it</string>
 	<string name="hide_downloaded">Hidden Downloaded</string>
 	<string name="only_bookmarked">Bookmarked Only</string>
+	<string name="resume_unfinished_task_on">Resume on startup</string>
+	<string name="signature_title">Your signature</string>
+	<string name="post_comment">Send</string>
+	<string name="dark">Dark mode</string>
+	<string name="like">Like</string>
+	<string name="private_">private</string>
+	<string name="state">Progress</string>
 </resources>

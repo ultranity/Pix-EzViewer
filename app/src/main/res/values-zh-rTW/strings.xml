@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_help">
 		"0. 本應用是免費應用，如果您付費購買，請立即請求退款並打差評！\n"
         "請務必確保在商店或者項目地址內安裝與更新，第三方提供的安裝包可能存在問題且不是最新 \n"
@@ -23,8 +22,7 @@
 	<string name="support_static">粗略統計，您使用PixEz收圖張數已達：%1$s !</string>
 	<string name="ali">跳轉到支付寶</string>
 	<string name="wechat">跳轉到微信</string>
-	<string name="thanks">感謝腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61幫助我測試的弹幕委员会的熱心你群群友們，以及提供會員帳號的果干辣，還有積極提供建議的吸血姬，逢田梨香子的老公,吃猫的咸鱼等熱心用戶們</string>
-	<string name="add_widget">新增小工具</string>
+    <string name="add_widget">新增小工具</string>
 	<string name="configure">配置</string>
 	<string name="title_home">家</string>
 	<string name="title_dashboard">儀表板</string>

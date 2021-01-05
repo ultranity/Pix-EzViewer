@@ -1,6 +1,6 @@
 <resources>
     <item name="tag_first" type="id" />
-    <string name="app_name">Pix-EzViewer</string>
+    <string name="app_name" translatable="false">Pix-EzViewer</string>
     <string name="app_help">
         "0.本应用是免费应用，如果您付费购买，请立即请求退款并打差评！\n"
         "请务必确保在商店或者项目地址内安装与更新,第三方提供的安装包可能存在问题且不是最新\n"
@@ -113,15 +113,15 @@
     <string name="current_developer">当前开发者</string>
     <string name="support_Notsfsssf" translatable="false">912756674@qq.com</string>
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>
-    <string name="support_text">"PixEz对您有帮助吗？\n 您的支持将鼓励我持续开发~\n 可以通过邮箱发送信息认领捐赠！\n 截图后点击跳转扫描"</string>
+    <string name="support_text">PixEz对您有帮助吗？  您的支持将鼓励我持续开发~  可以通过邮箱发送信息认领捐赠！  截图后点击跳转扫描</string>
     <string name="support_popup_title">支持开发者：</string>
     <string name="support_static">粗略统计，您使用PixEz收图张数已达：%1$s !</string>
     <string name="ali">跳转到支付宝</string>
     <string name="wechat" >跳转到微信</string>
-    <string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们,以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
-    <string name="add_widget" translatable="false">Add widget</string>
-    <string name="title_activity_saucenao" translatable="false">Saucenao Search</string>
-    <string name="configure" translatable="false">Configure</string>
+    <string name="thanks" translatable="false">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们,以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_activity_saucenao">配置</string>
+    <string name="configure">配置</string>
     <string name="title_activity_search_result" translatable="false">SearchResultActivity</string>
     <string name="title_home" translatable="false">Home</string>
     <string name="title_dashboard" translatable="false">Dashboard</string>
@@ -202,11 +202,11 @@
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
-    <string name="sync_header" translatable="false">Sync</string>
+    <string name="sync_header">同步</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title" translatable="false">Your signature</string>
-    <string name="reply_title" translatable="false">Default reply action</string>
+    <string name="signature_title">你的签名</string>
+    <string name="reply_title">默认回复动作</string>
     <string name="reply_to">回复</string>
 
     <!-- Sync Preferences -->
@@ -226,7 +226,7 @@
     <string name="save">保存</string>
     <string name="download">下载</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_password">密码</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="add">添加</string>
@@ -327,19 +327,19 @@
     <string name="attention">关注</string>
     <string name="customformat_token">Token</string>
     <string name="customformat_result">Result（点击自动填入）</string>
-    <string name="post_comment" translatable="false">send</string>
+    <string name="post_comment">发送</string>
     <string name="summary_thanks">非常感谢你们的支持:</string>
-    <string name="dark" translatable="false">Dark</string>
+    <string name="dark">黑暗</string>
     <string name="following">关注用户</string>
     <string name="followers">关注者</string>
-    <string name="empty" translatable="false">EMPTY</string>
-    <string name="advices" translatable="false">advices</string>
+    <string name="empty">EMPTY</string>
+    <string name="advices">建议</string>
     <string name="pixivision_desc2">为不甘于沉闷生活的人提供的\n创作型媒体！</string>
     <string name="change_to_first">更改为第1个</string>
     <string name="notsf_subtext">开发,测试,发布</string>
-    <string name="private_" translatable="false">private</string>
-    <string name="like" translatable="false">LIKE</string>
-    <string name="state" translatable="false">State</string>
+    <string name="private_">私人的</string>
+    <string name="like">喜欢</string>
+    <string name="state">州</string>
     <string name="loading">正在加载...</string>
     <string name="communicate" translatable="false">Communicate</string>
     <string name="needstatusbar_subtext">——v——</string>

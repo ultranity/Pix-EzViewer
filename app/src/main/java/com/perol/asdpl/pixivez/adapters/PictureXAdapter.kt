@@ -558,7 +558,7 @@ class PictureXAdapter(
                                         }
                                     }
                                     .setNegativeButton(android.R.string.cancel) { dialog, id -> }
-                                    .setNeutralButton("全选") { _, id ->
+                                    .setNeutralButton(context.getString(R.string.select_all)) { _, id ->
                                         for (i in boolean.indices) {
                                             boolean[i] = true
                                         }

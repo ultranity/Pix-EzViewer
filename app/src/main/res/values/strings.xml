@@ -14,6 +14,7 @@
         "8.新账户注册支持已暂停，请自行官网注册\n"
         "9.本应用不收集除崩溃信息以外的非必要信息"
     </string>
+    <string name="login_help_md"># TroubleShoot帮助\n\n如果你登录时提示\n\n```shell\n    http 400 bad request\n```\n\n请尝试以下步骤\n1. 确保应用是最新的，到google play或者github获取最新的版本\n2. 检查接入点APN是否为Net而不是Wap\n3. 已是最新版，则用户名或者密码有错(104:)，需要核对账号密码\n4. 账号未完成验证或者用户账号无效(103:)，需要到官网进行验证完善\n\nps:账号密码指的是pixiv的账号密码，而不是github的\n\n如果登录后提示\n\n```shell\n    程序出错，即将退出,xx resourece not found\n```\n\n1. 确保应用是最新的，到google play或者github获取最新的版本\n2. 确保应用是google play或者github获取的，而不是别人传的甚至某某dalao卖的\n3. 到以上渠道安装完最新版本后，清除应用数据并重新尝试登录\n\n## 若都无帮助\n\n请通过反馈邮箱，详细反馈版本号，系统信息，错误信息截图\n反馈之前,你需要确保\n\n1. 应用是google play或者github获取的\n2. 不是使用尝鲜系统或者使用xposed或者magisk模块进行过魔改\n3. 已仔细阅读完毕\"请务必读完\"</string>
     <string name="action_settings" translatable="false">Settings</string>
     <string name="title_activity_login" translatable="false">LoginActivity</string>
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
@@ -266,4 +267,7 @@
     <string name="read_it">请务必读完</string>
     <string name="hide_downloaded">隐藏已下载图片</string>
     <string name="only_bookmarked">只显示已收藏</string>
+    <string name="comment_successful">评论成功！</string>
+    <string name="rate_limited">Rate Limit</string>
+    <string name="select_all">全选</string>
 </resources>

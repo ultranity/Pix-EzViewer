@@ -94,7 +94,7 @@
 	<string name="messages_header">Messages</string>
 	<string name="sync_header">Sync</string>
 	<string name="reply_title">Default reply action</string>
-	<string name="reply_to">Reply</string>
+	<string name="reply_to">Reply to</string>
 	<string name="illust">Illust</string>
 	<string name="manga">Manga</string>
 	<string name="abouts">About</string>
@@ -236,4 +236,9 @@
 	<string name="like">Like</string>
 	<string name="private_">private</string>
 	<string name="state">Progress</string>
+    <string name="login_help_md"># Troubleshooting\n\nIf you are receive this when trying to log in:\n\n```shell\n    http 400 bad request\n```\n\nPlease try the following steps:\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Check if the access point APN is Net instead of Wap\n3. If it is the latest version, the username or password is wrong (104:), you need to check the account password\n4. The account is not verified or the user account is invalid (103:), you need to go to the official website for verification\n\nps: account password refers to pixiv account password, not github\n\nIf prompted after login\n\n```shell\n    Program error, about to exit, xx resourece not found\n```\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Make sure that the application is obtained from one of the official sites, not from others\n3. After installing the latest version from the above channels, clear the application data and try to log in again\n\n## If nothing helps\n\nPlease use the feedback email or GitHub Issues, provide details like version number, system information, error message screenshots\n\nBefore giving feedback, you need to make sure\n\n1. The application is obtained from one of the official sites linked on GitHub\n2. Did not use the early adopter system or use the xposed or magisk module to make magic changes\n3. You have read carefully \"please read it all\" in settings</string>
+	<string name="title_activity_saucenao">SauceNAO</string>
+	<string name="comment_successful">Comment successful!</string>
+	<string name="rate_limited">Rate limited.</string>
+    <string name="select_all">Select all</string>
 </resources>

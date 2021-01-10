@@ -55,7 +55,6 @@ import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import org.jetbrains.annotations.NotNull
-import java.io.File
 
 
 class DownloadTaskAdapter :
@@ -200,6 +199,7 @@ class DownLoadManagerFragment : Fragment() {
                     Aria.download(this).allNotCompleteTask?.forEach {
                         if(it.state == 0) {
                             Aria.download(this).load(it.id).cancel(true)
+                            Thread.sleep(500)
                             val illustD = Gson().fromJson(it.str, IllustD::class.java)
                             Aria.download(this).load(it.url)
                                 .setFilePath(it.filePath) //设置文件保存的完整路径
@@ -207,7 +207,7 @@ class DownLoadManagerFragment : Fragment() {
                                 .setExtendField(it.str)
                                 .option(Works.option)
                                 .create()
-                            Thread.sleep(500)
+                            Thread.sleep(300)
                         }
                     }
                     activity?.runOnUiThread{

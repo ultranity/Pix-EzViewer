@@ -121,21 +121,25 @@ class PxEZApp : Application() {
                 if((System.currentTimeMillis() - it.completeTime) > 10*60*1000 )
                 Aria.download(this).load(it.id).cancel()
             }
+            Thread.sleep(10000)
             if( pre.getBoolean("resume_unfinished_task",true)
                 //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
             )
             {
                 //Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
-                    Aria.download(this).load(it.id).cancel(true)
-                    val illustD = Gson().fromJson(it.str, IllustD::class.java)
-                    Aria.download(this).load(it.url)
-                        .setFilePath(it.filePath) //设置文件保存的完整路径
-                        .ignoreFilePathOccupy()
-                        .setExtendField(Gson().toJson(illustD))
-                        .option(Works.option)
-                        .create()
-                    Thread.sleep(550)
+                    if(it.state == 0) {
+                        Aria.download(this).load(it.id).cancel()
+                        Thread.sleep(500)
+                        //val illustD = Gson().fromJson(it.str, IllustD::class.java)
+                        Aria.download(this).load(it.url)
+                            .setFilePath(it.filePath) //设置文件保存的完整路径
+                            .ignoreFilePathOccupy()
+                            .setExtendField(it.str)
+                            .option(Works.option)
+                            .create()
+                        Thread.sleep(300)
+                    }
                 }
             }
         }).start()

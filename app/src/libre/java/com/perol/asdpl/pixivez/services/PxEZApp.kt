@@ -43,9 +43,11 @@ import com.google.gson.Gson
 //import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import java.io.File
 import com.tencent.mmkv.MMKV
+import java.util.*
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences

@@ -51,6 +51,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.HelloMActivity
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -159,7 +160,9 @@ class SettingFragment : PreferenceFragmentCompat() {
             Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
                 .setAction(R.string.restart_now) {
                     PxEZApp.language = newValue.toString().toInt()
-                    PxEZApp.ActivityCollector.recreate()
+                    val intent = Intent(context, HelloMActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    requireContext().startActivity(intent)
                 }
                 .show()
             true
@@ -292,10 +295,10 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "me0" -> {
-                        val url = "https://github.com/ultranity"
-                        val uri = Uri.parse(url)
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        startActivity(intent)
+                val url = "https://github.com/ultranity"
+                val uri = Uri.parse(url)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
             }
             "check" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -308,7 +311,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
                 } else
-                        Beta.checkUpgrade()
+                    Beta.checkUpgrade()
             }
             "storepath1" -> {
 //                startActivityForResult(Intent(activity, PathProviderActivity::class.java), 887)
@@ -335,16 +338,19 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "R18Folder" -> {
-                if(PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
+                if (PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
                     MaterialDialog(requireContext()).show {
                         title(R.string.block_tag)
                         message(R.string.R18_folder)
-                        input (prefill = PxEZApp.R18FolderPath,hint = "xRestrict/"){ dialog, text ->
+                        input(
+                            prefill = PxEZApp.R18FolderPath,
+                            hint = "xRestrict/"
+                        ) { dialog, text ->
                             PxEZApp.R18FolderPath =
                                 if (text.isBlank())
                                     "xRestrict/"
                                 else
-                                    text.toString().removePrefix("/").removeSuffix("/")+"/"
+                                    text.toString().removePrefix("/").removeSuffix("/") + "/"
                         }
                         positiveButton(R.string.save) { dialog ->
                             PreferenceManager.getDefaultSharedPreferences(activity).apply {
@@ -368,8 +374,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                     } catch (e: Exception) {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
-                }
-                else {
+                } else {
                     val url = "https://github.com/ultranity/Pix-EzViewer"
                     val uri = Uri.parse(url)
                     val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -433,19 +438,19 @@ class SettingFragment : PreferenceFragmentCompat() {
         val InputEditable = Input.editableText
         for (i in 1..descTable.childCount-1)
             descTable.getChildAt(i).setOnClickListener {
-                InputEditable.insert(Input.selectionStart,it.tag.toString())
+                InputEditable.insert(Input.selectionStart, it.tag.toString())
             }
         for (i in 1 until sampleTable.childCount)
             sampleTable.getChildAt(i).setOnClickListener {
                 InputEditable.clear()
-                InputEditable.insert(0,it.tag.toString())
+                InputEditable.insert(0, it.tag.toString())
             }
     }
 
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(initialDirectory=File(PxEZApp.storepath),allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
                     PreferenceManager.getDefaultSharedPreferences(activity).apply {

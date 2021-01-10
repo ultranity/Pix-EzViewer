@@ -275,7 +275,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 val text = clipData.getItemAt(0)?.text ?: return@Runnable
                 var item = Regex("""\d{7,8}""")
                     .find(text)
-                    ?.value?:Regex("""((画师)|(artist)|(by)|(twi(tter)?)[：:\s]*)(\S+)""")
+                    ?.value?:Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
                     .find(text)?.groupValues?.last()?.trim()
                     ?: return@Runnable
 

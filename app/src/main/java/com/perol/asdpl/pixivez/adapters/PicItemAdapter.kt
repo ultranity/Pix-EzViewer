@@ -221,32 +221,13 @@ abstract class PicItemAdapter(
             item.image_urls.medium
         }
 
-        if (!R18on) {
-            val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-            if (isr18) {
+        //val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+        if (!R18on && item.x_restrict == 1) {
                 GlideApp.with(mainImage.context)
-                    .load(R.drawable.h)
+                    .load(R.drawable.h).transition(withCrossFade())
+                    .placeholder(R.drawable.h)
                     .into(mainImage)
-            } else {
-                GlideApp.with(mainImage.context).load(loadUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .transition(withCrossFade()).placeholder(R.color.halftrans)
-                    .into(object : ImageViewTarget<Drawable>(mainImage) {
-                        override fun setResource(resource: Drawable?) {
-                            mainImage.setImageDrawable(resource)
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
-                        ) {
-                            if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
-                                super.onResourceReady(resource, transition)
-                            }
-                        }
-                    })
             }
-        }
         else {
             GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(R.color.halftrans)

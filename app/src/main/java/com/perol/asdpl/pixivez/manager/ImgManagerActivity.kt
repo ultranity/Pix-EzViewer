@@ -43,12 +43,15 @@ import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_img_manager.*
 import kotlinx.android.synthetic.main.fragment_recom_user.*
 import java.io.File
+import kotlin.math.max
+import kotlin.math.min
 
 
 class ImgManagerActivity : RinkActivity() {
@@ -213,13 +216,18 @@ class ImgManagerActivity : RinkActivity() {
             if (file.type == FileUtil.T_DIR) {
                 viewModel.path.value = file.path
             } else {
-                val pid = viewModel.files!![position].pid.toLongOrNull()
+                val pid = viewModel.files!![position].pid
                 if (pid != null) {
                     val bundle = Bundle()
-                    val arrayList = LongArray(1)
-                    arrayList[0] = (pid)
+                    val arrayList = viewModel.files!!.subList(
+                        max(position-30,0), min(viewModel.files!!.size,
+                            max(position-30,0) +60)
+                    ).mapNotNull { it.pid }.toLongArray()
+                    bundle.putInt("position",arrayList.indexOf(pid))
+                    //val arrayList = LongArray(1)
+                    //arrayList[0] = (pid)
                     bundle.putLongArray("illustidlist", arrayList)
-                    bundle.putLong("illustid", arrayList[0])
+                    bundle.putLong("illustid", pid)
                     val intent2 = Intent(applicationContext, PictureActivity::class.java)
                     intent2.putExtras(bundle)
                     startActivity(intent2)

@@ -92,6 +92,7 @@ class UserShowAdapter(layoutResId: Int) :
         userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             bundle.putInt("position", position)
+            bundle.putLong("illustid", item.illusts[position].id)
             DataHolder.setIllustsList(item.illusts as ArrayList<Illust>)
             val intent = Intent(context, PictureActivity::class.java)
             intent.putExtras(bundle)

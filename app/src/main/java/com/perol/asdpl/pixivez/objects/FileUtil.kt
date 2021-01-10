@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.objects
 import android.os.Environment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.PxEZApp
 import org.roaringbitmap.RoaringBitmap
 import java.io.*
 import java.text.SimpleDateFormat
@@ -71,10 +72,10 @@ class FileInfo(file: File) {
                 ""
             }
         }
-    val pid:String
+    val pid: Long?
         get() {
-        return Regex("(?<=(pid)?_?)([0-9]{7,8})")
-            .find(name)?.value?:""
+        return (Regex("(?<=(pid)?_?)([0-9]{7,8})")
+            .find(name)?.value?:"").toLongOrNull()
     }
 
     val part: String
@@ -100,7 +101,9 @@ object FileUtil{
         const val SORT_DATE = 1
         const val SORT_SIZE = 2
 
-
+    init {
+        getFileList()
+    }
     /**
      * 通过传入的路径,返回该路径下的所有的文件和文件夹列表
      *
@@ -111,7 +114,8 @@ object FileUtil{
         path: String,
         picOnly: Boolean = true,
         withFolder: Boolean = true,
-        showParent: Boolean = true
+        showParent: Boolean = true//,
+        //includeSubFolder: Boolean = false
     ): MutableList<FileInfo> {
         val list = ArrayList<FileInfo>()//用来存储便利之后每一个文件中的信息
         val pfile = File(path)// 兴建实例化文件对象
@@ -150,6 +154,8 @@ object FileUtil{
                     item.size =
                         it.listFiles()?.size.toString()//getSize(item.bytesize.toFloat())//大小
                     item.type = T_DIR
+                    //if (includeSubFolder)
+                    //    list.addAll(getListData(it.path,includeSubFolder=true))
                 }
                 if (it.isFile) {// 文件
                     if (picOnly && !item.isPic())
@@ -162,7 +168,7 @@ object FileUtil{
                     .format(Date(it.lastModified()))
                 item
             })
-        }
+    }
         return list
     }
 
@@ -196,7 +202,7 @@ object FileUtil{
         return searchResultList
     }
 
-    fun getGroupList(path: String): MutableList<FileInfo> {
+    fun getGroupList(path: String, recursive: Boolean = false): MutableList<FileInfo> {
         val list = getListData(path)
         val dirs = ArrayList<FileInfo>()
         val files = ArrayList<FileInfo>()
@@ -207,6 +213,13 @@ object FileUtil{
             } else {
                 files.add(item)
             }
+        }
+        if (recursive){
+            val subDirs = ArrayList<FileInfo>()
+            for (dir in dirs) {
+                subDirs.addAll(getGroupList(dir.path))
+            }
+            dirs.addAll(subDirs)
         }
         dirs.addAll(files)
         return dirs
@@ -239,6 +252,13 @@ object FileUtil{
         dir.copyRecursively(newDir, false)
     }
 
+    fun extraPath(path: String): List<String>? {
+        File(path).let { file ->
+            if (file.exists())
+               return file.readLines()
+        }
+        return null
+    }
     fun bitSetFileLog(path: String): RoaringBitmap? {
         val rr = RoaringBitmap()
         val file = File(path)
@@ -249,5 +269,51 @@ object FileUtil{
         // number of values stored?
         val cardinality = rr.longCardinality
         return rr
+    }
+
+
+
+    lateinit var fileList:List<Long>
+    lateinit var extraPath:List<String>
+    lateinit var ListLog:RoaringBitmap
+    lateinit var localLog:RoaringBitmap
+    fun getFileList(){
+        localLog = RoaringBitmap()
+        extraPath = FileUtil.extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
+                FileUtil.extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
+                ?: listOf()
+        fileList = FileUtil.getGroupList(PxEZApp.storepath,true).mapNotNull{ it.pid }
+        if (extraPath.isNotEmpty()){
+            extraPath.forEach {
+                FileUtil.getGroupList(it,true).forEach {it.pid?.toInt()?.let{localLog.add(it)} }
+                fileList.plus(FileUtil.getGroupList(it,true).mapNotNull{ it.pid})
+            }
+        }
+        ListLog =FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
+                FileUtil.bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
+                ?:RoaringBitmap()
+    }
+    fun haveLog(): Boolean {
+        return (FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
+                FileUtil.bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
+                != null)
+    }
+    fun haveExtraPath(): Boolean {
+        return (FileUtil.extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
+                FileUtil.extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
+                != null)
+    }
+    fun isDownloaded(illust: Illust): Boolean {
+        return isDownloaded2(illust)|| isDownloaded3(illust)
+    }
+    fun logDownloaded(illust: Illust): Int {
+        return if(isDownloaded2(illust)) 1 else 0 + if(isDownloaded3(illust)) 1 else 0
+    }
+    fun isDownloaded2(illust: Illust): Boolean {
+        return fileList.contains(illust.id)
+    }
+
+    fun isDownloaded3(illust: Illust): Boolean {
+        return ListLog.contains(illust.id.toInt())
     }
 }

@@ -204,7 +204,7 @@ class DownLoadManagerFragment : Fragment() {
                             Aria.download(this).load(it.url)
                                 .setFilePath(it.filePath) //设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
-                                .setExtendField(Gson().toJson(illustD))
+                                .setExtendField(it.str)
                                 .option(Works.option)
                                 .create()
                             Thread.sleep(500)

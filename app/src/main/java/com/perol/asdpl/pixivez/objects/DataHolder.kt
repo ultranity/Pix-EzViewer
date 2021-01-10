@@ -33,15 +33,23 @@ import kotlin.collections.set
 
 class DataHolder {
     companion object{
-        private var illustsList: Stack<ArrayList<Illust>?> = Stack<ArrayList<Illust>?>()
+        private var illustsList: Stack<List<Illust>?> = Stack<List<Illust>?>()
         var pictureAdapter: PagerAdapter? = null
 
-        fun getIllustsList(): ArrayList<Illust>? {
+        fun peekIllustsList(): List<Illust>? {
+            return if (this.illustsList.empty()) null
+                     else this.illustsList.peek()
+        }
+        fun checkIllustsList(pos: Int, id: Long): Boolean {
+            return if (this.illustsList.empty()) false
+                     else this.illustsList.peek()?.get(pos)?.id ?:-1  == id
+        }
+        fun getIllustsList(): List<Illust>? {
             return if (this.illustsList.empty()) null
                      else this.illustsList.pop()
         }
 
-        fun setIllustsList(illustList: ArrayList<Illust>) {
+        fun setIllustsList(illustList: List<Illust>) {
             this.illustsList.push(illustList)
         }
     }

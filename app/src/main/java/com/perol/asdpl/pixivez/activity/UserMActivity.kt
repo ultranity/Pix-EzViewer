@@ -29,6 +29,7 @@ import android.app.Activity
 import android.content.*
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu

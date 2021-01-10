@@ -42,7 +42,7 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
         GlideApp.with(icon.context).load(item.icon.toIntOrNull()?:item.icon).placeholder(R.color.halftrans).into(icon)
         //helper.getView<ConstraintLayout>(R.id.layout).background
         helper.getView<TextView>(R.id.item_name).text = item.name
-        helper.getView<TextView>(R.id.item_pid).text = item.pid
+        helper.getView<TextView>(R.id.item_pid).text = item.pid.toString()
         helper.getView<TextView>(R.id.item_part).text = item.part
         helper.getView<TextView>(R.id.item_time).text = item.time
         helper.getView<TextView>(R.id.item_size).text = item.size

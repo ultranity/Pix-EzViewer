@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit
 
 class renameTask constructor(fileInfo:FileInfo){
     val file :FileInfo = fileInfo
-    val pid :Long? = if(file.isPic()) file.pid.toLongOrNull() else null
+    val pid :Long? = if(file.isPic()) file.pid else null
     val part :Int? = if(file.isPic()) fileInfo.part.toIntOrNull() else null
 
 }

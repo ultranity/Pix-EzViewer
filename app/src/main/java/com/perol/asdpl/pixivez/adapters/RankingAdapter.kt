@@ -33,11 +33,7 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -59,6 +55,8 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.shehuan.niv.NiceImageView
 import java.util.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 // simple Adapter for image item with user imageView
 //TODO: rename
@@ -99,8 +97,9 @@ class RankingAdapter(
             }
             setOnItemLongClickListener { adapter, view, position ->
                 val bundle = Bundle()
-                bundle.putInt("position", position)
-                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                DataHolder.setIllustsList(this.data.subList(max(position-30,0), min(this.data.size,max(position-30,0)+60)))
+                bundle.putInt("position",position - max(position-30,0))
+                bundle.putLong("illustid", this.data[position].id)
                 val intent = Intent(context, PictureActivity::class.java)
                 intent.putExtras(bundle)
                 if (PxEZApp.animationEnable) {
@@ -132,9 +131,10 @@ class RankingAdapter(
                 //    illustlist[i] = this.data[i].id
                 //}
                 //bundle.putParcelable("illust", this.data[position])
-                bundle.putInt("position", position)
-                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                DataHolder.setIllustsList(this.data.subList(max(position-30,0), min(this.data.size,max(position-30,0)+60)))
+                bundle.putInt("position",position - max(position-30,0))
                 //  bundle.putParcelable(this.data[position].id.toString(), this.data[position])
+                bundle.putLong("illustid", this.data[position].id)
                 val intent = Intent(context, PictureActivity::class.java)
                 intent.putExtras(bundle)
                 if (PxEZApp.animationEnable) {

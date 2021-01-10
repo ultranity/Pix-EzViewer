@@ -154,7 +154,7 @@ class IntentActivity : RinkActivity() {
 
     private fun openIllust(id: Long) {
         val bundle = Bundle()
-        val arrayList = longArrayOf(id.toLong())
+        val arrayList = longArrayOf(id)
         bundle.putLongArray("illustidlist", arrayList)
         bundle.putLong("illustid", id)
         val intent2 = Intent(this, PictureActivity::class.java)

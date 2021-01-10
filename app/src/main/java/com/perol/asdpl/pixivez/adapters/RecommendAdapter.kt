@@ -44,6 +44,8 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.util.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 
 // simple Adapter for image item, without user imageView
@@ -63,13 +65,12 @@ class RecommendAdapter(
             setOnItemClickListener { adapter, view, position ->
                 (this.data as ArrayList<Illust?>)[position]?.let {
                     val item = it
+                    view.findViewById<MaterialButton>(R.id.save).setTextColor(colorPrimaryDark)
                     Works.imageDownloadAll(item)
                     if (!item.is_bookmarked) {
                         retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
                             .subscribe({
-                                view.findViewById<MaterialButton>(R.id.like).setTextColor(
-                                    badgeTextColor
-                                )
+                                view.findViewById<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
                                 item.is_bookmarked = true
                             }, {}, {})
                     }
@@ -82,8 +83,9 @@ class RecommendAdapter(
             }
             setOnItemLongClickListener { adapter, view, position ->
                 val bundle = Bundle()
-                bundle.putInt("position", position)
-                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                DataHolder.setIllustsList(this.data.subList(max(position-30,0), min(this.data.size,max(position-30,0)+60)))
+                bundle.putInt("position",position - max(position-30,0))
+                bundle.putLong("illustid", this.data[position].id)
                 val intent = Intent(context, PictureActivity::class.java)
                 intent.putExtras(bundle)
                 if (PxEZApp.animationEnable) {
@@ -111,8 +113,9 @@ class RecommendAdapter(
                 //    illustlist[i] = this.data[i].id
                 //}
                 //bundle.putLongArray("illustidlist", illustlist)
-                bundle.putInt("position", position)
-                DataHolder.setIllustsList(this.data as ArrayList<Illust>)
+                DataHolder.setIllustsList(this.data.subList(max(position-30,0), min(this.data.size,max(position-30,0)+60)))
+                bundle.putInt("position",position - max(position-30,0))
+                bundle.putLong("illustid", this.data[position].id)
                 val intent = Intent(context, PictureActivity::class.java)
                 intent.putExtras(bundle)
                 if (PxEZApp.animationEnable) {

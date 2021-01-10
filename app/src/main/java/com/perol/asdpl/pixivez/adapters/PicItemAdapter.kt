@@ -33,6 +33,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -200,7 +201,12 @@ abstract class PicItemAdapter(
         }
         val mainImage = helper.getView<ImageView>(R.id.item_img)
         mainImage.setTag(R.id.tag_first, item.image_urls.medium)
-        val needSmall = item.height > 1500 || item.height > 1500
+        val quality =
+            PreferenceManager.getDefaultSharedPreferences(context).getString("quality","0")?.toInt()?: 0
+        val needSmall = if(quality == 1)
+                            (item.height/item.width > 3) ||(item.width/item.height > 3)
+                        else
+                            item.height > 1800
         val loadUrl = if (needSmall) {
             item.image_urls.square_medium
         }
@@ -216,7 +222,7 @@ abstract class PicItemAdapter(
                     .into(mainImage)
             } else {
                 GlideApp.with(mainImage.context).load(loadUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .transition(withCrossFade()).placeholder(R.color.halftrans)
                     .into(object : ImageViewTarget<Drawable>(mainImage) {
                         override fun setResource(resource: Drawable?) {
@@ -237,7 +243,7 @@ abstract class PicItemAdapter(
         else {
             GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(R.color.halftrans)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))
                 .into(object : ImageViewTarget<Drawable>(mainImage) {
                     override fun setResource(resource: Drawable?) {

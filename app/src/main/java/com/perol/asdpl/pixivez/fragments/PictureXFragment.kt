@@ -266,8 +266,7 @@ class PictureXFragment : BaseFragment() {
                 requireActivity(),
                 resources.getString(R.string.fetchtags),
                 Toast.LENGTH_SHORT
-            )
-                .show()
+            ).show()
             val tagsBookMarkDialog = TagsBookMarkDialog()
             tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog::class.java.name)
             true

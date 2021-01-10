@@ -211,19 +211,20 @@ class PictureXViewModel : BaseViewModel() {
 
     fun onDialogClick(boolean: Boolean) {
         val toLong = illustDetail.value!!.id
-        val arrayList = ArrayList<String>()
-        for (i in tags.value!!.tags) {
-            if (i.isIs_registered) {
-                arrayList.add(i.name)
-            }
-        }
         if (!illustDetail.value!!.is_bookmarked) {
             val string = if (!boolean) {
                 "public"
             } else {
                 "private"
             }
-
+            val arrayList = ArrayList<String>()
+            tags.value?.let {
+                for (i in it.tags) {
+                    if (i.isIs_registered) {
+                        arrayList.add(i.name)
+                    }
+                }
+            }
             retrofitRepository.postLikeIllustWithTags(toLong, string, arrayList).subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true

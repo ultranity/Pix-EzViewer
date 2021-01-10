@@ -29,6 +29,7 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.ComponentName
 import android.content.Context
+import android.content.DialogInterface.BUTTON_NEUTRAL
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.BitmapFactory
@@ -47,7 +48,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -59,6 +59,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -91,7 +92,6 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 
@@ -101,6 +101,8 @@ class PictureXAdapter(
     private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val imageUrls = ArrayList<String>()
+    val imageThumbnailUrls = ArrayList<String>()
+    val pre = PreferenceManager.getDefaultSharedPreferences(mContext)
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
     private lateinit var mBookmarkedUserListen: () -> Unit
@@ -122,11 +124,9 @@ class PictureXAdapter(
     }
 
     init {
-        when (PreferenceManager.getDefaultSharedPreferences(mContext).getString(
-            "quality",
-            "0"
-        )?.toInt()
-            ?: 0) {
+        val quality =
+            pre.getString("quality","0")?.toInt()?: 0
+        when (quality) {
             0 -> {
                 if (data.meta_pages.isEmpty()) {
                     imageUrls.add(data.image_urls.medium)
@@ -143,10 +143,39 @@ class PictureXAdapter(
                     data.meta_pages.map {
                         imageUrls.add(it.image_urls.large)
                     }
-
                 }
             }
         }
+
+        val needSmall =if(quality == 1)
+                            (data.height/data.width > 3) ||(data.width/data.height > 3)
+                        else
+                            data.height > 1800
+        if (needSmall) {
+            imageThumbnailUrls.add(data.image_urls.square_medium)
+        }
+        else {
+            imageThumbnailUrls.add(data.image_urls.medium)
+        }
+
+        /*if (needSmall) {
+            if (data.meta_pages.isEmpty()) {
+                imageThumbnailUrls.add(data.image_urls.square_medium)
+            } else {
+                data.meta_pages.map {
+                    imageThumbnailUrls.add(it.image_urls.square_medium)
+                }
+            }
+        }
+        else {
+            if (data.meta_pages.isEmpty()) {
+                imageUrls.add(data.image_urls.medium)
+            } else {
+                data.meta_pages.map {
+                    imageUrls.add(it.image_urls.medium)
+                }
+            }
+        }*/
     }
 
     class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -187,6 +216,7 @@ class PictureXAdapter(
             binding.illust = illust
             //captionTextView.autoLinkMask = Linkify.WEB_URLS
             val colorPrimary = ThemeUtil.getColor(mContext, R.attr.colorPrimary)
+            val colorPrimaryDark = ThemeUtil.getColor(mContext, R.attr.colorPrimaryDark)
             val badgeTextColor= ThemeUtil.getColor(mContext,R.attr.badgeTextColor)
             if (illust.user.is_followed)
                 imageViewUser.setBorderColor(badgeTextColor)
@@ -343,7 +373,8 @@ class PictureXAdapter(
 
 
             }
-
+            if(FileUtil.isDownloaded(illust))
+                imageButtonDownload.drawable.setTint(badgeTextColor)
             if (illust.type == "ugoira") //gif
                 imageButtonDownload.setOnClickListener {
 
@@ -355,6 +386,7 @@ class PictureXAdapter(
                 }
             else
                 imageButtonDownload.setOnClickListener {
+                    imageButtonDownload.drawable.setTint(colorPrimaryDark)
                     Works.imageDownloadAll(illust)
                 }
             imageButtonDownload.setOnLongClickListener {
@@ -375,7 +407,8 @@ class PictureXAdapter(
                         "is_muted: " + illust.is_muted.toString() + "\n" +
                         "sanity_level: " + illust.sanity_level.toString() + "\n" +
                         "restrict: " + illust.restrict.toString() + "\n" +
-                        "x_restrict: " + illust.x_restrict.toString()
+                        "x_restrict: " + illust.x_restrict.toString() + "\n" +
+                        "isDownloaded: " + FileUtil.isDownloaded(illust).toString()
                 MaterialAlertDialogBuilder(mContext as Activity)
                     .setMessage(detailstring)
                     .setTitle("Detail")
@@ -468,7 +501,8 @@ class PictureXAdapter(
         when(holder) {
             is PictureViewHolder -> {
                 val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(R.color.halftrans)
+                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if(position % 2 == 1) R.color.transparent  else R.color.halftrans)
+                    .thumbnail(GlideApp.with(mContext).load(if(position == 0) imageThumbnailUrls[0]  else R.color.halftrans))
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
                         override fun onLoadFailed(
@@ -478,7 +512,8 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            if (position == 0)
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             return false
                         }
 
@@ -491,11 +526,16 @@ class PictureXAdapter(
                         ): Boolean {
                             if (position == 0) {
                                 mListen.invoke()
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             }
-                            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             return false
                         }
-                    }).into(mainImage)
+                    })
+                    .into(object : ImageViewTarget<Drawable>(mainImage) {
+                        override fun setResource(resource: Drawable?) {
+                            mainImage.setImageDrawable(resource)
+                        }
+                    })//.into(mainImage)
                 mainImage.apply {
                     setOnLongClickListener {
                         val builder = MaterialAlertDialogBuilder(mContext as Activity)
@@ -510,7 +550,8 @@ class PictureXAdapter(
                                 "is_muted: " + data.is_muted.toString() + "\n" +
                                 "sanity_level: " + data.sanity_level.toString() + "\n" +
                                 "restrict: " + data.restrict.toString() + "\n" +
-                                "x_restrict: " + data.x_restrict.toString()
+                                "x_restrict: " + data.x_restrict.toString()+ "\n" +
+                                "isDownloaded: " + FileUtil.isDownloaded(data).toString()
                         builder.setMessage(detailstring)
                         builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
                             TToast.startDownload(PxEZApp.instance)
@@ -520,7 +561,7 @@ class PictureXAdapter(
 
                         }
                         if (data.meta_pages.isNotEmpty()) {
-                            builder.setNeutralButton(R.string.multichoicesave) { dialog, which ->
+                            builder.setNeutralButton(R.string.multichoicesave) { _, which ->
 
                                 val list = ArrayList<String>()
                                 data.meta_pages.map { ot ->
@@ -551,38 +592,28 @@ class PictureXAdapter(
                                         }
                                     }
                                     // Set the action buttons
-                                    .setPositiveButton(android.R.string.ok) { dialog, id ->
+                                builder.setPositiveButton(android.R.string.ok) { dialog, id ->
                                         TToast.startDownload(PxEZApp.instance)
                                         mSelectedItems.map {
                                             Works.imgD(data, it)
                                         }
                                     }
                                     .setNegativeButton(android.R.string.cancel) { dialog, id -> }
-                                    .setNeutralButton("全选") { _, id ->
-                                        for (i in boolean.indices) {
-                                            boolean[i] = true
-                                        }
-
-                                        mSelectedItems.clear()
-                                        for (i in showlist.indices) {
-                                            mSelectedItems.add(i)
-                                        }
-                                        builder.setMultiChoiceItems(
-                                            showlist.toTypedArray(), boolean
-                                        ) { _, which, isChecked ->
-                                            if (isChecked) {
-                                                // If the user checked the item, add it to the selected items
-
-                                                mSelectedItems.add(which)
-                                            } else if (mSelectedItems.contains(which)) {
-                                                // Else, if the item is already in the array, remove it
-                                                mSelectedItems.remove(Integer.valueOf(which))
-                                            }
-                                        }
-                                        builder.create().show()
+                                    .setNeutralButton(R.string.selectAll) { _, id ->
+                                        //see below
                                     }
                                 val dialog = builder.create()
                                 dialog.show()
+                                dialog.getButton(BUTTON_NEUTRAL).setOnClickListener {
+                                    for (i in boolean.indices) {
+                                        boolean[i] = true
+                                        dialog.listView.setItemChecked(i,true)
+                                    }
+                                    mSelectedItems.clear()
+                                    for (i in showlist.indices) {
+                                        mSelectedItems.add(i)
+                                    }
+                                }
                             }
                         }
 
@@ -629,7 +660,7 @@ class PictureXAdapter(
                         height = finalHeight.toInt()
                     }
                 }
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(R.color.halftrans)
+                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if(position % 2 == 1) R.color.transparent  else R.color.halftrans)
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -638,7 +669,8 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            if (position == 0)
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             return false
                         }
 
@@ -650,7 +682,8 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            if (position == 0)
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             return false
                         }
                     }).into(holder.itemView.preview)
@@ -850,10 +883,8 @@ class PictureXAdapter(
         if (it.isEmpty()) {
             return
         }
-        val list = ArrayList<String>()
-        it.forEach {
-            list.add(it.image_urls.square_medium)
-        }
+        val list = it.map { it.image_urls.square_medium }.toMutableList()
+
 
         relativePictureAdapter.setNewData(list)
         relativePictureAdapter.setOnItemClickListener { adapter, view, position ->
@@ -864,7 +895,7 @@ class PictureXAdapter(
             //    arrayList.add(it.id)
             //}
             //bundle.putLongArray("illustidlist", arrayList.toLongArray())
-            //bundle.putLong("illustid", id)
+            bundle.putLong("illustid", it[position].id)
             bundle.putInt("position", position)
             DataHolder.setIllustsList(it)
             val intent = Intent(mContext, PictureActivity::class.java)

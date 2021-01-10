@@ -77,12 +77,11 @@ class RankingAdapter(
             setOnItemClickListener { adapter, view, position ->
                 (adapter.data as ArrayList<Illust?>)[position]?.let {
                     val item = it
+                    view.findViewById<MaterialButton>(R.id.save).setTextColor(colorPrimaryDark)
                     Works.imageDownloadAll(item)
                     if (!item.is_bookmarked){
                         retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
-                        view.findViewById<MaterialButton>(R.id.like).setTextColor(
-                                badgeTextColor
-                            )
+                        view.findViewById<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
                             item.is_bookmarked = true
                         }, {}, {})
                     }

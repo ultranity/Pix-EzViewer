@@ -247,19 +247,6 @@ object Works {
             .create()
     }
 
-    fun isDownloaded(illust: Illust): Boolean {
-        return isDownloaded2(illust)|| isDownloaded3(illust)
-    }
-    private val fileList by lazy{FileUtil.getGroupList(PxEZApp.storepath).map{ it.pid.toLongOrNull() }}
-    fun isDownloaded2(illust: Illust): Boolean {
-        return fileList.contains(illust.id)
-    }
-
-    private val ListLog by lazy{FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")}
-    fun isDownloaded3(illust: Illust): Boolean {
-        return ListLog?.contains(illust.id.toInt())?:false
-    }
-
 /*
     @Deprecated("imgD")
     fun imageDownloadOne(illust: Illust, part: Int?) {

@@ -46,6 +46,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
@@ -63,8 +64,10 @@ abstract class PicItemAdapter(
 
     abstract var R18on: Boolean
     abstract var hideBookmarked: Int
+    abstract var sortCoM: Int
     abstract var hideDownloaded: Boolean
     var colorPrimary: Int = R.color.colorPrimary
+    var colorPrimaryDark: Int = R.color.colorPrimaryDark
     var badgeTextColor: Int = R.color.yellow
     abstract var blockTags: List<String>
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
@@ -95,18 +98,14 @@ abstract class PicItemAdapter(
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
         colorPrimary = ThemeUtil.getColor(context, R.attr.colorPrimary)
+        colorPrimaryDark= ThemeUtil.getColor(context,R.attr.colorPrimaryDark)
         badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
     }
     override fun convert(helper: BaseViewHolder, item: Illust) {
-        if ((hideBookmarked == 1 && item.is_bookmarked) || (hideBookmarked == 3 && !item.is_bookmarked)) {
-            helper.itemView.visibility = View.GONE
-            helper.itemView.layoutParams.apply {
-                height = 0
-                width = 0
-            }
-            return
-        }
-        if (hideDownloaded && Works.isDownloaded(item)){
+        if (((hideBookmarked == 1 && item.is_bookmarked) || (hideBookmarked == 3 && !item.is_bookmarked)) ||
+                (sortCoM == 1 && item.type !="manga") || (sortCoM == 2 && item.type =="manga") ||
+                (hideDownloaded && FileUtil.isDownloaded(item))
+        ){
             helper.itemView.visibility = View.GONE
             helper.itemView.layoutParams.apply {
                 height = 0
@@ -118,6 +117,7 @@ abstract class PicItemAdapter(
             it.name
         }
         var needBlock = false
+        //if (blockTags.intersect(tags).isNotEmpty())
         for (i in blockTags) {
             if (tags.contains(i)) {
                 needBlock = true
@@ -140,19 +140,19 @@ abstract class PicItemAdapter(
         }
         if (PxEZApp.CollectMode == 1) {
             helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                helper.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
                 if (!item.is_bookmarked) {
                     retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
                         .subscribe({
-                            helper.getView<MaterialButton>(R.id.like).setTextColor(
-                                badgeTextColor
-                            )
+                            helper.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
                             item.is_bookmarked = true
                         }, {}, {})
                 }
             }
         } else {
             helper.getView<MaterialButton>(R.id.save).setOnClickListener {
+                helper.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
             }
         }
@@ -160,6 +160,13 @@ abstract class PicItemAdapter(
         helper.setText(R.id.title, item.title)
         helper.setTextColor(
             R.id.like, if (item.is_bookmarked) {
+                badgeTextColor
+            } else {
+                colorPrimary
+            }
+        )
+        helper.setTextColor(
+            R.id.save, if (FileUtil.isDownloaded(item)) {
                 badgeTextColor
             } else {
                 colorPrimary

@@ -42,12 +42,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.fragments.UserMessageFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -124,7 +126,11 @@ class UserMActivity : RinkActivity() {
         viewModel.getData(id)
         viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
         viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
-        viewModel.userDetail.observe(this, Observer {
+        viewModel.hideDownloaded.observe(this, Observer {
+            if (it)
+                FileUtil.getFileList()
+        })
+        viewModel.userDetail.observe(this, {
             if (it != null) {
                 fab.show()
                 disposables.add(viewModel.isuser(id).subscribe({
@@ -136,6 +142,9 @@ class UserMActivity : RinkActivity() {
                         menuD.getItem(2).isVisible = true
                         menuD.getItem(2).isEnabled = true
                     }
+                    viewModel.hideBookmarked.observe(this, {
+                        menuD.getItem(2).isChecked = it % 2 == 1
+                    })
                 }, {}))
 
                 binding.user = it
@@ -148,7 +157,7 @@ class UserMActivity : RinkActivity() {
                 mtablayout.setupWithViewPager(mviewpager)
             }
         })
-        viewModel.isfollow.observe(this, Observer {
+        viewModel.isfollow.observe(this, {
             if (it != null) {
                 if (it) {
                     fab.setImageResource(R.drawable.ic_check_white_24dp)
@@ -186,7 +195,11 @@ class UserMActivity : RinkActivity() {
                                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val clip: ClipData = ClipData.newPlainText("simple text", shareLink)
                             clipboard.setPrimaryClip(clip)
-                            Toasty.info(this@UserMActivity, getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                            Toasty.info(
+                                this@UserMActivity,
+                                getString(R.string.copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         1 -> {
                             runBlocking {
@@ -212,7 +225,11 @@ class UserMActivity : RinkActivity() {
                                     }
                                 }
 
-                                Toasty.info(this@UserMActivity, getString(R.string.saved), Toast.LENGTH_SHORT)
+                                Toasty.info(
+                                    this@UserMActivity,
+                                    getString(R.string.saved),
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             }
                         }
@@ -253,24 +270,60 @@ class UserMActivity : RinkActivity() {
             android.R.id.home -> finishAfterTransition()
             R.id.action_share -> share()
             R.id.action_hideBookmarked -> {
-                val pre = PreferenceManager.getDefaultSharedPreferences(this)
-                when(viewModel.hideBookmarked.value) {
-                    3->{
-                        item.title = getString(R.string.hide_bookmarked)
+                if (pre.getBoolean("enableonlybookmarked", false)) {
+                    when (viewModel.hideBookmarked.value) {
+                        3 -> {
+                            item.title = getString(R.string.hide_bookmarked)
+                        }
+                        1 -> {
+                            item.title = getString(R.string.only_bookmarked)
+                        }
                     }
-                    1->{
-                        item.title = getString(R.string.only_bookmarked)
-                    }
+                    viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!! + 1) % 4
+                } else {
+                    viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!! + 1) % 2
                 }
-                viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!!+1)%4
                 item.isChecked = !item.isChecked
-                pre.edit().putInt( HIDE_BOOKMARKED_ITEM, (viewModel.hideBookmarked.value!!)).apply()
+                pre.edit().putInt(HIDE_BOOKMARKED_ITEM, (viewModel.hideBookmarked.value!!)).apply()
                 EventBus.getDefault().post(AdapterRefreshEvent())
             }
             R.id.action_hideDownloaded -> {
                 viewModel.hideDownloaded.value = !item.isChecked
                 item.isChecked = !item.isChecked
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+                if (!pre.getBoolean("init$HIDE_DOWNLOADED_ITEM", false)) {
+                    MaterialDialog(this).show {
+                        title(R.string.hide_downloaded)
+                        message(R.string.hide_downloaded_detail) {
+                            html()
+                        }
+                        positiveButton(R.string.I_know) {
+                            pre.edit().putBoolean(
+                                "init$HIDE_DOWNLOADED_ITEM", true
+                            ).apply()
+                            val uri = Uri.parse(getString(R.string.plink))
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            startActivity(intent)
+                        }
+                        neutralButton(R.string.share) {
+                            pre.edit().putBoolean(
+                                "init$HIDE_DOWNLOADED_ITEM", true
+                            ).apply()
+                            val textIntent = Intent(Intent.ACTION_SEND)
+                            textIntent.type = "text/plain"
+                            textIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.hide_downloaded_detail))
+                            startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
+                        }
+                        negativeButton() {
+                            viewModel.hideDownloaded.value = !item.isChecked
+                            item.isChecked = !item.isChecked
+                        }
+                        setOnCancelListener {
+                            viewModel.hideDownloaded.value = !item.isChecked
+                            item.isChecked = !item.isChecked
+                        }
+                    }
+                }
+                pre.edit().putBoolean(
                     HIDE_DOWNLOADED_ITEM, item.isChecked
                 ).apply()
                 EventBus.getDefault().post(AdapterRefreshEvent())

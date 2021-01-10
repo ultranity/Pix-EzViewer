@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.dialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
@@ -15,6 +16,15 @@ class FirstInfoDialog : DialogFragment() {
             normalDialog.setTitle(R.string.read_it)
             normalDialog.setPositiveButton(R.string.I_know) { _, _ ->
                 SharedPreferencesServices.getInstance().setBoolean("firstinfo", true)
+            }
+            normalDialog.setNegativeButton(R.string.other) { _, _ ->
+                MaterialDialog(it).show {
+                    title(R.string.other)
+                    message(text = getString(R.string.app_features)+getString(R.string.hide_downloaded_summary)+getString(R.string.hide_downloaded_detail)){
+                        html()
+                    }
+                    positiveButton(android.R.string.ok) {}
+                }
             }
             normalDialog.create()
         } ?: throw IllegalStateException("Activity cannot be null")

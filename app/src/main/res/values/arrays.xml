@@ -76,12 +76,14 @@
         <item>XVIII_WeekG</item>
     </string-array>
     <string-array name="language">
+        <item>system</item>
         <item>zh</item>
         <item>en</item>
         <item>zh-rTW</item>
         <item>ja</item>
     </string-array>
     <string-array name="language_values">
+        <item>-1</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>

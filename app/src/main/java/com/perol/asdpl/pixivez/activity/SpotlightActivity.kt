@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SpotlightAdapter
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
@@ -71,27 +72,14 @@ class SpotlightActivity : RinkActivity() {
     private fun getData() {
         val intent = intent
         url = intent.getStringExtra("url")
-        textView_test.setOnClickListener({
+        textView_test.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
             val content_url = Uri.parse(url)
             intent.data = content_url
             startActivity(intent)
-        })
-        val local = when (PxEZApp.language) {
-            1 -> {
-                Locale.ENGLISH
-            }
-            2 -> {
-                Locale.TRADITIONAL_CHINESE
-            }
-            3 -> {
-                Locale.JAPANESE
-            }
-            else -> {
-                Locale.SIMPLIFIED_CHINESE
-            }
         }
+        val local = LanguageUtil.langToLocale(PxEZApp.language)
         Observable.create(ObservableOnSubscribe<String> { emitter ->
             val builder = OkHttpClient.Builder()
             val okHttpClient = builder.build()

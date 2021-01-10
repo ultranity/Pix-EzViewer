@@ -7,6 +7,7 @@ import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.networks.RubyHttpDns
 import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -24,20 +25,7 @@ import javax.net.ssl.HostnameVerifier
 object ApiClient {
     private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
-    private val local = when (PxEZApp.language) {
-        1 -> {
-            Locale.ENGLISH
-        }
-        2 -> {
-            Locale.TRADITIONAL_CHINESE
-        }
-        3 -> {
-            Locale.JAPANESE
-        }
-        else -> {
-            Locale.SIMPLIFIED_CHINESE
-        }
-    }
+    private val local = LanguageUtil.langToLocale(PxEZApp.language)
 
     private fun encode(text: String): String {
         try {

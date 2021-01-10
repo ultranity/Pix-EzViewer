@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Pix-EzViewer</string>
+	<string name="app_features">"部分功能隱藏於菜單或長按後，多按直覺嘗試\n"</string>
 	<string name="app_help">
 		"0. 本應用是免費應用，如果您付費購買，請立即請求退款並打差評！\n"
         "請務必確保在商店或者項目地址內安裝與更新，第三方提供的安裝包可能存在問題且不是最新 \n"
@@ -13,6 +14,7 @@
         "7. R 限制總開關在官網裡，遇到無權限訪問的插畫，自行至網頁開啟，開發者不提供幫助服務，開發者並不是老好人 \n"
         "8. 新賬戶註冊支持已暫停，請自行官網註冊 \n"
         "9. 本應用不收集除崩潰信息以外的非必要信息"
+		"\nYou can reopen this help on the settings page"
 	</string>
 	<string name="follow">關注</string>
 	<string name="click">點擊</string>
@@ -24,11 +26,6 @@
 	<string name="ali">跳轉到支付寶</string>
 	<string name="wechat">跳轉到微信</string>
 	<string name="thanks">感謝腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61幫助我測試的弹幕委员会的熱心你群群友們，以及提供會員帳號的果干辣，還有積極提供建議的吸血姬，逢田梨香子的老公,吃猫的咸鱼等熱心用戶們</string>
-	<string name="add_widget">新增小工具</string>
-	<string name="configure">配置</string>
-	<string name="title_home">家</string>
-	<string name="title_dashboard">儀表板</string>
-	<string name="title_notifications">通知</string>
 	<string name="img_manager">圖片管理</string>
 	<string name="checkupdate">檢查更新</string>
 	<string name="_18">隐藏遮罩</string>
@@ -79,6 +76,7 @@
 	<string name="title">標題</string>
 	<string name="by">按照順序</string>
 	<string name="search_by">搜索篩選</string>
+	<string name="search">搜索</string>
 	<string name="some_as_tag">與標簽一致</string>
 	<string name="painterid">畫師ID</string>
 	<string name="word">綜合</string>
@@ -98,9 +96,6 @@
 	<string name="publics">公開</string>
 	<string name="privates">非公開</string>
 	<string name="messages_header">消息</string>
-	<string name="sync_header">同步</string>
-	<string name="signature_title">你的簽名</string>
-	<string name="reply_title">默認回复動作</string>
 	<string name="reply_to">回复</string>
 	<string name="illust">插畫</string>
 	<string name="manga">漫畫</string>
@@ -212,21 +207,13 @@
 	<string name="attention">關注</string>
 	<string name="customformat_token">Token</string>
 	<string name="customformat_result">Result（點擊自動填入）</string>
-	<string name="post_comment">發送</string>
 	<string name="summary_thanks">非常感謝你們的支持:</string>
-	<string name="dark">黑暗</string>
 	<string name="following">關注用戶</string>
 	<string name="followers">關注者</string>
-	<string name="empty">EMPTY</string>
-	<string name="advices">建議</string>
 	<string name="pixivision_desc2">為不甘於沉悶生活的人提供的\n創作型媒體！</string>
 	<string name="change_to_first">更改為第1個</string>
 	<string name="notsf_subtext">開發,測試,發布</string>
-	<string name="private_">私人的</string>
-	<string name="like">喜歡</string>
-	<string name="state">州</string>
 	<string name="loading">正在加載…</string>
-	<string name="communicate">通信</string>
 	<string name="needstatusbar_subtext">——v——</string>
 	<string name="ultranity_subtext">編寫開發調試(當前維護者)</string>
 	<string name="notsf_subtext2">編寫開發調試(原作者)</string>
@@ -243,4 +230,17 @@
 	<string name="read_it">請務必讀完</string>
 	<string name="hide_downloaded">隱藏已下載圖片</string>
 	<string name="only_bookmarked">只顯示已收藏</string>
+	<string name="enableonlybookmarked">允許僅顯示已收藏</string>
+	<string name="supportsummary">如果你覺得這個應用還不錯，支持一下吧</string>
+	<string name="welcomePR">如果你希望且有能力幫助改進這個應用，歡迎PR</string>
+	<string name="donate">捐贈</string>
+	<string name="sample_title">Sample:點擊自動設置</string>
+	<string name="hide_downloaded_detail"><![CDATA[默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供<a href ="https://wwa.lanzous.com/iQB4Rigc7yh">PC打包藍奏雲</a>]]> </string>
+	<string name="hide_downloaded_summary">隱藏已下載功能可以附加非本機記錄：</string>
+	<string name="selectAll">全選</string>
+	<string name="sortPic">排序/篩選</string>
+	<string name="sort_by">排序規則</string>
+	<string name="create_time">創作時間</string>
+	<string name="default_config">默認</string>
+	<string name="other">其它</string>
 </resources>

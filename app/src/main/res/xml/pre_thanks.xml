@@ -7,11 +7,11 @@
         <Preference
             android:title="@string/supporttitle"
             app:key="support"
-            app:summary="如果你觉得这个应用还不错，支持一下吧" />
+            app:summary="@string/supportsummary" />
         <Preference
             android:title="贡献"
             app:key="pr"
-            app:summary="如果你希望且有能力帮助改进这个应用，欢迎PR" />
+            app:summary="@string/welcomePR" />
         <Preference
             android:title="感谢"
             app:key="thanks"
@@ -52,7 +52,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:key="huonaicai"
-        android:title="捐赠"
+        android:title="@string/donate"
         app:isPreferenceVisible="false">
         <Preference
             android:title="@string/current_developer"

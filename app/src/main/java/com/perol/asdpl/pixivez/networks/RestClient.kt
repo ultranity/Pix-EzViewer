@@ -30,6 +30,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.BuildConfig
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
@@ -53,20 +54,7 @@ import javax.net.ssl.X509TrustManager
 
 class RestClient {
     private val httpsDns by lazy { RubyHttpDns() }
-    private val local = when (PxEZApp.language) {
-        1 -> {
-            Locale.ENGLISH
-        }
-        2 -> {
-            Locale.TRADITIONAL_CHINESE
-        }
-        3 -> {
-            Locale.JAPANESE
-        }
-        else -> {
-            Locale.SIMPLIFIED_CHINESE
-        }
-    }
+    private val local = LanguageUtil.langToLocale(PxEZApp.language)
     private val disableProxy by lazy { PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false)}
     private val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()

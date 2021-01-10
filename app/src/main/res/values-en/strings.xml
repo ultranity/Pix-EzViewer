@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Pix-EzViewer</string>
+	<string name="app_features">"Some features hidden in the menu or long press, and more by intuition attempt\n"</string>
 	<string name="app_help">
         "0. This is a free app. If you pay for it, please immediately ask for a refund and make a negative comment! \n"
         "Be sure to install and update in the store or project address, There may be problems with the installation package provided by the third party and it is not up to date.\n"
@@ -13,6 +14,7 @@
         "7. the main switch of R limit is in the official website, if you find illustration without permission, you can open the switch by yourself. The developer can not provide help to this\n"
         "8. The in-app account registration support has been suspended, please register on the official website.\n"
         "9. This application does not collect unnecessary information except for crash information\n"
+        "\nYou can reopen this help on the settings page"
     </string>
 	<string name="follow">focus</string>
 	<string name="click">click</string>
@@ -24,8 +26,6 @@
 	<string name="ali">AliPay</string>
 	<string name="wechat">WeChat</string>
 	<string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们，以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
-	<string name="add_widget">Add widget</string>
-	<string name="configure">Configure</string>
 	<string name="img_manager">Pictures</string>
 	<string name="checkupdate">Check</string>
 	<string name="_18">Show R-18 image previews</string>
@@ -76,6 +76,7 @@
 	<string name="title">title</string>
 	<string name="by">by</string>
 	<string name="search_by">search by</string>
+	<string name="search">search for</string>
 	<string name="some_as_tag">some as tag</string>
 	<string name="painterid">Artist ID</string>
 	<string name="word">WORD</string>
@@ -95,9 +96,6 @@
 	<string name="publics">Public</string>
 	<string name="privates">Private</string>
 	<string name="messages_header">Messages</string>
-	<string name="sync_header">Sync</string>
-	<string name="signature_title">Your signature</string>
-	<string name="reply_title">Default reply action</string>
 	<string name="reply_to">Reply</string>
 	<string name="illust">Illust</string>
 	<string name="manga">Manga</string>
@@ -212,8 +210,6 @@
 	<string name="summary_thanks">Thanks to:</string>
 	<string name="following">Following</string>
 	<string name="followers">Followers</string>
-	<string name="empty">Empty</string>
-	<string name="advices">advices</string>
 	<string name="pixivision_desc2">a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
 	<string name="change_to_first">change to first</string>
 	<string name="notsf_subtext">Development, testing, release</string>
@@ -234,4 +230,17 @@
 	<string name="read_it">please read it</string>
 	<string name="hide_downloaded">Hidden Downloaded</string>
 	<string name="only_bookmarked">Bookmarked Only</string>
+	<string name="enableonlybookmarked">Showing only allow collection</string>
+	<string name="supportsummary">If you think this application is also good, to support what it</string>
+	<string name="welcomePR">If you want and have the ability to help improve this application, welcomed PR</string>
+	<string name="donate">Donate</string>
+	<string name="sample_title">Sample: click auto set</string>
+	<string name="hide_downloaded_detail"><![CDATA[Retrieve the current default download path and subfolders, supporting the use of python scripts to get more Gallery pid record, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged blue cloud played </a>]]> </string>
+	<string name="hide_downloaded_summary">Hide download function can record additional non-native:</string>
+	<string name="selectAll">select all</string>
+	<string name="sortPic">Sort / filter</string>
+	<string name="sort_by">Sort by</string>
+	<string name="create_time">Created time</string>
+	<string name="default_config">Default</string>
+	<string name="other">Other</string>
 </resources>

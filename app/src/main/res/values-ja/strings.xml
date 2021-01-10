@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Pix-EzViewer</string>
+	<string name="app_features">"一部の機能は、メニューや長押しに隠された、そしてより直感試行によって\n"</string>
 	<string name="app_help">
 		"0. このアプリケーションは無料です。お支払いいただいた場合は、すぐに払い戻しをリクエストし、否定的なレビューを行ってください！\ n"
         "ストアまたはプロジェクトのアドレスにインストールして更新してください。サードパーティから提供されたインストールパッケージに問題がある可能性があり、最新のものではありません \ n"
@@ -13,6 +14,7 @@
         "7.R 制限マスタースイッチは公式 Web サイトにあり、アクセス権のないイラストが表示された場合は、自分でそれを開くことができます。開発者はヘルプを提供しません。開発者は良い人ではありません \ n"
         "8. 新規アカウントの登録サポートが一時停止されました。公式ウェブサイトでご自分で登録してください \ n"
         "9. このアプリケーションは、クラッシュ情報以外の重要でない情報を収集しません"
+		"\nYou can reopen this help on the settings page"
 	</string>
 	<string name="follow">follow</string>
 	<string name="click">click</string>
@@ -24,8 +26,6 @@
 	<string name="ali">アリペイへジャンプ</string>
 	<string name="wechat">微信へジャンプ</string>
 	<string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们，以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
-	<string name="add_widget">ウィジェットを追加</string>
-	<string name="configure">設定</string>
 	<string name="img_manager">ピクチャー</string>
 	<string name="checkupdate">確認</string>
 	<string name="_18">R-18コンテンツを隠さない</string>
@@ -76,6 +76,7 @@
 	<string name="title">タイトル</string>
 	<string name="by">ソート順</string>
 	<string name="search_by">検索フィルタ</string>
+	<string name="search">検索する</string>
 	<string name="some_as_tag">some as tag</string>
 	<string name="painterid">PAINTER</string>
 	<string name="word">WORD</string>
@@ -95,9 +96,6 @@
 	<string name="publics">公開</string>
 	<string name="privates">非公開</string>
 	<string name="messages_header">メッセージ</string>
-	<string name="sync_header">同期</string>
-	<string name="signature_title">あなたの署名</string>
-	<string name="reply_title">デフォルトの返信アクション</string>
 	<string name="reply_to">応答</string>
 	<string name="illust">イラスト</string>
 	<string name="manga">漫画</string>
@@ -209,17 +207,13 @@
 	<string name="attention">注意</string>
 	<string name="customformat_token">名前</string>
 	<string name="customformat_result">結果（自動的に記入します）</string>
-	<string name="post_comment">送信</string>
 	<string name="summary_thanks">ご協力ありがとうございます：</string>
 	<string name="following">ユーザー懸念</string>
 	<string name="followers">フォロワー</string>
-	<string name="empty">空の</string>
-	<string name="advices">アドバイス</string>
 	<string name="pixivision_desc2">これは、\ n型メディアの作成を提供するために、鈍い人々の生活に不本意です！</string>
 	<string name="change_to_first">最初のものを変更</string>
 	<string name="notsf_subtext">開発、テスト、リリース</string>
 	<string name="loading">読み込んでいます…</string>
-	<string name="communicate">伝えます</string>
 	<string name="needstatusbar_subtext">ノッチ付きスクリーン用</string>
 	<string name="ultranity_subtext">開発とデバッグの調製（現在の保守）</string>
 	<string name="notsf_subtext2">開発とデバッグの調製（原作者）</string>
@@ -236,4 +230,17 @@
 	<string name="read_it">必ずお読みください</string>
 	<string name="hide_downloaded">非表示画像をダウンロード</string>
 	<string name="only_bookmarked">唯一のコレクションを表示</string>
+	<string name="enableonlybookmarked">コレクションを許可のみ表示</string>
+	<string name="supportsummary">あなたが考える場合は、このアプリケーションは、何、それをサポートするために、も良いです</string>
+	<string name="welcomePR">あなたがしたいと、このアプリケーションを改善するための能力を持っている場合は、PRを歓迎しました</string>
+	<string name="donate">寄付</string>
+	<string name="sample_title">サンプル：クリック自動設定</string>
+	<string name="hide_downloaded_detail"><![CDATA[現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzous.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID ]]> </string>
+	<string name="hide_downloaded_summary">隠すダウンロード機能は、追加の非ネイティブ記録することができます：</string>
+	<string name="selectAll">すべて選択</string>
+	<string name="sortPic">ソート/フィルタ</string>
+	<string name="sort_by">照合</string>
+	<string name="create_time">作成した</string>
+	<string name="default_config">デフォルト</string>
+	<string name="other">他の</string>
 </resources>

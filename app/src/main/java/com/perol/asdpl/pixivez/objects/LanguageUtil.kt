@@ -12,7 +12,7 @@ object LanguageUtil {
         val resources = context.resources
         val configuration = resources.configuration
         val displayMetrics = resources.displayMetrics
-        configuration.setLocale(getLocale(language))
+        configuration.setLocale(langToLocale(language))
         // https://developer.android.com/reference/android/content/res/Resources.html#updateConfiguration(android.content.res.Configuration,%20android.util.DisplayMetrics).
         resources.updateConfiguration(
             configuration,
@@ -20,7 +20,29 @@ object LanguageUtil {
         ) // This method was deprecated in API level 25.
     }
 
-    private fun getLocale(@Language language: Int): Locale {
+    fun localeToLang(local: Locale): Int {
+        return when (local.language) {
+            Locale.ENGLISH.language -> Language.ENGLISH
+            Locale.JAPANESE.language -> Language.JAPANESE
+            Locale.SIMPLIFIED_CHINESE.language -> Language.SIMPLIFIED_CHINESE
+            Locale.TRADITIONAL_CHINESE.language -> Language.TRADITIONAL_CHINESE
+            else -> Language.ENGLISH
+        }
+    }
+
+    fun getLocale(): Locale {
+        return langToLocale(Language.SYSTEM)
+    }
+
+    fun getLang(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Resources.getSystem().configuration.locales.get(0).language
+        } else {
+            Resources.getSystem().configuration.locale.language
+        }
+    }
+
+    fun langToLocale(@Language language: Int): Locale {
         return when (language) {
             Language.SYSTEM -> {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

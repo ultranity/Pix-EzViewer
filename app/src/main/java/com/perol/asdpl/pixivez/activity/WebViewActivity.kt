@@ -32,6 +32,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.android.synthetic.main.activity_web_view.*
 import java.io.ByteArrayInputStream
@@ -41,20 +42,7 @@ class WebViewActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
-        val local = when (PxEZApp.language) {
-            1 -> {
-                "en"
-            }
-            2 -> {
-                "zh"
-            }
-            3 -> {
-                "ja"
-            }
-            else -> {
-                "zh"
-            }
-        }
+        val local = LanguageUtil.langToLocale(PxEZApp.language).language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"

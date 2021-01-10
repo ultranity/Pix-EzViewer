@@ -44,11 +44,13 @@ import com.google.gson.Gson
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.bugly.Bugly
 import com.tencent.bugly.beta.Beta
 import java.io.File
 import com.tencent.mmkv.MMKV
+import java.util.*
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences
@@ -157,7 +159,6 @@ class PxEZApp : Application() {
         R18Folder = pre.getBoolean("R18Folder", false)
         R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
         TagSeparator = pre.getString("TagSeparator", "#")!!
-        language = pre.getString("language", "0")?.toInt() ?: 0
         storepath = pre.getString(
             "storepath1",
             Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
@@ -166,11 +167,9 @@ class PxEZApp : Application() {
         if (pre.getBoolean("crashreport", true)) {
             CrashHandler.getInstance().init(this)
         }
-        locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resources.configuration.locales.get(0).language
-        } else {
-            resources.configuration.locale.language
-        }
+        locale = LanguageUtil.getLocale() //System locale
+        language = pre.getString("language", "-1")?.toIntOrNull()
+                    ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
         Beta.enableHotfix = false
@@ -245,7 +244,7 @@ class PxEZApp : Application() {
         var saveformat = ""
 
         @JvmStatic
-        var locale = "zh"
+        var locale = Locale.SIMPLIFIED_CHINESE
 
         @JvmStatic
         var language: Int = 0

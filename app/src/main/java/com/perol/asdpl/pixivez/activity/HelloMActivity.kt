@@ -275,22 +275,34 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 val text = clipData.getItemAt(0)?.text ?: return@Runnable
                 var item = Regex("""\d{7,8}""")
                     .find(text)
-                    ?.value?.toLongOrNull()?: return@Runnable
+                    ?.value?:Regex("""((画师)|(artist)|(by)|(twi(tter)?)[：:\s]*)(\S+)""")
+                    .find(text)?.groupValues?.last()?.trim()
+                    ?: return@Runnable
 
                 val pre =PreferenceManager.getDefaultSharedPreferences(this)
-                if (item==pre.getLong("lastclip",-1))
+                if (item==pre.getString("lastclip2",""))
                     return@Runnable
                 MaterialDialog(this).show {
                     title(R.string.clipboard_detected)
                     message(R.string.jumpto)
-                    input(prefill = item.toString(), inputType = InputType.TYPE_CLASS_NUMBER)
+                    input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
                     positiveButton(android.R.string.ok) {
-                        item = this.getInputField().text.toString().toLongOrNull()?:return@positiveButton
-                        pre.edit().putLong("lastclip",item).apply()
-                        PictureActivity.startSingle(this@HelloMActivity, item)
+                        item = getInputField().text.toString()
+                        pre.edit().putString("lastclip2",item).apply()
+                        if((item).toLongOrNull() != null)
+                        {
+                            PictureActivity.startSingle(this@HelloMActivity, item.toLong())
+                        }else{
+                            val bundle = Bundle()
+                            bundle.putString("searchword", item)
+                            bundle.putInt("type", 1)
+                            val intent = Intent(this@HelloMActivity, SearchResultActivity::class.java)
+                            intent.putExtras(bundle)
+                            startActivityForResult(intent, 775)
+                        }
                     }
                     neutralButton(R.string.not_this_one){
-                        pre.edit().putLong("lastclip",item).apply()
+                        pre.edit().putString("lastclip2", item).apply()
                     }
                     negativeButton(android.R.string.cancel)
                 }

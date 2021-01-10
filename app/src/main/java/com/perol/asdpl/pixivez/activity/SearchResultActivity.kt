@@ -45,7 +45,8 @@ import kotlinx.android.synthetic.main.content_search_result.*
 
 
 class SearchResultActivity : RinkActivity() {
-    lateinit var searchword: String
+    var searchword: String ="1"
+    var type: Int = 0
 
     lateinit var binding: ActivitySearchResultBinding
     var arrayList = ArrayList<Fragment>()
@@ -56,10 +57,9 @@ class SearchResultActivity : RinkActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        searchword = if (intent.extras != null) {
-            intent.extras!!.getString("searchword")!!
-        } else {
-            "1"
+        if (intent.extras != null) {
+            searchword = intent.extras!!.getString("searchword")!!
+            type = intent.extras!!.getInt("type")
         }
         initView()
 
@@ -90,6 +90,7 @@ class SearchResultActivity : RinkActivity() {
         arrayList.add(SearchIllustFragment.newInstance(searchword))
         arrayList.add(UserFragment.newInstance(searchword))
         viewpage_searchresult.adapter = SearchResultAdapter(this, supportFragmentManager, arrayList)
+        tablayout_searchresult.getTabAt(type)?.select()
         viewpage_searchresult.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,

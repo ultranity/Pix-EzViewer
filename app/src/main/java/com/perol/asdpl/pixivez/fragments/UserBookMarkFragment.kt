@@ -48,6 +48,7 @@ import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import kotlinx.android.synthetic.main.fragment_user_book_mark.*
 import kotlinx.coroutines.runBlocking
@@ -108,9 +109,11 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             }
 
 
-        mrecyclerview.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        mrecyclerview.adapter = picItemAdapter
+        mrecyclerview.apply{
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            adapter = picItemAdapter
+            addItemDecoration(GridItemDecoration())
+        }
         picItemAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel!!.onLoadMoreListener()
         }

@@ -39,6 +39,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RankingAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
+import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
 import kotlinx.android.synthetic.main.fragment_ranking_m.*
@@ -127,9 +128,10 @@ class RankingMFragment : BaseFragment() {
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel!!.onLoadMore()
         }
-        recyclerview_rankingm.apply {
+        recyclerview_rankingm.apply{
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = rankingAdapter
+            addItemDecoration(GridItemDecoration())
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
             ?.view?.setOnClickListener {

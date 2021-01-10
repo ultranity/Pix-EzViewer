@@ -82,10 +82,11 @@ class UserIllustFragment : BaseFragment() {
         mrefreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, param2!!)
         }
-        mrecyclerview.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        mrecyclerview.adapter = recommendAdapter
-
+        mrecyclerview.apply{
+                layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                adapter = recommendAdapter
+                //addItemDecoration(GridItemDecoration())
+            }
 
     }
 

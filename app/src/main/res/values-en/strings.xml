@@ -24,6 +24,7 @@
 	<string name="support_static">The No. of pics you have collected is: %1$s !</string>
 	<string name="ali">AliPay</string>
 	<string name="wechat">WeChat</string>
+	<string name="thanks_to">Thanks</string>
 	<string name="thanks">Thanks for your help/proposal: 腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61，果干辣，吸血姬，逢田梨香子的老公,吃猫的咸鱼,etc</string>
 	<string name="img_manager">Pictures</string>
 	<string name="checkupdate">Check for updates</string>
@@ -235,19 +236,19 @@
 	<string name="post_comment">Send</string>
 	<string name="dark">Dark mode</string>
 	<string name="like">Like</string>
-	<string name="private">private</string>
+	<string name="private_">private</string>
 	<string name="state">Progress</string>
     <string name="login_help_md"># Troubleshooting\n\nIf you are receive this when trying to log in:\n\n```shell\n    http 400 bad request\n```\n\nPlease try the following steps:\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Check if the access point APN is Net instead of Wap\n3. If it is the latest version, the username or password is wrong (104:), you need to check the account password\n4. The account is not verified or the user account is invalid (103:), you need to go to the official website for verification\n\nps: account password refers to pixiv account password, not github\n\nIf prompted after login\n\n```shell\n    Program error, about to exit, xx resourece not found\n```\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Make sure that the application is obtained from one of the official sites, not from others\n3. After installing the latest version from the above channels, clear the application data and try to log in again\n\n## If nothing helps\n\nPlease use the feedback email or GitHub Issues, provide details like version number, system information, error message screenshots\n\nBefore giving feedback, you need to make sure\n\n1. The application is obtained from one of the official sites linked on GitHub\n2. Did not use the early adopter system or use the xposed or magisk module to make magic changes\n3. You have read carefully \"please read it all\" in settings</string>
 	<string name="title_activity_saucenao">SauceNAO</string>
 	<string name="comment_successful">Comment successful!</string>
 	<string name="rate_limited">Rate limited.</string>
-    <string name="select_all">Select all</string>
 	<string name="enableonlybookmarked">Showing only allow collection</string>
-	<string name="supportsummary">If you think this application is also good, to support what it</string>
-	<string name="welcomePR">If you want and have the ability to help improve this application, welcomed PR</string>
+	<string name="supportsummary">If you think this app is useful, support us!</string>
+	<string name="PR">submit Pull Request</string>
+	<string name="welcomePR">If you want and have the ability to help improve this application, submit PR to us!</string>
 	<string name="donate">Donate</string>
 	<string name="sample_title">Sample: click auto set</string>
-	<string name="hide_downloaded_detail"><![CDATA[Retrieve the current default download path and subfolders, supporting the use of python scripts to get more Gallery pid record, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged blue cloud played </a>]]> </string>
+	<string name="hide_downloaded_detail"><![CDATA[Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged program here</a>]]> </string>
 	<string name="hide_downloaded_summary">Hide download function can record additional non-native:</string>
 	<string name="selectAll">Select all</string>
 	<string name="sortPic">Sort / filter</string>
@@ -255,4 +256,5 @@
 	<string name="create_time">Created time</string>
 	<string name="default_config">Default</string>
 	<string name="other">Other</string>
+	<string name="follow">follow</string>
 </resources>

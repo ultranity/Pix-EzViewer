@@ -251,4 +251,5 @@
 	<string name="create_time">作成した</string>
 	<string name="default_config">デフォルト</string>
 	<string name="other">他の</string>
+	<string name="comment_successful">コメント成功！</string>
 </resources>

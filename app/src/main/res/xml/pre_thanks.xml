@@ -9,11 +9,11 @@
             app:key="support"
             app:summary="@string/supportsummary" />
         <Preference
-            android:title="贡献"
+            android:title="@string/PR"
             app:key="pr"
             app:summary="@string/welcomePR" />
         <Preference
-            android:title="感谢"
+            android:title="@string/thanks_to"
             app:key="thanks"
             app:summary="@string/thanks" />
 

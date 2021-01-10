@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <item name="tag_first" type="id" />
     <string name="app_name" translatable="false">Pix-EzViewer</string>
     <string name="app_features">
@@ -34,6 +34,7 @@
     <string name="support_static">粗略统计，您使用PixEz收图张数已达：%1$s !</string>
     <string name="ali">跳转到支付宝</string>
     <string name="wechat" >跳转到微信</string>
+    <string name="thanks_to">感谢</string>
     <string name="thanks">感谢腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61帮助我测试的弹幕委员会的热心你群群友们,以及提供会员帐号的果干辣，还有积极提供建议的吸血姬，逢田梨香子的老公,吃猫的咸鱼等热心用户们</string>
     <string name="add_widget" translatable="false">Add widget</string>
     <string name="title_activity_saucenao" translatable="false">Saucenao Search</string>
@@ -276,8 +277,7 @@
     <string name="hide_downloaded">隐藏已下载图片</string>
     <string name="only_bookmarked">只显示已收藏</string>
     <string name="comment_successful">评论成功！</string>
-    <string name="rate_limited">Rate Limit</string>
-    <string name="select_all">全选</string>
+    <string name="rate_limited">Rate limited.</string>
     <string name="enableonlybookmarked">允许仅显示已收藏</string>
     <string name="supportsummary">如果你觉得这个应用还不错，支持一下吧</string>
     <string name="welcomePR">如果你希望且有能力帮助改进这个应用，欢迎PR</string>
@@ -292,4 +292,5 @@
     <string name="create_time">创作时间</string>
     <string name="default_config">默认</string>
     <string name="other">其它</string>
+    <string name="PR">贡献</string>
 </resources>

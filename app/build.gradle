@@ -42,8 +42,8 @@ android {
         applicationId "com.perol.asdpl.play.pixivez"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 107
-        versionName "1.7.4R"
+        versionCode 109
+        versionName "1.7.6R"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -131,6 +131,7 @@ android {
     dexOptions {
         preDexLibraries true
     }
+    buildToolsVersion '29.0.3'
 
 /*    configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
@@ -286,8 +287,10 @@ dependencies {
 
     implementation 'com.tencent:mmkv-static:1.2.2'
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.2'
+
     implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
     implementation 'com.github.qingyc:GuideTipView:0.6'
+    //implementation 'com.github.sevar83:indeterminate-checkbox:1.0.5@aar'
     //implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.0.2'
     //implementation 'me.jessyan:progressmanager:1.5.0'
     //implementation 'com.google.android.play:core:1.7.2'

@@ -1,0 +1,12 @@
+## 1.7.5R & 1.7.6R:
+- [x] fix: now language follow system settings by default
+- [x] fix: record lost when resuming task
+- [x] fix: x_restrict mask
+- [x] feature: try to recognize artist's name in clipboards starts with artist or twitter for search
+- [x] feature: download record and color prompt, PID record on PC can also be collected using python scripts (see help in app)
+- [x] feature: list filtering (Comics / collected) in trending page
+- [x] update: disable "only display bookmarked items" by default
+- [x] update: grid space hide to avoid long blank
+- [x] update: translation enhancement
+- [x] update: Other adjustments and performance optimization
+- [x] update: donation record

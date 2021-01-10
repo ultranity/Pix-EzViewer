@@ -77,7 +77,7 @@ class HelloMDynamicsFragment : LazyFragment() {
                 shareModel.apply {
                     val dateDialog = DatePickerDialog(
                         requireActivity(),
-                        DatePickerDialog.OnDateSetListener { p0, year1, month1, day1 ->
+                        { p0, year1, month1, day1 ->
                             val monthR = month1 + 1
                             picDateShare.value = if ("$year1-$monthR-$day1" == dateNow) {
                                 null
@@ -96,8 +96,10 @@ class HelloMDynamicsFragment : LazyFragment() {
                     dateDialog.datePicker.maxDate = System.currentTimeMillis()
                     dateDialog.show()
                 }
-
-
+            }
+            setOnLongClickListener {
+                shareModel.hideBookmarked.value = 1 - shareModel.hideBookmarked.value!!
+                true
             }
         }
     }

@@ -56,7 +56,8 @@ class RecommendAdapter(
     override var R18on: Boolean,
     override var blockTags: List<String>,
     override var hideBookmarked: Int = 0,
-    override var hideDownloaded: Boolean = false
+    override var hideDownloaded: Boolean = false,
+    override var sortCoM: Int = 0
 ) :
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 

@@ -67,7 +67,8 @@ class RankingAdapter(
     override var blockTags: List<String>,
     var singleLine: Boolean = false,
     override var hideBookmarked: Int = 0,
-    override var hideDownloaded: Boolean = false
+    override var hideDownloaded: Boolean = false,
+    override var sortCoM: Int = 0
 ) :
     PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
 

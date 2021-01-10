@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="com">
+        <item>全部</item>
+        <item>CoM</item>
+        <item>非CoM</item>
+    </string-array>
     <string-array name="week">
         <item>全部</item>
         <item>公开的</item>

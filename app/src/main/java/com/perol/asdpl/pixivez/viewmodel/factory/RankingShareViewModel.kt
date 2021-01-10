@@ -33,11 +33,14 @@ class RankingShareViewModel : ViewModel() {
     var year = MutableLiveData<Int>()
     var month = MutableLiveData<Int>()
     var day = MutableLiveData<Int>()
+    var hideBookmarked = MutableLiveData<Int>()
+    var sortCoM = MutableLiveData<Int>()
 
     init {
         val calendar = Calendar.getInstance()
         year.value = calendar.get(Calendar.YEAR)
         month.value = calendar.get(Calendar.MONTH) + 1
         day.value = calendar.get(Calendar.DAY_OF_MONTH)
+        hideBookmarked.value = 0
     }
 }

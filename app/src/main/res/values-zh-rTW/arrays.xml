@@ -9,12 +9,6 @@
         <item>公開的</item>
         <item>非公開</item>
     </string-array>
-    <string-array name="search">
-        <item>綜合</item>
-        <item>插畫id</item>
-        <item>畫師id</item>
-
-    </string-array>
     <string-array name="sort">
         <item>預設</item>
         <item>預設asc</item>
@@ -28,10 +22,6 @@
     <string-array name="quality">
         <item>中圖（更快）</item>
         <item>大圖（高配）</item>
-    </string-array>
-    <string-array name="locale">
-        <item>ZH</item>
-        <item>EN</item>
     </string-array>
 
     <string-array name="modellist">

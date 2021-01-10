@@ -9,12 +9,6 @@
         <item>公開</item>
         <item>非公開</item>
     </string-array>
-    <string-array name="search">
-        <item>ワード</item>
-        <item>イラストID</item>
-        <item>投稿者ID</item>
-
-    </string-array>
     <string-array name="sort">
         <item>デフォルト</item>
         <item>デフォルト(古い順)</item>

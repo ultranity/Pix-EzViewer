@@ -137,7 +137,7 @@ class CommentDialog : DialogFragment() {
                         if (view.id == R.id.reply_to_hit) {
                             Parent_comment_id = illustCommentsResponse.comments[position].id
                             edittextComment.hint =
-                                "回复:" + illustCommentsResponse.comments[position].user.name
+                                getString(R.string.reply_to) + ":" + illustCommentsResponse.comments[position].user.name
                         }
                     }
                     nextUrl = illustCommentsResponse.next_url
@@ -201,7 +201,7 @@ class CommentDialog : DialogFragment() {
                             override fun onNext(illustCommentsResponse: IllustCommentsResponse) {
 
                                 commentAdapter!!.setNewData(illustCommentsResponse.comments)
-                                Toast.makeText(context, "评论成功！", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
                                 edittextComment.setText("")
                                 Parent_comment_id = 1
                                 edittextComment.hint = ""
@@ -210,7 +210,7 @@ class CommentDialog : DialogFragment() {
                             override fun onError(e: Throwable) {
                                 if ((e as HttpException).response()!!.code() == 403) {
 
-                                    Toasty.warning(context!!, "Rate Limit", Toast.LENGTH_SHORT)
+                                    Toasty.warning(context!!, getString(R.string.rate_limited), Toast.LENGTH_SHORT)
                                         .show()
 
 

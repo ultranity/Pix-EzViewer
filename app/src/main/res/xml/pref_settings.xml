@@ -34,8 +34,7 @@
             />
         <Preference
             app:key="check"
-            app:title="@string/checkupdate"
-            app:summary="update" />
+            app:title="@string/checkupdate" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
         <SwitchPreference

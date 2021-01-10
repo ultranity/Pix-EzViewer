@@ -9,12 +9,6 @@
         <item>Public</item>
         <item>Private</item>
     </string-array>
-    <string-array name="search">
-        <item>word</item>
-        <item>illust id</item>
-        <item>painter id</item>
-
-    </string-array>
     <string-array name="sort">
         <item>default</item>
         <item>default asc</item>
@@ -26,8 +20,8 @@
         <item>myself</item>
     </string-array>
     <string-array name="quality">
-        <item>meduim（fast）</item>
-        <item>high（low）</item>
+        <item>medium (fast)</item>
+        <item>high (slow)</item>
     </string-array>
     <string-array name="modellist">
         <item>day</item>
@@ -44,16 +38,16 @@
         <item>XVIII_WeekG</item>
     </string-array>
     <string-array name="dark_mode">
-        <item>FOLLOW_SYSTEM</item>
-        <item>AUTO_TIME</item>
-        <item>NO</item>
-        <item>YES</item>
-        <item>AUTO_BATTERY</item>
+        <item>System setting</item>
+        <item>Based on time</item>
+        <item>Never</item>
+        <item>Always</item>
+        <item>Based on battery</item>
     </string-array>
     <string-array name="user_profile">
-        <item>Copy Link</item>
-        <item>Save Avatar</item>
-        <item>Change Avatar</item>
+        <item>Copy link</item>
+        <item>Save avatar</item>
+        <item>Change avatar</item>
     </string-array>
     <string-array name="download_task_choice">
         <item>RETRY</item>
@@ -63,7 +57,7 @@
     </string-array>
     <string-array name="CollectMode">
         <item>Normal</item>
-        <item>Auto Like when download</item>
-        <item>click to download+like+follow, Long click to pic details</item>
+        <item>Auto-like on download</item>
+        <item>Tap to download, like &amp; follow; long press for details</item>
     </string-array>
 </resources>

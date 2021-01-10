@@ -68,33 +68,6 @@ class LoginActivity : RinkActivity() {
     private var username: String? = null
     private var password: String? = null
     lateinit var sharedPreferencesServices: SharedPreferencesServices
-    private val markdownShot = "# TroubleShoot帮助\n" +
-            "如果你登录时提示\n" +
-            "```shell\n" +
-            "    http 400 bad request\n" +
-            "```\n" +
-            "请尝试以下步骤  \n" +
-            "1.确保应用是最新的，到google play或者github获取最新的版本  \n" +
-            "2.检查接入点APN是否为Net而不是Wap  \n" +
-            "3.已是最新版，则用户名或者密码有错(104:)，需要核对账号密码  \n" +
-            "4.账号未完成验证或者用户账号无效(103:)，需要到官网进行验证完善  \n" +
-            "ps:账号密码指的是pixiv的账号密码，而不是github的\n" +
-            "\n" +
-            "\n" +
-            "如果登录后提示\n" +
-            "```shell\n" +
-            "    程序出错，即将退出,xx resourece not found\n" +
-            "```\n" +
-            "1.确保应用是最新的，到google play或者github获取最新的版本  \n" +
-            "2.确保应用是google play或者github获取的，而不是别人传的甚至某某dalao卖的  \n" +
-            "3.到以上渠道安装完最新版本后，清除应用数据并重新尝试登录\n" +
-            "\n" +
-            "## 若都无帮助\n" +
-            "请通过反馈邮箱，详细反馈版本号，系统信息，错误信息截图  \n" +
-            "反馈之前,你需要确保  \n" +
-            "1.应用是google play或者github获取的  \n" +
-            "2.不是使用尝鲜系统或者使用xposed或者magisk模块进行过魔改  \n" +
-            "3.已仔细阅读完毕\"请务必读完\""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,7 +125,7 @@ class LoginActivity : RinkActivity() {
             // obtain an instance of Markwon
             val markwon = Markwon.create(this)
 
-            val node = markwon.parse(markdownShot)
+            val node = markwon.parse(getString(R.string.login_help_md))
 
             val markdown = markwon.render(node)
 

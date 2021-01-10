@@ -103,6 +103,10 @@ class RankingMFragment : BaseFragment(){
             sharemodel.picDateShare.value
         }
 
+        sharemodel.sortCoM.observe(this, Observer {
+            rankingAdapter.sortCoM = it
+            EventBus.getDefault().post(AdapterRefreshEvent())
+        })
         sharemodel.picDateShare.observe(this, Observer {
             viewmodel.datePick(param1!!, it)
         })

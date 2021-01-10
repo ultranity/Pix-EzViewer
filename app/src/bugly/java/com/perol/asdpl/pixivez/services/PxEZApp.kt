@@ -81,7 +81,7 @@ class PxEZApp : Application() {
                 }
                 sourceFile.delete()
 
-                if(PxEZApp.ShowDownloadToast) {
+                if(ShowDownloadToast) {
                     Toasty.success(
                         this,
                         "${title}${getString(R.string.savesuccess)}",
@@ -121,7 +121,7 @@ class PxEZApp : Application() {
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
                 if((System.currentTimeMillis() - it.completeTime) > 10*60*1000 )
-                Aria.download(this).load(it.id).cancel()
+                    Aria.download(this).load(it.id).cancel()
             }
             Thread.sleep(10000)
             if( pre.getBoolean("resume_unfinished_task",true)

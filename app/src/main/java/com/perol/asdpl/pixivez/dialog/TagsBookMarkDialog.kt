@@ -75,6 +75,13 @@ class TagsBookMarkDialog : DialogFragment() {
             }
             pictureXViewModel =
                 ViewModelProvider(requireParentFragment()).get(PictureXViewModel::class.java)
+            pictureXViewModel.illustDetail.value?.let{
+                tagsAdapter.setNewData(it.tags.map {
+                    BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
+                        isIs_registered = false
+                        name = it.toString()
+                    }}.toMutableList())
+            }
             pictureXViewModel.tags.observe(this, Observer {
                 tagsAdapter.setNewData(it.tags)
             })
@@ -87,12 +94,12 @@ class TagsBookMarkDialog : DialogFragment() {
 
                 }
                 .setPositiveButton(R.string.bookmark_public) { _, _ ->
-                    if (pictureXViewModel.tags.value != null)
+                    //if (pictureXViewModel.tags.value != null)
                         pictureXViewModel.onDialogClick(false)
                 }
 
                 .setNeutralButton(R.string.bookmark_private) { _, _ ->
-                    if (pictureXViewModel.tags.value != null)
+                    //if (pictureXViewModel.tags.value != null)
                         pictureXViewModel.onDialogClick(true)
                 }
             // Create the AlertDialog object and return it

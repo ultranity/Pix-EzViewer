@@ -52,9 +52,9 @@ class IllustfragmentViewModel : BaseViewModel() {
     var nexturl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
+    var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
     var hideBookmarked = MutableLiveData<Int>(
-        PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-            .getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
+        pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )
     val sort = MutableLiveData<Int>(0)
     val searchTarget = MutableLiveData<Int>(0)

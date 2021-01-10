@@ -118,8 +118,13 @@
             app:key="R18Private"
             app:defaultValue="true"
             app:title="@string/R18_private"/>
+        <SwitchPreference
+            app:key="enableonlybookmarked"
+            app:defaultValue="true"
+            app:title="@string/enableonlybookmarked"/>
         <Preference
             app:key="filesaveformat"
+            app:defaultValue="false"
             app:title="@string/filesaveformat"/>
         <ListPreference
             android:entries="@array/firstpage"

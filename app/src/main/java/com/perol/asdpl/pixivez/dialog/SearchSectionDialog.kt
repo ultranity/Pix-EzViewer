@@ -118,6 +118,7 @@ class SearchSectionDialog : DialogFragment() {
         val toggleShow = view.findViewById<ToggleButton>(R.id.toggleShow).apply {
             isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
+                if (viewModel.pre.getBoolean("enableonlybookmarked",false)){
                 when(hideBookmarked) {
                     3->{
                         toggleShowTitle.text = getString(R.string.hide_bookmarked)
@@ -126,7 +127,10 @@ class SearchSectionDialog : DialogFragment() {
                         toggleShowTitle.text = getString(R.string.only_bookmarked)
                     }
                 }
-                hideBookmarked = (hideBookmarked+1)%4
+                    hideBookmarked = (hideBookmarked+1)%4
+                }else{
+                    hideBookmarked = (hideBookmarked+1)%2
+                }
             }
         }
         val button = view.findViewById<Button>(R.id.pick_button).apply {

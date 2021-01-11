@@ -1,11 +1,13 @@
+ !!this app requires an existing Pixiv account (No registration in app).
  A third-party Pixiv Android client. (Android 5.0+)  with:
- * anti dns-polution support 
- * aria download speed up
- * custom file naming (save the information such as tags) 
- * one-click gather mode
+ * anti dns-pollution support
+ * aria download (speed up!)
+ * custom file naming (save the information such as tags)
+ * local pid detection & batch rename
+ * one-click collection mode
  * night mode switch 
  * multi-user support
+ * search-by-image(sauceNAO)
  * GIF play 
- * save, view, add, reply comments 
- * pid detaction
- * other enhancements
+ * save, view, add, reply comments
+and other enhancements for you to explore~

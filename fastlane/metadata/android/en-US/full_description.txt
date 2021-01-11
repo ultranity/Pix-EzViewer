@@ -1,5 +1,6 @@
  !!this app requires an existing Pixiv account (No registration in app).
- A third-party Pixiv Android client. (Android 5.0+)  with:
+
+ A third-party Pixiv.net Android client. (Android 5.0+)  with:
  * anti dns-pollution support
  * aria download (speed up!)
  * custom file naming (save the information such as tags)
@@ -8,6 +9,9 @@
  * night mode switch 
  * multi-user support
  * search-by-image(sauceNAO)
- * GIF play 
- * save, view, add, reply comments
+ * GIF play
+ * Google Translate support (need to install the app)
+ * view, add, reply comments
+ * private LIKE/FOLLOW, separate download folder
+ * sort picture by LIKE status
 and other enhancements for you to explore~

@@ -70,7 +70,7 @@ class RankingMFragment : BaseFragment(){
     var picDate: String? = null
     lateinit var viewmodel: RankingMViewModel
     lateinit var sharemodel: RankingShareViewModel
-    lateinit var rankingAdapter: RankingAdapter
+    private lateinit var rankingAdapter: RankingAdapter
     private var param1: String? = null
     private var param2: Int? = null
     
@@ -91,6 +91,12 @@ class RankingMFragment : BaseFragment(){
         }
     }
     fun lazyLoad() {
+
+        rankingAdapter = RankingAdapter(
+            R.layout.view_ranking_item,
+            null,
+            isR18on, blockTags
+        )
         viewmodel = ViewModelProvider(this).get(RankingMViewModel::class.java)
         sharemodel = ViewModelProvider(requireActivity()).get(RankingShareViewModel::class.java)
         val calendar = Calendar.getInstance()
@@ -172,11 +178,6 @@ class RankingMFragment : BaseFragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        rankingAdapter = RankingAdapter(
-            R.layout.view_ranking_item,
-            null,
-            isR18on, blockTags
-        )
         val headerView = layoutInflater.inflate(R.layout.header_mdynamics, null)
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = sharemodel.hideBookmarked.value == 1

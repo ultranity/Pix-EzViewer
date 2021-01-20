@@ -136,20 +136,18 @@ class SettingFragment : PreferenceFragmentCompat() {
         findPreference<SwitchPreference>("disableproxy")!!.apply {
             if (Works.mirrorLinkDownload||Works.mirrorLinkView)
                 summary = getString(R.string.mirror)+":"+Works.mirrorURL
-            setOnPreferenceChangeListener { preference, newValue ->
-                Toasty.normal(
-                    PxEZApp.instance,
-                    getString(R.string.needtorestart),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-                false
-            }
             setOnPreferenceClickListener {
                 showMirrorLinkDialog()
+                Works.spximg = Works.lookup(Works.opximg)
+                Works.smirrorURL = Works.lookup(Works.mirrorURL)
+                snackbar_force_restart()
+                true
+            }
+            setOnPreferenceChangeListener { preference, newValue ->
                 true
             }
         }
+
         findPreference<Preference>("storepath1")!!.apply {
             setDefaultValue(PxEZApp.storepath)
             summary = PxEZApp.storepath
@@ -170,38 +168,20 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
         }
         findPreference<ListPreference>("language")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.language = newValue.toString().toInt()
-                    val intent = Intent(context, HelloMActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    requireContext().startActivity(intent)
-                }
-                .show()
+            PxEZApp.language = newValue.toString().toInt()
+            snackbar_force_restart()
             true
         }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
 
@@ -233,12 +213,27 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.CollectMode = (newValue as String).toInt()
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }.show()
+            snackbar_restart()
             true
         }
+    }
+
+    private fun snackbar_force_restart() {
+        Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.restart_now) {
+                val intent = Intent(context, HelloMActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                requireContext().startActivity(intent)
+            }
+            .show()
+    }
+
+    private fun snackbar_restart() {
+        Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.restart_now) {
+                PxEZApp.ActivityCollector.recreate()
+            }
+            .show()
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -387,7 +382,8 @@ class SettingFragment : PreferenceFragmentCompat() {
                     } catch (e: Exception) {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
-                } else {
+                }
+                else {
                     val url = "https://github.com/ultranity/Pix-EzViewer"
                     val uri = Uri.parse(url)
                     val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -488,7 +484,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             lifecycleOwner(this@SettingFragment)
         }
         val InputEditable = Input.editableText
-        for (i in 1..descTable.childCount-1)
+        for (i in 1 until descTable.childCount)
             descTable.getChildAt(i).setOnClickListener {
                 InputEditable.insert(Input.selectionStart, it.tag.toString())
             }

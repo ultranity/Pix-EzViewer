@@ -212,26 +212,32 @@ object Works {
     }
     var mirrorLinkView = pre.getBoolean("mirrorLinkView",false)
     var mirrorLinkDownload = pre.getBoolean("mirrorLinkDownload",false)
-    var mirrorURL = pre.getString("mirrorURL","i.pximg.net")!!
-    var mirrorFormat = pre.getString("mirrorFormat","{host}/{params}")!!
     val opximg = "i.pximg.net"
-    val spximg = if (pre.getBoolean("disableproxy",false)|| mirrorURL != opximg)
-        opximg
-    else
-        ImageHttpDns.lookup(opximg)[0].hostAddress
-    fun mirror(url: String): String{
-        if (!mirrorLinkDownload)
+    var mirrorURL = pre.getString("mirrorURL",opximg)!!
+    var mirrorFormat = pre.getString("mirrorFormat","{host}/{params}")!!
+    var spximg = lookup(opximg)
+    var smirrorURL = lookup(mirrorURL)
+    fun lookup(url: String):String{
+        return if(pre.getBoolean("disableproxy",false))
+                    url
+                else
+                    ImageHttpDns.lookup(url)[0].hostAddress
+    }
+    fun mirrorLinkView(url: String) = mirror(url,mirrorLinkView)
+    fun mirrorLinkDownload(url: String)= mirror(url,mirrorLinkDownload)
+    fun mirror(url: String,mirror:Boolean=true): String{
+        if (!mirror)
             return url.replace(opximg, spximg)
-        var params = url.substringAfterLast(opximg)
-        if (mirrorFormat.equals("{host}/{params}"))
-            return url.replace(opximg, mirrorURL)
+        if (mirrorFormat == "{host}/{params}")
+            return url.replace(opximg, smirrorURL)
 
+        var params = url.substringAfterLast(opximg)
         val pname = params.substringAfterLast('/')
         params = params.trimStart('/').substringBeforeLast('/')
         val illustid = pname.substringBeforeLast("_p").toIntOrNull()
         val part = pname.substringAfterLast("_p").substringBeforeLast(".").toIntOrNull()
         val type = "."+pname.substringAfterLast(".")
-        return "https://"+mirrorFormat.replace("{host}", spximg)
+        return "https://"+mirrorFormat.replace("{host}", smirrorURL)
             .replace("{params}",params)
             .replace("{illustid}", illustid.toString())
             .replace("{part}",part.toString())
@@ -263,7 +269,7 @@ object Works {
                      else
                         illust.meta_single_page.original_image_url!!)
         //url = mirror(illust, part, url)
-        url = mirror(url)
+        url = mirrorLinkDownload(url)
         val name = illust.user.name.toLegal()
         val title = illust.title.toLegal()
         val filename = parseSaveFormat(illust, part)

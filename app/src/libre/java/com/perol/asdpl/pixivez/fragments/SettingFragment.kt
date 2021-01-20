@@ -51,20 +51,23 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.HelloMActivity
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
+import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.services.Works
 import java.io.File
 import java.io.FilenameFilter
 
 class SettingFragment : PreferenceFragmentCompat() {
     private val storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-
+    private lateinit var pre: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        pre = PreferenceManager.getDefaultSharedPreferences(activity)
         defaultComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =
@@ -129,10 +132,19 @@ class SettingFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
-        findPreference<SwitchPreference>("disableproxy")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
-                .show()
-            true
+        findPreference<SwitchPreference>("disableproxy")!!.apply {
+            if (Works.mirrorLinkDownload||Works.mirrorLinkView)
+                summary = getString(R.string.mirror)+":"+Works.mirrorURL
+            setOnPreferenceClickListener {
+                showMirrorLinkDialog()
+                Works.spximg = Works.lookup(Works.opximg)
+                Works.smirrorURL = Works.lookup(Works.mirrorURL)
+                snackbar_force_restart()
+                true
+            }
+            setOnPreferenceChangeListener { preference, newValue ->
+                true
+            }
         }
 
         findPreference<Preference>("storepath1")!!.apply {
@@ -155,36 +167,20 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
         }
         findPreference<ListPreference>("language")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.language = newValue.toString().toInt()
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            PxEZApp.language = newValue.toString().toInt()
+            snackbar_force_restart()
             true
         }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-                .setAction(R.string.restart_now) {
-                    PxEZApp.ActivityCollector.recreate()
-                }
-                .show()
+            snackbar_restart()
             true
         }
 
@@ -216,12 +212,27 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.CollectMode = (newValue as String).toInt()
-            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-            .setAction(R.string.restart_now) {
-                PxEZApp.ActivityCollector.recreate()
-            }.show()
+            snackbar_restart()
             true
         }
+    }
+
+    private fun snackbar_force_restart() {
+        Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.restart_now) {
+                val intent = Intent(context, HelloMActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                requireContext().startActivity(intent)
+            }
+            .show()
+    }
+
+    private fun snackbar_restart() {
+        Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.restart_now) {
+                PxEZApp.ActivityCollector.recreate()
+            }
+            .show()
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -231,7 +242,7 @@ class SettingFragment : PreferenceFragmentCompat() {
 //            if (requestCode == 887) {
 //                val path = data!!.getStringExtra("path")
 //                PxEZApp.storepath = path
-//                PreferenceManager.getDefaultSharedPreferences(activity).edit().putString("storepath1", PxEZApp.storepath).apply()
+//                pre.edit().putString("storepath1", PxEZApp.storepath).apply()
 //                findPreference<Preference>("storepath1")!!.apply {
 //                    summary = path
 //                }
@@ -291,10 +302,10 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "me0" -> {
-                        val url = "https://github.com/ultranity"
-                        val uri = Uri.parse(url)
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        startActivity(intent)
+                val url = "https://github.com/ultranity"
+                val uri = Uri.parse(url)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
             }
             "check" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -323,7 +334,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
             "filesaveformat" -> {
                 if (requireContext().allPermissionsGranted(storagePermissions)) {
-                    showCustomViewDialog()
+                    showSaveFormatDialog()
                 } else {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
@@ -333,19 +344,22 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "R18Folder" -> {
-                if(PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
+                if (PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
                     MaterialDialog(requireContext()).show {
                         title(R.string.block_tag)
                         message(R.string.R18_folder)
-                        input (prefill = PxEZApp.R18FolderPath,hint = "xRestrict/"){ dialog, text ->
+                        input(
+                            prefill = PxEZApp.R18FolderPath,
+                            hint = "xRestrict/"
+                        ) { dialog, text ->
                             PxEZApp.R18FolderPath =
                                 if (text.isBlank())
                                     "xRestrict/"
                                 else
-                                    text.toString().removePrefix("/").removeSuffix("/")+"/"
+                                    text.toString().removePrefix("/").removeSuffix("/") + "/"
                         }
                         positiveButton(R.string.save) { dialog ->
-                            PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                            pre.apply {
                                 putString("R18FolderPath", PxEZApp.R18FolderPath)
                             }
                             findPreference<Preference>("R18Folder")!!.apply {
@@ -399,7 +413,46 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         return super.onPreferenceTreeClick(preference)
     }
-    private fun showCustomViewDialog() {
+    private fun showMirrorLinkDialog() {
+        val binding = DialogMirrorLinkBinding.inflate(layoutInflater)
+        val descTable = binding.formatDescTable
+        val urlInput = binding.urlInput
+        val formatInput = binding.formatInput
+        val mirrorLinkDownload = binding.mirrorLinkDownload
+        val mirrorLinkView = binding.mirrorLinkView
+        mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView",false)
+        mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload",false)
+        urlInput.setText(Works.mirrorURL)
+        formatInput.setText(Works.mirrorFormat)
+        val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
+        dialog.show {
+            title(R.string.saveformat)
+            customView(view = binding.root, scrollable = true, horizontalPadding = true)
+            positiveButton(R.string.save) { dialog ->
+                Works.mirrorURL = "${urlInput.text}"
+                Works.mirrorFormat = "${formatInput.text}"
+                Works.mirrorLinkView=mirrorLinkView.isChecked
+                Works.mirrorLinkDownload=mirrorLinkDownload.isChecked
+                findPreference<Preference>("disableproxy")!!.apply {
+                    summary = Works.mirrorURL+Works.mirrorFormat
+                }
+                pre.apply {
+                    putString("mirrorURL", Works.mirrorURL)
+                    putString("mirrorFormat", Works.mirrorFormat)
+                    putBoolean("mirrorLinkView",Works.mirrorLinkView)
+                    putBoolean("mirrorLinkDownload",Works.mirrorLinkDownload)
+                }
+            }
+            negativeButton(android.R.string.cancel)
+            lifecycleOwner(this@SettingFragment)
+        }
+        val urlInputEditable = formatInput.editableText
+        for (i in 1 until descTable.childCount)
+            descTable.getChildAt(i).setOnClickListener {
+                urlInputEditable.insert(formatInput.selectionStart, it.tag.toString())
+            }
+    }
+    private fun showSaveFormatDialog() {
         // Setup custom view content
         val binding = CustomformatviewBinding.inflate(layoutInflater)
         val descTable = binding.formatDescTable
@@ -414,14 +467,14 @@ class SettingFragment : PreferenceFragmentCompat() {
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
             positiveButton(R.string.save) { dialog ->
                 PxEZApp.saveformat = "${Input.text}"
-                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                pre.apply {
                     putString("filesaveformat", PxEZApp.saveformat)
                 }
                 findPreference<Preference>("filesaveformat")!!.apply {
                     summary = PxEZApp.saveformat
                 }
                 PxEZApp.TagSeparator = "${tagSeparator.text}"
-                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                pre.apply {
                     putString("TagSeparator", PxEZApp.TagSeparator)
                 }
             }
@@ -431,22 +484,22 @@ class SettingFragment : PreferenceFragmentCompat() {
         val InputEditable = Input.editableText
         for (i in 1 until descTable.childCount)
             descTable.getChildAt(i).setOnClickListener {
-                InputEditable.insert(Input.selectionStart,it.tag.toString())
+                InputEditable.insert(Input.selectionStart, it.tag.toString())
             }
         for (i in 1 until sampleTable.childCount)
             sampleTable.getChildAt(i).setOnClickListener {
                 InputEditable.clear()
-                InputEditable.insert(0,it.tag.toString())
+                InputEditable.insert(0, it.tag.toString())
             }
     }
 
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(initialDirectory=File(PxEZApp.storepath),allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
-                    PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                    pre.apply {
                         putString("storepath1", PxEZApp.storepath)
                     }
                     findPreference<Preference>("storepath1")!!.apply {

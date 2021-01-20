@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_features">"一部の機能は、メニューや長押しに隠された、そしてより直感試行によって\n"</string>
 	<string name="app_help">
 		"0. このアプリケーションは無料です。お支払いいただいた場合は、すぐに払い戻しをリクエストし、否定的なレビューを行ってください！\ n"
@@ -239,7 +238,7 @@
 	<string name="welcomePR">あなたがしたいと、このアプリケーションを改善するための能力を持っている場合は、PRを歓迎しました</string>
 	<string name="donate">寄付</string>
 	<string name="sample_title">サンプル：クリック自動設定</string>
-	<string name="hide_downloaded_detail"><![CDATA[現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzous.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID ]]> </string>
+	<string name="hide_downloaded_detail">現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzous.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID  </string>
 	<string name="hide_downloaded_summary">隠すダウンロード機能は、追加の非ネイティブ記録することができます：</string>
 	<string name="selectAll">すべて選択</string>
 	<string name="sortPic">ソート/フィルタ</string>
@@ -257,7 +256,8 @@
 	<string name="params_desc">{time}/{ILLUSTID}_p{part}{type}を含むオリジナルのパラメータ</string>
 	<string name="mirror_link_download">ダウンロード時にミラーを有効にします</string>
 	<string name="mirror_link_view">閲覧時にイメージを有効にします</string>
-	<string name="i_pximg_net">i.pximg.net</string>
 	<string name="icon_draw_by">描画：你主人(探姬);HK流星(MD)</string>
 	<string name="set_mirror">クリックしてミラーステーションを設定します</string>
+	<string name="login_expired">ログインが異常です、またログインしてください</string>
+	<string name="token_expired">ID情報が期限切れになったら、さわやかにお待ちください</string>
 </resources>

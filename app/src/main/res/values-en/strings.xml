@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_features">"Some features hidden in the menu or long press, and more by intuition attempt\n"</string>
 	<string name="app_help">
         "0. This is a free app. If you paid for it, please immediately ask for a refund and make a negative comment! \n"
@@ -239,7 +238,7 @@
 	<string name="welcomePR">If you want and have the ability to help improve this application, submit PR to us!</string>
 	<string name="donate">Donate</string>
 	<string name="sample_title">Sample: click auto set</string>
-	<string name="hide_downloaded_detail"><![CDATA[Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged program here</a>]]> </string>
+	<string name="hide_downloaded_detail">Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged program here</a> </string>
 	<string name="hide_downloaded_summary">Hide download function can record additional non-native:</string>
 	<string name="selectAll">Select all</string>
 	<string name="sortPic">Sort / filter</string>
@@ -259,4 +258,6 @@
 	<string name="mirror_link_view">Use mirror website when viewing</string>
 	<string name="icon_draw_by">Drawing by:你主人(探姬);HK流星(MD) </string>
 	<string name="set_mirror">Click to set the mirror website</string>
+	<string name="login_expired">Login expired, please login again</string>
+	<string name="token_expired">Token expired, please wait for refreshing</string>
 </resources>

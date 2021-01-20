@@ -54,6 +54,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String? = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
     private var client_secret: String? = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
+    private val TOKEN_ERROR_2 = "Invalid refresh token"
     private var oAuthSecureService: OAuthSecureService? = null
     private var i = 0
     private val maxRetries = 3
@@ -77,6 +78,21 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                 return@Function Observable.error<Any>(throwable)
             } else if (throwable is HttpException) {
                 if (throwable.response()!!.code() == 400) {
+                    if (throwable.message().contains(TOKEN_ERROR))
+                        Toasty.info(
+                            PxEZApp.instance,
+                            PxEZApp.instance.getString(R.string.token_expired),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    if (throwable.message().contains(TOKEN_ERROR_2))
+                    {
+                        Toasty.info(
+                            PxEZApp.instance,
+                            PxEZApp.instance.getString(R.string.login_expired),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Function Observable.error<Any>(throwable)
+                    }
                     retryCount++
                     Log.d("init","400 retryCount $retryCount refreshing $refreshing")
                         if (refreshing && retryCount <= maxRetries-1)

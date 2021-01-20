@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Pix-EzViewer</string>
 	<string name="app_features">"部分功能隱藏於菜單或長按後，多按直覺嘗試\n"</string>
 	<string name="app_help">
 		"0. 本應用是免費應用，如果您付費購買，請立即請求退款並打差評！\n"
@@ -239,7 +238,7 @@
 	<string name="welcomePR">如果你希望且有能力幫助改進這個應用，歡迎PR</string>
 	<string name="donate">捐贈</string>
 	<string name="sample_title">Sample:點擊自動設置</string>
-	<string name="hide_downloaded_detail">默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供<a href ="https://wwa.lanzous.com/iQB4Rigc7yh">PC打包藍奏雲</a> </string>
+	<string name="hide_downloaded_detail">默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供 </string>
 	<string name="hide_downloaded_summary">隱藏已下載功能可以附加非本機記錄：</string>
 	<string name="selectAll">全選</string>
 	<string name="sortPic">排序/篩選</string>
@@ -259,4 +258,6 @@
 	<string name="mirror_link_view">瀏覽時啟用鏡像</string>
 	<string name="icon_draw_by">你主人(探姬);HK流星(MD)繪製</string>
 	<string name="set_mirror">點擊可設置鏡像站</string>
+	<string name="login_expired">登錄狀態異常，請重新登錄</string>
+	<string name="token_expired">身份信息過期，請等待刷新</string>
 </resources>

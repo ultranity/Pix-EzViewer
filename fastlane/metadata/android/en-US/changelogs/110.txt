@@ -1,0 +1,4 @@
+## 1.7.7R:
+- [x] fix: SNI connection
+- [x] feature: custom image mirror-site
+- [x] update: translation

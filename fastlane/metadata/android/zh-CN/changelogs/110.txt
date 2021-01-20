@@ -1,0 +1,4 @@
+## 1.7.7R:
+- [x] fix: SNI 连接
+- [x] feature: 自定义镜像站
+- [x] update: 翻译调整

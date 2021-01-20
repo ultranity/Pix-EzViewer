@@ -16,6 +16,7 @@
         "9. このアプリケーションは、クラッシュ情報以外の重要でない情報を収集しません"
 		"\nこのヘルプは設定ページで再開くことができます。"
 	</string>
+	<string name="login_help_md">＃トラブルシューティングヘルプ\ N \ Nログインしている場合は、プロンプト\ N \ n```hell \ n http 400不正な要求\ n`` \ n \ n次の手順を試してください\ N1アプリケーションが最新のGoogleであることを確認してください。 </string>
 	<string name="follow">follow</string>
 	<string name="click">click</string>
 	<string name="support_string">フィードバックEメール：githubの星を経由してPix-Ez@outlook.com歓迎のフィードバックは、ページにジャンプすることができます私にコーヒーを喜ば</string>
@@ -25,8 +26,8 @@
 	<string name="support_static">ラフ統計は、あなたは、枚数の近景に達しPixEz：％1 $ sの！</string>
 	<string name="ali">アリペイへジャンプ</string>
 	<string name="wechat">微信へジャンプ</string>
+	<string name="thanks_to">感謝</string>
 	<string name="thanks">ありがとうございます: 腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61，果干辣，吸血姬，逢田梨香子的老公,吃猫的咸鱼等</string>
-	<string name="configure">設定</string>
 	<string name="img_manager">ピクチャー</string>
 	<string name="checkupdate">確認</string>
 	<string name="_18">R-18コンテンツを隠さない</string>
@@ -208,12 +209,9 @@
 	<string name="attention">注意</string>
 	<string name="customformat_token">名前</string>
 	<string name="customformat_result">結果（自動的に記入します）</string>
-	<string name="post_comment">送信</string>
 	<string name="summary_thanks">ご協力ありがとうございます：</string>
 	<string name="following">ユーザー懸念</string>
 	<string name="followers">フォロワー</string>
-	<string name="empty">空の</string>
-	<string name="advices">アドバイス</string>
 	<string name="pixivision_desc2">これは、\ n型メディアの作成を提供するために、鈍い人々の生活に不本意です！</string>
 	<string name="change_to_first">最初のものを変更</string>
 	<string name="notsf_subtext">開発、テスト、リリース</string>
@@ -234,10 +232,8 @@
 	<string name="read_it">必ずお読みください</string>
 	<string name="hide_downloaded">非表示画像をダウンロード</string>
 	<string name="only_bookmarked">唯一のコレクションを表示</string>
-	<string name="dark">闇</string>
-	<string name="like">好む</string>
-	<string name="private_">民間</string>
-	<string name="state">プログレス</string>
+	<string name="comment_successful">コメント成功！</string>
+	<string name="rate_limited">レート制限。</string>
 	<string name="enableonlybookmarked">コレクションを許可のみ表示</string>
 	<string name="supportsummary">あなたが考える場合は、このアプリケーションは、何、それをサポートするために、も良いです</string>
 	<string name="welcomePR">あなたがしたいと、このアプリケーションを改善するための能力を持っている場合は、PRを歓迎しました</string>
@@ -251,5 +247,17 @@
 	<string name="create_time">作成した</string>
 	<string name="default_config">デフォルト</string>
 	<string name="other">他の</string>
-	<string name="comment_successful">コメント成功！</string>
+	<string name="PR">貢献</string>
+	<string name="action_export">書き出す</string>
+	<string name="action_import">インポート</string>
+	<string name="mirror">ミラーサイト</string>
+	<string name="url">URL</string>
+	<string name="format">フォーマット</string>
+	<string name="mirror_link_hint">i.pximg.netミラーのWebサイトは、i.pixiv.cat、original.img.pixivic.netなどのURLに設定されています。</string>
+	<string name="params_desc">{time}/{ILLUSTID}_p{part}{type}を含むオリジナルのパラメータ</string>
+	<string name="mirror_link_download">ダウンロード時にミラーを有効にします</string>
+	<string name="mirror_link_view">閲覧時にイメージを有効にします</string>
+	<string name="i_pximg_net">i.pximg.net</string>
+	<string name="icon_draw_by">描画：你主人(探姬);HK流星(MD)</string>
+	<string name="set_mirror">クリックしてミラーステーションを設定します</string>
 </resources>

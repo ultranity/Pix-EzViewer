@@ -16,6 +16,7 @@
         "9. 本應用不收集除崩潰信息以外的非必要信息"
 		"\n本頁可以在設定中重新查看"
 	</string>
+	<string name="login_help_md"># TroubleShoot幫助\n\n如果你登錄時提示\n\n```shell\n http 400 bad request\n```\n\n請嘗試以下步驟\n1. 確保應用是最新的，到google </string>
 	<string name="follow">關注</string>
 	<string name="click">點擊</string>
 	<string name="support_string">反饋郵箱：Pix-Ez@outlook.com 歡迎通過github 反饋及star 也可以通過關於頁面跳轉請我喝杯咖啡</string>
@@ -25,6 +26,7 @@
 	<string name="support_static">粗略統計，您使用PixEz收圖張數已達：%1$s !</string>
 	<string name="ali">跳轉到支付寶</string>
 	<string name="wechat">跳轉到微信</string>
+	<string name="thanks_to">感謝</string>
 	<string name="thanks">感謝腐奇，爱酱,Snake，PoisonBCat,涛灬,万物皆虚,繁落,碘酒,betray,right now,niconiconi,firok,YAMAHA,OneMice,SC61幫助我測試的弹幕委员会的熱心你群群友們，以及提供會員帳號的果干辣，還有積極提供建議的吸血姬，逢田梨香子的老公,吃猫的咸鱼等熱心用戶們</string>
 	<string name="img_manager">圖片管理</string>
 	<string name="checkupdate">檢查更新</string>
@@ -230,12 +232,14 @@
 	<string name="read_it">請務必讀完</string>
 	<string name="hide_downloaded">隱藏已下載圖片</string>
 	<string name="only_bookmarked">只顯示已收藏</string>
+	<string name="comment_successful">评论成功！</string>
+	<string name="rate_limited">速率有限。</string>
 	<string name="enableonlybookmarked">允許僅顯示已收藏</string>
 	<string name="supportsummary">如果你覺得這個應用還不錯，支持一下吧</string>
 	<string name="welcomePR">如果你希望且有能力幫助改進這個應用，歡迎PR</string>
 	<string name="donate">捐贈</string>
 	<string name="sample_title">Sample:點擊自動設置</string>
-	<string name="hide_downloaded_detail"><![CDATA[默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供<a href ="https://wwa.lanzous.com/iQB4Rigc7yh">PC打包藍奏雲</a>]]> </string>
+	<string name="hide_downloaded_detail">默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供<a href ="https://wwa.lanzous.com/iQB4Rigc7yh">PC打包藍奏雲</a> </string>
 	<string name="hide_downloaded_summary">隱藏已下載功能可以附加非本機記錄：</string>
 	<string name="selectAll">全選</string>
 	<string name="sortPic">排序/篩選</string>
@@ -243,5 +247,16 @@
 	<string name="create_time">創作時間</string>
 	<string name="default_config">默認</string>
 	<string name="other">其它</string>
-	<string name="comment_successful">评论成功！</string>
+	<string name="PR">貢獻</string>
+	<string name="action_export">導出</string>
+	<string name="action_import">導入</string>
+	<string name="mirror">鏡像</string>
+	<string name="url">URL.</string>
+	<string name="format">格式</string>
+	<string name="mirror_link_hint">URL中設置的i.pximg.net鏡像網站，如i.pixiv.cat，original.img.pixivic.net等</string>
+	<string name="params_desc">original參數,包括{time}/{illustid}_p{part}{type}</string>
+	<string name="mirror_link_download">下載時啟用鏡像</string>
+	<string name="mirror_link_view">瀏覽時啟用鏡像</string>
+	<string name="icon_draw_by">你主人(探姬);HK流星(MD)繪製</string>
+	<string name="set_mirror">點擊可設置鏡像站</string>
 </resources>

@@ -293,4 +293,16 @@
     <string name="default_config">默认</string>
     <string name="other">其它</string>
     <string name="PR">贡献</string>
+    <string name="action_export">导出</string>
+    <string name="action_import">导入</string>
+    <string name="mirror">镜像</string>
+    <string name="url">URL</string>
+    <string name="format">格式</string>
+    <string name="mirror_link_hint">URL中设置的i.pximg.net镜像网站，如i.pixiv.cat，original.img.pixivic.net等</string>
+    <string name="params_desc">original参数,包括{time}/{illustid}_p{part}{type}</string>
+    <string name="mirror_link_download">下载时启用镜像</string>
+    <string name="mirror_link_view">浏览时启用镜像</string>
+    <string name="i_pximg_net">i.pximg.net</string>
+    <string name="icon_draw_by">你主人(探姬);HK流星(MD)绘制</string>
+    <string name="set_mirror">点击可设置镜像站</string>
 </resources>

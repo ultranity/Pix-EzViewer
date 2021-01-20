@@ -52,7 +52,7 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-// pixvision
+// pixvision - deprecated
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
     private val retrofitRepository  = RetrofitRepository.getInstance()

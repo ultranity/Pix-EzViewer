@@ -61,12 +61,12 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
 
     constructor(context: Context) : super() {
         this.oAuthSecureService =
-            RestClient().getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+            RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
     }
 
     private constructor() {
         this.oAuthSecureService =
-            RestClient().getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+            RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
     }
 
     @Throws(Exception::class)

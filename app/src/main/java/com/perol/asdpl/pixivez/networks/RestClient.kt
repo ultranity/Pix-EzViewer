@@ -34,6 +34,7 @@ import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
+import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -52,8 +53,9 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.X509TrustManager
 
 
-class RestClient {
-    private val httpsDns by lazy { RubyHttpDns() }
+object RestClient {
+    private val httpsDns by lazy { RubyHttpDns }
+    private val imageHttpDns by lazy { ImageHttpDns }
     private val local = LanguageUtil.langToLocale(PxEZApp.language)
     private val disableProxy by lazy { PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false)}
     private val pixivOkHttpClient: OkHttpClient by lazy {
@@ -62,9 +64,8 @@ class RestClient {
             override fun intercept(chain: Interceptor.Chain): Response {
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
-                    .addHeader("Accept-Language", "${local.language}_${local.country}")
-                    .removeHeader("User-Agent")
-                    .addHeader(
+                    .header("Accept-Language", "${local.language}_${local.country}")
+                    .header(
                         "User-Agent",
                         "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                     )
@@ -74,7 +75,7 @@ class RestClient {
 
 
         })
-        proxySocket(builder)
+            .httpProxySocket()
 
         return@lazy builder.build()
     }
@@ -87,24 +88,23 @@ class RestClient {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original = chain.request()
                     val requestBuilder = original.newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader(
+                        .header(
                             "User-Agent",
                             "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                         )
-                        .addHeader("referer", "https://app-api.pixiv.net/")
+                        .header("referer", "https://app-api.pixiv.net/")
                     val request = requestBuilder.build()
                     return chain.proceed(request)
                 }
-            }).dns(ImageHttpDns())
+            }).dns(imageHttpDns)
             return builder.build()
         }
 
 
     private val gson = GsonBuilder().create()
-    val retrofitAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",okHttpClient("app-api.pixiv.net"))
+    val retrofitAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",okHttpClient("app-api.pixiv.net"))
 
-    val pixivisionAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",pixivOkHttpClient)
+    val pixivisionAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
 
     val retrofitAccount = buildRetrofit(if(disableProxy) "https://accounts.pixiv.net" else "https://210.140.131.219",okHttpClient("accounts.pixiv.net"))
     private val HashSalt =
@@ -178,7 +178,7 @@ class RestClient {
             }
         })
 //                .addInterceptor(httpLoggingInterceptor)
-        proxySocket(builder)
+            .httpProxySocket()
         builder.connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
@@ -186,16 +186,19 @@ class RestClient {
             .build()
     }
 
-    private fun proxySocket(builder: OkHttpClient.Builder) {
+    fun OkHttpClient.Builder.httpProxySocket() = proxySocket(httpsDns)
+    fun OkHttpClient.Builder.imageProxySocket() = proxySocket(imageHttpDns)
+    private fun OkHttpClient.Builder.proxySocket(dns: Dns = httpsDns): OkHttpClient.Builder {
         if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean(
                 "disableproxy",
                 false
             )
         ) {
-            builder.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
+            this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
                 .hostnameVerifier { p0, p1 -> true }
-            builder.dns(httpsDns)
+            this.dns(dns)
         }
+        return this
     }
 
     fun getRetrofitGIF(): Retrofit {
@@ -219,7 +222,7 @@ class RestClient {
     }
 
     fun getRetrofitOauthSecure(): Retrofit {
-        return buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.188",okHttpClient("oauth.secure.pixiv.net"))
+        return buildRetrofit(if(disableProxy) "https://oauth.secure.pixiv.net/" else "https://210.140.131.209",okHttpClient("oauth.secure.pixiv.net"))
     }
 
 }

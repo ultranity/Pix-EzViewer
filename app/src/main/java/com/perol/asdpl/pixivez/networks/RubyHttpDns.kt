@@ -30,7 +30,7 @@ import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
-class RubyHttpDns : Dns {
+object RubyHttpDns : Dns {
     private val addressList = mutableListOf<InetAddress>()
     private val service =
         ServiceFactory.create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
@@ -38,6 +38,9 @@ class RubyHttpDns : Dns {
     override fun lookup(hostname: String): List<InetAddress> {
         if (addressList.isNotEmpty()) return addressList
         val defaultList = listOf(
+            "210.140.131.218",
+            "210.140.131.208",
+            "210.140.131.209",
             "210.140.131.187",
             "210.140.131.188",
             "210.140.131.189"

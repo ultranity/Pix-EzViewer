@@ -27,18 +27,15 @@ package com.perol.asdpl.pixivez.manager
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.view.MenuInflater
-import android.view.LayoutInflater
+import android.view.*
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.files.fileChooser
+import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
@@ -55,6 +52,7 @@ import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import org.jetbrains.annotations.NotNull
+import java.io.File
 
 
 class DownloadTaskAdapter :
@@ -197,7 +195,7 @@ class DownLoadManagerFragment : Fragment() {
                     Thread.sleep(2000)
                     // restart other failed task
                     Aria.download(this).allNotCompleteTask?.forEach {
-                        if(it.state == 0) {
+                        if (it.state == 0) {
                             Aria.download(this).load(it.id).cancel(true)
                             Thread.sleep(500)
                             val illustD = Gson().fromJson(it.str, IllustD::class.java)
@@ -210,7 +208,7 @@ class DownLoadManagerFragment : Fragment() {
                             Thread.sleep(300)
                         }
                     }
-                    activity?.runOnUiThread{
+                    activity?.runOnUiThread {
                         val taskList = Aria.download(this).taskList
                         if (taskList?.isNotEmpty() == true)
                             downloadTaskAdapter.setNewData(taskList.asReversed())
@@ -228,11 +226,41 @@ class DownLoadManagerFragment : Fragment() {
                 }).start()
             }
             R.id.action_stop -> {
-            Aria.download(context).stopAllTask()
+                Aria.download(context).stopAllTask()
             }
 
             R.id.action_restart -> {
                 PxEZApp.ActivityCollector.recreate()
+            }
+            R.id.action_export -> {
+                MaterialDialog(requireContext()).show {
+                    folderChooser(
+                        allowFolderCreation = true
+                    ) { _, folder ->
+                        val writer  = File(folder.absolutePath+ File.separatorChar+"download.log")
+                            .writer()
+                        Aria.download(this).taskList.map {
+                            writer.appendLine(it.url.substringAfterLast("/"))
+                        }
+                        writer.flush()
+                        writer.close()
+                    }
+                }
+            }
+            R.id.action_import -> {
+                MaterialDialog(requireContext()).show {
+                    fileChooser(filter = { it.isDirectory || it.extension=="log"})
+                    { _, file ->
+                        file.readLines().forEach {
+                            it.split("_p",".").let {
+                                val pid = it[0].toLongOrNull()
+                                val part = it[1].toIntOrNull()
+                                if (pid!=null && part!=null)
+                                    Works.imgD(pid,part)
+                            }
+                        }
+                    }
+                }
             }
         }
         val taskList = Aria.download(this).taskList

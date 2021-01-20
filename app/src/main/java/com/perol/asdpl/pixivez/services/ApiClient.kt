@@ -125,7 +125,7 @@ object ApiClient {
         ) {
             builder1.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
                 .hostnameVerifier { p0, p1 -> true }
-            builder1.dns(RubyHttpDns())
+            builder1.dns(RubyHttpDns)
         }
         builder.client(client).build()
     }

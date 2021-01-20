@@ -29,7 +29,7 @@ import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
-class ImageHttpDns : Dns {
+object ImageHttpDns : Dns {
 
     private val addressList = mutableListOf<InetAddress>()
     private val service =
@@ -38,7 +38,7 @@ class ImageHttpDns : Dns {
     override fun lookup(hostname: String): List<InetAddress> {
         if (addressList.isNotEmpty()) return addressList
         val defaultList = listOf(
-            "210.140.92.136", "210.140.92.137", "210.140.92.145"
+            "210.140.92.140", "210.140.92.137", "210.140.92.145"
         ).map { InetAddress.getByName(it) }
         try {
             val response = service.queryDns(name = hostname).blockingSingle()

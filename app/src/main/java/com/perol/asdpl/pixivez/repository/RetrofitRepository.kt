@@ -46,14 +46,13 @@ import retrofit2.HttpException
 class RetrofitRepository {
 
 
-    var restClient = RestClient()
     var appApiPixivService: AppApiPixivService
     var sharedPreferencesServices: SharedPreferencesServices
     var gifApiPixivService: AppApiPixivService
     var reFreshFunction: ReFreshFunction
     init {
-        appApiPixivService = restClient.retrofitAppApi.create(AppApiPixivService::class.java)
-        gifApiPixivService = restClient.getRetrofitGIF().create(AppApiPixivService::class.java)
+        appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
+        gifApiPixivService = RestClient.getRetrofitGIF().create(AppApiPixivService::class.java)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         reFreshFunction = ReFreshFunction.getInstance()
         if (System.currentTimeMillis() - PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getLong("lastRefresh",0)

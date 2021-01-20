@@ -46,17 +46,17 @@ import java.util.*
 class NewUserActivity : RinkActivity() {
     private val Authorization = "Bearer l-f9qZ0ZyqSwRyZs8-MymbtWBbSxmCu1pmbOlyisou8"
     private var accountPixivService: AccountPixivService? = null
-    private var restClient: RestClient? = null
+    private var RestClient: RestClient? = null
     private var sharedPreferencesServices: SharedPreferencesServices? = null
     private var oAuthSecureService: OAuthSecureService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_user)
-        restClient = RestClient()
-        accountPixivService = restClient!!.retrofitAccount.create(AccountPixivService::class.java)
+        RestClient = RestClient
+        accountPixivService = RestClient!!.retrofitAccount.create(AccountPixivService::class.java)
         oAuthSecureService =
-            restClient!!.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+            RestClient!!.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
         sharedPreferencesServices = SharedPreferencesServices(applicationContext)
         button_login.setOnClickListener {
             if (edittext_username.text.toString().isNotBlank()) {

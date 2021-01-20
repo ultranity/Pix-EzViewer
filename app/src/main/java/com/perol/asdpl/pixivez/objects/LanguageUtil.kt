@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.objects
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import android.os.LocaleList
 import androidx.annotation.IntDef
 import java.util.*
 
@@ -12,7 +13,17 @@ object LanguageUtil {
         val resources = context.resources
         val configuration = resources.configuration
         val displayMetrics = resources.displayMetrics
-        configuration.setLocale(langToLocale(localeToLang(langToLocale(language))))
+        val newLocale = langToLocale(localeToLang(langToLocale(language)))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.setLocale(newLocale)
+            val localeList = LocaleList(newLocale)
+            LocaleList.setDefault(localeList)
+            configuration.setLocales(localeList)
+            context.createConfigurationContext(configuration)
+        } else {
+            configuration.setLocale(newLocale)
+            context.createConfigurationContext(configuration)
+        }
         // https://developer.android.com/reference/android/content/res/Resources.html#updateConfiguration(android.content.res.Configuration,%20android.util.DisplayMetrics).
         resources.updateConfiguration(
             configuration,

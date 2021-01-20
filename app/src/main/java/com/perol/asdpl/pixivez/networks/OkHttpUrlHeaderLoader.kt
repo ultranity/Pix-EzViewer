@@ -29,6 +29,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.*
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
+import com.perol.asdpl.pixivez.networks.RestClient.imageProxySocket
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
@@ -39,7 +40,7 @@ class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
 
         //添加拦截器到Glide
         val builder = OkHttpClient.Builder()
-        builder.addInterceptor(ProgressInterceptor())
+        .imageProxySocket()
         val okHttpClient = builder.build()
         return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
     }
@@ -60,11 +61,11 @@ class OkHttpUrlHeaderLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, 
 
     override fun getHeaders(model: String?, width: Int, height: Int, options: Options?): Headers? {
         return LazyHeaders.Builder()
-            .addHeader(
+            .setHeader(
                 "User-Agent",
                 "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
             )
-                .addHeader("referer", "https://app-api.pixiv.net/")
+                .setHeader("referer", "https://app-api.pixiv.net/")
                 .build()
     }
 

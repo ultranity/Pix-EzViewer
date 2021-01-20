@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.services
 
+import android.content.SharedPreferences
 import android.media.MediaScannerConnection
 import android.os.Looper
 import android.webkit.MimeTypeMap
@@ -34,10 +35,13 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 fun String.toLegal(): String {
@@ -49,6 +53,7 @@ fun String.toLegal(): String {
 
 data class IllustD(
     var id: Long = 0,
+    var part: Int = 0,
     var preview: String? = null,
     var userId: Long = 0,
     var userName: String? = null,
@@ -77,6 +82,8 @@ fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit:In
     return result
 }
 object Works {
+
+    val pre: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
     fun parseSaveFormat(illust: Illust, part: Int?=null): String {
         return parseSaveFormat(illust, part, PxEZApp.saveformat,PxEZApp.TagSeparator,PxEZApp.R18Folder )
     }
@@ -146,7 +153,6 @@ object Works {
         val name = illust.user.name.toLegal()
         val userid = illust.user.id
         val filename = parseSaveFormat(illust, part)
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
             "${PxEZApp.storepath}/${name}_${userid}"
@@ -204,17 +210,63 @@ object Works {
                 ).addHeader("referer", "https://app-api.pixiv.net/")
             }
     }
+    var mirrorLinkView = pre.getBoolean("mirrorLinkView",false)
+    var mirrorLinkDownload = pre.getBoolean("mirrorLinkDownload",false)
+    var mirrorURL = pre.getString("mirrorURL","i.pximg.net")!!
+    var mirrorFormat = pre.getString("mirrorFormat","{host}/{params}")!!
+    val opximg = "i.pximg.net"
+    val spximg = if (pre.getBoolean("disableproxy",false)|| mirrorURL != opximg)
+        opximg
+    else
+        ImageHttpDns.lookup(opximg)[0].hostAddress
+    fun mirror(url: String): String{
+        if (!mirrorLinkDownload)
+            return url.replace(opximg, spximg)
+        var params = url.substringAfterLast(opximg)
+        if (mirrorFormat.equals("{host}/{params}"))
+            return url.replace(opximg, mirrorURL)
 
+        val pname = params.substringAfterLast('/')
+        params = params.trimStart('/').substringBeforeLast('/')
+        val illustid = pname.substringBeforeLast("_p").toIntOrNull()
+        val part = pname.substringAfterLast("_p").substringBeforeLast(".").toIntOrNull()
+        val type = "."+pname.substringAfterLast(".")
+        return "https://"+mirrorFormat.replace("{host}", spximg)
+            .replace("{params}",params)
+            .replace("{illustid}", illustid.toString())
+            .replace("{part}",part.toString())
+            .replace("{type}",type)
+    }
+    fun mirror(illust: Illust, part: Int?, url: String): String{
+        var params = url.substringAfterLast(opximg).trimStart('/')
+        val pname = params.substringAfterLast('/')
+        params = params.substringBeforeLast('/')
+        //val illustid = pname.substringBeforeLast("_p").toIntOrNull()
+        //val part = pname.substringAfterLast("_p").substringBeforeLast(".").toIntOrNull()
+        val type = "."+pname.substringAfterLast(".")
+        return "https://"+ mirrorFormat.replace("{host}", spximg)
+                                        .replace("{params}",params)
+                                        .replace("{illustid}", illust.id.toString())
+                                        .replace("{part}",part?.toString()?:"0")
+                                        .replace("{type}",type)
+    }
+    fun imgD(pid: Long, part: Int?) {
+            RetrofitRepository.getInstance().getIllust(pid)
+                .subscribeOn(Schedulers.io()).map {
+                    imgD(it.illust,part)
+                }
+                .observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
     fun imgD(illust: Illust, part: Int?) {
-        val url = if (part != null && illust.meta_pages.isNotEmpty())
+        var url = (if (part != null && illust.meta_pages.isNotEmpty())
                         illust.meta_pages[part].image_urls.original
                      else
-                        illust.meta_single_page.original_image_url!!
+                        illust.meta_single_page.original_image_url!!)
+        //url = mirror(illust, part, url)
+        url = mirror(url)
         val name = illust.user.name.toLegal()
         val title = illust.title.toLegal()
         val filename = parseSaveFormat(illust, part)
-
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
             "${PxEZApp.storepath}/${name}_${illust.user.id}"
@@ -230,6 +282,7 @@ object Works {
         }
         val illustD = IllustD(
             id = illust.id,
+            part = part?:0,
             preview = illust.image_urls.square_medium,
             userName = name,
             userId = illust.user.id,
@@ -255,7 +308,6 @@ object Works {
         val userName = illust.user.name.toLegal()
         val user = illust.user.id
         val name = illust.id
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance);
         val format = pre.getString(
             "saveformat",
             "0"

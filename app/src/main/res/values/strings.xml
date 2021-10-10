@@ -307,4 +307,5 @@
     <string name="set_mirror">点击可设置镜像站</string>
     <string name="login_expired">登录过期，请重新登录</string>
     <string name="token_expired">身份信息过期，请等待刷新</string>
+    <string name="webview_login">请使用上方浏览器登录</string>
 </resources>

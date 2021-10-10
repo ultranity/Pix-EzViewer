@@ -189,10 +189,6 @@ class LoginActivity : RinkActivity() {
                         )
 
                         sharedPreferencesServices.setBoolean("isnone", false)
-                        sharedPreferencesServices.setString(
-                            "Device_token",
-                            pixivOAuthResponse.response.device_token
-                        )
                     }
                 }
 

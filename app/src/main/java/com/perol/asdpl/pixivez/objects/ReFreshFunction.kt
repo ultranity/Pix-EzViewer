@@ -149,10 +149,8 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                 Toast.LENGTH_SHORT
             ).show()
         Log.d("init","reFreshToken")
-        SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthToken(
-            client_id, client_secret, "refresh_token", it.Refresh_token,
-            it.Device_token, true
+            client_id, client_secret, "refresh_token", it.Refresh_token, true
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .doOnNext { pixivOAuthResponse ->
                     val user = pixivOAuthResponse.response.user
@@ -164,7 +162,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                         user.name,
                         user.mail_address,
                         user.isIs_premium,
-                        pixivOAuthResponse.response.device_token,
+                        "",
                         pixivOAuthResponse.response.refresh_token,
                         "Bearer " + pixivOAuthResponse.response.access_token
                     )

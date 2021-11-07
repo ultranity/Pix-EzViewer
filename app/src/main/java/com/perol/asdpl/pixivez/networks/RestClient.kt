@@ -68,7 +68,7 @@ object RestClient {
                     .header("Accept-Language", "${local.language}_${local.country}")
                     .header(
                         "User-Agent",
-                        "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                        "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                     )
                 val request = requestBuilder.build()
                 return chain.proceed(request)

@@ -260,4 +260,5 @@
 	<string name="set_mirror">Click to set the mirror website</string>
 	<string name="login_expired">Login expired, please login again</string>
 	<string name="token_expired">Token expired, please wait for refreshing</string>
+	<string name="webview_login">Please use the browser above to login</string>
 </resources>

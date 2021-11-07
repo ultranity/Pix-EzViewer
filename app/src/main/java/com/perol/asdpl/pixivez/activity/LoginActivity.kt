@@ -65,8 +65,7 @@ import java.io.IOException
 import java.util.*
 
 class LoginActivity : RinkActivity() {
-    private var username: String? = null
-    private var password: String? = null
+    lateinit var oAuthSecureService: OAuthSecureService
     lateinit var sharedPreferencesServices: SharedPreferencesServices
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +82,11 @@ class LoginActivity : RinkActivity() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         initBind()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loginBtn.isEnabled = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,19 +108,13 @@ class LoginActivity : RinkActivity() {
     private fun initBind() {
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         try {
-
-            if (sharedPreferencesServices.getString("password") != null) {
-                edit_password!!.setText(sharedPreferencesServices.getString("password"))
-                edit_username!!.setText(sharedPreferencesServices.getString("username"))
-            }
             if (!sharedPreferencesServices.getBoolean("firstinfo")) {
                 FirstInfoDialog().show(this.supportFragmentManager, "infodialog")
             }
         } catch (e: Exception) {
 
         }
-        val oAuthSecureService =
-            RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+        oAuthSecureService = RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
         textview_help.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val view = layoutInflater.inflate(R.layout.new_dialog_user_help, null)
@@ -137,164 +135,110 @@ class LoginActivity : RinkActivity() {
             builder.create().show()
         }
 
-        edit_username.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // Ignore.
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Ignore.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                accountTextInputLayout.isErrorEnabled = false
-            }
-        })
-        edit_password.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // Ignore.
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Ignore.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                passwordTextInputLayout.isErrorEnabled = false
-            }
-        })
-
         loginBtn!!.setOnClickListener {
-
-            username = edit_username!!.text.toString().trim()
-            password = edit_password!!.text.toString()
-
-            if (username.isNullOrBlank()) accountTextInputLayout.error =
-                getString(R.string.error_blank_account)
-
-            if (password.isNullOrBlank()) passwordTextInputLayout.error =
-                getString(R.string.error_blank_password)
-
-            if (username.isNullOrBlank() || password.isNullOrBlank()) {
-                return@setOnClickListener
-            }
             loginBtn.isEnabled = false
-            sharedPreferencesServices.setString("username", username)
-            sharedPreferencesServices.setString("password", password)
-            val map = HashMap<String, Any>()
-            map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-            map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
-            map["grant_type"] = "password"
-            map["username"] = username!!
-            map["password"] = password!!
-            map["device_token"] = sharedPreferencesServices.getString("Device_token") ?: "pixiv"
-            map["get_secure_url"] = true
-            map["include_policy"] = true
 
-            oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<PixivOAuthResponse> {
-                    override fun onSubscribe(d: Disposable) {
-                        Toast.makeText(
-                            applicationContext,
-                            getString(R.string.try_to_login),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
-                        val user = pixivOAuthResponse.response.user
-                        GlobalScope.launch {
-                            AppDataRepository.insertUser(
-                                UserEntity(
-                                    user.profile_image_urls.px_170x170,
-                                    user.id.toLong(),
-                                    user.name,
-                                    user.mail_address,
-                                    user.isIs_premium,
-                                    pixivOAuthResponse.response.device_token,
-                                    pixivOAuthResponse.response.refresh_token,
-                                    "Bearer " + pixivOAuthResponse.response.access_token
-                                )
-                            )
-
-                            sharedPreferencesServices.setBoolean("isnone", false)
-                            sharedPreferencesServices.setString("username", username)
-                            sharedPreferencesServices.setString("password", password)
-                            sharedPreferencesServices.setString(
-                                "Device_token",
-                                pixivOAuthResponse.response.device_token
-                            )
-                        }
-                    }
-
-                    override fun onError(e: Throwable) {
-                        loginBtn.isEnabled = true
-
-                        textview_help.visibility = View.VISIBLE
-                        if (e is HttpException) {
-                            try {
-                                val errorBody = e.response()?.errorBody()?.string()
-                                val gson = Gson()
-                                val errorResponse = gson.fromJson<ErrorResponse>(
-                                    errorBody,
-                                    ErrorResponse::class.java
-                                )
-                                var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
-                                errMsg =
-                                    if (errorResponse.has_error && errorResponse.errors.system.message.contains(
-                                            Regex(""".*103:.*""")
-                                        )
-                                    ) {
-                                        getString(R.string.error_invalid_account_password)
-                                    } else {
-                                        getString(R.string.error_unknown) + "\n" + errMsg
-                                    }
-
-                                Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
-                            } catch (e1: IOException) {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "${e.message}",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-
-                        } else {
-                            Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    }
-
-                    override fun onComplete() {
-                        Toast.makeText(applicationContext, getString(R.string.login_success), Toast.LENGTH_LONG).show()
-                        val intent = Intent(this@LoginActivity, HelloMActivity::class.java).apply {
-                            // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
-                            flags =
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
-                        }
-                        startActivity(intent)
-                    }
-                })
+            val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
+            startActivityForResult(intent, 8080)
         }
-/*        println(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this))
-        if(BuildConfig.ISGOOGLEPLAY)
-        if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)==ConnectionResult.SERVICE_MISSING){
-            MaterialDialog(this).show {
-                title(text="Google Play service丢失！")
-                message(text = "你使用的是Google play的版本，请确保应用是从Google play安装的，而不是第三方打包（如QQ传应用，APKPURE，应用备份等等），因为这会导致play版本的诸多问题bug\n" +
-                        "如果无法使用play service，请前往项目地址下载适合中国内陆地区更新的全量包版本")
-                negativeButton(android.R.string.cancel)
-                positiveButton(R.string.action_select)
-                lifecycleOwner(this@LoginActivity)
-            }
-        }*/
     }
 
-    fun showHelp(view: View) {
-//        val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
-//        startActivity(intent)
-        Toasty.info(this, this.resources.getString(R.string.registerclose), Toast.LENGTH_LONG)
-            .show()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != 8080) return
+        val code = data?.getStringExtra("code")
+        val codeVerifier = data?.getStringExtra("codeVerifier")
+        if (code == null || codeVerifier == null) {
+            Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG).show()
+            return
+        }
+        val map = HashMap<String, Any>()
+        map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
+        map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+        map["grant_type"] = "authorization_code"
+        map["code"] = code
+        map["code_verifier"] = codeVerifier
+        map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
+        map["include_policy"] = true
+
+        oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : Observer<PixivOAuthResponse> {
+                override fun onSubscribe(d: Disposable) {
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.try_to_login),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
+                    val user = pixivOAuthResponse.response.user
+                    GlobalScope.launch {
+                        AppDataRepository.insertUser(
+                            UserEntity(
+                                user.profile_image_urls.px_170x170,
+                                user.id.toLong(),
+                                user.name,
+                                user.mail_address,
+                                user.isIs_premium,
+                                "",
+                                pixivOAuthResponse.response.refresh_token,
+                                "Bearer " + pixivOAuthResponse.response.access_token
+                            )
+                        )
+
+                        sharedPreferencesServices.setBoolean("isnone", false)
+                    }
+                }
+
+                override fun onError(e: Throwable) {
+                    loginBtn.isEnabled = true
+
+                    textview_help.visibility = View.VISIBLE
+                    if (e is HttpException) {
+                        try {
+                            val errorBody = e.response()?.errorBody()?.string()
+                            val gson = Gson()
+                            val errorResponse = gson.fromJson<ErrorResponse>(
+                                errorBody,
+                                ErrorResponse::class.java
+                            )
+                            var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
+                            errMsg =
+                                if (errorResponse.has_error && errorResponse.errors.system.message.contains(
+                                        Regex(""".*103:.*""")
+                                    )
+                                ) {
+                                    getString(R.string.error_invalid_account_password)
+                                } else {
+                                    getString(R.string.error_unknown) + "\n" + errMsg
+                                }
+
+                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
+                        } catch (e1: IOException) {
+                            Toast.makeText(
+                                applicationContext,
+                                "${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                    } else {
+                        Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+
+                override fun onComplete() {
+                    Toast.makeText(applicationContext, getString(R.string.login_success), Toast.LENGTH_LONG).show()
+                    val intent = Intent(this@LoginActivity, HelloMActivity::class.java).apply {
+                        // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
+                        flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                    }
+                    startActivity(intent)
+                }
+            })
     }
 }

@@ -44,13 +44,44 @@ public interface OAuthSecureService {
 
     @FormUrlEncoded
     @POST("/auth/token")
-    Call<ResponseBody> postAuthTokenx(@FieldMap Map<String, Object> map);
+    Observable<PixivOAuthResponse> postAuthTokenx(
+            @Field("client_id") String client_id,
+            @Field("client_secret") String client_secret,
+            @Field("grant_type") String grant_type,//authorization_code
+            @Field("code") String code,//BB5_yxZvE1n3ECFH9KmPQV3Tu3pfaJqUp-5fuWP-msg
+            @Field("code_verifier") String code_verifier,//cwnuOPjfkM1f65Cqaf94Pu4EqFNZJcAzfDGKmrAr0vQ
+            @Field("redirect_uri") String redirect_uri, //https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback
+            @Field("include_policy") boolean include_policy);
 
     @FormUrlEncoded
     @POST("/auth/token")
-    Call<PixivOAuthResponse> postAuthTokenSync(@Field("client_id") String paramString1, @Field("client_secret") String paramString2, @Field("grant_type") String paramString3, @Field("username") String paramString4, @Field("password") String paramString5, @Field("device_token") String paramString6, @Field("get_secure_url") boolean paramBoolean);
+    Observable<PixivOAuthResponse> postRefreshAuthTokenX(
+            @Field("client_id") String client_id,
+            @Field("client_secret") String client_secret,
+            @Field("grant_type") String grant_type,
+            @Field("refresh_token") String refresh_token,
+            @Field("include_policy") boolean get_secure_url);
 
     @FormUrlEncoded
     @POST("/auth/token")
-    Observable<PixivOAuthResponse> postRefreshAuthToken(@Field("client_id") String paramString1, @Field("client_secret") String paramString2, @Field("grant_type") String paramString3, @Field("refresh_token") String paramString4, @Field("device_token") String paramString5, @Field("get_secure_url") boolean paramBoolean);
+    @Deprecated
+    Call<PixivOAuthResponse> postAuthTokenSync(
+            @Field("client_id") String client_id,
+            @Field("client_secret") String client_secret,
+            @Field("grant_type") String grant_type,
+			@Field("username") String username,
+			@Field("password") String password,
+            @Field("device_token") String device_token,
+			@Field("get_secure_url") boolean paramBoolean);
+
+    @FormUrlEncoded
+    @POST("/auth/token")
+    @Deprecated
+    Observable<PixivOAuthResponse> postRefreshAuthToken(
+            @Field("client_id") String client_id,
+			@Field("client_secret") String client_secret,
+			@Field("grant_type") String grant_type,
+			@Field("refresh_token") String refresh_token,
+			@Field("device_token") String device_token,
+			@Field("get_secure_url") boolean get_secure_url);
 }

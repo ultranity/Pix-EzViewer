@@ -31,19 +31,74 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
 object RubyHttpDns : Dns {
-    private val addressList = mutableListOf<InetAddress>()
+    private val addressCache = mutableMapOf<String, InetAddress>()
+    private val addressCacheX = mutableMapOf<String, List<InetAddress>>()
     private val service =
         ServiceFactory.create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
+    private val apiAddress = listOf(
+        "app-api.pixiv.net",
+        "oauth.secure.pixiv.net",
+        "accounts.pixiv.net",
+        "s.pximg.net",
+        "i.pximg.net",
+        "imgaz.pixiv.net",
+        "sketch.pixiv.net",
+        "www.pixiv.net"
+    )
+    /*
+    D/httpdns addressList: {app-api.pixiv.net=[app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, app-api.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199], oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.31.199, /104.18.30.199], accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, accounts.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.30.199, /104.18.31.199], s.pximg.net=[/210.140.92.138, /210.140.92.142, /210.140.92.146, /210.140.92.139, /210.140.92.140, /210.140.92.143, /210.140.92.147, /210.140.92.141, /210.140.92.144, /210.140.92.145], i.pximg.net=[/210.140.92.140, /210.140.92.141, /210.140.92.144, /210.140.92.145, /210.140.92.147, /210.140.92.142, /210.140.92.146, /210.140.92.139, /210.140.92.143, /210.140.92.138], imgaz.pixiv.net=[/210.140.131.147, /210.140.131.144, /210.140.131.153, /210.140.131.145], sketch.pixiv.net=[/210.140.174.37, /210.140.170.179, /210.140.175.130], www.pixiv.net=[www.pixiv.net.cdn.cloudflare.net./104.18.30.199, www.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.31.199, /104.18.30.199]}
+D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/103.228.130.27, app-api.pixiv.net/2001::45ab:ef0b], oauth.secure.pixiv.net=[oauth.secure.pixiv.net/31.13.64.33, oauth.secure.pixiv.net/2001::9a55:661e], accounts.pixiv.net=[accounts.pixiv.net/108.160.163.116, accounts.pixiv.net/2001::453f:b00b], s.pximg.net=[s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.141, s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.143, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.147, s.pximg.net/210.140.92.139], i.pximg.net=[i.pximg.net/108.160.169.186, i.pximg.net/2001::6ca0:a36a], imgaz.pixiv.net=[imgaz.pixiv.net/128.121.146.101, imgaz.pixiv.net/2001::48e8:aa10], sketch.pixiv.net=[sketch.pixiv.net/31.13.66.6, sketch.pixiv.net/2001::7a0a:5504], www.pixiv.net=[www.pixiv.net/31.13.65.1, www.pixiv.net/2001::453f:ba1e]}
+D/httpdns init end: ========================================
+D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /210.140.92.138, /210.140.92.140, /210.140.131.147, /210.140.174.37, www.pixiv.net.cdn.cloudflare.net./104.18.30.199]
+     */
+    var inited = true
+    fun dlookup(): List<InetAddress> {
+        val addressList = mutableMapOf<String, List<InetAddress>>()
+        val addressListX = mutableMapOf<String, List<InetAddress>>()
+        apiAddress.forEach { addressListX[it]= InetAddress.getAllByName(it).asList()}
+        Log.d("httpdns", "========================================")
+        apiAddress.forEach { k ->
+            try {
+                val response = service.queryDns(name = k).blockingSingle()
+                response.answer.flatMap { InetAddress.getAllByName(it.data).toList() }.also {
+                    addressList[k]=it
+                }
+            } catch (e: Exception) {
 
+            }
+        }
+        Log.d("httpdns addressList", addressList.toString())
+        Log.d("httpdns addressListX", addressListX.toString())
+        Log.d("httpdns init end", "========================================")
+        return addressList.map {
+            it.value[0]
+        }
+    }
     override fun lookup(hostname: String): List<InetAddress> {
-        if (addressList.isNotEmpty()) return addressList
+        if (!inited){
+            inited = true
+            Log.d("httpdns init", "========================================")
+            Log.d("httpdns", dlookup().toString())
+            Log.d("httpdns", "========================================")
+        }
+        val addressList = mutableListOf<InetAddress>()
+        InetAddress.getByName(hostname).also {
+            if (it.hostAddress.equals(hostname))
+            return listOf(it)
+        }
+        if (addressCache.contains(hostname))
+            return listOf(addressCache[hostname]!!)
+        if (addressCacheX.contains(hostname))
+            return addressCacheX[hostname]!!
+        //if (addressList.isNotEmpty()) return addressList
         val defaultList = listOf(
             "210.140.131.218",
-            "210.140.131.208",
+            "210.140.131.208",//app-api.pixiv.net
             "210.140.131.209",
             "210.140.131.187",
             "210.140.131.188",
-            "210.140.131.189"
+            "210.140.131.189",
+            "210.140.92.141" //s.pximg.net
         ).map { InetAddress.getByName(it) }
         Log.d("httpdns", "========================================")
         try {
@@ -54,13 +109,14 @@ object RubyHttpDns : Dns {
         } catch (e: Exception) {
 
         }
-
-        return if (addressList.isNotEmpty())
-            addressList
-        else {
+        //if (addressList.isEmpty())
             addressList.addAll(defaultList)
-            addressList
+        Log.d("httpdns", addressList.toString())
+        Log.d("httpdns end", "========================================")
+        if (addressList.isNotEmpty()){
+            addressCache[hostname] = addressList[0]
+            addressCacheX[hostname] = addressList
         }
-
+        return  addressList
     }
 }

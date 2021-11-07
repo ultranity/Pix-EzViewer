@@ -37,7 +37,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.runBlocking
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.HttpException
@@ -52,7 +51,7 @@ class RetrofitRepository {
     var reFreshFunction: ReFreshFunction
     init {
         appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
-        gifApiPixivService = RestClient.getRetrofitGIF().create(AppApiPixivService::class.java)
+        gifApiPixivService = RestClient.gifAppApi.create(AppApiPixivService::class.java)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         reFreshFunction = ReFreshFunction.getInstance()
         if (System.currentTimeMillis() - PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getLong("lastRefresh",0)
@@ -122,7 +121,7 @@ class RetrofitRepository {
         parent_comment_id: Int?
     ): Observable<ResponseBody> = Request(appApiPixivService.postIllustComment(illust_id ,comment ,parent_comment_id))
 
-    fun postLikeIllust(int: Long): Observable<ResponseBody>? = Request(appApiPixivService.postLikeIllust(int, "public", null))
+    fun postLikeIllust(int: Long): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(int, "public", null))
 
     fun getIllustTrendTags(): Observable<TrendingtagResponse> = Request(appApiPixivService.getIllustTrendTags())
 

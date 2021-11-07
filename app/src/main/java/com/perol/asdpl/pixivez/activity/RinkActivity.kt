@@ -36,9 +36,9 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 
 // base activity with i18n +Theme support
 abstract class RinkActivity : AppCompatActivity() {
-
+    protected var className = javaClass.simpleName + " "
     private fun getColorPrimary() =
-        ThemeUtil.getColor(this,R.attr.colorPrimary)
+        ThemeUtil.getColor(this, R.attr.colorPrimary)
 
     /*fun getColorPrimaryDark(): Int {
         val typedValue = TypedValue()
@@ -53,10 +53,14 @@ abstract class RinkActivity : AppCompatActivity() {
     }*/
 
     fun getColorHighlight(): Int =
-        ThemeUtil.getColor(this,R.attr.badgeTextColor)
+        ThemeUtil.getColor(this, R.attr.badgeTextColor)
 
     private fun getNavigationBarHeight(): Int {
-        val resourceId: Int = this.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        val resourceId: Int = this.resources.getIdentifier(
+            "navigation_bar_height",
+            "dimen",
+            "android"
+        )
         //Log.v("dbg", "Navi height:$height")
         return resources.getDimensionPixelSize(resourceId)
     }

@@ -25,14 +25,14 @@
 
 package com.perol.asdpl.pixivez.objects
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.UserEntity
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import kotlin.math.pow
 
-class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
+class ReFreshFunction private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String? = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
     private var client_secret: String? = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
@@ -60,14 +60,9 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     private val maxRetries = 3
     private var retryCount = 0
 
-    constructor(context: Context) : super() {
+    init {
         this.oAuthSecureService =
-            RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
-    }
-
-    private constructor() {
-        this.oAuthSecureService =
-            RestClient.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+            RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
     }
 
     @Throws(Exception::class)
@@ -107,15 +102,15 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                             return@Function Observable.error<Any>(throwable)
                         }
                 } else if (throwable.response()!!.code() == 404) {
-                    if (i == 0) {
+                    //if (i == 0) {
                         Log.d("d", throwable.response()!!.message())
                         Toasty.warning(
                             PxEZApp.instance,
-                            "查找的id不存在" + throwable.response()!!.message(),
+                            "404 " + throwable.response()!!.message(),
                             Toast.LENGTH_SHORT
                         ).show()
-                        i++
-                    }
+                    //    i++
+                    //}
                     return@Function Observable.error<Any>(throwable)
                 }
             }
@@ -125,6 +120,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                     "连接状态异常 $throwable",
                     Toast.LENGTH_SHORT
                 ).show()
+                RetrofitRepository.getInstance().appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
             }
             return@Function Observable.error<Any>(throwable)
         })
@@ -132,6 +128,8 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
     }
 
     fun reFreshToken(): ObservableSource<*> {
+        if(refreshing)
+            return Observable.timer(2000,TimeUnit.MILLISECONDS)
         refreshing = true
         var userEntity: UserEntity? = null
 //                        TToast.retoken(PxEZApp.instance)
@@ -149,10 +147,10 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                 Toast.LENGTH_SHORT
             ).show()
         Log.d("init","reFreshToken")
-        SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
-        return oAuthSecureService!!.postRefreshAuthToken(
+        //SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
+        return oAuthSecureService!!.postRefreshAuthTokenX(
             client_id, client_secret, "refresh_token", it.Refresh_token,
-            it.Device_token, true
+            true
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .doOnNext { pixivOAuthResponse ->
                     val user = pixivOAuthResponse.response.user
@@ -164,7 +162,7 @@ class ReFreshFunction : Function<Observable<Throwable>, ObservableSource<*>> {
                         user.name,
                         user.mail_address,
                         user.isIs_premium,
-                        pixivOAuthResponse.response.device_token,
+                        "OAuth2",//pixivOAuthResponse.response.device_token,
                         pixivOAuthResponse.response.refresh_token,
                         "Bearer " + pixivOAuthResponse.response.access_token
                     )

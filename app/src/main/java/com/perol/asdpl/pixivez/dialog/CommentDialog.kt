@@ -151,6 +151,7 @@ class CommentDialog : DialogFragment() {
                                     nextUrl = it.next_url
                                     commentAdapter?.loadMoreModule?.loadMoreComplete()
                                 }, {
+                                    commentAdapter?.loadMoreModule?.loadMoreFail()
                                     it.printStackTrace()
                                 }, {
 

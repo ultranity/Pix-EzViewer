@@ -163,11 +163,7 @@ object Works {
             file.delete()
             if(PxEZApp.ShowDownloadToast)
             {
-                Toasty.success(
-                    PxEZApp.instance,
-                    PxEZApp.instance.resources.getString(R.string.savesuccess)+"!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toasty.shortToast(R.string.savesuccess)
             }
             MediaScannerConnection.scanFile(
                 PxEZApp.instance,
@@ -185,7 +181,7 @@ object Works {
 
     fun imageDownloadAll(illust: Illust) {
         if(PxEZApp.ShowDownloadToast) {
-            TToast.startDownload(PxEZApp.instance)
+            TToast.startDownload()
         }
 
         if (illust.meta_pages.isEmpty()) {
@@ -279,11 +275,7 @@ object Works {
         } else PxEZApp.storepath
         val targetFile = File(path, filename)
         if (targetFile.exists()) {
-            Toasty.normal(
-                PxEZApp.instance,
-                PxEZApp.instance.getString(R.string.alreadysaved),
-                Toast.LENGTH_SHORT
-            ).show()
+            Toasty.shortToast(R.string.alreadysaved)
             return
         }
         val illustD = IllustD(

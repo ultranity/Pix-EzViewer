@@ -40,7 +40,9 @@ class HelloMMyViewModel : BaseViewModel() {
         retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            addillusts.value = null
+        }, {}).add()
     }
 
     fun OnRefreshListener(restrict: String) {

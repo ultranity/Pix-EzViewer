@@ -24,30 +24,31 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import android.app.Application
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
 
-class TToast {
-    companion object {
-        fun retoken(context: Context) {
-            val toast = Toast.makeText(context, "", Toast.LENGTH_LONG)
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val view = inflater.inflate(R.layout.toast_retoken, null)
-            toast.view = view
-            toast.show()
-        }
+object TToast {
 
-        fun startDownload(context: Context) {
-            val toast = Toast.makeText(context, PxEZApp.instance.getString(R.string.join_download_queue), Toast.LENGTH_SHORT)
+    val LToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
+    val sToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    fun retoken(context: Context) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.toast_retoken, null)
+        LToast.view = view
+        LToast.show()
+    }
+
+    fun startDownload() {
+        //val toast = Toast.makeText(context, PxEZApp.instance.getString(R.string.join_download_queue), Toast.LENGTH_SHORT)
 //            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 //            val view = inflater.inflate(R.layout.toast_startdownload, null)
 //            toast.view = view
 //            toast.setGravity(Gravity.BOTTOM,0,0)
-            toast.show()
-        }
+        sToast.setText(R.string.join_download_queue)
+        sToast.show()
     }
-
 }

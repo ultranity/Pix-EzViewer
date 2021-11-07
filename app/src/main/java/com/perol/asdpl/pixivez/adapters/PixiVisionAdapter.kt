@@ -59,4 +59,8 @@ class PixiVisionAdapter(
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
     }
+
+    fun loadMoreFail() {
+        this.loadMoreModule?.loadMoreFail()
+    }
 }

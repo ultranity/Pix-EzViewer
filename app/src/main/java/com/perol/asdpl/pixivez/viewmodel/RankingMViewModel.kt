@@ -45,20 +45,26 @@ class RankingMViewModel : BaseViewModel() {
         retrofitRepository.getIllustRanking(mode, picdata).subscribe({
             nexturl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            illusts.value = null
+           }, {}).add()
     }
 
     fun onLoadMore() {
         retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            addillusts.value = null
+        }, {}).add()
     }
 
     fun datePick(mode: String, pickDate: String?) {
         retrofitRepository.getIllustRanking(mode, pickDate).subscribe({
             nexturl.value = it.next_url
-            illusts.value = ArrayList<Illust>(it.illusts)
-        }, {}, {}).add()
+            illusts.value = ArrayList(it.illusts)
+        }, {
+            illusts.value = null
+        }, {}).add()
     }
 }

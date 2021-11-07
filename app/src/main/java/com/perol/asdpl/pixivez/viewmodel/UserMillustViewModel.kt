@@ -38,7 +38,9 @@ class UserMillustViewModel : BaseViewModel() {
             retrofit.getNextUserIllusts(nexturl.value!!).subscribe({
                 adddata.value = it.illusts
                 nexturl.value = it.next_url
-            }, {}, {}).add()
+            }, {
+                adddata.value = null
+            }, {}).add()
         }
 
 

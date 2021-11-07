@@ -47,6 +47,8 @@ class HelloRecomUserViewModel : BaseViewModel() {
         retrofit.getUserRecommandedUrl(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             adddata.value = it.user_previews
-        }, {}, {}).add()
+        }, {
+            adddata.value = null
+        }, {}).add()
     }
 }

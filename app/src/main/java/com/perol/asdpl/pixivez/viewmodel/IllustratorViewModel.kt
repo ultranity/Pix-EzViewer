@@ -57,7 +57,9 @@ class IllustratorViewModel : BaseViewModel() {
         retrofitRepository.getNextUser(string).subscribe({
             adduserpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
             nexturl.value = it.next_url
-        }, {}, {}).add()
+        }, {
+            adduserpreviews.value = null
+        }, {}).add()
     }
 
     fun onRefresh(long: Long, restrict: String, param2: Boolean) {

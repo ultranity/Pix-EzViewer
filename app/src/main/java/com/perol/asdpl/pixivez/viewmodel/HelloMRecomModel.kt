@@ -52,13 +52,17 @@ class HelloMRecomModel : BaseViewModel() {
         retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            addillusts.value = null
+        }, {}).add()
     }
     fun onLoadMoreBannerRequested() {
         retrofitRepository.getNextPixivisionArticles(nextPixivisonUrl.value!!).subscribe({
             nextPixivisonUrl.value = it.next_url
             addbanners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
-        }, {}, {}).add()
+        }, {
+            addbanners.value = null
+           }, {}).add()
     }
 
     fun OnRefreshListener() {
@@ -68,7 +72,9 @@ class HelloMRecomModel : BaseViewModel() {
                 if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
                     nextPixivisonUrl.value = it.next_url
                 banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
-            }, {}, {}).add()
+            }, {
+                banners.value = null
+            }, {}).add()
         }.subscribe({
             Log.d("init","getRecommend")
             nextUrl.value = it.next_url

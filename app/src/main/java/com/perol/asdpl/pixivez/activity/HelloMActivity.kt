@@ -254,14 +254,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
         headtext.text = allUser!![nowNum].username
         textView.text = allUser!![nowNum].useremail
-
-        val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY)
-                    -SharedPreferencesServices.getInstance()
-                .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
-            )>= 30*24) {
-            SupportDialog().show(this.supportFragmentManager, "supportdialog")
-        }
     }
 
     override fun onResume() {

@@ -20,7 +20,7 @@
 	<string name="click">click</string>
 	<string name="support_string">フィードバックEメール：githubの星を経由してPix-Ez@outlook.com歓迎のフィードバックは、ページにジャンプすることができます私にコーヒーを喜ば</string>
 	<string name="current_developer">現在の開発</string>
-	<string name="support_text">"PixEzあなたは？それを助ける\ Nあなたのサポートを〜開発を継続するために私を奨励する\ n個の情報がメール引き取り手のない寄付によって送信することができます！\ Nは、スキャンした後、ジャンプショットを打ちます"</string>
+	<string name="support_text">PixEzあなたは？それを助ける Nあなたのサポートを〜開発を継続するために私を奨励する n個の情報がメール引き取り手のない寄付によって送信することができます！</string>
 	<string name="support_popup_title">サポート開発者：</string>
 	<string name="support_static">ラフ統計は、あなたは、枚数の近景に達しPixEz：％1 $ sの！</string>
 	<string name="ali">アリペイへジャンプ</string>
@@ -260,4 +260,5 @@
 	<string name="set_mirror">クリックしてミラーステーションを設定します</string>
 	<string name="login_expired">ログインが異常です、またログインしてください</string>
 	<string name="token_expired">ID情報が期限切れになったら、さわやかにお待ちください</string>
+	<string name="login_help_new">受Pixiv検証制限、中国の本土地域は事前に公開するために必要です、あなた自身を準備してください</string>
 </resources>

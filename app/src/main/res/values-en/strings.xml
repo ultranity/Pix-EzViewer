@@ -260,4 +260,5 @@
 	<string name="set_mirror">Click to set the mirror website</string>
 	<string name="login_expired">Login expired, please login again</string>
 	<string name="token_expired">Token expired, please wait for refreshing</string>
+	<string name="login_help_new">Due to Pixiv verification restriction, login from China\'s mainland is required to prepare VPN in advance by yourself</string>
 </resources>

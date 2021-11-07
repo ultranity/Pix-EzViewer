@@ -20,7 +20,7 @@
 	<string name="click">點擊</string>
 	<string name="support_string">反饋郵箱：Pix-Ez@outlook.com 歡迎通過github 反饋及star 也可以通過關於頁面跳轉請我喝杯咖啡</string>
 	<string name="current_developer">當前開發者</string>
-	<string name="support_text">"PixEz對您有幫助嗎？\n 您的支持將鼓勵我持續開發~\n 可以通過郵箱發送信息認領捐贈！\n 截圖後點擊跳轉掃描"</string>
+	<string name="support_text">"PixEz對您有幫助嗎？  您的支持將鼓勵我持續開發~  可以通過郵箱發送信息認領捐贈！  "</string>
 	<string name="support_popup_title">支持開發者：</string>
 	<string name="support_static">粗略統計，您使用PixEz收圖張數已達：%1$s !</string>
 	<string name="ali">跳轉到支付寶</string>
@@ -260,4 +260,5 @@
 	<string name="set_mirror">點擊可設置鏡像站</string>
 	<string name="login_expired">登錄狀態異常，請重新登錄</string>
 	<string name="token_expired">身份信息過期，請等待刷新</string>
+	<string name="login_help_new">受pixiv驗證限制，中國大陸地區登錄需要提前開啟代理，請自行準備</string>
 </resources>

@@ -122,8 +122,8 @@ interface AppApiPixivService {
     @POST("/v2/illust/bookmark/add")
     fun postLikeIllust(
         //@Header("Authorization") paramString1: String,
-        @Field("illust_id") paramLong: Long,
-        @Field("restrict") paramString2: String,
+        @Field("illust_id") illust_id: Long,
+        @Field("restrict") restrict: String,
         @Field("tags[]") paramList: List<String>?
     ): Observable<ResponseBody>
 

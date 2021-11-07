@@ -11,15 +11,17 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.util.Base64
+import android.view.View
 import android.webkit.MimeTypeMap
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.SettingActivity
 import com.perol.asdpl.pixivez.adapters.ThanksAdapter
+import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
@@ -247,6 +249,10 @@ class SupportDialog : DialogFragment() {
         }
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        var full: Boolean = true
+        arguments?.let {
+            full = it.getBoolean(ARG_PARAM1)
+        }
         return activity?.let {
             val calendar = Calendar.getInstance()
             val sharedPreferencesServices = SharedPreferencesServices.getInstance()
@@ -257,46 +263,85 @@ class SupportDialog : DialogFragment() {
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_thanks, null)
             val re = view.findViewById<RecyclerView>(R.id.list)
-            val msg = it.layoutInflater.inflate(R.layout.dialog_weixin_ultranity, null)
-            val static = msg.findViewById<TextView>(R.id.textStatic)
+            val binding = DialogWeixinUltranityBinding.inflate(inflater)
+            val msg = binding.root
             val spannableString = SpannableString(getString(R.string.support_static).format(totaldownloadcount))
             val colorSpan = ForegroundColorSpan(Color.parseColor("#F44336"))
+            if (!full) {
+                binding.qrCode.visibility = View.GONE
+            }
             spannableString.setSpan(
                 colorSpan,
                 getString(R.string.support_static).length - 6,
                 spannableString.length,
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE
             )
-            static.text = spannableString
+            binding.textStatic.text = spannableString
             re.adapter = ThanksAdapter(R.layout.simple_list_item, ThanksArray).apply {
                 setHeaderView(msg)
             }
             re.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 
             builder.setTitle(getString(R.string.support_popup_title))
-                    .setView(view).setNegativeButton(R.string.wechat)
-                    { _,_->
-                        gotoWeChat()
-                        sharedPreferencesServices.setInt("lastsupport",
-                            calendar.get(Calendar.DAY_OF_YEAR)*100+500+calendar.get(Calendar.HOUR_OF_DAY))
-                        sharedPreferencesServices.setInt("supports", sharedPreferencesServices.getInt("supports" ) +1 )
+                    .setView(view).apply {
+                    if(full){
+                        setNegativeButton(R.string.wechat)
+                        { _, _ ->
+                            gotoWeChat()
+                            sharedPreferencesServices.setInt(
+                                "lastsupport",
+                                calendar.get(Calendar.DAY_OF_YEAR) * 100 + 500 + calendar.get(Calendar.HOUR_OF_DAY)
+                            )
+                            sharedPreferencesServices.setInt(
+                                "supports",
+                                sharedPreferencesServices.getInt("supports") + 1
+                            )
+                        }
+                        setPositiveButton(R.string.ali)
+                        { _, _ ->
+                            val clipboard =
+                                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip: ClipData = ClipData.newPlainText(
+                                "simple text",
+                                String(
+                                    Base64.decode(
+                                        "I+e7meaIkei9rOi0piPplb/mjInlpI3liLbmraTmnaHmtojmga/vvIzljrvmlK/ku5jlrp3pppbp\n" +
+                                                "obXov5vooYzmkJzntKLnspjotLTljbPlj6/nu5nmiJHovazotKZUaFlXMlhqNzBTdyM=\n",
+                                        Base64.DEFAULT
+                                    )
+                                )
+                            )
+                            clipboard.setPrimaryClip(clip)
+                            gotoAliPay()
+                            sharedPreferencesServices.setInt(
+                                "lastsupport",
+                                calendar.get(Calendar.DAY_OF_YEAR) * 100 + 500 + calendar.get(Calendar.HOUR_OF_DAY)
+                            )
+                            sharedPreferencesServices.setInt(
+                                "supports",
+                                sharedPreferencesServices.getInt("supports") + 1
+                            )
+                        }
+                    }else{
+                        setPositiveButton(R.string.supporttitle){ _, _ ->
+                            startActivity(Intent(requireActivity(), SettingActivity::class.java).apply {
+                                putExtra("page",1)
+                            })
+                        }
                     }
-                    .setPositiveButton(R.string.ali)
-                    { _,_->
-                    val clipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip: ClipData = ClipData.newPlainText("simple text",
-                        String(
-                            Base64.decode("I+e7meaIkei9rOi0piPplb/mjInlpI3liLbmraTmnaHmtojmga/vvIzljrvmlK/ku5jlrp3pppbp\n" +
-                                "obXov5vooYzmkJzntKLnspjotLTljbPlj6/nu5nmiJHovazotKZUaFlXMlhqNzBTdyM=\n",
-                                Base64.DEFAULT)
-                        )
-                    )
-                    clipboard.setPrimaryClip(clip)
-                    gotoAliPay()
-                    sharedPreferencesServices.setInt("lastsupport",
-                        calendar.get(Calendar.DAY_OF_YEAR)*100+500+calendar.get(Calendar.HOUR_OF_DAY))
-                    sharedPreferencesServices.setInt("supports", sharedPreferencesServices.getInt("supports" ) +1 )
                 }.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    companion object {
+
+        private const val ARG_PARAM1 = "full"
+        @JvmStatic
+        fun newInstance(param1: Boolean) =
+            SupportDialog().apply {
+                arguments = Bundle().apply {
+                    putBoolean(ARG_PARAM1, param1)
+                }
+            }
     }
 }

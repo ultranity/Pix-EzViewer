@@ -30,6 +30,7 @@ import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
 
 
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Header
@@ -39,9 +40,27 @@ import retrofit2.http.POST
 interface AccountPixivService {
     @FormUrlEncoded
     @POST("/api/provisional-accounts/create")
-    fun createProvisionalAccount(@Field("user_name") paramString1: String, @Field("ref") paramString2: String, @Header("Authorization") paramString3: String): Observable<PixivAccountsResponse>
+    fun createProvisionalAccount(@Field("user_name") user_name: String,
+		@Field("ref") ref: String,
+		@Header("Authorization") paramString3: String): Observable<PixivAccountsResponse>
+
+    @FormUrlEncoded
+    @POST("/api/login")
+    fun login(@Field("pixiv_id") pixiv_id: String,
+              @Field("password") password: String,
+              @Field("captcha") captcha: String,
+              @Field("g_recaptcha_response") g_recaptcha_response: String,
+              @Field("ref") ref: String,
+              @Field("source") source: String,
+              @Field("return_to") return_to: String,
+              @Field("recaptcha_enterprise_score_token") recaptcha_enterprise_score_token: String
+    ): Observable<ResponseBody>
 
     @FormUrlEncoded
     @POST("/api/account/edit")
-    fun editAccount(@Field("new_mail_address") paramString1: String, @Field("new_user_account") paramString2: String, @Field("current_password") paramString3: String, @Field("new_password") paramString4: String, @Header("Authorization") paramString5: String): Observable<PixivAccountsEditResponse>
+    fun editAccount(@Field("new_mail_address") new_mail_address: String,
+		@Field("new_user_account") new_user_account: String,
+		@Field("current_password") current_password: String,
+		@Field("new_password") new_password: String,
+		@Header("Authorization") paramString5: String): Observable<PixivAccountsEditResponse>
 }

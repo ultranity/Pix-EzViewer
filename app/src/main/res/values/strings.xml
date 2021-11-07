@@ -29,7 +29,7 @@
     <string name="current_developer">当前开发者</string>
     <string name="support_Notsfsssf" translatable="false">912756674@qq.com</string>
     <string name="support_ultranity" translatable="false">1095429904@qq.com</string>
-    <string name="support_text">"PixEz对您有帮助吗？\n 您的支持将鼓励我持续开发~\n 可以通过邮箱发送信息认领捐赠！\n 截图后点击跳转扫描"</string>
+    <string name="support_text">"PixEz对您有帮助吗？\n 您的支持将鼓励我持续开发~\n 可以通过邮箱发送信息认领捐赠！"</string>
     <string name="support_popup_title">支持开发者：</string>
     <string name="support_static">粗略统计，您使用PixEz收图张数已达：%1$s !</string>
     <string name="ali">跳转到支付宝</string>
@@ -307,4 +307,5 @@
     <string name="set_mirror">点击可设置镜像站</string>
     <string name="login_expired">登录过期，请重新登录</string>
     <string name="token_expired">身份信息过期，请等待刷新</string>
+    <string name="login_help_new">受pixiv验证限制，中国大陆地区登录需要提前开启代理，请自行准备</string>
 </resources>

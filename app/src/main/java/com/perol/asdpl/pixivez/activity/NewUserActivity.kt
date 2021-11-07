@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2021 Austin Huang
  * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
@@ -25,136 +26,104 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.webkit.*
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.ActivityNewUserBinding
-import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.objects.PkceUtil
 import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
 import com.perol.asdpl.pixivez.services.AccountPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_new_user.*
 import java.util.*
 
 class NewUserActivity : RinkActivity() {
-    private val Authorization = "Bearer l-f9qZ0ZyqSwRyZs8-MymbtWBbSxmCu1pmbOlyisou8"
-    private var accountPixivService: AccountPixivService? = null
-    private var RestClient: RestClient? = null
-    private var sharedPreferencesServices: SharedPreferencesServices? = null
-    private var oAuthSecureService: OAuthSecureService? = null
-    private lateinit var binding: ActivityNewUserBinding
+    private var webViewUrl: String? = null
+    private var ready = false
+    private var codeVerifier: String? = null
+
+    private val webChromeClient = WebChromeClient()
+    private val webViewClient: WebViewClient = object : WebViewClient() {
+        override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+        }
+
+        override fun onPageFinished(view: WebView, url: String) {
+            if (url.startsWith("pixiv://account/login")) {
+                val code = url.split("?")[1].split("&").find{ it.startsWith("code=") }
+                if (code == null || code.length < 6) {
+                    Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG).show()
+                    finish()
+                    return
+                }
+                val intent = Intent()
+                intent.putExtra("code", code.substring(5))
+                intent.putExtra("codeVerifier", codeVerifier)
+                setResult(8080, intent)
+                finish()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewUserBinding.inflate(layoutInflater)
-		setContentView(binding.root)
-        accountPixivService = RestClient!!.retrofitAccount.create(AccountPixivService::class.java)
-        oAuthSecureService =
-            RestClient!!.retrofitOauthSecure.create(OAuthSecureService::class.java)
-        sharedPreferencesServices = SharedPreferencesServices(applicationContext)
-        binding.buttonLogin.setOnClickListener {
-            if (binding.edittextUsername.text.toString().isNotBlank()) {
-                accountPixivService!!.createProvisionalAccount(
-                    binding.edittextUsername.text.toString(),
-                    "pixiv_android_app_provisional_account",
-                    Authorization
-                ).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-                    .subscribe(object : Observer<PixivAccountsResponse> {
-                        override fun onSubscribe(d: Disposable) {}
+        setContentView(R.layout.activity_new_user)
+        initWebView()
+    }
 
-                        override fun onNext(pixivAccountsResponse: PixivAccountsResponse) {
-                            sharedPreferencesServices!!.setString(
-                                "Device_token",
-                                pixivAccountsResponse.body.device_token
-                            )
-                            sharedPreferencesServices!!.setString(
-                                "client_id",
-                                "KzEZED7aC0vird8jWyHM38mXjNTY"
-                            )
-                            sharedPreferencesServices!!.setString(
-                                "client_secret",
-                                "W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP"
-                            )
-                            sharedPreferencesServices!!.setString(
-                                "username",
-                                pixivAccountsResponse.body.user_account
-                            )
-                            sharedPreferencesServices!!.setString(
-                                "password",
-                                pixivAccountsResponse.body.password
-                            )
-                            sharedPreferencesServices!!.setBoolean("isnone", true)
-                        }
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun initWebView() {
+        webView.webChromeClient = webChromeClient
+        webView.webViewClient = webViewClient
+        val webSettings = webView.settings
+        webSettings.userAgentString = "PixivAndroidApp/5.0.234 (Android ${Build.VERSION.RELEASE}; ${Build.MODEL})"
+        webSettings.javaScriptEnabled = true
+        webSettings.domStorageEnabled = true
+        webSettings.setSupportZoom(true)
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+        webSettings.loadWithOverviewMode = true
+        webSettings.useWideViewPort = true
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
-                        override fun onError(e: Throwable) {
-                            Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
-                        }
-
-                        override fun onComplete() {
-                            val map = HashMap<String, Any>()
-                            map["client_id"] = "KzEZED7aC0vird8jWyHM38mXjNTY"
-                            map["client_secret"] = "W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP"
-                            map["grant_type"] = "password"
-                            map["username"] = sharedPreferencesServices!!.getString("username")
-                            map["password"] = sharedPreferencesServices!!.getString("password")
-                            map["device_token"] =  sharedPreferencesServices!!.getString("Device_token")
-                            oAuthSecureService!!.postAuthToken(map).subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(object : Observer<PixivOAuthResponse> {
-                                    override fun onSubscribe(d: Disposable) {
-
-                                    }
-
-                                    override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
-                                        sharedPreferencesServices!!.setString(
-                                            "Device_token",
-                                            pixivOAuthResponse.response.device_token
-                                        )
-                                        sharedPreferencesServices!!.setString(
-                                            "Refresh_token",
-                                            pixivOAuthResponse.response.refresh_token
-                                        )
-                                        sharedPreferencesServices!!.setString(
-                                            "Authorization",
-                                            "Bearer " + pixivOAuthResponse.response.access_token
-                                        )
-                                        sharedPreferencesServices!!.setString(
-                                            "userid",
-                                            pixivOAuthResponse.response.user.id.toString()
-                                        )
-                                    }
-
-                                    override fun onError(e: Throwable) {
-                                        Toast.makeText(
-                                            applicationContext,
-                                            e.message,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-
-                                    override fun onComplete() {
-                                        Toast.makeText(
-                                            applicationContext,
-                                            getString(R.string.login_success),
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                        val intent =
-                                            Intent(applicationContext, HelloMActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                })
-                        }
-                    })
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null)
+            CookieManager.getInstance().flush()
+        } else {
+            val cookieSyncMngr = CookieSyncManager.createInstance(applicationContext)
+            cookieSyncMngr.startSync()
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.removeAllCookie()
+            cookieManager.removeSessionCookie()
+            cookieSyncMngr.stopSync()
+            cookieSyncMngr.sync()
         }
+
+        codeVerifier = PkceUtil.generateCodeVerifier()
+        val codeChallenge = PkceUtil.generateCodeChallenge(codeVerifier!!)
+        webView.loadUrl("https://app-api.pixiv.net/web/v1/login?code_challenge_method=S256&client=pixiv-android&code_challenge=" + codeChallenge)
+    }
+
+    override fun onPause() {
+        webView.onPause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
+    override fun onDestroy() {
+        webView.destroy()
+        super.onDestroy()
     }
 }

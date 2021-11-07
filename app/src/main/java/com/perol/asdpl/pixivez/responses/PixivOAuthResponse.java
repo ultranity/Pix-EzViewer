@@ -49,7 +49,7 @@ public class PixivOAuthResponse {
          * scope :
          * refresh_token : YeysYu5dgbu0tV1yckzLhJmUCMOyDmqTeriZfFh-UTw
          * user : {"profile_image_urls":{"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"},"id":"14713395","name":"Notsfsssf","account":"912756674","mail_address":"912756674@qq.com","is_premium":false,"x_restrict":2,"is_mail_authorized":true}
-         * device_token : eb3adb884046935fe8952c977b949209
+         * device_token : DEPRECATED
          */
 
         private String access_token;
@@ -108,13 +108,13 @@ public class PixivOAuthResponse {
             this.user = user;
         }
 
-        public String getDevice_token() {
-            return device_token;
-        }
-
-        public void setDevice_token(String device_token) {
-            this.device_token = device_token;
-        }
+//        public String getDevice_token() {
+//            return device_token;
+//        }
+//
+//        public void setDevice_token(String device_token) {
+//            this.device_token = device_token;
+//        }
 
         public static class UserBean {
             /**

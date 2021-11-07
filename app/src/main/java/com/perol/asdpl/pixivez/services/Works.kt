@@ -45,7 +45,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 fun String.toLegal(): String {
-    return this.replace("\t","    ")
+    return this.replace(Regex("[\\x00-\\x1f]"),"").replace("\t","    ")
         .replace("/", "／").replace("\\", "＼").replace(":", "꞉")
         .replace("*", "∗").replace("?", "？").replace("|", "ǀ")
         .replace("\"", "\'\'").replace("<", "＜").replace(">", "＞")
@@ -99,7 +99,7 @@ object Works {
             .replace("{userid}", illust.user.id.toString())
             .replace("{name}", illust.user.name.let{ if (it.length>8) it.substringBeforeLast("@") else it}.toLegal())
             .replace("{account}", illust.user.account.toLegal())
-            .replace("{R18}", if(illust.x_restrict.equals(1)) "R18" else "")
+            .replace("{R18}", if(illust.x_restrict == 1) "R18" else "")
             .replace("{title}", illust.title.toLegal())
                 //!illust.title.contains(it.name)
         if (part != null && illust.meta_pages.isNotEmpty()) {
@@ -115,7 +115,7 @@ object Works {
         else{
             url = ""
         }
-        if(R18Folder && illust.x_restrict.equals(1))
+        if(R18Folder && illust.x_restrict == 1)
             filename = "？$filename"
 
         val type = when {

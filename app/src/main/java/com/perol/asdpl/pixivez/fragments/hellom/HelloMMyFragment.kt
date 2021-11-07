@@ -45,7 +45,7 @@ import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
-import kotlinx.android.synthetic.main.fragment_hello_mmy.*
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMmyBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -88,9 +88,9 @@ class HelloMMyFragment : BaseFragment() {
             }
         })
         viewmodel.illusts.observe(this, Observer {
-            swiperefresh_mym.isRefreshing = false
+            binding.swiperefreshMym.isRefreshing = false
             rankingAdapter.setNewData(it)
-            recyclerview_mym?.smoothScrollToPosition(0)
+            binding.recyclerviewMym.smoothScrollToPosition(0)
         })
         viewmodel.nexturl.observe(this, Observer {
             if (it == null) {
@@ -122,9 +122,11 @@ class HelloMMyFragment : BaseFragment() {
         lazyLoad()
     }
 
+    private lateinit var binding: FragmentHelloMmyBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_hello_mmy, container, false)
+		binding = FragmentHelloMmyBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     private var exitTime = 0L
@@ -141,9 +143,9 @@ class HelloMMyFragment : BaseFragment() {
             blockTags,
             if(viewmodel.hideBookmarked.value!!) 1 else 0
         )
-        recyclerview_mym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        recyclerview_mym.adapter = rankingAdapter
-        swiperefresh_mym.setOnRefreshListener {
+        binding.recyclerviewMym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerviewMym.adapter = rankingAdapter
+        binding.swiperefreshMym.setOnRefreshListener {
             viewmodel.OnRefreshListener(restrict)
         }
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
@@ -188,10 +190,10 @@ class HelloMMyFragment : BaseFragment() {
                     ).show()*/
                     exitTime = System.currentTimeMillis()
                 } else {
-                    recyclerview_mym.smoothScrollToPosition(0)
+                    binding.recyclerviewMym.smoothScrollToPosition(0)
                 }
             }
-        swiperefresh_mym.isRefreshing = true
+        binding.swiperefreshMym.isRefreshing = true
     }
 
     companion object {

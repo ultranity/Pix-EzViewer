@@ -32,13 +32,15 @@ import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.ZoomPagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
-import kotlinx.android.synthetic.main.activity_zoom.*
-
+import com.perol.asdpl.pixivez.databinding.ActivityZoomBinding
 // zoom pic for viewing when clicked
 class ZoomActivity : RinkActivity() {
 
+    private lateinit var binding: ActivityZoomBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityZoomBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
@@ -48,11 +50,10 @@ class ZoomActivity : RinkActivity() {
                 // Hide the nav bar and status bar
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        setContentView(R.layout.activity_zoom)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
         val intent = intent
         val bundle = intent.extras!!
         val illust = bundle.getParcelable<Illust>("illust")!!
@@ -63,9 +64,9 @@ class ZoomActivity : RinkActivity() {
                 1
             else
                 illust.meta_pages.size
-        textview_zoom.text = "1/${size}"
-        viewpage_zoom.adapter = zoomPagerAdapter
-        viewpage_zoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.textviewZoom.text = "1/${size}"
+        binding.viewpageZoom.adapter = zoomPagerAdapter
+        binding.viewpageZoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -75,15 +76,15 @@ class ZoomActivity : RinkActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                viewpage_zoom.tag = position
-                textview_zoom.text = "${position + 1}/${size}"
+                binding.viewpageZoom.tag = position
+                binding.textviewZoom.text = "${position + 1}/${size}"
             }
 
             override fun onPageScrollStateChanged(state: Int) {
 
             }
         })
-        viewpage_zoom.currentItem = num
+        binding.viewpageZoom.currentItem = num
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

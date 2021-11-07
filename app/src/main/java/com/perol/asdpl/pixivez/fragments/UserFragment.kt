@@ -44,8 +44,7 @@ import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
-import kotlinx.android.synthetic.main.fragment_user.*
-
+import com.perol.asdpl.pixivez.databinding.FragmentUserBinding
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -65,8 +64,8 @@ class UserFragment : LazyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
-        recyclerview_user.adapter = userShowAdapter
-        recyclerview_user.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerviewUser.adapter = userShowAdapter
+        binding.recyclerviewUser.layoutManager = LinearLayoutManager(activity)
         userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
             if (userViewModel.nexturl.value != null)
                 userViewModel.getNextUsers(userViewModel.nexturl.value!!)
@@ -100,11 +99,13 @@ class UserFragment : LazyFragment() {
         lazyLoad()
     }
 
+    private lateinit var binding: FragmentUserBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        return inflater.inflate(R.layout.fragment_user, container, false)
+		binding = FragmentUserBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     fun lazyLoad() {
@@ -112,26 +113,20 @@ class UserFragment : LazyFragment() {
 
 
         userViewModel.users.observe(this, Observer {
-            users(it)
+            if (it != null) {
+                userShowAdapter.addData(it.user_previews)
+            } else {
+                userShowAdapter.loadMoreModule?.loadMoreFail()
+            }
         })
 
         userViewModel.nexturl.observe(this, Observer {
-            nexturl(it)
+            if (it != null) {
+                userShowAdapter.loadMoreModule?.loadMoreComplete()
+            } else {
+                userShowAdapter.loadMoreModule?.loadMoreEnd()
+            }
         })
-
-
-    }
-
-    private fun users(it: SearchUserResponse?) {
-        if (it != null) {
-            userShowAdapter.addData(it.user_previews)
-        }
-    }
-
-    private fun nexturl(it: String?) {
-        if (it != null) {
-            userShowAdapter.loadMoreModule?.loadMoreComplete()
-        } else userShowAdapter.loadMoreModule?.loadMoreEnd()
     }
 
     companion object {

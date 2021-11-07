@@ -7,21 +7,22 @@ import androidx.preference.PreferenceFragmentCompat
 import com.arialyy.aria.core.Aria
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.RinkActivity
-import kotlinx.android.synthetic.main.settings_activity.*
-
+import com.perol.asdpl.pixivez.databinding.SettingsActivityBinding
 class ManagerSettingsActivity : RinkActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: SettingsActivityBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
-        setSupportActionBar(toolbar)
+		binding = SettingsActivityBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.settings, SettingsFragment())
             .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
     }
 

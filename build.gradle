@@ -2,7 +2,7 @@
 
 buildscript {
 
-    ext.kotlin_version = '1.4.10'
+    ext.kotlin_version = '1.4.32'
 
     repositories {
         /*
@@ -16,6 +16,7 @@ buildscript {
             url "https://maven.aliyun.com/repository/central"
         }*/
         maven { url 'https://www.jitpack.io' }
+        mavenCentral()
         jcenter()
         google()
 
@@ -23,9 +24,8 @@ buildscript {
     dependencies {
 
         classpath 'com.android.tools.build:bundletool:0.13.4'
-        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.android.tools.build:gradle:4.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
         if (getGradle().getStartParameter().getTaskRequests()
                 .toString().contains("Play")){
@@ -49,6 +49,7 @@ allprojects {
             url "https://maven.aliyun.com/repository/central"
         }*/
         maven { url 'https://www.jitpack.io' }
+        mavenCentral()
         jcenter()
         google()
     }

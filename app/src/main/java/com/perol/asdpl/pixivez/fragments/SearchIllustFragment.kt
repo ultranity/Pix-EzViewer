@@ -51,7 +51,7 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
-import kotlinx.android.synthetic.main.fragment_search_illust.*
+import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -143,10 +143,10 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             setHeaderView(searchResultHeaderView)
         }
         searchtext.text = param1
-        recyclerview_illust.adapter = searchIllustAdapter
-        recyclerview_illust.layoutManager =
+        binding.recyclerviewIllust.adapter = searchIllustAdapter
+        binding.recyclerviewIllust.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val arrayList = arrayOfNulls<String>(starnum.size)
             for (i in starnum.indices) {
@@ -165,7 +165,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                     else
                         param1 + " " + starnum[which].toString() + "users入り"
                     viewModel.firstSetData(query)
-                    recyclerview_illust.scrollToPosition(0)
+                    binding.recyclerviewIllust.scrollToPosition(0)
                 }
             builder.create().show()
         }
@@ -180,7 +180,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         searchIllustAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel.onLoadMoreListen()
         }
-        swiperefresh.setOnRefreshListener {
+        binding.swiperefresh.setOnRefreshListener {
             runBlocking {
                 val user = AppDataRepository.getUser()
                 if (!user.ispro && selectSort == 2) {
@@ -204,7 +204,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
                     exitTime = System.currentTimeMillis()
                 } else {
-                    recyclerview_illust.smoothScrollToPosition(0)
+                    binding.recyclerviewIllust.smoothScrollToPosition(0)
                 }
 
             }
@@ -239,12 +239,14 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     }
 
+    private lateinit var binding: FragmentSearchIllustBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_search_illust, container, false)
+		binding = FragmentSearchIllustBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 
@@ -254,17 +256,25 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         viewModel.illusts.observe(this, Observer {
             updateillust(it)
         })
-        viewModel.addIllusts.observe(this, Observer {
-            addIllust(it)
+        viewModel.addIllusts.observe(this, {
+            if (it != null){
+                searchIllustAdapter.addData(it)
+            } else {
+                searchIllustAdapter.loadMoreFail()
+            }
         })
         viewModel.nexturl.observe(this, Observer {
-            nexturl(it)
+            if (it == null) {
+                searchIllustAdapter.loadMoreEnd()
+            } else {
+                searchIllustAdapter.loadMoreComplete()
+            }
         })
         viewModel.bookmarkid.observe(this, Observer {
             changeToBlue(it)
         })
         viewModel.isRefresh.observe(this, Observer {
-            swiperefresh.isRefreshing = it
+            binding.swiperefresh.isRefreshing = it
         })
         viewModel.hideBookmarked.observe(this, Observer {
             if (it != null) {
@@ -274,11 +284,6 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 searchIllustAdapter.hideBookmarked = it
             }
         })
-    }
-
-    private fun addIllust(it: java.util.ArrayList<Illust>) {
-        searchIllustAdapter.addData(it)
-        searchIllustAdapter.loadMoreComplete()
     }
 
     private var position: Int? = null
@@ -291,11 +296,6 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             item.setBackgroundColor(Color.YELLOW)
             Toasty.success(requireActivity(), "收藏成功", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun nexturl(it: String?) {
-        it ?: searchIllustAdapter.loadMoreEnd()
-
     }
 
     private fun updateillust(it: ArrayList<Illust>?) {

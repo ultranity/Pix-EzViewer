@@ -46,10 +46,8 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_saucenao.*
-import kotlinx.android.synthetic.main.activity_saucenao.fab
-import kotlinx.android.synthetic.main.activity_saucenao.webview
-import kotlinx.android.synthetic.main.activity_web_view.*
+import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
+import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -69,13 +67,12 @@ import kotlin.collections.ArrayList
 class SaucenaoActivity : RinkActivity() {
 
     private val IMAGE = 1
+    private lateinit var binding: ActivitySaucenaoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivitySaucenaoBinding>(
-            this,
-            R.layout.activity_saucenao
-        )
-        fab.setOnClickListener {
+        binding = ActivitySaucenaoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.fab.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -89,7 +86,7 @@ class SaucenaoActivity : RinkActivity() {
             }
         })
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val builder1 = OkHttpClient.Builder()
         builder1.addInterceptor(object : Interceptor {
@@ -128,7 +125,7 @@ class SaucenaoActivity : RinkActivity() {
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
-        ssl.isChecked = false
+        binding.ssl.isChecked = false
         api = service.create(SaucenaoService::class.java)
 
         if (intent != null) {
@@ -258,13 +255,13 @@ class SaucenaoActivity : RinkActivity() {
                     this,
                     R.drawable.buzhisuocuo
                 )
-            ).into(imageview)
-
-            webview.loadDataWithBaseURL("https://saucenao.com", string,"text/html","UTF-8","")
-            webview.settings.blockNetworkImage = false
+            ).into(binding.imageview)
+            //prevent CORS
+            binding.webview.loadDataWithBaseURL("https://saucenao.com", string,"text/html","UTF-8","")
+            binding.webview.settings.blockNetworkImage = false
             //webview.settings.javaScriptEnabled = true
-            webview.settings.userAgentString
-            webview.visibility = View.VISIBLE
+            binding.webview.settings.userAgentString
+            binding.webview.visibility = View.VISIBLE
         }
     }
 

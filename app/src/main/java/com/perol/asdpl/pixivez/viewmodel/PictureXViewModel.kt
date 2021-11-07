@@ -25,7 +25,9 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.responses.Illust
@@ -72,7 +74,7 @@ class PictureXViewModel : BaseViewModel() {
 
     }
 
-    fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)!!
+    fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)
 
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"
@@ -162,7 +164,14 @@ class PictureXViewModel : BaseViewModel() {
                         )
                     )
             }
-        }, {}, {}).add()
+        }, {
+            Toasty.warning(
+                PxEZApp.instance,
+                "查找的id不存在: $toLong",
+                Toast.LENGTH_SHORT
+            ).show()
+            illustDetail.value = null
+        }, {}).add()
     }
 
     fun getRelative(long: Long) {

@@ -33,11 +33,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RankingMAdapter
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
-import kotlinx.android.synthetic.main.fragment_hello_mdynamics.*
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import java.util.*
 
 
@@ -58,11 +59,36 @@ class HelloMDynamicsFragment : LazyFragment() {
     }
 
 
+    private val modelist = arrayOf(
+        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18"
+        , "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
+    )
+    private val titles by lazy {resources.getStringArray(R.array.modellist)}
     private fun initView() {
-        viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
+        //viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
             ViewModelProvider(requireActivity()).get(RankingShareViewModel::class.java)
-        tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
+        for (i in modelist.indices)
+            binding.tablayoutRankingm.addTab(binding.tablayoutRankingm.newTab().setText(titles[i]))
+        childFragmentManager.fragments.forEach {
+            childFragmentManager.beginTransaction().remove(it).commit()
+        }
+        childFragmentManager.beginTransaction()
+            .add(R.id.content_view,RankingMFragment.newInstance(modelist[0], 0)).commit()
+        binding.tablayoutRankingm.getTabAt(0)!!.select()
+        binding.tablayoutRankingm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                childFragmentManager.beginTransaction().remove(childFragmentManager.fragments[0])
+                    .add(R.id.content_view,RankingMFragment.newInstance(modelist[tab.position], tab.position)).commit()
+            }
+        })
+        //tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
 /*        TabLayoutMediator(tablayout_rankingm, viewpage_rankingm) { tab, position ->
             tab.text = resources.getStringArray(R.array.modellist)[position]
             viewpage_rankingm.setCurrentItem(tab.position, true)
@@ -72,7 +98,7 @@ class HelloMDynamicsFragment : LazyFragment() {
         val monthNow = calendar.get(Calendar.MONTH) + 1
         val dayNow = calendar.get(Calendar.DAY_OF_MONTH)
         val dateNow = "$yearNow-$monthNow-$dayNow"
-        imageview_triangle.apply {
+        binding.imageviewTriangle.apply {
             setOnClickListener {
                 shareModel.apply {
                     val dateDialog = DatePickerDialog(
@@ -120,11 +146,13 @@ class HelloMDynamicsFragment : LazyFragment() {
         }
     }
 
+    private lateinit var binding: FragmentHelloMdynamicsBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_hello_mdynamics, container, false)
+		binding = FragmentHelloMdynamicsBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

@@ -4,15 +4,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.BlockTagFragment
-import kotlinx.android.synthetic.main.activity_block.*
-
-
+import com.perol.asdpl.pixivez.databinding.ActivityBlockBinding
 class BlockActivity : RinkActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: ActivityBlockBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_block)
-        setSupportActionBar(toolbar)
+		binding = ActivityBlockBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager.beginTransaction()
             .add(R.id.fragmentContainer, BlockTagFragment.newInstance("", "")).commit()

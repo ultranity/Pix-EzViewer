@@ -43,7 +43,7 @@ import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
 import com.zhy.view.flowlayout.TagFlowLayout
-import kotlinx.android.synthetic.main.fragment_user_message.*
+import com.perol.asdpl.pixivez.databinding.FragmentUserMessageBinding
 import java.util.*
 
 
@@ -64,16 +64,16 @@ class UserMessageFragment : Fragment() {
     }
 
     private fun initdata() {
-        textView_tacomment.autoLinkMask = Linkify.WEB_URLS
+        binding.textViewTacomment.autoLinkMask = Linkify.WEB_URLS
         if (mParam1!!.user != null || mParam1!!.user.comment != "")
-            textView_tacomment!!.text = mParam1!!.user.comment
+            binding.textViewTacomment!!.text = mParam1!!.user.comment
         else
-            textView_tacomment!!.text = "~"
-        GlideLoadImage(imageview_user_bg,mParam1!!.profile.background_image_url)
+            binding.textViewTacomment!!.text = "~"
+        GlideLoadImage(binding.imageviewUserBg,mParam1!!.profile.background_image_url)
         val mInflater = LayoutInflater.from(requireActivity())
-        textView_user_id!!.text = mParam1!!.user.id.toString()
-        textView_fans!!.text = mParam1!!.profile.total_mypixiv_users.toString()
-        textView_fans!!.setOnClickListener {
+        binding.textViewUserId!!.text = mParam1!!.user.id.toString()
+        binding.textViewFans!!.text = mParam1!!.profile.total_mypixiv_users.toString()
+        binding.textViewFans!!.setOnClickListener {
             val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
             val bundle = Bundle()
             bundle.putLong("user", mParam1!!.user.id.toLong())
@@ -81,8 +81,8 @@ class UserMessageFragment : Fragment() {
             intent.putExtras(bundle)
             startActivity(intent)
         }
-        textView5!!.text = mParam1!!.profile.total_follow_users.toString()
-        textView5!!.setOnClickListener { BreaktoUserFollow(mParam1!!.user.id.toLong()) }
+        binding.textView5!!.text = mParam1!!.profile.total_follow_users.toString()
+        binding.textView5!!.setOnClickListener { BreaktoUserFollow(mParam1!!.user.id.toLong()) }
         val strings = ArrayList<String>()
         strings.add("twitter@" + mParam1!!.profile.twitter_account)
         strings.add("pawoo")
@@ -107,7 +107,7 @@ class UserMessageFragment : Fragment() {
         }
         strings -= removelist
         if (strings.size <= 2) strings.add("╮(╯▽╰)╭")
-        search_page_flowlayout!!.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
+        binding.searchPageFlowlayout!!.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
             override fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean {
                 when (position) {
                     0 -> {
@@ -151,23 +151,23 @@ class UserMessageFragment : Fragment() {
                 return true
             }
         })
-        search_page_flowlayout!!.adapter = object : TagAdapter<String>(strings) {
+        binding.searchPageFlowlayout.adapter = object : TagAdapter<String>(strings) {
             override fun getView(parent: FlowLayout, position: Int, s: String): View {
                 when (position) {
                     0 -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, search_page_flowlayout, false) as TextView
+                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
                         tv.text = s
                         tv.setTextColor(Color.BLUE)
                         return tv
                     }
                     1 -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, search_page_flowlayout, false) as TextView
+                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
                         tv.text = s
                         tv.setTextColor(Color.YELLOW)
                         return tv
                     }
                     else -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, search_page_flowlayout, false) as TextView
+                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
                         tv.text = s
                         return tv
                     }
@@ -184,12 +184,13 @@ class UserMessageFragment : Fragment() {
 
         }
     }
-
+    private lateinit var binding:FragmentUserMessageBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        return inflater.inflate(R.layout.fragment_user_message, container, false)
+		binding = FragmentUserMessageBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

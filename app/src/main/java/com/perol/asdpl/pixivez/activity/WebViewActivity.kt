@@ -25,31 +25,40 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.android.synthetic.main.activity_web_view.*
 import java.io.ByteArrayInputStream
 
 
 class WebViewActivity : RinkActivity() {
+
+    private lateinit var binding: ActivityWebViewBinding
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_web_view)
+        binding = ActivityWebViewBinding.inflate(layoutInflater)
+		setContentView(binding.root)
         val local = LanguageUtil.langToLocale(PxEZApp.language).language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"
-        webview.loadUrl(intent.getStringExtra("url")!!.replace("ja", local))
-        webview.settings.blockNetworkImage = false
-        webview.settings.javaScriptEnabled = true
-        webview.webViewClient = object : WebViewClient() {
+        binding.webview.loadUrl(intent.getStringExtra("url")!!.replace("ja", local))
+        //binding.webview.title
+        binding.webview.settings.blockNetworkImage = false
+        binding.webview.settings.javaScriptEnabled = true
+        //WebView.setWebContentsDebuggingEnabled(true)
+        binding.webview.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest
@@ -71,38 +80,78 @@ class WebViewActivity : RinkActivity() {
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
-                val segment = request.url.pathSegments
-                if (segment.contains("artworks")) {
-                    val id = segment[segment.indexOf("artworks")+1].toLong()
-                    val bundle = Bundle()
-                    val arrayList = LongArray(1)
-                    arrayList[0] = id
-                    bundle.putLongArray("illustidlist", arrayList)
-                    bundle.putLong("illustid", id)
-                    val intent = Intent(this@WebViewActivity, PictureActivity::class.java)
-                    intent.putExtras(bundle)
-                    startActivity(intent)
-                    return true
-                }
-                else if(segment.contains("users")){
-                    val userId = segment[segment.indexOf("users")+1].toLong()
-                    val intent = Intent(this@WebViewActivity, UserMActivity::class.java)
-                    intent.putExtra("data", userId.toLong())
-                    startActivity(intent)
-                    return true
-                }
-                else if (segment.size == 1 && request.url.toString().contains("/member.php?id=")) {
-                    val userId = request.url.getQueryParameter("id")
-                    val intent = Intent(this@WebViewActivity, UserMActivity::class.java)
-                    intent.putExtra("data", userId?.toLong())
-                    startActivity(intent)
-                    return true
+                try {
+                    val uri = request.url
+                    Log.d(className, "loading $uri")
+                    if (uri != null) {
+                        val scheme = uri.scheme
+                        val host = uri.host
+                        val segment = uri.pathSegments
+                        if (scheme != null) {
+                            // pixiv://illusts/
+                            if (scheme.contains("pixiv")) {
+                                val new = Intent(
+                                    this@WebViewActivity,
+                                    IntentActivity::class.java
+                                )
+                                new.data = request.url
+                                startActivity(new)
+                                finish()
+                                return true
+                            }
+                            else {
+                                if (host != null) {
+                                    if (uri.host?.contains("www.pixiv.net") == true) {
+                                        if (segment.contains("artworks")) {
+                                            val id =
+                                                segment[segment.indexOf("artworks") + 1].toLong()
+                                            val bundle = Bundle()
+                                            val arrayList = LongArray(1)
+                                            arrayList[0] = id
+                                            bundle.putLongArray("illustidlist", arrayList)
+                                            bundle.putLong("illustid", id)
+                                            val intent = Intent(
+                                                this@WebViewActivity,
+                                                PictureActivity::class.java
+                                            )
+                                            intent.putExtras(bundle)
+                                            startActivity(intent)
+                                            return true
+                                        } else if (segment.contains("users")) {
+                                            val userId =
+                                                segment[segment.indexOf("users") + 1].toLong()
+                                            val intent = Intent(
+                                                this@WebViewActivity,
+                                                UserMActivity::class.java
+                                            )
+                                            intent.putExtra("data", userId.toLong())
+                                            startActivity(intent)
+                                            return true
+                                        } else if (segment.size == 1 && request.url.toString()
+                                                .contains("/member.php?id=")
+                                        ) {
+                                            val userId = request.url.getQueryParameter("id")
+                                            val intent = Intent(
+                                                this@WebViewActivity,
+                                                UserMActivity::class.java
+                                            )
+                                            intent.putExtra("data", userId?.toLong())
+                                            startActivity(intent)
+                                            return true
+                                        } else
+                                            return false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }catch (e: Exception){
+                    e.printStackTrace()
                 }
                 return false
-
             }
         }
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             finish()
         }
     }

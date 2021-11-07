@@ -66,6 +66,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.*
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
+import com.perol.asdpl.pixivez.databinding.ViewPicturexGifBinding
+import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
@@ -85,7 +87,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.view_picturex_surface_gif.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -102,7 +103,7 @@ class PictureXAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val imageUrls = ArrayList<String>()
     val imageThumbnailUrls = ArrayList<String>()
-    val pre = PreferenceManager.getDefaultSharedPreferences(mContext)
+    val pre = PreferenceManager.getDefaultSharedPreferences(mContext)!!
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
     private lateinit var mBookmarkedUserListen: () -> Unit
@@ -554,7 +555,7 @@ class PictureXAdapter(
                                 "isDownloaded: " + FileUtil.isDownloaded(data).toString()
                         builder.setMessage(detailstring)
                         builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
-                            TToast.startDownload(PxEZApp.instance)
+                            TToast.startDownload()
                             Works.imgD(data, position)
                         }
                         builder.setNegativeButton(mContext.resources.getString(android.R.string.cancel)) { dialog, which ->
@@ -593,7 +594,7 @@ class PictureXAdapter(
                                     }
                                     // Set the action buttons
                                 builder.setPositiveButton(android.R.string.ok) { dialog, id ->
-                                        TToast.startDownload(PxEZApp.instance)
+                                        TToast.startDownload()
                                         mSelectedItems.map {
                                             Works.imgD(data, it)
                                         }
@@ -641,15 +642,15 @@ class PictureXAdapter(
 //            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
             }
             is SurfaceGifViewHolder -> {
-                gifProgressBar =
-                    holder.itemView.findViewById<CircleProgressBar>(R.id.progressbar_gif)
-                val play = holder.itemView.findViewById<ImageView>(R.id.imageview_play)
+                val binding = ViewPicturexSurfaceGifBinding.bind(holder.itemView)
+                gifProgressBar = binding.progressbarGif
+                val play = binding.imageviewPlay
 
-                imageViewGif = holder.itemView.imageview_gif
+                imageViewGif = binding.imageviewGif
                 val s = (data.height.toFloat() / data.width.toFloat())
                 holder.itemView.post {
                     val finalHeight = s * holder.itemView.width.toFloat()
-                    holder.itemView.container.apply {
+                    binding.container.apply {
                         layoutParams = layoutParams.apply {
                             width = FrameLayout.LayoutParams.MATCH_PARENT
                             height = finalHeight.toInt()
@@ -686,8 +687,8 @@ class PictureXAdapter(
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                             return false
                         }
-                    }).into(holder.itemView.preview)
-                previewImageView = holder.itemView.preview
+                    }).into(binding.preview)
+                previewImageView = binding.preview
                 val path2 = PxEZApp.storepath + File.separatorChar + (if(PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "") +
                         Works.parseSaveFormat(data).substringBeforeLast(".").removePrefix("？") + ".gif"
                 imageViewGif!!.setOnLongClickListener {

@@ -244,7 +244,7 @@ class PxEZApp : Application() {
         var saveformat = ""
 
         @JvmStatic
-        var locale = Locale.SIMPLIFIED_CHINESE
+        var locale = Locale.SIMPLIFIED_CHINESE!!
 
         @JvmStatic
         var language: Int = 0

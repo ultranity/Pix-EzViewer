@@ -43,6 +43,8 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
 import com.perol.asdpl.pixivez.adapters.RankingAdapter
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentUserBinding
+import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
@@ -50,7 +52,6 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
-import kotlinx.android.synthetic.main.fragment_user_book_mark.*
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -81,7 +82,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 }
             }
         }.doOnError {
-
+            it.printStackTrace()
         }.subscribe()
     }
 
@@ -109,7 +110,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             }
 
 
-        mrecyclerview.apply{
+        binding.mrecyclerview.apply{
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = picItemAdapter
             addItemDecoration(GridItemDecoration())
@@ -118,7 +119,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             viewModel!!.onLoadMoreListener()
         }
 
-        mrefreshlayout.setOnRefreshListener {
+        binding.mrefreshlayout.setOnRefreshListener {
             viewModel!!.onRefreshListener(param1!!, pub, null)
         }
         requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
@@ -127,7 +128,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
                 exitTime = System.currentTimeMillis()
             } else {
-                mrecyclerview?.smoothScrollToPosition(0)
+                binding.mrecyclerview.smoothScrollToPosition(0)
             }
 
         }
@@ -156,7 +157,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         })
         viewModel!!.data.observe(this, Observer {
             if (it != null) {
-                mrefreshlayout.isRefreshing = false
+                binding.mrefreshlayout.isRefreshing = false
                 picItemAdapter.setNewData(it.toMutableList())
             }
 
@@ -165,6 +166,8 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
+            } else {
+                picItemAdapter.loadMoreFail()
             }
         })
         viewModel!!.tags.observe(this, Observer {
@@ -238,13 +241,15 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         }
     }
     private lateinit var picItemAdapter: PicItemAdapter
+    private lateinit var binding: FragmentUserBookMarkBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-        return inflater.inflate(R.layout.fragment_user_book_mark, container, false)
+        binding = FragmentUserBookMarkBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 

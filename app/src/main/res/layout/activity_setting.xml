@@ -47,7 +47,9 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_setting" />
+    <include
+        android:id="@+id/content_setting"
+        layout="@layout/content_setting" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

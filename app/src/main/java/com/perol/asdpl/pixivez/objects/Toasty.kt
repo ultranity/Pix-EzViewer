@@ -26,31 +26,66 @@ package com.perol.asdpl.pixivez.objects
 
 import android.content.Context
 import android.widget.Toast
+import com.perol.asdpl.pixivez.services.PxEZApp
+object Toasty {
+    val lToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
+    val sToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    fun longToast(string: String){
+        lToast.setText(string)
+        lToast.show()
+    }
+    fun shortToast(string: String){
+        sToast.setText(string)
+        sToast.show()
+    }
+    fun longToast(string: Int){
+        lToast.setText(string)
+        lToast.show()
+    }
+    fun shortToast(string: Int){
+        sToast.setText(string)
+        sToast.show()
+    }
+    fun success(context: Context, stringId: Int, length: Int=Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, context.getText(stringId), length)
+    }
 
-class Toasty {
-    companion object {
+    fun error(context: Context, stringId: Int): Toast {
+        return Toast.makeText(context, context.getText(stringId), Toast.LENGTH_SHORT)
+    }
 
-        fun success(context: Context, string: String, length: Int): Toast {
-            return Toast.makeText(context, string, length)
-        }
+    fun info(context: Context, stringId: Int, length: Int=Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, context.getText(stringId), length)
+    }
 
-        fun error(context: Context, string: String): Toast {
-            return Toast.makeText(context, string, Toast.LENGTH_SHORT)
-        }
+    fun warning(context: Context, stringId: Int, length: Int=Toast.LENGTH_SHORT): Toast {
 
-        fun info(context: Context, string: String, length: Int): Toast {
+        return Toast.makeText(context, context.getText(stringId), length)
+    }
 
-            return Toast.makeText(context, string, length)
-        }
+    fun normal(context: Context, stringId: Int, length: Int=Toast.LENGTH_SHORT): Toast {
 
-        fun warning(context: Context, string: String, length: Int): Toast {
+        return Toast.makeText(context, context.getText(stringId), length)
+    }
 
-            return Toast.makeText(context, string, length)
-        }
+    fun success(context: Context, string: String, length: Int=Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, string, length)
+    }
 
-        fun normal(context: Context, string: String, length: Int): Toast {
+    fun error(context: Context, string: String): Toast {
+        return Toast.makeText(context, string, Toast.LENGTH_SHORT)
+    }
 
-            return Toast.makeText(context, string, length)
-        }
+    fun info(context: Context, string: String, length: Int=Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, string, length)
+    }
+
+    fun warning(context: Context, string: String, length: Int=Toast.LENGTH_SHORT): Toast {
+
+        return Toast.makeText(context, string, length)
+    }
+
+    fun normal(context: Context, string: String, length: Int=Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, string, length)
     }
 }

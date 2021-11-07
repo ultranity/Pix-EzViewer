@@ -40,12 +40,11 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.trend_tag_fragment.*
-
-
+import com.perol.asdpl.pixivez.databinding.TrendTagFragmentBinding
 class TrendTagFragment : Fragment() {
     private val mDisposable = CompositeDisposable()
 
@@ -54,16 +53,19 @@ class TrendTagFragment : Fragment() {
     }
 
     private lateinit var viewModel: TrendTagViewModel
+
+    private lateinit var binding: TrendTagFragmentBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.trend_tag_fragment, container, false)
+		binding = TrendTagFragmentBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        textView_clearn.setOnClickListener {
+        binding.textViewClearn.setOnClickListener {
 
             viewModel.sethis()
         }
@@ -81,12 +83,12 @@ class TrendTagFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(TrendTagViewModel::class.java)
         mDisposable.add(viewModel.getIllustTrendTags().subscribe({
             if (it != null) {
-                recyclerview_searhm.layoutManager =
+                binding.recyclerviewSearhm.layoutManager =
                     StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
                 val trendingtagAdapter =
                     TrendingTagAdapter(R.layout.view_trendingtag_item, it.trend_tags)
-                recyclerview_searhm.adapter = trendingtagAdapter
-                recyclerview_searhm.isNestedScrollingEnabled = false
+                binding.recyclerviewSearhm.adapter = trendingtagAdapter
+                binding.recyclerviewSearhm.isNestedScrollingEnabled = false
                 trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
                     val searchword = it.trend_tags[position].tag
                     upToPage(searchword)
@@ -112,13 +114,13 @@ class TrendTagFragment : Fragment() {
             }
         }, {}))
         viewModel.searchhistroy.observe(viewLifecycleOwner, Observer { it ->
-            chipgroup.removeAllViews()
+            binding.chipgroup.removeAllViews()
             it.forEach {
-                chipgroup.addView(getChip(it))
+                binding.chipgroup.addView(getChip(it))
             }
 
-            if (it.isNotEmpty()) textView_clearn.visibility = View.VISIBLE
-            else textView_clearn.visibility = View.GONE
+            if (it.isNotEmpty()) binding.textViewClearn.visibility = View.VISIBLE
+            else binding.textViewClearn.visibility = View.GONE
         })
     }
 

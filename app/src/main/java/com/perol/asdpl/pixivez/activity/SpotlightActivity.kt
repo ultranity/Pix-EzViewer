@@ -44,7 +44,7 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_spotlight.*
+import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
@@ -62,9 +62,11 @@ class SpotlightActivity : RinkActivity() {
     private var url = ""
     private var num = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: ActivitySpotlightBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_spotlight)
+		binding = ActivitySpotlightBinding.inflate(layoutInflater)
+		setContentView(binding.root)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         getData()
     }
@@ -72,7 +74,7 @@ class SpotlightActivity : RinkActivity() {
     private fun getData() {
         val intent = intent
         url = intent.getStringExtra("url")
-        textView_test.setOnClickListener {
+        binding.textViewTest.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
             val content_url = Uri.parse(url)
@@ -110,7 +112,7 @@ class SpotlightActivity : RinkActivity() {
                             stringBuilder.append(element.text())
 
                         }
-                        textView_test.text = stringBuilder
+                        binding.textViewTest.text = stringBuilder
                         for (string in urls) {
                             if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
                                 reurls.add(Integer.valueOf(string.replace("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=", "")))
@@ -182,11 +184,11 @@ class SpotlightActivity : RinkActivity() {
 
                     override fun onComplete() {
                         spotlightAdapter = SpotlightAdapter(R.layout.view_spotlight_item, list)
-                        recyclerview_spotlight.layoutManager =
+                        binding.recyclerviewSpotlight.layoutManager =
                             LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
 
-                        recyclerview_spotlight.adapter = spotlightAdapter
-                        recyclerview_spotlight.isNestedScrollingEnabled = false
+                        binding.recyclerviewSpotlight.adapter = spotlightAdapter
+                        binding.recyclerviewSpotlight.isNestedScrollingEnabled = false
                     }
                 })
 

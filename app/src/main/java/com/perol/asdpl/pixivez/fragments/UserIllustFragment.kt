@@ -41,7 +41,7 @@ import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
-import kotlinx.android.synthetic.main.fragment_user_illust.*
+import com.perol.asdpl.pixivez.databinding.FragmentUserIllustBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -79,10 +79,10 @@ class UserIllustFragment : BaseFragment() {
         recommendAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
-        mrefreshlayout.setOnRefreshListener {
+        binding.mrefreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, param2!!)
         }
-        mrecyclerview.apply{
+        binding.mrecyclerview.apply{
                 layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                 adapter = recommendAdapter
                 //addItemDecoration(GridItemDecoration())
@@ -111,7 +111,7 @@ class UserIllustFragment : BaseFragment() {
         viewActivity = activity as UserMActivity
         viewModel.data.observe(this, Observer {
             if (it != null) {
-                mrefreshlayout.isRefreshing = false
+                binding.mrefreshlayout.isRefreshing = false
                 recommendAdapter.setNewData(it.toMutableList())
             }
 
@@ -133,6 +133,7 @@ class UserIllustFragment : BaseFragment() {
     private lateinit var viewActivity: UserMActivity
 
     private lateinit var recommendAdapter: RecommendAdapter
+    private lateinit var binding: FragmentUserIllustBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -147,7 +148,8 @@ class UserIllustFragment : BaseFragment() {
                 .getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
         )
 
-        return inflater.inflate(R.layout.fragment_user_illust, container, false)
+		binding = FragmentUserIllustBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

@@ -36,7 +36,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.AccountChoiceAdapter
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.android.synthetic.main.activity_account.*
+import com.perol.asdpl.pixivez.databinding.ActivityAccountBinding
 import kotlinx.coroutines.runBlocking
 
 class AccountActivity : RinkActivity() {
@@ -66,15 +66,17 @@ class AccountActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: ActivityAccountBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account)
-        setSupportActionBar(toolbar)
+		binding = ActivityAccountBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        recyclerview_account.layoutManager = LinearLayoutManager(this)
+        binding.recyclerviewAccount.layoutManager = LinearLayoutManager(this)
         runBlocking {
             val users = AppDataRepository.getAllUser()
-            recyclerview_account.adapter = AccountChoiceAdapter(
+            binding.recyclerviewAccount.adapter = AccountChoiceAdapter(
                 R.layout.view_account_item, users
 
             ).apply {

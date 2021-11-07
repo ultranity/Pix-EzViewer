@@ -45,8 +45,8 @@ import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
-import kotlinx.android.synthetic.main.fragment_hello_mdynamics.*
-import kotlinx.android.synthetic.main.fragment_ranking_m.*
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
+import com.perol.asdpl.pixivez.databinding.FragmentRankingMBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -127,8 +127,12 @@ class RankingMFragment : BaseFragment(){
             }
         })
         viewmodel.illusts.observe(this, Observer {
-            swiperefresh_rankingm.isRefreshing = false
-            rankingAdapter.setNewData(it)
+            binding.swiperefreshRankingm.isRefreshing = false
+            if (it != null) {
+                rankingAdapter.setNewData(it)
+            } else {
+                rankingAdapter.loadMoreFail()
+            }
         })
         viewmodel.nexturl.observe(this, Observer {
             if (it == null) {
@@ -142,13 +146,13 @@ class RankingMFragment : BaseFragment(){
     var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        swiperefresh_rankingm.setOnRefreshListener {
+        binding.swiperefreshRankingm.setOnRefreshListener {
             viewmodel.onRefresh(param1!!, picDate)
         }
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
-        recyclerview_rankingm.apply{
+        binding.recyclerviewRankingm.apply{
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = rankingAdapter
             addItemDecoration(GridItemDecoration())
@@ -159,7 +163,7 @@ class RankingMFragment : BaseFragment(){
 
                 exitTime = System.currentTimeMillis()
             } else {
-                recyclerview_rankingm.smoothScrollToPosition(0)
+                binding.recyclerviewRankingm.smoothScrollToPosition(0)
             }
 
         }
@@ -174,6 +178,7 @@ class RankingMFragment : BaseFragment(){
         lazyLoad()
     }
 
+    private lateinit var binding: FragmentRankingMBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -194,7 +199,8 @@ class RankingMFragment : BaseFragment(){
             }
         }
         rankingAdapter.addHeaderView(headerView)
-        return inflater.inflate(R.layout.fragment_ranking_m, container, false)
+		binding = FragmentRankingMBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     companion object {

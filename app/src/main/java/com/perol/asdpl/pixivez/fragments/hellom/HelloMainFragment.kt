@@ -33,8 +33,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMRecomViewPager
-import kotlinx.android.synthetic.main.fragment_hello_main.*
-
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -61,19 +60,21 @@ class HelloMainFragment : Fragment() {
         }
     }
 
+    private lateinit var binding: FragmentHelloMainBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.fragment_hello_main, container, false)
+		binding = FragmentHelloMainBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewpager.adapter =
+        binding.viewpager.adapter =
             HelloMRecomViewPager(this, childFragmentManager)
-        tablayout.setupWithViewPager(viewpager)
+        binding.tablayout.setupWithViewPager(binding.viewpager)
 
     }
 

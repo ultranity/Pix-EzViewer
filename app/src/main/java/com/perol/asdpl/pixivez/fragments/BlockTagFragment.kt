@@ -16,7 +16,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
-import kotlinx.android.synthetic.main.fragment_block_tag.*
+import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 
@@ -35,6 +35,7 @@ class BlockTagFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var viewModel: BlockViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -63,13 +64,14 @@ class BlockTagFragment : Fragment() {
         }
         return chip
     }
-
+    private lateinit var binding:FragmentBlockTagBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_block_tag, container, false)
+        binding=FragmentBlockTagBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onStart() {
@@ -80,9 +82,9 @@ class BlockTagFragment : Fragment() {
     private fun getTagList() {
         runBlocking {
             val it = viewModel.getAllTags()
-            chipgroup.removeAllViews()
+            binding.chipgroup.removeAllViews()
             it.forEach { v ->
-                chipgroup.addView(getChip(v))
+                binding.chipgroup.addView(getChip(v))
             }
             val chip = Chip(requireContext())
             val paddingDp = TypedValue.applyDimension(
@@ -111,7 +113,7 @@ class BlockTagFragment : Fragment() {
                     negativeButton()
                 }
             }
-            chipgroup.addView(chip)
+            binding.chipgroup.addView(chip)
         }
 
     }

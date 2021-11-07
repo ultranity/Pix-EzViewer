@@ -50,7 +50,6 @@ import com.perol.asdpl.pixivez.activity.BlockActivity
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PictureXAdapter
-import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
@@ -60,7 +59,7 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
-import kotlinx.android.synthetic.main.fragment_picture_x.*
+import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -125,7 +124,7 @@ class PictureXFragment : BaseFragment() {
                 if (blockTags.contains(it.name)) needBlock = true
             }
             if (!needBlock) {
-                block_view.visibility = View.GONE
+                binding.blockView.visibility = View.GONE
             }
         }
     }
@@ -134,21 +133,21 @@ class PictureXFragment : BaseFragment() {
 
         pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
         pictureXViewModel.illustDetail.observe(this, Observer { it ->
-            progress_view.visibility = View.GONE
+            binding.progressView.visibility = View.GONE
             if (it != null) {
                 val tags = it.tags.map {rt ->
                     rt.name
                 }
                 for (i in tags) {
                     if (blockTags.contains(i)) {
-                        jump_button.setOnClickListener {
+                        binding.jumpButton.setOnClickListener {
                             startActivity(Intent(requireActivity(), BlockActivity::class.java))
                         }
-                        blocktag_textview.text = "$i"
-                        block_view.visibility = View.VISIBLE
+                        binding.blocktagTextview.text = "$i"
+                        binding.blockView.visibility = View.VISIBLE
                     }
                 }
-                rootBinding.illust = it
+                binding.illust = it
 
                 position = if (it.meta_pages.isNotEmpty())
                     it.meta_pages.size
@@ -158,8 +157,8 @@ class PictureXFragment : BaseFragment() {
                         it.setListener {
                             //                        activity?.supportStartPostponedEnterTransition()
                             if (!hasMoved) {
-                                recyclerview?.scrollToPosition(0)
-                                (recyclerview?.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
+                                binding.recyclerview?.scrollToPosition(0)
+                                (binding.recyclerview?.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
                                     0,
                                     0
                                 )
@@ -185,12 +184,12 @@ class PictureXFragment : BaseFragment() {
 
                     }
 
-                recyclerview.adapter = pictureXAdapter
+                binding.recyclerview.adapter = pictureXAdapter
                 if (it.user.is_followed)
-                    imageViewUser_picX.setBorderColor(Color.YELLOW)
+                    binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
                 //else
-                //    imageViewUser_picX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                imageViewUser_picX.setOnLongClickListener { ot->
+                //    binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+                binding.imageViewUserPicX.setOnLongClickListener { ot->
                     val id = it.user.id
                     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
                     if (it.user.is_followed) {
@@ -199,32 +198,38 @@ class PictureXFragment : BaseFragment() {
                             requireContext().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
                             val colorPrimary = typedValue.resourceId
                             it.user.is_followed = false
-                            imageViewUser_picX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+                            binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
                         }, {}, {}
                         )
                     } else {
                         retrofitRepository.postfollowUser(id, "public").subscribe({ pt->
                             it.user.is_followed = true
-                            imageViewUser_picX.setBorderColor(Color.YELLOW)
+                            binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
                         }, {}, {})
                     }
                     true
                 }
-                imageViewUser_picX.setOnClickListener { ot ->
+                binding.imageViewUserPicX.setOnClickListener { ot ->
                     val intent = Intent(context, UserMActivity::class.java)
                     intent.putExtra("data", it.user.id)
 
                     if (PxEZApp.animationEnable) {
                         val options = ActivityOptions.makeSceneTransitionAnimation(
                             context as Activity,
-                            Pair.create(imageViewUser_picX, "UserImage")
+                            Pair.create(binding.imageViewUserPicX, "UserImage")
                         )
                         startActivity(intent, options.toBundle())
                     } else
                         startActivity(intent)
                 }
-                fab.show()
+                binding.fab.show()
 
+            }
+            else {
+                if(parentFragmentManager.backStackEntryCount<=1)
+                    activity?.finish()
+                else
+                    parentFragmentManager.popBackStack()
             }
         })
         pictureXViewModel.aboutPics.observe(this, Observer {
@@ -233,9 +238,9 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.likeIllust.observe(this, Observer {
             if (it != null) {
                 if (it) {
-                    GlideApp.with(this).load(R.drawable.heart_red).into(fab)
+                    GlideApp.with(this).load(R.drawable.heart_red).into(binding.fab)
                 } else {
-                    GlideApp.with(this).load(R.drawable.ic_action_heart).into(fab)
+                    GlideApp.with(this).load(R.drawable.ic_action_heart).into(binding.fab)
                 }
 
             }
@@ -255,10 +260,10 @@ class PictureXFragment : BaseFragment() {
 
     var hasMoved = false
     private fun initView() {
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             pictureXViewModel.fabClick()
         }
-        fab.setOnLongClickListener {
+        binding.fab.setOnLongClickListener {
             if (pictureXViewModel.illustDetail.value!!.is_bookmarked) {
                 return@setOnLongClickListener true
             }
@@ -271,30 +276,30 @@ class PictureXFragment : BaseFragment() {
             tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog::class.java.name)
             true
         }
-        imageButton.setOnClickListener {
-            recyclerview.scrollToPosition(position)
-            constraintLayout_fold.visibility = View.INVISIBLE
+        binding.imageButton.setOnClickListener {
+            binding.recyclerview.scrollToPosition(position)
+            binding.constraintLayoutFold.visibility = View.INVISIBLE
         }
         val linearLayoutManager = LinearLayoutManager(requireActivity())
-        recyclerview.layoutManager = linearLayoutManager
-        recyclerview.setHasFixedSize(true)
-        recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.recyclerview.layoutManager = linearLayoutManager
+        binding.recyclerview.setHasFixedSize(true)
+        binding.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 hasMoved = true
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                (recyclerview.layoutManager as LinearLayoutManager).run {
+                (binding.recyclerview.layoutManager as LinearLayoutManager).run {
                     /*Log.d("test", "onScrolled: "+
                             findFirstCompletelyVisibleItemPosition().toString()+" "+
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
                             findLastVisibleItemPosition().toString()+" "+position)*/
                     if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position -1) {
-                        constraintLayout_fold.visibility = View.INVISIBLE
+                        binding.constraintLayoutFold.visibility = View.INVISIBLE
                     } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position ) {
-                        constraintLayout_fold.visibility = View.VISIBLE
+                        binding.constraintLayoutFold.visibility = View.VISIBLE
                     }
                 }
 
@@ -312,19 +317,19 @@ class PictureXFragment : BaseFragment() {
         initViewModel()
     }
 
-    lateinit var rootBinding: FragmentPictureXBinding
+    lateinit var binding: FragmentPictureXBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        if(! this::rootBinding.isInitialized) {
-            rootBinding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
+        if(! this::binding.isInitialized) {
+		binding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
                 lifecycleOwner = this@PictureXFragment
             }
         }
         position = param2?.meta_pages?.size?: 1
-        return rootBinding.root
+        return binding.root
     }
 
     var position = 0

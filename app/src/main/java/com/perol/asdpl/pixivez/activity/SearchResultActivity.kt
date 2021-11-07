@@ -37,13 +37,9 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SearchResultAdapter
-import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
 import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
 import com.perol.asdpl.pixivez.fragments.UserFragment
-import kotlinx.android.synthetic.main.activity_search_result.*
-import kotlinx.android.synthetic.main.content_search_result.*
-
-
+import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
 class SearchResultActivity : RinkActivity() {
     var searchword: String ="1"
     var type: Int = 0
@@ -52,9 +48,11 @@ class SearchResultActivity : RinkActivity() {
     var arrayList = ArrayList<Fragment>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_search_result)
+
+        binding = ActivitySearchResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         binding.lifecycleOwner = this
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (intent.extras != null) {
@@ -86,12 +84,12 @@ class SearchResultActivity : RinkActivity() {
 
     private fun initView() {
 
-        tablayout_searchresult.setupWithViewPager(viewpage_searchresult)
+        binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
         arrayList.add(SearchIllustFragment.newInstance(searchword))
         arrayList.add(UserFragment.newInstance(searchword))
-        viewpage_searchresult.adapter = SearchResultAdapter(this, supportFragmentManager, arrayList)
-        tablayout_searchresult.getTabAt(type)?.select()
-        viewpage_searchresult.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.contentSearchResult.viewpageSearchresult.adapter = SearchResultAdapter(this, supportFragmentManager, arrayList)
+        binding.tablayoutSearchresult.getTabAt(type)?.select()
+        binding.contentSearchResult.viewpageSearchresult.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -103,10 +101,10 @@ class SearchResultActivity : RinkActivity() {
             override fun onPageSelected(position: Int) {
                 when (position) {
                     0 -> {
-                        pickbar.visibility = View.VISIBLE
+                        binding.pickbar.visibility = View.VISIBLE
                     }
                     else -> {
-                        pickbar.visibility = View.GONE
+                        binding.pickbar.visibility = View.GONE
                     }
                 }
             }
@@ -116,9 +114,9 @@ class SearchResultActivity : RinkActivity() {
             }
 
         })
-        searchtext.setOnClickListener {
+        binding.searchtext.setOnClickListener {
             setResult(Activity.RESULT_OK, Intent().apply {
-                putExtra("word", searchtext.text.toString())
+                putExtra("word", binding.searchtext.text.toString())
             })
             finish()
         }

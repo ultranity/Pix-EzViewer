@@ -27,7 +27,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,48 +40,46 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.RinkActivity
-import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.android.synthetic.main.activity_img_manager.*
-import kotlinx.android.synthetic.main.fragment_recom_user.*
+import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 
 
 class ImgManagerActivity : RinkActivity() {
-    private lateinit var activityImgMgrMBinding: ActivityImgManagerBinding
+    private lateinit var binding: ActivityImgManagerBinding
     private lateinit var viewModel: ImgManagerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityImgMgrMBinding = DataBindingUtil.setContentView(this, R.layout.activity_img_manager)
+        binding = ActivityImgManagerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initView()
         initBind()
     }
 
     private val ImgManagerAdapter = ImgManagerAdapter(R.layout.view_imgmanager_item)
-
     private fun initView() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        recyclerview_img_manager.layoutManager =
+        binding.recyclerviewImgManager.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        //recyclerview_img_manager.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
-        recyclerview_img_manager.adapter = ImgManagerAdapter
+        //binding.recyclerviewImgManager.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
+        binding.recyclerviewImgManager.adapter = ImgManagerAdapter
         ImgManagerAdapter.addFooterView(LayoutInflater.from(this).inflate(R.layout.foot_list, null))
-        //recyclerview_img_manager.smoothScrollToPosition(ImgManagerAdapter.data.size)
+        //binding.recyclerviewImgManager.smoothScrollToPosition(ImgManagerAdapter.data.size)
 
         viewModel = ViewModelProvider(this).get(ImgManagerViewModel::class.java)
         viewModel.adapter = ImgManagerAdapter
-        viewModel.layoutManager = recyclerview_img_manager.layoutManager as LinearLayoutManager
+        viewModel.layoutManager = binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
         viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
         viewModel.path.observe(this, Observer {
-            swiperefresh.isRefreshing = true
+            binding.swiperefresh.isRefreshing = true
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
                     it
@@ -90,13 +87,13 @@ class ImgManagerActivity : RinkActivity() {
                 //.filter{it.isPic()}.toMutableList()
                 viewModel.task = viewModel.files!!.map { renameTask(it) }
                 runOnUiThread {
-                    img_count.text = viewModel.files!!.size.toString()
-                    swiperefresh.isRefreshing = false
+                    binding.imgCount.text = viewModel.files!!.size.toString()
+                    binding.swiperefresh.isRefreshing = false
                     ImgManagerAdapter.setNewData(viewModel.files)
                 }
             }).start()
         })
-        swiperefresh.setOnRefreshListener {
+        binding.swiperefresh.setOnRefreshListener {
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
                     viewModel.path.value!!
@@ -104,18 +101,18 @@ class ImgManagerActivity : RinkActivity() {
                 //.filter{it.isPic()}.toMutableList()
                 viewModel.task = viewModel.files!!.map { renameTask(it) }
                 runOnUiThread {
-                    img_count.text = viewModel.files!!.size.toString()
-                    swiperefresh.isRefreshing = false
+                    binding.imgCount.text = viewModel.files!!.size.toString()
+                    binding.swiperefresh.isRefreshing = false
                     ImgManagerAdapter.setNewData(viewModel.files)
                 }
             }).start()
         }
-        swith_filter.isChecked = true
-        swith_filter.setOnCheckedChangeListener { compoundButton, state ->
+        binding.swithFilter.isChecked = true
+        binding.swithFilter.setOnCheckedChangeListener { compoundButton, state ->
             //viewModel.length_filter= state
             reset()
         }
-        swith_once.setOnCheckedChangeListener { compoundButton, state ->
+        binding.swithOnce.setOnCheckedChangeListener { compoundButton, state ->
             //viewModel.rename_once = state
             reset()
         }
@@ -127,7 +124,7 @@ class ImgManagerActivity : RinkActivity() {
 
     private fun reset() {
         getInfo = false
-        GlideApp.with(this).load(R.drawable.ic_action_search).thumbnail(0.5f).into(fab_start)
+        GlideApp.with(this).load(R.drawable.ic_action_search).thumbnail(0.5f).into(binding.fabStart)
         viewModel.task?.forEach {
             it.file.checked = false
         }
@@ -136,24 +133,24 @@ class ImgManagerActivity : RinkActivity() {
 
     private var getInfo = false
     private fun initBind() {
-        fab_start.setOnClickListener {
-            viewModel.length_filter = swith_filter.isChecked
-            viewModel.rename_once = swith_once.isChecked
+        binding.fabStart.setOnClickListener {
+            viewModel.length_filter = binding.swithFilter.isChecked
+            viewModel.rename_once = binding.swithOnce.isChecked
             if (viewModel.rename_once)
                 viewModel.getInfo()
             else {
                 if (getInfo) {
-                    GlideApp.with(this).load(R.drawable.ic_action_search).into(fab_start)
+                    GlideApp.with(this).load(R.drawable.ic_action_search).into(binding.fabStart)
                     viewModel.renameAll()
                 } else {
-                    GlideApp.with(this).load(R.drawable.ic_action_play).into(fab_start)
+                    GlideApp.with(this).load(R.drawable.ic_action_play).into(binding.fabStart)
                     viewModel.getInfo()
                 }
                 getInfo = !getInfo
                 //ImgManagerAdapter.notifyDataSetChanged()
             }
         }
-        fab_folder.setOnClickListener {
+        binding.fabFolder.setOnClickListener {
             MaterialDialog(this).show {
                 title(R.string.title_save_path)
                 folderChooser(
@@ -171,7 +168,7 @@ class ImgManagerActivity : RinkActivity() {
                 lifecycleOwner(this@ImgManagerActivity)
             }
         }
-        fab_settings.setOnClickListener {
+        binding.fabSettings.setOnClickListener {
             // Setup custom view content
             val binding = CustomformatviewBinding.inflate(layoutInflater)
             val descTable = binding.formatDescTable

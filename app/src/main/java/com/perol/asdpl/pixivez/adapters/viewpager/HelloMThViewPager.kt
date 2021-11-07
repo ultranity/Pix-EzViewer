@@ -38,7 +38,7 @@ class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager
         BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
     ) {
 
-    override fun getPageTitle(position: Int): CharSequence? =
+    override fun getPageTitle(position: Int): CharSequence =
             when (position) {
                 0 -> {
                     fragment.getString(R.string.new1)

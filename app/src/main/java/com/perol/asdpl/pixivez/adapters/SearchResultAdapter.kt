@@ -39,7 +39,7 @@ class SearchResultAdapter(var context: Context, fm: FragmentManager, private var
 
     override fun getItem(position: Int): Fragment = arrayList[position]
 
-    override fun getPageTitle(position: Int): CharSequence? = when (position) {
+    override fun getPageTitle(position: Int): CharSequence = when (position) {
         0 -> {
             context.getString(R.string.illust)
         }

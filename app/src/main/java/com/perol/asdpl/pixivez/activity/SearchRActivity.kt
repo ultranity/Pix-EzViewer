@@ -38,8 +38,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.TrendTagFragment
 import com.perol.asdpl.pixivez.fragments.TrendTagViewModel
 import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
-import kotlinx.android.synthetic.main.activity_search_r.*
-
+import com.perol.asdpl.pixivez.databinding.ActivitySearchRBinding
 class SearchRActivity : RinkActivity() {
     lateinit var searchRActivityFragment: SearchRActivityFragment
     lateinit var trendTagFragment: TrendTagFragment
@@ -63,16 +62,18 @@ class SearchRActivity : RinkActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {
             val word = data.getStringExtra("word")
-            searchview_searchm.setQuery(word, false)
+            binding.searchviewSearchm.setQuery(word, false)
         }else if(intent.extras !=null){
             finish()
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: ActivitySearchRBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_r)
-        setSupportActionBar(toolbar)
+		binding = ActivitySearchRBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         tagsTextViewModel = ViewModelProvider(this).get(TagsTextViewModel::class.java)
@@ -87,8 +88,8 @@ class SearchRActivity : RinkActivity() {
             hide(searchRActivityFragment)
         }
         transaction.commit()
-        tablayout_searchm.clearOnTabSelectedListeners()
-        tablayout_searchm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tablayoutSearchm.clearOnTabSelectedListeners()
+        binding.tablayoutSearchm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
 
             }
@@ -96,9 +97,9 @@ class SearchRActivity : RinkActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
                     if (tab.position == 0) {
-                        searchview_searchm.inputType = EditorInfo.TYPE_CLASS_TEXT
+                        binding.searchviewSearchm.inputType = EditorInfo.TYPE_CLASS_TEXT
                     } else {
-                        searchview_searchm.inputType = EditorInfo.TYPE_CLASS_NUMBER
+                        binding.searchviewSearchm.inputType = EditorInfo.TYPE_CLASS_NUMBER
                     }
                 }
             }
@@ -107,12 +108,12 @@ class SearchRActivity : RinkActivity() {
 
             }
         })
-        searchview_searchm.onActionViewExpanded()
-        searchview_searchm.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchviewSearchm.onActionViewExpanded()
+        binding.searchviewSearchm.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 if (query != null && !query.isBlank())
-                    when (tablayout_searchm.selectedTabPosition) {
+                    when (binding.tablayoutSearchm.selectedTabPosition) {
                         0 -> {
 
                             trendTagViewModel.addhistory(query)
@@ -149,7 +150,7 @@ class SearchRActivity : RinkActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (tablayout_searchm.selectedTabPosition != 0) {
+                if (binding.tablayoutSearchm.selectedTabPosition != 0) {
                     return true
                 }
                 if (!newText.isNullOrBlank())
@@ -161,7 +162,7 @@ class SearchRActivity : RinkActivity() {
         })
 
         if (intent.extras != null) {
-            searchview_searchm.setQuery(intent.extras!!.getString("searchword")!!, true)
+            binding.searchviewSearchm.setQuery(intent.extras!!.getString("searchword")!!, true)
         }
 
     }

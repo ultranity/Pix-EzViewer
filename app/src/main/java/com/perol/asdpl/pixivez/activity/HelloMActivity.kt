@@ -52,8 +52,10 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.tabs.TabLayout
+import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.adapters.viewpager.HelloMViewPagerAdapter
+import com.perol.asdpl.pixivez.databinding.AppBarHelloMBinding
 import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMDynamicsFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
@@ -65,7 +67,6 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.UserEntity
-import kotlinx.android.synthetic.main.app_bar_hello_m.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.*
@@ -143,14 +144,14 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             }
         }
 
-        drawer_layout.closeDrawer(GravityCompat.START)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     var exitTime = 0L
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             return
         }
 
@@ -168,6 +169,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     private val fragments = Array<Fragment?>(3) {null}
     private var curFragment :Fragment? = null
+    private lateinit var binding: AppBarHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var allUser: ArrayList<UserEntity>? = null
@@ -180,38 +182,40 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             finish()
             return
         }
-        setContentView(R.layout.app_bar_hello_m)
-        setSupportActionBar(toolbar)
+        binding = AppBarHelloMBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         val toggle = ActionBarDrawerToggle(
             this,
-            drawer_layout,
-            toolbar,
+            binding.drawerLayout,
+            binding.toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
         toggle.setHomeAsUpIndicator(R.drawable.ic_action_logo)
         toggle.isDrawerIndicatorEnabled = true
         toggle.setToolbarNavigationClickListener {
-            drawer_layout.openDrawer(GravityCompat.START)
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
-        drawer_layout.addDrawerListener(toggle)
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        nav_view.setNavigationItemSelectedListener(this)
+        binding.navView.setNavigationItemSelectedListener(this)
         val permissionList = ArrayList<String>()
         permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
         initView() //Listener
         val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
+        binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)
+        /*if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
             getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().replace(R.id.content_view, it).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
             }
         else if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
-            tablayout_hellom.getTabAt(position)!!.select()
+            binding.tablayoutHellom.getTabAt(position)!!.select()
             getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().add(R.id.content_view, it).commit()
+                supportFragmentManager.beginTransaction().add(R.id.binding.contentView, it).commit()
                     curFragment = it
                     fragments[position] = it
                     //supportFragmentManager.fragments.forEach(){ it ->
@@ -219,9 +223,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     //}
             }
         } else {
-            curFragment = supportFragmentManager.findFragmentById(R.id.content_view)
-        }
-        val view = nav_view.inflateHeaderView(R.layout.nav_header_hello_m)
+            curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
+        }*/
+        val view = binding.navView.inflateHeaderView(R.layout.nav_header_hello_m)
         val currentUserimageview = view.findViewById<ImageView>(R.id.imageView)
         val headtext = view.findViewById<TextView>(R.id.headtext)
         val textView = view.findViewById<TextView>(R.id.textView)
@@ -252,10 +256,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         textView.text = allUser!![nowNum].useremail
 
         val calendar = Calendar.getInstance()
-        if ((calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
+        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
             - SharedPreferencesServices.getInstance()
                 .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 140))
-            >= 10*24) {
+            >= 20*24) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         }
     }
@@ -355,11 +359,11 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     }
 
     private fun initView() {
-        /*        viewpager_hellom.adapter = HelloMViewPagerAdapter(supportFragmentManager, this.lifecycle)
-        TabLayoutMediator(tablayout_hellom, viewpager_hellom) { tab, position ->
-            viewpager_hellom.setCurrentItem(tab.position, true)
-        }.attach()*/
-        tablayout_hellom.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tablayoutHellom.setupWithViewPager(binding.contentView)
+        binding.contentView.adapter = HelloMViewPagerAdapter(supportFragmentManager)
+
+        binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true)) 0 else 3
+        /*tablayout_hellom.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {
             }
 
@@ -379,14 +383,14 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     curFragment == null -> {
                         getFragmentContent(tab.position).let {
                             supportFragmentManager.beginTransaction()
-                                .replace(R.id.content_view, it).commit()
+                                .replace(R.id.binding.contentView, it).commit()
                         }
                     }
                     fragments[tab.position] == null -> {
                         getFragmentContent(tab.position).let {
                             fragments[tab.position] = it
                             supportFragmentManager.beginTransaction().hide(curFragment!!)
-                                .add(R.id.content_view, it).commit()
+                                .add(R.id.binding.contentView, it).commit()
                             curFragment = it
                         }
 
@@ -398,9 +402,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 }
             }
 
-        })
-/*        for (i in 0..2) {
-            val tabItem = tablayout_hellom.getTabAt(i)!!
+        })*/
+        for (i in 0..2) {
+            val tabItem = binding.tablayoutHellom.getTabAt(i)!!
 
             when (i) {
                 0 -> {
@@ -417,7 +421,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 }
             }
 
-        }*/
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

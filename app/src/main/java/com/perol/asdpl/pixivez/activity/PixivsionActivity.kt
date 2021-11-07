@@ -31,12 +31,12 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
+import com.perol.asdpl.pixivez.databinding.ActivityPixivisionBinding
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_pixivision.*
 
 class PixivsionActivity : RinkActivity() {
 
@@ -46,11 +46,13 @@ class PixivsionActivity : RinkActivity() {
     private var Nexturl: String? = null
     private var data: SpotlightResponse? = null
     private val retrofitRepository  = RetrofitRepository.getInstance()
+    private lateinit var binding: ActivityPixivisionBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pixivision)
-        setSupportActionBar(toobar_pixivision)
+        binding = ActivityPixivisionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toobarPixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         initbind()
@@ -77,8 +79,8 @@ class PixivsionActivity : RinkActivity() {
                         data = spotlightResponse
                         Nexturl = spotlightResponse.next_url
                         val pixiviSionAdapter = PixiVisionAdapter(R.layout.view_pixivision_item, spotlightResponse.spotlight_articles, this@PixivsionActivity)
-                        recyclerview_pixivision.layoutManager = LinearLayoutManager(applicationContext)
-                        recyclerview_pixivision.adapter = pixiviSionAdapter
+                        binding.recyclerviewPixivision.layoutManager = LinearLayoutManager(applicationContext)
+                        binding.recyclerviewPixivision.adapter = pixiviSionAdapter
                         pixiviSionAdapter.loadMoreModule?.setOnLoadMoreListener {
                                 retrofitRepository.getNextPixivisionArticles(
                                     Nexturl!!

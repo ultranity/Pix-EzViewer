@@ -5,19 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.RinkActivity
-import kotlinx.android.synthetic.main.activity_download_manager.*
-
-
+import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 class DownloadManagerActivity : RinkActivity() {
 
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+private lateinit var binding: ActivityDownloadManagerBinding
+	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_download_manager)
-        setSupportActionBar(toolbar)
+		binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_body, DownLoadManagerFragment.newInstance()).commitNow()
     }

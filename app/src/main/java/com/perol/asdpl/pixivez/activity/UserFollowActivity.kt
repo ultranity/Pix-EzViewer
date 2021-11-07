@@ -34,13 +34,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
+import com.perol.asdpl.pixivez.databinding.ActivityUserFollowBinding
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.ListUserResponse
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import io.reactivex.Observer
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_user_follow.*
 import kotlinx.coroutines.runBlocking
 
 class UserFollowActivity : RinkActivity() {
@@ -60,24 +61,26 @@ class UserFollowActivity : RinkActivity() {
     private var data: SearchUserResponse? = null
     private var pastdata: SearchUserResponse? = null
     internal var isfollower: Boolean? = false
+    private lateinit var binding: ActivityUserFollowBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_follow)
-        setSupportActionBar(toolbar_userfollow)
+        binding = ActivityUserFollowBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbarUserfollow)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         bundle = this.intent.extras
         if(bundle!!.containsKey("illust_id")) {
             illust_id = bundle!!.getLong("illust_id")
             supportActionBar!!.setTitle(R.string.bookmark)
-            textView8.text =  getString(R.string.bookmark)
+            binding.textView8.text =  getString(R.string.bookmark)
             initIllustData()
         }
         else{
             userid = bundle!!.getLong("user")
             isfollower = bundle!!.getBoolean("isfollower", false)
             supportActionBar!!.setTitle(R.string.following)
-            textView8.text =   getString(R.string.following)
+            binding.textView8.text =   getString(R.string.following)
             initFollowData()
         }
 
@@ -91,7 +94,7 @@ class UserFollowActivity : RinkActivity() {
     }
 
     private fun initFollowData() {
-        spinner.visibility = View.GONE
+        binding.spinner.visibility = View.GONE
         linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
         recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
         recyclerviewusersearch!!.layoutManager = linearLayoutManager
@@ -116,8 +119,8 @@ class UserFollowActivity : RinkActivity() {
                         runBlocking {
                             val user = AppDataRepository.getUser()
                             if (userid == user.userid && !isfollower!!) {
-                                spinner.visibility = View.VISIBLE
-                                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                binding.spinner.visibility = View.VISIBLE
+                                binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                                     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                                         when (position) {
                                             0 -> {
@@ -137,7 +140,7 @@ class UserFollowActivity : RinkActivity() {
                                 }
 
                             } else {
-                                spinner.visibility = View.GONE
+                                binding.spinner.visibility = View.GONE
                             }
                         }
 
@@ -166,8 +169,13 @@ class UserFollowActivity : RinkActivity() {
 
     }
 
+    var compositeDisposable = CompositeDisposable()
+    override fun finish() {
+        compositeDisposable.clear()
+        super.finish()
+    }
     private fun initIllustData() {
-        spinner.visibility = View.GONE
+        binding.spinner.visibility = View.GONE
         linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
         recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
         recyclerviewusersearch!!.layoutManager = linearLayoutManager
@@ -190,12 +198,17 @@ class UserFollowActivity : RinkActivity() {
                             //retrofitRepository.getIllustBookmarkUsers(illust_id,
                             //    Next_url!!.substringAfter("offset=").toInt())
                             retrofitRepository.getNext<ListUserResponse>(Next_url!!)
-                                .subscribe {
-                                Illustdata = it
-                                Next_url = it.next_url
-                                userListAdapter!!.addData(it.users)
-                                userListAdapter!!.loadMoreModule?.loadMoreComplete()
-                            }
+                                .subscribe ({
+                                    Illustdata = it
+                                    Next_url = it.next_url
+                                    userListAdapter!!.addData(it.users)
+                                    userListAdapter!!.loadMoreModule?.loadMoreComplete()
+                                },{
+                                    userListAdapter?.loadMoreModule?.loadMoreFail()
+                                    it.printStackTrace()
+                                },{},{
+
+                                })
                         }
                     }
                 }

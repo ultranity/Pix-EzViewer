@@ -46,7 +46,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
-import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.fragments.UserMessageFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -55,7 +54,7 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_user_m.*
+import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -107,12 +106,8 @@ class UserMActivity : RinkActivity() {
     lateinit var pre: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding =
-            DataBindingUtil.setContentView<ActivityUserMBinding>(this, R.layout.activity_user_m)
-                .apply {
-                    lifecycleOwner = this@UserMActivity
-                }
-
+        val binding = ActivityUserMBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         binding.lifecycleOwner = this
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility =
@@ -132,12 +127,12 @@ class UserMActivity : RinkActivity() {
         })
         viewModel.userDetail.observe(this, {
             if (it != null) {
-                fab.show()
+                binding.fab.show()
                 disposables.add(viewModel.isuser(id).subscribe({
                     if (it) { //用户自己
-                        fab.hide()
+                        binding.fab.hide()
                         viewModel.hideBookmarked.value = 0
-                        mviewpager.currentItem = 2
+                        binding.mviewpager.currentItem = 2
                         menuD.getItem(1).isVisible = false
                         menuD.getItem(2).isVisible = true
                         menuD.getItem(2).isEnabled = true
@@ -150,39 +145,39 @@ class UserMActivity : RinkActivity() {
                 binding.user = it
 
 
-                mviewpager.adapter = UserMPagerAdapter(
+                binding.mviewpager.adapter = UserMPagerAdapter(
                     this, supportFragmentManager,
                     id, UserMessageFragment.newInstance(it)
                 )
-                mtablayout.setupWithViewPager(mviewpager)
+                binding.mtablayout.setupWithViewPager(binding.mviewpager)
             }
         })
         viewModel.isfollow.observe(this, {
             if (it != null) {
                 if (it) {
-                    fab.setImageResource(R.drawable.ic_check_white_24dp)
+                    binding.fab.setImageResource(R.drawable.ic_check_white_24dp)
                 } else
-                    fab.setImageResource(R.drawable.ic_add_white_24dp)
+                    binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
             }
 
 
         })
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
         }
 
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             viewModel.onFabclick(id)
         }
-        fab.setOnLongClickListener {
+        binding.fab.setOnLongClickListener {
             Toasty.info(applicationContext, "Private....", Toast.LENGTH_SHORT).show()
             viewModel.onFabLongClick(id)
             true
         }
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
-        imageview_userimage.setOnClickListener {
+        binding.imageviewUserimage.setOnClickListener {
             disposables.add(viewModel.isuser(id).subscribe({
                 var array = resources.getStringArray(R.array.user_profile)
                 if (!it) {

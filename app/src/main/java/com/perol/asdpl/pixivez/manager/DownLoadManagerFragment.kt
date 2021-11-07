@@ -345,7 +345,7 @@ class DownLoadManagerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         Aria.download(this).register()
         downloadTaskAdapter = DownloadTaskAdapter()
         binding = FragmentDownloadManagerBinding.inflate(inflater)

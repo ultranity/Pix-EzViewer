@@ -38,16 +38,17 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsTextAdapter
 import com.perol.asdpl.pixivez.responses.Tags
 import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
-import kotlinx.android.synthetic.main.fragment_search_r.*
-
+import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
 /**
  * A placeholder fragment containing a simple view.
  */
 class SearchRActivityFragment : Fragment() {
 
+    private lateinit var binding: FragmentSearchRBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_search_r, container, false)
+		binding = FragmentSearchRBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     lateinit var tagsTextViewModel: TagsTextViewModel
@@ -55,8 +56,8 @@ class SearchRActivityFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tagsTextAdapter = TagsTextAdapter(R.layout.tagstext_item)
-        recyclerview.layoutManager = LinearLayoutManager(activity)
-        recyclerview.adapter = tagsTextAdapter
+        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerview.adapter = tagsTextAdapter
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
             val s_tag = tags[position]
             if (s_tag.translated_name != null && s_tag.translated_name.isNotEmpty())

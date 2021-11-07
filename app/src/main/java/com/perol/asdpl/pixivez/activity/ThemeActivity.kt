@@ -47,8 +47,8 @@ import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.ActivityThemeBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.android.synthetic.main.activity_theme.*
 
 class ThemeActivity : RinkActivity() {
     class ThemeFragment : PreferenceFragmentCompat() {
@@ -143,10 +143,12 @@ class ThemeActivity : RinkActivity() {
             )
     }
 
+    private lateinit var binding: ActivityThemeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_theme)
-        setSupportActionBar(toolbar)
+        binding = ActivityThemeBinding.inflate(layoutInflater)
+		setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_theme, ThemeFragment()).commit()
 //        return

@@ -65,9 +65,7 @@ import com.perol.asdpl.pixivez.ui.LinearItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloMRecomModel
 import com.youth.banner.Banner
 import com.youth.banner.loader.ImageLoader
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_recommend.*
+import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -84,15 +82,6 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class HelloMRecommendFragment : BaseFragment() {
-    val disposables = CompositeDisposable()
-    fun Disposable.add() {
-        disposables.add(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
-    }
     override fun loadData() {
         viewmodel.OnRefreshListener()
     }
@@ -111,9 +100,9 @@ class HelloMRecommendFragment : BaseFragment() {
     private fun lazyLoad() {
         viewmodel = ViewModelProvider(this).get(HelloMRecomModel::class.java)
         viewmodel.illusts.observe(this, Observer {
-            swiperefresh_recom.isRefreshing = false
+            binding.swiperefreshRecom.isRefreshing = false
             rankingAdapter.setNewData(it)
-            recyclerview_recom?.smoothScrollToPosition(0)
+            binding.recyclerviewRecom.smoothScrollToPosition(0)
         })
         viewmodel.addillusts.observe(this, Observer {
             if (it != null) {
@@ -201,11 +190,11 @@ class HelloMRecommendFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerview_recom.apply{
+        binding.recyclerviewRecom.apply{
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = rankingAdapter
     }
-        swiperefresh_recom.setOnRefreshListener {
+        binding.swiperefreshRecom.setOnRefreshListener {
             viewmodel.OnRefreshListener()
         }
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
@@ -260,7 +249,7 @@ class HelloMRecommendFragment : BaseFragment() {
             //    attachToRecyclerView(spotlightView)
             //}
 
-            swiperefresh_recom.isRefreshing = true
+            binding.swiperefreshRecom.isRefreshing = true
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(0)
             ?.view?.setOnClickListener {
@@ -272,12 +261,13 @@ class HelloMRecommendFragment : BaseFragment() {
                     ).show()
                     exitTime = System.currentTimeMillis()
                 } else {
-                    recyclerview_recom.smoothScrollToPosition(0)
+                    binding.recyclerviewRecom.smoothScrollToPosition(0)
                 }
             }
     }
 
     private lateinit var bannerView: View
+    private lateinit var binding: FragmentRecommendBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -314,7 +304,8 @@ class HelloMRecommendFragment : BaseFragment() {
             addHeaderView(bannerView)
         }
 
-        return inflater.inflate(R.layout.fragment_recommend, container, false)
+		binding = FragmentRecommendBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     companion object {

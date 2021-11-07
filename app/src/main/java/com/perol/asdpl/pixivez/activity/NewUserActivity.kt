@@ -30,6 +30,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.ActivityNewUserBinding
+import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
@@ -40,7 +42,6 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_new_user.*
 import java.util.*
 
 class NewUserActivity : RinkActivity() {
@@ -49,19 +50,20 @@ class NewUserActivity : RinkActivity() {
     private var RestClient: RestClient? = null
     private var sharedPreferencesServices: SharedPreferencesServices? = null
     private var oAuthSecureService: OAuthSecureService? = null
+    private lateinit var binding: ActivityNewUserBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_user)
-        RestClient = RestClient
+        binding = ActivityNewUserBinding.inflate(layoutInflater)
+		setContentView(binding.root)
         accountPixivService = RestClient!!.retrofitAccount.create(AccountPixivService::class.java)
         oAuthSecureService =
-            RestClient!!.getRetrofitOauthSecure().create(OAuthSecureService::class.java)
+            RestClient!!.retrofitOauthSecure.create(OAuthSecureService::class.java)
         sharedPreferencesServices = SharedPreferencesServices(applicationContext)
-        button_login.setOnClickListener {
-            if (edittext_username.text.toString().isNotBlank()) {
+        binding.buttonLogin.setOnClickListener {
+            if (binding.edittextUsername.text.toString().isNotBlank()) {
                 accountPixivService!!.createProvisionalAccount(
-                    edittext_username.text.toString(),
+                    binding.edittextUsername.text.toString(),
                     "pixiv_android_app_provisional_account",
                     Authorization
                 ).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
@@ -103,8 +105,7 @@ class NewUserActivity : RinkActivity() {
                             map["grant_type"] = "password"
                             map["username"] = sharedPreferencesServices!!.getString("username")
                             map["password"] = sharedPreferencesServices!!.getString("password")
-                            map["device_token"] =
-                                sharedPreferencesServices!!.getString("Device_token")
+                            map["device_token"] =  sharedPreferencesServices!!.getString("Device_token")
                             oAuthSecureService!!.postAuthToken(map).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(object : Observer<PixivOAuthResponse> {

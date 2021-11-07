@@ -34,7 +34,7 @@ import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMThViewPager
 import com.perol.asdpl.pixivez.repository.AppDataRepository
-import kotlinx.android.synthetic.main.fragment_hello_mth.*
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMthBinding
 import kotlinx.coroutines.runBlocking
 
 // TODO: Rename parameter arguments, choose names that match
@@ -56,9 +56,9 @@ class HelloMThFragment : Fragment() {
             val it = AppDataRepository.getUser()
             val userid = it.userid
             activity?.runOnUiThread {
-                viewpager_hellomth.adapter =
+                binding.viewpagerHellomth.adapter =
                     HelloMThViewPager(this@HelloMThFragment, childFragmentManager, userid)
-                tablayout_hellomth.setupWithViewPager(viewpager_hellomth)
+                binding.tablayoutHellomth.setupWithViewPager(binding.viewpagerHellomth)
             }
 
         }
@@ -76,12 +76,14 @@ class HelloMThFragment : Fragment() {
     }
 
 
+    private lateinit var binding: FragmentHelloMthBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.fragment_hello_mth, container, false)
+		binding = FragmentHelloMthBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

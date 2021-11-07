@@ -43,8 +43,7 @@ import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
-import kotlinx.android.synthetic.main.fragment_illustrator.*
-
+import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -90,13 +89,13 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     var restrict: String = "public"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerview_illustrator.adapter = userShowAdapter
-        recyclerview_illustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
-        spinner_illustrator.onItemSelectedListener = this
+        binding.recyclerviewIllustrator.adapter = userShowAdapter
+        binding.recyclerviewIllustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
+        binding.spinnerIllustrator.onItemSelectedListener = this
         userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel!!.onLoadMore(viewModel!!.nexturl.value!!)
         }
-        swiperefresh_illustrator.setOnRefreshListener {
+        binding.swiperefreshIllustrator.setOnRefreshListener {
             viewModel!!.onRefresh(param1!!, restrict, param2!!)
         }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
@@ -122,7 +121,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
         viewModel!!.refreshcomplete.observe(this, Observer {
             if (it != null) {
-                swiperefresh_illustrator.isRefreshing = false
+                binding.swiperefreshIllustrator.isRefreshing = false
             }
         })
 
@@ -161,12 +160,14 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         lazyLoad()
     }
 
+    private lateinit var binding: FragmentIllustratorBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
 
-        return inflater.inflate(R.layout.fragment_illustrator, container, false)
+		binding = FragmentIllustratorBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

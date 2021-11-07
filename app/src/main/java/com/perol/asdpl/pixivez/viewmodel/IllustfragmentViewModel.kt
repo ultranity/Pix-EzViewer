@@ -52,7 +52,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     var nexturl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
-    var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+    var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
     var hideBookmarked = MutableLiveData<Int>(
         pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )
@@ -90,7 +90,7 @@ class IllustfragmentViewModel : BaseViewModel() {
                 null
             )
                 .subscribe({
-                    illusts.value = ArrayList<Illust>(it.illusts)
+                    illusts.value = ArrayList(it.illusts)
                     nexturl.value = it.next_url
                     isRefresh.value = false
                 }, {
@@ -101,9 +101,11 @@ class IllustfragmentViewModel : BaseViewModel() {
     fun onLoadMoreListen() {
         if (nexturl.value != null) {
             retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
-                addIllusts.value = ArrayList<Illust>(it.illusts)
+                addIllusts.value = ArrayList(it.illusts)
                 nexturl.value = it.next_url
-            }, {}, {}).add()
+            }, {
+                addIllusts.value = null
+            }, {}).add()
         }
 
     }

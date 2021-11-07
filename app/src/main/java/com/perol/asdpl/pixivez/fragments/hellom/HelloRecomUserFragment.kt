@@ -38,9 +38,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
-import kotlinx.android.synthetic.main.fragment_recom_user.*
-
-
+import com.perol.asdpl.pixivez.databinding.FragmentRecomUserBinding
 /**
  * A simple [Fragment] subclass.
  * Use the [HelloRecomUserFragment.newInstance] factory method to
@@ -64,7 +62,7 @@ class HelloRecomUserFragment : BaseFragment() {
         })
         viewmodel!!.data.observe(this, Observer {
             userShowAdapter.setNewData(it.toMutableList())
-            swipe.isRefreshing = false
+            binding.swipe.isRefreshing = false
         })
         viewmodel!!.nexturl.observe(this, Observer {
             if (it != null) {
@@ -87,25 +85,27 @@ class HelloRecomUserFragment : BaseFragment() {
     val userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = userShowAdapter
             layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         }
         userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel!!.getNext()
         }
-        swipe.setOnRefreshListener {
+        binding.swipe.setOnRefreshListener {
             viewmodel!!.reData()
 
         }
 
     }
 
+    private lateinit var binding: FragmentRecomUserBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_recom_user, container, false)
+		binding = FragmentRecomUserBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
 

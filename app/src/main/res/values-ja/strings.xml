@@ -261,4 +261,5 @@
 	<string name="login_expired">ログインが異常です、またログインしてください</string>
 	<string name="token_expired">ID情報が期限切れになったら、さわやかにお待ちください</string>
 	<string name="login_help_new">受Pixiv検証制限、中国の本土地域は事前に公開するために必要です、あなた自身を準備してください</string>
+    <string name="open_in_external_browser">外部ブラウザで開く</string>
 </resources>

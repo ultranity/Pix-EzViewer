@@ -261,4 +261,5 @@
 	<string name="login_expired">登錄狀態異常，請重新登錄</string>
 	<string name="token_expired">身份信息過期，請等待刷新</string>
 	<string name="login_help_new">受pixiv驗證限制，中國大陸地區登錄需要提前開啟代理，請自行準備</string>
+    <string name="open_in_external_browser">若出現錯誤點擊此處選擇瀏覽器登入</string>
 </resources>

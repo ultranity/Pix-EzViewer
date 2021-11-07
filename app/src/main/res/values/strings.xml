@@ -308,4 +308,5 @@
     <string name="login_expired">登录过期，请重新登录</string>
     <string name="token_expired">身份信息过期，请等待刷新</string>
     <string name="login_help_new">受pixiv验证限制，中国大陆地区登录需要提前开启代理，请自行准备</string>
+    <string name="open_in_external_browser">若出现错误点击此处选择浏览器登录</string>
 </resources>

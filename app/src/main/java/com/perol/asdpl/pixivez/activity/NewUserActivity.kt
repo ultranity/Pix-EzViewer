@@ -29,27 +29,16 @@ package com.perol.asdpl.pixivez.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.webkit.*
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.PkceUtil
-import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
-import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
-import com.perol.asdpl.pixivez.services.AccountPixivService
-import com.perol.asdpl.pixivez.services.OAuthSecureService
-import kotlinx.android.synthetic.main.activity_new_user.*
-import java.util.*
+import com.perol.asdpl.pixivez.databinding.ActivityNewUserBinding
+import com.perol.asdpl.pixivez.networks.Pkce
 
 class NewUserActivity : RinkActivity() {
-    private var webViewUrl: String? = null
-    private var ready = false
-    private var codeVerifier: String? = null
 
     private val webChromeClient = WebChromeClient()
     private val webViewClient: WebViewClient = object : WebViewClient() {
@@ -58,32 +47,41 @@ class NewUserActivity : RinkActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             if (url.startsWith("pixiv://account/login")) {
-                val code = url.split("?")[1].split("&").find{ it.startsWith("code=") }
-                if (code == null || code.length < 6) {
+
+                val code = Uri.parse(url).getQueryParameter("code").toString()
+                if (code.isBlank()) {
                     Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG).show()
                     finish()
                     return
                 }
                 val intent = Intent()
-                intent.putExtra("code", code.substring(5))
-                intent.putExtra("codeVerifier", codeVerifier)
+                intent.putExtra("code", code)
                 setResult(8080, intent)
                 finish()
             }
         }
     }
 
+    private lateinit var binding: ActivityNewUserBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_user)
+        binding = ActivityNewUserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.ext.setOnClickListener {
+            val url: String = "https://app-api.pixiv.net/web/v1/login?code_challenge=" +
+                    Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
+            val uri = Uri.parse(url)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(intent)
+        }
         initWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
-        webView.webChromeClient = webChromeClient
-        webView.webViewClient = webViewClient
-        val webSettings = webView.settings
+        binding.webView.webChromeClient = webChromeClient
+        binding.webView.webViewClient = webViewClient
+        val webSettings = binding.webView.settings
         webSettings.userAgentString = "PixivAndroidApp/5.0.234 (Android ${Build.VERSION.RELEASE}; ${Build.MODEL})"
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
@@ -107,23 +105,22 @@ class NewUserActivity : RinkActivity() {
             cookieSyncMngr.sync()
         }
 
-        codeVerifier = PkceUtil.generateCodeVerifier()
-        val codeChallenge = PkceUtil.generateCodeChallenge(codeVerifier!!)
-        webView.loadUrl("https://app-api.pixiv.net/web/v1/login?code_challenge_method=S256&client=pixiv-android&code_challenge=" + codeChallenge)
+        val codeChallenge = Pkce.getPkce().challenge
+        binding.webView.loadUrl("https://app-api.pixiv.net/web/v1/login?code_challenge_method=S256&client=pixiv-android&code_challenge=$codeChallenge")
     }
 
     override fun onPause() {
-        webView.onPause()
+        binding.webView.onPause()
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        webView.onResume()
+        binding.webView.onResume()
     }
 
     override fun onDestroy() {
-        webView.destroy()
+        binding.webView.destroy()
         super.onDestroy()
     }
 }

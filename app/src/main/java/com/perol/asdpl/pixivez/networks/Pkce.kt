@@ -1,6 +1,9 @@
+// Converted from https://github.com/CeuiLiSA/Pixiv-Shaft/blob/77e0cb739cf502b7453000ff5738b79697ca9666/app/src/main/java/ceui/lisa/feature/PkceUtil.java (MIT)
+// to Kotlin
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Base64
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.SecureRandom
 
@@ -11,7 +14,7 @@ object Pkce {
     fun getPkce(): PKCEItem {
         if (pkceItem == null) {
             val verify: String = generateCodeVerifier()
-            val challenge: String = generateCodeChallange(verify)
+            val challenge: String = generateCodeChallenge(verify)
             pkceItem = PKCEItem(verify, challenge)
         }
         return pkceItem!!
@@ -25,8 +28,9 @@ object Pkce {
             Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
         )
     }
-    fun generateCodeChallange(codeVerifier: String): String {
-        val bytes = codeVerifier.toByteArray(charset("US-ASCII"))
+
+    fun generateCodeChallenge(codeVerifier: String): String {
+        val bytes = codeVerifier.toByteArray(StandardCharsets.US_ASCII)
         val messageDigest = MessageDigest.getInstance("SHA-256")
         messageDigest.update(bytes, 0, bytes.size)
         val digest = messageDigest.digest()

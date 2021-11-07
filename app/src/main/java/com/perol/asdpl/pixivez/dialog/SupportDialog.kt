@@ -257,7 +257,7 @@ class SupportDialog : DialogFragment() {
             val calendar = Calendar.getInstance()
             val sharedPreferencesServices = SharedPreferencesServices.getInstance()
             sharedPreferencesServices.setInt("lastsupport",
-                calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY))
+                calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
             val totaldownloadcount = sharedPreferencesServices.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size?:0)
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val inflater = requireActivity().layoutInflater
@@ -290,7 +290,7 @@ class SupportDialog : DialogFragment() {
                             gotoWeChat()
                             sharedPreferencesServices.setInt(
                                 "lastsupport",
-                                calendar.get(Calendar.DAY_OF_YEAR) * 100 + 500 + calendar.get(Calendar.HOUR_OF_DAY)
+                                calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                             )
                             sharedPreferencesServices.setInt(
                                 "supports",
@@ -315,7 +315,7 @@ class SupportDialog : DialogFragment() {
                             gotoAliPay()
                             sharedPreferencesServices.setInt(
                                 "lastsupport",
-                                calendar.get(Calendar.DAY_OF_YEAR) * 100 + 500 + calendar.get(Calendar.HOUR_OF_DAY)
+                                calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                             )
                             sharedPreferencesServices.setInt(
                                 "supports",

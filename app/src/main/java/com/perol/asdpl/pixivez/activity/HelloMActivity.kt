@@ -256,10 +256,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         textView.text = allUser!![nowNum].useremail
 
         val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
-            - SharedPreferencesServices.getInstance()
-                .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 140))
-            >= 20*24) {
+        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY)
+                    -SharedPreferencesServices.getInstance()
+                .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
+            )>= 30*24) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         }
     }

@@ -109,16 +109,16 @@ private lateinit var binding: ActivitySettingBinding
 
     override fun onBackPressed() {
         val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY)
+        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY)
                 -SharedPreferencesServices.getInstance()
-                    .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*100+calendar.get(Calendar.HOUR_OF_DAY) - 100)
-             )>= 20*24) {
+                    .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
+             )>= 30*24) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         }
         else {
             SharedPreferencesServices.getInstance()
                 .setInt("lastsupport",
-                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 12)
+                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 24)
             super.onBackPressed()
         }
     }

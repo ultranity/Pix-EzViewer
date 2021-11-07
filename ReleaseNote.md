@@ -21,7 +21,7 @@
 - [] feature&update: 更多命名自定义字符串（tags,tag#,tag5,tagst)
 - [ ] feature&update:  侧滑功能
 
-## 1.8.0R:
+## 1.8.0+:
 - [ ] feature:  画师作品页面筛选整合
 - [ ] feature:  一键下载
 - [ ] feature:  下载信息导出
@@ -29,6 +29,13 @@
 - [ ] feature&update:  图片管理功能完善+功能引导？
 
 # 更新日志：
+
+## 1.8.0R:
+- [x] fix: 支持新版 OAuth2 登录
+- [x] update: tab 优化
+- [x] adjust: toasts
+- [x] update: 切换至 viewBinding
+- [x] update: 依赖升级
 
 ## 1.7.7R:
 - [x] fix: SNI 连接

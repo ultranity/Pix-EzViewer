@@ -1,0 +1,4 @@
+## 1.8.0:
+- [x] fix: new pixiv.net login authorization with OAuth2
+- [x] update: tab swipe experience
+- [x] adjust: toasts

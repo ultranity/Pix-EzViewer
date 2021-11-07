@@ -1,0 +1,4 @@
+## 1.8.0:
+- [x] fix: 支持新版 OAuth2 登录
+- [x] update: tab 优化
+- [x] adjust: toasts

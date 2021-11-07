@@ -38,10 +38,14 @@
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <!--androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpage_rankingm"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent" /-->
+    <FrameLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/content_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
 
 </LinearLayout>

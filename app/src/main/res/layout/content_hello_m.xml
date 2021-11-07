@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.viewpager2.widget.ViewPager2 android:id="@+id/viewpager_hellom"
+<androidx.viewpager2.widget.ViewPager2 android:id="@+id/content_view"
     android:layout_width="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.HelloMActivity"

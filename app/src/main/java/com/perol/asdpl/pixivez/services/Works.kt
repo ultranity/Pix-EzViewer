@@ -154,10 +154,10 @@ object Works {
         val userid = illust.user.id
         val filename = parseSaveFormat(illust, part)
         val needCreateFold = pre.getBoolean("needcreatefold", false)
-        val path = if (needCreateFold) {
-            "${PxEZApp.storepath}/${name}_${userid}"
-        } else PxEZApp.storepath
-        val targetFile = File(path, filename)
+        val targetFile = File("${PxEZApp.storepath}/" +
+                (if (PxEZApp.R18Folder && filename.startsWith("？")) PxEZApp.R18FolderPath else "") +
+                if (needCreateFold) "${name}_${userid}" else "",
+            filename.removePrefix("？"))
         try {
             file.copyTo(targetFile, overwrite = true)
             file.delete()

@@ -23,17 +23,17 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.fragments
+package com.perol.asdpl.pixivez.fragments.user
 
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -41,9 +41,8 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.RankingAdapter
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
-import com.perol.asdpl.pixivez.databinding.FragmentUserBinding
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -91,7 +90,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         super.onViewCreated(view, savedInstanceState)
         picItemAdapter =
             if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_bookmarked",true)){
-                RankingAdapter(
+                PicListBtnUserAdapter(
                     R.layout.view_ranking_item,
                     null,
                     isR18on,
@@ -100,7 +99,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                     viewActivity.viewModel.hideBookmarked.value!!,
                     viewActivity.viewModel.hideDownloaded.value!!)
             } else{
-                RecommendAdapter(
+                PicListBtnAdapter(
                     R.layout.view_recommand_item,
                     null,
                     isR18on,
@@ -111,7 +110,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
 
         binding.mrecyclerview.apply{
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
             adapter = picItemAdapter
             addItemDecoration(GridItemDecoration())
         }
@@ -136,43 +135,46 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     override fun onClick(string: String, public: String) {
         viewModel!!.onRefreshListener(
-            param1!!, public, if (string.isNotBlank()) {
-                string
-            } else {
+            param1!!, public, string.ifBlank {
                 null
             }
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("UserBookMarkFragment","UserBookMarkFragment resume")
     }
 
     private fun lazyLoad() {
         viewModel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
         this.viewActivity = activity as UserMActivity
 
-        viewModel!!.nexturl.observe(this, Observer {
+        viewModel!!.nexturl.observe(this){
             if (it.isNullOrEmpty()) {
                 picItemAdapter.loadMoreEnd()
             } else {
                 picItemAdapter.loadMoreComplete()
             }
-        })
-        viewModel!!.data.observe(this, Observer {
+        }
+        viewModel!!.data.observe(this){
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
                 picItemAdapter.setNewData(it.toMutableList())
             }
 
-        })
-        viewModel!!.adddata.observe(this, Observer {
+        }
+        viewModel!!.adddata.observe(this){
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
             } else {
                 picItemAdapter.loadMoreFail()
             }
-        })
-        viewModel!!.tags.observe(this, Observer {
+        }
+        viewModel!!.tags.observe(this){
 
-        })
+        }
 
     }
 
@@ -246,7 +248,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentUserBookMarkBinding.inflate(inflater, container, false)
         return binding.root

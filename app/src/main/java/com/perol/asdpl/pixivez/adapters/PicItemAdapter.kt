@@ -31,7 +31,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -53,6 +52,8 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 
 // basic Adapter for image item
 //TODO: reuse more code
@@ -60,7 +61,7 @@ abstract class PicItemAdapter(
     layoutResId: Int,
     data: List<Illust>?
 ) :
-    BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
+    BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule, CoroutineScope by MainScope(){
 
     abstract var R18on: Boolean
     abstract var hideBookmarked: Int
@@ -97,9 +98,9 @@ abstract class PicItemAdapter(
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
         this.loadMoreModule?.preLoadNumber = 12
-        colorPrimary = ThemeUtil.getColor(context, R.attr.colorPrimary)
-        colorPrimaryDark= ThemeUtil.getColor(context,R.attr.colorPrimaryDark)
-        badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
+        colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
+        colorPrimaryDark= ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
+        badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
     }
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (((hideBookmarked == 1 && item.is_bookmarked) || (hideBookmarked == 3 && !item.is_bookmarked)) ||
@@ -188,21 +189,21 @@ abstract class PicItemAdapter(
             }
         }
 
-        val constraintLayout =
-            helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
+        val numLayout =
+            helper.itemView.findViewById<View>(R.id.layout_num)
         when (item.type) {
             "illust" -> if (item.meta_pages.isEmpty()) {
-                constraintLayout.visibility = View.INVISIBLE
+                numLayout.visibility = View.INVISIBLE
             } else if (item.meta_pages.isNotEmpty()) {
-                constraintLayout.visibility = View.VISIBLE
+                numLayout.visibility = View.VISIBLE
                 helper.setText(R.id.textview_num, item.meta_pages.size.toString())
             }
             "ugoira" -> {
-                constraintLayout.visibility = View.VISIBLE
+                numLayout.visibility = View.VISIBLE
                 helper.setText(R.id.textview_num, "Gif")
             }
             else -> {
-                constraintLayout.visibility = View.VISIBLE
+                numLayout.visibility = View.VISIBLE
                 helper.setText(R.id.textview_num, "CoM")
             }
         }

@@ -78,7 +78,7 @@ class ImgManagerActivity : RinkActivity() {
         viewModel.adapter = ImgManagerAdapter
         viewModel.layoutManager = binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
         viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
-        viewModel.path.observe(this, Observer {
+        viewModel.path.observe(this){
             binding.swiperefresh.isRefreshing = true
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
@@ -92,7 +92,7 @@ class ImgManagerActivity : RinkActivity() {
                     ImgManagerAdapter.setNewData(viewModel.files)
                 }
             }).start()
-        })
+        }
         binding.swiperefresh.setOnRefreshListener {
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
@@ -155,7 +155,7 @@ class ImgManagerActivity : RinkActivity() {
                 title(R.string.title_save_path)
                 folderChooser(
                     initialDirectory = File(viewModel.path.value!!),
-                    allowFolderCreation = true
+                    allowFolderCreation = true, context = context
                 ) { _, folder ->
                     folder.absolutePath.let {
                         viewModel.pre.edit().putString("ImgManagerPath", it).apply()

@@ -124,7 +124,7 @@ class WebViewActivity : RinkActivity() {
                                                 this@WebViewActivity,
                                                 UserMActivity::class.java
                                             )
-                                            intent.putExtra("data", userId.toLong())
+                                            intent.putExtra("data", userId)
                                             startActivity(intent)
                                             return true
                                         } else if (segment.size == 1 && request.url.toString()

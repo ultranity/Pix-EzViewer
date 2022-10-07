@@ -44,7 +44,7 @@ class SearchRActivity : RinkActivity() {
     lateinit var trendTagFragment: TrendTagFragment
     lateinit var tagsTextViewModel: TagsTextViewModel
     lateinit var trendTagViewModel: TrendTagViewModel
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item!!.itemId) {
             android.R.id.home -> {
                 if (searchRActivityFragment.isHidden) {

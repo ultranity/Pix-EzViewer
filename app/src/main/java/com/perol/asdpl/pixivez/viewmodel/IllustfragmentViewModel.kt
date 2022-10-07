@@ -64,7 +64,7 @@ class IllustfragmentViewModel : BaseViewModel() {
         isRefresh.value = true
         retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
             .subscribe({
-                illusts.value = ArrayList<Illust>(it.illusts)
+                illusts.value = ArrayList(it.illusts)
                 nexturl.value = it.next_url
                 isRefresh.value = false
             }, {
@@ -90,7 +90,8 @@ class IllustfragmentViewModel : BaseViewModel() {
                 null
             )
                 .subscribe({
-                    illusts.value = ArrayList(it.illusts)
+                    illusts.value = if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
+                                    else  ArrayList(it.illusts)
                     nexturl.value = it.next_url
                     isRefresh.value = false
                 }, {
@@ -101,7 +102,8 @@ class IllustfragmentViewModel : BaseViewModel() {
     fun onLoadMoreListen() {
         if (nexturl.value != null) {
             retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
-                addIllusts.value = ArrayList(it.illusts)
+                addIllusts.value =  if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
+                                    else  ArrayList(it.illusts)
                 nexturl.value = it.next_url
             }, {
                 addIllusts.value = null

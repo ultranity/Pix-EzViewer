@@ -48,6 +48,9 @@ class ThemeUtil {
         )
         var colorPrimary:Int?=null
         var badgeTextColor:Int = R.color.yellow
+
+        const val halftrans = 0x089a9a9a
+        const val transparent = 0x00000000
         fun getColor(context: Context, resId:Int): Int {
             val typedValue = TypedValue()
             context.theme.resolveAttribute(resId, typedValue, true)

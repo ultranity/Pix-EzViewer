@@ -102,7 +102,7 @@ public class UserDetailResponse implements Serializable {
          * is_using_custom_profile_image : true
          */
 
-        private Object webpage;
+        private String webpage;
         private String gender;
         private String birth;
         private String birth_day;
@@ -126,11 +126,11 @@ public class UserDetailResponse implements Serializable {
         private boolean is_premium;
         private boolean is_using_custom_profile_image;
 
-        public Object getWebpage() {
+        public String getWebpage() {
             return webpage;
         }
 
-        public void setWebpage(Object webpage) {
+        public void setWebpage(String webpage) {
             this.webpage = webpage;
         }
 

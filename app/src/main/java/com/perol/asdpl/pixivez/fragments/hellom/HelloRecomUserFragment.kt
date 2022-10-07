@@ -53,24 +53,24 @@ class HelloRecomUserFragment : BaseFragment() {
     var viewmodel: HelloRecomUserViewModel? = null
     private fun lazyLoad() {
 
-        viewmodel!!.adddata.observe(this, Observer {
+        viewmodel!!.adddata.observe(this){
             if (it != null) {
                 userShowAdapter.addData(it)
             } else {
                 userShowAdapter.loadMoreModule?.loadMoreFail()
             }
-        })
-        viewmodel!!.data.observe(this, Observer {
+        }
+        viewmodel!!.data.observe(this){
             userShowAdapter.setNewData(it.toMutableList())
             binding.swipe.isRefreshing = false
-        })
-        viewmodel!!.nexturl.observe(this, Observer {
+        }
+        viewmodel!!.nexturl.observe(this){
             if (it != null) {
                 userShowAdapter.loadMoreModule?.loadMoreComplete()
             } else {
                 userShowAdapter.loadMoreModule?.loadMoreEnd()
             }
-        })
+        }
 
 
     }
@@ -103,7 +103,7 @@ class HelloRecomUserFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 		binding = FragmentRecomUserBinding.inflate(inflater, container, false)
 		return binding.root
     }

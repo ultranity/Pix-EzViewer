@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -34,6 +35,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.SpotlightResponse.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.services.GlideApp
 
@@ -50,7 +52,7 @@ class PixiVisionAdapter(
         val imageView =
             helper.getView<ImageView>(R.id.imageView_pixivision)
         GlideApp.with(context).load(item.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(R.color.halftrans)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(ColorDrawable(ThemeUtil.halftrans))
             .transition(DrawableTransitionOptions.withCrossFade()).into(imageView)
     }
     @SuppressLint("InflateParams")

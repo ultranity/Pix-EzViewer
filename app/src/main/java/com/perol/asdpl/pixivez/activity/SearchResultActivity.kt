@@ -32,13 +32,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SearchResultAdapter
 import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
-import com.perol.asdpl.pixivez.fragments.UserFragment
+import com.perol.asdpl.pixivez.fragments.UsersListFragment
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
 class SearchResultActivity : RinkActivity() {
     var searchword: String ="1"
@@ -68,7 +67,7 @@ class SearchResultActivity : RinkActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item!!.itemId) {
             android.R.id.home -> {
                 this.finish() // back button
@@ -86,7 +85,7 @@ class SearchResultActivity : RinkActivity() {
 
         binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
         arrayList.add(SearchIllustFragment.newInstance(searchword))
-        arrayList.add(UserFragment.newInstance(searchword))
+        arrayList.add(UsersListFragment.newInstance(searchword))
         binding.contentSearchResult.viewpageSearchresult.adapter = SearchResultAdapter(this, supportFragmentManager, arrayList)
         binding.tablayoutSearchresult.getTabAt(type)?.select()
         binding.contentSearchResult.viewpageSearchresult.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

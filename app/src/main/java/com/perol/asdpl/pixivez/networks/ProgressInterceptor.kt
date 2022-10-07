@@ -61,7 +61,7 @@ class ProgressResponseBody(url: String?, private val responseBody: ResponseBody)
         return bufferedSource as BufferedSource
     }
 
-    private inner class ProgressSource internal constructor(source: Source) :
+    private inner class ProgressSource(source: Source) :
         ForwardingSource(source) {
         var totalBytesRead: Long = 0
         var currentProgress = 0

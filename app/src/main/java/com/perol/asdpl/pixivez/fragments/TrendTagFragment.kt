@@ -58,7 +58,7 @@ class TrendTagFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 		binding = TrendTagFragmentBinding.inflate(inflater, container, false)
 		return binding.root
     }

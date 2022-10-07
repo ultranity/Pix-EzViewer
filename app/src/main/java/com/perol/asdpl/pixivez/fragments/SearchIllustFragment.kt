@@ -41,8 +41,8 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.RankingAdapter
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
 import com.perol.asdpl.pixivez.dialog.SearchSectionDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
@@ -121,14 +121,14 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
         searchIllustAdapter =
             if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_searchr",true)){
-            RankingAdapter(
+            PicListBtnUserAdapter(
                 R.layout.view_ranking_item,
                 null,
                 isR18on,
                 blockTags,
                 singleLine = false)
         } else{
-            RecommendAdapter(
+            PicListBtnAdapter(
                 R.layout.view_recommand_item,
                 null,
                 isR18on,
@@ -143,9 +143,11 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             setHeaderView(searchResultHeaderView)
         }
         searchtext.text = param1
-        binding.recyclerviewIllust.adapter = searchIllustAdapter
-        binding.recyclerviewIllust.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerviewIllust.apply {
+            adapter = searchIllustAdapter
+            layoutManager =
+                StaggeredGridLayoutManager(1+ context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+        }
         binding.fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val arrayList = arrayOfNulls<String>(starnum.size)
@@ -244,7 +246,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 		binding = FragmentSearchIllustBinding.inflate(inflater, container, false)
 		return binding.root
     }
@@ -253,37 +255,37 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private fun lazyLoad() {
         viewModel = ViewModelProvider(this).get(IllustfragmentViewModel::class.java)
 
-        viewModel.illusts.observe(this, Observer {
+        viewModel.illusts.observe(this){
             updateillust(it)
-        })
-        viewModel.addIllusts.observe(this, {
+        }
+        viewModel.addIllusts.observe(this){
             if (it != null){
                 searchIllustAdapter.addData(it)
             } else {
                 searchIllustAdapter.loadMoreFail()
             }
-        })
-        viewModel.nexturl.observe(this, Observer {
+        }
+        viewModel.nexturl.observe(this){
             if (it == null) {
                 searchIllustAdapter.loadMoreEnd()
             } else {
                 searchIllustAdapter.loadMoreComplete()
             }
-        })
-        viewModel.bookmarkid.observe(this, Observer {
+        }
+        viewModel.bookmarkid.observe(this){
             changeToBlue(it)
-        })
-        viewModel.isRefresh.observe(this, Observer {
+        }
+        viewModel.isRefresh.observe(this){
             binding.swiperefresh.isRefreshing = it
-        })
-        viewModel.hideBookmarked.observe(this, Observer {
+        }
+        viewModel.hideBookmarked.observe(this){
             if (it != null) {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putInt(
                     "hide_bookmark_item_in_search2", it
                 ).apply()
                 searchIllustAdapter.hideBookmarked = it
             }
-        })
+        }
     }
 
     private var position: Int? = null

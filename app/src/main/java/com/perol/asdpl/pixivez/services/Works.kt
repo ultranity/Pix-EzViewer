@@ -36,6 +36,7 @@ import com.arialyy.aria.core.common.HttpOption
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
@@ -178,7 +179,13 @@ object Works {
 
         }
     }
-
+    suspend fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true){
+        for (item in data.toList()) {
+            if (hideDownloaded && FileUtil.isDownloaded(item)) {
+                imageDownloadAll(item)
+            }
+        }
+    }
     fun imageDownloadAll(illust: Illust) {
         if(PxEZApp.ShowDownloadToast) {
             TToast.startDownload()
@@ -202,7 +209,7 @@ object Works {
             .apply {
                 addHeader(
                     "User-Agent",
-                    "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                    "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                 ).addHeader("referer", "https://app-api.pixiv.net/")
             }
     }

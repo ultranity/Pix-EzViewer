@@ -39,13 +39,12 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.RankingAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import com.perol.asdpl.pixivez.databinding.FragmentRankingMBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
@@ -70,7 +69,7 @@ class RankingMFragment : BaseFragment(){
     var picDate: String? = null
     lateinit var viewmodel: RankingMViewModel
     lateinit var sharemodel: RankingShareViewModel
-    private lateinit var rankingAdapter: RankingAdapter
+    private lateinit var picListBtnUserAdapter: PicListBtnUserAdapter
     private var param1: String? = null
     private var param2: Int? = null
     
@@ -85,14 +84,14 @@ class RankingMFragment : BaseFragment(){
             blockTags = allTags.map {
                 it.name
             }
-            rankingAdapter.blockTags = blockTags
-            rankingAdapter.hideBookmarked = sharemodel.hideBookmarked.value!!
-            rankingAdapter.notifyDataSetChanged()
+            picListBtnUserAdapter.blockTags = blockTags
+            picListBtnUserAdapter.hideBookmarked = sharemodel.hideBookmarked.value!!
+            picListBtnUserAdapter.notifyDataSetChanged()
         }
     }
     fun lazyLoad() {
 
-        rankingAdapter = RankingAdapter(
+        picListBtnUserAdapter = PicListBtnUserAdapter(
             R.layout.view_ranking_item,
             null,
             isR18on, blockTags
@@ -109,38 +108,40 @@ class RankingMFragment : BaseFragment(){
             sharemodel.picDateShare.value
         }
 
-        sharemodel.sortCoM.observe(this, Observer {
-            rankingAdapter.sortCoM = it
+        sharemodel.sortCoM.observe(this){
+            picListBtnUserAdapter.sortCoM = it
             EventBus.getDefault().post(AdapterRefreshEvent())
-        })
-        sharemodel.picDateShare.observe(this, Observer {
+        }
+        sharemodel.picDateShare.observe(this){
             viewmodel.datePick(param1!!, it)
-        })
-        sharemodel.hideBookmarked.observe(this, Observer {
-            rankingAdapter.hideBookmarked = it
+        }
+        sharemodel.hideBookmarked.observe(this){
+            picListBtnUserAdapter.hideBookmarked = it
             EventBus.getDefault().post(AdapterRefreshEvent())
-        })
+        }
 
-        viewmodel.addillusts.observe(this, Observer {
+        viewmodel.addillusts.observe(this){
             if (it != null) {
-                rankingAdapter.addData(it)
+                picListBtnUserAdapter.addData(it)
+            } else {
+                picListBtnUserAdapter.loadMoreFail()
             }
-        })
-        viewmodel.illusts.observe(this, Observer {
+        }
+        viewmodel.illusts.observe(this){
             binding.swiperefreshRankingm.isRefreshing = false
             if (it != null) {
-                rankingAdapter.setNewData(it)
+                picListBtnUserAdapter.setNewData(it)
             } else {
-                rankingAdapter.loadMoreFail()
+                picListBtnUserAdapter.loadMoreFail()
             }
-        })
-        viewmodel.nexturl.observe(this, Observer {
+        }
+        viewmodel.nexturl.observe(this){
             if (it == null) {
-                rankingAdapter.loadMoreEnd()
+                picListBtnUserAdapter.loadMoreEnd()
             } else {
-                rankingAdapter.loadMoreComplete()
+                picListBtnUserAdapter.loadMoreComplete()
             }
-        })
+        }
     }
 
     var exitTime = 0L
@@ -149,12 +150,12 @@ class RankingMFragment : BaseFragment(){
         binding.swiperefreshRankingm.setOnRefreshListener {
             viewmodel.onRefresh(param1!!, picDate)
         }
-        rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picListBtnUserAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
         binding.recyclerviewRankingm.apply{
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-            adapter = rankingAdapter
+            layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+            adapter = picListBtnUserAdapter
             addItemDecoration(GridItemDecoration())
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
@@ -182,7 +183,7 @@ class RankingMFragment : BaseFragment(){
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val headerView = layoutInflater.inflate(R.layout.header_mdynamics, null)
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = sharemodel.hideBookmarked.value == 1
@@ -198,7 +199,7 @@ class RankingMFragment : BaseFragment(){
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-        rankingAdapter.addHeaderView(headerView)
+        picListBtnUserAdapter.addHeaderView(headerView)
 		binding = FragmentRankingMBinding.inflate(inflater, container, false)
 		return binding.root
     }

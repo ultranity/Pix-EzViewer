@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -77,36 +77,38 @@ class HelloMMyFragment : BaseFragment() {
             rankingAdapter.notifyDataSetChanged()
         }
     }
-    private lateinit var rankingAdapter: RecommendAdapter
+    private lateinit var rankingAdapter: PicListBtnAdapter
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
     private fun lazyLoad() {
         viewmodel = ViewModelProvider(this).get(HelloMMyViewModel::class.java)
-        viewmodel.addillusts.observe(this, Observer {
+        viewmodel.addillusts.observe(this){
             if (it != null) {
                 rankingAdapter.addData(it)
+            } else {
+                rankingAdapter.loadMoreFail()
             }
-        })
-        viewmodel.illusts.observe(this, Observer {
+        }
+        viewmodel.illusts.observe(this){
             binding.swiperefreshMym.isRefreshing = false
             rankingAdapter.setNewData(it)
             binding.recyclerviewMym.smoothScrollToPosition(0)
-        })
-        viewmodel.nexturl.observe(this, Observer {
+        }
+        viewmodel.nexturl.observe(this){
             if (it == null) {
                 rankingAdapter.loadMoreEnd()
             } else {
                 rankingAdapter.loadMoreComplete()
             }
-        })
-        viewmodel.hideBookmarked.observe(this, Observer {
+        }
+        viewmodel.hideBookmarked.observe(this){
             if (it != null) {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
                     "hide_bookmark_item_in_mmy", it
                 ).apply()
                 rankingAdapter.hideBookmarked = if(it) 1 else 0
             }
-        })
+        }
     }
 
 
@@ -124,7 +126,7 @@ class HelloMMyFragment : BaseFragment() {
 
     private lateinit var binding: FragmentHelloMmyBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
 		binding = FragmentHelloMmyBinding.inflate(inflater, container, false)
 		return binding.root
     }
@@ -136,18 +138,23 @@ class HelloMMyFragment : BaseFragment() {
             .getBoolean(
                 "hide_bookmark_item_in_mmy", false
             )
-        rankingAdapter = RecommendAdapter(
+        rankingAdapter = PicListBtnAdapter(
             R.layout.view_recommand_item,
             null,
             isR18on,
             blockTags,
             if(viewmodel.hideBookmarked.value!!) 1 else 0
         )
-        binding.recyclerviewMym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        binding.recyclerviewMym.adapter = rankingAdapter
-        binding.swiperefreshMym.setOnRefreshListener {
-            viewmodel.OnRefreshListener(restrict)
+        binding.recyclerviewMym.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                1 + context.resources.configuration.orientation,
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            adapter = rankingAdapter
         }
+        binding.swiperefreshMym.setOnRefreshListener {
+                viewmodel.onRefreshListener(restrict)
+            }
         rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
@@ -172,7 +179,7 @@ class HelloMMyFragment : BaseFragment() {
                         restrict = "private"
                     }
                 }
-                viewmodel.OnRefreshListener(restrict)
+                viewmodel.onRefreshListener(restrict)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {

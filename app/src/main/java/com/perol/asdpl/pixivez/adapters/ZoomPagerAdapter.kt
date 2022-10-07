@@ -111,7 +111,7 @@ class ZoomPagerAdapter(
                     return false
                 }
 
-                override fun onLongPress(e: MotionEvent?) {
+                override fun onLongPress(e: MotionEvent) {
                     super.onLongPress(e)
                     if (illust != null && resourceFile != null) {
                         MaterialDialog(context).show {

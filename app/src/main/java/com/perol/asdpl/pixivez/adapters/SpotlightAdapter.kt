@@ -32,7 +32,6 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -49,8 +48,8 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
 
 
     override fun convert(helper: BaseViewHolder, item: Spotlight) {
-        val constraintLayout = helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
-        constraintLayout.visibility = View.GONE
+        val numLayout = helper.itemView.findViewById<View>(R.id.layout_num)
+        numLayout.visibility = View.GONE
         val userImage = helper.getView<ImageView>(R.id.imageview_user)
         val mainImage = helper.getView<ImageView>(R.id.item_img)
         helper.setText(R.id.textview_context, item.username)

@@ -29,9 +29,9 @@ import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
 import android.media.MediaScannerConnection
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -48,8 +48,10 @@ import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.bugly.Bugly
 import com.tencent.bugly.beta.Beta
+import com.tencent.bugly.crashreport.BuglyLog
 import java.io.File
 import com.tencent.mmkv.MMKV
+import io.reactivex.plugins.RxJavaPlugins
 import java.util.*
 
 class PxEZApp : Application() {
@@ -113,24 +115,24 @@ class PxEZApp : Application() {
                 threadNum = pre.getString("thread_num", "2")!!.toInt()
             }
             appConfig.apply {
+                logLevel = 5
                 isNotNetRetry = true
             }
         }
 
-        Thread(Runnable {
+        Thread {
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
-                if((System.currentTimeMillis() - it.completeTime) > 10*60*1000 )
+                if ((System.currentTimeMillis() - it.completeTime) > 10 * 60 * 1000)
                     Aria.download(this).load(it.id).cancel()
             }
             Thread.sleep(10000)
-            if( pre.getBoolean("resume_unfinished_task",true)
-                //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
-            )
-            {
+            if (pre.getBoolean("resume_unfinished_task", true)
+            //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
+            ) {
                 //Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
-                    if(it.state == 0) {
+                    if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
                         Thread.sleep(500)
                         //val illustD = Gson().fromJson(it.str, IllustD::class.java)
@@ -144,7 +146,7 @@ class PxEZApp : Application() {
                     }
                 }
             }
-        }).start()
+        }.start()
         instance = this
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
@@ -174,9 +176,18 @@ class PxEZApp : Application() {
         Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
         Beta.enableHotfix = false
         //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
-        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
+        if(BuildConfig.DEBUG)
+            Bugly.setAppChannel(this,"DeBug")
+        else
+            Bugly.setAppChannel(this,"InApp")
+        BuglyLog.d("settings", pre.all.toString())
 
+        RxJavaPlugins.setErrorHandler {
+            Log.e("onRxJavaErrorHandler", "${it.message}")
+            it.printStackTrace()
+        }
         if(pre.getBoolean("infoCache", true))
             MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
@@ -244,7 +255,7 @@ class PxEZApp : Application() {
         var saveformat = ""
 
         @JvmStatic
-        var locale = Locale.SIMPLIFIED_CHINESE!!
+        var locale = Locale.SIMPLIFIED_CHINESE
 
         @JvmStatic
         var language: Int = 0

@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.adapters
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -75,6 +76,7 @@ class UserShowAdapter(layoutResId: Int) :
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun convert(helper: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
         val linearLayoutManager = LinearLayoutManager(helper.itemView.context, LinearLayoutManager.HORIZONTAL, false)
         val userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
@@ -82,8 +84,8 @@ class UserShowAdapter(layoutResId: Int) :
         val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
         val userImage = helper.getView<NiceImageView>(R.id.imageview_usershow)
         val username = helper.getView<TextView>(R.id.textview_usershowname)
-        val colorPrimary = ThemeUtil.getColor(context, R.attr.colorPrimary)
-        val badgeTextColor= ThemeUtil.getColor(context,R.attr.badgeTextColor)
+        val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
+        val badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
         if (item.user.isIs_followed)
             userImage.setBorderColor(badgeTextColor) // Color.YELLOW
         else
@@ -113,7 +115,7 @@ class UserShowAdapter(layoutResId: Int) :
                 ContextCompat.startActivity(context, intent, null)
         }
         recyclerView.adapter = userSearchillustAdapter
-        username.text = item.user.name
+        username.text = "${item.user.name} : ${item.user.account}"
         GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
 

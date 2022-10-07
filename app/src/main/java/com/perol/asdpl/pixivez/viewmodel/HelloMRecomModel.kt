@@ -37,9 +37,9 @@ import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
     val illusts = MutableLiveData<ArrayList<Illust>>()
-    val addillusts = MutableLiveData<ArrayList<Illust>>()
+    val addillusts = MutableLiveData<ArrayList<Illust>?>()
     val banners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
-    val addbanners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
+    val addbanners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>?>()
     var nextUrl = MutableLiveData<String>()
     var nextPixivisonUrl = MutableLiveData<String>()
     private var retrofitRepository = RetrofitRepository.getInstance()
@@ -72,9 +72,7 @@ class HelloMRecomModel : BaseViewModel() {
                 if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
                     nextPixivisonUrl.value = it.next_url
                 banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
-            }, {
-                banners.value = null
-            }, {}).add()
+            }, {}, {}).add()
         }.subscribe({
             Log.d("init","getRecommend")
             nextUrl.value = it.next_url

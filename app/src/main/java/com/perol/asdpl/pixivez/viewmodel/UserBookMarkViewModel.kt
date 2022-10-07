@@ -45,9 +45,7 @@ class UserBookMarkViewModel : BaseViewModel() {
             retrofit.getNextUserIllusts(nexturl.value!!).subscribe({
                 adddata.value = it.illusts
                 nexturl.value = it.next_url
-            }, {
-                adddata.value = null
-               }, {})
+            }, {}, {}).add()
     }
 
     private fun isUser(id: Long) = Single.create<Boolean> {
@@ -72,7 +70,6 @@ class UserBookMarkViewModel : BaseViewModel() {
         }, {}, {}).add()
         retrofit.getIllustBookmarkTags(id, string).subscribe({
             tags.value = it
-
         }, {}, {}).add()
         return isUser(id)
     }

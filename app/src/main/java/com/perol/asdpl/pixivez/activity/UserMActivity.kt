@@ -38,15 +38,13 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
-import com.perol.asdpl.pixivez.fragments.UserMessageFragment
+import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -66,7 +64,7 @@ class UserMActivity : RinkActivity() {
         const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
         const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
         const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
-        lateinit var menuD:Menu
+        var menuD:Menu? = null
         fun start(context: Context, id: Long) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
@@ -99,14 +97,16 @@ class UserMActivity : RinkActivity() {
     val disposables = CompositeDisposable()
     override fun onDestroy() {
         disposables.clear()
+        menuD = null
         super.onDestroy()
     }
 
     lateinit var viewModel: UserMViewModel
     lateinit var pre: SharedPreferences
+    private lateinit var binding: ActivityUserMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityUserMBinding.inflate(layoutInflater)
+        binding = ActivityUserMBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -116,16 +116,16 @@ class UserMActivity : RinkActivity() {
         window.statusBarColor = Color.TRANSPARENT
 
         id = intent.getLongExtra("data", 1)
-        viewModel = ViewModelProvider(this).get(UserMViewModel::class.java)
+        viewModel = ViewModelProvider(this)[UserMViewModel::class.java]
         pre = PreferenceManager.getDefaultSharedPreferences(this)
         viewModel.getData(id)
         viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
         viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
-        viewModel.hideDownloaded.observe(this, Observer {
+        viewModel.hideDownloaded.observe(this){
             if (it)
                 FileUtil.getFileList()
-        })
-        viewModel.userDetail.observe(this, {
+        }
+        viewModel.userDetail.observe(this) {
             if (it != null) {
                 binding.fab.show()
                 disposables.add(viewModel.isuser(id).subscribe({
@@ -133,13 +133,14 @@ class UserMActivity : RinkActivity() {
                         binding.fab.hide()
                         viewModel.hideBookmarked.value = 0
                         binding.mviewpager.currentItem = 2
-                        menuD.getItem(1).isVisible = false
-                        menuD.getItem(2).isVisible = true
-                        menuD.getItem(2).isEnabled = true
+                        menuD!!.getItem(1).isVisible = false
+                        menuD!!.getItem(2).isVisible = true
+                        menuD!!.getItem(2).isEnabled = true
+                    } else {
+                        viewModel.hideBookmarked.observe(this) {
+                            menuD!!.getItem(1).isChecked = it % 2 == 1
+                        }
                     }
-                    viewModel.hideBookmarked.observe(this, {
-                        menuD.getItem(2).isChecked = it % 2 == 1
-                    })
                 }, {}))
 
                 binding.user = it
@@ -147,12 +148,12 @@ class UserMActivity : RinkActivity() {
 
                 binding.mviewpager.adapter = UserMPagerAdapter(
                     this, supportFragmentManager,
-                    id, UserMessageFragment.newInstance(it)
+                    id, UserInfoFragment.newInstance(it)
                 )
                 binding.mtablayout.setupWithViewPager(binding.mviewpager)
             }
-        })
-        viewModel.isfollow.observe(this, {
+        }
+        viewModel.isfollow.observe(this) {
             if (it != null) {
                 if (it) {
                     binding.fab.setImageResource(R.drawable.ic_check_white_24dp)
@@ -161,7 +162,7 @@ class UserMActivity : RinkActivity() {
             }
 
 
-        })
+        }
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -252,11 +253,13 @@ class UserMActivity : RinkActivity() {
                 menu.getItem(1).title = getString(R.string.only_bookmarked)
         }
         menuD = menu
-        menu.getItem(2).isVisible = false
-        menu.getItem(2).isEnabled = false
-        menu.getItem(2).isChecked = pre.getBoolean(
-            HIDE_DOWNLOADED_ITEM, false
-        )
+        menu.findItem(R.id.action_hideDownloaded).apply {
+            isVisible = false
+            isEnabled = false
+            isChecked = pre.getBoolean(
+                HIDE_DOWNLOADED_ITEM, false
+            )
+        }
         return true
     }
 
@@ -308,7 +311,7 @@ class UserMActivity : RinkActivity() {
                             textIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.hide_downloaded_detail))
                             startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
                         }
-                        negativeButton() {
+                        negativeButton {
                             viewModel.hideDownloaded.value = !item.isChecked
                             item.isChecked = !item.isChecked
                         }
@@ -327,6 +330,7 @@ class UserMActivity : RinkActivity() {
 //                val intent =Intent(this,WorkActivity::class.java)
 //                intent.putExtra("id",id)
 //                startActivity(intent)
+                //var curr = supportFragmentManager.fragments[binding.mviewpager.currentItem]
             }
         }
         return super.onOptionsItemSelected(item)

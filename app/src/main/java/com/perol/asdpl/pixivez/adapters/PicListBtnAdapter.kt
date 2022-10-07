@@ -50,7 +50,7 @@ import kotlin.math.min
 
 // simple Adapter for image item, without user imageView
 //TODO: rename
-class RecommendAdapter(
+class PicListBtnAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     override var R18on: Boolean,
@@ -167,11 +167,4 @@ class RecommendAdapter(
         }
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-    }
-
-    override fun convert(helper: BaseViewHolder, item: Illust) {
-        super.convert(helper, item)
-    }
 }

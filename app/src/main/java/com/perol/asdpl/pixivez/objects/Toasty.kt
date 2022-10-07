@@ -28,8 +28,8 @@ import android.content.Context
 import android.widget.Toast
 import com.perol.asdpl.pixivez.services.PxEZApp
 object Toasty {
-    val lToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
-    val sToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    val lToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_LONG)
+    val sToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_SHORT)
     fun longToast(string: String){
         lToast.setText(string)
         lToast.show()

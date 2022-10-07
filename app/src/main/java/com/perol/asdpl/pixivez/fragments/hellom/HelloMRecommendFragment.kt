@@ -40,7 +40,6 @@ import android.view.animation.LayoutAnimationController
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,23 +48,22 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.OKWebViewActivity
 import com.perol.asdpl.pixivez.activity.PixivsionActivity
-import com.perol.asdpl.pixivez.activity.WebViewActivity
-import com.perol.asdpl.pixivez.adapters.PicItemAdapter
+import com.perol.asdpl.pixivez.adapters.PicItemXUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListXUserAdapter
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
-import com.perol.asdpl.pixivez.adapters.RankingAdapter
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.ui.LinearItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloMRecomModel
 import com.youth.banner.Banner
 import com.youth.banner.loader.ImageLoader
-import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -85,6 +83,12 @@ class HelloMRecommendFragment : BaseFragment() {
     override fun loadData() {
         viewmodel.OnRefreshListener()
     }
+
+    override fun onResume() {
+        isLoaded = rankingAdapter.data.isNotEmpty()
+        super.onResume()
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
@@ -99,27 +103,29 @@ class HelloMRecommendFragment : BaseFragment() {
 
     private fun lazyLoad() {
         viewmodel = ViewModelProvider(this).get(HelloMRecomModel::class.java)
-        viewmodel.illusts.observe(this, Observer {
+        viewmodel.illusts.observe(this) {
             binding.swiperefreshRecom.isRefreshing = false
             rankingAdapter.setNewData(it)
             binding.recyclerviewRecom.smoothScrollToPosition(0)
-        })
-        viewmodel.addillusts.observe(this, Observer {
+        }
+        viewmodel.addillusts.observe(this) {
             if (it != null) {
                 rankingAdapter.addData(it)
+            } else {
+                rankingAdapter.loadMoreFail()
             }
-        })
-        viewmodel.nextUrl.observe(this, Observer {
-                if (it == null) {
-                    rankingAdapter.loadMoreEnd()
-                } else {
-                    rankingAdapter.loadMoreComplete()
-                }
-        })
-        viewmodel.banners.observe(this, Observer {
-            if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-                    .getBoolean("use_new_banner",true))
-            {
+        }
+        viewmodel.nextUrl.observe(this) {
+            if (it == null) {
+                rankingAdapter.loadMoreEnd()
+            } else {
+                rankingAdapter.loadMoreComplete()
+            }
+        }
+        viewmodel.banners.observe(this) {
+            if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                    .getBoolean("use_new_banner", true)
+            ) {
                 val arrayList = ArrayList<String>()
                 it.map {
                     arrayList.add(it.thumbnail)
@@ -135,29 +141,35 @@ class HelloMRecommendFragment : BaseFragment() {
                     )
                 }
                 banner.start()
-            }
-            else {
+            } else {
                 pixiVisionAdapter.setNewData(it)
                 pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
-                    val intent = Intent(context, WebViewActivity::class.java)
+                    val intent = Intent(context, OKWebViewActivity::class.java)
                     intent.putExtra("url", it[position].article_url)
                     startActivity(intent)
                     view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
                 }
                 val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
-                spotlightView.layoutAnimation = LayoutAnimationController(AnimationUtils.loadAnimation(context, R.anim.left_in)).also {
+                spotlightView.layoutAnimation = LayoutAnimationController(
+                    AnimationUtils.loadAnimation(
+                        context,
+                        R.anim.left_in
+                    )
+                ).also {
                     it.order = LayoutAnimationController.ORDER_NORMAL
                     it.delay = 1f
                     it.interpolator = AccelerateInterpolator(0.5f)
                 }
             }
-        })
-        viewmodel.addbanners.observe(this, Observer {
+        }
+        viewmodel.addbanners.observe(this) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
+            } else {
+                pixiVisionAdapter.loadMoreFail()
             }
-        })
-        viewmodel.nextPixivisonUrl.observe(this, Observer {
+        }
+        viewmodel.nextPixivisonUrl.observe(this) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreModule?.loadMoreEnd()
@@ -165,11 +177,11 @@ class HelloMRecommendFragment : BaseFragment() {
                     pixiVisionAdapter.loadMoreModule?.loadMoreComplete()
                 }
             }
-        })
+        }
     }
 
 
-    private lateinit var rankingAdapter: PicItemAdapter
+    private lateinit var rankingAdapter: PicItemXUserAdapter
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var viewmodel: HelloMRecomModel
     private lateinit var banner: Banner
@@ -190,10 +202,13 @@ class HelloMRecommendFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerviewRecom.apply{
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerviewRecom.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                1 + context.resources.configuration.orientation,
+                StaggeredGridLayoutManager.VERTICAL
+            )
             adapter = rankingAdapter
-    }
+        }
         binding.swiperefreshRecom.setOnRefreshListener {
             viewmodel.OnRefreshListener()
         }
@@ -201,9 +216,10 @@ class HelloMRecommendFragment : BaseFragment() {
             viewmodel.onLoadMorePicRequested()
         }
 
-        if(!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-                .getBoolean("use_new_banner",true)){
-            banner = bannerView.findViewById<Banner>(R.id.banner)
+        if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                .getBoolean("use_new_banner", true)
+        ) {
+            banner = bannerView.findViewById(R.id.banner)
             banner.setImageLoader(object : ImageLoader() {
                 override fun displayImage(context: Context, path: Any?, imageView: ImageView?) {
                     GlideApp.with(context).load(path).into(imageView!!)
@@ -211,7 +227,7 @@ class HelloMRecommendFragment : BaseFragment() {
             })
         } else {
             val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
-            pixiVisionAdapter.loadMoreModule?.setOnLoadMoreListener{
+            pixiVisionAdapter.loadMoreModule?.setOnLoadMoreListener {
                 viewmodel.onLoadMoreBannerRequested()
             }
             /*val logo = LayoutInflater.from(requireContext()).inflate(R.layout.header_pixvision_logo, null)
@@ -271,25 +287,26 @@ class HelloMRecommendFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rankingAdapter =
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-                    .getBoolean("show_user_img_main",true)){
-                RankingAdapter(
-                    R.layout.view_ranking_item_mid,
-                    null,
-                    isR18on,
-                    blockTags,
-                    singleLine = true,
-                    hideBookmarked = 0)
-            } else {
-                RecommendAdapter(
-                    R.layout.view_recommand_item,
-                    null,
-                    isR18on,
-                    blockTags,
-                    hideBookmarked = 0)
-            }
+                //if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+               //         .getBoolean("show_user_img_main",true)){
+                        PicListXUserAdapter(
+                            R.layout.view_ranking_item_s,
+                            null,
+                            isR18on,
+                            blockTags,
+                            //singleLine = true,
+                            hideBookmarked = 0
+                        )
+                    /*} else {
+                        PicListBtnAdapter(
+                            R.layout.view_recommand_item,
+                            null,
+                            isR18on,
+                            blockTags,
+                            hideBookmarked = 0)
+                    }*/
         if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
                 .getBoolean("use_new_banner",true)){
             bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
@@ -304,8 +321,8 @@ class HelloMRecommendFragment : BaseFragment() {
             addHeaderView(bannerView)
         }
 
-		binding = FragmentRecommendBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentRecommendBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     companion object {

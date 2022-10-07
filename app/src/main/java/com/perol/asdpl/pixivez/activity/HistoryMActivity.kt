@@ -33,6 +33,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.HistoryAdapter
@@ -53,7 +54,12 @@ class HistoryMActivity : RinkActivity() {
 
     private fun initBind() {
         binding.fab.setOnClickListener {
-            historyMViewModel!!.fabOnClick()
+            MaterialDialog(this).show {
+                title(R.string.clearhistory)
+                positiveButton {
+                    historyMViewModel!!.fabOnClick()
+                }
+            }
         }
         historyAdapter.setOnItemClickListener { _, _, position ->
             val bundle = Bundle()
@@ -77,9 +83,9 @@ class HistoryMActivity : RinkActivity() {
     private fun initData() {
         historyMViewModel = ViewModelProvider(this).get(HistoryMViewModel::class.java)
 
-        historyMViewModel!!.illustBeans.observe(this, Observer {
+        historyMViewModel!!.illustBeans.observe(this){
             illustBeans(it)
-        })
+        }
         historyMViewModel!!.first()
 
     }

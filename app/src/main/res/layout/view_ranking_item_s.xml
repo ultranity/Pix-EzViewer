@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview_recommand"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="2dp"
+    app:cardElevation="5dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/item_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:maxHeight="450dp"
+            android:src="?attr/colorSurface"
+            android:transitionName="mainimage" />
+
+        <com.shehuan.niv.NiceImageView
+            android:id="@+id/imageview_user"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="-8dp"
+            android:alpha="0.8"
+            android:src="@mipmap/ic_noimage"
+            android:transitionName="userimage"
+            android:translationX="-8dp"
+            app:border_color="@color/transparent"
+            app:border_width="2dp"
+            app:is_circle="true" />
+
+            <com.shehuan.niv.NiceImageView
+                android:id="@+id/imageview_like"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="2dp"
+                android:alpha="0.5"
+                app:border_color="@color/transparent"
+                app:border_width="2dp"
+                app:is_circle="true"
+                android:layout_gravity="bottom|right"/>
+
+        <FrameLayout
+            android:id="@+id/layout_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:alpha="0.3"
+            android:background="#e0000000">
+
+            <TextView
+                android:id="@+id/textview_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="1dp"
+                android:text="11"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </FrameLayout >
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>
+

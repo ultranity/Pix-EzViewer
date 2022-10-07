@@ -18,14 +18,14 @@
             android:orientation="horizontal">
 
             <com.google.android.material.tabs.TabLayout
+                android:layout_alignParentBottom="true"
                 android:id="@+id/tablayout_rankingm"
-                android:layout_width="0dp"
-                android:layout_weight="1"
                 style="@style/Widget.MaterialComponents.TabLayout.Colored"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
                 app:tabIndicatorFullWidth="false"
-                app:tabMode="scrollable">
-            </com.google.android.material.tabs.TabLayout>
+                app:tabMode="scrollable" />
 
             <ImageView
                 android:id="@+id/imageview_triangle"

@@ -32,6 +32,7 @@ import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -47,6 +48,7 @@ import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import java.io.File
 import com.tencent.mmkv.MMKV
+import io.reactivex.plugins.RxJavaPlugins
 import java.util.*
 
 class PxEZApp : Application() {
@@ -114,20 +116,19 @@ class PxEZApp : Application() {
             }
         }
 
-        Thread(Runnable {
+        Thread {
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
-                if((System.currentTimeMillis() - it.completeTime) > 10*60*1000 )
+                if ((System.currentTimeMillis() - it.completeTime) > 10 * 60 * 1000)
                     Aria.download(this).load(it.id).cancel()
             }
             Thread.sleep(10000)
-            if( pre.getBoolean("resume_unfinished_task",true)
-                //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
-            )
-            {
+            if (pre.getBoolean("resume_unfinished_task", true)
+            //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
+            ) {
                 //Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
-                    if(it.state == 0) {
+                    if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
                         Thread.sleep(500)
                         //val illustD = Gson().fromJson(it.str, IllustD::class.java)
@@ -141,7 +142,7 @@ class PxEZApp : Application() {
                     }
                 }
             }
-        }).start()
+        }.start()
         instance = this
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
@@ -166,9 +167,13 @@ class PxEZApp : Application() {
         }
         locale = LanguageUtil.getLocale() //System locale
         language = pre.getString("language", "-1")?.toIntOrNull()
-            ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
+                    ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
 
 
+        RxJavaPlugins.setErrorHandler {
+            Log.e("onRxJavaErrorHandler", "${it.message}")
+            it.printStackTrace()
+        }
         if(pre.getBoolean("infoCache", true))
             MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

@@ -45,7 +45,7 @@ class HelloMMyViewModel : BaseViewModel() {
         }, {}).add()
     }
 
-    fun OnRefreshListener(restrict: String) {
+    fun onRefreshListener(restrict: String) {
         retrofitRepository.getFollowIllusts(restrict).subscribe({
             nexturl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?

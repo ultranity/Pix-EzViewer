@@ -108,22 +108,22 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
     fun lazyLoad() {
         viewModel = ViewModelProvider(this).get(IllustratorViewModel::class.java)
-        viewModel!!.userpreviews.observe(this, Observer {
+        viewModel!!.userpreviews.observe(this){
             userpreviews(it)
-        })
-        viewModel!!.nexturl.observe(this, Observer {
+        }
+        viewModel!!.nexturl.observe(this){
             nexturl(it)
-        })
-        viewModel!!.adduserpreviews.observe(this, Observer {
+        }
+        viewModel!!.adduserpreviews.observe(this){
             adduserpreviews(it)
-        })
+        }
 
 
-        viewModel!!.refreshcomplete.observe(this, Observer {
+        viewModel!!.refreshcomplete.observe(this){
             if (it != null) {
                 binding.swiperefreshIllustrator.isRefreshing = false
             }
-        })
+        }
 
     }
 
@@ -162,7 +162,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
     private lateinit var binding: FragmentIllustratorBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
 

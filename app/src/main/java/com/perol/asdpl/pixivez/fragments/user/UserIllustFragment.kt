@@ -23,21 +23,21 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.fragments
+package com.perol.asdpl.pixivez.fragments.user
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.adapters.PicListXAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
@@ -69,22 +69,27 @@ class UserIllustFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            recommendAdapter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
-            recommendAdapter.blockTags = blockTags
-            recommendAdapter.notifyDataSetChanged()
+            picListBtnAdapter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
+            picListBtnAdapter.blockTags = blockTags
+            picListBtnAdapter.notifyDataSetChanged()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("UserIllustFragment","UserIllustFragment resume")
+    }
+
     fun lazyLoad() {
-        recommendAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picListBtnAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
         binding.mrefreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, param2!!)
         }
         binding.mrecyclerview.apply{
-                layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                adapter = recommendAdapter
+                layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+                adapter = picListBtnAdapter
                 //addItemDecoration(GridItemDecoration())
             }
 
@@ -101,27 +106,29 @@ class UserIllustFragment : BaseFragment() {
         }
         viewModel = ViewModelProvider(this).get(UserMillustViewModel::class.java)
 
-        viewModel.nexturl.observe(this, Observer {
+        viewModel.nexturl.observe(this){
             if (it.isNullOrEmpty()) {
-                recommendAdapter.loadMoreEnd()
+                picListBtnAdapter.loadMoreEnd()
             } else {
-                recommendAdapter.loadMoreComplete()
+                picListBtnAdapter.loadMoreComplete()
             }
-        })
+        }
         viewActivity = activity as UserMActivity
-        viewModel.data.observe(this, Observer {
+        viewModel.data.observe(this){
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
-                recommendAdapter.setNewData(it.toMutableList())
+                picListBtnAdapter.setNewData(it.toMutableList())
             }
 
-        })
-        viewModel.adddata.observe(this, Observer {
+        }
+        viewModel.adddata.observe(this){
             if (it != null) {
-                recommendAdapter.addData(it)
-                recommendAdapter.loadMoreComplete()
+                picListBtnAdapter.addData(it)
+                picListBtnAdapter.loadMoreComplete()
+            } else {
+                picListBtnAdapter.loadMoreModule?.loadMoreFail()
             }
-        })
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,14 +139,14 @@ class UserIllustFragment : BaseFragment() {
     lateinit var viewModel: UserMillustViewModel
     private lateinit var viewActivity: UserMActivity
 
-    private lateinit var recommendAdapter: RecommendAdapter
+    private lateinit var picListBtnAdapter: PicListXAdapter
     private lateinit var binding: FragmentUserIllustBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        recommendAdapter = RecommendAdapter(
+        picListBtnAdapter = PicListXAdapter(
             R.layout.view_recommand_item,
             null,
             isR18on,

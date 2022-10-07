@@ -73,7 +73,7 @@ private lateinit var binding: ActivitySpotlightBinding
 
     private fun getData() {
         val intent = intent
-        url = intent.getStringExtra("url")
+        url = intent.getStringExtra("url").toString()
         binding.textViewTest.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"

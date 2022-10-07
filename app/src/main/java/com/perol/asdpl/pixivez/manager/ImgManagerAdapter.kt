@@ -24,14 +24,17 @@
 
 package com.perol.asdpl.pixivez.manager
 
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileInfo
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 
 
@@ -39,7 +42,8 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
 
     override fun convert(helper: BaseViewHolder, item: FileInfo) {
         val icon = helper.getView<ImageView>(R.id.item_img)
-        GlideApp.with(icon.context).load(item.icon.toIntOrNull()?:item.icon).placeholder(R.color.halftrans).into(icon)
+        GlideApp.with(icon.context).load(item.icon.toIntOrNull()?:item.icon)
+            .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(icon)
         //helper.getView<ConstraintLayout>(R.id.layout).background
         helper.getView<TextView>(R.id.item_name).text = item.name
         helper.getView<TextView>(R.id.item_pid).text = item.pid.toString()

@@ -38,7 +38,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 abstract class RinkActivity : AppCompatActivity() {
     protected var className = javaClass.simpleName + " "
     private fun getColorPrimary() =
-        ThemeUtil.getColor(this, R.attr.colorPrimary)
+        ThemeUtil.getColor(this, androidx.appcompat.R.attr.colorPrimary)
 
     /*fun getColorPrimaryDark(): Int {
         val typedValue = TypedValue()
@@ -53,7 +53,7 @@ abstract class RinkActivity : AppCompatActivity() {
     }*/
 
     fun getColorHighlight(): Int =
-        ThemeUtil.getColor(this, R.attr.badgeTextColor)
+        ThemeUtil.getColor(this, com.google.android.material.R.attr.badgeTextColor)
 
     private fun getNavigationBarHeight(): Int {
         val resourceId: Int = this.resources.getIdentifier(

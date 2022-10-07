@@ -21,7 +21,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
 
-
 object ApiClient {
     private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
@@ -90,13 +89,13 @@ object ApiClient {
                 .removeHeader("User-Agent")
                 .addHeader(
                     "User-Agent",
-                    "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                    "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                 )
                 .addHeader("Authorization", Authorization)
                 .addHeader("Accept-Language", "${local.language}_${local.country}")
                 .addHeader("App-OS", "Android")
                 .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
-                .header("App-Version", "5.0.166")
+                .header("App-Version", "5.0.234")
                 .addHeader("X-Client-Time", isoDate)
                 .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
 

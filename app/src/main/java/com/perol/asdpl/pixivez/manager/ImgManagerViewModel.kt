@@ -57,7 +57,7 @@ class ImgManagerViewModel : BaseViewModel() {
     var TagSeparator = pre.getString("ImgManagerTagSeparator",PxEZApp.TagSeparator)!!
     var files:MutableList<FileInfo>?=null
     var task:List<renameTask>?=null
-    var length_filter = true
+    var length_filter = false
     var rename_once = false
     lateinit var adapter:ImgManagerAdapter
     lateinit var layoutManager: LinearLayoutManager
@@ -77,9 +77,10 @@ class ImgManagerViewModel : BaseViewModel() {
         }.subscribeOn(Schedulers.io().add()*/
         val kv=MMKV.defaultMMKV(MMKV.MULTI_PROCESS_MODE,null)
         val taskmap = HashMap<Long,renameTask>()
-        Observable.fromIterable(task).subscribeOn(Schedulers.io()).filter {
+        task?.filter {
             (!length_filter ||it.file.name.length<50) && it.pid != null
-            }.flatMap { it ->
+        }?.forEach {
+            Observable.just(it).subscribeOn(Schedulers.io()).flatMap { it ->
                 taskmap[it.pid!!] = it
                 if (kv.containsKey(it.pid.toString()))
                     Observable.just(kv.decodeParcelable(it.pid.toString(),Illust::class.java))
@@ -87,37 +88,41 @@ class ImgManagerViewModel : BaseViewModel() {
                     retrofitRepository.getIllust(it.pid).flatMap{
                         kv.encode(it.illust.id.toString(),it.illust)
                         Observable.just(it.illust)
+                    }.subscribeOn(Schedulers.io()).doOnError {e->
+                        Log.e("imgMgr", "getIllust ${it.pid} : ${e.message} ", )
                     }
-            }.subscribeOn(Schedulers.io())
-            .map{ rt->
-                //Log.d("imgMgr","get"+this+"p"+it.part)
-                val it = taskmap[rt.id]!!
-                it.file.illust = rt
-                it.file.target = Works.parseSaveFormat(rt, it.part,saveformat,TagSeparator,false)
-                it.file.checked = (it.file.target != it.file.name)
-                //Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
-                if(rename_once)
-                    rename(it)
-                it
             }
-            .doFinally {
-            //Log.d("imgMgr","all")
-            File(path.value+File.separatorChar+"rename.log")
-                .writeText(Gson().toJson(task))
-            taskmap.clear()
-                AndroidSchedulers.mainThread().scheduleDirect({
-                    adapter.notifyDataSetChanged()},100,TimeUnit.MICROSECONDS).add()
-            }
-            .observeOn(AndroidSchedulers.mainThread()).subscribe ({rt->
-                //Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
-                val preIndex = files!!.indexOf(rt.file)
-                if (preIndex>=layoutManager.findFirstVisibleItemPosition()
-                    &&preIndex<=layoutManager.findLastVisibleItemPosition()) {
-                    adapter.notifyItemChanged(preIndex)
+                .subscribeOn(Schedulers.io())
+                .map{ rt->
+                    //Log.d("imgMgr","get"+this+"p"+it.part)
+                    val it = taskmap[rt.id]!!
+                    it.file.illust = rt
+                    it.file.target = Works.parseSaveFormat(rt, it.part,saveformat,TagSeparator,false)
+                    it.file.checked = (it.file.target != it.file.name)
+                    //Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
+                    if(rename_once)
+                        rename(it)
+                    it
                 }
-            },{
-                Log.e("imgMgr", "error$it")
-            },{}).add()
+                .doFinally {
+                    //Log.d("imgMgr","all")
+                    File(path.value+File.separatorChar+"rename.log")
+                        .writeText(Gson().toJson(task))
+                    taskmap.clear()
+                    AndroidSchedulers.mainThread().scheduleDirect({
+                        adapter.notifyDataSetChanged()},100,TimeUnit.MICROSECONDS).add()
+                }
+                .observeOn(AndroidSchedulers.mainThread()).subscribe ({rt->
+                    //Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
+                    val preIndex = files!!.indexOf(rt.file)
+                    if (preIndex>=layoutManager.findFirstVisibleItemPosition()
+                        &&preIndex<=layoutManager.findLastVisibleItemPosition()) {
+                        adapter.notifyItemChanged(preIndex)
+                    }
+                },{
+                    Log.e("imgMgr", "error$it")
+                },{}).add()
+        }
     }
     fun rename(it:renameTask) {
         if(it.file.name == it.file.target || it.file.target == null)

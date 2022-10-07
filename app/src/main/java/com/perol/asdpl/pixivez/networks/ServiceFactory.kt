@@ -13,6 +13,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
+import com.perol.asdpl.pixivez.services.CloudflareService
 
 object ServiceFactory {
 
@@ -63,4 +64,6 @@ object ServiceFactory {
             }
         }
     }
+
+    val cloudflareService = create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
 }

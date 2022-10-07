@@ -22,6 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.dialog
 
 import android.app.Dialog
 import android.os.Bundle
@@ -82,9 +83,9 @@ class TagsBookMarkDialog : DialogFragment() {
                         name = it.toString()
                     }}.toMutableList())
             }
-            pictureXViewModel.tags.observe(this, Observer {
+            pictureXViewModel.tags.observe(this){
                 tagsAdapter.setNewData(it.tags)
-            })
+            }
             pictureXViewModel.fabOnLongClick()
             builder
                 .setView(view)

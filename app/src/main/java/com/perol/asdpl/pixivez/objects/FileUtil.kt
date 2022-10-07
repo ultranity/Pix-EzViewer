@@ -74,7 +74,7 @@ class FileInfo(file: File) {
         }
     val pid: Long?
         get() {
-        return (Regex("(?<=(pid)?_?)([0-9]{7,8})")
+        return (Regex("(?<=(pid)?_?)(\\d{7,9})")
             .find(name)?.value?:"").toLongOrNull()
     }
 
@@ -122,8 +122,11 @@ object FileUtil{
         if (!pfile.exists()) {// 判断路径是否存在
         //如果没有这个文件目录。那么这里去创建
             pfile.mkdirs()
+                return list
         }
-
+        if (pfile.isFile){
+            //TODO: pfile.readLines().forEach {  }
+        }
         if(showParent && pfile.parentFile != null){
             val parent = FileInfo(pfile.parentFile!!)
             // 获取文件夹目录结构
@@ -195,7 +198,7 @@ object FileUtil{
         val searchResultList = ArrayList<FileInfo>()
         for (i in list.indices) {
             val app = list[i]
-            if (app.name.toLowerCase().contains(keyword.toLowerCase())) {
+            if (app.name.lowercase(Locale.ROOT).contains(keyword.lowercase(Locale.ROOT))) {
                 searchResultList.add(app)
             }
         }
@@ -252,14 +255,14 @@ object FileUtil{
         dir.copyRecursively(newDir, false)
     }
 
-    fun extraPath(path: String): List<String>? {
+    private fun extraPath(path: String): List<String>? {
         File(path).let { file ->
             if (file.exists())
                return file.readLines()
         }
         return null
     }
-    fun bitSetFileLog(path: String): RoaringBitmap? {
+    private fun bitSetFileLog(path: String): RoaringBitmap? {
         val rr = RoaringBitmap()
         val file = File(path)
         if (!file.exists())
@@ -267,53 +270,76 @@ object FileUtil{
         val stream = DataInputStream(FileInputStream(file))
         rr.deserialize(stream)
         // number of values stored?
-        val cardinality = rr.longCardinality
+        // val cardinality = rr.longCardinality
         return rr
     }
+    private fun writeBitSetFileLog(rr:RoaringBitmap, path: String) {
+        val file = File("$path.bak")
+        val stream = DataOutputStream(FileOutputStream(file))
+        rr.serialize(stream)
+        stream.close()
+        file.copyTo(File(path),true)
+    }
 
 
 
-    lateinit var fileList:List<Long>
+    lateinit var fileList:List<Int>
     lateinit var extraPath:List<String>
     lateinit var ListLog:RoaringBitmap
-    lateinit var localLog:RoaringBitmap
+    //lateinit var localLog:RoaringBitmap
     fun getFileList(){
-        localLog = RoaringBitmap()
-        extraPath = FileUtil.extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
-                FileUtil.extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
+        //localLog = RoaringBitmap()
+        extraPath = extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
+                extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
                 ?: listOf()
-        fileList = FileUtil.getGroupList(PxEZApp.storepath,true).mapNotNull{ it.pid }
+        fileList = getGroupList(PxEZApp.storepath,true).mapNotNull{ it.pid?.toInt() }.sorted()
+
         if (extraPath.isNotEmpty()){
             extraPath.forEach {
-                FileUtil.getGroupList(it,true).forEach {it.pid?.toInt()?.let{localLog.add(it)} }
-                fileList.plus(FileUtil.getGroupList(it,true).mapNotNull{ it.pid})
+                getGroupList(it,true).forEach {it.pid?.toInt()?.let{ListLog.add(it)} }
+                fileList.plus(getGroupList(it,true).mapNotNull{ it.pid})
             }
         }
-        ListLog =FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
-                FileUtil.bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
+        ListLog =bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
+                bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
                 ?:RoaringBitmap()
+        val before = ListLog.cardinality
+        ListLog.addN(fileList.toIntArray(),0,fileList.size)
+        if (ListLog.cardinality > before)
+            writeBitSetFileLog(ListLog,PxEZApp.storepath+File.separator+"roaringbit.data")
+        //fileList.forEach {ListLog.add(it)}
     }
     fun haveLog(): Boolean {
-        return (FileUtil.bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
-                FileUtil.bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
-                != null)
+        return (((bitSetFileLog(PxEZApp.storepath + File.separator + "roaringbit.data")
+            ?: bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "roaringbit.data"))
+                != null))
     }
     fun haveExtraPath(): Boolean {
-        return (FileUtil.extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
-                FileUtil.extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
-                != null)
+        return (((extraPath(PxEZApp.storepath + File.separator + "path.txt") ?: extraPath(
+            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt"
+        ))
+                != null))
     }
     fun isDownloaded(illust: Illust): Boolean {
         return isDownloaded2(illust)|| isDownloaded3(illust)
     }
+    fun isDownloaded(pid: Long): Boolean {
+        return isDownloaded2(pid)|| isDownloaded3(pid)
+    }
     fun logDownloaded(illust: Illust): Int {
         return if(isDownloaded2(illust)) 1 else 0 + if(isDownloaded3(illust)) 1 else 0
     }
-    fun isDownloaded2(illust: Illust): Boolean {
-        return fileList.contains(illust.id)
+    private fun isDownloaded2(illust: Illust): Boolean {
+        return fileList.contains(illust.id.toInt())
+    }
+    private fun isDownloaded2(pid: Long): Boolean {
+        return fileList.contains(pid.toInt())
     }
 
-    fun isDownloaded3(illust: Illust): Boolean {
+    private fun isDownloaded3(illust: Illust): Boolean {
         return ListLog.contains(illust.id.toInt())
+    }
+    private fun isDownloaded3(pid: Long): Boolean {
+        return ListLog.contains(pid.toInt())
     }
 }

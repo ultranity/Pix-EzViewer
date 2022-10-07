@@ -34,17 +34,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.objects.LazyFragment
-import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentUserBinding
+import com.perol.asdpl.pixivez.databinding.FragmentUserslistBinding
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -52,11 +50,11 @@ private const val ARG_PARAM1 = "param1"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [UserFragment.newInstance] factory method to
+ * Use the [UsersListFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class UserFragment : LazyFragment() {
+class UsersListFragment : LazyFragment() {
     override fun loadData() {
         userViewModel.getSearchUser(param1!!)
     }
@@ -99,12 +97,12 @@ class UserFragment : LazyFragment() {
         lazyLoad()
     }
 
-    private lateinit var binding: FragmentUserBinding
+    private lateinit var binding: FragmentUserslistBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
-		binding = FragmentUserBinding.inflate(inflater, container, false)
+		binding = FragmentUserslistBinding.inflate(inflater, container, false)
 		return binding.root
     }
 
@@ -112,21 +110,21 @@ class UserFragment : LazyFragment() {
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
 
-        userViewModel.users.observe(this, Observer {
+        userViewModel.users.observe(this) {
             if (it != null) {
                 userShowAdapter.addData(it.user_previews)
             } else {
                 userShowAdapter.loadMoreModule?.loadMoreFail()
             }
-        })
+        }
 
-        userViewModel.nexturl.observe(this, Observer {
+        userViewModel.nexturl.observe(this) {
             if (it != null) {
                 userShowAdapter.loadMoreModule?.loadMoreComplete()
             } else {
                 userShowAdapter.loadMoreModule?.loadMoreEnd()
             }
-        })
+        }
     }
 
     companion object {
@@ -136,12 +134,12 @@ class UserFragment : LazyFragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment UserFragment.
+         * @return A new instance of fragment UsersListFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String) =
-                UserFragment().apply {
+                UsersListFragment().apply {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                     }

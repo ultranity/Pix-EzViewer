@@ -59,7 +59,7 @@ fun loadImage(imageView: ImageView, url: String?) {
                       else
                             url)
                 .circleCrop()
-                .placeholder(R.drawable.black_background)
+                .placeholder(com.youth.banner.R.drawable.black_background)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,

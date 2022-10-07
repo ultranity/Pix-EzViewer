@@ -68,7 +68,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        pre = PreferenceManager.getDefaultSharedPreferences(activity)
+        pre = activity?.let { PreferenceManager.getDefaultSharedPreferences(it) }!!
         defaultComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =
@@ -181,7 +181,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbar_force_restart()
             true
         }
 
@@ -275,7 +275,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     }
 
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference?.key) {
             "me" -> {
                 try {
@@ -498,7 +498,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true, context = context) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
                     pre.apply {

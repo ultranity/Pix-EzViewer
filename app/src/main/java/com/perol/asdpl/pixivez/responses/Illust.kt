@@ -48,7 +48,7 @@ data class Illust(
         val total_view: Int,
         val type: String,
         val user: User,
-        val visible: Boolean,
+        var visible: Boolean,
         val width: Int,
         val x_restrict: Int
 ) : Parcelable

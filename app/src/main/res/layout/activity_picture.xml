@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.perol.asdpl.pixivez.activity.PictureActivity">
+    tools:context="com.perol.asdpl.pixivez.activity.PictureActivity"
+    android:orientation="vertical">
 
 
     <androidx.viewpager.widget.ViewPager
@@ -12,12 +13,11 @@
         android:layout_height="match_parent" />
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:fitsSystemWindows="true"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-      />
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize" />
 
 
-</LinearLayout>
+</FrameLayout>

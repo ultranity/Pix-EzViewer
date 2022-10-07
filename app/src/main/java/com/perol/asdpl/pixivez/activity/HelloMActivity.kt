@@ -75,6 +75,7 @@ import kotlin.collections.ArrayList
 
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -89,6 +90,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             3000 -> {
                 val length = grantResults.size
@@ -269,7 +271,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 //}
                 //clipboard.addPrimaryClipChangedListener {
                 val text = clipData.getItemAt(0)?.text ?: return@Runnable
-                var item = Regex("""\d{7,8}""")
+                var item = Regex("""\d{7,9}""")
                     .find(text)
                     ?.value?:Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
                     .find(text)?.groupValues?.last()?.trim()

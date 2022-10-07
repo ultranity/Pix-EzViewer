@@ -44,25 +44,21 @@ import retrofit2.HttpException
 
 class RetrofitRepository {
 
+    var sharedPreferencesServices: SharedPreferencesServices = SharedPreferencesServices.getInstance()
+    var appApiPixivService: AppApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
+    private var gifApiPixivService: AppApiPixivService = RestClient.gifAppApi.create(AppApiPixivService::class.java)
+    var reFreshFunction: ReFreshFunction = ReFreshFunction.getInstance()
 
-    var appApiPixivService: AppApiPixivService
-    var sharedPreferencesServices: SharedPreferencesServices
-    var gifApiPixivService: AppApiPixivService
-    var reFreshFunction: ReFreshFunction
     init {
-        appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
-        gifApiPixivService = RestClient.gifAppApi.create(AppApiPixivService::class.java)
-        sharedPreferencesServices = SharedPreferencesServices.getInstance()
-        reFreshFunction = ReFreshFunction.getInstance()
         if (System.currentTimeMillis() - PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getLong("lastRefresh",0)
-                > 3600 * 1000){
+                > 60 * 60 * 1000){
             val init = Observable.just(1).flatMap{
                 //Log.d("init", "Observable init")
                 reFreshFunction.reFreshToken()
             }.subscribe({
-                Log.d("init","Observable inited")}, {}, {})
+                Log.d("Retrofit","Observable inited")}, {}, {})
         }
-        Log.d("init","RetrofitRepository inited")
+        Log.d("Retrofit","RetrofitRepository inited")
     }
 
     fun getLikeIllust(userid: Long, pub: String, tag: String?): Observable<IllustNext> = Request(appApiPixivService.getLikeIllust(userid, pub, tag))
@@ -132,7 +128,7 @@ class RetrofitRepository {
     ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(int, string, tagList))
 
 
-    fun getIllust(long: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(long))
+    fun getIllust(long: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(long)).also{Log.d("getIllust",long.toString())}
 
     suspend fun getIllustCor(long: Long): IllustDetailResponse? {
         var illustDetailResponse: IllustDetailResponse? = null
@@ -146,10 +142,8 @@ class RetrofitRepository {
             if (illustDetailResponse == null) {
                 getIllustCor(long)
             }
-
-            return illustDetailResponse
         }
-
+        return illustDetailResponse
     }
 
     fun postUnlikeIllust(long: Long): Observable<ResponseBody> = Request(appApiPixivService.postUnlikeIllust(long))
@@ -171,7 +165,7 @@ class RetrofitRepository {
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
         return Observable.just(1).flatMap {
             //resetToken()
-            Log.d("init","Request")
+            Log.d("Retrofit","Request ${T::class.java.canonicalName}")
             observable
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen(reFreshFunction)
@@ -186,6 +180,7 @@ class RetrofitRepository {
 
     inline fun <reified T> getNext(url: String): Observable<T> =
         Observable.just(1).flatMap {
+            Log.d("Retrofit","getNext ${T::class.java.simpleName} from $url")
             appApiPixivService.getUrl(url).flatMap {
                 Observable.just(Gson().fromJson(it.string(), T::class.java))
             }

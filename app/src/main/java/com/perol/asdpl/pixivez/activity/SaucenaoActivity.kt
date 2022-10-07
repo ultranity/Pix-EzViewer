@@ -97,7 +97,7 @@ class SaucenaoActivity : RinkActivity() {
                     .removeHeader("User-Agent")
                     .addHeader(
                         "User-Agent",
-                        "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                        "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
                     )
                     .addHeader("referer", "https://app-api.pixiv.net/")
                 val request = requestBuilder.build()

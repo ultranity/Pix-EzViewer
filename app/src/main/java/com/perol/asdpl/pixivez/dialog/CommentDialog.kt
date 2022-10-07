@@ -50,18 +50,25 @@ import com.google.android.material.textfield.TextInputEditText
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.CommentAdapter
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustCommentsResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 
 class CommentDialog : DialogFragment() {
 
+    val disposables = CompositeDisposable()
+    fun Disposable.add() {
+        disposables.add(this)
+    }
 
     lateinit var recyclerviewPicture: RecyclerView
 
@@ -87,6 +94,8 @@ class CommentDialog : DialogFragment() {
 
     private fun getData() {
         retrofitRepository.getIllustComments(id!!)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .subscribe(object : Observer<IllustCommentsResponse> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
@@ -157,7 +166,7 @@ class CommentDialog : DialogFragment() {
 
                                 }, {
                                     compositeDisposable.add(it)
-                                })
+                                }).add()
                         } else {
                             commentAdapter?.loadMoreModule?.loadMoreEnd()
                         }
@@ -174,8 +183,6 @@ class CommentDialog : DialogFragment() {
 
                 }
             })
-
-
     }
 
     fun commit() {
@@ -248,8 +255,7 @@ class CommentDialog : DialogFragment() {
         params.gravity = Gravity.BOTTOM
         params.width = WindowManager.LayoutParams.MATCH_PARENT
         window.attributes = params
-        val color = ContextCompat.getColor(requireActivity(), android.R.color.transparent)
-        window.setBackgroundDrawable(ColorDrawable(color))
+        window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
     }
 
 
@@ -295,6 +301,7 @@ class CommentDialog : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         callback = null
+        disposables.clear()
     }
 
     companion object {

@@ -161,7 +161,7 @@ class LoginActivity : RinkActivity() {
             }
         })
 */
-        binding.loginBtn.setOnClickListener {
+        binding.loginBtn.setOnLongClickListener {
 /*
             username = binding.editUsername.text.toString().trim()
             password = binding.editPassword.text.toString()
@@ -184,18 +184,18 @@ class LoginActivity : RinkActivity() {
                 positiveButton(R.string.I_know) {
                     val url: String = "https://app-api.pixiv.net/web/v1/login?code_challenge=" +
                             Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
-                    //WeissUtil.start();
-                    //WeissUtil.proxy();
-                    val intent = Intent(this@LoginActivity, WebViewActivity::class.java)
+                    //WeissUtil.start()
+                    //WeissUtil.proxy()
+                    val intent = Intent(this@LoginActivity, OKWebViewActivity::class.java)
                     intent.putExtra("url", url)
                     startActivity(intent)
                 }
             }
+            true
         }
 
         binding.loginBtn.setOnClickListener {
-            binding.loginBtn.isEnabled = false
-
+            //binding.loginBtn.isEnabled = false
             val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
             startActivityForResult(intent, 8080)
         }

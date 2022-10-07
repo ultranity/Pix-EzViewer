@@ -42,7 +42,7 @@ class AboutXFragment : PreferenceFragmentCompat() {
         // findPreference<Preference>
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference?.key) {
             "about_feedback_email" -> {
                 val emailurl = "Pix-Ez@outlook.com"

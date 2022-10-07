@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.fragments
+package com.perol.asdpl.pixivez.fragments.user
 
 
 import android.content.Intent
@@ -43,20 +43,20 @@ import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
 import com.zhy.view.flowlayout.TagFlowLayout
-import com.perol.asdpl.pixivez.databinding.FragmentUserMessageBinding
+import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import java.util.*
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [UserMessageFragment.newInstance] factory method to
+ * Use the [UserInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class UserMessageFragment : Fragment() {
+class UserInfoFragment : Fragment() {
 
 
     // TODO: Rename and change types of parameters
-    private var mParam1: UserDetailResponse? = null
+    private lateinit var mParam1: UserDetailResponse
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,38 +65,39 @@ class UserMessageFragment : Fragment() {
 
     private fun initdata() {
         binding.textViewTacomment.autoLinkMask = Linkify.WEB_URLS
-        if (mParam1!!.user != null || mParam1!!.user.comment != "")
-            binding.textViewTacomment!!.text = mParam1!!.user.comment
+        if (mParam1.user != null || mParam1.user.comment != "")
+            binding.textViewTacomment.text = "${mParam1.user.account}:\r\n${mParam1.user.comment}"
         else
-            binding.textViewTacomment!!.text = "~"
-        GlideLoadImage(binding.imageviewUserBg,mParam1!!.profile.background_image_url)
+            binding.textViewTacomment.text = "~"
+        GlideLoadImage(binding.imageviewUserBg,mParam1.profile.background_image_url)
         val mInflater = LayoutInflater.from(requireActivity())
-        binding.textViewUserId!!.text = mParam1!!.user.id.toString()
-        binding.textViewFans!!.text = mParam1!!.profile.total_mypixiv_users.toString()
-        binding.textViewFans!!.setOnClickListener {
+        binding.textViewUserId.text = mParam1.user.id.toString()
+        binding.textViewFans.text = mParam1.profile.total_mypixiv_users.toString()
+        binding.textViewFans.setOnClickListener {
             val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
             val bundle = Bundle()
-            bundle.putLong("user", mParam1!!.user.id.toLong())
+            bundle.putLong("user", mParam1.user.id.toLong())
             bundle.putBoolean("isfollower", true)
             intent.putExtras(bundle)
             startActivity(intent)
         }
-        binding.textView5!!.text = mParam1!!.profile.total_follow_users.toString()
-        binding.textView5!!.setOnClickListener { BreaktoUserFollow(mParam1!!.user.id.toLong()) }
+        binding.textView5.text = mParam1.profile.total_follow_users.toString()
+        binding.textView5.setOnClickListener { BreaktoUserFollow(mParam1.user.id.toLong()) }
         val strings = ArrayList<String>()
-        strings.add("twitter@" + mParam1!!.profile.twitter_account)
-        strings.add("pawoo")
-        strings.add("ta的作品" + mParam1!!.profile.total_illusts)
-        strings.add("ta的收藏" + mParam1!!.profile.total_illust_bookmarks_public)
-        strings.add(mParam1!!.profile.gender)
-        strings.add(mParam1!!.profile.birth)
-        strings.add(mParam1!!.profile.region)
-        strings.add(mParam1!!.profile.job)
-        strings.add(mParam1!!.workspace.tool)
-        strings.add(mParam1!!.workspace.tablet)
-        strings.add(mParam1!!.workspace.printer)
-        strings.add(mParam1!!.workspace.monitor)
-        strings.add(mParam1!!.workspace.chair)
+        if(!mParam1.profile.twitter_account.isNullOrBlank()) strings.add("twitter@" + mParam1.profile.twitter_account)
+        if(mParam1.profile_publicity.isPawoo) strings.add("pawoo")
+        strings.add("ta的作品" + mParam1.profile.total_illusts)
+        strings.add("ta的收藏" + mParam1.profile.total_illust_bookmarks_public)
+        strings.add(mParam1.profile.gender)
+        strings.add(mParam1.profile.birth)
+        strings.add(mParam1.profile.region+mParam1.profile.country_code)
+        strings.add(mParam1.profile.job)
+        if(!mParam1.profile.webpage.isNullOrBlank())strings.add(mParam1.profile.webpage)
+        strings.add(mParam1.workspace.tool)
+        strings.add(mParam1.workspace.tablet)
+        strings.add(mParam1.workspace.printer)
+        strings.add(mParam1.workspace.monitor)
+        strings.add(mParam1.workspace.chair)
         val iterator = strings.iterator()
         val removelist = ArrayList<String>()
         while (iterator.hasNext()) {
@@ -107,15 +108,15 @@ class UserMessageFragment : Fragment() {
         }
         strings -= removelist
         if (strings.size <= 2) strings.add("╮(╯▽╰)╭")
-        binding.searchPageFlowlayout!!.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
+        binding.searchPageFlowlayout.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
             override fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean {
                 when (position) {
                     0 -> {
                         run {
-                            if (mParam1!!.profile.twitter_url == null)
+                            if (mParam1.profile.twitter_url.isNullOrBlank())
                                 return true
-                            else if (mParam1!!.profile.twitter_url.isNotBlank()) {
-                                val uri = Uri.parse(mParam1!!.profile.twitter_url)
+                            else {
+                                val uri = Uri.parse(mParam1.profile.twitter_url)
                                 val intent = Intent()
                                 intent.action = Intent.ACTION_VIEW
                                 intent.data = uri
@@ -123,10 +124,10 @@ class UserMessageFragment : Fragment() {
                             }
                         }
 //                        run {
-//                            if (mParam1!!.profile.pawoo_url == null)
+//                            if (mParam1.profile.pawoo_url == null)
 //                                return true
-//                            else if (mParam1!!.profile.pawoo_url.isNotBlank()) {
-//                                val uri = Uri.parse(mParam1!!.profile.pawoo_url)
+//                            else if (mParam1.profile.pawoo_url.isNotBlank()) {
+//                                val uri = Uri.parse(mParam1.profile.pawoo_url)
 //                                val intent = Intent()
 //                                intent.action = Intent.ACTION_VIEW
 //                                intent.data = uri
@@ -137,10 +138,10 @@ class UserMessageFragment : Fragment() {
 //                        }
                     }
                     1 -> {
-                        if (mParam1!!.profile.pawoo_url == null)
+                        if (mParam1.profile.pawoo_url.isNullOrBlank())
                             return true
-                        else if (mParam1!!.profile.pawoo_url != "") {
-                            val uri = Uri.parse(mParam1!!.profile.pawoo_url)
+                        else {
+                            val uri = Uri.parse(mParam1.profile.pawoo_url)
                             val intent = Intent()
                             intent.action = Intent.ACTION_VIEW
                             intent.data = uri
@@ -181,15 +182,14 @@ class UserMessageFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             mParam1 = requireArguments().getSerializable(ARG_PARAM1) as UserDetailResponse
-
         }
     }
-    private lateinit var binding:FragmentUserMessageBinding
+    private lateinit var binding:FragmentUserInfoBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
-		binding = FragmentUserMessageBinding.inflate(inflater, container, false)
+		binding = FragmentUserInfoBinding.inflate(inflater, container, false)
 		return binding.root
     }
 
@@ -217,7 +217,7 @@ class UserMessageFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         fun newInstance(param1: UserDetailResponse): Fragment {
-            val fragment = UserMessageFragment()
+            val fragment = UserInfoFragment()
             val args = Bundle()
             args.putSerializable(ARG_PARAM1, param1)
             fragment.arguments = args

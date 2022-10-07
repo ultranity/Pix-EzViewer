@@ -34,6 +34,7 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.os.Build
@@ -147,9 +148,8 @@ class PictureXAdapter(
                 }
             }
         }
-
         val needSmall =if(quality == 1)
-                            (data.height/data.width > 3) ||(data.width/data.height > 3)
+                            (data.height/data.width > 3) ||(data.width/data.height >= 3)
                         else
                             data.height > 1800
         if (needSmall) {
@@ -216,9 +216,9 @@ class PictureXAdapter(
         ) {
             binding.illust = illust
             //captionTextView.autoLinkMask = Linkify.WEB_URLS
-            val colorPrimary = ThemeUtil.getColor(mContext, R.attr.colorPrimary)
-            val colorPrimaryDark = ThemeUtil.getColor(mContext, R.attr.colorPrimaryDark)
-            val badgeTextColor= ThemeUtil.getColor(mContext,R.attr.badgeTextColor)
+            val colorPrimary = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimary)
+            val colorPrimaryDark = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimaryDark)
+            val badgeTextColor= ThemeUtil.getColor(mContext, com.google.android.material.R.attr.badgeTextColor)
             if (illust.user.is_followed)
                 imageViewUser.setBorderColor(badgeTextColor)
             else
@@ -503,7 +503,7 @@ class PictureXAdapter(
             is PictureViewHolder -> {
                 val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
                 GlideApp.with(mContext).load(imageUrls[position]).placeholder(if(position % 2 == 1) R.color.transparent  else R.color.halftrans)
-                    .thumbnail(GlideApp.with(mContext).load(if(position == 0) imageThumbnailUrls[0]  else R.color.halftrans))
+                    .thumbnail(GlideApp.with(mContext).load(if(position == 0) imageThumbnailUrls[0]  else ColorDrawable(ThemeUtil.halftrans)))
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
                         override fun onLoadFailed(
@@ -801,7 +801,7 @@ class PictureXAdapter(
                     }
                     true
                 }
-                play!!.setOnClickListener {
+                play.setOnClickListener {
                     play.visibility = View.GONE
                     Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
                     pictureXViewModel.loadGif(data.id).flatMap {

@@ -28,6 +28,7 @@ package com.perol.asdpl.pixivez.objects
 import android.util.Log
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.repository.AppDataRepository
@@ -51,8 +52,8 @@ import java.util.concurrent.TimeoutException
 import kotlin.math.pow
 
 class ReFreshFunction private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
-    private var client_id: String? = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-    private var client_secret: String? = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+    private var client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
+    private var client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
     private val TOKEN_ERROR_2 = "Invalid refresh token"
     private var oAuthSecureService: OAuthSecureService? = null
@@ -101,7 +102,8 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                             retryCount = 0
                             return@Function Observable.error<Any>(throwable)
                         }
-                } else if (throwable.response()!!.code() == 404) {
+                }
+                else if (throwable.response()!!.code() == 404) {
                     //if (i == 0) {
                         Log.d("d", throwable.response()!!.message())
                         Toasty.warning(
@@ -120,6 +122,8 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                     "连接状态异常 $throwable",
                     Toast.LENGTH_SHORT
                 ).show()
+                throwable.printStackTrace()
+                Log.e("SocketException", throwable.localizedMessage?:throwable.toString())
                 RetrofitRepository.getInstance().appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
             }
             return@Function Observable.error<Any>(throwable)
@@ -182,9 +186,10 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                         refreshing = false
                     }
                 }.doOnError {
+                it.printStackTrace()
                     Toasty.info(
                         PxEZApp.instance,
-                        PxEZApp.instance.getString(R.string.refresh_token_fail),
+                        PxEZApp.instance.getString(R.string.refresh_token_fail)+":"+it.message,
                         Toast.LENGTH_SHORT
                     ).show()
                 refreshing = false

@@ -33,6 +33,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -41,6 +42,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsShowAdapter
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 //UserBookMarkFragment
@@ -51,10 +54,15 @@ class TagsShowDialog : DialogFragment() {
     }
 
 
+    val disposables = CompositeDisposable()
+    fun Disposable.add() {
+        disposables.add(this)
+    }
     var callback: Callback? = null
     override fun onDestroy() {
         super.onDestroy()
         callback = null
+        disposables.clear()
     }
 
     override fun onCancel(dialog: DialogInterface) {
@@ -144,9 +152,7 @@ class TagsShowDialog : DialogFragment() {
                                     tagsShowAdapter.counts.add(ot.count)
                                 }
                                 tagsShowAdapter.setNewData(x)
-                            }, {}, {})
-
-
+                            }, {}, {}).add()
             }
         })
         tagsShowAdapter.loadMoreModule?.setOnLoadMoreListener {
@@ -165,7 +171,7 @@ class TagsShowDialog : DialogFragment() {
                             tagsShowAdapter.addData(arrayList)
                         },
                         { tagsShowAdapter.loadMoreModule?.loadMoreFail() },
-                        { tagsShowAdapter.loadMoreModule?.loadMoreComplete() })
+                        { tagsShowAdapter.loadMoreModule?.loadMoreComplete() }).add()
             } else {
                 tagsShowAdapter.loadMoreModule?.loadMoreEnd()
             }

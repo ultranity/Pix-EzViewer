@@ -29,8 +29,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.fragments.UserBookMarkFragment
-import com.perol.asdpl.pixivez.fragments.UserIllustFragment
+import com.perol.asdpl.pixivez.fragments.user.UserBookMarkFragment
+import com.perol.asdpl.pixivez.fragments.user.UserIllustFragment
 
 class UserMPagerAdapter(
     var activity: Activity,
@@ -40,7 +40,7 @@ class UserMPagerAdapter(
 ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItemPosition(`object`: Any): Int {
-        return if (`object`.javaClass.name == "com.perol.asdpl.pixivez.fragments.UserIllustFragment") {
+        return if (`object`.javaClass.name == "com.perol.asdpl.pixivez.fragments.User.UserIllustFragment") {
             POSITION_NONE
         } else super.getItemPosition(`object`)
     }

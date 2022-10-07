@@ -96,7 +96,7 @@ class PictureXViewModel : BaseViewModel() {
                     progress.value!!.now = bytesCopied
                     Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe {
                         progress.value = progress.value!!
-                    }
+                    }.add()
                 }
                 inputStream.close()
                 output.close()
@@ -111,7 +111,7 @@ class PictureXViewModel : BaseViewModel() {
                 println("wwwwwwwwwwwwwwwwwwwwww")
             }, {
                 it.printStackTrace()
-            })
+            }).add()
 
         }, {}, {}).add()
     }
@@ -163,7 +163,7 @@ class PictureXViewModel : BaseViewModel() {
                             it.illust.id
                         )
                     )
-            }
+            }.add()
         }, {
             Toasty.warning(
                 PxEZApp.instance,

@@ -33,8 +33,9 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 
 object TToast {
 
-    val LToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
-    val sToast = Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    val LToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_LONG)
+    val sToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_SHORT)
+
     fun retoken(context: Context) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.toast_retoken, null)

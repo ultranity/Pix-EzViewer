@@ -64,7 +64,7 @@ class OkHttpUrlHeaderLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, 
         return LazyHeaders.Builder()
             .setHeader(
                 "User-Agent",
-                "PixivAndroidApp/5.0.155 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
             )
                 .setHeader("referer", "https://app-api.pixiv.net/")
                 .build()

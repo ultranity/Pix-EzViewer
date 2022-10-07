@@ -26,7 +26,7 @@
 package com.perol.asdpl.pixivez.fragments
 
 
-import TagsBookMarkDialog
+import com.perol.asdpl.pixivez.dialog.TagsBookMarkDialog
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -132,7 +132,7 @@ class PictureXFragment : BaseFragment() {
     private fun initViewModel() {
 
         pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
-        pictureXViewModel.illustDetail.observe(this, Observer { it ->
+        pictureXViewModel.illustDetail.observe(this){ it ->
             binding.progressView.visibility = View.GONE
             if (it != null) {
                 val tags = it.tags.map {rt ->
@@ -143,7 +143,7 @@ class PictureXFragment : BaseFragment() {
                         binding.jumpButton.setOnClickListener {
                             startActivity(Intent(requireActivity(), BlockActivity::class.java))
                         }
-                        binding.blocktagTextview.text = "$i"
+                        binding.blocktagTextview.text = i
                         binding.blockView.visibility = View.VISIBLE
                     }
                 }
@@ -157,8 +157,8 @@ class PictureXFragment : BaseFragment() {
                         it.setListener {
                             //                        activity?.supportStartPostponedEnterTransition()
                             if (!hasMoved) {
-                                binding.recyclerview?.scrollToPosition(0)
-                                (binding.recyclerview?.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
+                                binding.recyclerview.scrollToPosition(0)
+                                (binding.recyclerview.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
                                     0,
                                     0
                                 )
@@ -195,7 +195,7 @@ class PictureXFragment : BaseFragment() {
                     if (it.user.is_followed) {
                         retrofitRepository.postunfollowUser(id).subscribe({ pt->
                             val typedValue = TypedValue()
-                            requireContext().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+                            requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
                             val colorPrimary = typedValue.resourceId
                             it.user.is_followed = false
                             binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
@@ -231,11 +231,11 @@ class PictureXFragment : BaseFragment() {
                 else
                     parentFragmentManager.popBackStack()
             }
-        })
-        pictureXViewModel.aboutPics.observe(this, Observer {
+        }
+        pictureXViewModel.aboutPics.observe(this){
                 pictureXAdapter?.setRelativeNow(it)
-        })
-        pictureXViewModel.likeIllust.observe(this, Observer {
+        }
+        pictureXViewModel.likeIllust.observe(this){
             if (it != null) {
                 if (it) {
                     GlideApp.with(this).load(R.drawable.heart_red).into(binding.fab)
@@ -244,17 +244,17 @@ class PictureXFragment : BaseFragment() {
                 }
 
             }
-        })
-        pictureXViewModel.followUser.observe(this, Observer {
+        }
+        pictureXViewModel.followUser.observe(this){
             pictureXAdapter?.setUserPicColor(it)
-        })
-        pictureXViewModel.progress.observe(this, Observer {
+        }
+        pictureXViewModel.progress.observe(this){
                 pictureXAdapter?.setProgress(it)
-        })
-        pictureXViewModel.downloadGifSuccess.observe(this, Observer {
+        }
+        pictureXViewModel.downloadGifSuccess.observe(this){
 
             pictureXAdapter?.setProgressComplete(it)
-        })
+        }
         pictureXAdapter?.notifyDataSetChanged()
     }
 

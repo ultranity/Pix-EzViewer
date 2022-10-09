@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:maxHeight="450dp"
+                android:maxHeight="720dp"
                 android:src="?attr/colorSurface"
                 android:transitionName="mainimage" />
 

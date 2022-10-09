@@ -164,6 +164,17 @@
                 app:layout_constraintTop_toTopOf="@+id/textView26" />
 
             <ImageButton
+                android:id="@+id/imagebutton_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_share_black"
+                app:layout_constraintEnd_toStartOf="@+id/imagebutton_download"
+                app:layout_constraintTop_toTopOf="@+id/textview12"
+                app:tint="?android:attr/textColorPrimary" />
+            <ImageButton
                 android:id="@+id/imagebutton_download"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -171,9 +182,9 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_action_download"
-                android:tint="?android:attr/textColorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textview12" />
+                app:layout_constraintTop_toTopOf="@+id/textview12"
+                app:tint="?android:attr/textColorPrimary" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.zhy.view.flowlayout.TagFlowLayout
@@ -208,20 +219,13 @@
             android:padding="4dp"
             android:text="@string/translate"
             />
-        <RelativeLayout
+        <TextView
+            android:id="@+id/textview_viewcomment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/textview_viewcomment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:text="@string/viewcomment" />
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/viewcomment" />
 
         <TextView
             android:layout_width="wrap_content"

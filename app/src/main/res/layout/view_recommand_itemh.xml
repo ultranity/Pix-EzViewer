@@ -21,7 +21,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@color/grayx"
-            android:maxHeight="400dp"
+            android:maxHeight="720dp"
             android:transitionName="mainimage"
             />
     </LinearLayout>

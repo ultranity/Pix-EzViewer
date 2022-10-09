@@ -33,7 +33,6 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -94,7 +93,7 @@ class TagsShowDialog : DialogFragment() {
         val tagList = bundle!!.getStringArrayList("tags")
         val countList = bundle.getIntegerArrayList("counts")
         val id = bundle.getLong("id")
-        var nexturl = bundle.getString("nexturl")
+        var nextUrl = bundle.getString("nextUrl")
         val builder = MaterialAlertDialogBuilder(requireActivity())
         val dialogView = inflater.inflate(R.layout.view_tagsshow, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerview_tags)
@@ -135,7 +134,7 @@ class TagsShowDialog : DialogFragment() {
                     })
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.io()).subscribe({
-                                nexturl = it.next_url
+                                nextUrl = it.next_url
                                 val x = ArrayList<String>()
                             tagsShowAdapter.counts.clear()
                             if (it.bookmark_tags.isNullOrEmpty()){
@@ -155,14 +154,14 @@ class TagsShowDialog : DialogFragment() {
                             }, {}, {}).add()
             }
         })
-        tagsShowAdapter.loadMoreModule?.setOnLoadMoreListener {
-            if (!nexturl.isNullOrBlank()) {
-                retrofitRepository.getNextTags( nexturl!!)
+        tagsShowAdapter.loadMoreModule.setOnLoadMoreListener {
+            if (!nextUrl.isNullOrBlank()) {
+                retrofitRepository.getNextTags( nextUrl!!)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(
                         {
-                            nexturl = it.next_url
+                            nextUrl = it.next_url
                             val arrayList = ArrayList<String>()
                             it.bookmark_tags.map {
                                 arrayList.add(it.name)
@@ -170,10 +169,10 @@ class TagsShowDialog : DialogFragment() {
                             }
                             tagsShowAdapter.addData(arrayList)
                         },
-                        { tagsShowAdapter.loadMoreModule?.loadMoreFail() },
-                        { tagsShowAdapter.loadMoreModule?.loadMoreComplete() }).add()
+                        { tagsShowAdapter.loadMoreModule.loadMoreFail() },
+                        { tagsShowAdapter.loadMoreModule.loadMoreComplete() }).add()
             } else {
-                tagsShowAdapter.loadMoreModule?.loadMoreEnd()
+                tagsShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
         recyclerView.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)

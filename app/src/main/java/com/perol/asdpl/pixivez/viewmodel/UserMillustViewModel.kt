@@ -32,29 +32,27 @@ class UserMillustViewModel : BaseViewModel() {
     val retrofit = RetrofitRepository.getInstance()
     val data = MutableLiveData<List<Illust>>()
     val adddata = MutableLiveData<List<Illust>>()
-    val nexturl = MutableLiveData<String>()
+    val nextUrl = MutableLiveData<String>()
     fun onLoadMoreListener() {
-        if (nexturl.value != null) {
-            retrofit.getNextUserIllusts(nexturl.value!!).subscribe({
+        if (nextUrl.value != null) {
+            retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
                 adddata.value = it.illusts
-                nexturl.value = it.next_url
+                nextUrl.value = it.next_url
             }, {}, {}).add()
         }
-
-
     }
 
     fun onRefreshListener(id: Long, type: String) {
         retrofit.getUserIllusts(id, type).subscribe({
             data.value = it.illusts
-            nexturl.value = it.next_url
+            nextUrl.value = it.next_url
         }, {}, {}).add()
     }
 
     fun first(id: Long, type: String) {
         retrofit.getUserIllusts(id, type).subscribe({
             data.value = it.illusts
-            nexturl.value = it.next_url
+            nextUrl.value = it.next_url
         }, {}, {}).add()
     }
 

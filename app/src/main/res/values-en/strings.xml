@@ -129,7 +129,7 @@
 	<string name="collectmode">Collection mode</string>
 	<string name="animation">Animation</string>
 	<string name="animation_summary">Disable to reduce memory usage</string>
-	<string name="show_user_img_searchr">Show artist avatar in search</string>
+	<string name="show_user_img_searchr">Show artist avatar in search results</string>
 	<string name="show_user_img_searchr_summary">Large style card, can save some memory on close</string>
 	<string name="show_user_img_bookmarked">Show artist avatar in bookmark view</string>
 	<string name="show_user_img_bookmarked_summary">Large style card, can save some memory on close</string>
@@ -262,4 +262,10 @@
 	<string name="token_expired">Token expired, please wait for refreshing</string>
 	<string name="login_help_new">Due to Pixiv verification restriction, login from China\'s mainland is required to prepare VPN in advance by yourself</string>
     <string name="open_in_external_browser">Click here to open in browser (may fix error)</string>
+    <string name="needactionbar">Show ActionBar</string>
+    <string name="needactionbar_subtext">Back and share buttons</string>
+	<string name="use_bottom_layout">Use bottom layout</string>
+	<string name="use_bottom_layout_subtext">up side down~</string>
+	<string name="use_picX_layout_main">Use new Card UI in main page</string>
+	<string name="use_picX_layout_subtext">modern view UX</string>
 </resources>

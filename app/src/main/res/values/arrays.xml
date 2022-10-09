@@ -5,7 +5,7 @@
         <item>CoM</item>
         <item>非CoM</item>
     </string-array>
-    <string-array name="week">
+    <string-array name="restrict_type">
         <item>全部</item>
         <item>公开的</item>
         <item>非公开</item>

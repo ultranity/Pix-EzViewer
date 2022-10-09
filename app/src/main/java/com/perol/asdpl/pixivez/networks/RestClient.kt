@@ -26,10 +26,8 @@
 package com.perol.asdpl.pixivez.networks
 
 
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.GsonBuilder
-import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -39,7 +37,6 @@ import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -53,7 +50,7 @@ import java.util.concurrent.TimeUnit
 
 object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
-    private val httpXDns by lazy { RubyHttpXDns }
+    private val httpDns by lazy { RubyHttpDns }
     private val imageDns by lazy { ImageHttpDns }
     val local = LanguageUtil.langToLocale(PxEZApp.language)
     private val disableProxy by lazy { PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false)}
@@ -104,12 +101,13 @@ object RestClient {
     }
     val gifAppApi = buildRetrofit("https://oauth.secure.pixiv.net",imageHttpClient)
     //val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
-    val retrofitAccount = buildRetrofit("https://accounts.pixiv.net",okHttpClient("accounts.pixiv.net"))
-    val retrofitOauthSecure = buildRetrofit("https://oauth.secure.pixiv.net",okHttpClient("oauth.secure.pixiv.net"))
+    //val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
+    val retrofitOauthSecure = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
+    val retrofitOauthSecureDirect = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net", true))
     private val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
-    fun encode(text: String): String {
+    private fun encode(text: String): String {
         try {
             val instance: MessageDigest = MessageDigest.getInstance("MD5")
             val digest: ByteArray = instance.digest(text.toByteArray())
@@ -130,7 +128,7 @@ object RestClient {
         return ""
     }
 
-    private fun okHttpClient(host:String): OkHttpClient {
+    private fun okHttpClient(host:String, disableProxy:Boolean=false): OkHttpClient {
         /*val httpLoggingInterceptor =
             HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
@@ -141,48 +139,50 @@ object RestClient {
                     if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             }*/
         val builder = OkHttpClient.Builder()
-
-        builder.addInterceptor(Interceptor { chain ->
-            val ISO8601DATETIMEFORMAT =
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
-            val isoDate = ISO8601DATETIMEFORMAT.format(Date())
-            val original = chain.request()
-            var Authorization = ""
-            runBlocking {
-                try {
-                    Authorization = AppDataRepository.getUser().Authorization
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        builder.apply {
+            addInterceptor(Interceptor { chain ->
+                val ISO8601DATETIMEFORMAT =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
+                val isoDate = ISO8601DATETIMEFORMAT.format(Date())
+                val original = chain.request()
+                var Authorization = ""
+                runBlocking {
+                    try {
+                        Authorization = AppDataRepository.getUser().Authorization
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
+                //Log.d("OkHttpClient","Request $Authorization and original ${original.header("Authorization")}")
+                val requestBuilder = original.newBuilder()
+                    .removeHeader("User-Agent")
+                    .addHeader(
+                        "User-Agent",
+                        "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                    )
+                    .addHeader("Accept-Language", "${local.language}_${local.country}")
+                    .header("Authorization", Authorization)
+                    .addHeader("App-OS", "Android")
+                    .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
+                    .header("App-Version", "5.0.234")
+                    .addHeader("X-Client-Time", isoDate)
+                    .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
+                    .addHeader("Host", host)
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            })
+            //addInterceptor(httpLoggingInterceptor)
+            if(!disableProxy){
+                apiProxySocket()
             }
-            Log.d("OkHttpClient","Request $Authorization and original ${original.header("Authorization")}")
-            val requestBuilder = original.newBuilder()
-                .removeHeader("User-Agent")
-                .addHeader(
-                    "User-Agent",
-                    "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                )
-                .addHeader("Accept-Language", "${local.language}_${local.country}")
-                .header("Authorization", Authorization)
-                .addHeader("App-OS", "Android")
-                .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
-                .header("App-Version", "5.0.234")
-                .addHeader("X-Client-Time", isoDate)
-                .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
-                .addHeader("Host", host)
-            val request = requestBuilder.build()
-            chain.proceed(request)
-        })
-//                .addInterceptor(httpLoggingInterceptor)
-            .apiProxySocket()
-        builder.connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
-        return builder
-            .build()
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(20, TimeUnit.SECONDS)
+        }
+        return builder.build()
     }
 
-    fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
+    private fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
     fun OkHttpClient.Builder.imageProxySocket() = apply {
         if (Works.mirrorLinkView)
             addInterceptor {

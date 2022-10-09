@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.view.View
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
@@ -34,11 +35,10 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.shehuan.niv.NiceImageView
 
 // simple Adapter for image item with heart icon
 //TODO: rename
-open class PicListXAdapter(
+open class PicListXBtnAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     filter: IllustFilter
@@ -47,69 +47,61 @@ open class PicListXAdapter(
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
+
+        holder.setText(R.id.title, item.title)
+
+        holder.setTextColor(
+            R.id.save, if (FileUtil.isDownloaded(item)) {
+                badgeTextColor
+            } else {
+                colorPrimary
+            }
+        )
+
         if (PxEZApp.CollectMode == 1) {
-            holder.getView<NiceImageView>(R.id.imageview_like).apply {
-                setOnClickListener {
-                    //download
-                    setBorderColor(colorPrimaryDark)
-                    Works.imageDownloadAll(item)
-                    //set like
-                    if (!item.is_bookmarked) {
-                        InteractionUtil.like(item, null){
-                            setUILike(true, this)
+            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
+                holder.setTextColor(R.id.save, colorPrimaryDark)
+                Works.imageDownloadAll(item)
+                if (!item.is_bookmarked) {
+                    InteractionUtil.like(item, null){
+                            holder.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
                         }
-                    }
                 }
             }
         } else {
-            holder.getView<NiceImageView>(R.id.imageview_like).apply {
-                setOnClickListener {
-                    if (item.is_bookmarked) {
-                        InteractionUtil.unlike(item){
-                            setUILike(false, this)
-                        }
-                    } else {
-                        InteractionUtil.like(item, null){
-                            setUILike(true, this)
-                        }
-                    }
-                }
-                setOnLongClickListener {
-                    setUIDownload(1, this)
-                    Works.imageDownloadAll(item)
-                    true
-                }
+            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
+                holder.setTextColor(R.id.save, colorPrimaryDark)
+                Works.imageDownloadAll(item)
             }
         }
 
-        holder.getView<NiceImageView>(R.id.imageview_like).apply {
+        holder.getView<MaterialButton>(R.id.like).apply {
+            setOnClickListener { v ->
+                if (!item.is_bookmarked){
+                    InteractionUtil.like(item, null){
+                        setUILike(true, v)
+                    }
+                }
+                else {
+                    InteractionUtil.unlike(item){
+                        setUILike(false, v)
+                    }
+                }
+            }
             setUILike(item.is_bookmarked, this)
-            setUIDownload(if(FileUtil.isDownloaded(item)) 2 else 0, this)
-        }
-    }
-
-    private fun NiceImageView.setLike(status:Boolean) {
-        if (status) {
-            setImageResource(R.drawable.heart_red)
-            //GlideApp.with(context).load(R.drawable.heart_red).into(this)
-            //alpha = 0.9F
-        } else {
-            setImageResource(R.drawable.ic_action_heart)
-            //GlideApp.with(context).load(R.drawable.ic_action_heart).into(this)
-            //alpha = 0.8F
         }
     }
 
     override fun setUILike(status: Boolean, position: Int) {
         (getViewByAdapterPosition(
             position,
-            R.id.imageview_like
-        ) as NiceImageView?)?.let { setUILike(status, it) }
+            R.id.like
+        ) as MaterialButton?)?.let { setUILike(status, it) }
     }
 
     override fun setUILike(status: Boolean, view: View) {
-        val like = view as NiceImageView
-        like.setLike(status)
+        val like = view as MaterialButton
+        like.setTextColor( if (status) badgeTextColor else colorPrimary )
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {
@@ -123,21 +115,21 @@ open class PicListXAdapter(
     override fun setUIDownload(status: Int, position: Int) {
         (getViewByAdapterPosition(
             position,
-            R.id.imageview_like
-        ) as NiceImageView?)?.let { setUIDownload(status, it) }
+            R.id.save
+        ) as MaterialButton?)?.let { setUIDownload(status, it) }
     }
 
     override fun setUIDownload(status: Int, view: View) {
-        val like = view as NiceImageView
+        val save = view as MaterialButton
         when (status) {
             0 -> { //not downloaded
-                like.setBorderColor(colorTransparent)
+                save.setTextColor(colorPrimary)
             }
             1 -> { //Downloading
-                like.setBorderColor(colorPrimaryDark)
+                save.setTextColor(colorPrimaryDark)
             }
             2 -> {//Downloaded
-                like.setBorderColor(badgeTextColor)
+                save.setTextColor(badgeTextColor)
             }
         }
     }

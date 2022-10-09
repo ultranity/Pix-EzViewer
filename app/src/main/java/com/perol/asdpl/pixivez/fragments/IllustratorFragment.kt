@@ -32,18 +32,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
-import com.perol.asdpl.pixivez.objects.BaseFragment
-import com.perol.asdpl.pixivez.responses.SearchUserResponse
-import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
 import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
+import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
+import kotlin.properties.Delegates
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -57,65 +60,73 @@ private const val ARG_PARAM2 = "param2"
  */
 class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     override fun loadData() {
-        viewModel!!.first(param1!!, restrict, param2!!)
+        viewModel!!.onRefresh(userid, restrict, getFollowing)
     }
 
-    var firststart = true
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         when (p2) {
             0 -> {
                 restrict = "public"
-                viewModel!!.onRefresh(param1!!, restrict, param2!!)
-
             }
             1 -> {
                 restrict = "private"
-                viewModel!!.onRefresh(param1!!, restrict, param2!!)
             }
         }
-        if (!firststart) {
-
-        } else {
-            firststart = false
-        }
+        viewModel!!.onRefresh(userid, restrict, getFollowing)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-
     }
 
     lateinit var userShowAdapter: UserShowAdapter
     var viewModel: IllustratorViewModel? = null
     var restrict: String = "public"
+    private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerviewIllustrator.adapter = userShowAdapter
         binding.recyclerviewIllustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
         binding.spinnerIllustrator.onItemSelectedListener = this
-        userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
-            viewModel!!.onLoadMore(viewModel!!.nexturl.value!!)
+        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+            viewModel!!.onLoadMore(viewModel!!.nextUrl.value!!)
         }
         binding.swiperefreshIllustrator.setOnRefreshListener {
-            viewModel!!.onRefresh(param1!!, restrict, param2!!)
+            viewModel!!.onRefresh(userid, restrict, getFollowing)
         }
-        userShowAdapter.setOnItemClickListener { adapter, view, position ->
+        userShowAdapter.setOnItemClickListener { _, _, position ->
             val intent = Intent(requireActivity().applicationContext, UserMActivity::class.java)
             val userid = viewModel!!.userpreviews.value!![position].user.id
             intent.putExtra("data", userid)
             startActivity(intent)
         }
+
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(0)
+            ?.view?.setOnClickListener {
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    binding.recyclerviewIllustrator.scrollToPosition(0)
+                }
+            }
     }
 
-    fun lazyLoad() {
-        viewModel = ViewModelProvider(this).get(IllustratorViewModel::class.java)
+    private fun lazyLoad() {
+        viewModel = ViewModelProvider(this)[IllustratorViewModel::class.java]
         viewModel!!.userpreviews.observe(this){
             userpreviews(it)
         }
-        viewModel!!.nexturl.observe(this){
-            nexturl(it)
+        viewModel!!.nextUrl.observe(this){
+            nextUrl(it)
         }
         viewModel!!.adduserpreviews.observe(this){
-            adduserpreviews(it)
+            if (it != null) {
+                userShowAdapter.addData(it)
+            }
         }
 
 
@@ -127,17 +138,11 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
     }
 
-    private fun adduserpreviews(it: ArrayList<SearchUserResponse.UserPreviewsBean>?) {
+    private fun nextUrl(it: String?) {
         if (it != null) {
-            userShowAdapter.addData(it)
-        }
-    }
-
-    private fun nexturl(it: String?) {
-        if (it != null) {
-            userShowAdapter.loadMoreModule?.loadMoreComplete()
+            userShowAdapter.loadMoreModule.loadMoreComplete()
         } else {
-            userShowAdapter.loadMoreModule?.loadMoreEnd()
+            userShowAdapter.loadMoreModule.loadMoreEnd()
         }
     }
 
@@ -148,14 +153,14 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     // TODO: Rename and change types of parameters
-    private var param1: Long? = null
-    private var param2: Boolean? = false
+    private var userid by Delegates.notNull<Long>()
+    private var getFollowing by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getLong(ARG_PARAM1)
-            param2 = it.getBoolean(ARG_PARAM2)
+            userid = it.getLong(ARG_PARAM1)
+            getFollowing = it.getBoolean(ARG_PARAM2)
         }
         lazyLoad()
     }
@@ -167,6 +172,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
 
 		binding = FragmentIllustratorBinding.inflate(inflater, container, false)
+
 		return binding.root
     }
 
@@ -176,17 +182,17 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 isuserfollowing 2.
+         * @param userid Parameter 1.
+         * @param getFollowing Parameter 2.
          * @return A new instance of fragment IllustratorFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long, param2: Boolean) =
+        fun newInstance(userid: Long, getFollowing: Boolean) =
                 IllustratorFragment().apply {
                     arguments = Bundle().apply {
-                        putLong(ARG_PARAM1, param1)
-                        putBoolean(ARG_PARAM2, param2)
+                        putLong(ARG_PARAM1, userid)
+                        putBoolean(ARG_PARAM2, getFollowing)
                     }
                 }
     }

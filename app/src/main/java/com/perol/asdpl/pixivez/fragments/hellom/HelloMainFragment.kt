@@ -31,7 +31,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMRecomViewPager
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
 // TODO: Rename parameter arguments, choose names that match

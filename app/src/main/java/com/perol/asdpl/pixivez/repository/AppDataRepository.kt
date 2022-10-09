@@ -29,62 +29,70 @@ import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.UserEntity
+import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class AppDataRepository {
-    companion object {
-        private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-        val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
-        suspend fun getUser(): UserEntity {
-            val result = withContext(Dispatchers.IO) {
-                appDatabase.userDao().getUsers()
-            }
-            val num = pre.getInt("usernum", 0)
-            return if (result.size <= num)
-                result[0]
-            else {
-                result[num]
-            }
+object AppDataRepository {
+    private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
+    suspend fun getUser(): UserEntity {
+        val result = withContext(Dispatchers.IO) {
+            appDatabase.userDao().getUsers()
         }
-
-        suspend fun getAllUser(): List<UserEntity> {
-            return withContext(Dispatchers.IO) {
-                appDatabase.userDao().getUsers()
-            }
-        }
-
-        suspend fun deleteAllUser() {
-            withContext(Dispatchers.IO) {
-                appDatabase.userDao().deleteUsers()
-            }
-
-        }
-
-        suspend fun updateUser(query: UserEntity) {
-            return withContext(Dispatchers.IO) {
-                appDatabase.userDao().updateUser(query)
-            }
-        }
-
-        suspend fun insertUser(query: UserEntity) {
-            return withContext(Dispatchers.IO) {
-                appDatabase.userDao().insert(query)
-            }
-        }
-
-        suspend fun deleteUser(id: UserEntity) {
-            return withContext(Dispatchers.IO) {
-                appDatabase.userDao().deleteUser(id)
-            }
-        }
-
-        suspend fun findUser(id: Long): List<UserEntity> {
-            return withContext(Dispatchers.IO) {
-                appDatabase.userDao().findUsers(id)
-            }
+        val num = pre.getInt("usernum", 0)
+        return if (result.size <= num)
+            result[0]
+        else {
+            result[num]
         }
     }
 
+    suspend fun getAllUser(): List<UserEntity> {
+        return withContext(Dispatchers.IO) {
+            appDatabase.userDao().getUsers()
+        }
+    }
 
+    suspend fun deleteAllUser() {
+        withContext(Dispatchers.IO) {
+            appDatabase.userDao().deleteUsers()
+        }
+
+    }
+
+    suspend fun updateUser(query: UserEntity) {
+        return withContext(Dispatchers.IO) {
+            appDatabase.userDao().updateUser(query)
+        }
+    }
+
+    suspend fun insertUser(query: UserEntity) {
+        return withContext(Dispatchers.IO) {
+            appDatabase.userDao().insert(query)
+        }
+    }
+
+    suspend fun deleteUser(id: UserEntity) {
+        return withContext(Dispatchers.IO) {
+            appDatabase.userDao().deleteUser(id)
+        }
+    }
+
+    suspend fun findUser(id: Long): List<UserEntity> {
+        return withContext(Dispatchers.IO) {
+            appDatabase.userDao().findUsers(id)
+        }
+    }
+
+    suspend fun getAllBlockTags() =
+        withContext(Dispatchers.IO) {
+            appDatabase.blockTagDao().getAllTags()
+        }
+
+    suspend fun deleteSingleBlockTag(blockTagEntity: BlockTagEntity) =
+        appDatabase.blockTagDao().deleteTag(blockTagEntity)
+
+    suspend fun insertBlockTag(blockTagEntity: BlockTagEntity) = appDatabase.blockTagDao()
+        .insert(blockTagEntity)
 }

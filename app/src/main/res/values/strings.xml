@@ -165,7 +165,7 @@
     <string name="collectmode">收图模式</string>
     <string name="animation">更多动画</string>
     <string name="animation_summary">关闭可节省转场动画的运存</string>
-    <string name="show_user_img_searchr">搜索页面显示用户头像</string>
+    <string name="show_user_img_searchr">搜索结果页面显示用户头像</string>
     <string name="show_user_img_searchr_summary">使用大卡片样式,关闭可节省部分运存</string>
     <string name="show_user_img_bookmarked">收藏页面显示用户头像</string>
     <string name="show_user_img_bookmarked_summary">使用大卡片样式,关闭可节省部分运存</string>
@@ -309,4 +309,10 @@
     <string name="token_expired">身份信息过期，请等待刷新</string>
     <string name="login_help_new">受pixiv验证限制，中国大陆地区登录需要提前开启代理，请自行准备</string>
     <string name="open_in_external_browser">若出现错误点击此处选择浏览器登录</string>
+    <string name="needactionbar">详情页显示工具栏</string>
+    <string name="needactionbar_subtext">顶部显示返回、分享键</string>
+    <string name="use_bottom_layout">使用底部导航栏</string>
+    <string name="use_bottom_layout_subtext">颠倒上下~</string>
+    <string name="use_picX_layout_main">首页使用新式卡片布局</string>
+    <string name="use_picX_layout_subtext">简明体验，只为看图</string>
 </resources>

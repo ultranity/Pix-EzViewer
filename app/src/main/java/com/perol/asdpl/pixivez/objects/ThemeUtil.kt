@@ -35,16 +35,16 @@ import com.perol.asdpl.pixivez.R
 class ThemeUtil {
     companion object {
         val themeArray = arrayOf(
-                R.style.AppThemeBase_Primary,
-                R.style.AppThemeBase_blue,
-                R.style.AppThemeBase_pink,
-                R.style.AppThemeBase_miku,
-                R.style.AppThemeBase_purple,
-                R.style.AppThemeBase_cyan,
-                R.style.AppThemeBase_green,
-                R.style.AppThemeBase_indigo,
-                R.style.AppThemeBase_red,
-                R.style.AppThemeBase_now
+            R.style.AppThemeBase_Primary,
+            R.style.AppThemeBase_blue,
+            R.style.AppThemeBase_pink,
+            R.style.AppThemeBase_miku,
+            R.style.AppThemeBase_purple,
+            R.style.AppThemeBase_cyan,
+            R.style.AppThemeBase_green,
+            R.style.AppThemeBase_indigo,
+            R.style.AppThemeBase_red,
+            R.style.AppThemeBase_now,
         )
         var colorPrimary:Int?=null
         var badgeTextColor:Int = R.color.yellow

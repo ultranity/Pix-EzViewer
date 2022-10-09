@@ -39,10 +39,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentUserslistBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentUserslistBinding
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -64,9 +65,9 @@ class UsersListFragment : LazyFragment() {
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
         binding.recyclerviewUser.adapter = userShowAdapter
         binding.recyclerviewUser.layoutManager = LinearLayoutManager(activity)
-        userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
-            if (userViewModel.nexturl.value != null)
-                userViewModel.getNextUsers(userViewModel.nexturl.value!!)
+        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+            if (userViewModel.nextUrl.value != null)
+                userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
 
         }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
@@ -114,15 +115,15 @@ class UsersListFragment : LazyFragment() {
             if (it != null) {
                 userShowAdapter.addData(it.user_previews)
             } else {
-                userShowAdapter.loadMoreModule?.loadMoreFail()
+                userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
 
-        userViewModel.nexturl.observe(this) {
+        userViewModel.nextUrl.observe(this) {
             if (it != null) {
-                userShowAdapter.loadMoreModule?.loadMoreComplete()
+                userShowAdapter.loadMoreModule.loadMoreComplete()
             } else {
-                userShowAdapter.loadMoreModule?.loadMoreEnd()
+                userShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
     }

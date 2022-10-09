@@ -31,12 +31,12 @@ import com.perol.asdpl.pixivez.responses.SearchUserResponse
 
 class HelloRecomUserViewModel : BaseViewModel() {
     val retrofit = RetrofitRepository.getInstance()
-    val nexturl = MutableLiveData<String>()
+    val nextUrl = MutableLiveData<String>()
     val adddata = MutableLiveData<List<SearchUserResponse.UserPreviewsBean>>()
     val data = MutableLiveData<List<SearchUserResponse.UserPreviewsBean>>()
     fun reData() {
         retrofit.getUserRecommanded().subscribe({
-            nexturl.value = it.next_url
+            nextUrl.value = it.next_url
             data.value = it.user_previews
         }, {
 
@@ -44,8 +44,8 @@ class HelloRecomUserViewModel : BaseViewModel() {
     }
 
     fun getNext() {
-        retrofit.getUserRecommandedUrl(nexturl.value!!).subscribe({
-            nexturl.value = it.next_url
+        retrofit.getUserRecommandedUrl(nextUrl.value!!).subscribe({
+            nextUrl.value = it.next_url
             adddata.value = it.user_previews
         }, {
             adddata.value = null

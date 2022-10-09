@@ -129,7 +129,7 @@
 	<string name="collectmode">收圖模式</string>
 	<string name="animation">動畫</string>
 	<string name="animation_summary">關閉可節省轉場動畫的運存</string>
-	<string name="show_user_img_searchr">搜索頁面顯示用戶頭像</string>
+	<string name="show_user_img_searchr">搜索結果頁面顯示用戶頭像</string>
 	<string name="show_user_img_searchr_summary">使用大卡片樣式,關閉可節省部分運存</string>
 	<string name="show_user_img_bookmarked">收藏頁面顯示用戶頭像</string>
 	<string name="show_user_img_bookmarked_summary">使用大卡片樣式,關閉可節省部分運存</string>
@@ -262,4 +262,7 @@
 	<string name="token_expired">身份信息過期，請等待刷新</string>
 	<string name="login_help_new">受pixiv驗證限制，中國大陸地區登錄需要提前開啟代理，請自行準備</string>
     <string name="open_in_external_browser">若出現錯誤點擊此處選擇瀏覽器登入</string>
+    <string name="needactionbar">詳情頁顯示工具欄</string>
+    <string name="needactionbar_subtext">頂部顯示返回、分享鍵</string>
+	<string name="use_bottom_layout">使用底部导航欄</string>
 </resources>

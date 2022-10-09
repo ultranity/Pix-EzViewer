@@ -63,6 +63,6 @@ class PixiVisionAdapter(
     }
 
     fun loadMoreFail() {
-        this.loadMoreModule?.loadMoreFail()
+        this.loadMoreModule.loadMoreFail()
     }
 }

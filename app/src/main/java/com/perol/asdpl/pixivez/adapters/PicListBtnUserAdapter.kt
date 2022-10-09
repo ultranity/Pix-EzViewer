@@ -31,13 +31,11 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.module.LoadMoreModule
@@ -48,13 +46,12 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.shehuan.niv.NiceImageView
-import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 
@@ -87,7 +84,7 @@ class PicListBtnUserAdapter(
                     }
 
                     if (!item.user.is_followed) {
-                        retrofitRepository.postfollowUser(item.user.id, x_restrict(item)).subscribe({
+                        retrofitRepository.postFollowUser(item.user.id, x_restrict(item)).subscribe({
                             item.user.is_followed = true
                             view.findViewById<NiceImageView>(R.id.imageview_user)
                                 .setBorderColor(badgeTextColor) // Color.YELLOW
@@ -159,24 +156,7 @@ class PicListBtnUserAdapter(
             setOnItemLongClickListener { adapter, view, position ->
                 //show detail of illust
                 (adapter.data as ArrayList<Illust?>)[position]?.let {
-                    val detailstring =
-                        "id: " + it.id.toString() +
-                                "caption: " + it.caption + "create_date: " + it.create_date +
-                                "width: " + it.width.toString() + "height: " + it.height.toString() +
-                                //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
-                                "user: " + it.user.name +
-                                "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
-                                "total_bookmarks: " + it.total_bookmarks.toString() +
-                                "total_view: " + it.total_view.toString() +
-                                "user account: " + it.user.account + "\n" +
-                                "tools: " + it.tools.toString() + "\n" +
-                                "type: " + it.type + "\n" +
-                                "page_count: " + it.page_count.toString() + "\n" +
-                                "visible: " + it.visible.toString() + "\n" +
-                                "is_muted: " + it.is_muted.toString() + "\n" +
-                                "sanity_level: " + it.sanity_level.toString() + "\n" +
-                                "restrict: " + it.restrict.toString() + "\n" +
-                                "x_restrict: " + it.x_restrict.toString()
+                    val detailstring = InteractionUtil.toDetailString(it)
                     MaterialAlertDialogBuilder(context as Activity)
                         .setMessage(detailstring)
                         .setTitle("Detail")
@@ -219,12 +199,12 @@ class PicListBtnUserAdapter(
         imageViewUser.setOnLongClickListener {
             val id = item.user.id
             if (!item.user.is_followed) {
-                retrofitRepository.postfollowUser(id, "public").subscribe({
+                retrofitRepository.postFollowUser(id, "public").subscribe({
                     item.user.is_followed = true
                     imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
                 }, {}, {})
             } else {
-                retrofitRepository.postunfollowUser(id).subscribe({
+                retrofitRepository.postUnfollowUser(id).subscribe({
                     item.user.is_followed = false
                     imageViewUser.setBorderColor(colorPrimary)
                 }, {}, {}

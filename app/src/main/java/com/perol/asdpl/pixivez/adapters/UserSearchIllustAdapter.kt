@@ -37,10 +37,10 @@ class UserSearchIllustAdapter(
     data: MutableList<Illust>?
 ) : BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
     override fun convert(
-        helper: BaseViewHolder,
+        holder: BaseViewHolder,
         item: Illust
     ) {
-        val mainimage = helper.getView<View>(R.id.imageview_usersearchillust) as ImageView
+        val mainimage = holder.getView<View>(R.id.imageview_usersearchillust) as ImageView
         GlideApp.with(mainimage.context).load(item.image_urls.square_medium)
             .transition(DrawableTransitionOptions.withCrossFade()).into(mainimage)
     }

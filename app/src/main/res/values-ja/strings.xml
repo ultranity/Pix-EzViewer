@@ -129,7 +129,7 @@
 	<string name="collectmode">図は、受信モード</string>
 	<string name="animation">アニメーション</string>
 	<string name="animation_summary">トランジションアニメーションのメモリを節約する閉じます</string>
-	<string name="show_user_img_searchr">ページが表示さにユーザアバターを検索</string>
+	<string name="show_user_img_searchr">ページが表示さにユーザアバターを検索結果</string>
 	<string name="show_user_img_searchr_summary">大規模なスタイルのカードは、近くにいくつかのメモリを節約することができます</string>
 	<string name="show_user_img_bookmarked">お気に入りのページが表示され、ユーザアバター</string>
 	<string name="show_user_img_bookmarked_summary">大規模なスタイルのカードは、近くにいくつかのメモリを節約することができます</string>
@@ -262,4 +262,6 @@
 	<string name="token_expired">ID情報が期限切れになったら、さわやかにお待ちください</string>
 	<string name="login_help_new">受Pixiv検証制限、中国の本土地域は事前に公開するために必要です、あなた自身を準備してください</string>
     <string name="open_in_external_browser">外部ブラウザで開く</string>
+    <string name="needactionbar">詳細ページ表示ツールバー</string>
+    <string name="needactionbar_subtext">戻るボタンと共有ボタンが上部に表示されます</string>
 </resources>

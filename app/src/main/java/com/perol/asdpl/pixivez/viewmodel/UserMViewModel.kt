@@ -55,11 +55,11 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabclick(userid: Long) {
         if (isfollow.value!!) {
-            retrofitRepository.postunfollowUser(userid).subscribe({
+            retrofitRepository.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
         } else {
-            retrofitRepository.postfollowUser(userid, "public").subscribe({
+            retrofitRepository.postFollowUser(userid, "public").subscribe({
                 isfollow.value = true
             }, {}, {}).add()
         }
@@ -67,10 +67,10 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabLongClick(userid: Long) {
         if (isfollow.value!!)
-            retrofitRepository.postunfollowUser(userid).subscribe({
+            retrofitRepository.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
-        else retrofitRepository.postfollowUser(userid, "private").subscribe({
+        else retrofitRepository.postFollowUser(userid, "private").subscribe({
             isfollow.value = true
         }, {}, {}).add()
     }

@@ -37,11 +37,13 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.adapters.PicListXAdapter
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
-import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
+import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
+import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserIllustBinding
+import com.perol.asdpl.pixivez.fragments.BaseFragment
+import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.IllustFilter
+import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -69,8 +71,8 @@ class UserIllustFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            picListBtnAdapter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
-            picListBtnAdapter.blockTags = blockTags
+            picListBtnAdapter.filter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
+            picListBtnAdapter.filter.blockTags = blockTags
             picListBtnAdapter.notifyDataSetChanged()
         }
     }
@@ -81,7 +83,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     fun lazyLoad() {
-        picListBtnAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picListBtnAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
         binding.mrefreshlayout.setOnRefreshListener {
@@ -106,7 +108,7 @@ class UserIllustFragment : BaseFragment() {
         }
         viewModel = ViewModelProvider(this).get(UserMillustViewModel::class.java)
 
-        viewModel.nexturl.observe(this){
+        viewModel.nextUrl.observe(this){
             if (it.isNullOrEmpty()) {
                 picListBtnAdapter.loadMoreEnd()
             } else {
@@ -126,7 +128,7 @@ class UserIllustFragment : BaseFragment() {
                 picListBtnAdapter.addData(it)
                 picListBtnAdapter.loadMoreComplete()
             } else {
-                picListBtnAdapter.loadMoreModule?.loadMoreFail()
+                picListBtnAdapter.loadMoreModule.loadMoreFail()
             }
         }
     }
@@ -137,26 +139,27 @@ class UserIllustFragment : BaseFragment() {
     }
 
     lateinit var viewModel: UserMillustViewModel
+    lateinit var filter: IllustFilter
     private lateinit var viewActivity: UserMActivity
 
-    private lateinit var picListBtnAdapter: PicListXAdapter
+    private lateinit var picListBtnAdapter: PicItemAdapterBase
     private lateinit var binding: FragmentUserIllustBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        filter = IllustFilter(isR18on,
+                blockTags,
+                PreferenceManager.getDefaultSharedPreferences(requireActivity())
+                    .getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0))
         // Inflate the layout for this fragment
-        picListBtnAdapter = PicListXAdapter(
+        picListBtnAdapter = PicListXBtnAdapter(
             R.layout.view_recommand_item,
             null,
-            isR18on,
-            blockTags,
-            PreferenceManager.getDefaultSharedPreferences(requireActivity())
-                .getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
+            filter
         )
-
-		binding = FragmentUserIllustBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentUserIllustBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 

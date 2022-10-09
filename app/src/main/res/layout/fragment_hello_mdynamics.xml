@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.hellom.HelloMDynamicsFragment">
+    tools:context=".fragments.hellom.HelloMTrendingFragment">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -18,7 +18,6 @@
             android:orientation="horizontal">
 
             <com.google.android.material.tabs.TabLayout
-                android:layout_alignParentBottom="true"
                 android:id="@+id/tablayout_rankingm"
                 style="@style/Widget.MaterialComponents.TabLayout.Colored"
                 android:layout_width="0dp"

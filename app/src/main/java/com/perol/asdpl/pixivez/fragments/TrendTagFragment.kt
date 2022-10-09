@@ -40,11 +40,11 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
-import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
-import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.responses.Illust
-import io.reactivex.disposables.CompositeDisposable
 import com.perol.asdpl.pixivez.databinding.TrendTagFragmentBinding
+import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.viewmodel.TrendTagViewModel
+import io.reactivex.disposables.CompositeDisposable
+
 class TrendTagFragment : Fragment() {
     private val mDisposable = CompositeDisposable()
 

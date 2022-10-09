@@ -52,25 +52,17 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMViewPagerAdapter
 import com.perol.asdpl.pixivez.databinding.AppBarHelloMBinding
-import com.perol.asdpl.pixivez.dialog.SupportDialog
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMDynamicsFragment
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMainFragment
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.coroutines.runBlocking
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -332,71 +324,11 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         ActivityCompat.requestPermissions(this, permissions, 3000)
     }
 
-    fun getFragmentContent(position: Int): Fragment {
-        if(fragments[position] == null)
-            return when (position) {
-            0 -> {
-                HelloMainFragment.newInstance("s", "s")
-            }
-            1 -> {
-                HelloMDynamicsFragment.newInstance("d")
-            }
-            2 -> {
-                HelloMThFragment.newInstance("d", "c")
-            }
-            else -> {
-                HelloMThFragment.newInstance("d", "c")
-            }
-        }
-        else
-            return fragments[position]!!
-    }
-
     private fun initView() {
         binding.tablayoutHellom.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMViewPagerAdapter(supportFragmentManager)
 
         binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true)) 0 else 3
-        /*tablayout_hellom.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    0 -> {
-                    }
-                    1 -> {
-                    }
-                    else -> {
-                    }
-                }
-                when {
-                    curFragment == null -> {
-                        getFragmentContent(tab.position).let {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.binding.contentView, it).commit()
-                        }
-                    }
-                    fragments[tab.position] == null -> {
-                        getFragmentContent(tab.position).let {
-                            fragments[tab.position] = it
-                            supportFragmentManager.beginTransaction().hide(curFragment!!)
-                                .add(R.id.binding.contentView, it).commit()
-                            curFragment = it
-                        }
-
-                    }
-                    else -> {
-                        supportFragmentManager.beginTransaction().hide(curFragment!!).show(fragments[tab.position]!!).commit()
-                        curFragment = fragments[tab.position]!!
-                    }
-                }
-            }
-
-        })*/
         for (i in 0..2) {
             val tabItem = binding.tablayoutHellom.getTabAt(i)!!
 

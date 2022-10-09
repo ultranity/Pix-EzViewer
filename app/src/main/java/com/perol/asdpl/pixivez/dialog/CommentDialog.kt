@@ -39,7 +39,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -53,16 +52,13 @@ import com.perol.asdpl.pixivez.adapters.CommentAdapter
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.IllustCommentsResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import okhttp3.ResponseBody
 import retrofit2.HttpException
-
+//TODO: Refactor
 class CommentDialog : DialogFragment() {
 
     val disposables = CompositeDisposable()
@@ -96,16 +92,11 @@ class CommentDialog : DialogFragment() {
         retrofitRepository.getIllustComments(id!!)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-            .subscribe(object : Observer<IllustCommentsResponse> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
-
-                override fun onNext(illustCommentsResponse: IllustCommentsResponse) {
+            .subscribe({
                     button.isClickable = true
                     commentAdapter = CommentAdapter(
                         R.layout.view_comment_item,
-                        illustCommentsResponse.comments,
+                        it.comments,
                         context
                     )
                     recyclerviewPicture.isNestedScrollingEnabled = false
@@ -119,8 +110,8 @@ class CommentDialog : DialogFragment() {
                         )
                     )
                     commentAdapter!!.setOnItemClickListener { adapter, view, position ->
-                        val builder = MaterialAlertDialogBuilder(activity!!)
-                        val comment = illustCommentsResponse.comments[position].comment
+                        val builder = MaterialAlertDialogBuilder(requireActivity())
+                        val comment = it.comments[position].comment
                         builder.setMessage(comment)
                         val dialog = builder.create()
                         dialog.show()
@@ -131,7 +122,7 @@ class CommentDialog : DialogFragment() {
                             val intent = Intent(context, UserMActivity::class.java)
                             intent.putExtra(
                                 "data",
-                                illustCommentsResponse.comments[position].user.id
+                                it.comments[position].user.id
                             )
 
                             if (PxEZApp.animationEnable) {
@@ -144,23 +135,23 @@ class CommentDialog : DialogFragment() {
                                 startActivity(intent)
                         }
                         if (view.id == R.id.reply_to_hit) {
-                            Parent_comment_id = illustCommentsResponse.comments[position].id
+                            Parent_comment_id = it.comments[position].id
                             edittextComment.hint =
-                                getString(R.string.reply_to) + ":" + illustCommentsResponse.comments[position].user.name
+                                getString(R.string.reply_to) + ":" + it.comments[position].user.name
                         }
                     }
-                    nextUrl = illustCommentsResponse.next_url
-                    commentAdapter?.loadMoreModule?.setOnLoadMoreListener {
+                    nextUrl = it.next_url
+                    commentAdapter!!.loadMoreModule.setOnLoadMoreListener {
                         if (!nextUrl.isNullOrBlank()) {
 
                             retrofitRepository.getNextIllustComments(
                                 nextUrl!!
                             ).subscribe({
-                                    commentAdapter?.addData(it.comments)
+                                    commentAdapter!!.addData(it.comments)
                                     nextUrl = it.next_url
-                                    commentAdapter?.loadMoreModule?.loadMoreComplete()
+                                    commentAdapter!!.loadMoreModule.loadMoreComplete()
                                 }, {
-                                    commentAdapter?.loadMoreModule?.loadMoreFail()
+                                    commentAdapter!!.loadMoreModule.loadMoreFail()
                                     it.printStackTrace()
                                 }, {
 
@@ -168,21 +159,11 @@ class CommentDialog : DialogFragment() {
                                     compositeDisposable.add(it)
                                 }).add()
                         } else {
-                            commentAdapter?.loadMoreModule?.loadMoreEnd()
+                            commentAdapter!!.loadMoreModule.loadMoreEnd()
                         }
                     }
                     button.setOnClickListener { commit() }
-
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-
-                override fun onComplete() {
-
-                }
-            })
+                },{},{}).add()
     }
 
     fun commit() {
@@ -191,58 +172,23 @@ class CommentDialog : DialogFragment() {
                 id!!,
                 edittextComment.text.toString(),
                 if (Parent_comment_id == 1) null else Parent_comment_id
-            )
-            .subscribe(object : Observer<ResponseBody> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
-
-                override fun onNext(responseBody: ResponseBody) {
-                    retrofitRepository.getIllustComments(
-                        id!!
-                    )
-                        .subscribe(object : Observer<IllustCommentsResponse> {
-                            override fun onSubscribe(d: Disposable) {
-                                compositeDisposable.add(d)
-                            }
-
-                            override fun onNext(illustCommentsResponse: IllustCommentsResponse) {
-
-                                commentAdapter!!.setNewData(illustCommentsResponse.comments)
-                                Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
-                                edittextComment.setText("")
-                                Parent_comment_id = 1
-                                edittextComment.hint = ""
-                            }
-
-                            override fun onError(e: Throwable) {
-                                if ((e as HttpException).response()!!.code() == 403) {
-
-                                    Toasty.warning(context!!, getString(R.string.rate_limited), Toast.LENGTH_SHORT)
-                                        .show()
-
-
-                                } else if (e.response()!!.code() == 404) {
-
-
-                                }
-                            }
-
-                            override fun onComplete() {
-
-                            }
-                        })
-
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-
-                override fun onComplete() {
-
-                }
-            })
+            ).subscribe({
+                retrofitRepository.getIllustComments(
+                    id!!
+                ).subscribe({
+                        commentAdapter!!.setNewData(it.comments)
+                        Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
+                        edittextComment.setText("")
+                        Parent_comment_id = 1
+                        edittextComment.hint = ""
+                    },{e->
+                        if ((e as HttpException).response()!!.code() == 403) {
+                            Toasty.warning(requireContext(), getString(R.string.rate_limited), Toast.LENGTH_SHORT)
+                                .show()
+                        } else if (e.response()!!.code() == 404) {
+                        }
+                    },{}) .add()
+            },{},{}).add()
 
 
     }

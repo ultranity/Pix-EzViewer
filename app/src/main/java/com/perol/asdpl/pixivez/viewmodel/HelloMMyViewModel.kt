@@ -30,15 +30,16 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 
 class HelloMMyViewModel : BaseViewModel() {
+    var isRefresh = MutableLiveData(false)
     var retrofitRepository = RetrofitRepository.getInstance()
-    val illusts = MutableLiveData<ArrayList<Illust>>()
-    val addillusts = MutableLiveData<ArrayList<Illust>>()
-    val nexturl = MutableLiveData<String>()
+    val illusts = MutableLiveData<ArrayList<Illust>?>()
+    val addillusts = MutableLiveData<ArrayList<Illust>?>()
+    val nextUrl = MutableLiveData<String>()
     val hideBookmarked = MutableLiveData<Boolean>()
 
     fun onLoadMoreRequested() {
-        retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
-            nexturl.value = it.next_url
+        retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
+            nextUrl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
         }, {
             addillusts.value = null
@@ -46,10 +47,13 @@ class HelloMMyViewModel : BaseViewModel() {
     }
 
     fun onRefreshListener(restrict: String) {
+        isRefresh.value = true
         retrofitRepository.getFollowIllusts(restrict).subscribe({
-            nexturl.value = it.next_url
+            nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}).add()
+        }, {
+            illusts.value = null
+           }, {isRefresh.value=false}).add()
     }
 
 }

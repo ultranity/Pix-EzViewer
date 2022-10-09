@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.networks
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.*
-import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import com.perol.asdpl.pixivez.networks.RestClient.imageProxySocket
 import okhttp3.OkHttpClient
@@ -40,8 +39,7 @@ class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<String, InputStream> {
 
         //添加拦截器到Glide
-        val builder = OkHttpClient.Builder()
-        .imageProxySocket()
+        val builder = OkHttpClient.Builder().imageProxySocket()
         val okHttpClient = builder.build()
         return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
     }

@@ -33,19 +33,18 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentSwiperefreshRecyclerviewBinding
+import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentRankingMBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -128,14 +127,14 @@ class RankingMFragment : BaseFragment(){
             }
         }
         viewmodel.illusts.observe(this){
-            binding.swiperefreshRankingm.isRefreshing = false
+            binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
-                picListBtnUserAdapter.setNewData(it)
+                picListBtnUserAdapter.setNewInstance(it)
             } else {
                 picListBtnUserAdapter.loadMoreFail()
             }
         }
-        viewmodel.nexturl.observe(this){
+        viewmodel.nextUrl.observe(this){
             if (it == null) {
                 picListBtnUserAdapter.loadMoreEnd()
             } else {
@@ -147,13 +146,13 @@ class RankingMFragment : BaseFragment(){
     var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.swiperefreshRankingm.setOnRefreshListener {
+        binding.swiperefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(param1!!, picDate)
         }
-        picListBtnUserAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picListBtnUserAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
-        binding.recyclerviewRankingm.apply{
+        binding.recyclerview.apply{
             layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
             adapter = picListBtnUserAdapter
             addItemDecoration(GridItemDecoration())
@@ -164,7 +163,7 @@ class RankingMFragment : BaseFragment(){
 
                 exitTime = System.currentTimeMillis()
             } else {
-                binding.recyclerviewRankingm.smoothScrollToPosition(0)
+                binding.recyclerview.smoothScrollToPosition(0)
             }
 
         }
@@ -179,7 +178,7 @@ class RankingMFragment : BaseFragment(){
         lazyLoad()
     }
 
-    private lateinit var binding: FragmentRankingMBinding
+    private lateinit var binding: FragmentSwiperefreshRecyclerviewBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -200,7 +199,7 @@ class RankingMFragment : BaseFragment(){
             }
         }
         picListBtnUserAdapter.addHeaderView(headerView)
-		binding = FragmentRankingMBinding.inflate(inflater, container, false)
+		binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)
 		return binding.root
     }
 

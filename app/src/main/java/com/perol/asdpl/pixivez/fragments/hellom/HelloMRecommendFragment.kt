@@ -50,13 +50,11 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.OKWebViewActivity
 import com.perol.asdpl.pixivez.activity.PixivsionActivity
-import com.perol.asdpl.pixivez.adapters.PicItemXUserAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListXUserAdapter
-import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
+import com.perol.asdpl.pixivez.adapters.*
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
+import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
+import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -81,11 +79,11 @@ private const val ARG_PARAM2 = "param2"
  */
 class HelloMRecommendFragment : BaseFragment() {
     override fun loadData() {
-        viewmodel.OnRefreshListener()
+        viewmodel.onRefreshListener()
     }
 
     override fun onResume() {
-        isLoaded = rankingAdapter.data.isNotEmpty()
+        isLoaded = picListXAdapter.data.isNotEmpty()
         super.onResume()
     }
 
@@ -96,30 +94,34 @@ class HelloMRecommendFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            rankingAdapter.blockTags = blockTags
-            rankingAdapter.notifyDataSetChanged()
+            picListXAdapter.filter.blockTags = blockTags
+            picListXAdapter.notifyDataSetChanged()
         }
     }
 
     private fun lazyLoad() {
-        viewmodel = ViewModelProvider(this).get(HelloMRecomModel::class.java)
+        viewmodel = ViewModelProvider(this)[HelloMRecomModel::class.java]
         viewmodel.illusts.observe(this) {
             binding.swiperefreshRecom.isRefreshing = false
-            rankingAdapter.setNewData(it)
-            binding.recyclerviewRecom.smoothScrollToPosition(0)
+            if (it != null) {
+                picListXAdapter.setNewInstance(it)
+                binding.recyclerviewRecom.smoothScrollToPosition(0)
+            } else {
+                picListXAdapter.loadMoreFail()
+            }
         }
         viewmodel.addillusts.observe(this) {
             if (it != null) {
-                rankingAdapter.addData(it)
+                picListXAdapter.addData(it)
             } else {
-                rankingAdapter.loadMoreFail()
+                picListXAdapter.loadMoreFail()
             }
         }
         viewmodel.nextUrl.observe(this) {
             if (it == null) {
-                rankingAdapter.loadMoreEnd()
+                picListXAdapter.loadMoreEnd()
             } else {
-                rankingAdapter.loadMoreComplete()
+                picListXAdapter.loadMoreComplete()
             }
         }
         viewmodel.banners.observe(this) {
@@ -142,7 +144,7 @@ class HelloMRecommendFragment : BaseFragment() {
                 }
                 banner.start()
             } else {
-                pixiVisionAdapter.setNewData(it)
+                pixiVisionAdapter.setNewInstance(it)
                 pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
                     val intent = Intent(context, OKWebViewActivity::class.java)
                     intent.putExtra("url", it[position].article_url)
@@ -172,16 +174,16 @@ class HelloMRecommendFragment : BaseFragment() {
         viewmodel.nextPixivisonUrl.observe(this) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
-                    pixiVisionAdapter.loadMoreModule?.loadMoreEnd()
+                    pixiVisionAdapter.loadMoreModule.loadMoreEnd()
                 } else {
-                    pixiVisionAdapter.loadMoreModule?.loadMoreComplete()
+                    pixiVisionAdapter.loadMoreModule.loadMoreComplete()
                 }
             }
         }
     }
 
 
-    private lateinit var rankingAdapter: PicItemXUserAdapter
+    private lateinit var picListXAdapter: PicItemAdapterBase
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var viewmodel: HelloMRecomModel
     private lateinit var banner: Banner
@@ -207,12 +209,12 @@ class HelloMRecommendFragment : BaseFragment() {
                 1 + context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = rankingAdapter
+            adapter = picListXAdapter
         }
         binding.swiperefreshRecom.setOnRefreshListener {
-            viewmodel.OnRefreshListener()
+            viewmodel.onRefreshListener()
         }
-        rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picListXAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMorePicRequested()
         }
 
@@ -227,7 +229,7 @@ class HelloMRecommendFragment : BaseFragment() {
             })
         } else {
             val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
-            pixiVisionAdapter.loadMoreModule?.setOnLoadMoreListener {
+            pixiVisionAdapter.loadMoreModule.setOnLoadMoreListener {
                 viewmodel.onLoadMoreBannerRequested()
             }
             /*val logo = LayoutInflater.from(requireContext()).inflate(R.layout.header_pixvision_logo, null)
@@ -284,29 +286,49 @@ class HelloMRecommendFragment : BaseFragment() {
 
     private lateinit var bannerView: View
     private lateinit var binding: FragmentRecommendBinding
+    private lateinit var filter: IllustFilter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        rankingAdapter =
-                //if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-               //         .getBoolean("show_user_img_main",true)){
-                        PicListXUserAdapter(
-                            R.layout.view_ranking_item_s,
-                            null,
-                            isR18on,
-                            blockTags,
-                            //singleLine = true,
-                            hideBookmarked = 0
-                        )
-                    /*} else {
-                        PicListBtnAdapter(
-                            R.layout.view_recommand_item,
-                            null,
-                            isR18on,
-                            blockTags,
-                            hideBookmarked = 0)
-                    }*/
+        filter = IllustFilter(isR18on)
+        picListXAdapter =
+            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                    .getBoolean("use_picX_layout_main",true)) {
+                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                        .getBoolean("show_user_img_main", true)
+                ) {
+                    PicListXUserAdapter(
+                        R.layout.view_ranking_item_s,
+                        null,
+                        filter
+                    )
+                } else {
+                    PicListXAdapter(
+                        R.layout.view_recommand_item_s,
+                        null,
+                        filter
+                    )
+                }
+            }
+            else {
+                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                        .getBoolean("show_user_img_main", true)
+                ) {
+                    PicListXBtnUserAdapter(
+                        R.layout.view_ranking_item,
+                        null,
+                        filter
+                    )
+                } else {
+                    PicListXBtnAdapter(
+                        R.layout.view_recommand_item,
+                        null,
+                        filter
+                    )
+                }
+            }
+        //picListXAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
                 .getBoolean("use_new_banner",true)){
             bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
@@ -317,7 +339,7 @@ class HelloMRecommendFragment : BaseFragment() {
         } else {
             bannerView = inflater.inflate(R.layout.header_recom, container, false)
         }
-        rankingAdapter.apply {
+        picListXAdapter.apply {
             addHeaderView(bannerView)
         }
 

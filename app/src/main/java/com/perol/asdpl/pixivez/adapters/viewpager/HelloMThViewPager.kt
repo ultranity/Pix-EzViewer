@@ -29,10 +29,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMMyFragment
 import com.perol.asdpl.pixivez.fragments.IllustratorFragment
+import com.perol.asdpl.pixivez.fragments.hellom.HelloMMyFragment
 
-class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager, var long: Long) :
+class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager, var userid: Long) :
     FragmentStatePagerAdapter(
         fragmentManager,
         BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
@@ -54,7 +54,7 @@ class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager
 
         }
         else -> {
-            IllustratorFragment.newInstance(long, true)
+            IllustratorFragment.newInstance(userid, true)
         }
 
     }

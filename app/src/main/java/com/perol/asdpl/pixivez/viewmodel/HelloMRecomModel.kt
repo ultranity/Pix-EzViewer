@@ -36,7 +36,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
-    val illusts = MutableLiveData<ArrayList<Illust>>()
+    val illusts = MutableLiveData<ArrayList<Illust>?>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
     val banners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
     val addbanners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>?>()
@@ -65,7 +65,7 @@ class HelloMRecomModel : BaseViewModel() {
            }, {}).add()
     }
 
-    fun OnRefreshListener() {
+    fun onRefreshListener() {
         Log.d("init","gettingRecommend")
         retrofitRepository.getRecommend().doAfterTerminate {
             retrofitRepository.getPixivison("all").subscribe({
@@ -79,6 +79,7 @@ class HelloMRecomModel : BaseViewModel() {
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {
             Log.d("init","getRecommend fail $it")
+            illusts.value = null
         }, {}).add()
     }
 }

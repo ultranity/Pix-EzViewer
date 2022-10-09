@@ -26,14 +26,12 @@
 package com.perol.asdpl.pixivez.repository
 
 import android.util.Log
-import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.perol.asdpl.pixivez.networks.ReFreshFunction
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.ReFreshFunction
 import com.perol.asdpl.pixivez.responses.*
 import com.perol.asdpl.pixivez.services.AppApiPixivService
-import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -50,8 +48,8 @@ class RetrofitRepository {
     var reFreshFunction: ReFreshFunction = ReFreshFunction.getInstance()
 
     init {
-        if (System.currentTimeMillis() - PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getLong("lastRefresh",0)
-                > 60 * 60 * 1000){
+        if (System.currentTimeMillis() - AppDataRepository.pre.getLong("lastRefresh",0)
+                > 59 * 60 * 1000){
             val init = Observable.just(1).flatMap{
                 //Log.d("init", "Observable init")
                 reFreshFunction.reFreshToken()
@@ -67,7 +65,7 @@ class RetrofitRepository {
 
     fun getUserIllusts(id: Long, type: String): Observable<IllustNext> = Request(appApiPixivService.getUserIllusts(id, type))
 
-    fun getIllustRecommended(id: Long): Observable<RecommendResponse> = Request(appApiPixivService.getIllustRecommended(id))
+    fun getIllustRelated(id: Long): Observable<RecommendResponse> = Request(appApiPixivService.getIllustRecommended(id))
 
     fun getIllustRanking(mode: String, pickdata: String?): Observable<IllustNext> = Request(appApiPixivService.getIllustRanking(mode, pickdata))
 
@@ -99,9 +97,9 @@ class RetrofitRepository {
 
     fun postUserProfileEdit(part: MultipartBody.Part): Observable<ResponseBody> = Request(appApiPixivService.postUserProfileEdit(part))
 
-    fun getUserFollower(long: Long): Observable<SearchUserResponse> = Request(appApiPixivService.getUserFollower(long))
+    fun getUserFollower(user_id: Long): Observable<SearchUserResponse> = Request(appApiPixivService.getUserFollower(user_id))
 
-    fun getUserFollowing(long: Long, restrict: String): Observable<SearchUserResponse> = Request(appApiPixivService.getUserFollowing(long, restrict))
+    fun getUserFollowing(user_id: Long, restrict: String): Observable<SearchUserResponse> = Request(appApiPixivService.getUserFollowing(user_id, restrict))
 
     fun getFollowIllusts(restrict: String): Observable<IllustNext> = Request(appApiPixivService.getFollowIllusts(restrict))
 
@@ -148,9 +146,9 @@ class RetrofitRepository {
 
     fun postUnlikeIllust(long: Long): Observable<ResponseBody> = Request(appApiPixivService.postUnlikeIllust(long))
 
-    fun postfollowUser(long: Long, restrict: String): Observable<ResponseBody> = Request(appApiPixivService.postFollowUser(long, restrict))
+    fun postFollowUser(long: Long, restrict: String): Observable<ResponseBody> = Request(appApiPixivService.postFollowUser(long, restrict))
 
-    fun postunfollowUser(long: Long): Observable<ResponseBody> = Request(appApiPixivService.postUnfollowUser(long))
+    fun postUnfollowUser(long: Long): Observable<ResponseBody> = Request(appApiPixivService.postUnfollowUser(long))
 
     fun getUgoiraMetadata(long: Long): Observable<UgoiraMetadataResponse> = Request(appApiPixivService.getUgoiraMetadata(long))
 

@@ -53,12 +53,12 @@ import kotlin.math.min
 
 // simple Adapter for image item with user imageView and heart icon
 //TODO: rename
-class PicListXUserAdapter(
+class PicListXBtnUserAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     filter: IllustFilter
 ) :
-    PicListXAdapter(layoutResId, data, filter), LoadMoreModule {
+    PicListXBtnAdapter(layoutResId, data, filter), LoadMoreModule {
 
     override fun viewPics(view: View, position: Int) {
         //super.viewPics(view, position)
@@ -114,16 +114,16 @@ class PicListXUserAdapter(
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
-        convertUser(holder, item)
 
-    }
-
-    private fun convertUser(
-        helper: BaseViewHolder,
-        item: Illust
-    ) {
-        val imageViewUser = helper.getView<NiceImageView>(R.id.imageview_user)
-        setUIFollow(item.user.is_followed, imageViewUser)
+        val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
+        if (item.user.is_followed) {
+            imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
+            //imageViewUser.alpha = 0.9F
+        }
+        else {
+            imageViewUser.setBorderColor(colorPrimary)//setBorderColor(colorPrimary)
+            //imageViewUser.alpha = 0.5F
+        }
         imageViewUser.setOnClickListener {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", item.user.id)
@@ -141,12 +141,12 @@ class PicListXUserAdapter(
         imageViewUser.setOnLongClickListener {
             val id = item.user.id
             if (!item.user.is_followed) {
-                InteractionUtil.follow(item) {
+                InteractionUtil.follow(item){
                     imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
                     //imageViewUser.alpha = 0.9F
                 }
             } else {
-                InteractionUtil.unfollow(item) {
+                InteractionUtil.unfollow(item){
                     imageViewUser.setBorderColor(colorPrimary)
                     //imageViewUser.alpha = 0.5F
                 }
@@ -172,5 +172,6 @@ class PicListXUserAdapter(
                     }
                 }
             })
+
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="week">
+    <string-array name="restrict_type">
         <item>すべて</item>
         <item>公開</item>
         <item>非公開</item>

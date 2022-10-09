@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SpotlightAdapter
+import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Spotlight
@@ -39,12 +40,10 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
@@ -52,7 +51,8 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-// pixvision - deprecated
+// parsed pixvision - deprecated
+@Deprecated("use webview PixivisionActivity instead")
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
     private val retrofitRepository  = RetrofitRepository.getInstance()
@@ -82,17 +82,17 @@ private lateinit var binding: ActivitySpotlightBinding
             startActivity(intent)
         }
         val local = LanguageUtil.langToLocale(PxEZApp.language)
-        Observable.create(ObservableOnSubscribe<String> { emitter ->
+        Observable.create { emitter ->
             val builder = OkHttpClient.Builder()
             val okHttpClient = builder.build()
             val request = Request.Builder()
-                    .url(url)
+                .url(url)
                 .addHeader("Accept-Language", "${local.language}_${local.country}")
-                    .build()
+                .build()
             val response = okHttpClient.newCall(request).execute()
             val result = response.body!!.string()
             emitter.onNext(result)
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<String> {
                     override fun onSubscribe(d: Disposable) {
 
@@ -135,33 +135,33 @@ private lateinit var binding: ActivitySpotlightBinding
 
     private fun getspolight() {
 
-        Observable.create(ObservableOnSubscribe<IllustDetailResponse> { emitter ->
+        Observable.create { emitter ->
             num = 0
             for (id in reurls) {
                 num += 1
                 retrofitRepository.getIllust(id.toLong())
-                        .subscribe(object : Observer<IllustDetailResponse> {
-                            override fun onSubscribe(d: Disposable) {
+                    .subscribe(object : Observer<IllustDetailResponse> {
+                        override fun onSubscribe(d: Disposable) {
 
-                            }
+                        }
 
-                            override fun onNext(illustDetailResponse: IllustDetailResponse) {
-                                emitter.onNext(illustDetailResponse)
+                        override fun onNext(illustDetailResponse: IllustDetailResponse) {
+                            emitter.onNext(illustDetailResponse)
 
 
-                            }
+                        }
 
-                            override fun onError(e: Throwable) {
+                        override fun onError(e: Throwable) {
 
-                            }
+                        }
 
-                            override fun onComplete() {
+                        override fun onComplete() {
 
-                            }
-                        })
+                        }
+                    })
 
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<IllustDetailResponse> {
                     override fun onSubscribe(d: Disposable) {
 
@@ -210,7 +210,7 @@ private lateinit var binding: ActivitySpotlightBinding
                 img = m_image.group()
                 val m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img)
                 while (m.find()) {
-                    pics.add(m.group(1))
+                    m.group(1)?.let { pics.add(it) }
                 }
             }
             return pics

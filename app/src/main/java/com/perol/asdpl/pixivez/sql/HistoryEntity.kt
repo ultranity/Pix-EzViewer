@@ -63,7 +63,7 @@ class DownUserEntity constructor(
         @ColumnInfo(name = "totalillust")
         var totalillust: Long,
         @ColumnInfo(name = "username")
-        var nexturl: String
+        var nextUrl: String
 
 ) {
     @PrimaryKey(autoGenerate = true)

@@ -28,8 +28,8 @@ package com.perol.asdpl.pixivez.adapters.viewpager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMDynamicsFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMThFragment
+import com.perol.asdpl.pixivez.fragments.hellom.HelloMTrendingFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMainFragment
 
 class HelloMViewPagerAdapter(fragmentManager: FragmentManager) :
@@ -44,7 +44,7 @@ class HelloMViewPagerAdapter(fragmentManager: FragmentManager) :
                     HelloMainFragment.newInstance("s", "s")
                 }
                 1 -> {
-                    HelloMDynamicsFragment.newInstance("d")
+                    HelloMTrendingFragment.newInstance("d")
                 }
                 2 -> {
                     HelloMThFragment.newInstance("d", "c")

@@ -27,7 +27,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,12 +39,11 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.RinkActivity
+import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
-import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -79,7 +77,7 @@ class ImgManagerActivity : RinkActivity() {
         viewModel.layoutManager = binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
         viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
         viewModel.path.observe(this){
-            binding.swiperefresh.isRefreshing = true
+            binding.swiperefreshLayout.isRefreshing = true
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
                     it
@@ -88,12 +86,12 @@ class ImgManagerActivity : RinkActivity() {
                 viewModel.task = viewModel.files!!.map { renameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()
-                    binding.swiperefresh.isRefreshing = false
+                    binding.swiperefreshLayout.isRefreshing = false
                     ImgManagerAdapter.setNewData(viewModel.files)
                 }
             }).start()
         }
-        binding.swiperefresh.setOnRefreshListener {
+        binding.swiperefreshLayout.setOnRefreshListener {
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
                     viewModel.path.value!!
@@ -102,7 +100,7 @@ class ImgManagerActivity : RinkActivity() {
                 viewModel.task = viewModel.files!!.map { renameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()
-                    binding.swiperefresh.isRefreshing = false
+                    binding.swiperefreshLayout.isRefreshing = false
                     ImgManagerAdapter.setNewData(viewModel.files)
                 }
             }).start()

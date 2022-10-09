@@ -1,103 +1,85 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019 Perol_Notsfsssf
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE
+ */
+
 package com.perol.asdpl.pixivez.fragments
 
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import java.util.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
+import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
+import kotlinx.coroutines.runBlocking
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
-abstract class BaseFragment<Layout : ViewDataBinding> : Fragment() {
-    protected lateinit var rootView: View
-    protected lateinit var binding: Layout
-    protected var className = javaClass.simpleName + " "
-    protected var mLayoutID = -1
-    protected lateinit var mActivity: FragmentActivity
-    protected lateinit var mContext: Context
-    private var isVertical = false
-    protected var isInit = false
-    protected var uuid: String = UUID.randomUUID().toString()
+abstract class BaseFragment: Fragment() {
+    var isR18on = false
+    var blockTags = emptyList<String>()
+    var isLoaded = false
 
-    init {
-        Log.d(className, " new Fragment instance uuid:$uuid")
+    override fun onResume() {
+        super.onResume()
+        if (!isLoaded) {
+            isLoaded = true
+            loadData()
+        }
     }
 
+    protected abstract fun loadData()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: AdapterRefreshEvent) {
+
+    }
+
+    lateinit var blockViewModel: BlockViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().register(this)
+        isR18on = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+            .getBoolean("r18on", false)
+        blockViewModel = ViewModelProvider(requireActivity())[BlockViewModel::class.java]
         try {
-            mActivity = requireActivity()
-            mContext = requireContext()
-            val bundle = arguments
-            bundle?.let { initBundle(it) }
-            val intent = mActivity.intent
-            if (intent != null) {
-                val activityBundle = intent.extras
-                activityBundle?.let { initActivityBundle(it) }
-            }
-            initModel()
-
-            //orientation
-            val orientation = resources.configuration.orientation
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                isVertical = false
-            } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                isVertical = true
+            runBlocking {
+                val result = blockViewModel.getAllTags()
+                blockTags = result.map {
+                    it.name
+                }
+                if (blockTags.isEmpty()) blockTags = emptyList()
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        try {
-            isInit = true
-            initLayout()
-            if (mLayoutID != -1) {
-                binding = DataBindingUtil.inflate(inflater, mLayoutID, container, false)
-                rootView = binding.root
-                initView()
-                initData()
-                return rootView
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        try {
-            rootView.tag = uuid
-            if (isVertical) {
-                vertical()
-            } else {
-                horizon()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    protected abstract fun initLayout()
-    protected fun initBundle(bundle: Bundle?) {}
-    protected fun initActivityBundle(bundle: Bundle?) {}
-    protected fun initView() {}
-    protected fun initData() {}
-    fun horizon() {}
-    fun vertical() {}
-    fun finish() {
-        mActivity.finish()
-    }
-
-    fun initModel() {}
 }
+

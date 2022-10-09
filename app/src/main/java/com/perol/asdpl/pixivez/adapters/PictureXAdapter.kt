@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.adapters
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.ComponentName
@@ -65,9 +66,11 @@ import com.bumptech.glide.request.target.Target
 import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.*
+import com.perol.asdpl.pixivez.activity.PictureActivity
+import com.perol.asdpl.pixivez.activity.SearchRActivity
+import com.perol.asdpl.pixivez.activity.UserMActivity
+import com.perol.asdpl.pixivez.activity.ZoomActivity
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
-import com.perol.asdpl.pixivez.databinding.ViewPicturexGifBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.responses.Illust
@@ -93,8 +96,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class PictureXAdapter(
@@ -258,6 +259,7 @@ class PictureXAdapter(
             var componentPackageName = ""
             var componentName = ""
             var isGoogleTranslateEnabled = false
+            //check google translate
             for (resolveInfo: ResolveInfo in mContext.packageManager.queryIntentActivities(
                 intent,
                 0
@@ -295,8 +297,8 @@ class PictureXAdapter(
             }
 
             tagFlowLayout.apply {
-
                 adapter = object : TagAdapter<Tag>(illust.tags) {
+                    @SuppressLint("SetTextI18n")
                     override fun getView(parent: FlowLayout, position: Int, t: Tag): View {
                         val tv = LayoutInflater.from(context)
                             .inflate(R.layout.picture_tag, parent, false)
@@ -392,24 +394,7 @@ class PictureXAdapter(
                 }
             imageButtonDownload.setOnLongClickListener {
                 //show detail of illust
-                val detailstring =
-                        //"caption: " + illust.caption.toString() + "create_date: " + illust.create_date.toString() +
-                        //"width: " + illust.width.toString() + "height: " + illust.height.toString() + "id: " + illust.id.toString()
-                        //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
-                        //"user: " + illust.user.toString() + "tags: " + illust.tags.toString() + "title: " + illust.title.toString() +
-                        //"total_bookmarks: " + illust.total_bookmarks.toString() + "total_view: " + illust.total_view.toString() +
-                         //"meta_pages: " + illust.meta_pages.toString() + "\n" +
-                         //"meta_single_page: " + illust.meta_single_page.toString() + "\n" +
-                        "user account: " + illust.user.account + "\n" +
-                        "tools: " + illust.tools.toString() + "\n" +
-                        "type: " + illust.type + "\n" +
-                        "page_count: " + illust.page_count.toString() + "\n" +
-                        "visible: " + illust.visible.toString() + "\n" +
-                        "is_muted: " + illust.is_muted.toString() + "\n" +
-                        "sanity_level: " + illust.sanity_level.toString() + "\n" +
-                        "restrict: " + illust.restrict.toString() + "\n" +
-                        "x_restrict: " + illust.x_restrict.toString() + "\n" +
-                        "isDownloaded: " + FileUtil.isDownloaded(illust).toString()
+                val detailstring =InteractionUtil.toDetailString(illust, false)
                 MaterialAlertDialogBuilder(mContext as Activity)
                     .setMessage(detailstring)
                     .setTitle("Detail")
@@ -421,14 +406,13 @@ class PictureXAdapter(
         }
     }
 
-    class RelativeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun updateWithPage(s: RelativePictureAdapter, mContext: Context) {
-            recyclerView.layoutManager = GridLayoutManager(mContext, 3)
+    class RelatedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun updateWithPage(s: RelatedPictureAdapter, mContext: Context) {
+            recyclerView.layoutManager = GridLayoutManager(mContext, 1+2*mContext.resources.configuration.orientation)
             recyclerView.adapter = s
-
         }
 
-        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_relative)!!
+        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_related)!!
 
     }
 
@@ -452,7 +436,7 @@ class PictureXAdapter(
             ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.view_picturex_relative, parent, false)
-                return RelativeHolder(view)
+                return RelatedHolder(view)
             }
             else -> {
                 val binding = ViewPicturexDetailBinding.inflate(
@@ -499,6 +483,7 @@ class PictureXAdapter(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val position = holder.bindingAdapterPosition
         when(holder) {
             is PictureViewHolder -> {
                 val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
@@ -542,17 +527,7 @@ class PictureXAdapter(
                         val builder = MaterialAlertDialogBuilder(mContext as Activity)
                         builder.setTitle(mContext.resources.getString(R.string.saveselectpic1))
                         //show detail of illust
-                        val detailstring = "描述: " + Html.fromHtml(data.caption) + "\n" +
-                                "user account: " + data.user.account + "\n" +
-                                "tools: " + data.tools.toString() + "\n" +
-                                "type: " + data.type + "\n" +
-                                "page_count: " + data.page_count.toString() + "\n" +
-                                "visible: " + data.visible.toString() + "\n" +
-                                "is_muted: " + data.is_muted.toString() + "\n" +
-                                "sanity_level: " + data.sanity_level.toString() + "\n" +
-                                "restrict: " + data.restrict.toString() + "\n" +
-                                "x_restrict: " + data.x_restrict.toString()+ "\n" +
-                                "isDownloaded: " + FileUtil.isDownloaded(data).toString()
+                        val detailstring = InteractionUtil.toDetailString(data)
                         builder.setMessage(detailstring)
                         builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
                             TToast.startDownload()
@@ -820,9 +795,9 @@ class PictureXAdapter(
             }
             is DetailViewHolder ->
                 holder.updateWithPage(mContext, data, mViewCommentListen,mBookmarkedUserListen, mUserPicLongClick)
-            is RelativeHolder -> {
+            is RelatedHolder -> {
 //            aboutPictureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
-                holder.updateWithPage(relativePictureAdapter, mContext)
+                holder.updateWithPage(relatedPictureAdapter, mContext)
             }
         }
     }
@@ -847,7 +822,7 @@ class PictureXAdapter(
         }
         Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成", Toast.LENGTH_SHORT).show()
         return Observable.create<Int> {
-            listFiles.sortWith(Comparator { o1, o2 -> o1.name.compareTo(o2.name) })
+            listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
             val gifEncoder = GifEncoder()
             for (i in listFiles.indices) {
                 if (listFiles[i].isFile) {
@@ -879,16 +854,16 @@ class PictureXAdapter(
     var duration: Int = 50
     private var gifProgressBar: CircleProgressBar? = null
     var imageViewGif: AnimationView? = null
-    private val relativePictureAdapter = RelativePictureAdapter(R.layout.view_relativepic_item)
-    fun setRelativeNow(it: ArrayList<Illust>) {
+    private val relatedPictureAdapter = RelatedPictureAdapter(R.layout.view_relatedpic_item)
+    fun setRelatedPics(it: ArrayList<Illust>) {
         if (it.isEmpty()) {
             return
         }
         val list = it.map { it.image_urls.square_medium }.toMutableList()
 
 
-        relativePictureAdapter.setNewData(list)
-        relativePictureAdapter.setOnItemClickListener { adapter, view, position ->
+        relatedPictureAdapter.setNewData(list)
+        relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             //val id = it[position].id
             //val arrayList = ArrayList<Long>()
@@ -925,7 +900,7 @@ class PictureXAdapter(
         val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
         val parentFile = File(parentPath)
         val listFiles = parentFile.listFiles()!!
-        listFiles.sortWith(Comparator { o1, o2 -> o1.name.compareTo(o2.name) })
+        listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
         val result = listFiles.map {
             it.path
         }

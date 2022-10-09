@@ -43,7 +43,7 @@ import java.io.File
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
-    val aboutPics = MutableLiveData<ArrayList<Illust>>()
+    val relatedPics = MutableLiveData<ArrayList<Illust>>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()
     var tags = MutableLiveData<BookMarkDetailResponse.BookmarkDetailBean>()
@@ -118,26 +118,19 @@ class PictureXViewModel : BaseViewModel() {
     fun firstGet(param2: Illust){
             illustDetail.value = param2
             likeIllust.value = param2.is_bookmarked
-            Thread(Runnable {
+            Thread {
                 val ee = appDatabase.illusthistoryDao().getHistoryOne(param2.id)
                 if (ee.isNotEmpty()) {
                     appDatabase.illusthistoryDao().deleteOne(ee[0])
-                    appDatabase.illusthistoryDao().insert(
-                        IllustBeanEntity(
-                            null,
-                            param2.image_urls.square_medium,
-                            param2.id
-                        )
+                }
+                appDatabase.illusthistoryDao().insert(
+                    IllustBeanEntity(
+                        null,
+                        param2.image_urls.square_medium,
+                        param2.id
                     )
-                } else
-                    appDatabase.illusthistoryDao().insert(
-                        IllustBeanEntity(
-                            null,
-                            param2.image_urls.square_medium,
-                            param2.id
-                        )
-                    )
-            }).start()
+                )
+            }.start()
         }
 
     fun firstGet(toLong: Long) {
@@ -148,21 +141,14 @@ class PictureXViewModel : BaseViewModel() {
                 val ee = appDatabase.illusthistoryDao().getHistoryOne(it.illust.id)
                 if (ee.isNotEmpty()) {
                     appDatabase.illusthistoryDao().deleteOne(ee[0])
-                    appDatabase.illusthistoryDao().insert(
-                        IllustBeanEntity(
-                            null,
-                            it.illust.image_urls.square_medium,
-                            it.illust.id
-                        )
+                }
+                appDatabase.illusthistoryDao().insert(
+                    IllustBeanEntity(
+                        null,
+                        it.illust.image_urls.square_medium,
+                        it.illust.id
                     )
-                } else
-                    appDatabase.illusthistoryDao().insert(
-                        IllustBeanEntity(
-                            null,
-                            it.illust.image_urls.square_medium,
-                            it.illust.id
-                        )
-                    )
+                )
             }.add()
         }, {
             Toasty.warning(
@@ -175,10 +161,9 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun getRelative(long: Long) {
-        disposables.add(retrofitRepository.getIllustRecommended(long).subscribe({
-
-            aboutPics.value = it.illusts as ArrayList<Illust>?
-        }, {}, {}))
+        retrofitRepository.getIllustRelated(long).subscribe({
+            relatedPics.value = it.illusts as ArrayList<Illust>?
+        }, {}, {}).add()
     }
 
     fun fabClick() {
@@ -188,17 +173,15 @@ class PictureXViewModel : BaseViewModel() {
         } else {
             "public"
         }
-        val postUnlikeIllust = retrofitRepository.postUnlikeIllust(id)
-        val postLikeIllust = retrofitRepository.postLikeIllustWithTags(id, x_restrict, null)
         if (illustDetail.value!!.is_bookmarked) {
-            postUnlikeIllust.subscribe({
+            retrofitRepository.postUnlikeIllust(id).subscribe({
                 likeIllust.value = false
                 illustDetail.value!!.is_bookmarked = false
             }, {
 
             }, {}, {}).add()
         } else {
-            postLikeIllust.subscribe({
+            retrofitRepository.postLikeIllustWithTags(id, x_restrict, null).subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
             }, {}, {}).add()
@@ -251,12 +234,12 @@ class PictureXViewModel : BaseViewModel() {
     fun likeUser() {
         val id = illustDetail.value!!.user.id
         if (!illustDetail.value!!.user.is_followed) {
-            retrofitRepository.postfollowUser(id, "public").subscribe({
+            retrofitRepository.postFollowUser(id, "public").subscribe({
                 followUser.value = true
                 illustDetail.value!!.user.is_followed = true
             }, {}, {}).add()
         } else {
-            retrofitRepository.postunfollowUser(id).subscribe({
+            retrofitRepository.postUnfollowUser(id).subscribe({
                 followUser.value = false
                 illustDetail.value!!.user.is_followed = false
             }, {}, {}

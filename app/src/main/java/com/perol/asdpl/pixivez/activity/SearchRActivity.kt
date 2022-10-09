@@ -35,10 +35,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.fragments.TrendTagFragment
-import com.perol.asdpl.pixivez.fragments.TrendTagViewModel
-import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
 import com.perol.asdpl.pixivez.databinding.ActivitySearchRBinding
+import com.perol.asdpl.pixivez.fragments.TrendTagFragment
+import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
+import com.perol.asdpl.pixivez.viewmodel.TrendTagViewModel
+
 class SearchRActivity : RinkActivity() {
     lateinit var searchRActivityFragment: SearchRActivityFragment
     lateinit var trendTagFragment: TrendTagFragment

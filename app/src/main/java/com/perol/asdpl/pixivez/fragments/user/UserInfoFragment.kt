@@ -38,13 +38,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
+import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.databindingadapter.GlideLoadImage
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
 import com.zhy.view.flowlayout.TagFlowLayout
-import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
-import java.util.*
 
 
 /**
@@ -60,10 +59,10 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initdata()
+        initData()
     }
 
-    private fun initdata() {
+    private fun initData() {
         binding.textViewTacomment.autoLinkMask = Linkify.WEB_URLS
         if (mParam1.user != null || mParam1.user.comment != "")
             binding.textViewTacomment.text = "${mParam1.user.account}:\r\n${mParam1.user.comment}"

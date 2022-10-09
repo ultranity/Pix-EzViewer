@@ -32,7 +32,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -41,17 +40,16 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import com.perol.asdpl.pixivez.dialog.SearchSectionDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -136,14 +134,14 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         }
         searchIllustAdapter.apply {
             val searchResultHeaderView = LayoutInflater.from(requireContext()).inflate(
-                R.layout.search_result_header, null
+                R.layout.header_search_result, null
             )
             searchResultHeaderView.findViewById<Spinner>(R.id.spinner_result).onItemSelectedListener =
                 this@SearchIllustFragment
             setHeaderView(searchResultHeaderView)
         }
         searchtext.text = param1
-        binding.recyclerviewIllust.apply {
+        binding.recyclerview.apply {
             adapter = searchIllustAdapter
             layoutManager =
                 StaggeredGridLayoutManager(1+ context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
@@ -167,7 +165,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                     else
                         param1 + " " + starnum[which].toString() + "users入り"
                     viewModel.firstSetData(query)
-                    binding.recyclerviewIllust.scrollToPosition(0)
+                    binding.recyclerview.scrollToPosition(0)
                 }
             builder.create().show()
         }
@@ -179,10 +177,10 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 }
             }.show(childFragmentManager)
         }
-        searchIllustAdapter.loadMoreModule?.setOnLoadMoreListener {
+        searchIllustAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListen()
         }
-        binding.swiperefresh.setOnRefreshListener {
+        binding.swiperefreshLayout.setOnRefreshListener {
             runBlocking {
                 val user = AppDataRepository.getUser()
                 if (!user.ispro && selectSort == 2) {
@@ -206,7 +204,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
                     exitTime = System.currentTimeMillis()
                 } else {
-                    binding.recyclerviewIllust.smoothScrollToPosition(0)
+                    binding.recyclerview.smoothScrollToPosition(0)
                 }
 
             }
@@ -265,7 +263,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 searchIllustAdapter.loadMoreFail()
             }
         }
-        viewModel.nexturl.observe(this){
+        viewModel.nextUrl.observe(this){
             if (it == null) {
                 searchIllustAdapter.loadMoreEnd()
             } else {
@@ -276,7 +274,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             changeToBlue(it)
         }
         viewModel.isRefresh.observe(this){
-            binding.swiperefresh.isRefreshing = it
+            binding.swiperefreshLayout.isRefreshing = it
         }
         viewModel.hideBookmarked.observe(this){
             if (it != null) {

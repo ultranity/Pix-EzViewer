@@ -73,15 +73,15 @@ abstract class PicItemAdapter(
     abstract var blockTags: List<String>
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     fun loadMoreEnd() {
-        this.loadMoreModule?.loadMoreEnd()
+        this.loadMoreModule.loadMoreEnd()
     }
 
     fun loadMoreComplete() {
-        this.loadMoreModule?.loadMoreComplete()
+        this.loadMoreModule.loadMoreComplete()
     }
 
     fun loadMoreFail() {
-        this.loadMoreModule?.loadMoreFail()
+        this.loadMoreModule.loadMoreFail()
     }
 
     fun x_restrict(item: Illust): String{
@@ -97,11 +97,12 @@ abstract class PicItemAdapter(
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
-        this.loadMoreModule?.preLoadNumber = 12
+        this.loadMoreModule.preLoadNumber = 12
         colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
         colorPrimaryDark= ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
         badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
     }
+
     override fun convert(helper: BaseViewHolder, item: Illust) {
         if (((hideBookmarked == 1 && item.is_bookmarked) || (hideBookmarked == 3 && !item.is_bookmarked)) ||
                 (sortCoM == 1 && item.type !="manga") || (sortCoM == 2 && item.type =="manga") ||
@@ -204,7 +205,7 @@ abstract class PicItemAdapter(
             }
             else -> {
                 numLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, "CoM")
+                helper.setText(R.id.textview_num, "C"+item.meta_pages.size.toString())
             }
         }
         val mainImage = helper.getView<ImageView>(R.id.item_img)
@@ -252,7 +253,7 @@ abstract class PicItemAdapter(
         }
     }
     fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener, recyclerView: RecyclerView?) {
-        this.loadMoreModule?.setOnLoadMoreListener(onLoadMoreListener)
+        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 
     /*override fun addData(newData: Collection<Illust>) {

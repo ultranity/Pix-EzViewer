@@ -26,22 +26,17 @@
 package com.perol.asdpl.pixivez.fragments
 
 
-import com.perol.asdpl.pixivez.dialog.TagsBookMarkDialog
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-//import android.util.Log
 import android.util.Pair
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,16 +45,16 @@ import com.perol.asdpl.pixivez.activity.BlockActivity
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PictureXAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.dialog.CommentDialog
+import com.perol.asdpl.pixivez.dialog.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -189,27 +184,11 @@ class PictureXFragment : BaseFragment() {
                     binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
                 //else
                 //    binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                binding.imageViewUserPicX.setOnLongClickListener { ot->
-                    val id = it.user.id
-                    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
-                    if (it.user.is_followed) {
-                        retrofitRepository.postunfollowUser(id).subscribe({ pt->
-                            val typedValue = TypedValue()
-                            requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
-                            val colorPrimary = typedValue.resourceId
-                            it.user.is_followed = false
-                            binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                        }, {}, {}
-                        )
-                    } else {
-                        retrofitRepository.postfollowUser(id, "public").subscribe({ pt->
-                            it.user.is_followed = true
-                            binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
-                        }, {}, {})
-                    }
+                binding.imageViewUserPicX.setOnLongClickListener { _->
+                    pictureXViewModel.likeUser()
                     true
                 }
-                binding.imageViewUserPicX.setOnClickListener { ot ->
+                binding.imageViewUserPicX.setOnClickListener { _ ->
                     val intent = Intent(context, UserMActivity::class.java)
                     intent.putExtra("data", it.user.id)
 
@@ -232,8 +211,8 @@ class PictureXFragment : BaseFragment() {
                     parentFragmentManager.popBackStack()
             }
         }
-        pictureXViewModel.aboutPics.observe(this){
-                pictureXAdapter?.setRelativeNow(it)
+        pictureXViewModel.relatedPics.observe(this){
+                pictureXAdapter?.setRelatedPics(it)
         }
         pictureXViewModel.likeIllust.observe(this){
             if (it != null) {

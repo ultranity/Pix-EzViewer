@@ -144,16 +144,16 @@ class UserFollowActivity : RinkActivity() {
                             }
                         }
 
-                        userShowAdapter!!.loadMoreModule?.setOnLoadMoreListener {
+                        userShowAdapter!!.loadMoreModule.setOnLoadMoreListener {
                             if (Next_url != null) {
                                 retrofitRepository.getNextUser(Next_url!!)
                                     .subscribe{
                                             Next_url = it.next_url
                                             userShowAdapter!!.addData(it.user_previews)
-                                            userShowAdapter!!.loadMoreModule?.loadMoreComplete()
-                                        }
+                                            userShowAdapter!!.loadMoreModule.loadMoreComplete()
+                                        }.add()
                             } else {
-                                userShowAdapter!!.loadMoreModule?.loadMoreEnd()
+                                userShowAdapter!!.loadMoreModule.loadMoreEnd()
                             }
                         }
                     }
@@ -169,9 +169,12 @@ class UserFollowActivity : RinkActivity() {
 
     }
 
-    var compositeDisposable = CompositeDisposable()
+    var disposables = CompositeDisposable()
+    fun Disposable.add() {
+        disposables.add(this)
+    }
     override fun finish() {
-        compositeDisposable.clear()
+        disposables.clear()
         super.finish()
     }
     private fun initIllustData() {
@@ -180,19 +183,15 @@ class UserFollowActivity : RinkActivity() {
         recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
         recyclerviewusersearch!!.layoutManager = linearLayoutManager
         retrofitRepository.getIllustBookmarkUsers(illust_id)
-            .subscribe(object : Observer<ListUserResponse> {
-                override fun onSubscribe(d: Disposable) {
-
-                }
-                override fun onNext(listUserResponse: ListUserResponse) {
-                    Illustdata = listUserResponse
-                    Next_url = listUserResponse.next_url
+            .subscribe( {
+                    Illustdata = it
+                    Next_url = it.next_url
                     userListAdapter = UserListAdapter(R.layout.view_usershow_item)
                     recyclerviewusersearch!!.adapter = userListAdapter
-                    userListAdapter!!.setNewData(listUserResponse.users)
-                    userListAdapter!!.loadMoreModule?.setOnLoadMoreListener {
+                    userListAdapter!!.setNewData(it.users)
+                    userListAdapter!!.loadMoreModule.setOnLoadMoreListener {
                         if (Next_url == null) {
-                            userListAdapter!!.loadMoreModule?.loadMoreEnd()
+                            userListAdapter!!.loadMoreModule.loadMoreEnd()
                         }
                         else {
                             //retrofitRepository.getIllustBookmarkUsers(illust_id,
@@ -202,25 +201,16 @@ class UserFollowActivity : RinkActivity() {
                                     Illustdata = it
                                     Next_url = it.next_url
                                     userListAdapter!!.addData(it.users)
-                                    userListAdapter!!.loadMoreModule?.loadMoreComplete()
+                                    userListAdapter!!.loadMoreModule.loadMoreComplete()
                                 },{
-                                    userListAdapter?.loadMoreModule?.loadMoreFail()
+                                    userListAdapter!!.loadMoreModule.loadMoreFail()
                                     it.printStackTrace()
                                 },{},{
 
-                                })
+                                }).add()
                         }
                     }
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-
-                override fun onComplete() {
-
-                }
-            })
+                },{},{}).add()
     }
 
     private fun againrefresh() {

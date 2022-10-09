@@ -81,7 +81,7 @@ class PixivsionActivity : RinkActivity() {
                         val pixiviSionAdapter = PixiVisionAdapter(R.layout.view_pixivision_item, spotlightResponse.spotlight_articles, this@PixivsionActivity)
                         binding.recyclerviewPixivision.layoutManager = LinearLayoutManager(applicationContext)
                         binding.recyclerviewPixivision.adapter = pixiviSionAdapter
-                        pixiviSionAdapter.loadMoreModule?.setOnLoadMoreListener {
+                        pixiviSionAdapter.loadMoreModule.setOnLoadMoreListener {
                                 retrofitRepository.getNextPixivisionArticles(
                                     Nexturl!!
                                 )
@@ -96,11 +96,11 @@ class PixivsionActivity : RinkActivity() {
                                         }
 
                                         override fun onError(e: Throwable) {
-                                            pixiviSionAdapter.loadMoreModule?.loadMoreFail()
+                                            pixiviSionAdapter.loadMoreModule.loadMoreFail()
                                         }
 
                                         override fun onComplete() {
-                                            pixiviSionAdapter.loadMoreModule?.loadMoreComplete()
+                                            pixiviSionAdapter.loadMoreModule.loadMoreComplete()
                                         }
                                     })
                         }

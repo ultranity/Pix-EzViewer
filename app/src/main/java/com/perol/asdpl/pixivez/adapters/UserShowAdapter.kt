@@ -30,7 +30,6 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.util.Pair
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -51,7 +50,6 @@ import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.shehuan.niv.NiceImageView
-import java.util.ArrayList
 
 
 class UserShowAdapter(layoutResId: Int) :
@@ -68,7 +66,7 @@ class UserShowAdapter(layoutResId: Int) :
             if (PxEZApp.animationEnable) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(view.findViewById<View>(R.id.imageview_usershow), "UserImage")
+                    Pair.create(view.findViewById(R.id.imageview_usershow), "UserImage")
                 )
                 context.startActivity(intent, options.toBundle())
             } else
@@ -77,13 +75,13 @@ class UserShowAdapter(layoutResId: Int) :
     }
 
     @SuppressLint("SetTextI18n")
-    override fun convert(helper: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
-        val linearLayoutManager = LinearLayoutManager(helper.itemView.context, LinearLayoutManager.HORIZONTAL, false)
+    override fun convert(holder: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
+        val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
         val userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
-        //        helper.addOnClickListener(R.id.cardview_recommand).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
-        val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
-        val userImage = helper.getView<NiceImageView>(R.id.imageview_usershow)
-        val username = helper.getView<TextView>(R.id.textview_usershowname)
+        //        helper.addOnClickListener(R.id.cardview).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
+        val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
+        val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)
+        val username = holder.getView<TextView>(R.id.textview_usershowname)
         val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
         val badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
         if (item.user.isIs_followed)

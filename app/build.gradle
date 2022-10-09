@@ -181,38 +181,38 @@ dependencies {
 
     implementation 'com.arialyy.aria:core:3.8.12'
     kapt 'com.arialyy.aria:compiler:3.8.12'
-
-    implementation 'com.hyman:flowlayout-lib:1.1.2'
-    implementation 'io.noties.markwon:core:4.6.2'
-    implementation 'org.jsoup:jsoup:1.15.2'
     playImplementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     //implementation "com.mikepenz:aboutlibraries-core:8.9.4"
     libreImplementation "com.mikepenz:aboutlibraries:8.9.4"
     buglyImplementation "com.mikepenz:aboutlibraries:8.9.4"
-    implementation 'com.dinuscxj:circleprogressbar:1.3.0'
-    implementation 'com.github.SheHuan:NiceImageView:1.0.5'
+
+    implementation 'com.hyman:flowlayout-lib:1.1.2'
+    implementation 'io.noties.markwon:core:4.6.2'
+    implementation 'org.jsoup:jsoup:1.15.2'
     implementation 'net.lingala.zip4j:zip4j:2.11.1'
     implementation 'com.waynejo:androidndkgif:0.3.3'
-    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
-    // optional - Test helpers
+    implementation 'com.youth.banner:banner:1.4.10'
+    implementation 'com.dinuscxj:circleprogressbar:1.3.0'
+    implementation 'com.github.SheHuan:NiceImageView:1.0.5'
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.9'
+
     //implementation 'androidx.annotation:annotation:1.5.0'
+    //implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.10'
 
     def room_version = "2.4.3"
     implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
     // For Kotlin use kapt/ksp instead of annotationProcessor
-
+    kapt "androidx.room:room-compiler:$room_version"
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$room_version"
-
     // optional - RxJava support for Room
     implementation "androidx.room:room-rxjava2:$room_version"
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
-    //implementation 'org.jetbrains.kotlin:kotlin-reflect:1.3.31'
-
-    implementation 'com.youth.banner:banner:1.4.10'
 
     def lifecycle_version = "2.5.1"
     // ViewModel and LiveData
@@ -223,25 +223,20 @@ dependencies {
     // ViewModel utilities for Compose
     //implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
     // LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    //implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     // Annotation processor
     //kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-
     // optional - ReactiveStreams support for LiveData
-    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
+    //implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
 
-    def arch_version = "2.1.0"
+    //def arch_version = "2.1.0"
     // optional - Test helpers for LiveData
-    testImplementation "androidx.arch.core:core-testing:$arch_version"
+    //testImplementation "androidx.arch.core:core-testing:$arch_version"
 
-    //implementation 'com.esotericsoftware.kryo:kryo:2.24.0'
-    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
-    implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'jp.wasabeef:glide-transformations:4.3.0'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
     implementation "io.reactivex.rxjava2:rxjava:2.2.21"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -255,12 +250,15 @@ dependencies {
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.13.2'
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
+    implementation 'jp.wasabeef:glide-transformations:4.3.0'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.1'
-    //noinspection GradleCompatible
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.google.android.material:material:1.6.1'
     //implementation 'androidx.core:core:1.3.1'
     implementation "androidx.core:core-ktx:1.9.0"
@@ -274,7 +272,6 @@ dependencies {
     implementation "androidx.webkit:webkit:1.5.0"
     //implementation 'androidx.activity:activity:1.2.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // Material Dialogs: https://github.com/afollestad/material-dialogs
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
@@ -285,18 +282,16 @@ dependencies {
 
     implementation 'org.greenrobot:eventbus:3.3.1'
 
-    //buglyImplementation 'com.tencent.bugly:crashreport:4.0.4'
-    buglyImplementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'
 
-    implementation 'com.tencent:mmkv-static:1.2.6'
+    //implementation 'com.esotericsoftware.kryo:kryo:2.24.0'
+    implementation 'com.tencent:mmkv-static:1.2.14'
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.30'
 
-    implementation 'com.just.agentweb:agentweb:4.1.4'
-
-    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
-
+    //implementation 'com.just.agentweb:agentweb:4.1.4'
     //implementation 'net.gotev:cookie-store:1.5.0'
     //implementation 'net.gotev:cookie-store-okhttp:1.5.0'
+
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
@@ -308,13 +303,16 @@ dependencies {
     //implementation 'com.github.SherlockGougou:BigImageViewPager:androidx-6.0.2'
     //implementation 'me.jessyan:progressmanager:1.5.0'
 
-    //implementation 'com.google.android.play:core:1.7.2'
-    //implementation 'com.google.android.gms:play-services-wallet:18.0.0'
-
     //implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0.rc1'
     //implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0.rc1'
     //implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0.rc1'
     //implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0.rc1'
+
+    //playImplementation 'com.google.android.play:core:1.7.2'
+    //playImplementation 'com.google.android.gms:play-services-wallet:18.0.0'
+
+    //buglyImplementation 'com.tencent.bugly:crashreport:4.0.4'
+    buglyImplementation 'com.tencent.bugly:crashreport_upgrade:1.6.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

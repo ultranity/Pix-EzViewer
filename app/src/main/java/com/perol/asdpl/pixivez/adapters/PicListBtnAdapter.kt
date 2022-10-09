@@ -32,21 +32,17 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.module.LoadMoreModule
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
-
 
 // simple Adapter for image item, without user imageView
 //TODO: rename
@@ -59,9 +55,10 @@ class PicListBtnAdapter(
     override var hideDownloaded: Boolean = false,
     override var sortCoM: Int = 0
 ) :
-    PicItemAdapter(layoutResId, data?.toMutableList()), LoadMoreModule {
+    PicItemAdapter(layoutResId, data?.toMutableList()) {
 
     init {
+
         if (PxEZApp.CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
                 (this.data as ArrayList<Illust?>)[position]?.let {
@@ -76,7 +73,7 @@ class PicListBtnAdapter(
                             }, {}, {})
                     }
                     if (!item.user.is_followed) {
-                        retrofitRepository.postfollowUser(item.user.id, x_restrict(item)).subscribe({
+                        retrofitRepository.postFollowUser(item.user.id, x_restrict(item)).subscribe({
                             item.user.is_followed = true
                         }, {}, {})
                     }
@@ -137,24 +134,7 @@ class PicListBtnAdapter(
             setOnItemLongClickListener { adapter, view, position ->
                 //show detail of illust
                 (adapter.data as ArrayList<Illust?>)[position]?.let {
-                    val detailstring =
-                        "id: " + it.id.toString() +
-                                "caption: " + it.caption + "create_date: " + it.create_date +
-                                "width: " + it.width.toString() + "height: " + it.height.toString() +
-                                //+ "image_urls: " + illust.image_urls.toString() + "is_bookmarked: " + illust.is_bookmarked.toString() +
-                                "user: " + it.user.name +
-                                "tags: " + it.tags.toString() +// "title: " + illust.title.toString() +
-                                "total_bookmarks: " + it.total_bookmarks.toString() +
-                                "total_view: " + it.total_view.toString() +
-                                "user account: " + it.user.account + "\n" +
-                                "tools: " + it.tools.toString() + "\n" +
-                                "type: " + it.type + "\n" +
-                                "page_count: " + it.page_count.toString() + "\n" +
-                                "visible: " + it.visible.toString() + "\n" +
-                                "is_muted: " + it.is_muted.toString() + "\n" +
-                                "sanity_level: " + it.sanity_level.toString() + "\n" +
-                                "restrict: " + it.restrict.toString() + "\n" +
-                                "x_restrict: " + it.x_restrict.toString()
+                    val detailstring = InteractionUtil.toDetailString(it)
                     MaterialAlertDialogBuilder(context as Activity)
                         .setMessage(detailstring)
                         .setTitle("Detail")

@@ -41,12 +41,12 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
+import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
@@ -114,7 +114,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             adapter = picItemAdapter
             addItemDecoration(GridItemDecoration())
         }
-        picItemAdapter.loadMoreModule?.setOnLoadMoreListener {
+        picItemAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel!!.onLoadMoreListener()
         }
 
@@ -150,7 +150,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         viewModel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
         this.viewActivity = activity as UserMActivity
 
-        viewModel!!.nexturl.observe(this){
+        viewModel!!.nextUrl.observe(this){
             if (it.isNullOrEmpty()) {
                 picItemAdapter.loadMoreEnd()
             } else {
@@ -160,7 +160,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         viewModel!!.data.observe(this){
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
-                picItemAdapter.setNewData(it.toMutableList())
+                picItemAdapter.setNewInstance(it.toMutableList())
             }
 
         }
@@ -213,7 +213,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             val bundle = Bundle()
             bundle.putStringArrayList("tags", arrayList)
             bundle.putIntegerArrayList("counts", arrayList1)
-            bundle.putString("nexturl", viewModel!!.tags.value!!.next_url)
+            bundle.putString("nextUrl", viewModel!!.tags.value!!.next_url)
             bundle.putLong("id", param1!!)
             tagsShowDialog.arguments = bundle
             tagsShowDialog.show(childFragmentManager)

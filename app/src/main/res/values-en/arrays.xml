@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="week">
+    <string-array name="restrict_type">
         <item>All</item>
         <item>Public</item>
         <item>Private</item>
@@ -57,7 +57,7 @@
     </string-array>
     <string-array name="CollectMode">
         <item>Normal</item>
-        <item>Auto-like on download</item>
-        <item>Tap to download, like &amp; follow; long press for details</item>
+        <item>set like on download</item>
+        <item>Tap to download, like &amp; follow user; long press for pic details</item>
     </string-array>
 </resources>

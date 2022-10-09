@@ -35,10 +35,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.RankingMAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import java.util.*
 
 
@@ -49,11 +48,11 @@ private const val ARG_PARAM1 = "param1"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HelloMDynamicsFragment.newInstance] factory method to
+ * Use the [HelloMTrendingFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class HelloMDynamicsFragment : LazyFragment() {
+class HelloMTrendingFragment : LazyFragment() {
     override fun loadData() {
 
     }
@@ -168,7 +167,7 @@ class HelloMDynamicsFragment : LazyFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String) =
-            HelloMDynamicsFragment().apply {
+            HelloMTrendingFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
 

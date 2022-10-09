@@ -23,14 +23,13 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.objects
+package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import android.widget.Toast
 import androidx.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.AppApiPixivService
@@ -135,7 +134,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
         if(refreshing)
             return Observable.timer(2000,TimeUnit.MILLISECONDS)
         refreshing = true
-        var userEntity: UserEntity? = null
+        var userEntity: UserEntity?
 //                        TToast.retoken(PxEZApp.instance)
 
         runBlocking {
@@ -189,7 +188,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                 it.printStackTrace()
                     Toasty.info(
                         PxEZApp.instance,
-                        PxEZApp.instance.getString(R.string.refresh_token_fail)+":"+it.message,
+                        PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + it.message,
                         Toast.LENGTH_SHORT
                     ).show()
                 refreshing = false

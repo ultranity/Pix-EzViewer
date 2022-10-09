@@ -32,8 +32,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -41,11 +41,11 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMmyBinding
+import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentHelloMmyBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -81,7 +81,7 @@ class HelloMMyFragment : BaseFragment() {
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
     private fun lazyLoad() {
-        viewmodel = ViewModelProvider(this).get(HelloMMyViewModel::class.java)
+        viewmodel = ViewModelProvider(this)[HelloMMyViewModel::class.java]
         viewmodel.addillusts.observe(this){
             if (it != null) {
                 rankingAdapter.addData(it)
@@ -90,11 +90,15 @@ class HelloMMyFragment : BaseFragment() {
             }
         }
         viewmodel.illusts.observe(this){
-            binding.swiperefreshMym.isRefreshing = false
-            rankingAdapter.setNewData(it)
-            binding.recyclerviewMym.smoothScrollToPosition(0)
+            binding.swiperefreshLayout.isRefreshing = false
+            if (it == null) {
+                rankingAdapter.loadMoreFail()
+            } else {
+                rankingAdapter.setNewInstance(it)
+                binding.recyclerview.smoothScrollToPosition(0)
+            }
         }
-        viewmodel.nexturl.observe(this){
+        viewmodel.nextUrl.observe(this){
             if (it == null) {
                 rankingAdapter.loadMoreEnd()
             } else {
@@ -145,24 +149,24 @@ class HelloMMyFragment : BaseFragment() {
             blockTags,
             if(viewmodel.hideBookmarked.value!!) 1 else 0
         )
-        binding.recyclerviewMym.apply {
+        binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
                 1 + context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = rankingAdapter
         }
-        binding.swiperefreshMym.setOnRefreshListener {
+        binding.swiperefreshLayout.setOnRefreshListener {
                 viewmodel.onRefreshListener(restrict)
             }
-        rankingAdapter.loadMoreModule?.setOnLoadMoreListener {
+        rankingAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
         val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
         rankingAdapter.addHeaderView(headerView)
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = viewmodel.hideBookmarked.value!!
-            setOnCheckedChangeListener { compoundButton, state ->
+            setOnCheckedChangeListener { _, state ->
                 viewmodel.hideBookmarked.value = state
             }
         }
@@ -187,20 +191,19 @@ class HelloMMyFragment : BaseFragment() {
             }
 
         }
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_hellomth)?.getTabAt(0)
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(0)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    /*Toast.makeText(
+                    Toast.makeText(
                         PxEZApp.instance,
                         getString(R.string.back_to_the_top),
                         Toast.LENGTH_SHORT
-                    ).show()*/
+                    ).show()
                     exitTime = System.currentTimeMillis()
                 } else {
                     binding.recyclerviewMym.smoothScrollToPosition(0)
                 }
             }
-        binding.swiperefreshMym.isRefreshing = true
     }
 
     companion object {

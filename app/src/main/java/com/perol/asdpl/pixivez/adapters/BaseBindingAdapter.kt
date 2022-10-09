@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.adapters
 import android.app.Activity
 import android.app.Dialog
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -23,6 +24,10 @@ inline fun <reified VB : ViewBinding> Dialog.inflate() = lazy {
 @Suppress("UNCHECKED_CAST")
 inline fun <reified VB : ViewBinding> inflateBinding(layoutInflater: LayoutInflater) =
     VB::class.java.getMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as VB
+
+@Suppress("UNCHECKED_CAST")
+fun <VB : ViewBinding> BaseViewHolder.getBinding(bind: (View) -> VB): VB =
+    itemView.getTag(Int.MIN_VALUE) as? VB ?: bind(itemView).also { itemView.setTag(Int.MIN_VALUE, it) }
 
 abstract class BaseBindingAdapter<T, VB : ViewBinding>(layoutResId: Int, VBClass: KClass<*>, data: List<T>?) :
     BaseQuickAdapter<T, BaseVBViewHolder<VB>>(layoutResId, data?.toMutableList()) {
@@ -53,7 +58,7 @@ abstract class BaseBindingAdapter<T, VB : ViewBinding>(layoutResId: Int, VBClass
         return binding
     }
 
-    class BaseVBViewHolder<VB:ViewBinding>(binding: VB) : BaseViewHolder(binding.root) {
-        var bd: VB = binding
+    class BaseVBViewHolder<VB:ViewBinding>(bd: VB) : BaseViewHolder(bd.root) {
+        var binding: VB = bd
     }
 }

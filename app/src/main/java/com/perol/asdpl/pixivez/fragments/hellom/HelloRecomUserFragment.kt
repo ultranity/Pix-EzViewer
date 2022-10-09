@@ -31,14 +31,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
-import com.perol.asdpl.pixivez.objects.BaseFragment
-import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
 import com.perol.asdpl.pixivez.databinding.FragmentRecomUserBinding
+import com.perol.asdpl.pixivez.fragments.BaseFragment
+import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
+
 /**
  * A simple [Fragment] subclass.
  * Use the [HelloRecomUserFragment.newInstance] factory method to
@@ -57,18 +57,18 @@ class HelloRecomUserFragment : BaseFragment() {
             if (it != null) {
                 userShowAdapter.addData(it)
             } else {
-                userShowAdapter.loadMoreModule?.loadMoreFail()
+                userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
         viewmodel!!.data.observe(this){
             userShowAdapter.setNewData(it.toMutableList())
             binding.swipe.isRefreshing = false
         }
-        viewmodel!!.nexturl.observe(this){
+        viewmodel!!.nextUrl.observe(this){
             if (it != null) {
-                userShowAdapter.loadMoreModule?.loadMoreComplete()
+                userShowAdapter.loadMoreModule.loadMoreComplete()
             } else {
-                userShowAdapter.loadMoreModule?.loadMoreEnd()
+                userShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
 
@@ -78,7 +78,7 @@ class HelloRecomUserFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewmodel = ViewModelProvider(this).get(HelloRecomUserViewModel::class.java)
+        viewmodel = ViewModelProvider(this)[HelloRecomUserViewModel::class.java]
         lazyLoad()
     }
 
@@ -89,7 +89,7 @@ class HelloRecomUserFragment : BaseFragment() {
             adapter = userShowAdapter
             layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         }
-        userShowAdapter.loadMoreModule?.setOnLoadMoreListener {
+        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel!!.getNext()
         }
         binding.swipe.setOnRefreshListener {

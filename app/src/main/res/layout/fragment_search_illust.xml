@@ -8,12 +8,12 @@
     android:orientation="vertical"
     tools:context=".fragments.SearchIllustFragment">
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swiperefresh"
+            android:id="@+id/swiperefresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_illust"
+                android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/swiperefresh"
+        app:layout_anchor="@+id/swiperefresh_layout"
         android:src="@drawable/ic_action_search"
         app:layout_anchorGravity="right|bottom" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

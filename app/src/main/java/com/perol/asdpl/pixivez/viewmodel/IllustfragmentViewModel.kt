@@ -32,7 +32,6 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import java.util.*
-import kotlin.collections.ArrayList
 
 fun Calendar?.generateDateString(): String? {
     if (this == null) {
@@ -49,7 +48,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     var illusts = MutableLiveData<ArrayList<Illust>>()
     var addIllusts = MutableLiveData<ArrayList<Illust>>()
     var retrofitRepository = RetrofitRepository.getInstance()
-    var nexturl = MutableLiveData<String>()
+    var nextUrl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
     var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
@@ -65,7 +64,7 @@ class IllustfragmentViewModel : BaseViewModel() {
         retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
             .subscribe({
                 illusts.value = ArrayList(it.illusts)
-                nexturl.value = it.next_url
+                nextUrl.value = it.next_url
                 isRefresh.value = false
             }, {
                 it.printStackTrace()
@@ -92,7 +91,7 @@ class IllustfragmentViewModel : BaseViewModel() {
                 .subscribe({
                     illusts.value = if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
                                     else  ArrayList(it.illusts)
-                    nexturl.value = it.next_url
+                    nextUrl.value = it.next_url
                     isRefresh.value = false
                 }, {
                     it.printStackTrace()
@@ -100,11 +99,11 @@ class IllustfragmentViewModel : BaseViewModel() {
     }
 
     fun onLoadMoreListen() {
-        if (nexturl.value != null) {
-            retrofitRepository.getNextIllustRecommended(nexturl.value!!).subscribe({
+        if (nextUrl.value != null) {
+            retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
                 addIllusts.value =  if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
                                     else  ArrayList(it.illusts)
-                nexturl.value = it.next_url
+                nextUrl.value = it.next_url
             }, {
                 addIllusts.value = null
             }, {}).add()

@@ -225,6 +225,7 @@ class PictureXFragment : BaseFragment() {
             }
         }
         pictureXViewModel.followUser.observe(this){
+            binding.imageViewUserPicX.setBorderColor(if (it) Color.YELLOW else ThemeUtil.getColor(requireContext(), androidx.appcompat.R.attr.colorPrimary))
             pictureXAdapter?.setUserPicColor(it)
         }
         pictureXViewModel.progress.observe(this){

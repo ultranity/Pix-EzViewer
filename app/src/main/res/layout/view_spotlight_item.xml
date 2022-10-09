@@ -12,7 +12,7 @@
     <!--android:clickable="true"-->
     <!--android:paddingBottom="1dp">-->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardview_recommand"
+        android:id="@+id/cardview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

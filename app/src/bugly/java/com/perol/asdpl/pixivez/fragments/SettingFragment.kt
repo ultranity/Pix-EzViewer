@@ -172,6 +172,10 @@ class SettingFragment : PreferenceFragmentCompat() {
             snackbar_force_restart()
             true
         }
+        findPreference<SwitchPreference>("needactionbar")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbar_restart()
+            true
+        }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbar_restart()
             true

@@ -58,6 +58,7 @@ import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import com.perol.asdpl.pixivez.services.checkUpdate
 import java.io.File
 import java.io.FilenameFilter
 
@@ -67,7 +68,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        pre = PreferenceManager.getDefaultSharedPreferences(activity)
+        pre = activity?.let { PreferenceManager.getDefaultSharedPreferences(it) }!!
         defaultComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =
@@ -171,7 +172,15 @@ class SettingFragment : PreferenceFragmentCompat() {
             snackbar_force_restart()
             true
         }
+        findPreference<SwitchPreference>("needactionbar")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbar_restart()
+            true
+        }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbar_restart()
+            true
+        }
+        findPreference<SwitchPreference>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbar_restart()
             true
         }
@@ -180,13 +189,12 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbar_force_restart()
             true
         }
 
         findPreference<SwitchPreference>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -274,7 +282,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     }
 
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference?.key) {
             "me" -> {
                 try {
@@ -308,15 +316,16 @@ class SettingFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
             }
             "check" -> {
-                if (BuildConfig.ISGOOGLEPLAY) {
+                if (BuildConfig.FLAVOR != "bugly") {
                     try {
-                        val uri =
-                            Uri.parse("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
+                        val uri = Uri.parse("https://github.com/ultranity/Pix-EzViewer/releases/latest")
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     } catch (e: Exception) {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    checkUpdate()
                 }
             }
             "storepath1" -> {
@@ -496,7 +505,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true, context = context) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
                     pre.apply {

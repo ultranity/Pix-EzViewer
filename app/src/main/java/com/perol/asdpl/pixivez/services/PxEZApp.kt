@@ -41,15 +41,11 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
 //import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
-import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.tencent.bugly.Bugly
-import com.tencent.bugly.beta.Beta
-import com.tencent.bugly.crashreport.BuglyLog
 import java.io.File
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
@@ -116,7 +112,6 @@ class PxEZApp : Application() {
                 threadNum = pre.getString("thread_num", "2")!!.toInt()
             }
             appConfig.apply {
-                logLevel = 5
                 isNotNetRetry = true
             }
         }
@@ -174,18 +169,7 @@ class PxEZApp : Application() {
         language = pre.getString("language", "-1")?.toIntOrNull()
                     ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
 
-        Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
-        Beta.enableHotfix = false
-        Beta.initDelay = 1 * 1000;
-        //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
-        Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
-        if(BuildConfig.DEBUG)
-            Bugly.setAppChannel(this,"DeBug")
-        else
-            Bugly.setAppChannel(this,"InApp")
-        BuglyLog.d("settings", pre.all.toString())
-
+        initBugly(this)
         RxJavaPlugins.setErrorHandler {
             Log.e("onRxJavaErrorHandler", "${it.message}")
             it.printStackTrace()

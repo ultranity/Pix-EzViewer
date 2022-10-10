@@ -45,7 +45,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -55,6 +54,7 @@ import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMViewPagerAdapter
 import com.perol.asdpl.pixivez.databinding.AppBarHelloMBinding
+import com.perol.asdpl.pixivez.databinding.NavHeaderHelloMBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.repository.AppDataRepository
@@ -161,8 +161,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
-    private val fragments = Array<Fragment?>(3) {null}
-    private var curFragment :Fragment? = null
     private lateinit var binding: AppBarHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -199,55 +197,32 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
-        initView() //Listener
-        val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
-        binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)
-        /*if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
-            getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
-            }
-        else if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
-            binding.tablayoutHellom.getTabAt(position)!!.select()
-            getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().add(R.id.binding.contentView, it).commit()
-                    curFragment = it
-                    fragments[position] = it
-                    //supportFragmentManager.fragments.forEach(){ it ->
-                    //    supportFragmentManager.beginTransaction().remove(it).commit()
-                    //}
-            }
-        } else {
-            curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
-        }*/
-        val view = binding.navView.inflateHeaderView(R.layout.nav_header_hello_m)
-        val currentUserimageview = view.findViewById<ImageView>(R.id.imageView)
-        val headtext = view.findViewById<TextView>(R.id.headtext)
-        val textView = view.findViewById<TextView>(R.id.textView)
+        initView()
         var nowNum = PreferenceManager.getDefaultSharedPreferences(this).getInt("usernum", 0)
         if (nowNum >= allUser!!.size) {
             nowNum = 0
         }
-        GlideApp.with(currentUserimageview.context)
-            .load(allUser!![nowNum].userimage)
-            .circleCrop().into(currentUserimageview)
-        currentUserimageview.setOnClickListener {
-            runBlocking {
-                val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
-                intent.putExtra("data", AppDataRepository.getUser().userid)
+        initNavDrawer(allUser!![nowNum])
 
-                if (PxEZApp.animationEnable) {
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
-                        this@HelloMActivity,
-                        Pair.create(currentUserimageview, "UserImage")
-                    )
-                    startActivity(intent, options.toBundle())
-                } else
-                    startActivity(intent)
+        for (i in 0..2) {
+            val tabItem = binding.tablayoutHellom.getTabAt(i)!!
+
+            when (i) {
+                0 -> {
+                    tabItem.icon =
+                        ContextCompat.getDrawable(this, R.drawable.ic_action_home_white)
+                }
+                1 -> {
+                    tabItem.icon =
+                        ContextCompat.getDrawable(this, R.drawable.ic_action_ranking_white)
+                }
+                2 -> {
+                    tabItem.icon =
+                        ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
+                }
             }
-        }
 
-        headtext.text = allUser!![nowNum].username
-        textView.text = allUser!![nowNum].useremail
+        }
     }
 
     override fun onResume() {
@@ -301,6 +276,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             }
         })
     }
+
     override fun onStart() {
         super.onStart()
     }
@@ -324,30 +300,57 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         ActivityCompat.requestPermissions(this, permissions, 3000)
     }
 
+    private fun initNavDrawer(user: UserEntity) {
+        val header = NavHeaderHelloMBinding.bind(binding.navView.getHeaderView(0))
+        GlideApp.with(header.imageView.context)
+            .load(user.userimage)
+            .circleCrop().into(header.imageView)
+        header.imageView.setOnClickListener {
+            runBlocking {
+                val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
+                intent.putExtra("data", AppDataRepository.getUser().userid)
+
+                if (PxEZApp.animationEnable) {
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        this@HelloMActivity,
+                        Pair.create(header.imageView, "UserImage")
+                    )
+                    startActivity(intent, options.toBundle())
+                } else
+                    startActivity(intent)
+            }
+        }
+
+        header.headtext.text = user.username
+        header.textView.text = user.useremail
+    }
+
     private fun initView() {
         binding.tablayoutHellom.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMViewPagerAdapter(supportFragmentManager)
 
         binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true)) 0 else 3
-        for (i in 0..2) {
-            val tabItem = binding.tablayoutHellom.getTabAt(i)!!
 
-            when (i) {
-                0 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_home_white)
-                }
-                1 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_ranking_white)
-                }
-                2 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
-                }
+        val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
+        binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)
+        /*if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
+            getFragmentContent(position).let {
+                supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
             }
+        else if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
+            binding.tablayoutHellom.getTabAt(position)!!.select()
+            getFragmentContent(position).let {
+                supportFragmentManager.beginTransaction().add(R.id.binding.contentView, it).commit()
+                    curFragment = it
+                    fragments[position] = it
+                    //supportFragmentManager.fragments.forEach(){ it ->
+                    //    supportFragmentManager.beginTransaction().remove(it).commit()
+                    //}
+            }
+        } else {
+            curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
+        }*/
 
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

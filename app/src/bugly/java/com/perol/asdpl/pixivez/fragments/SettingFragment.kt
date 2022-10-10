@@ -180,6 +180,10 @@ class SettingFragment : PreferenceFragmentCompat() {
             snackbar_restart()
             true
         }
+        findPreference<SwitchPreference>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbar_restart()
+            true
+        }
         findPreference<SwitchPreference>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbar_restart()
             true
@@ -190,8 +194,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<SwitchPreference>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
-                .show()
+            snackbar_restart()
             true
         }
         findPreference<SwitchPreference>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->

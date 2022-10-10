@@ -39,6 +39,7 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -51,10 +52,12 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
-import io.reactivex.disposables.CompositeDisposable
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
+import com.perol.asdpl.pixivez.responses.ProfileImageUrls
+import com.perol.asdpl.pixivez.responses.User
+import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
@@ -84,7 +87,7 @@ class UserMActivity : RinkActivity() {
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
             Toasty.info(this, getString(R.string.uploading), Toast.LENGTH_SHORT).show()
-            disposables.add(viewModel.tryToChangeProfile(imagePath).subscribe({
+            viewModel.disposables.add(viewModel.tryToChangeProfile(imagePath).subscribe({
                 Toasty.info(this, getString(R.string.upload_success), Toast.LENGTH_SHORT)
                     .show()
             }, {
@@ -94,9 +97,7 @@ class UserMActivity : RinkActivity() {
         }
     }
 
-    val disposables = CompositeDisposable()
     override fun onDestroy() {
-        disposables.clear()
         menuD = null
         super.onDestroy()
     }
@@ -128,7 +129,7 @@ class UserMActivity : RinkActivity() {
         viewModel.userDetail.observe(this) {
             if (it != null) {
                 binding.fab.show()
-                disposables.add(viewModel.isuser(id).subscribe({
+                viewModel.disposables.add(viewModel.isuser(id).subscribe({
                     if (it) { //用户自己
                         binding.fab.hide()
                         viewModel.hideBookmarked.value = 0
@@ -179,7 +180,7 @@ class UserMActivity : RinkActivity() {
         }
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
         binding.imageviewUserimage.setOnClickListener {
-            disposables.add(viewModel.isuser(id).subscribe({
+            viewModel.disposables.add(viewModel.isuser(id).subscribe({
                 var array = resources.getStringArray(R.array.user_profile)
                 if (!it) {
                     array = array.copyOfRange(0, 2)
@@ -198,7 +199,7 @@ class UserMActivity : RinkActivity() {
                             ).show()
                         }
                         1 -> {
-                            runBlocking {
+                            lifecycleScope.launch(){
                                 var file: File
                                 withContext(Dispatchers.IO) {
                                     val f = GlideApp.with(this@UserMActivity).asFile()

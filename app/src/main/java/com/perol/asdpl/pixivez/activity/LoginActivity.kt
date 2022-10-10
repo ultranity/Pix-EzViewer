@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -34,8 +35,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
@@ -43,7 +46,6 @@ import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.ErrorResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
@@ -55,15 +57,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.*
 
 class LoginActivity : RinkActivity() {
-    private var username: String? = null
-    private var password: String? = null
+    //private var username: String? = null
+    //private var password: String? = null
     lateinit var sharedPreferencesServices: SharedPreferencesServices
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,14 +216,23 @@ class LoginActivity : RinkActivity() {
     fun showHelp(view: View) {
 //        val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
 //        startActivity(intent)
-        Toasty.info(this, this.resources.getString(R.string.registerclose), Toast.LENGTH_LONG)
+        Snackbar.make(view, getString(R.string.registerclose), Snackbar.LENGTH_LONG)
+            .setAction(R.string.view) {
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.pixiv.net")).also {
+                    it.resolveActivity(packageManager)?.run {
+                        startActivity(it)
+                    }
+                }
+            }
             .show()
     }
 
+@Deprecated("Deprecated in Java")
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     if (resultCode != 8080) return
     val code = data!!.getStringExtra("code")!!
+    sharedPreferencesServices.setString("last_login_code", code)
 
     val map = HashMap<String, Any>()
     map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
@@ -234,7 +244,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
     map["include_policy"] = true
 
     val oAuthSecureService =
-        RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
+        RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
     oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(object : Observer<PixivOAuthResponse> {
@@ -248,7 +258,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
             override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
                 val user = pixivOAuthResponse.response.user
-                GlobalScope.launch {
+                lifecycleScope.launch {
                     AppDataRepository.insertUser(
                         UserEntity(
                             user.profile_image_urls.px_170x170,

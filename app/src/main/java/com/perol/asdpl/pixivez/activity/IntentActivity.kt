@@ -29,6 +29,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.Pkce
@@ -42,7 +43,6 @@ import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.sql.UserEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -64,11 +64,13 @@ class IntentActivity : RinkActivity() {
                     val host = uri.host
                     if (!host.isNullOrBlank()) {
                         if (host.contains("account") && segment.contains("login")) {
+                            val code = uri.getQueryParameter("code").toString()
+                            sharedPreferencesServices.setString("last_login_code", code)
                             val map = HashMap<String, Any>()
                             map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
                             map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
                             map["grant_type"] = "authorization_code"
-                            map["code"] = uri.getQueryParameter("code").toString()
+                            map["code"] = code
                             map["code_verifier"] = Pkce.getPkce().verify
                             //map["username"] = username!!
                             //map["password"] = password!!
@@ -76,8 +78,7 @@ class IntentActivity : RinkActivity() {
                             map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
                             //map["get_secure_url"] = true
                             map["include_policy"] = true
-                            val oAuthSecureService =
-                                RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
+                            val oAuthSecureService = RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
                             oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnSubscribe {
@@ -89,7 +90,7 @@ class IntentActivity : RinkActivity() {
                                 }
                                 .doOnNext {pixivOAuthResponse: PixivOAuthResponse ->
                                     val user = pixivOAuthResponse.response.user
-                                    GlobalScope.launch {
+                                    lifecycleScope.launch {
                                         AppDataRepository.insertUser(
                                             UserEntity(
                                                 user.profile_image_urls.px_170x170,
@@ -97,7 +98,7 @@ class IntentActivity : RinkActivity() {
                                                 user.name,
                                                 user.mail_address,
                                                 user.isIs_premium,
-                                                "OAuth2",//pixivOAuthResponse.response.device_token,
+                                                code,//pixivOAuthResponse.response.device_token,
                                                 pixivOAuthResponse.response.refresh_token,
                                                 "Bearer " + pixivOAuthResponse.response.access_token
                                             )
@@ -113,7 +114,7 @@ class IntentActivity : RinkActivity() {
                                         try {
                                             val errorBody = e.response()?.errorBody()?.string()
                                             val gson = Gson()
-                                            val errorResponse = gson.fromJson<ErrorResponse>(
+                                            val errorResponse = gson.fromJson(
                                                 errorBody,
                                                 ErrorResponse::class.java
                                             )

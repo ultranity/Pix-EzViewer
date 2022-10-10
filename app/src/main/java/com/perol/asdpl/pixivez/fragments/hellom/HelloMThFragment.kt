@@ -31,11 +31,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.perol.asdpl.pixivez.R
+import androidx.lifecycle.lifecycleScope
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMThViewPager
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMthBinding
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,20 +50,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class HelloMThFragment : Fragment() {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        runBlocking {
-            val it = AppDataRepository.getUser()
-            val userid = it.userid
-            activity?.runOnUiThread {
-                binding.viewpagerHellomth.adapter =
-                    HelloMThViewPager(this@HelloMThFragment, childFragmentManager, userid)
-                binding.tablayoutHellomth.setupWithViewPager(binding.viewpagerHellomth)
-            }
 
-        }
-    }
-
+    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -86,6 +74,16 @@ class HelloMThFragment : Fragment() {
 		return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch{
+            val userid = AppDataRepository.getUser().userid
+
+            binding.viewpager.adapter =
+                HelloMThViewPager(this@HelloMThFragment, childFragmentManager, userid)
+            binding.tablayout.setupWithViewPager(binding.viewpager)
+        }
+    }
 
     companion object {
         /**

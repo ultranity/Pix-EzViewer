@@ -41,11 +41,11 @@ import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HelloRecomUserFragment.newInstance] factory method to
+ * Use the [HelloMRecomUserFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class HelloRecomUserFragment : BaseFragment() {
+class HelloMRecomUserFragment : BaseFragment() {
     override fun loadData() {
         viewmodel!!.reData()
     }
@@ -61,7 +61,7 @@ class HelloRecomUserFragment : BaseFragment() {
             }
         }
         viewmodel!!.data.observe(this){
-            userShowAdapter.setNewData(it.toMutableList())
+            userShowAdapter.setNewInstance(it.toMutableList())
             binding.swipe.isRefreshing = false
         }
         viewmodel!!.nextUrl.observe(this){
@@ -120,6 +120,6 @@ class HelloRecomUserFragment : BaseFragment() {
          */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            HelloRecomUserFragment()
+            HelloMRecomUserFragment()
     }
 }

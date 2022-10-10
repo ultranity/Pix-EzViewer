@@ -95,7 +95,7 @@ class HelloMMyFragment : BaseFragment() {
                 rankingAdapter.loadMoreFail()
             } else {
                 rankingAdapter.setNewInstance(it)
-                binding.recyclerview.smoothScrollToPosition(0)
+                binding.recyclerview.scrollToPosition(0)
             }
         }
         viewmodel.nextUrl.observe(this){
@@ -138,6 +138,9 @@ class HelloMMyFragment : BaseFragment() {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewmodel.isRefresh.observe(viewLifecycleOwner){
+            binding.swiperefreshLayout.isRefreshing = it
+        }
         viewmodel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
             .getBoolean(
                 "hide_bookmark_item_in_mmy", false
@@ -201,7 +204,7 @@ class HelloMMyFragment : BaseFragment() {
                     ).show()
                     exitTime = System.currentTimeMillis()
                 } else {
-                    binding.recyclerviewMym.smoothScrollToPosition(0)
+                    binding.recyclerview.scrollToPosition(0)
                 }
             }
     }

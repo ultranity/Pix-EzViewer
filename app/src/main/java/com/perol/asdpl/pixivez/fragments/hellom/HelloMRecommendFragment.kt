@@ -279,7 +279,7 @@ class HelloMRecommendFragment : BaseFragment() {
                     ).show()
                     exitTime = System.currentTimeMillis()
                 } else {
-                    binding.recyclerviewRecom.smoothScrollToPosition(0)
+                    binding.recyclerviewRecom.scrollToPosition(0)
                 }
             }
     }

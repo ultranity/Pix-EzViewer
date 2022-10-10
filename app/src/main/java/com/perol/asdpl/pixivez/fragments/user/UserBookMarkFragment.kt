@@ -132,7 +132,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 ).show()
                 exitTime = System.currentTimeMillis()
             } else {
-                binding.mrecyclerview.smoothScrollToPosition(0)
+                binding.mrecyclerview.scrollToPosition(0)
             }
 
         }

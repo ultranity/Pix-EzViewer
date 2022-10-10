@@ -269,7 +269,8 @@ class HelloMRecommendFragment : BaseFragment() {
 
             binding.swiperefreshRecom.isRefreshing = true
         }
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(0)
+        //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
+        ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
                     Toast.makeText(

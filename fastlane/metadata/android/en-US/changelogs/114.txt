@@ -1,0 +1,15 @@
+## 1.8.0->1.8.3:
+- [x] fix: login socket closed
+- [x] fix: new pid support (expand digits num from 8 to 9 for pid=99999999+)
+- [x] fix: some memory leaks
+- [x] fix: UI freeze when first start
+- [x] fix: redundant refresh when screen orientation change
+- [x] feature: new card UI(Long press download is also supported for the like(heart) icon, see Collection mode setting for detail )
+- [x] feature: dynamic span number in lists (depends on screen orientation)
+- [x] feature: mixed width card view for extreme wide pics (set full span if 2.1 x height < width)
+- [x] feature: download list now supports swipe refreshing
+- [x] feature: hide action bar in pic details for better UX (configurable)
+- [x] update: tweak tab layout in user details / in tablet
+- [x] update: better Cloudflare DNS resolving
+- [x] update: lib dependencies & use nonTransitiveRClass
+- [x] adjust: code cleanup & other tweaks

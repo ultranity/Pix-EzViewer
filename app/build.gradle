@@ -45,8 +45,8 @@ android {
         minSdkVersion 21
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 113
-        versionName "1.8.2"
+        versionCode 114
+        versionName "1.8.3"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
@@ -63,7 +63,6 @@ android {
             buildConfigField("Boolean", "ISGOOGLEPLAY", "true")
         }
         libre{
-            //Warning: not fully tested
             dimension "version"
             buildConfigField("Boolean", "ISGOOGLEPLAY", "false")
             applicationIdSuffix ".libre"

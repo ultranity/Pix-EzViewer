@@ -33,7 +33,7 @@ class IllustratorViewModel : BaseViewModel() {
     val userpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>>()
     val adduserpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>?>()
     val nextUrl = MutableLiveData<String>()
-    val refreshcomplete = MutableLiveData<Boolean>()
+    val isRefreshing = MutableLiveData(false)
 
     fun onLoadMore(string: String) {
         retrofitRepository.getNextUser(string).subscribe({
@@ -45,17 +45,17 @@ class IllustratorViewModel : BaseViewModel() {
     }
 
     fun onRefresh(user_id: Long, restrict: String, get_following: Boolean) {
-        refreshcomplete.value = false
+        isRefreshing.value = true
         if (get_following) {
             retrofitRepository.getUserFollowing(user_id, restrict).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nextUrl.value = it.next_url
-            }, {}, {refreshcomplete.value = true}).add()
+            }, {}, {isRefreshing.value = false}).add()
         } else {
             retrofitRepository.getUserFollower(user_id).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nextUrl.value = it.next_url
-            }, {}, {refreshcomplete.value = true}).add()
+            }, {}, {isRefreshing.value = false}).add()
         }
     }
 

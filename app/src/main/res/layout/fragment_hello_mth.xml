@@ -7,23 +7,15 @@
     android:orientation="vertical"
     tools:context=".fragments.hellom.HelloMThFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout"
+        style="@style/Widget.MaterialComponents.TabLayout.Colored"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tablayout_hellomth"
-            style="@style/Widget.MaterialComponents.TabLayout.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            app:tabIndicatorHeight="3dp" />
-
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="40dp"
+        app:tabIndicatorHeight="3dp" />
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager_hellomth"
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

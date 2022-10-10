@@ -138,7 +138,7 @@ class HelloMMyFragment : BaseFragment() {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewmodel.isRefresh.observe(viewLifecycleOwner){
+        viewmodel.isRefreshing.observe(viewLifecycleOwner){
             binding.swiperefreshLayout.isRefreshing = it
         }
         viewmodel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)

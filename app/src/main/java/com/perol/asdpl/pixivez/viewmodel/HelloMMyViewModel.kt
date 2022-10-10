@@ -30,7 +30,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 
 class HelloMMyViewModel : BaseViewModel() {
-    var isRefresh = MutableLiveData(false)
+    var isRefreshing = MutableLiveData(false)
     var retrofitRepository = RetrofitRepository.getInstance()
     val illusts = MutableLiveData<ArrayList<Illust>?>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
@@ -47,13 +47,13 @@ class HelloMMyViewModel : BaseViewModel() {
     }
 
     fun onRefreshListener(restrict: String) {
-        isRefresh.value = true
+        isRefreshing.value = true
         retrofitRepository.getFollowIllusts(restrict).subscribe({
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {
             illusts.value = null
-           }, {isRefresh.value=false}).add()
+           }, {isRefreshing.value=false}).add()
     }
 
 }

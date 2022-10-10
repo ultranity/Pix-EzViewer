@@ -65,11 +65,11 @@ class UserListAdapter(layoutResId: Int) :
         }
     }
 
-    override fun convert(helper: BaseViewHolder, item: UserBean) {
+    override fun convert(holder: BaseViewHolder, item: UserBean) {
         //val linearLayoutManager = LinearLayoutManager(helper.itemView.context, LinearLayoutManager.HORIZONTAL, false)
         //val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
-        val userImage = helper.getView<View>(R.id.imageview_usershow) as ImageView
-        val username = helper.getView<View>(R.id.textview_usershowname) as TextView
+        val userImage = holder.getView<View>(R.id.imageview_usershow) as ImageView
+        val username = holder.getView<View>(R.id.textview_usershowname) as TextView
         //recyclerView.layoutManager = linearLayoutManager
         username.text = item.name
         GlideApp.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()

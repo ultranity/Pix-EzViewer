@@ -130,10 +130,8 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         }
 
 
-        viewModel!!.refreshcomplete.observe(this){
-            if (it != null) {
-                binding.swiperefreshIllustrator.isRefreshing = false
-            }
+        viewModel!!.isRefreshing.observe(this){
+            binding.swiperefreshIllustrator.isRefreshing = it
         }
 
     }
@@ -148,7 +146,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
     private fun userpreviews(it: ArrayList<SearchUserResponse.UserPreviewsBean>?) {
         if (it != null) {
-            userShowAdapter.setNewData(it)
+            userShowAdapter.setNewInstance(it)
         }
     }
 
@@ -171,9 +169,9 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         // Inflate the layout for this fragment
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
 
-		binding = FragmentIllustratorBinding.inflate(inflater, container, false)
+        binding = FragmentIllustratorBinding.inflate(inflater, container, false)
 
-		return binding.root
+        return binding.root
     }
 
 

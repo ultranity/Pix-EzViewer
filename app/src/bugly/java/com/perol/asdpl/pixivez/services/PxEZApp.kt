@@ -44,6 +44,7 @@ import com.google.gson.Gson
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.bugly.Bugly
@@ -175,6 +176,7 @@ class PxEZApp : Application() {
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
         Beta.enableHotfix = false
+        Beta.initDelay = 1 * 1000;
         //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
         Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         Bugly.init(this, "5f21ff45b7", BuildConfig.DEBUG)
@@ -205,6 +207,11 @@ class PxEZApp : Application() {
             }
 
             override fun onActivityStopped(activity: Activity) {
+            }
+
+            override fun onActivityPostDestroyed(activity: Activity) {
+                super.onActivityPostDestroyed(activity)
+                InteractionUtil.onDestory()
             }
 
             override fun onActivityDestroyed(activity: Activity) {

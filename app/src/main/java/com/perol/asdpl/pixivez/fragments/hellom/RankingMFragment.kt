@@ -32,6 +32,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -42,6 +43,7 @@ import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSwiperefreshRecyclerviewBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
@@ -160,10 +162,14 @@ class RankingMFragment : BaseFragment(){
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
             ?.view?.setOnClickListener {
             if ((System.currentTimeMillis() - exitTime) > 3000) {
-
+                Toast.makeText(
+                    PxEZApp.instance,
+                    getString(R.string.back_to_the_top),
+                    Toast.LENGTH_SHORT
+                ).show()
                 exitTime = System.currentTimeMillis()
             } else {
-                binding.recyclerview.smoothScrollToPosition(0)
+                binding.recyclerview.scrollToPosition(0)
             }
 
         }

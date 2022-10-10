@@ -33,6 +33,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -124,7 +125,11 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
             ?.view?.setOnClickListener {
             if ((System.currentTimeMillis() - exitTime) > 3000) {
-
+                Toast.makeText(
+                    PxEZApp.instance,
+                    getString(R.string.back_to_the_top),
+                    Toast.LENGTH_SHORT
+                ).show()
                 exitTime = System.currentTimeMillis()
             } else {
                 binding.mrecyclerview.smoothScrollToPosition(0)

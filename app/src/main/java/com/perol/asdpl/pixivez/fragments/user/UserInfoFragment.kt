@@ -39,7 +39,7 @@ import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
-import com.perol.asdpl.pixivez.databindingadapter.GlideLoadImage
+import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
@@ -68,7 +68,7 @@ class UserInfoFragment : Fragment() {
             binding.textViewTacomment.text = "${mParam1.user.account}:\r\n${mParam1.user.comment}"
         else
             binding.textViewTacomment.text = "~"
-        GlideLoadImage(binding.imageviewUserBg,mParam1.profile.background_image_url)
+        loadBGImage(binding.imageviewUserBg,mParam1.profile.background_image_url)
         val mInflater = LayoutInflater.from(requireActivity())
         binding.textViewUserId.text = mParam1.user.id.toString()
         binding.textViewFans.text = mParam1.profile.total_mypixiv_users.toString()

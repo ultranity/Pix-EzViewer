@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.databindingadapter
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
@@ -49,8 +50,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
+fun resourceIdToUri(context: Context, resourceId: Int): String =
+    "android.resource://${context.packageName}/$resourceId"
+
 @BindingAdapter("userUrl")
-fun loadImage(imageView: ImageView, url: String?) {
+fun loadUserImage(imageView: ImageView, url: String?) {
     if (url != null)
 
             GlideApp.with(imageView.context)
@@ -59,7 +63,7 @@ fun loadImage(imageView: ImageView, url: String?) {
                       else
                             url)
                 .circleCrop()
-                .placeholder(com.youth.banner.R.drawable.black_background)
+                .placeholder(R.mipmap.ic_noimage_round)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -87,7 +91,7 @@ fun loadImage(imageView: ImageView, url: String?) {
 }
 
 @BindingAdapter("url")
-fun GlideLoadImage(imageView: ImageView, url: String?) {
+fun loadBGImage(imageView: ImageView, url: String?) {
     if (url != null){
         imageView.setOnClickListener {
             MaterialAlertDialogBuilder(imageView.context).setMessage(url).setPositiveButton(R.string.download) { _, _ ->

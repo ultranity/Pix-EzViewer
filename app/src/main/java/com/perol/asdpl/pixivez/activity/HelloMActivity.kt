@@ -329,7 +329,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         binding.tablayoutHellom.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMViewPagerAdapter(supportFragmentManager)
 
-        binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true)) 0 else 3
+        binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", false)) 0 else 3
 
         val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
         binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)

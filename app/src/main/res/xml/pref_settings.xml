@@ -82,7 +82,7 @@
             app:title="@string/needactionbar" />
         <SwitchPreference
             app:key="refreshTab"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:title="@string/refreshTab"
             app:summary="@string/refreshTab_summary"/>
         <SwitchPreference
@@ -92,9 +92,9 @@
             app:title="@string/animation" />
         <SwitchPreference
             android:summary="@string/banner_summary"
-            app:defaultValue="true"
-            app:key="use_new_banner"
-            app:title="@string/new_banner" />
+            app:defaultValue="false"
+            app:key="banner_auto_loop"
+            app:title="@string/banner_auto_loop" />
         <SwitchPreference
             android:summary="@string/use_picX_layout_subtext"
             app:defaultValue="true"

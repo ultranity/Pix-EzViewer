@@ -55,6 +55,7 @@ import com.perol.asdpl.pixivez.activity.HelloMActivity
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
+import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
@@ -169,6 +170,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<ListPreference>("language")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.language = newValue.toString().toInt()
+            PxEZApp.locale = LanguageUtil.langToLocale(PxEZApp.language)
             snackbar_force_restart()
             true
         }

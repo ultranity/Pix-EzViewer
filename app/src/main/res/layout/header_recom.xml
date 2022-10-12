@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.perol.asdpl.pixivez.objects.RoundAngleFrameLayout
+    <!--com.perol.asdpl.pixivez.objects.RoundAngleFrameLayout
         android:layout_width="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -15,8 +15,14 @@
         <com.youth.banner.Banner
             android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
             />
-    </com.perol.asdpl.pixivez.objects.RoundAngleFrameLayout>
-
+    </com.perol.asdpl.pixivez.objects.RoundAngleFrameLayout-->
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:paddingTop="2dp"
+        />
     </LinearLayout>

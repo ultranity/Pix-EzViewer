@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.fragments.hellom
 
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -37,7 +36,6 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -52,16 +50,18 @@ import com.perol.asdpl.pixivez.activity.OKWebViewActivity
 import com.perol.asdpl.pixivez.activity.PixivsionActivity
 import com.perol.asdpl.pixivez.adapters.*
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
+import com.perol.asdpl.pixivez.databinding.HeaderRecomBinding
+import com.perol.asdpl.pixivez.databindingadapter.resourceIdToUri
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.ScreenUtil
-import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.LinearItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloMRecomModel
 import com.youth.banner.Banner
-import com.youth.banner.loader.ImageLoader
+import com.youth.banner.indicator.CircleIndicator
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -128,29 +128,11 @@ class HelloMRecommendFragment : BaseFragment() {
             if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
                     .getBoolean("use_new_banner", true)
             ) {
-                val arrayList = ArrayList<String>()
-                it.map {
-                    arrayList.add(it.thumbnail)
-                }
-                banner.setDelayTime(3800)
-                banner.setImages(arrayList)
-                banner.setOnBannerListener {
-                    startActivity(
-                        Intent(
-                            requireActivity().applicationContext,
-                            PixivsionActivity::class.java
-                        )
-                    )
-                }
+                it.add(0, banner.adapter.getData(0) as SpotlightArticlesBean)
+                banner.adapter.setDatas(it)
                 banner.start()
             } else {
                 pixiVisionAdapter.setNewInstance(it)
-                pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
-                    val intent = Intent(context, OKWebViewActivity::class.java)
-                    intent.putExtra("url", it[position].article_url)
-                    startActivity(intent)
-                    view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
-                }
                 val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
                 spotlightView.layoutAnimation = LayoutAnimationController(
                     AnimationUtils.loadAnimation(
@@ -186,7 +168,7 @@ class HelloMRecommendFragment : BaseFragment() {
     private lateinit var picListXAdapter: PicItemAdapterBase
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var viewmodel: HelloMRecomModel
-    private lateinit var banner: Banner
+    private lateinit var banner: Banner<Any, *>
 
     private var param1: String? = null
     private var param2: String? = null
@@ -206,7 +188,7 @@ class HelloMRecommendFragment : BaseFragment() {
 
         binding.recyclerviewRecom.apply {
             layoutManager = StaggeredGridLayoutManager(
-                1 + context.resources.configuration.orientation,
+                2*context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListXAdapter
@@ -217,43 +199,62 @@ class HelloMRecommendFragment : BaseFragment() {
         picListXAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMorePicRequested()
         }
-
+        val pixiVisionItem = SpotlightArticlesBean(thumbnail = resourceIdToUri(requireContext(), R.drawable.pixivision), title = getString(R.string.pixivision_desc))
         if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
                 .getBoolean("use_new_banner", true)
         ) {
-            banner = bannerView.findViewById(R.id.banner)
-            banner.setImageLoader(object : ImageLoader() {
-                override fun displayImage(context: Context, path: Any?, imageView: ImageView?) {
-                    GlideApp.with(context).load(path).into(imageView!!)
-                }
-            })
-        } else {
-            val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
+            val bannerViewBinding = HeaderRecomBinding.bind(bannerView)
+            banner = bannerViewBinding.banner
+                .addBannerLifecycleObserver(this).apply {
+                setAdapter(BannerAdapter(listOf(pixiVisionItem)))
+                setOnBannerListener { data, position ->
+                        if (position == 0){
+                            startActivity(
+                                Intent(context, PixivsionActivity::class.java)
+                            )
+                        }
+                        else {
+                            val intent = Intent(context, OKWebViewActivity::class.java)
+                            intent.putExtra("url", (data as SpotlightArticlesBean).article_url)
+                            startActivity(intent)
+                            view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
+                        }
+                    }
+                setBannerGalleryEffect(20, 5)
+                indicator = CircleIndicator(requireContext())
+            }
+        }
+        else {
+            pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
+                val intent = Intent(context, OKWebViewActivity::class.java)
+                intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
+                startActivity(intent)
+                view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
+            }
             pixiVisionAdapter.loadMoreModule.setOnLoadMoreListener {
                 viewmodel.onLoadMoreBannerRequested()
             }
-            /*val logo = LayoutInflater.from(requireContext()).inflate(R.layout.header_pixvision_logo, null)
+            // pixivision logo
+            val logo = LayoutInflater.from(requireContext()).inflate(R.layout.header_pixvision_logo, null)
             logo.setOnClickListener {
                 startActivity(
-                    Intent(
-                        requireActivity().applicationContext,
-                        PixivsionActivity::class.java
-                    )
+                    Intent(context, PixivsionActivity::class.java)
                 )
             }
-            pixiVisionAdapter.setHeaderView(logo)
-            logo.scaleX =0.6f
-            logo.scaleY =0.6f*/
+            pixiVisionAdapter.setHeaderView(logo, orientation = RecyclerView.HORIZONTAL)
+            //logo.scaleX =0.6f
+            //logo.scaleY =0.6f
+
+            val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
             val manager = LinearLayoutManager(requireContext())
             manager.orientation = LinearLayoutManager.HORIZONTAL
             spotlightView.layoutManager = manager
             spotlightView.adapter = pixiVisionAdapter
             spotlightView.layoutAnimationListener = object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation) {
-                }
+                override fun onAnimationStart(p0: Animation?) {}
 
                 override fun onAnimationEnd(animation: Animation) {
-                    spotlightView.smoothScrollToPosition(0)
+                    spotlightView.smoothScrollToPosition(2)
                     spotlightView.layoutAnimation = null //show animation only at first time
                 }
 
@@ -266,9 +267,8 @@ class HelloMRecommendFragment : BaseFragment() {
             //    mCurrentItemOffset=393
             //    attachToRecyclerView(spotlightView)
             //}
-
-            binding.swiperefreshRecom.isRefreshing = true
         }
+        binding.swiperefreshRecom.isRefreshing = true
         //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {
@@ -335,8 +335,8 @@ class HelloMRecommendFragment : BaseFragment() {
             bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
             pixiVisionAdapter = PixiVisionAdapter(
                 R.layout.view_pixivision_item_small,
-                null,
-                requireActivity())
+                null
+            )
         } else {
             bannerView = inflater.inflate(R.layout.header_recom, container, false)
         }

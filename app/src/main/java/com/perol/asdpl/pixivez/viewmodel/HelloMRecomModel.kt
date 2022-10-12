@@ -31,6 +31,7 @@ import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.RecommendResponse
+import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
@@ -38,8 +39,8 @@ import io.reactivex.Observable
 class HelloMRecomModel : BaseViewModel() {
     val illusts = MutableLiveData<ArrayList<Illust>?>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
-    val banners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>>()
-    val addbanners = MutableLiveData<ArrayList<SpotlightResponse.SpotlightArticlesBean>?>()
+    val banners = MutableLiveData<ArrayList<SpotlightArticlesBean>>()
+    val addbanners = MutableLiveData<ArrayList<SpotlightArticlesBean>?>()
     var nextUrl = MutableLiveData<String>()
     var nextPixivisonUrl = MutableLiveData<String>()
     private var retrofitRepository = RetrofitRepository.getInstance()
@@ -59,7 +60,7 @@ class HelloMRecomModel : BaseViewModel() {
     fun onLoadMoreBannerRequested() {
         retrofitRepository.getNextPixivisionArticles(nextPixivisonUrl.value!!).subscribe({
             nextPixivisonUrl.value = it.next_url
-            addbanners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
+            addbanners.value = it.spotlight_articles as ArrayList<SpotlightArticlesBean>?
         }, {
             addbanners.value = null
            }, {}).add()
@@ -71,8 +72,10 @@ class HelloMRecomModel : BaseViewModel() {
             retrofitRepository.getPixivison("all").subscribe({
                 if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("use_new_banner",true))
                     nextPixivisonUrl.value = it.next_url
-                banners.value = it.spotlight_articles as ArrayList<SpotlightResponse.SpotlightArticlesBean>?
-            }, {}, {}).add()
+                banners.value = it.spotlight_articles
+            }, {
+                Log.d("init","getBanner fail $it")
+            }, {}).add()
         }.subscribe({
             Log.d("init","getRecommend")
             nextUrl.value = it.next_url

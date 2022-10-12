@@ -21,13 +21,13 @@
             android:layout_width="wrap_content"
             android:layout_height="180dp"
             android:adjustViewBounds="true"
-            android:maxWidth="360dp"
+            android:layout_gravity="center_horizontal"
             android:minWidth="250dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/h" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/pixivision" />
 
         <TextView
-            android:id="@+id/textView__pixivision_title"
+            android:id="@+id/textView_pixivision_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"

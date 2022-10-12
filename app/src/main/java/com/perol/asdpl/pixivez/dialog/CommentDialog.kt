@@ -59,33 +59,20 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 //TODO: Refactor
-class CommentDialog : DialogFragment() {
-
-    val disposables = CompositeDisposable()
-    fun Disposable.add() {
-        disposables.add(this)
-    }
+class CommentDialog : BaseDialogFragment() {
 
     lateinit var recyclerviewPicture: RecyclerView
 
     lateinit var edittextComment: TextInputEditText
 
     lateinit var button: Button
-    private var Authorization: String? = null
     private var commentAdapter: CommentAdapter? = null
     private var id: Long? = null
     private var Parent_comment_id = 1
     private val retrofitRepository  = RetrofitRepository.getInstance()
-    var compositeDisposable = CompositeDisposable()
-    private var callback: Callback? = null
     var nextUrl: String? = null
     fun show(fragmentManager: FragmentManager) {
         show(fragmentManager, "ViewDialogFragment")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        compositeDisposable.clear()
     }
 
     private fun getData() {
@@ -94,79 +81,11 @@ class CommentDialog : DialogFragment() {
             .subscribeOn(Schedulers.io())
             .subscribe({
                     button.isClickable = true
-                    commentAdapter = CommentAdapter(
-                        R.layout.view_comment_item,
-                        it.comments,
-                        context
-                    )
-                    recyclerviewPicture.isNestedScrollingEnabled = false
-                    recyclerviewPicture.layoutManager =
-                        LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                    recyclerviewPicture.adapter = commentAdapter
-                    recyclerviewPicture.addItemDecoration(
-                        DividerItemDecoration(
-                            context,
-                            DividerItemDecoration.HORIZONTAL
-                        )
-                    )
-                    commentAdapter!!.setOnItemClickListener { adapter, view, position ->
-                        val builder = MaterialAlertDialogBuilder(requireActivity())
-                        val comment = it.comments[position].comment
-                        builder.setMessage(comment)
-                        val dialog = builder.create()
-                        dialog.show()
-                    }
-                    commentAdapter!!.addChildClickViewIds(R.id.commentuserimage, R.id.reply_to_hit)
-                    commentAdapter!!.setOnItemChildClickListener { adapter, view, position ->
-                        if (view.id == R.id.commentuserimage) {
-                            val intent = Intent(context, UserMActivity::class.java)
-                            intent.putExtra(
-                                "data",
-                                it.comments[position].user.id
-                            )
-
-                            if (PxEZApp.animationEnable) {
-                                val options = ActivityOptions.makeSceneTransitionAnimation(
-                                    context as Activity,
-                                    Pair.create(view, "UserImage")
-                                )
-                                startActivity(intent, options.toBundle())
-                            } else
-                                startActivity(intent)
-                        }
-                        if (view.id == R.id.reply_to_hit) {
-                            Parent_comment_id = it.comments[position].id
-                            edittextComment.hint =
-                                getString(R.string.reply_to) + ":" + it.comments[position].user.name
-                        }
-                    }
                     nextUrl = it.next_url
-                    commentAdapter!!.loadMoreModule.setOnLoadMoreListener {
-                        if (!nextUrl.isNullOrBlank()) {
-
-                            retrofitRepository.getNextIllustComments(
-                                nextUrl!!
-                            ).subscribe({
-                                    commentAdapter!!.addData(it.comments)
-                                    nextUrl = it.next_url
-                                    commentAdapter!!.loadMoreModule.loadMoreComplete()
-                                }, {
-                                    commentAdapter!!.loadMoreModule.loadMoreFail()
-                                    it.printStackTrace()
-                                }, {
-
-                                }, {
-                                    compositeDisposable.add(it)
-                                }).add()
-                        } else {
-                            commentAdapter!!.loadMoreModule.loadMoreEnd()
-                        }
-                    }
-                    button.setOnClickListener { commit() }
                 },{},{}).add()
     }
 
-    fun commit() {
+    private fun commit() {
         retrofitRepository
             .postIllustComment(
                 id!!,
@@ -176,7 +95,7 @@ class CommentDialog : DialogFragment() {
                 retrofitRepository.getIllustComments(
                     id!!
                 ).subscribe({
-                        commentAdapter!!.setNewData(it.comments)
+                        commentAdapter!!.setNewInstance(it.comments)
                         Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
                         edittextComment.setText("")
                         Parent_comment_id = 1
@@ -188,9 +107,9 @@ class CommentDialog : DialogFragment() {
                         } else if (e.response()!!.code() == 404) {
                         }
                     },{}) .add()
-            },{},{}).add()
-
-
+            },{},{
+                button.isEnabled = true
+            }).add()
     }
 
 
@@ -202,12 +121,6 @@ class CommentDialog : DialogFragment() {
         params.width = WindowManager.LayoutParams.MATCH_PARENT
         window.attributes = params
         window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
-    }
-
-
-    interface Callback {
-        fun onClick()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -230,25 +143,70 @@ class CommentDialog : DialogFragment() {
         edittextComment = view.findViewById(R.id.edittext_comment)
         button = view.findViewById(R.id.button)
         builder.setView(view)
-        getData()
+        commentAdapter = CommentAdapter(R.layout.view_comment_item, null)
+        recyclerviewPicture.isNestedScrollingEnabled = false
+        recyclerviewPicture.layoutManager =
+            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        recyclerviewPicture.adapter = commentAdapter
+        recyclerviewPicture.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.HORIZONTAL
+            )
+        )
+        commentAdapter!!.setOnItemClickListener { adapter, view, position ->
+            val comment = commentAdapter!!.data[position].comment
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage(comment)
+                .show()
+        }
+        commentAdapter!!.addChildClickViewIds(R.id.commentuserimage, R.id.reply_to_hit)
+        commentAdapter!!.setOnItemChildClickListener { adapter, view, position ->
+            if (view.id == R.id.commentuserimage) {
+                val intent = Intent(context, UserMActivity::class.java)
+                intent.putExtra(
+                    "data",
+                    commentAdapter!!.data[position].user.id
+                )
+
+                if (PxEZApp.animationEnable) {
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        context as Activity,
+                        Pair.create(view, "UserImage")
+                    )
+                    startActivity(intent, options.toBundle())
+                } else
+                    startActivity(intent)
+            }
+            if (view.id == R.id.reply_to_hit) {
+                Parent_comment_id = commentAdapter!!.data[position].id
+                edittextComment.hint =
+                    getString(R.string.reply_to) + ":" + commentAdapter!!.data[position].user.name
+            }
+        }
+        commentAdapter!!.loadMoreModule.setOnLoadMoreListener {
+            if (!nextUrl.isNullOrBlank()) {
+                retrofitRepository.getNextIllustComments(
+                    nextUrl!!
+                ).subscribe({
+                    commentAdapter!!.addData(it.comments)
+                    nextUrl = it.next_url
+                    commentAdapter!!.loadMoreModule.loadMoreComplete()
+                }, {
+                    commentAdapter!!.loadMoreModule.loadMoreFail()
+                    it.printStackTrace()
+                }, {}).add()
+            } else {
+                commentAdapter!!.loadMoreModule.loadMoreEnd()
+            }
+        }
+        button.setOnClickListener {
+            commit()
+            button.isEnabled = false
+        }
         return builder.create()
     }
 
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is Callback) {
-            callback = context
-        } else {
-
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        callback = null
-        disposables.clear()
-    }
 
     companion object {
 

@@ -1,8 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 ultranity
- * Copyright (c) 2019 Perol_Notsfsssf
+ * Copyright (c) 2022 ultranity
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,39 +28,36 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.responses.RecommendResponse
 import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 
-class HelloMRecomModel : BaseViewModel() {
-    val illusts = MutableLiveData<ArrayList<Illust>?>()
-    val addillusts = MutableLiveData<ArrayList<Illust>?>()
-    var nextUrl = MutableLiveData<String>()
+class PixivisionModel : BaseViewModel() {
+    val banners = MutableLiveData<ArrayList<SpotlightArticlesBean>>()
+    val addbanners = MutableLiveData<ArrayList<SpotlightArticlesBean>?>()
+    var nextPixivisonUrl = MutableLiveData<String?>()
     private var retrofitRepository = RetrofitRepository.getInstance()
-    fun firstRxGet(): Observable<RecommendResponse> = retrofitRepository.getRecommend()
-    fun onLoadMoreRxRequested(nextUrl: String) = retrofitRepository.getNextIllustRecommended(nextUrl)
+    fun getBanner(): Observable<SpotlightResponse> = retrofitRepository.getPixivison("all")
+    fun onLoadMoreBannerRequested(nextUrl: String) = retrofitRepository.getNextPixivisionArticles(nextUrl)
 
-    fun onLoadMorePicRequested() {
-        retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            addillusts.value = it.illusts as ArrayList<Illust>?
+    fun onLoadMoreBannerRequested() {
+        retrofitRepository.getNextPixivisionArticles(nextPixivisonUrl.value!!).subscribe({
+            nextPixivisonUrl.value = it.next_url
+            addbanners.value = it.spotlight_articles
         }, {
-            addillusts.value = null
-        }, {}).add()
+            addbanners.value = null
+           }, {}).add()
     }
 
     fun onRefreshListener() {
-        Log.d("init","gettingRecommend")
-        retrofitRepository.getRecommend().subscribe({
-            Log.d("init","getRecommend")
-            nextUrl.value = it.next_url
-            illusts.value = it.illusts as ArrayList<Illust>?
-        }, {
-            Log.d("init","getRecommend fail $it")
-            illusts.value = null
-        }, {}).add()
+        retrofitRepository.getPixivison("all").subscribe({
+                if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("banner_auto_loop",true)) {
+                    nextPixivisonUrl.value = it.next_url
+                }
+                banners.value = it.spotlight_articles
+            }, {
+                Log.d("init","getBanner fail $it")
+            }, {}).add()
     }
 }

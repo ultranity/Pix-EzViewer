@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
 
-        android:src="@drawable/pixivision" />
+        android:src="@drawable/pixivision_color_logo" />
     <TextView
 
         android:layout_marginStart="25dp"

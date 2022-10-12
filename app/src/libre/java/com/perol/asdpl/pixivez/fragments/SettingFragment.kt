@@ -190,8 +190,8 @@ class SettingFragment : PreferenceFragmentCompat() {
             snackbar_restart()
             true
         }
-        findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_force_restart()
+        findPreference<SwitchPreference>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbar_restart()
             true
         }
 

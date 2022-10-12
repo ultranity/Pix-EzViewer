@@ -179,7 +179,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                 .show()
             true
         }
-        findPreference<SwitchPreference>("use_new_banner")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreference>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
             Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
                 .setAction(R.string.restart_now) {
                     PxEZApp.ActivityCollector.recreate()

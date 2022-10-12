@@ -30,7 +30,7 @@
                 android:layout_height="120dp"
                 android:layout_marginEnd="50dp"
                 android:layout_marginStart="50dp"
-                android:src="@drawable/pixivision" />
+                android:src="@drawable/pixivision_color_logo" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView

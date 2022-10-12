@@ -25,9 +25,6 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -36,11 +33,9 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.ViewPixivisionItemSmallBinding
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.services.GlideApp
-import com.youth.banner.adapter.BannerAdapter
 
 
 class PixiVisionAdapter(
@@ -68,34 +63,4 @@ class PixiVisionAdapter(
     fun loadMoreFail() {
         this.loadMoreModule.loadMoreFail()
     }
-}
-
-
-class BannerViewHolder(var binding: ViewPixivisionItemSmallBinding) :
-    RecyclerView.ViewHolder(binding.root)
-
-class BannerAdapter(data: List<SpotlightArticlesBean>?) :
-    BannerAdapter<SpotlightArticlesBean, BannerViewHolder>(data) {
-    //创建ViewHolder，可以用viewType这个字段来区分不同的ViewHolder
-    override fun onCreateHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
-        val binding = ViewPixivisionItemSmallBinding.inflate(LayoutInflater.from(parent.context))
-        //注意，必须设置为match_parent，这个是viewpager2强制要求的
-        binding.root.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        return BannerViewHolder(binding)
-    }
-
-    override fun onBindView(holder: BannerViewHolder, item: SpotlightArticlesBean, position: Int, size: Int) {
-        val binding = holder.binding
-        binding.textViewPixivisionTitle.text = item.title
-        item.thumbnail?.let {
-            var url = if(it.startsWith("android.resource://"))  Uri.parse(it) else it
-            GlideApp.with(binding.root).load(it)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(ColorDrawable(ThemeUtil.halftrans))
-                .transition(DrawableTransitionOptions.withCrossFade()).into(binding.imageViewPixivision)
-        }
-    }
-
 }

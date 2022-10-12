@@ -10,16 +10,16 @@
     android:paddingTop="8dp"
     android:paddingRight="8dp"
     app:cardCornerRadius="5dp"
-    app:cardElevation="2dp">
+    app:cardElevation="4dp">
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:minWidth="300dp"
+        android:layout_height="220dp"
+        android:minWidth="330dp"
         android:paddingHorizontal="20dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/pixivision" />
+        android:src="@drawable/pixivision_color_logo" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.perol.asdpl.pixivez.objects
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
@@ -9,6 +10,7 @@ import java.util.*
 
 object LanguageUtil {
 
+    @SuppressLint("AppBundleLocaleChanges")
     fun setLanguage(context: Context, @Language language: Int) {
         val resources = context.resources
         val configuration = resources.configuration

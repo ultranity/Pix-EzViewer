@@ -46,7 +46,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.HashMap
 
 class IntentActivity : RinkActivity() {
 
@@ -181,7 +180,7 @@ class IntentActivity : RinkActivity() {
                     }
                 }
                 else if (scheme.contains("pixez")){
-
+                    //TODO: add pixez
                 }
             }
             if(uri.host?.equals("pixiv.me") == true){

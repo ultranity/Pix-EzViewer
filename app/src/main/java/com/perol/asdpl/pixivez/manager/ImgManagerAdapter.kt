@@ -29,7 +29,6 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -52,7 +51,7 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
         helper.getView<TextView>(R.id.item_size).text = item.size
         helper.getView<TextView>(R.id.item_pixel).text = item.pixel
         helper.getView<TextView>(R.id.item_target).text = item.target?:""
-        val check: CheckBox = helper.getView<CheckBox>(R.id.item_check)
+        val check: CheckBox = helper.getView(R.id.item_check)
         check.isChecked = item.checked
         check.setOnCheckedChangeListener { buttonView, isChecked ->
             item.checked =isChecked

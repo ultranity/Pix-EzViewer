@@ -40,9 +40,11 @@ import retrofit2.http.POST
 interface AccountPixivService {
     @FormUrlEncoded
     @POST("/api/provisional-accounts/create")
-    fun createProvisionalAccount(@Field("user_name") user_name: String,
-		@Field("ref") ref: String,
-		@Header("Authorization") paramString3: String): Observable<PixivAccountsResponse>
+    fun createProvisionalAccount(
+        @Field("user_name") user_name: String,
+        @Field("ref") ref: String,
+        @Header("Authorization") paramString3: String
+    ): Observable<PixivAccountsResponse>
 
     @FormUrlEncoded
     @POST("/api/login")
@@ -58,9 +60,11 @@ interface AccountPixivService {
 
     @FormUrlEncoded
     @POST("/api/account/edit")
-    fun editAccount(@Field("new_mail_address") new_mail_address: String,
-		@Field("new_user_account") new_user_account: String,
-		@Field("current_password") current_password: String,
-		@Field("new_password") new_password: String,
-		@Header("Authorization") paramString5: String): Observable<PixivAccountsEditResponse>
+    fun editAccount(
+        @Field("new_mail_address") new_mail_address: String,
+        @Field("new_user_account") new_user_account: String,
+        @Field("current_password") current_password: String,
+        @Field("new_password") new_password: String,
+        @Header("Authorization") paramString5: String
+    ): Observable<PixivAccountsEditResponse>
 }

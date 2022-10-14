@@ -37,7 +37,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -46,8 +45,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
-import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -62,7 +59,6 @@ import java.io.File
 import java.io.IOException
 import java.net.InetAddress
 import java.util.*
-import kotlin.collections.ArrayList
 
 class SaucenaoActivity : RinkActivity() {
 
@@ -146,9 +142,9 @@ class SaucenaoActivity : RinkActivity() {
                         runBlocking {
                             withContext(Dispatchers.IO) {
                                 image.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                                out.flush()
+                                out.close()
                             }
-                            out.flush()
-                            out.close()
                         }
                         Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT).show()
                         val builder = MultipartBody.Builder()
@@ -205,8 +201,9 @@ class SaucenaoActivity : RinkActivity() {
     }
 
     lateinit var api: SaucenaoService
-    fun trytosearch(path: String) {
-        Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT).show()
+    private fun trytosearch(path: String) {
+        Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT)
+            .show()
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -214,7 +211,11 @@ class SaucenaoActivity : RinkActivity() {
         builder.addFormDataPart("file", file.name, body)
         api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Toasty.success(this, getString(R.string.saucenao_upload_success), Toast.LENGTH_SHORT).show()
+                Toasty.success(
+                    this,
+                    getString(R.string.saucenao_upload_success),
+                    Toast.LENGTH_SHORT
+                ).show()
                 tryToParseHtml(it.string())
             }, { Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show() }, {
             })

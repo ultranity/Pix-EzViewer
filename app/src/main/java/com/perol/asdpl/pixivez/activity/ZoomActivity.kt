@@ -31,8 +31,9 @@ import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.ZoomPagerAdapter
-import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.databinding.ActivityZoomBinding
+import com.perol.asdpl.pixivez.responses.Illust
+
 // zoom pic for viewing when clicked
 class ZoomActivity : RinkActivity() {
 
@@ -64,7 +65,7 @@ class ZoomActivity : RinkActivity() {
                 1
             else
                 illust.meta_pages.size
-        binding.textviewZoom.text = "1/${size}"
+        binding.textviewZoom.text = getString(R.string.fractional, 1, size)
         binding.viewpageZoom.adapter = zoomPagerAdapter
         binding.viewpageZoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -77,7 +78,7 @@ class ZoomActivity : RinkActivity() {
 
             override fun onPageSelected(position: Int) {
                 binding.viewpageZoom.tag = position
-                binding.textviewZoom.text = "${position + 1}/${size}"
+                binding.textviewZoom.text = getString(R.string.fractional, position + 1, size)
             }
 
             override fun onPageScrollStateChanged(state: Int) {

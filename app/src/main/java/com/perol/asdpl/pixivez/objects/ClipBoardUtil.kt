@@ -12,7 +12,7 @@ import android.content.Context
  * Created by Rikka on 2015/12/18.
  */
 object ClipBoardUtil {
-    lateinit var mApplication: Application
+    private lateinit var mApplication: Application
     fun init( application: Application){
         mApplication = application
     }

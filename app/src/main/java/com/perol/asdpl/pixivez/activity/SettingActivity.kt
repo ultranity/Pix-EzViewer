@@ -34,13 +34,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
 import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.fragments.AboutXFragment
 import com.perol.asdpl.pixivez.fragments.SettingFragment
 import com.perol.asdpl.pixivez.fragments.ThanksFragment
 import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
-import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import java.util.*
 
 class SettingActivity : RinkActivity() {
@@ -64,10 +64,10 @@ class SettingActivity : RinkActivity() {
     }
 
 private lateinit var binding: ActivitySettingBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivitySettingBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivitySettingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.tablayoutSetting.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -105,20 +105,27 @@ private lateinit var binding: ActivitySettingBinding
             }
         })
         binding.contentSetting.viewpageSetting.currentItem = intent.getIntExtra("page",0)
-	}
+    }
 
     override fun onBackPressed() {
         val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR.equals("bugly")&&(calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY)
-                -SharedPreferencesServices.getInstance()
-                    .getInt("lastsupport",calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
-             )>= 30*24) {
+        if (BuildConfig.FLAVOR == "bugly" && (calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
+                Calendar.HOUR_OF_DAY
+            )
+                    - SharedPreferencesServices.getInstance()
+                .getInt(
+                    "lastsupport",
+                    calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
+                )
+                    ) >= 30 * 24
+        ) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
-        }
-        else {
+        } else {
             SharedPreferencesServices.getInstance()
-                .setInt("lastsupport",
-                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 24)
+                .setInt(
+                    "lastsupport",
+                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 24
+                )
             super.onBackPressed()
         }
     }

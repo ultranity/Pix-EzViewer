@@ -51,8 +51,7 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-// parsed pixvision - deprecated
-@Deprecated("use webview PixivisionActivity instead")
+// parsed pixvision - for now use webview PixivisionActivity instead
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
     private val retrofitRepository  = RetrofitRepository.getInstance()
@@ -63,10 +62,10 @@ class SpotlightActivity : RinkActivity() {
     private var num = 0
 
 private lateinit var binding: ActivitySpotlightBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivitySpotlightBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivitySpotlightBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         getData()
     }
@@ -77,8 +76,8 @@ private lateinit var binding: ActivitySpotlightBinding
         binding.textViewTest.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
-            val content_url = Uri.parse(url)
-            intent.data = content_url
+            val contentUrl = Uri.parse(url)
+            intent.data = contentUrl
             startActivity(intent)
         }
         val local = LanguageUtil.langToLocale(PxEZApp.language)
@@ -200,12 +199,10 @@ private lateinit var binding: ActivitySpotlightBinding
         fun getImgStr(htmlStr: String): Set<String> {
             val pics = HashSet<String>()
             var img = ""
-            val p_image: Pattern
-            val m_image: Matcher
             //     String regEx_img = "<img.*src=(.*?)[^>]*?>"; //图片链接地址
             val regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>"
-            p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE)
-            m_image = p_image.matcher(htmlStr)
+            val p_image: Pattern = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE)
+            val m_image: Matcher = p_image.matcher(htmlStr)
             while (m_image.find()) {
                 img = m_image.group()
                 val m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img)

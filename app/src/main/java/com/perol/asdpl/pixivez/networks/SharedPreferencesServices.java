@@ -45,17 +45,12 @@ public class SharedPreferencesServices {
 
     }
 
-    private static SharedPreferencesServices instance;//单例模式 双重检查锁定
+    private static final class InstanceHolder {
+        static final SharedPreferencesServices instance = new SharedPreferencesServices();//单例模式
+    }
 
     public static SharedPreferencesServices getInstance() {
-        if (instance == null) {
-            synchronized (SharedPreferencesServices.class) {
-                if (instance == null) {
-                    instance = new SharedPreferencesServices();
-                }
-            }
-        }
-        return instance;
+        return InstanceHolder.instance;
     }
 
 

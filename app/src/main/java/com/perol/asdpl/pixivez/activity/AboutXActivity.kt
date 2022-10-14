@@ -27,15 +27,15 @@ package com.perol.asdpl.pixivez.activity
 
 import android.os.Bundle
 import android.view.MenuItem
-import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityAboutXBinding
+
 class AboutXActivity : RinkActivity() {
 
 private lateinit var binding: ActivityAboutXBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivityAboutXBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivityAboutXBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }

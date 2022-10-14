@@ -103,8 +103,8 @@ class PictureXAdapter(
     private val data: Illust,
     private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val imageUrls = ArrayList<String>()
-    val imageThumbnailUrls = ArrayList<String>()
+    private val imageUrls = ArrayList<String>()
+    private val imageThumbnailUrls = ArrayList<String>()
     val pre = PreferenceManager.getDefaultSharedPreferences(mContext)!!
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
@@ -272,7 +272,7 @@ class PictureXAdapter(
                         componentName = resolveInfo.activityInfo.name
                     }
                 } catch (e: Exception) {
-
+                    e.printStackTrace()
                 }
 
             }
@@ -811,7 +811,7 @@ class PictureXAdapter(
         }
     }
 
-    var isEncoding = false
+    private var isEncoding = false
 
     private val path: String = PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".gif"
     private fun encodingGif(): Observable<Int>? {
@@ -871,7 +871,7 @@ class PictureXAdapter(
         val list = it.map { it.image_urls.square_medium }.toMutableList()
 
 
-        relatedPictureAdapter.setNewData(list)
+        relatedPictureAdapter.setNewInstance(list)
         relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             //val id = it[position].id
@@ -902,7 +902,7 @@ class PictureXAdapter(
 
     }
 
-    var previewImageView: ImageView? = null
+    private var previewImageView: ImageView? = null
     fun setProgressComplete(it: Boolean) {
         gifProgressBar?.visibility = View.GONE
         previewImageView?.visibility = View.GONE

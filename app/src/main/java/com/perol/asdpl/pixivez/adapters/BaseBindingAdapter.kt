@@ -31,7 +31,7 @@ fun <VB : ViewBinding> BaseViewHolder.getBinding(bind: (View) -> VB): VB =
 
 abstract class BaseBindingAdapter<T, VB : ViewBinding>(layoutResId: Int, VBClass: KClass<*>, data: List<T>?) :
     BaseQuickAdapter<T, BaseVBViewHolder<VB>>(layoutResId, data?.toMutableList()) {
-    val vbClass = VBClass.java
+    private val vbClass = VBClass.java
 
     override fun onCreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseVBViewHolder<VB> {
         return BaseVBViewHolder(getViewBinding(LayoutInflater.from(parent.context), parent)!!)

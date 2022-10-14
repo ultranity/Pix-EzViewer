@@ -22,7 +22,7 @@
     <string name="current_developer">現在の開発</string>
     <string name="support_text">PixEzあなたは？それを助ける Nあなたのサポートを〜開発を継続するために私を奨励する n個の情報がメール引き取り手のない寄付によって送信することができます！</string>
     <string name="support_popup_title">サポート開発者：</string>
-    <string name="support_static">ラフ統計は、あなたは、枚数の近景に達しPixEz：％1 $ sの！</string>
+    <string name="support_static">ラフ統計は、あなたは、枚数の近景に達しPixEz：%1$s の！</string>
     <string name="ali">アリペイへジャンプ</string>
     <string name="wechat">微信へジャンプ</string>
     <string name="thanks_to">感謝</string>

@@ -31,11 +31,10 @@ import com.perol.asdpl.pixivez.sql.IllustBeanEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 class HistoryMViewModel : BaseViewModel() {
     val illustBeans = MutableLiveData<ArrayList<IllustBeanEntity>>()
-    val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
 
     fun first() {
         appDatabase.illusthistoryDao().getIllustHistory().subscribeOn(Schedulers.io())

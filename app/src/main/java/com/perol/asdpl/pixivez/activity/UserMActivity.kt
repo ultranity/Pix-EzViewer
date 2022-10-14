@@ -45,6 +45,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
+import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -52,10 +53,6 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
-import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.responses.ProfileImageUrls
-import com.perol.asdpl.pixivez.responses.User
-import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -199,7 +196,7 @@ class UserMActivity : RinkActivity() {
                             ).show()
                         }
                         1 -> {
-                            lifecycleScope.launch(){
+                            lifecycleScope.launch {
                                 var file: File
                                 withContext(Dispatchers.IO) {
                                     val f = GlideApp.with(this@UserMActivity).asFile()

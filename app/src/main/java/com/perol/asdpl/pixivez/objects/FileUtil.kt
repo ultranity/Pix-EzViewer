@@ -194,7 +194,7 @@ object FileUtil{
         }
     }
 
-    fun SearchFile(list: List<FileInfo>, keyword: String): List<FileInfo> {
+    fun searchFile(list: List<FileInfo>, keyword: String): List<FileInfo> {
         val searchResultList = ArrayList<FileInfo>()
         for (i in list.indices) {
             val app = list[i]
@@ -258,7 +258,7 @@ object FileUtil{
     private fun extraPath(path: String): List<String>? {
         File(path).let { file ->
             if (file.exists())
-               return file.readLines()
+                return@extraPath file.readLines()
         }
         return null
     }

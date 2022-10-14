@@ -131,8 +131,8 @@ class HelloMMyFragment : BaseFragment() {
     private lateinit var binding: FragmentHelloMmyBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-		binding = FragmentHelloMmyBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentHelloMmyBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private var exitTime = 0L

@@ -195,7 +195,7 @@ abstract class PicItemAdapter(
         when (item.type) {
             "illust" -> if (item.meta_pages.isEmpty()) {
                 numLayout.visibility = View.INVISIBLE
-            } else if (item.meta_pages.isNotEmpty()) {
+            } else {
                 numLayout.visibility = View.VISIBLE
                 helper.setText(R.id.textview_num, item.meta_pages.size.toString())
             }

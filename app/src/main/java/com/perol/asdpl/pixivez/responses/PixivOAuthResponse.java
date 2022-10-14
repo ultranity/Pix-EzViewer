@@ -25,11 +25,10 @@
 package com.perol.asdpl.pixivez.responses;
 
 
+/**
+ * response : {"access_token":"SrsL1Z7tGhM6yArRKeGkfaZ-ID3TTiTdFWtLmJtvWBA","expires_in":3600,"token_type":"bearer","scope":"","refresh_token":"YeysYu5dgbu0tV1yckzLhJmUCMOyDmqTeriZfFh-UTw","user":{"profile_image_urls":{"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"},"id":"14713395","name":"Notsfsssf","account":"912756674","mail_address":"912756674@qq.com","is_premium":false,"x_restrict":2,"is_mail_authorized":true},"device_token":"eb3adb884046935fe8952c977b949209"}
+ */
 public class PixivOAuthResponse {
-
-    /**
-     * response : {"access_token":"SrsL1Z7tGhM6yArRKeGkfaZ-ID3TTiTdFWtLmJtvWBA","expires_in":3600,"token_type":"bearer","scope":"","refresh_token":"YeysYu5dgbu0tV1yckzLhJmUCMOyDmqTeriZfFh-UTw","user":{"profile_image_urls":{"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"},"id":"14713395","name":"Notsfsssf","account":"912756674","mail_address":"912756674@qq.com","is_premium":false,"x_restrict":2,"is_mail_authorized":true},"device_token":"eb3adb884046935fe8952c977b949209"}
-     */
 
     private ResponseBean response;
 
@@ -41,16 +40,16 @@ public class PixivOAuthResponse {
         this.response = response;
     }
 
+    /**
+     * access_token : SrsL1Z7tGhM6yArRKeGkfaZ-ID3TTiTdFWtLmJtvWBA
+     * expires_in : 3600
+     * token_type : bearer
+     * scope :
+     * refresh_token : YeysYu5dgbu0tV1yckzLhJmUCMOyDmqTeriZfFh-UTw
+     * user : {"profile_image_urls":{"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"},"id":"14713395","name":"Notsfsssf","account":"912756674","mail_address":"912756674@qq.com","is_premium":false,"x_restrict":2,"is_mail_authorized":true}
+     * device_token : DEPRECATED
+     */
     public static class ResponseBean {
-        /**
-         * access_token : SrsL1Z7tGhM6yArRKeGkfaZ-ID3TTiTdFWtLmJtvWBA
-         * expires_in : 3600
-         * token_type : bearer
-         * scope :
-         * refresh_token : YeysYu5dgbu0tV1yckzLhJmUCMOyDmqTeriZfFh-UTw
-         * user : {"profile_image_urls":{"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"},"id":"14713395","name":"Notsfsssf","account":"912756674","mail_address":"912756674@qq.com","is_premium":false,"x_restrict":2,"is_mail_authorized":true}
-         * device_token : DEPRECATED
-         */
 
         private String access_token;
         private int expires_in;
@@ -116,17 +115,17 @@ public class PixivOAuthResponse {
 //            this.device_token = device_token;
 //        }
 
+        /**
+         * profile_image_urls : {"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"}
+         * id : 14713395
+         * name : Notsfsssf
+         * account : 912756674
+         * mail_address : 912756674@qq.com
+         * is_premium : false
+         * x_restrict : 2
+         * is_mail_authorized : true
+         */
         public static class UserBean {
-            /**
-             * profile_image_urls : {"px_16x16":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg","px_50x50":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg","px_170x170":"https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg"}
-             * id : 14713395
-             * name : Notsfsssf
-             * account : 912756674
-             * mail_address : 912756674@qq.com
-             * is_premium : false
-             * x_restrict : 2
-             * is_mail_authorized : true
-             */
 
             private ProfileImageUrlsBean profile_image_urls;
             private String id;
@@ -201,12 +200,12 @@ public class PixivOAuthResponse {
                 this.is_mail_authorized = is_mail_authorized;
             }
 
+            /**
+             * px_16x16 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg
+             * px_50x50 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg
+             * px_170x170 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg
+             */
             public static class ProfileImageUrlsBean {
-                /**
-                 * px_16x16 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_16.jpg
-                 * px_50x50 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_50.jpg
-                 * px_170x170 : https://i.pximg.net/user-profile/img/2018/06/11/22/00/29/14348260_c1f2b130248005062b7c6c358812160a_170.jpg
-                 */
 
                 private String px_16x16;
                 private String px_50x50;

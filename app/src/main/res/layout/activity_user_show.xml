@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.UserShowActivity">
-<fragment
+<androidx.fragment.app.FragmentContainerView
     android:id="@+id/fragment_usershow"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

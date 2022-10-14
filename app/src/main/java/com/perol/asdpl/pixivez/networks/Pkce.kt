@@ -19,7 +19,8 @@ object Pkce {
         }
         return pkceItem!!
     }
-    fun generateCodeVerifier(): String {
+
+    private fun generateCodeVerifier(): String {
         val secureRandom = SecureRandom()
         val codeVerifier = ByteArray(32)
         secureRandom.nextBytes(codeVerifier)
@@ -29,7 +30,7 @@ object Pkce {
         )
     }
 
-    fun generateCodeChallenge(codeVerifier: String): String {
+    private fun generateCodeChallenge(codeVerifier: String): String {
         val bytes = codeVerifier.toByteArray(StandardCharsets.US_ASCII)
         val messageDigest = MessageDigest.getInstance("SHA-256")
         messageDigest.update(bytes, 0, bytes.size)

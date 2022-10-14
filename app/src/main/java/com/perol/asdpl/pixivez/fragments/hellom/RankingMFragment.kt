@@ -67,7 +67,7 @@ private const val ARG_PARAM2 = "param2"
 class RankingMFragment : BaseFragment(){
 
 
-    var picDate: String? = null
+    private var picDate: String? = null
     lateinit var viewmodel: RankingMViewModel
     lateinit var sharemodel: RankingShareViewModel
     private lateinit var picListBtnUserAdapter: PicListBtnUserAdapter
@@ -90,15 +90,16 @@ class RankingMFragment : BaseFragment(){
             picListBtnUserAdapter.notifyDataSetChanged()
         }
     }
-    fun lazyLoad() {
+
+    private fun lazyLoad() {
 
         picListBtnUserAdapter = PicListBtnUserAdapter(
             R.layout.view_ranking_item,
             null,
             isR18on, blockTags
         )
-        viewmodel = ViewModelProvider(this).get(RankingMViewModel::class.java)
-        sharemodel = ViewModelProvider(requireActivity()).get(RankingShareViewModel::class.java)
+        viewmodel = ViewModelProvider(this)[RankingMViewModel::class.java]
+        sharemodel = ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1
@@ -145,7 +146,7 @@ class RankingMFragment : BaseFragment(){
         }
     }
 
-    var exitTime = 0L
+    private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.swiperefreshLayout.setOnRefreshListener {
@@ -198,15 +199,21 @@ class RankingMFragment : BaseFragment(){
         }
         headerView.findViewById<Spinner>(R.id.spinner_CoM).onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                sharemodel.sortCoM.value = position
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    sharemodel.sortCoM.value = position
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
         picListBtnUserAdapter.addHeaderView(headerView)
-		binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     companion object {
@@ -215,7 +222,7 @@ class RankingMFragment : BaseFragment(){
          * this fragment using the provided parameters.
          *
          * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param position Parameter 2.
          * @return A new instance of fragment RankingMFragment.
          */
         // TODO: Rename and change types and number of parameters

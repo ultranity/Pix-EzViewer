@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.networks
 import android.util.Log
 import okhttp3.Dns
 import java.net.InetAddress
-import java.net.UnknownHostException
 
 object RubyHttpXDns : Dns {
     private val addressCache = mutableMapOf<String, InetAddress>()
@@ -78,7 +77,7 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
                     addressList[k]=it
                 }
             } catch (e: Exception) {
-
+                e.printStackTrace()
             }
         }
         Log.d("httpdns addressList", addressList.toString())

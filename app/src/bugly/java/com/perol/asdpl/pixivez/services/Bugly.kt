@@ -14,7 +14,7 @@ inline fun checkUpdate(){
 inline fun initBugly(context:PxEZApp) {
     Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
     Beta.enableHotfix = false
-    Beta.initDelay = 1 * 1000;
+    Beta.initDelay = 1 * 1000
     //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
     Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     Bugly.init(context, "5f21ff45b7", BuildConfig.DEBUG)

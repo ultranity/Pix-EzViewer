@@ -32,12 +32,12 @@ import com.perol.asdpl.pixivez.responses.Illust
 class RankingMViewModel : BaseViewModel() {
     val retrofitRepository = RetrofitRepository.getInstance()
     val nextUrl = MutableLiveData<String>()
-    val addillusts = MutableLiveData<ArrayList<Illust>>()
-    val illusts = MutableLiveData<ArrayList<Illust>>()
+    val addillusts = MutableLiveData<ArrayList<Illust>?>()
+    val illusts = MutableLiveData<ArrayList<Illust>??>()
     fun first(mode: String, picdata: String?) {
         retrofitRepository.getIllustRanking(mode, picdata).subscribe({
             nextUrl.value = it.next_url
-            illusts.value = ArrayList<Illust>(it.illusts)
+            illusts.value = ArrayList(it.illusts)
         }, { it.printStackTrace() }, {}).add()
     }
 

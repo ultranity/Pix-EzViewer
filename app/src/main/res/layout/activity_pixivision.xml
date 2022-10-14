@@ -19,29 +19,18 @@
             android:layout_height="wrap_content"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_marginBottom="18dp"
-    android:layout_height="match_parent" android:orientation="vertical">
-    <ImageView
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
 
-        android:src="@drawable/pixivision_color_logo" />
-    <TextView
-
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-
-        android:textColor="@color/dark"
-        android:text="@string/pixivision_desc"
-        android:layout_gravity="bottom|center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+            <TextView
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginEnd="25dp"
+                android:textColor="@color/dark"
+                android:text="@string/pixivision_desc"
+                android:layout_gravity="bottom|center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTopCompat="@drawable/pixivision_color_logo" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toobar_pixivision"

@@ -29,7 +29,6 @@ package com.perol.asdpl.pixivez.dialog
 import android.app.Activity
 import android.app.ActivityOptions
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -39,7 +38,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,16 +52,15 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
+
 //TODO: Refactor
 class CommentDialog : BaseDialogFragment() {
 
-    lateinit var recyclerviewPicture: RecyclerView
+    private lateinit var recyclerviewPicture: RecyclerView
 
-    lateinit var edittextComment: TextInputEditText
+    private lateinit var edittextComment: TextInputEditText
 
     lateinit var button: Button
     private var commentAdapter: CommentAdapter? = null
@@ -105,6 +102,7 @@ class CommentDialog : BaseDialogFragment() {
                             Toasty.warning(requireContext(), getString(R.string.rate_limited), Toast.LENGTH_SHORT)
                                 .show()
                         } else if (e.response()!!.code() == 404) {
+                            e.printStackTrace()
                         }
                     },{}) .add()
             },{},{

@@ -24,7 +24,6 @@
 
 package com.perol.asdpl.pixivez.objects
 
-import android.app.Application
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -33,8 +32,10 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 
 object TToast {
 
-    val LToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_LONG)
-    val sToast = Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_SHORT)
+    private val LToast: Toast =
+        Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_LONG)
+    private val sToast: Toast =
+        Toast.makeText(PxEZApp.instance.applicationContext, "", Toast.LENGTH_SHORT)
 
     fun retoken(context: Context) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

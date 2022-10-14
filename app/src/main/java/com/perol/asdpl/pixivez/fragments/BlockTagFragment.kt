@@ -13,10 +13,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 
@@ -42,7 +42,7 @@ class BlockTagFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewModel = ViewModelProvider(this).get(BlockViewModel::class.java)
+        viewModel = ViewModelProvider(this)[BlockViewModel::class.java]
     }
 
     @SuppressLint("SetTextI18n")

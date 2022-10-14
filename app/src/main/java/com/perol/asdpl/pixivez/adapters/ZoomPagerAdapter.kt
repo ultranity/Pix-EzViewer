@@ -42,7 +42,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.dinuscxj.progressbar.CircleProgressBar
-import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor
 import com.perol.asdpl.pixivez.networks.ProgressListener
@@ -113,11 +112,11 @@ class ZoomPagerAdapter(
 
                 override fun onLongPress(e: MotionEvent) {
                     super.onLongPress(e)
-                    if (illust != null && resourceFile != null) {
+                    if (resourceFile != null) {
                         MaterialDialog(context).show {
                             title(R.string.saveselectpic1)
                             positiveButton(android.R.string.ok) {
-                                if (!illust.meta_pages.isNullOrEmpty()) {
+                                if (illust.meta_pages.isNotEmpty()) {
                                     Works.imageDownloadWithFile(illust, resourceFile!!, position)
                                 } else Works.imageDownloadWithFile(illust, resourceFile!!, null)
 

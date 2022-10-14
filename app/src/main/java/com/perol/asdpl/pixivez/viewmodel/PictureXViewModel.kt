@@ -56,7 +56,7 @@ class PictureXViewModel : BaseViewModel() {
         val file = File(zipPath)
         if (file.exists()) {
             Observable.create<Int> { ob ->
-                UnzipUtil.UnZipFolder(
+                UnzipUtil.unZipFolder(
                     file,
                     PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
                 )
@@ -101,7 +101,7 @@ class PictureXViewModel : BaseViewModel() {
                 inputStream.close()
                 output.close()
                 println("+++++++++")
-                UnzipUtil.UnZipFolder(
+                UnzipUtil.unZipFolder(
                     file,
                     PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
                 )

@@ -2,6 +2,6 @@
 <TextView android:id="@+id/textview_search"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:textSize="20dp"
+    android:textSize="20sp"
     android:textAlignment="center"
     xmlns:android="http://schemas.android.com/apk/res/android" />

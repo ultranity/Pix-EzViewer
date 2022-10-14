@@ -45,7 +45,6 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
-import com.bekawestberg.loopinglayout.library.LoopingSnapHelper
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.OKWebViewActivity

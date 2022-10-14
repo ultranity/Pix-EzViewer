@@ -34,7 +34,7 @@ import com.perol.asdpl.pixivez.R
 
 class ThemeUtil {
     companion object {
-        val themeArray = arrayOf(
+        private val themeArray = arrayOf(
             R.style.AppThemeBase_Primary,
             R.style.AppThemeBase_blue,
             R.style.AppThemeBase_pink,

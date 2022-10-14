@@ -316,4 +316,5 @@
     <string name="use_bottom_layout_subtext">颠倒上下~</string>
     <string name="use_picX_layout_main">首页使用新式卡片布局</string>
     <string name="use_picX_layout_subtext">简明体验，只为看图</string>
+    <string name="fractional" translatable="false">%d/%d</string>
 </resources>

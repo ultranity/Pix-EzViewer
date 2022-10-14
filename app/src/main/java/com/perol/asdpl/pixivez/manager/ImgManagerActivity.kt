@@ -61,33 +61,34 @@ class ImgManagerActivity : RinkActivity() {
         initBind()
     }
 
-    private val ImgManagerAdapter = ImgManagerAdapter(R.layout.view_imgmanager_item)
+    private val imgManagerAdapter = ImgManagerAdapter(R.layout.view_imgmanager_item)
     private fun initView() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.recyclerviewImgManager.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         //binding.recyclerviewImgManager.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
-        binding.recyclerviewImgManager.adapter = ImgManagerAdapter
-        ImgManagerAdapter.addFooterView(LayoutInflater.from(this).inflate(R.layout.foot_list, null))
+        binding.recyclerviewImgManager.adapter = imgManagerAdapter
+        imgManagerAdapter.addFooterView(LayoutInflater.from(this).inflate(R.layout.foot_list, null))
         //binding.recyclerviewImgManager.smoothScrollToPosition(ImgManagerAdapter.data.size)
 
-        viewModel = ViewModelProvider(this).get(ImgManagerViewModel::class.java)
-        viewModel.adapter = ImgManagerAdapter
-        viewModel.layoutManager = binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
+        viewModel = ViewModelProvider(this)[ImgManagerViewModel::class.java]
+        viewModel.adapter = imgManagerAdapter
+        viewModel.layoutManager =
+            binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
         viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
-        viewModel.path.observe(this){
+        viewModel.path.observe(this) {
             binding.swiperefreshLayout.isRefreshing = true
             Thread(Runnable {
                 viewModel.files = FileUtil.getGroupList(
                     it
                 )
                 //.filter{it.isPic()}.toMutableList()
-                viewModel.task = viewModel.files!!.map { renameTask(it) }
+                viewModel.task = viewModel.files!!.map { RenameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()
                     binding.swiperefreshLayout.isRefreshing = false
-                    ImgManagerAdapter.setNewData(viewModel.files)
+                    imgManagerAdapter.setNewInstance(viewModel.files)
                 }
             }).start()
         }
@@ -97,11 +98,11 @@ class ImgManagerActivity : RinkActivity() {
                     viewModel.path.value!!
                 )
                 //.filter{it.isPic()}.toMutableList()
-                viewModel.task = viewModel.files!!.map { renameTask(it) }
+                viewModel.task = viewModel.files!!.map { RenameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()
                     binding.swiperefreshLayout.isRefreshing = false
-                    ImgManagerAdapter.setNewData(viewModel.files)
+                    imgManagerAdapter.setNewInstance(viewModel.files)
                 }
             }).start()
         }
@@ -126,7 +127,7 @@ class ImgManagerActivity : RinkActivity() {
         viewModel.task?.forEach {
             it.file.checked = false
         }
-        ImgManagerAdapter.notifyDataSetChanged()
+        imgManagerAdapter.notifyDataSetChanged()
     }
 
     private var getInfo = false
@@ -171,16 +172,16 @@ class ImgManagerActivity : RinkActivity() {
             val binding = CustomformatviewBinding.inflate(layoutInflater)
             val descTable = binding.formatDescTable
             val sampleTable = binding.formatSampleTable
-            val Input = binding.customizedformat
+            val customizedFormatInput = binding.customizedformat
             val tagSeparator = binding.tagSeparator
-            Input.setText(viewModel.saveformat)
+            customizedFormatInput.setText(viewModel.saveformat)
             tagSeparator.setText(viewModel.TagSeparator)
             val dialog = MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT))
             dialog.show {
                 title(R.string.saveformat)
                 customView(view = binding.root, scrollable = true, horizontalPadding = true)
                 positiveButton(R.string.save) { dialog ->
-                    viewModel.saveformat = "${Input.text}"
+                    viewModel.saveformat = "${customizedFormatInput.text}"
                     viewModel.TagSeparator = "${tagSeparator.text}"
                     viewModel.pre.edit().putString("ImgManagerSaveFormat", viewModel.saveformat)
                         .apply()
@@ -194,19 +195,19 @@ class ImgManagerActivity : RinkActivity() {
                 negativeButton(android.R.string.cancel)
                 lifecycleOwner(this@ImgManagerActivity)
             }
-            val InputEditable = Input.editableText
+            val inputEditable = customizedFormatInput.editableText
             for (i in 1 until descTable.childCount)
                 descTable.getChildAt(i).setOnClickListener {
-                    InputEditable.insert(Input.selectionStart, it.tag.toString())
+                    inputEditable.insert(customizedFormatInput.selectionStart, it.tag.toString())
                 }
             for (i in 1 until sampleTable.childCount)
                 sampleTable.getChildAt(i).setOnClickListener {
-                    InputEditable.clear()
-                    InputEditable.insert(0, it.tag.toString())
+                    inputEditable.clear()
+                    inputEditable.insert(0, it.tag.toString())
                 }
         }
 
-        ImgManagerAdapter.setOnItemClickListener { _, _, position ->
+        imgManagerAdapter.setOnItemClickListener { _, _, position ->
             val file = viewModel.files!![position]
             if (file.type == FileUtil.T_DIR) {
                 viewModel.path.value = file.path
@@ -215,8 +216,10 @@ class ImgManagerActivity : RinkActivity() {
                 if (pid != null) {
                     val bundle = Bundle()
                     val arrayList = viewModel.files!!.subList(
-                        max(position-30,0), min(viewModel.files!!.size,
-                            max(position-30,0) +60)
+                        max(position - 30, 0), min(
+                            viewModel.files!!.size,
+                            max(position - 30, 0) + 60
+                        )
                     ).mapNotNull { it.pid }.toLongArray()
                     bundle.putInt("position",arrayList.indexOf(pid))
                     //val arrayList = LongArray(1)

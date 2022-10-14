@@ -3,7 +3,8 @@ package com.perol.asdpl.pixivez.manager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -14,12 +15,10 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.download.DownloadReceiver
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.io.File
@@ -32,17 +31,17 @@ class DownloadManagerActivity : RinkActivity() {
     private lateinit var viewModel: DownLoadManagerViewModel
     private lateinit var downloadTaskAdapter: DownloadTaskAdapter
     private lateinit var  aria: DownloadReceiver
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
-        viewModel = ViewModelProvider(this).get(DownLoadManagerViewModel::class.java)
-        viewModel.progress.observe(this,{
+        viewModel = ViewModelProvider(this)[DownLoadManagerViewModel::class.java]
+        viewModel.progress.observe(this) {
             binding.progress.text = it
-        })
+        }
         aria = Aria.download(this)
         aria.register()
         downloadTaskAdapter = DownloadTaskAdapter()
@@ -53,7 +52,7 @@ class DownloadManagerActivity : RinkActivity() {
         binding.downloadlistrefreshlayout.setOnRefreshListener {
             val taskList = aria.taskList
             if (taskList?.isNotEmpty() == true)
-                downloadTaskAdapter.setNewData(taskList.asReversed())
+                downloadTaskAdapter.setNewInstance(taskList.asReversed())
             binding.downloadlistrefreshlayout.isRefreshing = false
         }
     }
@@ -109,7 +108,7 @@ class DownloadManagerActivity : RinkActivity() {
                     runOnUiThread {
                         val taskList = Aria.download(this).taskList
                         if (taskList?.isNotEmpty() == true)
-                            downloadTaskAdapter.setNewData(taskList.asReversed())
+                            downloadTaskAdapter.setNewInstance(taskList.asReversed())
                     }
                 }.start()
                 Aria.download(this).resumeAllTask()
@@ -181,7 +180,7 @@ class DownloadManagerActivity : RinkActivity() {
         }
         val taskList = Aria.download(this).taskList
         if (taskList?.isNotEmpty() == true)
-            downloadTaskAdapter.setNewData(taskList.asReversed())
+            downloadTaskAdapter.setNewInstance(taskList.asReversed())
         return true
     }
 
@@ -211,7 +210,7 @@ class DownloadManagerActivity : RinkActivity() {
             }
 
             if (index != -1) {
-                downloadTaskAdapter.remove(index)
+                downloadTaskAdapter.removeAt(index)
             }
         }
     }
@@ -255,7 +254,7 @@ class DownloadManagerActivity : RinkActivity() {
         super.onResume()
         val taskList = aria.taskList
         if (taskList?.isNotEmpty() == true){
-            downloadTaskAdapter.setNewData(taskList.asReversed())
+            downloadTaskAdapter.setNewInstance(taskList.asReversed())
         }
     }
 

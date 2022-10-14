@@ -27,10 +27,12 @@
 
 # 下载
 
-|来源|说明|
-|:---:|:---:|
-|[GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)|点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时|
-|[Google Play](https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez)|~~**★推荐!** 点这个，从 Google Play 上下载<br />需要已配置好 Play 全家桶，更新方便~~<br />因bugly依赖已下架|
+|                                            来源                                             |                                      说明                                       |
+|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
+|           [GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)            |           点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时            |
+| [Google Play](https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez) | ~~**
+★推荐!** 点这个，从 Google Play 上下载<br />需要已配置好 Play 全家桶，更新方便~~<br />因bugly依赖已下架 |
+|        [F-droid](https://f-droid.org/packages/com.perol.asdpl.play.pixivez.libre/)        |                          F-droid 分发，无bugly日志，社区更新较慢                           |
 
 Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁路阻断）直连 Pixiv 的功能
 
@@ -47,8 +49,9 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 如果你需要一个 WPF 客户端，那么可以尝试一下由 [@Rinacm](https://github.com/Rinacm) 开发的 [Pixeval](https://github.com/Rinacm/Pixeval) 。
 
 # Preview
-|![Preview](./preview/2.jpg) | ![Preview](./preview/1.jpg) | ![Preview](./preview/3.jpg) |
-|:-------------------:|:------------------------:|:-----------------:|
+
+| ![Preview](./preview/2.jpg) | ![Preview](./preview/1.jpg) | ![Preview](./preview/3.jpg) |
+|:---------------------------:|:---------------------------:|:---------------------------:|
 
 # 交流反馈
 
@@ -68,6 +71,6 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 
 如果你觉得这个应用还不错，就支持一下吧！
 
-|                             国内                             |                             国外                             |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                                       国内                                       |                                                                                                        国外                                                                                                         |
+|:------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | [点此](https://github.com/ultranity/Pix-EzViewer/blob/master/donation/README.md) | <a href='https://ko-fi.com/W7W5YU4B' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> |

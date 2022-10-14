@@ -37,7 +37,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentActivity
-import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -52,13 +51,14 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
             context.startActivity(intent)
         }
     }
-    protected var mContext: Context? = null
-    protected var mActivity: FragmentActivity? = null
-    protected var mLayoutID = 0
+
+    private var mContext: Context? = null
+    private var mActivity: FragmentActivity? = null
+    private var mLayoutID = 0
     protected var binding: Layout? = null
     protected var className = this.javaClass.simpleName + " "
-    fun initModel() {}
-    protected fun initBundle(bundle: Bundle?) {}
+    private fun initModel() {}
+    private fun initBundle(bundle: Bundle?) {}
     protected abstract fun initLayout(): Int
     protected abstract fun initView()
     protected abstract fun initData()

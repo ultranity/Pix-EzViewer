@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.services
 
+//import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
@@ -40,15 +41,14 @@ import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
-//import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import java.io.File
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
+import java.io.File
 import java.util.*
 
 class PxEZApp : Application() {
@@ -246,7 +246,7 @@ class PxEZApp : Application() {
         var saveformat = ""
 
         @JvmStatic
-        var locale = Locale.SIMPLIFIED_CHINESE
+        var locale: Locale = Locale.SIMPLIFIED_CHINESE
 
         @JvmStatic
         var language: Int = 0

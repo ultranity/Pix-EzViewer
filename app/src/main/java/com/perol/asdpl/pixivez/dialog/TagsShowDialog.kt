@@ -150,7 +150,7 @@ class TagsShowDialog : DialogFragment() {
 
                                     tagsShowAdapter.counts.add(ot.count)
                                 }
-                                tagsShowAdapter.setNewData(x)
+                            tagsShowAdapter.setNewInstance(x)
                             }, {}, {}).add()
             }
         })

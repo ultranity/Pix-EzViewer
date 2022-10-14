@@ -31,7 +31,7 @@ import java.util.*
 
 class SupportDialog : DialogFragment() {
 
-    val ThanksArray = listOf(
+    private val thanksArray = listOf(
         "**涛 x20",
         "*蒂",
         "C*a",
@@ -277,7 +277,7 @@ class SupportDialog : DialogFragment() {
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE
             )
             binding.textStatic.text = spannableString
-            re.adapter = ThanksAdapter(R.layout.simple_list_item, ThanksArray).apply {
+            re.adapter = ThanksAdapter(R.layout.simple_list_item, thanksArray).apply {
                 setHeaderView(msg)
             }
             re.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)

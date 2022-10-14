@@ -29,7 +29,6 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,13 +39,11 @@ import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 
 class TagsBookMarkDialog : DialogFragment() {
-    companion object {
-
-    }
+    companion object;
 
     lateinit var recyclerView: RecyclerView
     lateinit var editText: EditText
-    lateinit var pictureXViewModel: PictureXViewModel
+    private lateinit var pictureXViewModel: PictureXViewModel
     lateinit var imageButton: ImageButton
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -75,16 +72,17 @@ class TagsBookMarkDialog : DialogFragment() {
                 }
             }
             pictureXViewModel =
-                ViewModelProvider(requireParentFragment()).get(PictureXViewModel::class.java)
+                ViewModelProvider(requireParentFragment())[PictureXViewModel::class.java]
             pictureXViewModel.illustDetail.value?.let{
-                tagsAdapter.setNewData(it.tags.map {
+                tagsAdapter.setNewInstance(it.tags.map {
                     BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
                         isIs_registered = false
                         name = it.toString()
-                    }}.toMutableList())
+                    }
+                }.toMutableList())
             }
             pictureXViewModel.tags.observe(this){
-                tagsAdapter.setNewData(it.tags)
+                tagsAdapter.setNewInstance(it.tags)
             }
             pictureXViewModel.fabOnLongClick()
             builder

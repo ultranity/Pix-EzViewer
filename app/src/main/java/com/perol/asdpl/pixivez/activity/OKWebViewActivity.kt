@@ -40,13 +40,16 @@ import android.webkit.*
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
-import com.perol.asdpl.pixivez.networks.*
+import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.networks.RubyHttpXDns
+import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
+import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import okhttp3.Request
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.net.*
+import java.net.URL
 import java.security.SecureRandom
 import javax.net.ssl.*
 
@@ -85,7 +88,7 @@ object GlideUtil {
 }
 */
 object WebviewDnsInterceptUtil {
-    val TAG = "WebviewDnsInterceptUtil"
+    private const val TAG = "WebviewDnsInterceptUtil"
     lateinit var userAgentString: String
     fun getDnsInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
         return if (request != null && request.url != null &&
@@ -102,7 +105,7 @@ object WebviewDnsInterceptUtil {
         } else null
     }
 
-    fun getWebResourceFromUrl(url: Uri): WebResourceResponse? {
+    private fun getWebResourceFromUrl(url: Uri): WebResourceResponse? {
         /*val builder = OkHttpClient.Builder()
         builder.addInterceptor(object : Interceptor {
             override fun intercept(chain: Interceptor.Chain): Response {
@@ -218,13 +221,17 @@ object WebviewDnsInterceptUtil {
     @Volatile
     private var mNullHostNameVerifier: HostnameVerifier? = null
 
-    fun getIgnoreSSLContext(): SSLContext? {
+    private fun getIgnoreSSLContext(): SSLContext? {
         if (mIgnoreSSLContext == null) {
             synchronized(WebviewDnsInterceptUtil::class.java) {
                 if (mIgnoreSSLContext == null) {
                     try {
                         mIgnoreSSLContext = SSLContext.getInstance("TLS").apply {
-                            init(null, arrayOf<TrustManager>(RubyX509TrustManager()), SecureRandom())
+                            init(
+                                null,
+                                arrayOf<TrustManager>(RubyX509TrustManager()),
+                                SecureRandom()
+                            )
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, e.printStackTrace().toString())
@@ -259,7 +266,7 @@ class OKWebViewActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWebViewBinding.inflate(layoutInflater)
         mWebview = binding.webview
-		setContentView(binding.root)
+        setContentView(binding.root)
         val local = LanguageUtil.langToLocale(PxEZApp.language).language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
@@ -429,7 +436,7 @@ class OKWebViewActivity : RinkActivity() {
             ) {
                 super.onReceivedError(view, request, error)
                 if (BuildConfig.DEBUG) {
-                    Log.d("onReceivedError", "${request} ${error}")
+                    Log.d("onReceivedError", "$request $error")
                 }
             }
             val sslErrors: Array<String> = arrayOf(
@@ -468,6 +475,8 @@ class OKWebViewActivity : RinkActivity() {
                 }
                 return s
             }
+
+            @SuppressLint("WebViewClientOnReceivedSslError")
             override fun onReceivedSslError(
                 view: WebView,
                 handler: SslErrorHandler,

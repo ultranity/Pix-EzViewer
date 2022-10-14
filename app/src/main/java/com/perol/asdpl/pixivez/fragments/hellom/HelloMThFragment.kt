@@ -33,8 +33,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMThViewPager
-import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMthBinding
+import com.perol.asdpl.pixivez.repository.AppDataRepository
 import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
@@ -70,8 +70,8 @@ class HelloMThFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-		binding = FragmentHelloMthBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentHelloMthBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

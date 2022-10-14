@@ -103,8 +103,11 @@ object RestClient {
     //val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
     //val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
     val retrofitOauthSecure = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
-    val retrofitOauthSecureDirect = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net", true))
-    private val HashSalt =
+    val retrofitOauthSecureDirect = buildRetrofit(
+        "https://oauth.secure.pixiv.net",
+        okHttpClient("oauth.secure.pixiv.net", true)
+    )
+    private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
     private fun encode(text: String): String {

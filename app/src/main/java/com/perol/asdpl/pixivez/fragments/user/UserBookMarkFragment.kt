@@ -152,7 +152,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     private fun lazyLoad() {
-        viewModel = ViewModelProvider(this).get(UserBookMarkViewModel::class.java)
+        viewModel = ViewModelProvider(this)[UserBookMarkViewModel::class.java]
         this.viewActivity = activity as UserMActivity
 
         viewModel!!.nextUrl.observe(this){

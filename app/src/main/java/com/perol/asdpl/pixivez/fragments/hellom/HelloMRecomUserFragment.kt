@@ -82,7 +82,7 @@ class HelloMRecomUserFragment : BaseFragment() {
         lazyLoad()
     }
 
-    val userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
+    private val userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.apply {
@@ -104,8 +104,8 @@ class HelloMRecomUserFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-		binding = FragmentRecomUserBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentRecomUserBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 

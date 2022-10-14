@@ -77,9 +77,9 @@ class SettingFragment : PreferenceFragmentCompat() {
         mdComponent = ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.md")
     }
 
-    lateinit var defaultComponent: ComponentName
-    lateinit var testComponent: ComponentName
-    lateinit var mdComponent: ComponentName
+    private lateinit var defaultComponent: ComponentName
+    private lateinit var testComponent: ComponentName
+    private lateinit var mdComponent: ComponentName
     private fun enableComponent(componentName: ComponentName) {
         Log.d("compon", componentName.packageName)
         val state = activity?.packageManager!!.getComponentEnabledSetting(componentName)
@@ -285,7 +285,7 @@ class SettingFragment : PreferenceFragmentCompat() {
 
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
-        when (preference?.key) {
+        when (preference.key) {
             "me" -> {
                 try {
 
@@ -308,7 +308,7 @@ class SettingFragment : PreferenceFragmentCompat() {
 
 
                 } catch (e: Exception) {
-
+                    e.printStackTrace()
                 }
             }
             "me0" -> {
@@ -468,16 +468,16 @@ class SettingFragment : PreferenceFragmentCompat() {
         val binding = CustomformatviewBinding.inflate(layoutInflater)
         val descTable = binding.formatDescTable
         val sampleTable = binding.formatSampleTable
-        val Input = binding.customizedformat
+        val customizedFormatInput = binding.customizedformat
         val tagSeparator = binding.tagSeparator
-        Input.setText(PxEZApp.saveformat)
+        customizedFormatInput.setText(PxEZApp.saveformat)
         tagSeparator.setText(PxEZApp.TagSeparator)
         val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
         dialog.show {
             title(R.string.saveformat)
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
             positiveButton(R.string.save) { dialog ->
-                PxEZApp.saveformat = "${Input.text}"
+                PxEZApp.saveformat = "${customizedFormatInput.text}"
                 pre.apply {
                     putString("filesaveformat", PxEZApp.saveformat)
                 }
@@ -492,15 +492,15 @@ class SettingFragment : PreferenceFragmentCompat() {
             negativeButton(android.R.string.cancel)
             lifecycleOwner(this@SettingFragment)
         }
-        val InputEditable = Input.editableText
+        val inputEditable = customizedFormatInput.editableText
         for (i in 1 until descTable.childCount)
             descTable.getChildAt(i).setOnClickListener {
-                InputEditable.insert(Input.selectionStart, it.tag.toString())
+                inputEditable.insert(customizedFormatInput.selectionStart, it.tag.toString())
             }
         for (i in 1 until sampleTable.childCount)
             sampleTable.getChildAt(i).setOnClickListener {
-                InputEditable.clear()
-                InputEditable.insert(0, it.tag.toString())
+                inputEditable.clear()
+                inputEditable.insert(0, it.tag.toString())
             }
     }
 

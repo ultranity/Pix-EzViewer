@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.dialog
 
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -49,11 +50,12 @@ class SearchSectionDialog : DialogFragment() {
         show(fragmentManager, "LongHoldDialogFragment")
     }
 
-    val tms = Calendar.getInstance()
+    private val tms: Calendar = Calendar.getInstance()
     val thisMonth01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
     val halfYear01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
 
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val word = arguments?.getString("word", "")
         val builder = MaterialAlertDialogBuilder(requireActivity())
@@ -63,7 +65,7 @@ class SearchSectionDialog : DialogFragment() {
             null
         )
         val viewModel =
-            ViewModelProvider(requireParentFragment()).get(IllustfragmentViewModel::class.java)
+            ViewModelProvider(requireParentFragment())[IllustfragmentViewModel::class.java]
         var searchTargeti = viewModel.searchTarget.value
         val first = view.findViewById<TabLayout>(R.id.tablayout_search_target).apply {
             clearOnTabSelectedListeners()
@@ -119,14 +121,14 @@ class SearchSectionDialog : DialogFragment() {
             isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
                 if (viewModel.pre.getBoolean("enableonlybookmarked",false)){
-                when(hideBookmarked) {
-                    3->{
-                        toggleShowTitle.text = getString(R.string.hide_bookmarked)
+                    when(hideBookmarked) {
+                        3->{
+                            toggleShowTitle.text = getString(R.string.hide_bookmarked)
+                        }
+                        1->{
+                            toggleShowTitle.text = getString(R.string.only_bookmarked)
+                        }
                     }
-                    1->{
-                        toggleShowTitle.text = getString(R.string.only_bookmarked)
-                    }
-                }
                     hideBookmarked = (hideBookmarked+1)%4
                 }else{
                     hideBookmarked = (hideBookmarked+1)%2
@@ -135,8 +137,8 @@ class SearchSectionDialog : DialogFragment() {
         }
         val button = view.findViewById<Button>(R.id.pick_button).apply {
             var calendar = Calendar.getInstance()
-            if (viewModel.endDate.value != null) {
-                calendar = viewModel.startDate.value
+            if (viewModel.startDate.value != null) {
+                calendar = viewModel.startDate.value!!
                 this.text = viewModel.startDate.value.generateDateString()
             }
             setOnClickListener {
@@ -145,7 +147,7 @@ class SearchSectionDialog : DialogFragment() {
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
                 val dateDialog = DatePickerDialog(
                     requireActivity(),
-                    DatePickerDialog.OnDateSetListener { p0, year1, month1, day1 ->
+                    { p0, year1, month1, day1 ->
                         val monthR = month1 + 1
                         text = "${year1}-${monthR}-${day1}"
                         val calendar1 = Calendar.getInstance()
@@ -164,7 +166,7 @@ class SearchSectionDialog : DialogFragment() {
         view.findViewById<Button>(R.id.pick_end_button).apply {
             var calendar = Calendar.getInstance()
             if (viewModel.endDate.value != null) {
-                calendar = viewModel.endDate.value
+                calendar = viewModel.endDate.value!!
                 this.text = viewModel.endDate.value.generateDateString()
             }
             setOnClickListener {
@@ -176,7 +178,7 @@ class SearchSectionDialog : DialogFragment() {
 
                 val dateDialog = DatePickerDialog(
                     requireActivity(),
-                    DatePickerDialog.OnDateSetListener { p0, year1, month1, day1 ->
+                    { p0, year1, month1, day1 ->
                         val monthR = month1 + 1
                         val calendar1 = Calendar.getInstance()
                         calendar1.set(year1, month1, day1)

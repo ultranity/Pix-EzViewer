@@ -36,11 +36,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SearchResultAdapter
-import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
-import com.perol.asdpl.pixivez.fragments.UsersListFragment
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
+import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
+import com.perol.asdpl.pixivez.fragments.SearchUsersListFragment
+
 class SearchResultActivity : RinkActivity() {
-    var searchword: String ="1"
+    private var searchword: String = "1"
     var type: Int = 0
 
     lateinit var binding: ActivitySearchResultBinding
@@ -68,7 +69,7 @@ class SearchResultActivity : RinkActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item!!.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 this.finish() // back button
                 return true
@@ -85,7 +86,7 @@ class SearchResultActivity : RinkActivity() {
 
         binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
         arrayList.add(SearchIllustFragment.newInstance(searchword))
-        arrayList.add(UsersListFragment.newInstance(searchword))
+        arrayList.add(SearchUsersListFragment.newInstance(searchword))
         binding.contentSearchResult.viewpageSearchresult.adapter = SearchResultAdapter(this, supportFragmentManager, arrayList)
         binding.tablayoutSearchresult.getTabAt(type)?.select()
         binding.contentSearchResult.viewpageSearchresult.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

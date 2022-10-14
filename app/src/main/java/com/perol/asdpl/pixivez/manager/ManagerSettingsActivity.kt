@@ -11,10 +11,10 @@ import com.perol.asdpl.pixivez.databinding.SettingsActivityBinding
 class ManagerSettingsActivity : RinkActivity() {
 
 private lateinit var binding: SettingsActivityBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = SettingsActivityBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = SettingsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportFragmentManager
             .beginTransaction()

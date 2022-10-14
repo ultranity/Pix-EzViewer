@@ -26,9 +26,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebResourceRequest
@@ -48,7 +46,7 @@ class WebViewActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWebViewBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        setContentView(binding.root)
         val local = LanguageUtil.langToLocale(PxEZApp.language).language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
@@ -63,9 +61,7 @@ class WebViewActivity : RinkActivity() {
                 view: WebView?,
                 request: WebResourceRequest
             ): WebResourceResponse? {
-                if (request.url.host!!.equals("d.pixiv.org") || request.url.host!!.equals("connect.facebook.net") || request.url.host!!.equals(
-                        "platform.twitter.com"
-                    ) || request.url.host!!.equals("www.google-analytics.com")
+                if (request.url.host!! == "d.pixiv.org" || request.url.host!! == "connect.facebook.net" || request.url.host!! == "platform.twitter.com" || request.url.host!! == "www.google-analytics.com"
                 ) {
                     return WebResourceResponse(
                         "application/javascript",

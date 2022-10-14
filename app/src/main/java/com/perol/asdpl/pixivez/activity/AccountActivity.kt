@@ -34,9 +34,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.AccountChoiceAdapter
+import com.perol.asdpl.pixivez.databinding.ActivityAccountBinding
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.databinding.ActivityAccountBinding
 import kotlinx.coroutines.runBlocking
 
 class AccountActivity : RinkActivity() {
@@ -67,10 +67,10 @@ class AccountActivity : RinkActivity() {
     }
 
 private lateinit var binding: ActivityAccountBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivityAccountBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivityAccountBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.recyclerviewAccount.layoutManager = LinearLayoutManager(this)

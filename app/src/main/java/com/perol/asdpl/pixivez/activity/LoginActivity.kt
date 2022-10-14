@@ -60,7 +60,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.*
 
 class LoginActivity : RinkActivity() {
     //private var username: String? = null
@@ -114,7 +113,7 @@ class LoginActivity : RinkActivity() {
                 FirstInfoDialog().show(this.supportFragmentManager, "infodialog")
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
         binding.textviewHelp.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
@@ -200,6 +199,9 @@ class LoginActivity : RinkActivity() {
             val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
             startActivityForResult(intent, 8080)
         }
+        binding.register.setOnClickListener {
+            showRegisterHelp(binding.root)
+        }
 /*        println(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this))
         if(BuildConfig.ISGOOGLEPLAY)
         if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)==ConnectionResult.SERVICE_MISSING){
@@ -213,7 +215,8 @@ class LoginActivity : RinkActivity() {
             }
         }*/
     }
-    fun showHelp(view: View) {
+
+    private fun showRegisterHelp(view: View) {
 //        val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
 //        startActivity(intent)
         Snackbar.make(view, getString(R.string.registerclose), Snackbar.LENGTH_LONG)
@@ -284,7 +287,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                     try {
                         val errorBody = e.response()?.errorBody()?.string()
                         val gson = Gson()
-                        val errorResponse = gson.fromJson<ErrorResponse>(
+                        val errorResponse = gson.fromJson(
                             errorBody,
                             ErrorResponse::class.java
                         )

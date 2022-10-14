@@ -43,20 +43,21 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class renameTask constructor(fileInfo:FileInfo){
-    val file :FileInfo = fileInfo
-    val pid :Long? = if(file.isPic()) file.pid else null
-    val part :Int? = if(file.isPic()) fileInfo.part.toIntOrNull() else null
+class RenameTask(fileInfo: FileInfo) {
+    val file: FileInfo = fileInfo
+    val pid: Long? = if (file.isPic()) file.pid else null
+    val part: Int? = if (file.isPic()) fileInfo.part.toIntOrNull() else null
 
 }
+
 class ImgManagerViewModel : BaseViewModel() {
     val pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
-    var path =MutableLiveData<String>()
-    var saveformat = pre.getString("ImgManagerSaveFormat",PxEZApp.saveformat)!!
+    var path = MutableLiveData<String>()
+    var saveformat = pre.getString("ImgManagerSaveFormat", PxEZApp.saveformat)!!
     var TagSeparator = pre.getString("ImgManagerTagSeparator",PxEZApp.TagSeparator)!!
-    var files:MutableList<FileInfo>?=null
-    var task:List<renameTask>?=null
+    var files: MutableList<FileInfo>? = null
+    var task: List<RenameTask>? = null
     var length_filter = false
     var rename_once = false
     lateinit var adapter:ImgManagerAdapter
@@ -75,8 +76,8 @@ class ImgManagerViewModel : BaseViewModel() {
                 }
             return@map it
         }.subscribeOn(Schedulers.io().add()*/
-        val kv=MMKV.defaultMMKV(MMKV.MULTI_PROCESS_MODE,null)
-        val taskmap = HashMap<Long,renameTask>()
+        val kv = MMKV.defaultMMKV(MMKV.MULTI_PROCESS_MODE, null)
+        val taskmap = HashMap<Long, RenameTask>()
         task?.filter {
             (!length_filter ||it.file.name.length<50) && it.pid != null
         }?.forEach {
@@ -89,7 +90,7 @@ class ImgManagerViewModel : BaseViewModel() {
                         kv.encode(it.illust.id.toString(),it.illust)
                         Observable.just(it.illust)
                     }.subscribeOn(Schedulers.io()).doOnError {e->
-                        Log.e("imgMgr", "getIllust ${it.pid} : ${e.message} ", )
+                        Log.e("imgMgr", "getIllust ${it.pid} : ${e.message} ")
                     }
             }
                 .subscribeOn(Schedulers.io())
@@ -115,17 +116,19 @@ class ImgManagerViewModel : BaseViewModel() {
                 .observeOn(AndroidSchedulers.mainThread()).subscribe ({rt->
                     //Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
                     val preIndex = files!!.indexOf(rt.file)
-                    if (preIndex>=layoutManager.findFirstVisibleItemPosition()
-                        &&preIndex<=layoutManager.findLastVisibleItemPosition()) {
+                    if (preIndex >= layoutManager.findFirstVisibleItemPosition()
+                        && preIndex <= layoutManager.findLastVisibleItemPosition()
+                    ) {
                         adapter.notifyItemChanged(preIndex)
                     }
-                },{
+                }, {
                     Log.e("imgMgr", "error$it")
-                },{}).add()
+                }, {}).add()
         }
     }
-    fun rename(it:renameTask) {
-        if(it.file.name == it.file.target || it.file.target == null)
+
+    fun rename(it: RenameTask) {
+        if (it.file.name == it.file.target || it.file.target == null)
             return
         val orig = File(it.file.path)
         val tar = "${orig.parent}${File.separator}${it.file.target}"

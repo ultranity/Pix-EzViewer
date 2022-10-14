@@ -34,7 +34,7 @@ class UnzipUtil {
         const val TAG = "ZIP"
 
         @Throws(Exception::class)
-        fun UnZipFolder(file: File, outPathString: String) {
+        fun unZipFolder(file: File, outPathString: String) {
             ZipFile(file).extractAll(outPathString)
         }
     }

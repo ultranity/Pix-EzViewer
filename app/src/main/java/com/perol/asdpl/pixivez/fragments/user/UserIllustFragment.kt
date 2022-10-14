@@ -82,17 +82,20 @@ class UserIllustFragment : BaseFragment() {
         Log.d("UserIllustFragment","UserIllustFragment resume")
     }
 
-    fun lazyLoad() {
+    private fun lazyLoad() {
         picListBtnAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
         binding.mrefreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, param2!!)
         }
-        binding.mrecyclerview.apply{
-                layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
-                adapter = picListBtnAdapter
-                //addItemDecoration(GridItemDecoration())
+        binding.mrecyclerview.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                1 + context.resources.configuration.orientation,
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            adapter = picListBtnAdapter
+            //addItemDecoration(GridItemDecoration())
             }
 
     }
@@ -106,7 +109,7 @@ class UserIllustFragment : BaseFragment() {
             param1 = it.getLong(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewModel = ViewModelProvider(this).get(UserMillustViewModel::class.java)
+        viewModel = ViewModelProvider(this)[UserMillustViewModel::class.java]
 
         viewModel.nextUrl.observe(this){
             if (it.isNullOrEmpty()) {
@@ -119,7 +122,7 @@ class UserIllustFragment : BaseFragment() {
         viewModel.data.observe(this){
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
-                picListBtnAdapter.setNewData(it.toMutableList())
+                picListBtnAdapter.setNewInstance(it.toMutableList())
             }
 
         }

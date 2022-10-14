@@ -27,13 +27,9 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.RecommendResponse
-import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
-import com.perol.asdpl.pixivez.responses.SpotlightResponse
-import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {

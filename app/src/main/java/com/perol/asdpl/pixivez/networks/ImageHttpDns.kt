@@ -49,12 +49,10 @@ object ImageHttpDns : Dns {
                 addressList.addAll(it)
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
 
-        return if (addressList.isNotEmpty())
-            addressList
-        else {
+        return addressList.ifEmpty {
             addressList.addAll(defaultList)
             addressList
         }

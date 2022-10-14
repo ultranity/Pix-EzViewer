@@ -31,8 +31,9 @@ import java.io.File
 
 class PathProviderAdapter(layoutResId: Int, data: List<File>) :
     BaseQuickAdapter<File, BaseViewHolder>(layoutResId, data.toMutableList()) {
-    override fun convert(helper: BaseViewHolder, item: File) {
-        helper.setText(R.id.path_textview, item.name).setImageResource(R.id.imageView2, R.drawable.ic_action_folder)
+    override fun convert(holder: BaseViewHolder, item: File) {
+        holder.setText(R.id.path_textview, item.name)
+            .setImageResource(R.id.imageView2, R.drawable.ic_action_folder)
     }
 
 }

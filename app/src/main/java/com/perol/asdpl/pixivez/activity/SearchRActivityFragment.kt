@@ -31,38 +31,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsTextAdapter
+import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
 import com.perol.asdpl.pixivez.responses.Tags
 import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
-import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
+
 /**
  * A placeholder fragment containing a simple view.
  */
 class SearchRActivityFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchRBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-		binding = FragmentSearchRBinding.inflate(inflater, container, false)
-		return binding.root
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSearchRBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    lateinit var tagsTextViewModel: TagsTextViewModel
-    lateinit var tagsTextAdapter: TagsTextAdapter
+    private lateinit var tagsTextViewModel: TagsTextViewModel
+    private lateinit var tagsTextAdapter: TagsTextAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tagsTextAdapter = TagsTextAdapter(R.layout.tagstext_item)
         binding.recyclerview.layoutManager = LinearLayoutManager(activity)
         binding.recyclerview.adapter = tagsTextAdapter
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
-            val s_tag = tags[position]
-            if (s_tag.translated_name != null && s_tag.translated_name.isNotEmpty())
-                tagsTextViewModel.addhistory(s_tag.name + "|" + s_tag.translated_name)
-            else tagsTextViewModel.addhistory(s_tag.name)
+            val tag = tags[position]
+            if (tag.translated_name.isNotBlank())
+                tagsTextViewModel.addhistory(tag.name + "|" + tag.translated_name)
+            else tagsTextViewModel.addhistory(tag.name)
             val bundle = Bundle()
             bundle.putString("searchword", tags[position].name)
             val intent = Intent(requireActivity(), SearchResultActivity::class.java)
@@ -75,9 +77,9 @@ class SearchRActivityFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         tagsTextViewModel =
-            ViewModelProvider(requireActivity()).get(TagsTextViewModel::class.java)
-        tagsTextViewModel.tags.observe(viewLifecycleOwner, Observer {
-            tagsTextAdapter.setNewData(it.toMutableList())
+            ViewModelProvider(requireActivity())[TagsTextViewModel::class.java]
+        tagsTextViewModel.tags.observe(viewLifecycleOwner, {
+            tagsTextAdapter.setNewInstance(it.toMutableList())
             tags.clear()
             tags.addAll(it)
         })

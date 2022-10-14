@@ -66,7 +66,7 @@ class HelloMTrendingFragment : LazyFragment() {
     private fun initView() {
         //viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
-            ViewModelProvider(requireActivity()).get(RankingShareViewModel::class.java)
+            ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
         for (i in modelist.indices)
             binding.tablayoutRankingm.addTab(binding.tablayoutRankingm.newTab().setText(titles[i]))
         childFragmentManager.fragments.forEach {
@@ -150,8 +150,8 @@ class HelloMTrendingFragment : LazyFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-		binding = FragmentHelloMdynamicsBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentHelloMdynamicsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
@@ -161,7 +161,6 @@ class HelloMTrendingFragment : LazyFragment() {
          * this fragment using the provided parameters.
          *
          * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment HelloMDynamicsFragment.
          */
         // TODO: Rename and change types and number of parameters

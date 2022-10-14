@@ -38,8 +38,6 @@ import android.text.InputType
 import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
@@ -142,7 +140,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         return true
     }
 
-    var exitTime = 0L
+    private var exitTime = 0L
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -377,7 +375,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         normalDialog.setPositiveButton(
             getString(R.string.ok)
         ) { _, _ ->
-            Thread(Runnable {
+            Thread({
                 GlideApp.get(applicationContext).clearDiskCache()
                 deleteDir(applicationContext.cacheDir)
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {

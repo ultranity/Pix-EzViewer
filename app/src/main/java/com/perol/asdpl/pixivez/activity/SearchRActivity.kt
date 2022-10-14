@@ -46,12 +46,13 @@ class SearchRActivity : RinkActivity() {
     lateinit var tagsTextViewModel: TagsTextViewModel
     lateinit var trendTagViewModel: TrendTagViewModel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item!!.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 if (searchRActivityFragment.isHidden) {
                     this.finish()
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchRActivityFragment).show(trendTagFragment).commit()
+                    supportFragmentManager.beginTransaction().hide(searchRActivityFragment)
+                        .show(trendTagFragment).commit()
                 }
                 return true
             }
@@ -70,15 +71,15 @@ class SearchRActivity : RinkActivity() {
     }
 
 private lateinit var binding: ActivitySearchRBinding
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-		binding = ActivitySearchRBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        binding = ActivitySearchRBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        tagsTextViewModel = ViewModelProvider(this).get(TagsTextViewModel::class.java)
-        trendTagViewModel = ViewModelProvider(this).get(TrendTagViewModel::class.java)
+        tagsTextViewModel = ViewModelProvider(this)[TagsTextViewModel::class.java]
+        trendTagViewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         searchRActivityFragment = SearchRActivityFragment()
         trendTagFragment = TrendTagFragment.newInstance()
         val transaction = supportFragmentManager.beginTransaction().apply {
@@ -113,7 +114,7 @@ private lateinit var binding: ActivitySearchRBinding
         binding.searchviewSearchm.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
-                if (query != null && !query.isBlank())
+                if (query != null && query.isNotBlank())
                     when (binding.tablayoutSearchm.selectedTabPosition) {
                         0 -> {
 

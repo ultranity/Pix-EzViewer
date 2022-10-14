@@ -29,7 +29,6 @@ import android.content.SharedPreferences
 import android.media.MediaScannerConnection
 import android.os.Looper
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
@@ -172,11 +171,9 @@ object Works {
                 arrayOf(
                     MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
                 )
-            ) { _, _ ->
-
-            }
+            ) { _, _ -> }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
     suspend fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true){
@@ -194,7 +191,7 @@ object Works {
         if (illust.meta_pages.isEmpty()) {
             imgD(illust, null)
         } else {
-            Thread(Runnable {
+            Thread({
                 Looper.prepare()
                 for (i in illust.meta_pages.indices) {
                     imgD(illust, i)
@@ -214,9 +211,9 @@ object Works {
             }
     }
     var mirrorLinkView = pre.getBoolean("mirrorLinkView",false)
-    var mirrorLinkDownload = pre.getBoolean("mirrorLinkDownload",false)
-    val opximg = "i.pximg.net"
-    var mirrorURL = pre.getString("mirrorURL",opximg)!!
+    var mirrorLinkDownload = pre.getBoolean("mirrorLinkDownload", false)
+    const val opximg = "i.pximg.net"
+    var mirrorURL = pre.getString("mirrorURL", opximg)!!
     var mirrorFormat = pre.getString("mirrorFormat","{host}/{params}")!!
     var spximg = lookup(opximg)
     var smirrorURL = lookup(mirrorURL)

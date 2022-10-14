@@ -113,7 +113,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     }
 
-    var exitTime = 0L
+    private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
@@ -201,7 +201,6 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         requireActivity().findViewById<TabLayout>(R.id.tablayout_searchresult)?.getTabAt(0)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
-
                     exitTime = System.currentTimeMillis()
                 } else {
                     binding.recyclerview.smoothScrollToPosition(0)
@@ -212,9 +211,9 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
     private var param1: String? = null
-    lateinit var searchIllustAdapter: PicItemAdapter
+    private lateinit var searchIllustAdapter: PicItemAdapter
     var sort = arrayOf("date_desc", "date_asc", "popular_desc")
-    var search_target =
+    private var search_target =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
 
     var duration = arrayOf(
@@ -225,9 +224,9 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         "within_half_year",
         "within_year"
     )
-    var selectSort: Int = 0
-    var selectTarget: Int = 0
-    var selectDuration: Int = 0
+    private var selectSort: Int = 0
+    private var selectTarget: Int = 0
+    private var selectDuration: Int = 0
     private lateinit var viewModel: IllustfragmentViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -245,13 +244,13 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-		binding = FragmentSearchIllustBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentSearchIllustBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
     private fun lazyLoad() {
-        viewModel = ViewModelProvider(this).get(IllustfragmentViewModel::class.java)
+        viewModel = ViewModelProvider(this)[IllustfragmentViewModel::class.java]
 
         viewModel.illusts.observe(this){
             updateillust(it)
@@ -300,7 +299,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     private fun updateillust(it: ArrayList<Illust>?) {
         if (it != null) {
-            searchIllustAdapter.setNewData(it)
+            searchIllustAdapter.setNewInstance(it)
             if(it.size == 0){
                 param1!!.toLongOrNull()?.let {
                     val bundle = Bundle()

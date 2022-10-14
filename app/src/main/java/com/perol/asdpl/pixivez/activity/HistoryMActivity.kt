@@ -28,8 +28,6 @@ package com.perol.asdpl.pixivez.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,9 +35,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.HistoryAdapter
+import com.perol.asdpl.pixivez.databinding.ActivityHistoryMBinding
 import com.perol.asdpl.pixivez.sql.IllustBeanEntity
 import com.perol.asdpl.pixivez.viewmodel.HistoryMViewModel
-import com.perol.asdpl.pixivez.databinding.ActivityHistoryMBinding
+
 class HistoryMActivity : RinkActivity() {
     private lateinit var binding: ActivityHistoryMBinding
     private var historyMViewModel: HistoryMViewModel? = null
@@ -81,7 +80,7 @@ class HistoryMActivity : RinkActivity() {
     }
 
     private fun initData() {
-        historyMViewModel = ViewModelProvider(this).get(HistoryMViewModel::class.java)
+        historyMViewModel = ViewModelProvider(this)[HistoryMViewModel::class.java]
 
         historyMViewModel!!.illustBeans.observe(this){
             illustBeans(it)
@@ -100,7 +99,7 @@ class HistoryMActivity : RinkActivity() {
 
     private val historyAdapter = HistoryAdapter(R.layout.view_recommand_itemh)
     private fun illustBeans(it: ArrayList<IllustBeanEntity>?) {
-        historyAdapter.setNewData(it)
+        historyAdapter.setNewInstance(it)
     }
 
     private fun initView() {

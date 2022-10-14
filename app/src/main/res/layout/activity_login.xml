@@ -87,14 +87,13 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/loginBtn"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="?attr/colorPrimary"
         android:text="@string/login"
         android:textSize="18sp"
-        app:icon="@drawable/ic_done_black_24dp"
+        app:icon="@drawable/ic_done_black"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toTopOf="@id/textview_help"
         app:layout_constraintEnd_toEndOf="@id/passwordTextInputLayout"
@@ -118,11 +117,10 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:onClick="showHelp"
         android:text="@string/donthaveaccount"
         android:textColor="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="@id/loginBtn"

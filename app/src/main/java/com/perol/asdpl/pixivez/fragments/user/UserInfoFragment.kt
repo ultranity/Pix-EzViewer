@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.fragments.user
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -62,36 +63,34 @@ class UserInfoFragment : Fragment() {
         initData()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initData() {
         binding.textViewTacomment.autoLinkMask = Linkify.WEB_URLS
         if (mParam1.user != null || mParam1.user.comment != "")
             binding.textViewTacomment.text = "${mParam1.user.account}:\r\n${mParam1.user.comment}"
         else
             binding.textViewTacomment.text = "~"
-        loadBGImage(binding.imageviewUserBg,mParam1.profile.background_image_url)
+        loadBGImage(binding.imageviewUserBg, mParam1.profile.background_image_url)
         val mInflater = LayoutInflater.from(requireActivity())
         binding.textViewUserId.text = mParam1.user.id.toString()
         binding.textViewFans.text = mParam1.profile.total_mypixiv_users.toString()
         binding.textViewFans.setOnClickListener {
-            val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
-            val bundle = Bundle()
-            bundle.putLong("user", mParam1.user.id.toLong())
-            bundle.putBoolean("isfollower", true)
-            intent.putExtras(bundle)
-            startActivity(intent)
+            UserFollowActivity.start(requireContext(), mParam1.user.id.toLong(), true)
         }
         binding.textView5.text = mParam1.profile.total_follow_users.toString()
-        binding.textView5.setOnClickListener { BreaktoUserFollow(mParam1.user.id.toLong()) }
+        binding.textView5.setOnClickListener {
+            UserFollowActivity.start(requireContext(), mParam1.user.id.toLong(), false)
+        }
         val strings = ArrayList<String>()
-        if(!mParam1.profile.twitter_account.isNullOrBlank()) strings.add("twitter@" + mParam1.profile.twitter_account)
-        if(mParam1.profile_publicity.isPawoo) strings.add("pawoo")
+        if (!mParam1.profile.twitter_account.isNullOrBlank()) strings.add("twitter@" + mParam1.profile.twitter_account)
+        if (mParam1.profile_publicity.isPawoo) strings.add("pawoo")
         strings.add("ta的作品" + mParam1.profile.total_illusts)
         strings.add("ta的收藏" + mParam1.profile.total_illust_bookmarks_public)
         strings.add(mParam1.profile.gender)
         strings.add(mParam1.profile.birth)
-        strings.add(mParam1.profile.region+mParam1.profile.country_code)
+        strings.add(mParam1.profile.region + mParam1.profile.country_code)
         strings.add(mParam1.profile.job)
-        if(!mParam1.profile.webpage.isNullOrBlank())strings.add(mParam1.profile.webpage)
+        if (!mParam1.profile.webpage.isNullOrBlank()) strings.add(mParam1.profile.webpage)
         strings.add(mParam1.workspace.tool)
         strings.add(mParam1.workspace.tablet)
         strings.add(mParam1.workspace.printer)
@@ -122,19 +121,6 @@ class UserInfoFragment : Fragment() {
                                 startActivity(intent)
                             }
                         }
-//                        run {
-//                            if (mParam1.profile.pawoo_url == null)
-//                                return true
-//                            else if (mParam1.profile.pawoo_url.isNotBlank()) {
-//                                val uri = Uri.parse(mParam1.profile.pawoo_url)
-//                                val intent = Intent()
-//                                intent.action = Intent.ACTION_VIEW
-//                                intent.data = uri
-//                                startActivity(intent)
-//                            }
-//
-//
-//                        }
                     }
                     1 -> {
                         if (mParam1.profile.pawoo_url.isNullOrBlank())
@@ -188,19 +174,11 @@ class UserInfoFragment : Fragment() {
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
-		binding = FragmentUserInfoBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentUserInfoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
-    private fun BreaktoUserFollow(userid: Long?) {
-        val intent = Intent(activity, UserFollowActivity::class.java)
-        val bundle = Bundle()
-        bundle.putLong("user", userid!!)
-        bundle.putBoolean("isfollower", false)
-        intent.putExtras(bundle)
-        startActivity(intent)
-    }
 
     companion object {
         // TODO: Rename parameter arguments, choose names that match

@@ -27,7 +27,7 @@ class ProgressInterceptor : Interceptor {
 
     companion object {
         val LISTENER_MAP: MutableMap<String, ProgressListener> =
-            WeakHashMap<String, ProgressListener>()
+            WeakHashMap()
 
         //入注册下载监听
         fun addListener(url: String, listener: ProgressListener) {

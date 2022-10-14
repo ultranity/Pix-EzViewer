@@ -29,39 +29,34 @@
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:weightSum="1"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
             </LinearLayout>
             <!-- Bottom View End-->
 
-            <!-- Surface View Start -->
+            <!--What you want to show in SurfaceView-->
             <LinearLayout
+                android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="#ffffff"
-                >
-                <!--What you want to show in SurfaceView-->
-                <LinearLayout
-                    android:id="@+id/content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/item_img"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                            <ImageView
-                                android:id="@+id/item_img"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:adjustViewBounds="true"
-                                android:src="@color/colorPrimary"
-                                />
-                            <LinearLayout
-                                android:id="@+id/linearlayout_isbookmark"
-                                android:background="@color/colorPrimary"
-                                android:layout_width="match_parent"
-                                android:layout_height="5dp"
-                                android:orientation="vertical" />
-                        </LinearLayout>
+                    android:adjustViewBounds="true"
+                    android:src="@color/colorPrimary"
+                    android:contentDescription="image" />
+
+                <LinearLayout
+                    android:id="@+id/linearlayout_isbookmark"
+                    android:background="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:orientation="vertical" />
             </LinearLayout>
             <!-- Surface View End -->
         </com.daimajia.swipe.SwipeLayout>

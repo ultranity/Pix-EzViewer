@@ -19,7 +19,7 @@
         android:scaleType="centerCrop"
         android:transitionName="userimage"
         android:contentDescription="@string/nav_header_desc"
-        app:srcCompat="@mipmap/ic_launcherep" />
+        app:srcCompat="@mipmap/ic_noimage_foreground" />
 
     <TextView
         android:id="@+id/headtext"

@@ -32,7 +32,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.chip.Chip
@@ -59,8 +58,8 @@ class TrendTagFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-		binding = TrendTagFragmentBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = TrendTagFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,7 +79,7 @@ class TrendTagFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(TrendTagViewModel::class.java)
+        viewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         mDisposable.add(viewModel.getIllustTrendTags().subscribe({
             if (it != null) {
                 binding.recyclerviewSearhm.layoutManager =
@@ -113,7 +112,7 @@ class TrendTagFragment : Fragment() {
                 }
             }
         }, {}))
-        viewModel.searchhistroy.observe(viewLifecycleOwner, Observer { it ->
+        viewModel.searchhistroy.observe(viewLifecycleOwner, { it ->
             binding.chipgroup.removeAllViews()
             it.forEach {
                 binding.chipgroup.addView(getChip(it))

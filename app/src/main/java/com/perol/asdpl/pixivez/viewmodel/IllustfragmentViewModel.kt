@@ -41,24 +41,24 @@ fun Calendar?.generateDateString(): String? {
 }
 
 class IllustfragmentViewModel : BaseViewModel() {
-    var sortT = arrayOf("date_desc", "date_asc", "popular_desc")
-    var searchTargetT =
+    private var sortT = arrayOf("date_desc", "date_asc", "popular_desc")
+    private var searchTargetT =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
     var isPreview = false
     var illusts = MutableLiveData<ArrayList<Illust>>()
-    var addIllusts = MutableLiveData<ArrayList<Illust>>()
+    var addIllusts = MutableLiveData<ArrayList<Illust>??>()
     var retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
-    var isRefresh = MutableLiveData<Boolean>(false)
+    var isRefresh = MutableLiveData(false)
     var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
-    var hideBookmarked = MutableLiveData<Int>(
+    var hideBookmarked = MutableLiveData(
         pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )
-    val sort = MutableLiveData<Int>(0)
-    val searchTarget = MutableLiveData<Int>(0)
-    val startDate = MutableLiveData<Calendar>()
-    val endDate = MutableLiveData<Calendar>()
+    val sort = MutableLiveData(0)
+    val searchTarget = MutableLiveData(0)
+    val startDate = MutableLiveData<Calendar??>()
+    val endDate = MutableLiveData<Calendar??>()
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefresh.value = true
         retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
@@ -101,8 +101,10 @@ class IllustfragmentViewModel : BaseViewModel() {
     fun onLoadMoreListen() {
         if (nextUrl.value != null) {
             retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
-                addIllusts.value =  if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
-                                    else  ArrayList(it.illusts)
+                if (sort.value == 2) {
+                    it.illusts.sortByDescending { it.total_bookmarks } //in-place sort
+                }
+                addIllusts.value = it.illusts
                 nextUrl.value = it.next_url
             }, {
                 addIllusts.value = null

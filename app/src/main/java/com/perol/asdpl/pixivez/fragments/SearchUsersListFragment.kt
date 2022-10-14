@@ -46,18 +46,18 @@ import com.perol.asdpl.pixivez.viewmodel.UserViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM1 = "keyword"
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [UsersListFragment.newInstance] factory method to
+ * Use the [SearchUsersListFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class UsersListFragment : LazyFragment() {
+class SearchUsersListFragment : LazyFragment() {
     override fun loadData() {
-        userViewModel.getSearchUser(param1!!)
+        userViewModel.getSearchUser(keyword!!)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,30 +86,30 @@ class UsersListFragment : LazyFragment() {
         }
     }
 
-    private var param1: String? = null
-    lateinit var userShowAdapter: UserShowAdapter
-    lateinit var userViewModel: UserViewModel
+    private var keyword: String? = null
+    private lateinit var userShowAdapter: UserShowAdapter
+    private lateinit var userViewModel: UserViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-
+            keyword = it.getString(ARG_PARAM1)
         }
         lazyLoad()
     }
 
     private lateinit var binding: FragmentUserslistBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
 
-		binding = FragmentUserslistBinding.inflate(inflater, container, false)
-		return binding.root
+        binding = FragmentUserslistBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    fun lazyLoad() {
-        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-
+    private fun lazyLoad() {
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
         userViewModel.users.observe(this) {
             if (it != null) {
@@ -133,17 +133,16 @@ class UsersListFragment : LazyFragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UsersListFragment.
+         * @param keyword Parameter 1.
+         * @return A new instance of fragment SearchUsersListFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
-                UsersListFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                    }
+        fun newInstance(keyword: String) =
+            SearchUsersListFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, keyword)
                 }
+            }
     }
 }

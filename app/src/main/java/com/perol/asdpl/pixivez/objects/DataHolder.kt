@@ -28,7 +28,6 @@ import androidx.viewpager.widget.PagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
 import java.lang.ref.WeakReference
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.set
 
 class DataHolder {
@@ -42,7 +41,7 @@ class DataHolder {
         }
         fun checkIllustsList(pos: Int, id: Long): Boolean {
             return if (this.illustsList.empty()) false
-                     else this.illustsList.peek()?.get(pos)?.id ?:-1  == id
+            else (this.illustsList.peek()?.get(pos)?.id ?: -1) == id
         }
         fun getIllustsList(): List<Illust>? {
             return if (this.illustsList.empty()) null
@@ -55,7 +54,7 @@ class DataHolder {
     }
 
     var data: MutableMap<String, WeakReference<Any>> =
-        HashMap<String, WeakReference<Any>>()
+        HashMap()
 
     fun save(id: String, `object`: Any?) {
         data[id] = WeakReference<Any>(`object`)

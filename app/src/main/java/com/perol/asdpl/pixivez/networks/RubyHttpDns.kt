@@ -103,21 +103,25 @@ sketch.pixiv.net=[ ],
 www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
      */
     var inited = true
-    fun dlookup(): List<InetAddress> {
+    private fun dlookup(): List<InetAddress> {
         val addressList = mutableMapOf<String, List<InetAddress>>()
         val addressListX = mutableMapOf<String, List<InetAddress>>()
-        apiAddress.forEach { addressListX[it]= InetAddress.getAllByName(it)
-            .filter { it.isReachable(250) }}
+        apiAddress.forEach {
+            addressListX[it] = InetAddress.getAllByName(it)
+                .filter { it.isReachable(250) }
+        }
         Log.d("httpdns", "========================================")
         apiAddress.forEach { k ->
             try {
                 val response = service.queryDns(name = k).blockingSingle()
-                response.answer.flatMap { InetAddress.getAllByName(it.data)
-                    .filter { it.isReachable(250) } }.also {
+                response.answer.flatMap {
+                    InetAddress.getAllByName(it.data)
+                        .filter { it.isReachable(250) }
+                }.also {
                     addressList[k]=it
                 }
             } catch (e: Exception) {
-
+                e.printStackTrace()
             }
         }
         Log.d("httpdns addressList", addressList.toString())
@@ -134,7 +138,7 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
             Log.d("httpdns", dlookup().toString())
             Log.d("httpdns", "========================================")
         }
-        var addressList = mutableListOf<InetAddress>()
+        val addressList = mutableListOf<InetAddress>()
         InetAddress.getByName(hostname).also {
             if (it.hostAddress.equals(hostname))
             return listOf(it)

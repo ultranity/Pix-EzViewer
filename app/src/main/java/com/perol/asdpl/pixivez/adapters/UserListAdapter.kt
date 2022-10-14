@@ -57,7 +57,7 @@ class UserListAdapter(layoutResId: Int) :
             if (PxEZApp.animationEnable) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(view.findViewById<View>(R.id.imageview_usershow), "UserImage")
+                    Pair.create(view.findViewById(R.id.imageview_usershow), "UserImage")
                 )
                 context.startActivity(intent, options.toBundle())
             } else

@@ -60,10 +60,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     /**
-     * CrashHandler实例
-     */
-    private static CrashHandler INSTANCE;
-    /**
      * 程序的Context对象
      */
     private Context mContext;
@@ -84,25 +80,19 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private CrashHandler() {
     }
 
+    private static final class InstanceHolder {
+        /**
+         * CrashHandler实例
+         */
+        static final CrashHandler INSTANCE = new CrashHandler();
+    }
+
     /**
      * 获取CrashHandler实例 ,单例模式
      */
     public static CrashHandler getInstance() {
-       /* if (INSTANCE == null) {
-            INSTANCE = new CrashHandler();
-        }
-        return INSTANCE;*/
         // 防止多线程访问安全，这里使用了双重锁
-        if (INSTANCE == null) {
-
-            synchronized (syncRoot) {
-
-                if (INSTANCE == null) {
-                    INSTANCE = new CrashHandler();
-                }
-            }
-        }
-        return INSTANCE;
+        return InstanceHolder.INSTANCE;
     }
 
     /**
@@ -110,7 +100,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 获取系统默认的UncaughtException处理器,
      * 设置该CrashHandler为程序的默认处理器
      *
-     * @param ctx
+     * @param ctx Context
      */
     public void init(Context ctx) {
         mContext = ctx;
@@ -143,7 +133,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 发送错误报告等操作均在此完成.
      * 开发者可以根据自己的情况来自定义异常处理逻辑
      *
-     * @param ex
+     * @param ex Throwable
      * @return true:如果处理了该异常信息;否则返回false
      */
     private boolean handleException(final Throwable ex) {
@@ -195,12 +185,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 把错误报告发送给服务器,包含新产生的和以前没发送的.
      *
-     * @param ctx
+     * @param ctx Context
      */
     private void sendCrashReportsToServer(Context ctx) {
         String[] crFiles = getCrashReportFiles(ctx);
         if (crFiles != null && crFiles.length > 0) {
-            TreeSet<String> sortedFiles = new TreeSet<String>(Arrays.asList(crFiles));
+            TreeSet<String> sortedFiles = new TreeSet<>(Arrays.asList(crFiles));
             for (String fileName : sortedFiles) {
                 File cr = new File(ctx.getFilesDir(), fileName);
                 postReport(cr);
@@ -216,8 +206,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 获取错误报告文件名
      *
-     * @param ctx
-     * @return
+     * @param ctx Context
+     * @return filesDir.list(name.endsWith ( CRASH_REPORTER_EXTENSION))
      */
     private String[] getCrashReportFiles(Context ctx) {
         File filesDir = ctx.getFilesDir();
@@ -228,7 +218,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 保存错误信息到文件中
      *
-     * @param ex
+     * @param ex Throwable
      */
     private void saveCrashInfoToFile(Throwable ex) {
         Writer info = new StringWriter();
@@ -263,7 +253,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 收集程序崩溃的设备信息
      *
-     * @param ctx
+     * @param ctx Context
      */
     public void collectCrashDeviceInfo(Context ctx) {
 //        try {

@@ -126,7 +126,7 @@ class PictureXFragment : BaseFragment() {
 
     private fun initViewModel() {
 
-        pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
+        pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
         pictureXViewModel.illustDetail.observe(this){ it ->
             binding.progressView.visibility = View.GONE
             if (it != null) {
@@ -184,7 +184,7 @@ class PictureXFragment : BaseFragment() {
                     binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
                 //else
                 //    binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                binding.imageViewUserPicX.setOnLongClickListener { _->
+                binding.imageViewUserPicX.setOnLongClickListener {
                     pictureXViewModel.likeUser()
                     true
                 }
@@ -304,7 +304,7 @@ class PictureXFragment : BaseFragment() {
     ): View {
         // Inflate the layout for this fragment
         if(! this::binding.isInitialized) {
-		binding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
+            binding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
                 lifecycleOwner = this@PictureXFragment
             }
         }

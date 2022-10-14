@@ -29,7 +29,7 @@
         android:minHeight="50dp">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/register"
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"
@@ -49,8 +49,8 @@
             android:text="0"
             android:textColor="?attr/colorPrimary"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView2"
-            app:layout_constraintStart_toEndOf="@+id/textView2" />
+            app:layout_constraintBottom_toBottomOf="@+id/register"
+            app:layout_constraintStart_toEndOf="@+id/register" />
 
         <TextView
             android:id="@+id/textView3"

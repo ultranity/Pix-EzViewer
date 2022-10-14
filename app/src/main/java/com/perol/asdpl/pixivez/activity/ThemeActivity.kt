@@ -147,7 +147,7 @@ class ThemeActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityThemeBinding.inflate(layoutInflater)
-		setContentView(binding.root)
+        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_theme, ThemeFragment()).commit()

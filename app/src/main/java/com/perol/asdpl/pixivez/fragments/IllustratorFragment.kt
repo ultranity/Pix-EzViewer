@@ -78,7 +78,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
 
-    lateinit var userShowAdapter: UserShowAdapter
+    private lateinit var userShowAdapter: UserShowAdapter
     var viewModel: IllustratorViewModel? = null
     var restrict: String = "public"
     private var exitTime = 0L

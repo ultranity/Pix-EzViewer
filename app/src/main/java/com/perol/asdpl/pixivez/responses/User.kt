@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Perol_Notsfsssf
+ * Copyright (c) 2022 ultranity
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,81 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.responses
 
-package com.perol.asdpl.pixivez.responses;
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-import java.io.Serializable;
+/**
+ * id : 19887389
+ * name : kkrin1013
+ * account : kkrin1013
+ * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}
+ * comment:"Aliterと申します。\r\nいつもお気に入り、ブクマ、フォロー等々ありがとうございます！\r\n皆さんと一绪に交流していきたいと思います。\r\n\r\nThis is Aliter.\r\nThank you all for your comments, favorites and bookmarks.\r\nI also hope to comunicate with everyone.\r\n\r\n这里是Aliter；\r\n感谢各位的点赞、收藏与关注；\r\n同时也希望能和大家多多交流。\r\n\r\n這裡是Aliter；\r\n感謝各位的點贊、收藏與關注；\r\n同時也希望能和大家多多交流。\r\n\r\nTwitter: @aliter_c\r\n微博链接（weibo link）：http://weibo.com/aliter08\r\n半次元链接（bcy link）：https://bcy.net/u/1561764\r\n\r\n欢迎勾搭\r\n\r\n暂不接受约稿",
+ * is_followed : false
+ */
+@Parcelize
+data class User(
+    val id: Long,
+    val name: String,
+    val account: String,
+    val profile_image_urls: ProfileImageUrls,
+    var comment: String = "",
+    var is_followed: Boolean,
+) : Parcelable
 
-public class UserBean implements Serializable {
-    private Long id;
-    private String name;
-    private String account;
-    private ProfileImageUrlsBean profile_image_urls;
-    private String comment;
-    private boolean is_followed;
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    public ProfileImageUrlsBean getProfile_image_urls() {
-        return profile_image_urls;
-    }
-
-    public void setProfile_image_urls(ProfileImageUrlsBean profile_image_urls) {
-        this.profile_image_urls = profile_image_urls;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public boolean isIs_followed() {
-        return is_followed;
-    }
-
-    public void setIs_followed(boolean is_followed) {
-        this.is_followed = is_followed;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public static class ProfileImageUrlsBean implements Serializable {
-        /**
-         * medium : https://i.pximg.net/user-profile/img/2018/08/18/13/33/23/14652189_7fc9018d975d494657755b007d178a3f_170.jpg
-         */
-
-        private String medium;
-
-        public String getMedium() {
-            return medium;
-        }
-
-        public void setMedium(String medium) {
-            this.medium = medium;
-        }
-    }
-}
+/**
+ * {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}
+ */
+@Parcelize
+data class ProfileImageUrls(
+    val medium: String
+) : Parcelable

@@ -38,10 +38,13 @@ class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendT
         layoutResId,
         data?.toMutableList()
     ) {
-    override fun convert(helper: BaseViewHolder, item: TrendingtagResponse.TrendTagsBean) {
-        helper.setText(R.id.textview_tag, item.tag)
-        val imageView = helper.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
-        GlideApp.with(imageView.context).load(item.illust.image_urls.square_medium).placeholder(R.mipmap.ic_noimage).skipMemoryCache(true).into(imageView)
+    override fun convert(holder: BaseViewHolder, item: TrendingtagResponse.TrendTagsBean) {
+        holder.setText(R.id.textview_tag, item.tag)
+        val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
+        GlideApp.with(imageView.context)
+            .load(item.illust.image_urls.square_medium)
+            .placeholder(R.mipmap.ic_noimage)
+            .into(imageView)
     }
 
 

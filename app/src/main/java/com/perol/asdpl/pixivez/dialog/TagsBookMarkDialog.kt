@@ -64,8 +64,8 @@ class TagsBookMarkDialog : DialogFragment() {
                     tagsAdapter.addData(
                         0,
                         BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
-                        isIs_registered = true
-                        name = editText.text.toString()
+                        is_registered = true
+                            name = editText.text.toString()
                             editText.text.clear()
                     })
                     recyclerView.smoothScrollToPosition(0)
@@ -76,12 +76,12 @@ class TagsBookMarkDialog : DialogFragment() {
             pictureXViewModel.illustDetail.value?.let{
                 tagsAdapter.setNewInstance(it.tags.map {
                     BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
-                        isIs_registered = false
+                        is_registered = false
                         name = it.toString()
                     }
                 }.toMutableList())
             }
-            pictureXViewModel.tags.observe(this){
+            pictureXViewModel.tags.observe(viewLifecycleOwner) {
                 tagsAdapter.setNewInstance(it.tags)
             }
             pictureXViewModel.fabOnLongClick()

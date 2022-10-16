@@ -27,14 +27,13 @@ package com.perol.asdpl.pixivez.adapters
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import java.util.*
 
 data class ColorData(var color: Int, var name: String)
 
 class ColorfulAdapter(layoutResId: Int, data: ArrayList<ColorData>) : BaseQuickAdapter<ColorData, BaseViewHolder>(layoutResId, data) {
-    override fun convert(helper: BaseViewHolder, item: ColorData) {
-        helper.setBackgroundColor(R.id.imagevew_colorful, item.color)
-                .setText(R.id.name, item.name)
+    override fun convert(holder: BaseViewHolder, item: ColorData) {
+        holder.setBackgroundColor(R.id.imagevew_colorful, item.color)
+            .setText(R.id.name, item.name)
 
     }
 

@@ -173,11 +173,11 @@ class PicListBtnUserAdapter(
         super.onAttachedToRecyclerView(recyclerView)
     }
 
-    override fun convert(helper: BaseViewHolder, item: Illust) {
-        super.convert(helper, item)
-        if (!singleLine) helper.setText(R.id.textview_context, item.user.name)
-        //helper.setTextColor(R.id.textview_context, colorPrimary))
-        val imageViewUser = helper.getView<NiceImageView>(R.id.imageview_user)
+    override fun convert(holder: BaseViewHolder, item: Illust) {
+        super.convert(holder, item)
+        if (!singleLine) holder.setText(R.id.textview_context, item.user.name)
+        //holder.setTextColor(R.id.textview_context, colorPrimary))
+        val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
         if (item.user.is_followed)
             imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
         else

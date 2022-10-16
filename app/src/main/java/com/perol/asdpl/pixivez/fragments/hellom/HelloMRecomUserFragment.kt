@@ -47,24 +47,25 @@ import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
  */
 class HelloMRecomUserFragment : BaseFragment() {
     override fun loadData() {
-        viewmodel!!.reData()
+        viewmodel.reData()
     }
 
-    var viewmodel: HelloRecomUserViewModel? = null
-    private fun lazyLoad() {
+    lateinit var viewmodel: HelloRecomUserViewModel
+    private fun initViewModel() {
+        viewmodel = ViewModelProvider(this)[HelloRecomUserViewModel::class.java]
 
-        viewmodel!!.adddata.observe(this){
+        viewmodel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             } else {
                 userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
-        viewmodel!!.data.observe(this){
+        viewmodel.data.observe(viewLifecycleOwner) {
             userShowAdapter.setNewInstance(it.toMutableList())
             binding.swipe.isRefreshing = false
         }
-        viewmodel!!.nextUrl.observe(this){
+        viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.loadMoreModule.loadMoreComplete()
             } else {
@@ -78,22 +79,21 @@ class HelloMRecomUserFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewmodel = ViewModelProvider(this)[HelloRecomUserViewModel::class.java]
-        lazyLoad()
     }
 
     private val userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         binding.recyclerView.apply {
             adapter = userShowAdapter
             layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewmodel!!.getNext()
+            viewmodel.getNext()
         }
         binding.swipe.setOnRefreshListener {
-            viewmodel!!.reData()
+            viewmodel.reData()
 
         }
 

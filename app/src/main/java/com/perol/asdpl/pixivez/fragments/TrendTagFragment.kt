@@ -65,20 +65,8 @@ class TrendTagFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.textViewClearn.setOnClickListener {
-
             viewModel.sethis()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        // clear all the subscriptions
-        mDisposable.clear()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         mDisposable.add(viewModel.getIllustTrendTags().subscribe({
             if (it != null) {
@@ -112,7 +100,7 @@ class TrendTagFragment : Fragment() {
                 }
             }
         }, {}))
-        viewModel.searchhistroy.observe(viewLifecycleOwner, { it ->
+        viewModel.searchhistroy.observe(viewLifecycleOwner) { it ->
             binding.chipgroup.removeAllViews()
             it.forEach {
                 binding.chipgroup.addView(getChip(it))
@@ -120,7 +108,14 @@ class TrendTagFragment : Fragment() {
 
             if (it.isNotEmpty()) binding.textViewClearn.visibility = View.VISIBLE
             else binding.textViewClearn.visibility = View.GONE
-        })
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // clear all the subscriptions
+        mDisposable.clear()
     }
 
     private fun getChip(word: String): Chip {

@@ -50,13 +50,17 @@ class NewUserActivity : RinkActivity() {
 
                 val code = Uri.parse(url).getQueryParameter("code").toString()
                 if (code.isBlank()) {
-                    Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG)
+                        .show()
                     finish()
                     return
                 }
-                val intent = Intent()
-                intent.putExtra("code", code)
-                setResult(8080, intent)
+
+                val intent = Intent(
+                    this@NewUserActivity, IntentActivity::class.java
+                )
+                intent.data = Uri.parse(url)
+                startActivity(intent)
                 finish()
             }
         }

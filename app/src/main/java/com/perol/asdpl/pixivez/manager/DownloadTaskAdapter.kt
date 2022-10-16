@@ -50,7 +50,7 @@ class DownloadTaskAdapter :
         this.setOnItemClickListener { adapter, view, position ->
             val item = data[position]
             val illust = Gson().fromJson(item.str, IllustD::class.java)
-            PictureActivity.startSingle(context, id = illust.id)
+            PictureActivity.start(context, id = illust.id)
         }
         this.setOnItemLongClickListener { adapter, view, position ->
             val item = data[position]

@@ -82,7 +82,7 @@ class UserIllustFragment : BaseFragment() {
         Log.d("UserIllustFragment","UserIllustFragment resume")
     }
 
-    private fun lazyLoad() {
+    private fun initView() {
         picListBtnAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
@@ -109,24 +109,26 @@ class UserIllustFragment : BaseFragment() {
             param1 = it.getLong(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+    }
+
+    private fun initViewModel() {
         viewModel = ViewModelProvider(this)[UserMillustViewModel::class.java]
 
-        viewModel.nextUrl.observe(this){
+        viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 picListBtnAdapter.loadMoreEnd()
             } else {
                 picListBtnAdapter.loadMoreComplete()
             }
         }
-        viewActivity = activity as UserMActivity
-        viewModel.data.observe(this){
+        viewActivity = requireActivity() as UserMActivity
+        viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
                 picListBtnAdapter.setNewInstance(it.toMutableList())
             }
-
         }
-        viewModel.adddata.observe(this){
+        viewModel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListBtnAdapter.addData(it)
                 picListBtnAdapter.loadMoreComplete()
@@ -138,7 +140,8 @@ class UserIllustFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lazyLoad()
+        initViewModel()
+        initView()
     }
 
     lateinit var viewModel: UserMillustViewModel

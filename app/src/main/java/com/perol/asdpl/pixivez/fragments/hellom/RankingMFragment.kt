@@ -64,16 +64,16 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class RankingMFragment : BaseFragment(){
+class RankingMFragment : BaseFragment() {
 
 
     private var picDate: String? = null
-    lateinit var viewmodel: RankingMViewModel
-    lateinit var sharemodel: RankingShareViewModel
+    private lateinit var viewmodel: RankingMViewModel
+    private lateinit var sharemodel: RankingShareViewModel
     private lateinit var picListBtnUserAdapter: PicListBtnUserAdapter
     private var param1: String? = null
     private var param2: Int? = null
-    
+
     override fun loadData() {
         viewmodel.first(param1!!, picDate)
     }
@@ -91,45 +91,27 @@ class RankingMFragment : BaseFragment(){
         }
     }
 
-    private fun lazyLoad() {
-
-        picListBtnUserAdapter = PicListBtnUserAdapter(
-            R.layout.view_ranking_item,
-            null,
-            isR18on, blockTags
-        )
-        viewmodel = ViewModelProvider(this)[RankingMViewModel::class.java]
-        sharemodel = ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH) + 1
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        picDate = if (sharemodel.picDateShare.value == "$year-$month-$day") {
-            null
-        } else {
-            sharemodel.picDateShare.value
-        }
-
-        sharemodel.sortCoM.observe(this){
+    private fun initViewModel() {
+        sharemodel.sortCoM.observe(viewLifecycleOwner) {
             picListBtnUserAdapter.sortCoM = it
             EventBus.getDefault().post(AdapterRefreshEvent())
         }
-        sharemodel.picDateShare.observe(this){
+        sharemodel.picDateShare.observe(viewLifecycleOwner) {
             viewmodel.datePick(param1!!, it)
         }
-        sharemodel.hideBookmarked.observe(this){
+        sharemodel.hideBookmarked.observe(viewLifecycleOwner) {
             picListBtnUserAdapter.hideBookmarked = it
             EventBus.getDefault().post(AdapterRefreshEvent())
         }
 
-        viewmodel.addillusts.observe(this){
+        viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListBtnUserAdapter.addData(it)
             } else {
                 picListBtnUserAdapter.loadMoreFail()
             }
         }
-        viewmodel.illusts.observe(this){
+        viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
                 picListBtnUserAdapter.setNewInstance(it)
@@ -137,7 +119,7 @@ class RankingMFragment : BaseFragment(){
                 picListBtnUserAdapter.loadMoreFail()
             }
         }
-        viewmodel.nextUrl.observe(this){
+        viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 picListBtnUserAdapter.loadMoreEnd()
             } else {
@@ -149,31 +131,50 @@ class RankingMFragment : BaseFragment(){
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        picDate = if (sharemodel.picDateShare.value == "$year-$month-$day") {
+            null
+        } else {
+            sharemodel.picDateShare.value
+        }
         binding.swiperefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(param1!!, picDate)
         }
         picListBtnUserAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
-        binding.recyclerview.apply{
-            layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerview.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                1 + context.resources.configuration.orientation,
+                StaggeredGridLayoutManager.VERTICAL
+            )
             adapter = picListBtnUserAdapter
             addItemDecoration(GridItemDecoration())
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show()
-                exitTime = System.currentTimeMillis()
-            } else {
-                binding.recyclerview.scrollToPosition(0)
-            }
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    binding.recyclerview.scrollToPosition(0)
+                }
 
-        }
+            }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
+            ?.view?.setOnClickListener(null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,7 +183,8 @@ class RankingMFragment : BaseFragment(){
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getInt(ARG_PARAM2)
         }
-        lazyLoad()
+        viewmodel = ViewModelProvider(this)[RankingMViewModel::class.java]
+        sharemodel = ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
     }
 
     private lateinit var binding: FragmentSwiperefreshRecyclerviewBinding
@@ -194,7 +196,7 @@ class RankingMFragment : BaseFragment(){
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = sharemodel.hideBookmarked.value == 1
             setOnCheckedChangeListener { compoundButton, state ->
-                sharemodel.hideBookmarked.value = if(state) 1 else 0
+                sharemodel.hideBookmarked.value = if (state) 1 else 0
             }
         }
         headerView.findViewById<Spinner>(R.id.spinner_CoM).onItemSelectedListener =
@@ -211,6 +213,11 @@ class RankingMFragment : BaseFragment(){
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
             }
+        picListBtnUserAdapter = PicListBtnUserAdapter(
+            R.layout.view_ranking_item,
+            null,
+            isR18on, blockTags
+        )
         picListBtnUserAdapter.addHeaderView(headerView)
         binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)
         return binding.root

@@ -18,9 +18,10 @@ inline fun initBugly(context:PxEZApp) {
     //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
     Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     Bugly.init(context, "5f21ff45b7", BuildConfig.DEBUG)
-    if(BuildConfig.DEBUG)
-        Bugly.setAppChannel(context,"DeBug")
-    else
-        Bugly.setAppChannel(context,"InApp")
-    BuglyLog.d("settings", context.pre.all.toString())
+    if (BuildConfig.DEBUG) {
+        Bugly.setAppChannel(context, "DeBug")
+        BuglyLog.d("settings", context.pre.all.toString())
+    } else {
+        Bugly.setAppChannel(context, "InApp")
+    }
 }

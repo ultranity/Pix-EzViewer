@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2022 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +27,11 @@ package com.perol.asdpl.pixivez.responses
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+
+data class IllustNext(
+    val illusts: List<Illust>,
+    val next_url: String
+)
 
 /**
  * id : 66137839
@@ -118,28 +124,4 @@ data class MetaSinglePage(
 data class Tag(
     val name: String,
     val translated_name: String? = null
-) : Parcelable
-
-/**
- * id : 19887389
- * name : kkrin1013
- * account : kkrin1013
- * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}
- * is_followed : false
- */
-@Parcelize
-data class User(
-    val account: String,
-    val id: Long,
-    var is_followed: Boolean,
-    val name: String,
-    val profile_image_urls: ProfileImageUrls
-) : Parcelable
-
-/**
- * {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}
- */
-@Parcelize
-data class ProfileImageUrls(
-        val medium: String
 ) : Parcelable

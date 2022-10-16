@@ -30,8 +30,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.perol.asdpl.pixivez.sql.dao.BlockTagDao
 import com.perol.asdpl.pixivez.sql.dao.IllustDao
+import com.perol.asdpl.pixivez.sql.dao.UserDao
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.sql.entity.Illust
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 
 @Database(
     entities = [SearchHistoryEntity::class, IllustBeanEntity::class, UserEntity::class, Illust::class, BlockTagEntity::class],

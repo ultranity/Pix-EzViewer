@@ -93,7 +93,7 @@ public class BookMarkDetailResponse {
                 this.name = name;
             }
 
-            public boolean isIs_registered() {
+            public boolean getIs_registered() {
                 return is_registered;
             }
 

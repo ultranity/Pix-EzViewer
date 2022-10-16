@@ -97,9 +97,8 @@ class HelloMRecommendFragment : BaseFragment() {
         }
     }
 
-    private fun lazyLoad() {
-        viewmodel = ViewModelProvider(this)[HelloMRecomModel::class.java]
-        viewmodel.illusts.observe(this) {
+    private fun initViewModel() {
+        viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshRecom.isRefreshing = false
             if (it != null) {
                 picListXAdapter.setNewInstance(it)
@@ -110,14 +109,14 @@ class HelloMRecommendFragment : BaseFragment() {
                 picListXAdapter.loadMoreFail()
             }
         }
-        viewmodel.addillusts.observe(this) {
+        viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListXAdapter.addData(it)
             } else {
                 picListXAdapter.loadMoreFail()
             }
         }
-        viewmodel.nextUrl.observe(this) {
+        viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 picListXAdapter.loadMoreEnd()
             } else {
@@ -125,7 +124,7 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         }
         pixivisionModel = ViewModelProvider(this)[PixivisionModel::class.java]
-        pixivisionModel.banners.observe(this)  {
+        pixivisionModel.banners.observe(viewLifecycleOwner) {
             pixiVisionAdapter.setNewInstance(it)
             val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
             spotlightView.layoutAnimation = LayoutAnimationController(
@@ -139,14 +138,14 @@ class HelloMRecommendFragment : BaseFragment() {
                 it.interpolator = AccelerateInterpolator(0.5f)
             }
         }
-        pixivisionModel.addbanners.observe(this) {
+        pixivisionModel.addbanners.observe(viewLifecycleOwner) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
             } else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
-        pixivisionModel.nextPixivisonUrl.observe(this) {
+        pixivisionModel.nextPixivisonUrl.observe(viewLifecycleOwner) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreModule.loadMoreEnd()
@@ -172,12 +171,13 @@ class HelloMRecommendFragment : BaseFragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        lazyLoad()
+        viewmodel = ViewModelProvider(this)[HelloMRecomModel::class.java]
     }
 
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
 
         binding.recyclerviewRecom.apply {
             layoutManager = StaggeredGridLayoutManager(

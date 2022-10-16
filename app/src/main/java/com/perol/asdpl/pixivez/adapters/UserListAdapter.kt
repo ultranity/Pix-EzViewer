@@ -38,13 +38,13 @@ import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.responses.UserBean
+import com.perol.asdpl.pixivez.responses.User
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 
 class UserListAdapter(layoutResId: Int) :
-    BaseQuickAdapter<UserBean, BaseViewHolder>(layoutResId),
+    BaseQuickAdapter<User, BaseViewHolder>(layoutResId),
     LoadMoreModule {
 
 
@@ -65,15 +65,16 @@ class UserListAdapter(layoutResId: Int) :
         }
     }
 
-    override fun convert(holder: BaseViewHolder, item: UserBean) {
-        //val linearLayoutManager = LinearLayoutManager(helper.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        //val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
+    override fun convert(holder: BaseViewHolder, item: User) {
+        //val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
+        //val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         val userImage = holder.getView<View>(R.id.imageview_usershow) as ImageView
         val username = holder.getView<View>(R.id.textview_usershowname) as TextView
         //recyclerView.layoutManager = linearLayoutManager
         username.text = item.name
         GlideApp.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
+            .into(userImage)
 
     }
 }

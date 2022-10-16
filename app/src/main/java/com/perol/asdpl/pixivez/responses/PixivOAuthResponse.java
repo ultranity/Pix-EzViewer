@@ -176,7 +176,7 @@ public class PixivOAuthResponse {
                 this.mail_address = mail_address;
             }
 
-            public boolean isIs_premium() {
+            public boolean getIs_premium() {
                 return is_premium;
             }
 

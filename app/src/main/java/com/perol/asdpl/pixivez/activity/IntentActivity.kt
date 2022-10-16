@@ -29,7 +29,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.Pkce
@@ -40,15 +39,14 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.ErrorResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
 import com.perol.asdpl.pixivez.services.OAuthSecureService
-import com.perol.asdpl.pixivez.sql.UserEntity
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
 
 class IntentActivity : RinkActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +55,7 @@ class IntentActivity : RinkActivity() {
         if (uri != null) {
             val scheme = uri.scheme
             val segment = uri.pathSegments
-            if (scheme != null){
+            if (scheme != null) {
                 // pixiv://illusts/
                 if (scheme.contains("pixiv")) {
                     val host = uri.host
@@ -65,133 +63,40 @@ class IntentActivity : RinkActivity() {
                         if (host.contains("account") && segment.contains("login")) {
                             val code = uri.getQueryParameter("code").toString()
                             sharedPreferencesServices.setString("last_login_code", code)
-                            val map = HashMap<String, Any>()
-                            map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-                            map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
-                            map["grant_type"] = "authorization_code"
-                            map["code"] = code
-                            map["code_verifier"] = Pkce.getPkce().verify
-                            //map["username"] = username!!
-                            //map["password"] = password!!
-                            //map["device_token"] = SharedPreferencesServices.getInstance().getString("Device_token") ?: "pixiv"
-                            map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
-                            //map["get_secure_url"] = true
-                            map["include_policy"] = true
-                            val oAuthSecureService = RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
-                            oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSubscribe {
-                                    Toast.makeText(
-                                        applicationContext,
-                                        getString(R.string.try_to_login),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                .doOnNext {pixivOAuthResponse: PixivOAuthResponse ->
-                                    val user = pixivOAuthResponse.response.user
-                                    lifecycleScope.launch {
-                                        AppDataRepository.insertUser(
-                                            UserEntity(
-                                                user.profile_image_urls.px_170x170,
-                                                user.id.toLong(),
-                                                user.name,
-                                                user.mail_address,
-                                                user.isIs_premium,
-                                                code,//pixivOAuthResponse.response.device_token,
-                                                pixivOAuthResponse.response.refresh_token,
-                                                "Bearer " + pixivOAuthResponse.response.access_token
-                                            )
-                                        )
-                                        sharedPreferencesServices.setBoolean("isnone", false)
-                                        //sharedPreferencesServices.setString("username", username)
-                                        //sharedPreferencesServices.setString("password", password)
-                                        //sharedPreferencesServices.setString("Device_token", pixivOAuthResponse.response.device_token)
-                                    }
-                                }
-                                .doOnError{ e->
-                                    if (e is HttpException) {
-                                        try {
-                                            val errorBody = e.response()?.errorBody()?.string()
-                                            val gson = Gson()
-                                            val errorResponse = gson.fromJson(
-                                                errorBody,
-                                                ErrorResponse::class.java
-                                            )
-                                            var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
-                                            Log.e(className, errMsg)
-                                            errMsg =
-                                                if (errorResponse.has_error && errorResponse.errors.system.message.contains(
-                                                        Regex(""".*103:.*""")
-                                                    )
-                                                ) {
-                                                    getString(R.string.error_invalid_account_password)
-                                                } else {
-                                                    getString(R.string.error_unknown) + "\n" + errMsg
-                                                }
-
-                                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
-                                        } catch (e1: IOException) {
-                                            Toast.makeText(
-                                                applicationContext,
-                                                "${e.message}",
-                                                Toast.LENGTH_LONG
-                                            ).show()
-                                        }
-
-                                    } else {
-                                        Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
-                                            .show()
-                                    }
-                                }
-                                .doOnComplete {
-                                    Toast.makeText(
-                                        applicationContext,
-                                        getString(R.string.login_success),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    val intent = Intent(this, HelloMActivity::class.java).apply {
-                                        // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
-                                        flags =
-                                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
-                                    }
-                                    startActivity(intent)
-                                }
-                                .subscribe()
+                            tryLogin(code)
                             finish()
                             return
-                        }
-                        else if (host.contains("users")) {
+                        } else if (host.contains("users")) {
                             try {
                                 UserMActivity.start(this, segment[0].toLong())
                                 finish()
+                                return
+                            } catch (e: Exception) {
+                                Toasty.error(this, getString(R.string.wrong_id))
+                            }
+                        } else if (host.contains("illusts")) {
+                            try {
+                                PictureActivity.start(this, segment[0].toLong())
+                                finish()
+                                return
                             } catch (e: Exception) {
                                 Toasty.error(this, getString(R.string.wrong_id))
                             }
                         }
-                        else if (host.contains("illusts")) {
-                                try {
-                                    openIllust(segment[0].toLong())
-                                    finish()
-                                    return
-                                } catch (e: Exception) {
-                                    Toasty.error(this, getString(R.string.wrong_id))
-                                }
-                        }
                     }
-                }
-                else if (scheme.contains("pixez")){
+                } else if (scheme.contains("pixez")) {
                     //TODO: add pixez
                 }
             }
-            if(uri.host?.equals("pixiv.me") == true){
+            if (uri.host?.equals("pixiv.me") == true) {
                 val i = Intent(this, WebViewActivity::class.java)
                 intent.putExtra("url", uri)
                 startActivity(i)
             }
             if (uri.path?.contains("artworks") == true) {
-                val id = segment[segment.size - 1].toLong()
+                val id = segment[segment.size - 1]
                 try {
-                    openIllust(id)
+                    PictureActivity.start(this, id.toLong())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -201,25 +106,10 @@ class IntentActivity : RinkActivity() {
             }
             //en/user/xxxx
             if (segment.size == 2 || segment.size == 3) {
-                if (segment[segment.size - 2] == "users") {
-                    val s = segment[segment.size - 1]
-                    val id = s.toLong()
+                if ((segment[segment.size - 2] == "users") or (segment[segment.size - 2] == "u")) {
+                    val id = segment[segment.size - 1]
                     try {
-                        val intent1 = Intent(this, UserMActivity::class.java)
-                        intent1.putExtra("data", id)
-                        startActivity(intent1)
-                        finish()
-                        return
-                    } catch (e: Exception) {
-                        Toasty.error(this, getString(R.string.wrong_id))
-                    }
-                }
-                if (segment[segment.size - 2] == "u") {
-                    val id = segment[segment.size - 1].toLong()
-                    try {
-                        val intent1 = Intent(this, UserMActivity::class.java)
-                        intent1.putExtra("data", id)
-                        startActivity(intent1)
+                        UserMActivity.start(this, id.toLong())
                         finish()
                         return
                     } catch (e: Exception) {
@@ -227,9 +117,9 @@ class IntentActivity : RinkActivity() {
                     }
                 }
                 if (segment[segment.size - 2] == "i") {
-                    val id = segment[segment.size - 1].toLong()
+                    val id = segment[segment.size - 1]
                     try {
-                        openIllust(id)
+                        PictureActivity.start(this, id.toLong())
                         finish()
                         return
                     } catch (e: Exception) {
@@ -239,7 +129,7 @@ class IntentActivity : RinkActivity() {
             }
             uri.getQueryParameter("illust_id")?.let {
                 try {
-                    openIllust(it.toLong())
+                    PictureActivity.start(this, it.toLong())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -271,15 +161,99 @@ class IntentActivity : RinkActivity() {
         }
     }
 
-    private fun openIllust(id: Long) {
-        val bundle = Bundle()
-        val arrayList = longArrayOf(id)
-        bundle.putLongArray("illustidlist", arrayList)
-        bundle.putLong("illustid", id)
-        val intent2 = Intent(this, PictureActivity::class.java)
-        intent2.putExtras(bundle)
-        startActivity(intent2)
+    private fun tryLogin(code: String) {
+        val map = HashMap<String, Any>()
+        map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
+        map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+        map["grant_type"] = "authorization_code"
+        map["code"] = code
+        map["code_verifier"] = Pkce.getPkce().verify
+        //map["username"] = username!!
+        //map["password"] = password!!
+        //map["device_token"] = SharedPreferencesServices.getInstance().getString("Device_token") ?: "pixiv"
+        map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
+        //map["get_secure_url"] = true
+        map["include_policy"] = true
+        val oAuthSecureService =
+            RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
+        oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.try_to_login),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .doOnNext { pixivOAuthResponse: PixivOAuthResponse ->
+                val user = pixivOAuthResponse.response.user
+                runBlocking {
+                    AppDataRepository.insertUser(
+                        UserEntity(
+                            user.profile_image_urls.px_170x170,
+                            user.id.toLong(),
+                            user.name,
+                            user.mail_address,
+                            user.is_premium,
+                            code,//pixivOAuthResponse.response.device_token,
+                            pixivOAuthResponse.response.refresh_token,
+                            "Bearer " + pixivOAuthResponse.response.access_token
+                        )
+                    )
+                    //sharedPreferencesServices.setBoolean("isnone", false)
+                    //sharedPreferencesServices.setString("username", username)
+                    //sharedPreferencesServices.setString("password", password)
+                    //sharedPreferencesServices.setString("Device_token", pixivOAuthResponse.response.device_token)
+                }
+            }
+            .doOnError { e ->
+                if (e is HttpException) {
+                    try {
+                        val errorBody = e.response()?.errorBody()?.string()
+                        val gson = Gson()
+                        val errorResponse = gson.fromJson(
+                            errorBody,
+                            ErrorResponse::class.java
+                        )
+                        var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
+                        Log.e(className, errMsg)
+                        errMsg =
+                            if (errorResponse.has_error && errorResponse.errors.system.message.contains(
+                                    Regex(""".*103:.*""")
+                                )
+                            ) {
+                                getString(R.string.error_invalid_account_password)
+                            } else {
+                                getString(R.string.error_unknown) + "\n" + errMsg
+                            }
+
+                        Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
+                    } catch (e1: IOException) {
+                        Toast.makeText(
+                            applicationContext,
+                            "${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                } else {
+                    Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+            .doOnComplete {
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.login_success),
+                    Toast.LENGTH_LONG
+                ).show()
+                val intent = Intent(this, HelloMActivity::class.java).apply {
+                    // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
+                    flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                }
+                startActivity(intent)
+            }
+            .subscribe()
     }
-
-
 }

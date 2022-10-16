@@ -280,7 +280,7 @@ public class UserBookmarksResponse {
                 this.profile_image_urls = profile_image_urls;
             }
 
-            public boolean isIs_followed() {
+            public boolean is_followed() {
                 return is_followed;
             }
 

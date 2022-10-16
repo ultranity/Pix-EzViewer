@@ -30,7 +30,7 @@ import java.util.List;
 public class ListUserResponse {
 
     private String next_url;
-    private List<UserBean> users;
+    private List<User> users;
 
     public String getNext_url() {
         return next_url;
@@ -40,11 +40,11 @@ public class ListUserResponse {
         this.next_url = next_url;
     }
 
-    public List<UserBean> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserBean> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 }

@@ -315,5 +315,5 @@ dependencies {
     //buglyImplementation 'com.tencent.bugly:crashreport:4.0.4'
     buglyImplementation 'com.tencent.bugly:crashreport_upgrade:1.6.1'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

@@ -32,7 +32,8 @@ import com.perol.asdpl.pixivez.R
 class TagsShowAdapter(layoutResId: Int, data: List<String>?, var counts: ArrayList<Int>) :
     BaseQuickAdapter<String, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
-    override fun convert(helper: BaseViewHolder, item: String) {
-        helper.setText(R.id.textview_tagname, item).setText(R.id.textView24, counts[helper.adapterPosition].toString())
+    override fun convert(holder: BaseViewHolder, item: String) {
+        holder.setText(R.id.textview_tagname, item)
+            .setText(R.id.textView24, counts[holder.adapterPosition].toString())
     }
 }

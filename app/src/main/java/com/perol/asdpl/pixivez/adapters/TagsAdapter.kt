@@ -39,16 +39,16 @@ class TagsAdapter(
         data?.toMutableList()
     ) {
     override fun convert(
-        helper: BaseViewHolder,
+        holder: BaseViewHolder,
         item: BookMarkDetailResponse.BookmarkDetailBean.TagsBean
     ) {
-        helper.getView<CheckBox>(R.id.checkBox).apply {
-            isChecked = item.isIs_registered
+        holder.getView<CheckBox>(R.id.checkBox).apply {
+            isChecked = item.is_registered
             setOnCheckedChangeListener { buttonView, isChecked ->
-                this@TagsAdapter.data[helper.layoutPosition].isIs_registered = isChecked
+                this@TagsAdapter.data[holder.layoutPosition].is_registered = isChecked
             }
         }
-        helper.setText(R.id.textview_tag1, item.name)
+        holder.setText(R.id.textview_tag1, item.name)
 
 
     }

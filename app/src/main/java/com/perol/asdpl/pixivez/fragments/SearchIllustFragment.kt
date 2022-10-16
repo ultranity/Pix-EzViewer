@@ -116,6 +116,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
         searchIllustAdapter =
             if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_searchr",true)){
@@ -232,10 +233,8 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
-
         }
-        lazyLoad()
-
+        viewModel = ViewModelProvider(this)[IllustfragmentViewModel::class.java]
     }
 
     private lateinit var binding: FragmentSearchIllustBinding
@@ -249,33 +248,32 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     }
 
 
-    private fun lazyLoad() {
-        viewModel = ViewModelProvider(this)[IllustfragmentViewModel::class.java]
+    private fun initViewModel() {
 
-        viewModel.illusts.observe(this){
+        viewModel.illusts.observe(viewLifecycleOwner) {
             updateillust(it)
         }
-        viewModel.addIllusts.observe(this){
-            if (it != null){
+        viewModel.addIllusts.observe(viewLifecycleOwner) {
+            if (it != null) {
                 searchIllustAdapter.addData(it)
             } else {
                 searchIllustAdapter.loadMoreFail()
             }
         }
-        viewModel.nextUrl.observe(this){
+        viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 searchIllustAdapter.loadMoreEnd()
             } else {
                 searchIllustAdapter.loadMoreComplete()
             }
         }
-        viewModel.bookmarkid.observe(this){
+        viewModel.bookmarkid.observe(viewLifecycleOwner) {
             changeToBlue(it)
         }
-        viewModel.isRefresh.observe(this){
+        viewModel.isRefresh.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = it
         }
-        viewModel.hideBookmarked.observe(this){
+        viewModel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putInt(
                     "hide_bookmark_item_in_search2", it

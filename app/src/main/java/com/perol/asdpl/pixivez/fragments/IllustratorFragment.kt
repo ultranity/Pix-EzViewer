@@ -84,6 +84,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         binding.recyclerviewIllustrator.adapter = userShowAdapter
         binding.recyclerviewIllustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
         binding.spinnerIllustrator.onItemSelectedListener = this
@@ -116,22 +117,19 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             }
     }
 
-    private fun lazyLoad() {
-        viewModel = ViewModelProvider(this)[IllustratorViewModel::class.java]
-        viewModel!!.userpreviews.observe(this){
+    private fun initViewModel() {
+        viewModel!!.userpreviews.observe(viewLifecycleOwner) {
             userpreviews(it)
         }
-        viewModel!!.nextUrl.observe(this){
+        viewModel!!.nextUrl.observe(viewLifecycleOwner) {
             nextUrl(it)
         }
-        viewModel!!.adduserpreviews.observe(this){
+        viewModel!!.adduserpreviews.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             }
         }
-
-
-        viewModel!!.isRefreshing.observe(this){
+        viewModel!!.isRefreshing.observe(viewLifecycleOwner) {
             binding.swiperefreshIllustrator.isRefreshing = it
         }
 
@@ -161,7 +159,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             userid = it.getLong(ARG_PARAM1)
             getFollowing = it.getBoolean(ARG_PARAM2)
         }
-        lazyLoad()
+        viewModel = ViewModelProvider(this)[IllustratorViewModel::class.java]
     }
 
     private lateinit var binding: FragmentIllustratorBinding

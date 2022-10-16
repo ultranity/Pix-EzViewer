@@ -47,21 +47,25 @@ class UserMViewModel : BaseViewModel() {
     fun getData(userid: Long) {
         retrofitRepository.getUserDetail(userid).subscribe({
             userDetail.value = it
-            isfollow.value = it.user.isIs_followed
+            isfollow.value = it.user.is_followed
         }, {
-
+            it.printStackTrace()
         }, {}).add()
     }
 
-    fun onFabclick(userid: Long) {
+    fun onFabClick(userid: Long) {
         if (isfollow.value!!) {
             retrofitRepository.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
-            }, {}, {}).add()
+            }, {
+                it.printStackTrace()
+            }, {}).add()
         } else {
             retrofitRepository.postFollowUser(userid, "public").subscribe({
                 isfollow.value = true
-            }, {}, {}).add()
+            }, {
+                it.printStackTrace()
+            }, {}).add()
         }
     }
 

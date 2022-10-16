@@ -38,6 +38,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
@@ -55,7 +56,7 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -109,7 +110,7 @@ class PictureXFragment : BaseFragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
-        runBlocking {
+        lifecycleScope.launch {
             val allTags = blockViewModel.getAllTags()
             blockTags = allTags.map {
                 it.name
@@ -125,12 +126,10 @@ class PictureXFragment : BaseFragment() {
     }
 
     private fun initViewModel() {
-
-        pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
-        pictureXViewModel.illustDetail.observe(this){ it ->
+        pictureXViewModel.illustDetail.observe(viewLifecycleOwner) { it ->
             binding.progressView.visibility = View.GONE
             if (it != null) {
-                val tags = it.tags.map {rt ->
+                val tags = it.tags.map { rt ->
                     rt.name
                 }
                 for (i in tags) {
@@ -176,7 +175,6 @@ class PictureXFragment : BaseFragment() {
                         it.setUserPicLongClick {
                             pictureXViewModel.likeUser()
                         }
-
                     }
 
                 binding.recyclerview.adapter = pictureXAdapter
@@ -202,19 +200,17 @@ class PictureXFragment : BaseFragment() {
                         startActivity(intent)
                 }
                 binding.fab.show()
-
-            }
-            else {
-                if(parentFragmentManager.backStackEntryCount<=1)
+            } else {
+                if (parentFragmentManager.backStackEntryCount <= 1)
                     activity?.finish()
                 else
                     parentFragmentManager.popBackStack()
             }
         }
-        pictureXViewModel.relatedPics.observe(this){
-                pictureXAdapter?.setRelatedPics(it)
+        pictureXViewModel.relatedPics.observe(viewLifecycleOwner) {
+            pictureXAdapter?.setRelatedPics(it)
         }
-        pictureXViewModel.likeIllust.observe(this){
+        pictureXViewModel.likeIllust.observe(viewLifecycleOwner) {
             if (it != null) {
                 if (it) {
                     GlideApp.with(this).load(R.drawable.heart_red).into(binding.fab)
@@ -224,14 +220,19 @@ class PictureXFragment : BaseFragment() {
 
             }
         }
-        pictureXViewModel.followUser.observe(this){
-            binding.imageViewUserPicX.setBorderColor(if (it) Color.YELLOW else ThemeUtil.getColor(requireContext(), androidx.appcompat.R.attr.colorPrimary))
+        pictureXViewModel.followUser.observe(viewLifecycleOwner) {
+            binding.imageViewUserPicX.setBorderColor(
+                if (it) Color.YELLOW else ThemeUtil.getColor(
+                    requireContext(),
+                    androidx.appcompat.R.attr.colorPrimary
+                )
+            )
             pictureXAdapter?.setUserPicColor(it)
         }
-        pictureXViewModel.progress.observe(this){
-                pictureXAdapter?.setProgress(it)
+        pictureXViewModel.progress.observe(viewLifecycleOwner) {
+            pictureXAdapter?.setProgress(it)
         }
-        pictureXViewModel.downloadGifSuccess.observe(this){
+        pictureXViewModel.downloadGifSuccess.observe(viewLifecycleOwner) {
 
             pictureXAdapter?.setProgressComplete(it)
         }
@@ -285,7 +286,6 @@ class PictureXFragment : BaseFragment() {
 
                 }
         })
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -294,7 +294,7 @@ class PictureXFragment : BaseFragment() {
             param1 = it.getLong(ARG_ILLUSTID)
             param2 = it.getParcelable(ARG_ILLUSTOBJ)
         }
-        initViewModel()
+        pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
     }
 
     lateinit var binding: FragmentPictureXBinding
@@ -317,6 +317,7 @@ class PictureXFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         initView()
     }
 

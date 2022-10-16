@@ -56,16 +56,16 @@ public class SearchUserResponse {
     public static class UserPreviewsBean {
 
 
-        private UserBean user;
+        private User user;
         private boolean is_muted;
         private List<Illust> illusts;
         private List<?> novels;
 
-        public UserBean getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(UserBean user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

@@ -103,13 +103,13 @@ abstract class PicItemAdapter(
         badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
     }
 
-    override fun convert(helper: BaseViewHolder, item: Illust) {
+    override fun convert(holder: BaseViewHolder, item: Illust) {
         if (((hideBookmarked == 1 && item.is_bookmarked) || (hideBookmarked == 3 && !item.is_bookmarked)) ||
-                (sortCoM == 1 && item.type !="manga") || (sortCoM == 2 && item.type =="manga") ||
-                (hideDownloaded && FileUtil.isDownloaded(item))
-        ){
-            helper.itemView.visibility = View.GONE
-            helper.itemView.layoutParams.apply {
+            (sortCoM == 1 && item.type != "manga") || (sortCoM == 2 && item.type == "manga") ||
+            (hideDownloaded && FileUtil.isDownloaded(item))
+        ) {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams.apply {
                 height = 0
                 width = 0
             }
@@ -127,47 +127,47 @@ abstract class PicItemAdapter(
             }
         }
         if (blockTags.isNotEmpty() && tags.isNotEmpty() && needBlock) {
-            helper.itemView.visibility = View.GONE
-            helper.itemView.layoutParams.apply {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams.apply {
                 height = 0
                 width = 0
             }
             return
         } else {
-            helper.itemView.visibility = View.VISIBLE
-            helper.itemView.layoutParams.apply {
+            holder.itemView.visibility = View.VISIBLE
+            holder.itemView.layoutParams.apply {
                 height = LinearLayout.LayoutParams.WRAP_CONTENT
                 width = LinearLayout.LayoutParams.MATCH_PARENT
             }
         }
         if (PxEZApp.CollectMode == 1) {
-            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                helper.setTextColor(R.id.save, colorPrimaryDark)
+            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
+                holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
                 if (!item.is_bookmarked) {
                     retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
                         .subscribe({
-                            helper.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
+                            holder.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
                             item.is_bookmarked = true
                         }, {}, {})
                 }
             }
         } else {
-            helper.getView<MaterialButton>(R.id.save).setOnClickListener {
-                helper.setTextColor(R.id.save, colorPrimaryDark)
+            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
+                holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
             }
         }
 
-        helper.setText(R.id.title, item.title)
-        helper.setTextColor(
+        holder.setText(R.id.title, item.title)
+        holder.setTextColor(
             R.id.like, if (item.is_bookmarked) {
                 badgeTextColor
             } else {
                 colorPrimary
             }
         )
-        helper.setTextColor(
+        holder.setTextColor(
             R.id.save, if (FileUtil.isDownloaded(item)) {
                 badgeTextColor
             } else {
@@ -175,7 +175,7 @@ abstract class PicItemAdapter(
             }
         )
 
-        helper.getView<MaterialButton>(R.id.like).setOnClickListener { v ->
+        holder.getView<MaterialButton>(R.id.like).setOnClickListener { v ->
             val textView = v as Button
             if (item.is_bookmarked) {
                 retrofitRepository.postUnlikeIllust(item.id).subscribe({
@@ -183,32 +183,33 @@ abstract class PicItemAdapter(
                     item.is_bookmarked = false
                 }, {}, {})
             } else {
-                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null).subscribe({
-                    textView.setTextColor(badgeTextColor)
-                    item.is_bookmarked = true
+                retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), null)
+                    .subscribe({
+                        textView.setTextColor(badgeTextColor)
+                        item.is_bookmarked = true
                 }, {}, {})
             }
         }
 
         val numLayout =
-            helper.itemView.findViewById<View>(R.id.layout_num)
+            holder.itemView.findViewById<View>(R.id.layout_num)
         when (item.type) {
             "illust" -> if (item.meta_pages.isEmpty()) {
                 numLayout.visibility = View.INVISIBLE
             } else {
                 numLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, item.meta_pages.size.toString())
+                holder.setText(R.id.textview_num, item.meta_pages.size.toString())
             }
             "ugoira" -> {
                 numLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, "Gif")
+                holder.setText(R.id.textview_num, "Gif")
             }
             else -> {
                 numLayout.visibility = View.VISIBLE
-                helper.setText(R.id.textview_num, "C"+item.meta_pages.size.toString())
+                holder.setText(R.id.textview_num, "C" + item.meta_pages.size.toString())
             }
         }
-        val mainImage = helper.getView<ImageView>(R.id.item_img)
+        val mainImage = holder.getView<ImageView>(R.id.item_img)
         mainImage.setTag(R.id.tag_first, item.image_urls.medium)
         val quality =
             PreferenceManager.getDefaultSharedPreferences(context).getString("quality","0")?.toInt()?: 0

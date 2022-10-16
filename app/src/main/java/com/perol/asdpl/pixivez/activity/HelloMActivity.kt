@@ -58,7 +58,7 @@ import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.sql.UserEntity
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -162,7 +162,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     private lateinit var binding: AppBarHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var allUser: ArrayList<UserEntity>? = null
+        var allUser: ArrayList<UserEntity>?
         runBlocking {
             allUser = ArrayList(AppDataRepository.getAllUser())
 
@@ -254,7 +254,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                         pre.edit().putString("lastclip2",item).apply()
                         if((item).toLongOrNull() != null)
                         {
-                            PictureActivity.startSingle(this@HelloMActivity, item.toLong())
+                            PictureActivity.start(this@HelloMActivity, item.toLong())
                         }else{
                             val bundle = Bundle()
                             bundle.putString("searchword", item)
@@ -304,19 +304,19 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             .load(user.userimage)
             .circleCrop().into(header.imageView)
         header.imageView.setOnClickListener {
+            val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
             runBlocking {
-                val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
                 intent.putExtra("data", AppDataRepository.getUser().userid)
-
-                if (PxEZApp.animationEnable) {
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
-                        this@HelloMActivity,
-                        Pair.create(header.imageView, "UserImage")
-                    )
-                    startActivity(intent, options.toBundle())
-                } else
-                    startActivity(intent)
             }
+
+            if (PxEZApp.animationEnable) {
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    this@HelloMActivity,
+                    Pair.create(header.imageView, "UserImage")
+                )
+                startActivity(intent, options.toBundle())
+            } else
+                startActivity(intent)
         }
 
         header.headtext.text = user.username
@@ -375,13 +375,13 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         normalDialog.setPositiveButton(
             getString(R.string.ok)
         ) { _, _ ->
-            Thread({
+            Thread {
                 GlideApp.get(applicationContext).clearDiskCache()
                 deleteDir(applicationContext.cacheDir)
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     deleteDir(applicationContext.externalCacheDir)
                 }
-            }).start()
+            }.start()
         }
         normalDialog.show()
     }

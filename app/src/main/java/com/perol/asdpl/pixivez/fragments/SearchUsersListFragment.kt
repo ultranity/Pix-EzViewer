@@ -62,6 +62,7 @@ class SearchUsersListFragment : LazyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
         binding.recyclerviewUser.adapter = userShowAdapter
         binding.recyclerviewUser.layoutManager = LinearLayoutManager(activity)
@@ -94,7 +95,7 @@ class SearchUsersListFragment : LazyFragment() {
         arguments?.let {
             keyword = it.getString(ARG_PARAM1)
         }
-        lazyLoad()
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
     }
 
     private lateinit var binding: FragmentUserslistBinding
@@ -108,10 +109,9 @@ class SearchUsersListFragment : LazyFragment() {
         return binding.root
     }
 
-    private fun lazyLoad() {
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+    private fun initViewModel() {
 
-        userViewModel.users.observe(this) {
+        userViewModel.users.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it.user_previews)
             } else {
@@ -119,7 +119,7 @@ class SearchUsersListFragment : LazyFragment() {
             }
         }
 
-        userViewModel.nextUrl.observe(this) {
+        userViewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.loadMoreModule.loadMoreComplete()
             } else {

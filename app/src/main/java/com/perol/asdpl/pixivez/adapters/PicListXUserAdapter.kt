@@ -119,10 +119,10 @@ class PicListXUserAdapter(
     }
 
     private fun convertUser(
-        helper: BaseViewHolder,
+        holder: BaseViewHolder,
         item: Illust
     ) {
-        val imageViewUser = helper.getView<NiceImageView>(R.id.imageview_user)
+        val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
         setUIFollow(item.user.is_followed, imageViewUser)
         imageViewUser.setOnClickListener {
             val intent = Intent(context, UserMActivity::class.java)

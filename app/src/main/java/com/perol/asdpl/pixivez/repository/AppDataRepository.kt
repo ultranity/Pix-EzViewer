@@ -28,8 +28,8 @@ package com.perol.asdpl.pixivez.repository
 import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
-import com.perol.asdpl.pixivez.sql.UserEntity
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

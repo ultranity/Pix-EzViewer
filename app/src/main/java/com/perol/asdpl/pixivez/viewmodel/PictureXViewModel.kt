@@ -162,7 +162,7 @@ class PictureXViewModel : BaseViewModel() {
 
     fun getRelative(long: Long) {
         retrofitRepository.getIllustRelated(long).subscribe({
-            relatedPics.value = it.illusts as ArrayList<Illust>?
+            relatedPics.value = it.illusts
         }, {}, {}).add()
     }
 
@@ -201,10 +201,10 @@ class PictureXViewModel : BaseViewModel() {
         }
     }
 
-    fun onDialogClick(boolean: Boolean) {
+    fun onDialogClick(private: Boolean) {
         val toLong = illustDetail.value!!.id
-        if (!illustDetail.value!!.is_bookmarked) {
-            val string = if (!boolean) {
+        if (!illustDetail.value!!.is_bookmarked or private) {
+            val string = if (!private) {
                 "public"
             } else {
                 "private"
@@ -212,7 +212,7 @@ class PictureXViewModel : BaseViewModel() {
             val arrayList = ArrayList<String>()
             tags.value?.let {
                 for (i in it.tags) {
-                    if (i.isIs_registered) {
+                    if (i.is_registered) {
                         arrayList.add(i.name)
                     }
                 }

@@ -84,7 +84,7 @@ class UserShowAdapter(layoutResId: Int) :
         val username = holder.getView<TextView>(R.id.textview_usershowname)
         val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
         val badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
-        if (item.user.isIs_followed)
+        if (item.user.is_followed)
             userImage.setBorderColor(badgeTextColor) // Color.YELLOW
         else
             userImage.setBorderColor(colorPrimary)

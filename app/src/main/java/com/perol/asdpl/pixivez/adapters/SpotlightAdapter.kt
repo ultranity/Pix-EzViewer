@@ -46,16 +46,17 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
     BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data?.toMutableList()) {
 
 
-
-    override fun convert(helper: BaseViewHolder, item: Spotlight) {
-        val numLayout = helper.itemView.findViewById<View>(R.id.layout_num)
+    override fun convert(holder: BaseViewHolder, item: Spotlight) {
+        val numLayout = holder.itemView.findViewById<View>(R.id.layout_num)
         numLayout.visibility = View.GONE
-        val userImage = helper.getView<ImageView>(R.id.imageview_user)
-        val mainImage = helper.getView<ImageView>(R.id.item_img)
-        helper.setText(R.id.textview_context, item.username)
-                .setText(R.id.title, item.title)
-        GlideApp.with(mainImage.context).load(item.pictureurl).error(R.drawable.ai).transition(withCrossFade()).into(mainImage)
-        GlideApp.with(userImage.context).load(item.userpic).transition(withCrossFade()).circleCrop().into(userImage)
+        val userImage = holder.getView<ImageView>(R.id.imageview_user)
+        val mainImage = holder.getView<ImageView>(R.id.item_img)
+        holder.setText(R.id.textview_context, item.username)
+            .setText(R.id.title, item.title)
+        GlideApp.with(mainImage.context).load(item.pictureurl).error(R.drawable.ai)
+            .transition(withCrossFade()).into(mainImage)
+        GlideApp.with(userImage.context).load(item.userpic).transition(withCrossFade()).circleCrop()
+            .into(userImage)
         mainImage.setOnClickListener {
             val bundle = Bundle()
             val arrayList = LongArray(1)

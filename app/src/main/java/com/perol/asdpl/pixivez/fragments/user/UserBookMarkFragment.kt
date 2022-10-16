@@ -89,6 +89,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         picItemAdapter =
             if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_bookmarked",true)){
                 PicListBtnUserAdapter(
@@ -151,25 +152,25 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         Log.d("UserBookMarkFragment","UserBookMarkFragment resume")
     }
 
-    private fun lazyLoad() {
+    private fun initViewModel() {
         viewModel = ViewModelProvider(this)[UserBookMarkViewModel::class.java]
         this.viewActivity = activity as UserMActivity
 
-        viewModel!!.nextUrl.observe(this){
+        viewModel!!.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 picItemAdapter.loadMoreEnd()
             } else {
                 picItemAdapter.loadMoreComplete()
             }
         }
-        viewModel!!.data.observe(this){
+        viewModel!!.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.mrefreshlayout.isRefreshing = false
                 picItemAdapter.setNewInstance(it.toMutableList())
             }
 
         }
-        viewModel!!.adddata.observe(this){
+        viewModel!!.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
@@ -177,7 +178,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 picItemAdapter.loadMoreFail()
             }
         }
-        viewModel!!.tags.observe(this){
+        viewModel!!.tags.observe(viewLifecycleOwner) {
 
         }
 
@@ -195,8 +196,6 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             param1 = it.getLong(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        lazyLoad()
-
     }
 
     private var pub = "public"

@@ -39,28 +39,27 @@ import com.perol.asdpl.pixivez.services.GlideApp
 
 class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewHolder>(layoutResId) {
 
-    override fun convert(helper: BaseViewHolder, item: FileInfo) {
-        val icon = helper.getView<ImageView>(R.id.item_img)
-        GlideApp.with(icon.context).load(item.icon.toIntOrNull()?:item.icon)
+    override fun convert(holder: BaseViewHolder, item: FileInfo) {
+        val icon = holder.getView<ImageView>(R.id.item_img)
+        GlideApp.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
             .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(icon)
-        //helper.getView<ConstraintLayout>(R.id.layout).background
-        helper.getView<TextView>(R.id.item_name).text = item.name
-        helper.getView<TextView>(R.id.item_pid).text = item.pid.toString()
-        helper.getView<TextView>(R.id.item_part).text = item.part
-        helper.getView<TextView>(R.id.item_time).text = item.time
-        helper.getView<TextView>(R.id.item_size).text = item.size
-        helper.getView<TextView>(R.id.item_pixel).text = item.pixel
-        helper.getView<TextView>(R.id.item_target).text = item.target?:""
-        val check: CheckBox = helper.getView(R.id.item_check)
+        //holder.getView<ConstraintLayout>(R.id.layout).background
+        holder.getView<TextView>(R.id.item_name).text = item.name
+        holder.getView<TextView>(R.id.item_pid).text = item.pid.toString()
+        holder.getView<TextView>(R.id.item_part).text = item.part
+        holder.getView<TextView>(R.id.item_time).text = item.time
+        holder.getView<TextView>(R.id.item_size).text = item.size
+        holder.getView<TextView>(R.id.item_pixel).text = item.pixel
+        holder.getView<TextView>(R.id.item_target).text = item.target ?: ""
+        val check: CheckBox = holder.getView(R.id.item_check)
         check.isChecked = item.checked
         check.setOnCheckedChangeListener { buttonView, isChecked ->
-            item.checked =isChecked
+            item.checked = isChecked
         }
-        if (!item.isPic()){
+        if (!item.isPic()) {
             item.checked = false
             check.visibility = View.GONE
-        }
-        else{
+        } else {
             check.visibility = View.VISIBLE
         }
     }

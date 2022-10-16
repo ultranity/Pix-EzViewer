@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.objects
 import android.text.Html
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.responses.User
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -14,18 +15,22 @@ object InteractionUtil {
     fun Disposable.add() {
         disposables.add(this)
     }
-    fun x_restrict(item: Illust): String{
-        return if (PxEZApp.R18Private && item.x_restrict == 1) {
+
+    fun need_restrict(item: Illust) = (PxEZApp.R18Private && item.x_restrict == 1)
+    fun x_restrict(item: Illust): String = x_restrict(need_restrict(item))
+    fun x_restrict(restrict: Boolean): String {
+        return if (restrict) {
             "private"
         } else {
             "public"
         }
     }
-     fun toDetailString(it:Illust, caption:Boolean=true) =
-         "id:${it.id} " + (if (caption) "caption:${Html.fromHtml(it.caption)}" else "") +
-         "\nuser:${it.user.name} account:${it.user.account}\n" +
-         "create_date:${it.create_date}\n" +
-         "width:${it.width} height:${it.height}\n" +
+
+    fun toDetailString(it: Illust, caption: Boolean = true) =
+        "id:${it.id} " + (if (caption) "caption:${Html.fromHtml(it.caption)}" else "") +
+                "\nuser:${it.user.name} account:${it.user.account}\n" +
+                "create_date:${it.create_date}\n" +
+                "width:${it.width} height:${it.height}\n" +
          "tags:${it.tags}\n" +
          "total_bookmarks:${it.total_bookmarks} total_view:${it.total_view}\n" +
          "tools:${it.tools}\n" +
@@ -42,7 +47,8 @@ object InteractionUtil {
             callback()
         }, {}, {}).add()
     }
-    fun unlike(item:Illust, callback: () -> Unit){
+
+    fun unlike(item: Illust, callback: () -> Unit) {
         retrofitRepository.postUnlikeIllust(item.id).subscribe({
             item.is_bookmarked = false
             callback()
@@ -50,21 +56,28 @@ object InteractionUtil {
     }
 
     fun follow(item: Illust, callback: () -> Unit) {
-        retrofitRepository.postFollowUser(item.user.id, x_restrict(item)).subscribe({
-            item.user.is_followed = true
+        follow(item.user, need_restrict(item), callback)
+    }
+
+    fun follow(user: User, need_restrict: Boolean, callback: () -> Unit) {
+        retrofitRepository.postFollowUser(user.id, x_restrict(need_restrict)).subscribe({
+            user.is_followed = true
             callback()
         }, {}, {}).add()
     }
 
     fun unfollow(item: Illust, callback: () -> Unit) {
-        retrofitRepository.postUnfollowUser(item.user.id).subscribe({
-            item.user.is_followed = false
-            callback()
-        }, {}, {}).add()
-
+        unfollow(item.user, callback)
     }
 
-    fun onDestory(){
+    fun unfollow(user: User, callback: () -> Unit) {
+        retrofitRepository.postUnfollowUser(user.id).subscribe({
+            user.is_followed = false
+            callback()
+        }, {}, {}).add()
+    }
+
+    fun onDestory() {
         disposables.clear()
     }
 }

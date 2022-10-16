@@ -32,37 +32,37 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.sql.UserEntity
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import kotlinx.coroutines.runBlocking
 
 class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
     BaseQuickAdapter<UserEntity, BaseViewHolder>(layoutResId, data.toMutableList()) {
 
-    override fun convert(helper: BaseViewHolder, item: UserEntity) {
-        val userImage = helper.getView<ImageView>(R.id.imageView4)
+    override fun convert(holder: BaseViewHolder, item: UserEntity) {
+        val userImage = holder.getView<ImageView>(R.id.imageView4)
         Glide.with(context).load(item.userimage).circleCrop().into(userImage)
-        helper.setImageResource(R.id.imageview_delete, R.drawable.ic_action_lajitong)
-                .setText(R.id.textView4, item.username)
-                .setText(R.id.textview_email, item.useremail)
-        val delete = helper.getView<ImageView>(R.id.imageview_delete)
+        holder.setImageResource(R.id.imageview_delete, R.drawable.ic_action_lajitong)
+            .setText(R.id.textView4, item.username)
+            .setText(R.id.textview_email, item.useremail)
+        val delete = holder.getView<ImageView>(R.id.imageview_delete)
         delete.setOnClickListener {
             runBlocking {
                 AppDataRepository.deleteUser(item)
                 this@AccountChoiceAdapter.remove(item)
             }
         }
-        if (helper.layoutPosition == PreferenceManager.getDefaultSharedPreferences(context).getInt(
+        if (holder.layoutPosition == PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 "usernum",
                 0
             )
         ) {
             (delete.parent as ViewGroup).isClickable = false
             delete.isClickable = false
-            helper.setImageResource(R.id.imageview_delete, R.drawable.ic_check_black_24dp)
+            holder.setImageResource(R.id.imageview_delete, R.drawable.ic_check_black_24dp)
         } else {
             (delete.parent as ViewGroup).isClickable = true
             delete.isClickable = true
-            helper.setImageResource(R.id.imageview_delete, R.drawable.ic_close_black_24dp)
+            holder.setImageResource(R.id.imageview_delete, R.drawable.ic_close_black_24dp)
         }
 //        delete.colorFilter = LightingColorFilter(Color.BLACK, Color.BLACK)
     }

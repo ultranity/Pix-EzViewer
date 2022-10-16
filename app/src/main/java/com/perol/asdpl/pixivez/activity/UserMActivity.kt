@@ -39,7 +39,6 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -53,6 +52,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -143,7 +143,6 @@ class UserMActivity : RinkActivity() {
 
                 binding.user = it
 
-
                 binding.mviewpager.adapter = UserMPagerAdapter(
                     this, supportFragmentManager,
                     id, UserInfoFragment.newInstance(it)
@@ -168,7 +167,7 @@ class UserMActivity : RinkActivity() {
         }
 
         binding.fab.setOnClickListener {
-            viewModel.onFabclick(id)
+            viewModel.onFabClick(id)
         }
         binding.fab.setOnLongClickListener {
             Toasty.info(applicationContext, "Private....", Toast.LENGTH_SHORT).show()
@@ -196,7 +195,7 @@ class UserMActivity : RinkActivity() {
                             ).show()
                         }
                         1 -> {
-                            lifecycleScope.launch {
+                            CoroutineScope(Dispatchers.Main).launch {
                                 var file: File
                                 withContext(Dispatchers.IO) {
                                     val f = GlideApp.with(this@UserMActivity).asFile()
@@ -237,10 +236,7 @@ class UserMActivity : RinkActivity() {
                     }
                 }.create().show()
             }, {}))
-
-
         }
-        //supportPostponeEnterTransition ();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

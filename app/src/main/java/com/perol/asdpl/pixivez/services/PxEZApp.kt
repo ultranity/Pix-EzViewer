@@ -41,6 +41,7 @@ import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
+import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -143,6 +144,15 @@ class PxEZApp : Application() {
                 }
             }
         }.start()
+
+        initBugly(this)
+        RxJavaPlugins.setErrorHandler {
+            Log.e("onRxJavaErrorHandler", "${it.message}")
+            it.printStackTrace()
+        }
+        if (pre.getBoolean("infoCache", true))
+            MMKV.initialize(this)
+        ToastUtils.init(this)
         instance = this
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
@@ -169,13 +179,6 @@ class PxEZApp : Application() {
         language = pre.getString("language", "-1")?.toIntOrNull()
                     ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
 
-        initBugly(this)
-        RxJavaPlugins.setErrorHandler {
-            Log.e("onRxJavaErrorHandler", "${it.message}")
-            it.printStackTrace()
-        }
-        if(pre.getBoolean("infoCache", true))
-            MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityCollector.collect(activity)

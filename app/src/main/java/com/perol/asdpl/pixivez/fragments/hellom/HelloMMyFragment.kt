@@ -77,19 +77,19 @@ class HelloMMyFragment : BaseFragment() {
             rankingAdapter.notifyDataSetChanged()
         }
     }
+
     private lateinit var rankingAdapter: PicListBtnAdapter
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
-    private fun lazyLoad() {
-        viewmodel = ViewModelProvider(this)[HelloMMyViewModel::class.java]
-        viewmodel.addillusts.observe(this){
+    private fun initViewModel() {
+        viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 rankingAdapter.addData(it)
             } else {
                 rankingAdapter.loadMoreFail()
             }
         }
-        viewmodel.illusts.observe(this){
+        viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = false
             if (it == null) {
                 rankingAdapter.loadMoreFail()
@@ -98,20 +98,23 @@ class HelloMMyFragment : BaseFragment() {
                 binding.recyclerview.scrollToPosition(0)
             }
         }
-        viewmodel.nextUrl.observe(this){
+        viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 rankingAdapter.loadMoreEnd()
             } else {
                 rankingAdapter.loadMoreComplete()
             }
         }
-        viewmodel.hideBookmarked.observe(this){
+        viewmodel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
                 PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
                     "hide_bookmark_item_in_mmy", it
                 ).apply()
-                rankingAdapter.hideBookmarked = if(it) 1 else 0
+                rankingAdapter.hideBookmarked = if (it) 1 else 0
             }
+        }
+        viewmodel.isRefreshing.observe(viewLifecycleOwner) {
+            binding.swiperefreshLayout.isRefreshing = it
         }
     }
 
@@ -125,7 +128,7 @@ class HelloMMyFragment : BaseFragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        lazyLoad()
+        viewmodel = ViewModelProvider(this)[HelloMMyViewModel::class.java]
     }
 
     private lateinit var binding: FragmentHelloMmyBinding
@@ -138,9 +141,7 @@ class HelloMMyFragment : BaseFragment() {
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewmodel.isRefreshing.observe(viewLifecycleOwner){
-            binding.swiperefreshLayout.isRefreshing = it
-        }
+        initViewModel()
         viewmodel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
             .getBoolean(
                 "hide_bookmark_item_in_mmy", false

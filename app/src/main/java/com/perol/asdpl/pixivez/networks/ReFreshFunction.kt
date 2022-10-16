@@ -35,7 +35,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.sql.UserEntity
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,12 +43,20 @@ import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
+import java.lang.Long
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.Any
+import kotlin.Exception
+import kotlin.String
+import kotlin.Throwable
+import kotlin.Throws
+import kotlin.also
 import kotlin.math.pow
+import kotlin.synchronized
 
 class ReFreshFunction private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
@@ -159,12 +167,12 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                     val user = pixivOAuthResponse.response.user
                     val userEntity = UserEntity(
                         user.profile_image_urls.px_170x170,
-                        java.lang.Long.parseLong(
+                        Long.parseLong(
                             user.id
                         ),
                         user.name,
                         user.mail_address,
-                        user.isIs_premium,
+                        user.is_premium,
                         "OAuth2",//pixivOAuthResponse.response.device_token,
                         pixivOAuthResponse.response.refresh_token,
                         "Bearer " + pixivOAuthResponse.response.access_token

@@ -30,8 +30,8 @@ import com.perol.asdpl.pixivez.R
 
 class ThanksAdapter(layoutResId: Int, data: List<String>?) :
     BaseQuickAdapter<String, BaseViewHolder>(layoutResId, data?.toMutableList()) {
-    override fun convert(helper: BaseViewHolder, item: String) {
-        helper.setText(R.id.name, item)
+    override fun convert(holder: BaseViewHolder, item: String) {
+        holder.setText(R.id.name, item)
     }
 
 

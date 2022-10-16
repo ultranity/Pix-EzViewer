@@ -107,6 +107,7 @@ private lateinit var binding: ActivitySettingBinding
         binding.contentSetting.viewpageSetting.currentItem = intent.getIntExtra("page",0)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val calendar = Calendar.getInstance()
         if (BuildConfig.FLAVOR == "bugly" && (calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(

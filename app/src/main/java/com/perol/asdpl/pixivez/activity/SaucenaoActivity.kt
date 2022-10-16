@@ -275,6 +275,8 @@ class SaucenaoActivity : RinkActivity() {
     }
 
     var path: String? = null
+
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE && resultCode == Activity.RESULT_OK && data != null) {

@@ -46,7 +46,7 @@ object RubyHttpXDns : Dns {
     )
 
     private val defaultApiAddress = listOf(
-        "210.140.131.218", //"210.140.131.208" //app-api.pixiv.net
+        "210.140.131.220", //"210.140.131.208" //app-api.pixiv.net
         "210.140.131.219",//"oauth.secure.pixiv.net",
         "210.140.131.219",//"accounts.pixiv.net",
         "210.140.92.141", //"s.pximg.net"

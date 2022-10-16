@@ -140,8 +140,8 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
         }
         val addressList = mutableListOf<InetAddress>()
         InetAddress.getByName(hostname).also {
-            if (it.hostAddress.equals(hostname))
-            return listOf(it)
+            if (it.hostAddress?.equals(hostname) == true)
+                return listOf(it)
         }
         if (addressCache.contains(hostname))
             return listOf(addressCache[hostname]!!)

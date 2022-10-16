@@ -64,7 +64,7 @@ class UserMActivity : RinkActivity() {
         const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
         const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
         const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
-        var menuD:Menu? = null
+        var menuD: Menu? = null
         fun start(context: Context, id: Long) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
@@ -74,6 +74,8 @@ class UserMActivity : RinkActivity() {
 
     var id: Long = 0
     private val SELECT_IMAGE = 2
+
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && data != null) {

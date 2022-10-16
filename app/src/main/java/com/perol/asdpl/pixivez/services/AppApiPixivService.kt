@@ -260,7 +260,9 @@ interface AppApiPixivService {
     @GET("/v1/illust/comments")
     fun getIllustComments(
         //@Header("Authorization") paramString: String,
-        @Query("illust_id") paramLong: Long
+        @Query("illust_id") paramLong: Long,
+        @Query("offset") offset: Int? = 0,
+        @Query("include_total_comments") include_total_comments: Boolean? = false
     ): Observable<IllustCommentsResponse>
 
     @FormUrlEncoded

@@ -30,7 +30,7 @@
     android:background="?attr/colorSurface"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_picture"
+        android:id="@+id/recyclerview_comments"
         android:layout_width="match_parent"
         android:layout_height="400dp" />
     <androidx.constraintlayout.widget.ConstraintLayout

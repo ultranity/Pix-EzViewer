@@ -34,7 +34,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Pair
 import android.view.Gravity
-import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
@@ -44,6 +43,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
+import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.CommentAdapter
@@ -58,45 +58,49 @@ import retrofit2.HttpException
 //TODO: Refactor
 class CommentDialog : BaseDialogFragment() {
 
-    private lateinit var recyclerviewPicture: RecyclerView
+    private lateinit var recyclerview: RecyclerView
 
     private lateinit var edittextComment: TextInputEditText
 
     lateinit var button: Button
     private var commentAdapter: CommentAdapter? = null
     private var id: Long? = null
-    private var Parent_comment_id = 1
-    private val retrofitRepository  = RetrofitRepository.getInstance()
+    private var parent_comment_id = 1
+    private val retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl: String? = null
     fun show(fragmentManager: FragmentManager) {
         show(fragmentManager, "ViewDialogFragment")
     }
 
     private fun getData() {
-        retrofitRepository.getIllustComments(id!!)
+        retrofitRepository.getIllustComments(id!!, include_total_comments = true)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({
-                    button.isClickable = true
-                    nextUrl = it.next_url
-                },{},{}).add()
+                ToastUtils.show("${it.total_comments} comments in total")
+                commentAdapter?.setNewInstance(it.comments)
+                nextUrl = it.next_url
+            }, {
+                it.printStackTrace()
+            }, {
+                button.isEnabled = true
+            }).add()
     }
 
     private fun commit() {
-        retrofitRepository
-            .postIllustComment(
-                id!!,
-                edittextComment.text.toString(),
-                if (Parent_comment_id == 1) null else Parent_comment_id
-            ).subscribe({
+        retrofitRepository.postIllustComment(
+            id!!,
+            edittextComment.text.toString(),
+            if (parent_comment_id == 1) null else parent_comment_id
+        ).subscribe({
                 retrofitRepository.getIllustComments(
                     id!!
                 ).subscribe({
                         commentAdapter!!.setNewInstance(it.comments)
                         Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
                         edittextComment.setText("")
-                        Parent_comment_id = 1
-                        edittextComment.hint = ""
+                    parent_comment_id = 1
+                    edittextComment.hint = ""
                     },{e->
                         if ((e as HttpException).response()!!.code() == 403) {
                             Toasty.warning(requireContext(), getString(R.string.rate_limited), Toast.LENGTH_SHORT)
@@ -110,7 +114,6 @@ class CommentDialog : BaseDialogFragment() {
             }).add()
     }
 
-
     override fun onStart() {
         super.onStart()
         val window = dialog!!.window
@@ -121,32 +124,22 @@ class CommentDialog : BaseDialogFragment() {
         window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initbind()
-    }
-
-    private fun initbind() {
-        getData()
-    }
-
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bundle = arguments
         id = bundle!!.getLong("id")
         val builder = MaterialAlertDialogBuilder(requireActivity())
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_comment, null)
-        recyclerviewPicture = view.findViewById(R.id.recyclerview_picture)
+        recyclerview = view.findViewById(R.id.recyclerview_comments)
         edittextComment = view.findViewById(R.id.edittext_comment)
         button = view.findViewById(R.id.button)
         builder.setView(view)
         commentAdapter = CommentAdapter(R.layout.view_comment_item, null)
-        recyclerviewPicture.isNestedScrollingEnabled = false
-        recyclerviewPicture.layoutManager =
+        recyclerview.isNestedScrollingEnabled = false
+        recyclerview.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        recyclerviewPicture.adapter = commentAdapter
-        recyclerviewPicture.addItemDecoration(
+        recyclerview.adapter = commentAdapter
+        recyclerview.addItemDecoration(
             DividerItemDecoration(
                 context,
                 DividerItemDecoration.HORIZONTAL
@@ -177,7 +170,7 @@ class CommentDialog : BaseDialogFragment() {
                     startActivity(intent)
             }
             if (view.id == R.id.reply_to_hit) {
-                Parent_comment_id = commentAdapter!!.data[position].id
+                parent_comment_id = commentAdapter!!.data[position].id
                 edittextComment.hint =
                     getString(R.string.reply_to) + ":" + commentAdapter!!.data[position].user.name
             }
@@ -199,9 +192,13 @@ class CommentDialog : BaseDialogFragment() {
             }
         }
         button.setOnClickListener {
-            commit()
-            button.isEnabled = false
+            if (!edittextComment.text.isNullOrBlank()) {
+                commit()
+                button.isEnabled = false
+            }
         }
+        button.isEnabled = false
+        getData()
         return builder.create()
     }
 

@@ -247,6 +247,7 @@ class PictureXAdapter(
             Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
             Log.d("url", captionTextView.urls.toString())
             captionTextView.movementMethod = LinkMovementMethod.getInstance()
+            //viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }

@@ -105,24 +105,33 @@ class RetrofitRepository {
 
     fun getIllustBookmarkUsers(illust_id: Long, offset: Int = 0): Observable<ListUserResponse> = Request(appApiPixivService.getIllustBookmarkUsers(illust_id, offset))
 
-    fun getSearchUser(string: String): Observable<SearchUserResponse> = Request(appApiPixivService.getSearchUser(string))
+    fun getSearchUser(string: String): Observable<SearchUserResponse> =
+        Request(appApiPixivService.getSearchUser(string))
 
-    fun getIllustComments(illust_id: Long): Observable<IllustCommentsResponse> = Request(appApiPixivService.getIllustComments(illust_id))
+    fun getIllustComments(
+        illust_id: Long,
+        offset: Int = 0,
+        include_total_comments: Boolean = false
+    ): Observable<IllustCommentsResponse> =
+        Request(appApiPixivService.getIllustComments(illust_id, offset, include_total_comments))
 
     fun postIllustComment(
         illust_id: Long,
         comment: String,
         parent_comment_id: Int?
-    ): Observable<ResponseBody> = Request(appApiPixivService.postIllustComment(illust_id ,comment ,parent_comment_id))
+    ): Observable<ResponseBody> =
+        Request(appApiPixivService.postIllustComment(illust_id, comment, parent_comment_id))
 
-    fun postLikeIllust(int: Long): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(int, "public", null))
+    fun getIllustTrendTags(): Observable<TrendingtagResponse> =
+        Request(appApiPixivService.getIllustTrendTags())
 
-    fun getIllustTrendTags(): Observable<TrendingtagResponse> = Request(appApiPixivService.getIllustTrendTags())
+    fun postLikeIllust(int: Long): Observable<ResponseBody> =
+        Request(appApiPixivService.postLikeIllust(int, "public", null))
 
     fun postLikeIllustWithTags(
         int: Long,
-        string: String,
-        tagList: ArrayList<String>?
+        string: String = "public",
+        tagList: ArrayList<String>? = null
     ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(int, string, tagList))
 
 

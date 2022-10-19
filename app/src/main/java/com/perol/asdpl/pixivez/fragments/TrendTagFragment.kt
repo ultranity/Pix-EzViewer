@@ -71,7 +71,7 @@ class TrendTagFragment : Fragment() {
         mDisposable.add(viewModel.getIllustTrendTags().subscribe({
             if (it != null) {
                 binding.recyclerviewSearhm.layoutManager =
-                    StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+                    StaggeredGridLayoutManager(requireContext().resources.configuration.orientation*3, StaggeredGridLayoutManager.VERTICAL)
                 val trendingtagAdapter =
                     TrendingTagAdapter(R.layout.view_trendingtag_item, it.trend_tags)
                 binding.recyclerviewSearhm.adapter = trendingtagAdapter

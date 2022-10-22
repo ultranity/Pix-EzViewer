@@ -24,13 +24,17 @@
  */
 package com.perol.asdpl.pixivez.adapters
 
+import android.text.Html
 import android.view.View
 import android.widget.ImageView
-import com.perol.asdpl.pixivez.responses.IllustCommentsResponse.CommentsBean
+import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.chad.library.adapter.base.module.LoadMoreModule
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.EmojiUtil
+import com.perol.asdpl.pixivez.objects.GlideAssetsImageGetter
+import com.perol.asdpl.pixivez.responses.IllustCommentsResponse.CommentsBean
 import com.perol.asdpl.pixivez.services.GlideApp
 
 class CommentAdapter(
@@ -45,12 +49,20 @@ class CommentAdapter(
         ) else holder.setText(
             R.id.commentusername, item.user.name
         )
-        holder.setText(R.id.commentdetail, item.comment)
-        if (!item.user.profile_image_urls.medium!!.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
+        val commentdetail = holder.getView<TextView>(R.id.commentdetail)
+        val comment = EmojiUtil.transform(item.comment)
+        commentdetail.text = if (comment.hashCode() == item.comment.hashCode())
+            item.comment
+        else
+            Html.fromHtml(comment, GlideAssetsImageGetter(commentdetail, "Emoji"), null)
+
+        if (!item.user.profile_image_urls.medium!!
+                .contentEquals("https://source.pixiv.net/common/images/no_profile.png")
+        ) {
             GlideApp.with(context).load(item.user.profile_image_urls.medium)
                 .placeholder(R.mipmap.ic_noimage_foreground).circleCrop().into(
-                (holder.getView<View>(R.id.commentuserimage) as ImageView)
-            )
+                    (holder.getView<View>(R.id.commentuserimage) as ImageView)
+                )
         } else GlideApp.with(context).load(R.mipmap.ic_noimage_round)
             .into((holder.getView<View>(R.id.commentuserimage) as ImageView))
     }

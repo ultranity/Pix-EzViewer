@@ -46,8 +46,7 @@ class SearchRActivityFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchRBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentSearchRBinding.inflate(inflater, container, false)
         return binding.root
@@ -62,17 +61,17 @@ class SearchRActivityFragment : Fragment() {
         binding.recyclerview.adapter = tagsTextAdapter
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
             val tag = tags[position]
-            if (tag.translated_name.isNotBlank())
-                tagsTextViewModel.addhistory(tag.name + "|" + tag.translated_name)
-            else tagsTextViewModel.addhistory(tag.name)
+            tagsTextViewModel.addhistory(
+                if (tag.translated_name.isNullOrBlank()) tag.name
+                else tag.name + "|" + tag.translated_name
+            )
             val bundle = Bundle()
             bundle.putString("searchword", tags[position].name)
             val intent = Intent(requireActivity(), SearchResultActivity::class.java)
             intent.putExtras(bundle)
             startActivityForResult(intent, 775)
         }
-        tagsTextViewModel =
-            ViewModelProvider(requireActivity())[TagsTextViewModel::class.java]
+        tagsTextViewModel = ViewModelProvider(requireActivity())[TagsTextViewModel::class.java]
         tagsTextViewModel.tags.observe(viewLifecycleOwner) {
             tagsTextAdapter.setNewInstance(it.toMutableList())
             tags.clear()

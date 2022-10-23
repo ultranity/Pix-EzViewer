@@ -27,18 +27,23 @@ import android.os.Environment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.roaringbitmap.RoaringBitmap
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class FileInfo(file: File) {
+val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT)
+class FileInfo(val file: File) {
     var icon = "0"
     var name: String = file.name
     var size: String = ""
+        get() = FileUtil.getSize(file.length().toFloat())
     var pixel: String = ""
-    var time: String = ""
+    val time: String
+        get() = dateFormat.format(Date(file.lastModified()))
     var path: String = file.path
     var type: Int = 0
     var lastModify: Long = 0
@@ -102,7 +107,9 @@ object FileUtil{
         const val SORT_SIZE = 2
 
     init {
-        getFileList()
+        CoroutineScope(Dispatchers.IO).launch{
+            getFileList()
+        }
     }
     /**
      * 通过传入的路径,返回该路径下的所有的文件和文件夹列表
@@ -135,8 +142,6 @@ object FileUtil{
             parent.size = parent.name
             parent.name = ".."
             parent.type = T_DIR
-            parent.time = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT)
-                .format(Date(pfile.lastModified()))
             list.add(parent)
         }
         val files: Array<File>? = pfile.listFiles()//文件对象数组 // 该文件对象下所属的所有文件和文件夹列表
@@ -160,15 +165,12 @@ object FileUtil{
                     //if (includeSubFolder)
                     //    list.addAll(getListData(it.path,includeSubFolder=true))
                 }
-                if (it.isFile) {// 文件
+                else if (it.isFile) {// 文件
                     if (picOnly && !item.isPic())
                         return@mapNotNull null
                     item.icon = item.path// 根据扩展名获取图标
-                    item.size = getSize(it.length().toFloat())
                     item.type = T_FILE
                 }
-                item.time = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT)
-                    .format(Date(it.lastModified()))
                 item
             })
     }
@@ -283,28 +285,26 @@ object FileUtil{
 
 
 
-    lateinit var fileList:List<Int>
     lateinit var extraPath:List<String>
-    lateinit var ListLog:RoaringBitmap
+    var ListLog = RoaringBitmap()
     //lateinit var localLog:RoaringBitmap
     fun getFileList(){
-        //localLog = RoaringBitmap()
-        extraPath = extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
-                extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
-                ?: listOf()
-        fileList = getGroupList(PxEZApp.storepath,true).mapNotNull{ it.pid?.toInt() }.sorted()
-
-        if (extraPath.isNotEmpty()){
-            extraPath.forEach {
-                getGroupList(it,true).forEach {it.pid?.toInt()?.let{ListLog.add(it)} }
-                fileList.plus(getGroupList(it,true).mapNotNull{ it.pid})
-            }
-        }
         ListLog =bitSetFileLog(PxEZApp.storepath+File.separator+"roaringbit.data")?:
                 bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"roaringbit.data")
                 ?:RoaringBitmap()
+        extraPath = extraPath(PxEZApp.storepath+File.separator+"path.txt")?:
+                extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"+File.separator+"path.txt")
+                ?: listOf()
+        var fileList = getGroupList(PxEZApp.storepath,true).mapNotNull{ it.pid?.toInt() }.sorted().toIntArray()
         val before = ListLog.cardinality
-        ListLog.addN(fileList.toIntArray(),0,fileList.size)
+        ListLog.addN(fileList,0,fileList.size)
+
+        if (extraPath.isNotEmpty()){
+            extraPath.forEach {
+                fileList = getGroupList(it,true).mapNotNull{ it.pid?.toInt() }.sorted().toIntArray()
+                ListLog.addN(fileList,0,fileList.size)
+            }
+        }
         if (ListLog.cardinality > before)
             writeBitSetFileLog(ListLog,PxEZApp.storepath+File.separator+"roaringbit.data")
         //fileList.forEach {ListLog.add(it)}
@@ -321,25 +321,9 @@ object FileUtil{
                 != null))
     }
     fun isDownloaded(illust: Illust): Boolean {
-        return isDownloaded2(illust)|| isDownloaded3(illust)
-    }
-    fun isDownloaded(pid: Long): Boolean {
-        return isDownloaded2(pid)|| isDownloaded3(pid)
-    }
-    fun logDownloaded(illust: Illust): Int {
-        return if(isDownloaded2(illust)) 1 else 0 + if(isDownloaded3(illust)) 1 else 0
-    }
-    private fun isDownloaded2(illust: Illust): Boolean {
-        return fileList.contains(illust.id.toInt())
-    }
-    private fun isDownloaded2(pid: Long): Boolean {
-        return fileList.contains(pid.toInt())
-    }
-
-    private fun isDownloaded3(illust: Illust): Boolean {
         return ListLog.contains(illust.id.toInt())
     }
-    private fun isDownloaded3(pid: Long): Boolean {
+    fun isDownloaded(pid: Long): Boolean {
         return ListLog.contains(pid.toInt())
     }
 }

@@ -160,6 +160,14 @@ interface AppApiPixivService {
         @Query("duration") paramString4: String?
     ): Observable<SearchIllustResponse>
 
+    @GET("/v1/search/popular-preview/illust?filter=for_android")
+    fun getPopularPreviewIllust(
+        //@Header("Authorization") paramString1: String,
+        @Query("word") paramString2: String,
+        @Query("search_target") paramString3: String,
+        @Query("duration") paramString4: String
+    ): Call<PixivResponse>
+
     @GET("/v1/search/novel")
     fun getSearchNovel(
         //@Header("Authorization") paramString1: String,
@@ -175,15 +183,6 @@ interface AppApiPixivService {
         //@Header("Authorization") paramString1: String,
         @Query("word") paramString2: String
     ): Observable<SearchUserResponse>
-
-    @GET("/v1/search/popular-preview/illust?filter=for_android")
-    fun getPopularPreviewIllust(
-        //@Header("Authorization") paramString1: String,
-        @Query("word") paramString2: String,
-        @Query("search_target") paramString3: String,
-        @Query("duration") paramString4: String
-    ): Call<PixivResponse>
-
 
     @GET("/v1/user/follower?filter=for_android")
     fun getUserFollower(

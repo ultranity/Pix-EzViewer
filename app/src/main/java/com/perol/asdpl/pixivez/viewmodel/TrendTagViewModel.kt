@@ -29,7 +29,7 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
-import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
+import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -40,13 +40,13 @@ class TrendTagViewModel : BaseViewModel() {
     var retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
 
     init {
-        resethistory()
+        reloadSearchHistory()
     }
 
     fun addhistory(searchword: String) {
         Observable.create<Int> {
             appDatabase.searchhistoryDao().insert(SearchHistoryEntity(searchword))
-            resethistory()
+            reloadSearchHistory()
             it.onNext(1)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
 
@@ -65,7 +65,7 @@ class TrendTagViewModel : BaseViewModel() {
             .subscribe({}, { }, {}).add()
     }
 
-    private fun resethistory() {
+    private fun reloadSearchHistory() {
         appDatabase.searchhistoryDao().getSearchHistory().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

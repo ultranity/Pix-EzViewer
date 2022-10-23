@@ -56,38 +56,37 @@ fun resourceIdToUri(context: Context, resourceId: Int): String =
 @BindingAdapter("userUrl")
 fun loadUserImage(imageView: ImageView, url: String?) {
     if (url != null)
-
-            GlideApp.with(imageView.context)
-                .load(if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png"))
-                            GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
-                      else
-                            url)
-                .circleCrop()
-                .placeholder(R.mipmap.ic_noimage_round)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
-                        return false
-                    }
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
-                        return false
-                    }
-                })
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .error(R.mipmap.ic_noimage_round)
-                .transition(withCrossFade()).into(imageView)
+        GlideApp.with(imageView.context)
+            .load(if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png"))
+                        GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
+                  else
+                        url)
+            .circleCrop()
+            .placeholder(R.mipmap.ic_noimage_round)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
+                    return false
+                }
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
+                    return false
+                }
+            })
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .error(R.mipmap.ic_noimage_round)
+            .transition(withCrossFade()).into(imageView)
 }
 
 @BindingAdapter("url")

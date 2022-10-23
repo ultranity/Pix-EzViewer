@@ -212,7 +212,7 @@
     <string name="summary_thanks">Thanks to:</string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
-    <string name="pixivision_desc2">a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
+    <string name="pixivision_desc2">a creative media that delivers \n \"the best works of creative originality\"</string>
     <string name="change_to_first">change to first</string>
     <string name="notsf_subtext">Development, testing, release</string>
     <string name="loading">Loading...</string>

@@ -46,8 +46,7 @@ object ImageHttpDns : Dns {
             runBlocking(Dispatchers.IO) {
                 val response = service.queryDns(name = hostname).blockingSingle()
                 response.answer.flatMap {
-
-                    InetAddress.getAllByName(it.data).toList()
+                    InetAddress.getAllByName(it.data).asList()
                 }.also {
                     addressList.addAll(it)
                 }

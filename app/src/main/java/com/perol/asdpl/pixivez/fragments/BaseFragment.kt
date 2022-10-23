@@ -27,8 +27,8 @@ package com.perol.asdpl.pixivez.fragments
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
@@ -64,8 +64,7 @@ abstract class BaseFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
-        isR18on = PreferenceManager.getDefaultSharedPreferences(requireActivity())
-            .getBoolean("r18on", false)
+        isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
         blockViewModel = ViewModelProvider(requireActivity())[BlockViewModel::class.java]
         try {
             runBlocking {

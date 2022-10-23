@@ -25,7 +25,9 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -47,7 +49,18 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class IntentActivity : RinkActivity() {
-
+    companion object{
+        fun start(context: Context, string: String) {
+            val intent = Intent(context, IntentActivity::class.java)
+            intent.data = Uri.parse(string)
+            context.startActivity(intent)
+        }
+        fun start(context: Context, uri: Uri) {
+            val intent = Intent(context, IntentActivity::class.java)
+            intent.data = uri
+            context.startActivity(intent)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPreferencesServices = SharedPreferencesServices.getInstance()
@@ -84,7 +97,8 @@ class IntentActivity : RinkActivity() {
                             }
                         }
                     }
-                } else if (scheme.contains("pixez")) {
+                }
+                else if (scheme.contains("pixez")) {
                     //TODO: add pixez
                 }
             }
@@ -190,11 +204,11 @@ class IntentActivity : RinkActivity() {
                 runBlocking {
                     AppDataRepository.insertUser(
                         UserEntity(
-                            user.profile_image_urls.px_170x170,
-                            user.id.toLong(),
+                            user.id,
                             user.name,
                             user.mail_address,
                             user.is_premium,
+                            user.profile_image_urls.px_170x170,
                             code,//pixivOAuthResponse.response.device_token,
                             pixivOAuthResponse.response.refresh_token,
                             "Bearer " + pixivOAuthResponse.response.access_token

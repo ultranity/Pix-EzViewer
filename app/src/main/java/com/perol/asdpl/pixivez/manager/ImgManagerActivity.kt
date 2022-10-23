@@ -23,13 +23,11 @@
  */
 package com.perol.asdpl.pixivez.manager
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
@@ -66,8 +64,8 @@ class ImgManagerActivity : RinkActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.recyclerviewImgManager.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        //binding.recyclerviewImgManager.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
+            LinearLayoutManager(this)
+        //binding.recyclerviewImgManager.layoutManager = GridLayoutManager(this, 2)
         binding.recyclerviewImgManager.adapter = imgManagerAdapter
         imgManagerAdapter.addFooterView(LayoutInflater.from(this).inflate(R.layout.foot_list, null))
         //binding.recyclerviewImgManager.smoothScrollToPosition(ImgManagerAdapter.data.size)
@@ -93,7 +91,7 @@ class ImgManagerActivity : RinkActivity() {
             }).start()
         }
         binding.swiperefreshLayout.setOnRefreshListener {
-            Thread(Runnable {
+            Thread {
                 viewModel.files = FileUtil.getGroupList(
                     viewModel.path.value!!
                 )
@@ -104,7 +102,7 @@ class ImgManagerActivity : RinkActivity() {
                     binding.swiperefreshLayout.isRefreshing = false
                     imgManagerAdapter.setNewInstance(viewModel.files)
                 }
-            }).start()
+            }.start()
         }
         binding.swithFilter.isChecked = true
         binding.swithFilter.setOnCheckedChangeListener { compoundButton, state ->
@@ -214,21 +212,13 @@ class ImgManagerActivity : RinkActivity() {
             } else {
                 val pid = viewModel.files!![position].pid
                 if (pid != null) {
-                    val bundle = Bundle()
                     val arrayList = viewModel.files!!.subList(
                         max(position - 30, 0), min(
                             viewModel.files!!.size,
                             max(position - 30, 0) + 60
                         )
                     ).mapNotNull { it.pid }.toLongArray()
-                    bundle.putInt("position",arrayList.indexOf(pid))
-                    //val arrayList = LongArray(1)
-                    //arrayList[0] = (pid)
-                    bundle.putLongArray("illustidlist", arrayList)
-                    bundle.putLong("illustid", pid)
-                    val intent2 = Intent(applicationContext, PictureActivity::class.java)
-                    intent2.putExtras(bundle)
-                    startActivity(intent2)
+                    PictureActivity.start(this, pid, arrayList)
                 }
             }
         }

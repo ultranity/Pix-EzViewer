@@ -55,7 +55,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 
-//TODO: Refactor
+//TODO: Refactor as Bottom Sheet
+//TODO: comment select emoji
+//TODO: panel helper
 class CommentDialog : BaseDialogFragment() {
 
     private lateinit var recyclerview: RecyclerView
@@ -120,6 +122,7 @@ class CommentDialog : BaseDialogFragment() {
         val params = window!!.attributes
         params.gravity = Gravity.BOTTOM
         params.width = WindowManager.LayoutParams.MATCH_PARENT
+        //params.height = screenHeightPx()/2
         window.attributes = params
         window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
     }
@@ -145,6 +148,7 @@ class CommentDialog : BaseDialogFragment() {
                 DividerItemDecoration.HORIZONTAL
             )
         )
+        //recyclerview.layoutParams.height = screenHeightPx()/2 - 50
         commentAdapter!!.setOnItemClickListener { adapter, view, position ->
             val comment = commentAdapter!!.data[position].comment
             MaterialAlertDialogBuilder(requireContext())
@@ -163,7 +167,7 @@ class CommentDialog : BaseDialogFragment() {
                 if (PxEZApp.animationEnable) {
                     val options = ActivityOptions.makeSceneTransitionAnimation(
                         context as Activity,
-                        Pair.create(view, "UserImage")
+                        Pair.create(view, "userimage")
                     )
                     startActivity(intent, options.toBundle())
                 } else

@@ -33,18 +33,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
-import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
+import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListXBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import com.perol.asdpl.pixivez.dialog.SearchSectionDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.Illust
@@ -81,7 +81,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             blockTags = allTags.map {
                 it.name
             }
-            searchIllustAdapter.blockTags = blockTags
+            filter.blockTags = blockTags
             searchIllustAdapter.notifyDataSetChanged()
         }
     }
@@ -91,7 +91,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             selectSort = position
             if (position == 2) {
                 runBlocking {
-                    val user = AppDataRepository.getUser()
+                    val user = AppDataRepository.currentUser
                     if (!user.ispro) {
                         viewModel.isPreview = true
                         Toasty.error(PxEZApp.instance, "not premium!").show()
@@ -113,25 +113,25 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     }
 
+    private lateinit var filter: IllustFilter
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
+        filter = IllustFilter(isR18on, blockTags)
         searchIllustAdapter =
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_searchr",true)){
-            PicListBtnUserAdapter(
+            if(PxEZApp.instance.pre.getBoolean("show_user_img_searchr",true)){
+            PicListXBtnUserAdapter(
                 R.layout.view_ranking_item,
                 null,
-                isR18on,
-                blockTags,
-                singleLine = false)
+                filter)
+                //singleLine = false
         } else{
-            PicListBtnAdapter(
+            PicListXBtnAdapter(
                 R.layout.view_recommand_item,
                 null,
-                isR18on,
-                blockTags)
+                filter)
         }
         searchIllustAdapter.apply {
             val searchResultHeaderView = LayoutInflater.from(requireContext()).inflate(
@@ -145,7 +145,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         binding.recyclerview.apply {
             adapter = searchIllustAdapter
             layoutManager =
-                StaggeredGridLayoutManager(1+ context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(2*context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
         }
         binding.fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(requireActivity())
@@ -183,7 +183,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         }
         binding.swiperefreshLayout.setOnRefreshListener {
             runBlocking {
-                val user = AppDataRepository.getUser()
+                val user = AppDataRepository.currentUser
                 if (!user.ispro && selectSort == 2) {
                     Toasty.error(PxEZApp.instance, "not premium!").show()
                     viewModel.setPreview(
@@ -212,7 +212,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
     private var param1: String? = null
-    private lateinit var searchIllustAdapter: PicItemAdapter
+    private lateinit var searchIllustAdapter: PicItemAdapterBase
     var sort = arrayOf("date_desc", "date_asc", "popular_desc")
     private var search_target =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
@@ -275,10 +275,10 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         }
         viewModel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
-                PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putInt(
+                PxEZApp.instance.pre.edit().putInt(
                     "hide_bookmark_item_in_search2", it
                 ).apply()
-                searchIllustAdapter.hideBookmarked = it
+                filter.hideBookmarked = it
             }
         }
     }

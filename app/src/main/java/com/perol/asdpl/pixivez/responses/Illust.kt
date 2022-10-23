@@ -77,7 +77,7 @@ data class Illust(
     val total_bookmarks: Int,
     val total_view: Int,
     //val total_comments: Int,
-    val type: String,
+    val type: String, //illust, ugoira, manga
     val user: User,
     var visible: Boolean,
     val width: Int,

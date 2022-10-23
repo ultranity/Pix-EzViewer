@@ -231,7 +231,7 @@ class SettingFragment : PreferenceFragmentCompat() {
 //            if (requestCode == 887) {
 //                val path = data!!.getStringExtra("path")
 //                PxEZApp.storepath = path
-//                PreferenceManager.getDefaultSharedPreferences(activity).edit().putString("storepath1", PxEZApp.storepath).apply()
+//                PxEZApp.instance.pre.edit().putString("storepath1", PxEZApp.storepath).apply()
 //                findPreference<Preference>("storepath1")!!.apply {
 //                    summary = path
 //                }
@@ -345,7 +345,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                                     text.toString().removePrefix("/").removeSuffix("/")+"/"
                         }
                         positiveButton(R.string.save) { dialog ->
-                            PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                            PxEZApp.instance.pre.apply {
                                 putString("R18FolderPath", PxEZApp.R18FolderPath)
                             }
                             findPreference<Preference>("R18Folder")!!.apply {
@@ -414,14 +414,14 @@ class SettingFragment : PreferenceFragmentCompat() {
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
             positiveButton(R.string.save) { dialog ->
                 PxEZApp.saveformat = "${Input.text}"
-                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                PxEZApp.instance.pre.apply {
                     putString("filesaveformat", PxEZApp.saveformat)
                 }
                 findPreference<Preference>("filesaveformat")!!.apply {
                     summary = PxEZApp.saveformat
                 }
                 PxEZApp.TagSeparator = "${tagSeparator.text}"
-                PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                PxEZApp.instance.pre.apply {
                     putString("TagSeparator", PxEZApp.TagSeparator)
                 }
             }
@@ -446,7 +446,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             folderChooser(initialDirectory=File(PxEZApp.storepath),allowFolderCreation = true) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
-                    PreferenceManager.getDefaultSharedPreferences(activity).apply {
+                    PxEZApp.instance.pre.apply {
                         putString("storepath1", PxEZApp.storepath)
                     }
                     findPreference<Preference>("storepath1")!!.apply {

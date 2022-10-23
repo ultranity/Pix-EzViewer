@@ -28,29 +28,29 @@ package com.perol.asdpl.pixivez.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityPixivisionBinding
+import com.perol.asdpl.pixivez.objects.sharedViewModel
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PixivisionModel
 
 class PixivsionActivity : RinkActivity() {
     private lateinit var binding: ActivityPixivisionBinding
-    private lateinit var viewmodel: PixivisionModel
+    private val viewmodel: PixivisionModel by sharedViewModel("pixivision")
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPixivisionBinding.inflate(layoutInflater)
-        viewmodel = ViewModelProvider(this)[PixivisionModel::class.java]
         setContentView(binding.root)
         setSupportActionBar(binding.toobarPixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         initbind()
-        viewmodel.onRefreshListener()
+        if(viewmodel.banners.value==null) {
+            viewmodel.onRefreshListener()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -91,12 +91,12 @@ class PixivsionActivity : RinkActivity() {
                 }
             }
         }
-        binding.recyclerviewPixivision.layoutManager = LinearLayoutManager(applicationContext)
+        binding.recyclerviewPixivision.layoutManager = GridLayoutManager(this, resources.configuration.orientation)
         binding.recyclerviewPixivision.adapter = pixiVisionAdapter
         pixiVisionAdapter.addChildClickViewIds(R.id.imageView_pixivision)
         pixiVisionAdapter.setOnItemChildClickListener { adapter, view, position ->
             val intent = Intent(this@PixivsionActivity,
-                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false))
+                if (PxEZApp.instance.pre.getBoolean("disableproxy",false))
                     WebViewActivity::class.java else OKWebViewActivity::class.java)
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)

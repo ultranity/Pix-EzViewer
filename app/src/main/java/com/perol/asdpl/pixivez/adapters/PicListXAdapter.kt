@@ -32,6 +32,7 @@ import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.shehuan.niv.NiceImageView
@@ -90,12 +91,12 @@ open class PicListXAdapter(
 
     private fun NiceImageView.setLike(status:Boolean) {
         if (status) {
-            setImageResource(R.drawable.heart_red)
-            //GlideApp.with(context).load(R.drawable.heart_red).into(this)
+            //setImageResource(R.drawable.heart_red)
+            GlideApp.with(context).load(R.drawable.heart_red).into(this)
             //alpha = 0.9F
         } else {
-            setImageResource(R.drawable.ic_action_heart)
-            //GlideApp.with(context).load(R.drawable.ic_action_heart).into(this)
+            //setImageResource(R.drawable.ic_action_heart)
+            GlideApp.with(context).load(R.drawable.ic_action_heart).into(this)
             //alpha = 0.8F
         }
     }

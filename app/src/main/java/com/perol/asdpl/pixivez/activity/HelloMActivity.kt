@@ -43,7 +43,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
@@ -59,6 +58,9 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -164,12 +166,11 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     private lateinit var binding: AppBarHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var allUser: ArrayList<UserEntity>?
+        val user: UserEntity?
         runBlocking {
-            allUser = ArrayList(AppDataRepository.getAllUser())
-
+            user = AppDataRepository.getUser()
         }
-        if (allUser!!.isEmpty()) {
+        if (user == null) {
             startActivity(Intent(this@HelloMActivity, LoginActivity::class.java))
             finish()
             return
@@ -198,11 +199,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
         initView()
-        var nowNum = PreferenceManager.getDefaultSharedPreferences(this).getInt("usernum", 0)
-        if (nowNum >= allUser!!.size) {
-            nowNum = 0
-        }
-        initNavDrawer(allUser!![nowNum])
+        initNavDrawer(user)
 
         for (i in 0..2) {
             val tabItem = binding.tablayoutHellom.getTabAt(i)!!
@@ -244,7 +241,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     .find(text)?.groupValues?.last()?.trim()
                     ?: return@Runnable
 
-                val pre =PreferenceManager.getDefaultSharedPreferences(this)
+                val pre =PxEZApp.instance.pre
                 if (item==pre.getString("lastclip2",""))
                     return@Runnable
                 MaterialDialog(this).show {
@@ -306,19 +303,13 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             .load(user.userimage)
             .circleCrop().into(header.imageView)
         header.imageView.setOnClickListener {
-            val intent = Intent(this@HelloMActivity, UserMActivity::class.java)
-            runBlocking {
-                intent.putExtra("data", AppDataRepository.getUser().userid)
-            }
-
-            if (PxEZApp.animationEnable) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
                     this@HelloMActivity,
-                    Pair.create(header.imageView, "UserImage")
-                )
-                startActivity(intent, options.toBundle())
-            } else
-                startActivity(intent)
+                    Pair.create(header.imageView, "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(this@HelloMActivity, AppDataRepository.currentUser, options)
         }
 
         header.headtext.text = user.username
@@ -329,11 +320,11 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         binding.tablayoutHellom.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMViewPagerAdapter(supportFragmentManager)
 
-        binding.contentView.offscreenPageLimit = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", false)) 0 else 3
+        binding.contentView.offscreenPageLimit = if (PxEZApp.instance.pre.getBoolean("refreshTab", false)) 0 else 3
 
-        val position = PreferenceManager.getDefaultSharedPreferences(this).getString("firstpage", "0")?.toInt() ?: 0
+        val position = PxEZApp.instance.pre.getString("firstpage", "0")?.toInt() ?: 0
         binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)
-        /*if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("refreshTab", true))
+        /*if (PxEZApp.instance.pre.getBoolean("refreshTab", true))
             getFragmentContent(position).let {
                 supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
             }
@@ -377,13 +368,13 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         normalDialog.setPositiveButton(
             getString(R.string.ok)
         ) { _, _ ->
-            Thread {
+            CoroutineScope(Dispatchers.IO).launch{
                 GlideApp.get(applicationContext).clearDiskCache()
                 deleteDir(applicationContext.cacheDir)
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     deleteDir(applicationContext.externalCacheDir)
                 }
-            }.start()
+            }
         }
         normalDialog.show()
     }

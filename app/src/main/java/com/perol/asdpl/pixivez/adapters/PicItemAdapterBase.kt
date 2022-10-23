@@ -38,7 +38,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -65,6 +64,7 @@ import kotlin.math.min
 
 // basic Adapter for image item
 //TODO: reuse more code
+//TODO: fling optimize
 abstract class PicItemAdapterBase(
     layoutResId: Int,
     data: List<Illust>?,
@@ -152,7 +152,6 @@ abstract class PicItemAdapterBase(
     }
 
     open fun viewPics(view: View, position: Int) {
-        val bundle = Bundle()
         DataHolder.setIllustsList(
             this.data.subList(
                 max(position - 30, 0), min(
@@ -161,19 +160,19 @@ abstract class PicItemAdapterBase(
                 )
             )
         )
+        val options = if (PxEZApp.animationEnable) {
+            val mainimage = view.findViewById<View>(R.id.item_img)
+            ActivityOptions.makeSceneTransitionAnimation(
+                context as Activity,
+                Pair.create(mainimage, "mainimage")
+            ).toBundle()
+        } else null
+        val bundle = Bundle()
         bundle.putInt("position", position - max(position - 30, 0))
         bundle.putLong("illustid", this.data[position].id)
         val intent = Intent(context, PictureActivity::class.java)
         intent.putExtras(bundle)
-        if (PxEZApp.animationEnable) {
-            val mainimage = view.findViewById<View>(R.id.item_img)
-            val options = ActivityOptions.makeSceneTransitionAnimation(
-                context as Activity,
-                Pair.create(mainimage, "mainimage")
-            )
-            ContextCompat.startActivity(context, intent, options.toBundle())
-        } else
-            ContextCompat.startActivity(context, intent, null)
+        ContextCompat.startActivity(context, intent, options)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -186,7 +185,7 @@ abstract class PicItemAdapterBase(
         colorPrimaryDark= ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
         badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
         setAction(PxEZApp.CollectMode)
-        quality = PreferenceManager.getDefaultSharedPreferences(context).getString("quality","0")?.toInt()?: 0
+        quality = PxEZApp.instance.pre.getString("quality","0")?.toInt()?: 0
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
@@ -219,8 +218,9 @@ abstract class PicItemAdapterBase(
                 holder.setText(R.id.textview_num, "GIF")
                 numLayout.visibility = View.VISIBLE
             }
-            else -> {
-                holder.setText(R.id.textview_num, "C"+item.meta_pages.size.toString())
+            else -> { //"manga"
+                holder.setText(R.id.textview_num,
+                    "C" + if (item.meta_pages.isEmpty()) "" else item.meta_pages.size.toString())
                 numLayout.visibility = View.VISIBLE
             }
         }

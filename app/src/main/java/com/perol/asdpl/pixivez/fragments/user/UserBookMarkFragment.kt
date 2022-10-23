@@ -33,21 +33,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.adapters.PicItemAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.*
 import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
@@ -72,71 +68,67 @@ private const val ARG_PARAM2 = "param2"
 class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     @SuppressLint("InflateParams")
     override fun loadData() {
-        viewModel!!.first(param1!!, pub).doOnSuccess {
-            if (it) {
-                val view = layoutInflater.inflate(R.layout.header_bookmark, null)
-                val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
-                picItemAdapter.addHeaderView(view)
-                imagebutton.setOnClickListener {
-                    showTagDialog()
-                }
+        viewModel!!.first(param1!!, pub)
+        if (viewModel!!.isSelfPage(param1!!)) {
+            val view = layoutInflater.inflate(R.layout.header_bookmark, null)
+            picItemAdapter.addHeaderView(view)
+            val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
+            imagebutton.setOnClickListener {
+                showTagDialog()
             }
-        }.doOnError {
-            it.printStackTrace()
-        }.subscribe()
+        }
     }
 
-    private var exitTime = 0L
+    private lateinit var filter: IllustFilter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
+        filter = IllustFilter(isR18on, blockTags)
         picItemAdapter =
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("show_user_img_bookmarked",true)){
-                PicListBtnUserAdapter(
+            if (PxEZApp.instance.pre.getBoolean("show_user_img_bookmarked", true)) {
+                PicListXBtnUserAdapter(
                     R.layout.view_ranking_item,
                     null,
-                    isR18on,
-                    blockTags,
-                    singleLine = false,
-                    viewActivity.viewModel.hideBookmarked.value!!,
-                    viewActivity.viewModel.hideDownloaded.value!!)
-            } else{
-                PicListBtnAdapter(
+                    filter
+                )
+                //singleLine = false,
+            } else {
+                PicListXBtnAdapter(
                     R.layout.view_recommand_item,
                     null,
-                    isR18on,
-                    blockTags,
-                    viewActivity.viewModel.hideBookmarked.value!!,
-                    viewActivity.viewModel.hideDownloaded.value!!)
+                    filter
+                )
             }
 
 
-        binding.mrecyclerview.apply{
-            layoutManager = StaggeredGridLayoutManager(1+context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+        binding.recyclerview.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                2*context.resources.configuration.orientation,
+                StaggeredGridLayoutManager.VERTICAL
+            )
             adapter = picItemAdapter
             addItemDecoration(GridItemDecoration())
         }
         picItemAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewModel!!.onLoadMoreListener()
+            viewModel.onLoadMoreListener()
         }
 
-        binding.mrefreshlayout.setOnRefreshListener {
-            viewModel!!.onRefreshListener(param1!!, pub, null)
+        binding.refreshlayout.setOnRefreshListener {
+            viewModel.onRefreshListener(param1!!, pub, null)
         }
-        requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
+        /*requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show()
-                exitTime = System.currentTimeMillis()
-            } else {
-                binding.mrecyclerview.scrollToPosition(0)
-            }
-
-        }
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    binding.recyclerview.scrollToPosition(0)
+                }
+            }*/
     }
 
     override fun onClick(string: String, public: String) {
@@ -148,29 +140,29 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     override fun onResume() {
+        isLoaded = viewModel.data.value!=null
         super.onResume()
-        Log.d("UserBookMarkFragment","UserBookMarkFragment resume")
+        Log.d("UserBookMarkFragment", "UserBookMarkFragment resume")
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this)[UserBookMarkViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[UserBookMarkViewModel::class.java]
         this.viewActivity = activity as UserMActivity
 
-        viewModel!!.nextUrl.observe(viewLifecycleOwner) {
+        viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 picItemAdapter.loadMoreEnd()
             } else {
                 picItemAdapter.loadMoreComplete()
             }
         }
-        viewModel!!.data.observe(viewLifecycleOwner) {
+        viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                binding.mrefreshlayout.isRefreshing = false
+                binding.refreshlayout.isRefreshing = false
                 picItemAdapter.setNewInstance(it.toMutableList())
             }
-
         }
-        viewModel!!.adddata.observe(viewLifecycleOwner) {
+        viewModel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
@@ -178,18 +170,13 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 picItemAdapter.loadMoreFail()
             }
         }
-        viewModel!!.tags.observe(viewLifecycleOwner) {
-
-        }
-
+        //viewModel!!.tags.observe(viewLifecycleOwner) {
+        //
+        //}
     }
-
-
-    var first = true
 
     private var param1: Long? = null
     private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -200,7 +187,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     private var pub = "public"
 
-    var viewModel: UserBookMarkViewModel? = null
+    lateinit var viewModel: UserBookMarkViewModel
     private lateinit var viewActivity: UserMActivity
 
 
@@ -222,8 +209,6 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             tagsShowDialog.arguments = bundle
             tagsShowDialog.show(childFragmentManager)
         }
-
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -233,20 +218,21 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             blockTags = allTags.map {
                 it.name
             }
-            val id = AppDataRepository.getUser().userid
-                picItemAdapter.hideBookmarked =
-                    if (param1 != id) {
-                        viewActivity.viewModel.hideBookmarked.value!!
-                    } else 0
-                picItemAdapter.hideDownloaded =
-                    if (param1 == id) {
-                        viewActivity.viewModel.hideDownloaded.value!!
-                    } else false
-            picItemAdapter.blockTags = blockTags
+            val id = AppDataRepository.currentUser.userid
+            picItemAdapter.filter.hideBookmarked =
+                if (param1 != id) {
+                    viewActivity.viewModel.hideBookmarked.value!!
+                } else 0
+            picItemAdapter.filter.hideDownloaded =
+                if (param1 == id) {
+                    viewActivity.viewModel.hideDownloaded.value!!
+                } else false
+            picItemAdapter.filter.blockTags = blockTags
             picItemAdapter.notifyDataSetChanged()
         }
     }
-    private lateinit var picItemAdapter: PicItemAdapter
+
+    private lateinit var picItemAdapter: PicItemAdapterBase
     private lateinit var binding: FragmentUserBookMarkBinding
 
     override fun onCreateView(
@@ -264,17 +250,17 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param userid Parameter 1.
+         * @param tag Parameter 2.
          * @return A new instance of fragment UserBookMarkFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long, param2: String) =
+        fun newInstance(userid: Long, tag: String) =
             UserBookMarkFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putLong(ARG_PARAM1, userid)
+                    putString(ARG_PARAM2, tag)
                 }
             }
     }

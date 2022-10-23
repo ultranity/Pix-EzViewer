@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.activity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
@@ -300,6 +299,11 @@ class OKWebViewActivity : RinkActivity() {
                 injectCSS(mWebview)
             }
         }
+        mWebview.webChromeClient = object: WebChromeClient(){
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                super.onProgressChanged(view, newProgress)
+            }
+        }
         //mWebview.loadData("","text/html","UTF-8")
         mWebview.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
@@ -362,12 +366,8 @@ class OKWebViewActivity : RinkActivity() {
                         if (scheme != null) {
                             // pixiv://illusts/
                             if (scheme.contains("pixiv")) {
-                                val new = Intent(
-                                    this@OKWebViewActivity,
-                                    IntentActivity::class.java
-                                )
-                                new.data = request.url
-                                startActivity(new)
+                                IntentActivity.start(this@OKWebViewActivity, request.url)
+                                finish()
                                 return true
                             }
                             else {
@@ -376,41 +376,28 @@ class OKWebViewActivity : RinkActivity() {
                                         if (segment.contains("artworks")) {
                                             val id =
                                                 segment[segment.indexOf("artworks") + 1].toLong()
-                                            val bundle = Bundle()
-                                            val arrayList = LongArray(1)
-                                            arrayList[0] = id
-                                            bundle.putLongArray("illustidlist", arrayList)
-                                            bundle.putLong("illustid", id)
-                                            val intent = Intent(
-                                                this@OKWebViewActivity,
-                                                PictureActivity::class.java
-                                            )
-                                            intent.putExtras(bundle)
-                                            startActivity(intent)
+                                            PictureActivity.start(this@OKWebViewActivity, id)
                                             return true
-                                        } else if (segment.contains("users")) {
-                                            val userId =
-                                                segment[segment.indexOf("users") + 1].toLong()
-                                            val intent = Intent(
+                                        }
+                                        else if (segment.contains("users")) {
+                                            val userId = segment[segment.indexOf("users") + 1]
+                                            UserMActivity.start(
                                                 this@OKWebViewActivity,
-                                                UserMActivity::class.java
+                                                userId.toLong()
                                             )
-                                            intent.putExtra("data", userId)
-                                            startActivity(intent)
                                             return true
-                                        } else if (segment.size == 1 && request.url.toString()
-                                                .contains("/member.php?id=")
-                                        ) {
-                                            val userId = request.url.getQueryParameter("id")
-                                            val intent = Intent(
-                                                this@OKWebViewActivity,
-                                                UserMActivity::class.java
-                                            )
-                                            intent.putExtra("data", userId?.toLong())
-                                            startActivity(intent)
-                                            return true
-                                        } else
-                                            return false
+                                        }
+                                        else if (segment.size == 1 && request.url.toString()
+                                                .contains("/member.php?id=")) {
+                                            request.url.getQueryParameter("id")?.let {
+                                                UserMActivity.start(
+                                                    this@OKWebViewActivity,
+                                                    it.toLong()
+                                                )
+                                                return true
+                                            }
+                                        }
+                                        return false
                                     }
                                 }
                             }
@@ -421,7 +408,6 @@ class OKWebViewActivity : RinkActivity() {
                 }
                 return false
             }
-
 
             override fun onLoadResource(view: WebView, url: String) {
                 if (BuildConfig.DEBUG) {

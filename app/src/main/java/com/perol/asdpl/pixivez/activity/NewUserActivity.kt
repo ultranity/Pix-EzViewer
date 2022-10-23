@@ -56,11 +56,7 @@ class NewUserActivity : RinkActivity() {
                     return
                 }
 
-                val intent = Intent(
-                    this@NewUserActivity, IntentActivity::class.java
-                )
-                intent.data = Uri.parse(url)
-                startActivity(intent)
+                IntentActivity.start(this@NewUserActivity, url)
                 finish()
             }
         }

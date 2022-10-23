@@ -2,24 +2,23 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="#f0ffffff"
-    android:clipToPadding="true"
-    android:paddingLeft="8dp"
-    android:paddingTop="8dp"
-    android:paddingRight="8dp"
+    android:layout_margin="5dp"
+    android:padding="5dp"
     app:cardCornerRadius="5dp"
-    app:cardElevation="4dp">
+    app:cardElevation="2dp">
 
     <ImageView
+        android:background="#fffafafa"
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="220dp"
+        android:layout_gravity="center_horizontal"
         android:minWidth="330dp"
         android:paddingHorizontal="20dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/pixivision_color_logo" />
+        android:src="@drawable/pixivision_color_logo"
+        android:contentDescription="pixivision" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -31,6 +30,6 @@
         android:layout_marginBottom="15dp"
         android:text="@string/pixivision_desc2"
         android:textAlignment="center"
-        android:textColor="@color/dark"
+        android:textColor="?android:textColorPrimary"
         android:textSize="16sp" />
 </com.google.android.material.card.MaterialCardView>

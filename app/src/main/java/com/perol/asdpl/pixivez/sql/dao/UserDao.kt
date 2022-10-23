@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.sql.dao
 import androidx.room.*
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 
+
 @Dao
 abstract class UserDao {
     @Query("SELECT * FROM user WHERE userid=:userid")

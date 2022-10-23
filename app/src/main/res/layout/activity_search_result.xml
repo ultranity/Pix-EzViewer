@@ -29,14 +29,26 @@
                     android:theme="@style/MyToolbar"
                     android:layout_height="?attr/actionBarSize">
 
-                       <com.google.android.material.tabs.TabLayout
-                           android:id="@+id/tablayout_searchresult"
-                           android:layout_width="wrap_content"
-                           app:tabIndicatorFullWidth="false"
-                           app:tabIndicatorHeight="0dp"
-                           style="@style/Widget.MaterialComponents.TabLayout.Colored"
-                           app:tabMode="scrollable"
-                           android:layout_height="wrap_content" />
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tablayout_searchresult"
+                        style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:tabIndicatorFullWidth="false"
+                        app:tabIndicatorHeight="0dp"
+                        app:tabMode="scrollable">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/illust" />
+
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/painter" />
+                    </com.google.android.material.tabs.TabLayout>
 
 
                 </androidx.appcompat.widget.Toolbar>

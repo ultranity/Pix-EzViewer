@@ -28,17 +28,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.perol.asdpl.pixivez.sql.dao.BlockTagDao
-import com.perol.asdpl.pixivez.sql.dao.IllustDao
-import com.perol.asdpl.pixivez.sql.dao.UserDao
-import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
-import com.perol.asdpl.pixivez.sql.entity.Illust
-import com.perol.asdpl.pixivez.sql.entity.UserEntity
+import com.perol.asdpl.pixivez.sql.dao.*
+import com.perol.asdpl.pixivez.sql.entity.*
 
 @Database(
     entities = [SearchHistoryEntity::class, IllustBeanEntity::class, UserEntity::class, Illust::class, BlockTagEntity::class],
     version = 6,
-    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun searchhistoryDao(): SearchHistoryDao
@@ -60,7 +55,7 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java, "app.db"
-            ).fallbackToDestructiveMigration()
+            ).fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }
 }

@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebResourceRequest
@@ -86,12 +85,7 @@ class WebViewActivity : RinkActivity() {
                         if (scheme != null) {
                             // pixiv://illusts/
                             if (scheme.contains("pixiv")) {
-                                val new = Intent(
-                                    this@WebViewActivity,
-                                    IntentActivity::class.java
-                                )
-                                new.data = request.url
-                                startActivity(new)
+                                IntentActivity.start(this@WebViewActivity, request.url)
                                 finish()
                                 return true
                             }
@@ -101,41 +95,27 @@ class WebViewActivity : RinkActivity() {
                                         if (segment.contains("artworks")) {
                                             val id =
                                                 segment[segment.indexOf("artworks") + 1].toLong()
-                                            val bundle = Bundle()
-                                            val arrayList = LongArray(1)
-                                            arrayList[0] = id
-                                            bundle.putLongArray("illustidlist", arrayList)
-                                            bundle.putLong("illustid", id)
-                                            val intent = Intent(
-                                                this@WebViewActivity,
-                                                PictureActivity::class.java
-                                            )
-                                            intent.putExtras(bundle)
-                                            startActivity(intent)
+                                            PictureActivity.start(this@WebViewActivity, id)
                                             return true
-                                        } else if (segment.contains("users")) {
-                                            val userId =
-                                                segment[segment.indexOf("users") + 1].toLong()
-                                            val intent = Intent(
+                                        }
+                                        else if (segment.contains("users")) {
+                                            val userId = segment[segment.indexOf("users") + 1]
+                                            UserMActivity.start(
                                                 this@WebViewActivity,
-                                                UserMActivity::class.java
+                                                userId.toLong()
                                             )
-                                            intent.putExtra("data", userId)
-                                            startActivity(intent)
                                             return true
-                                        } else if (segment.size == 1 && request.url.toString()
-                                                .contains("/member.php?id=")
-                                        ) {
-                                            val userId = request.url.getQueryParameter("id")
-                                            val intent = Intent(
-                                                this@WebViewActivity,
-                                                UserMActivity::class.java
-                                            )
-                                            intent.putExtra("data", userId?.toLong())
-                                            startActivity(intent)
-                                            return true
-                                        } else
-                                            return false
+                                        }
+                                        else if (segment.size == 1 && request.url.toString()
+                                                .contains("/member.php?id=")) {
+                                            request.url.getQueryParameter("id")?.let {
+                                                UserMActivity.start(
+                                                    this@WebViewActivity,
+                                                    it.toLong()
+                                                )
+                                            }
+                                        }
+                                        return false
                                     }
                                 }
                             }

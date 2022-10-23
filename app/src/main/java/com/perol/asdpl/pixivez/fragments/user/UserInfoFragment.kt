@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.fragments.user
 
 
+import EasyFormatter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
@@ -35,16 +36,16 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.view.postDelayed
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import com.perol.asdpl.pixivez.R
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
-import com.zhy.view.flowlayout.FlowLayout
-import com.zhy.view.flowlayout.TagAdapter
-import com.zhy.view.flowlayout.TagFlowLayout
+import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 
 
 /**
@@ -56,147 +57,173 @@ class UserInfoFragment : Fragment() {
 
 
     // TODO: Rename and change types of parameters
-    private lateinit var mParam1: UserDetailResponse
+    lateinit var viewModel: UserMViewModel
+    private lateinit var userDetail: UserDetailResponse
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initData()
+        viewModel = ViewModelProvider(requireActivity())[UserMViewModel::class.java]
+        viewModel.userDetail.value?.let {
+            userDetail = it
+            initData()
+        }
+    }
+
+    private fun getChip(word: String, hint: String? = null, url: String? = null, onclickAction: ((Chip) -> Unit)? =null): Chip {
+        val chip = Chip(activity)
+        chip.text = word
+        chip.contentDescription = hint
+        if (!url.isNullOrBlank()) {
+            chip.setOnClickListener {
+                val uri = Uri.parse(url)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
+            }
+        }
+        if(onclickAction!=null){
+            chip.setOnClickListener{
+                onclickAction(chip)
+            }
+        }
+        if (!hint.isNullOrBlank()) {
+            chip.setOnLongClickListener {
+                chip.text = chip.contentDescription.also { chip.contentDescription = chip.text }
+                it.postDelayed(2000) {
+                    chip.contentDescription = chip.text.also { chip.text = chip.contentDescription }
+                }
+                true
+            }
+        }
+        return chip
     }
 
     @SuppressLint("SetTextI18n")
     private fun initData() {
-        binding.textViewTacomment.autoLinkMask = Linkify.WEB_URLS
-        if (mParam1.user != null || mParam1.user.comment != "")
-            binding.textViewTacomment.text = "${mParam1.user.account}:\r\n${mParam1.user.comment}"
-        else
-            binding.textViewTacomment.text = "~"
-        loadBGImage(binding.imageviewUserBg, mParam1.profile.background_image_url)
-        val mInflater = LayoutInflater.from(requireActivity())
-        binding.textViewUserId.text = mParam1.user.id.toString()
-        binding.textViewFans.text = mParam1.profile.total_mypixiv_users.toString()
+        binding.textViewUsercomment.run {
+            autoLinkMask = Linkify.WEB_URLS
+            text =
+                if (userDetail.user != null || userDetail.user.comment != "")
+                    "${userDetail.user.account}:\r\n${userDetail.user.comment}"
+                else
+                    "~~~"
+            binding.cardViewUsercomment.setOnLongClickListener {
+                contentDescription = text
+                text = EasyFormatter.DEFAULT.format(userDetail)
+                it.postDelayed(5000) {
+                    text = contentDescription
+                }
+                true
+            }
+        }
+        loadBGImage(binding.imageviewUserBg, userDetail.profile.background_image_url)
+        binding.textViewUserId.text = userDetail.user.id.toString()
+        binding.textViewFans.text = userDetail.profile.total_mypixiv_users.toString()
         binding.textViewFans.setOnClickListener {
-            UserFollowActivity.start(requireContext(), mParam1.user.id.toLong(), true)
+            UserFollowActivity.start(requireContext(), userDetail.user.id, true)
         }
-        binding.textView5.text = mParam1.profile.total_follow_users.toString()
-        binding.textView5.setOnClickListener {
-            UserFollowActivity.start(requireContext(), mParam1.user.id.toLong(), false)
-        }
-        val strings = ArrayList<String>()
-        if (!mParam1.profile.twitter_account.isNullOrBlank()) strings.add("twitter@" + mParam1.profile.twitter_account)
-        if (mParam1.profile_publicity.isPawoo) strings.add("pawoo")
-        strings.add("ta的作品" + mParam1.profile.total_illusts)
-        strings.add("ta的收藏" + mParam1.profile.total_illust_bookmarks_public)
-        strings.add(mParam1.profile.gender)
-        strings.add(mParam1.profile.birth)
-        strings.add(mParam1.profile.region + mParam1.profile.country_code)
-        strings.add(mParam1.profile.job)
-        if (!mParam1.profile.webpage.isNullOrBlank()) strings.add(mParam1.profile.webpage)
-        strings.add(mParam1.workspace.tool)
-        strings.add(mParam1.workspace.tablet)
-        strings.add(mParam1.workspace.printer)
-        strings.add(mParam1.workspace.monitor)
-        strings.add(mParam1.workspace.chair)
-        val iterator = strings.iterator()
-        val removelist = ArrayList<String>()
-        while (iterator.hasNext()) {
-            val k = iterator.next()
-            if (k == " " || k == "") {
-                removelist.add(k)
-            }
-        }
-        strings -= removelist
-        if (strings.size <= 2) strings.add("╮(╯▽╰)╭")
-        binding.searchPageFlowlayout.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
-            override fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean {
-                when (position) {
-                    0 -> {
-                        run {
-                            if (mParam1.profile.twitter_url.isNullOrBlank())
-                                return true
-                            else {
-                                val uri = Uri.parse(mParam1.profile.twitter_url)
-                                val intent = Intent()
-                                intent.action = Intent.ACTION_VIEW
-                                intent.data = uri
-                                startActivity(intent)
-                            }
-                        }
-                    }
-                    1 -> {
-                        if (mParam1.profile.pawoo_url.isNullOrBlank())
-                            return true
-                        else {
-                            val uri = Uri.parse(mParam1.profile.pawoo_url)
-                            val intent = Intent()
-                            intent.action = Intent.ACTION_VIEW
-                            intent.data = uri
-                            startActivity(intent)
-                        }
-                    }
-                }
-                return true
-            }
-        })
-        binding.searchPageFlowlayout.adapter = object : TagAdapter<String>(strings) {
-            override fun getView(parent: FlowLayout, position: Int, s: String): View {
-                when (position) {
-                    0 -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
-                        tv.text = s
-                        tv.setTextColor(Color.BLUE)
-                        return tv
-                    }
-                    1 -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
-                        tv.text = s
-                        tv.setTextColor(Color.YELLOW)
-                        return tv
-                    }
-                    else -> {
-                        val tv = mInflater.inflate(R.layout.picture_tag_single, binding.searchPageFlowlayout, false) as TextView
-                        tv.text = s
-                        return tv
-                    }
-                }
-            }
+        binding.textViewFollowerNum.text = userDetail.profile.total_follow_users.toString()
+        binding.textViewFollowerNum.setOnClickListener {
+            UserFollowActivity.start(requireContext(), userDetail.user.id, false)
         }
 
-    }
+        if (!userDetail.profile.twitter_account.isNullOrBlank())
+            binding.chipgroup.addView(
+                getChip(
+                    "twitter@" + userDetail.profile.twitter_account,
+                    "twitter",
+                    userDetail.profile.twitter_url
+                ).also { it.setTextColor(Color.BLUE) })
+        if (userDetail.profile_publicity.isPawoo)
+            binding.chipgroup.addView(
+                getChip(
+                    "pawoo","pawoo",
+                    userDetail.profile.pawoo_url
+                ).also { it.setTextColor(Color.YELLOW) })
+        if (userDetail.profile.total_illusts>0)
+            binding.chipgroup.addView(
+                getChip("ta的插画${userDetail.profile.total_illusts}", "total_illusts") {
+                    viewModel.currentTab.value = 0
+                }
+            )
+        if (userDetail.profile.total_manga>0)
+            binding.chipgroup.addView(
+                getChip("ta的漫画" + userDetail.profile.total_manga, "total_manga"){
+                    viewModel.currentTab.value = 1
+                }
+            )
+        if (userDetail.profile.total_illust_bookmarks_public>0)
+            binding.chipgroup.addView(
+                getChip("ta的收藏" + userDetail.profile.total_illust_bookmarks_public, "total_bookmarks"){
+                    viewModel.currentTab.value = 2
+                }
+            )
+        if (!userDetail.profile.webpage.isNullOrBlank())
+            binding.chipgroup.addView(
+                getChip(userDetail.profile.webpage, "webpage", userDetail.profile.webpage)
+            )
+        val chips = ArrayList<String>().apply {
+            add(userDetail.profile.gender)
+            add(userDetail.profile.birth)
+            add("${userDetail.profile.region} ${userDetail.profile.country_code}")
+            add(userDetail.profile.job)
+            add(userDetail.workspace.tool)
+            add(userDetail.workspace.tablet)
+            add(userDetail.workspace.printer)
+            add(userDetail.workspace.monitor)
+            add(userDetail.workspace.chair)
+        }
+        chips.filter { it.isNotBlank() }.forEach {
+            binding.chipgroup.addView(getChip(it))
+        }
+        if (binding.chipgroup.size <= 2)
+            binding.chipgroup.addView(getChip("╮(╯▽╰)╭"){chip->
+                chip.setOnLongClickListener {
+                    chip.text = chip.contentDescription.also { chip.contentDescription = chip.text }
+                    it.postDelayed(5000) {
+                        chip.contentDescription = chip.text.also { chip.text = chip.contentDescription }
+                    }
+                    true
+                }
+            })
+        }
 
+    private var param1: Long? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            mParam1 = requireArguments().getSerializable(ARG_PARAM1) as UserDetailResponse
+        arguments?.let {
+            param1 = it.getLong(ARG_PARAM1)
         }
-    }
-    private lateinit var binding:FragmentUserInfoBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        // Inflate the layout for this fragment
 
+    }
+
+    private lateinit var binding: FragmentUserInfoBinding
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment
         binding = FragmentUserInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
 
-
     companion object {
         // TODO: Rename parameter arguments, choose names that match
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private const val ARG_PARAM1 = "param1"
+        private const val ARG_PARAM1 = "uesrid"
 
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
+         * @param userid Parameter 1.
          * @return A new instance of fragment UserMessageFragment.
          */
         // TODO: Rename and change types and number of parameters
-        fun newInstance(param1: UserDetailResponse): Fragment {
+        fun newInstance(userid: Long): Fragment {
             val fragment = UserInfoFragment()
             val args = Bundle()
-            args.putSerializable(ARG_PARAM1, param1)
+            args.putLong(ARG_PARAM1, userid)
             fragment.arguments = args
             return fragment
         }

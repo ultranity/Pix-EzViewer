@@ -25,18 +25,19 @@
 package com.perol.asdpl.pixivez.adapters.viewpager
 
 import android.app.Activity
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.user.UserBookMarkFragment
 import com.perol.asdpl.pixivez.fragments.user.UserIllustFragment
+import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
 
 class UserMPagerAdapter(
     var activity: Activity,
     fm: FragmentManager,
-    var long: Long,
-    var newInstance: Fragment
+    var userid: Long,
 ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItemPosition(`object`: Any): Int {
@@ -44,22 +45,19 @@ class UserMPagerAdapter(
             POSITION_NONE
         } else super.getItemPosition(`object`)
     }
-/*    override fun getItemCount() = 4
-
-    override fun createFragment(position: Int) = when (position) {
-        0 -> UserIllustFragment.newInstance(long, "illust")
-        1 -> UserIllustFragment.newInstance(long, "manga")
-        2 -> UserBookMarkFragment.newInstance(long, "1")
-        else -> newInstance
-    }*/
 
     override fun getItem(position: Int) = when (position) {
-        0 -> UserIllustFragment.newInstance(long, "illust")
-        1 -> UserIllustFragment.newInstance(long, "manga")
-        2 -> UserBookMarkFragment.newInstance(long, "1")
-        else -> newInstance
+        0 -> UserIllustFragment.newInstance(userid, "illust")
+        1 -> UserIllustFragment.newInstance(userid, "manga")
+        2 -> UserBookMarkFragment.newInstance(userid, "1")
+        else -> UserInfoFragment.newInstance(userid)
     }
 
+    var currentFragment: Fragment? = null
+    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
+        super.setPrimaryItem(container, position, `object`)
+        currentFragment = `object` as Fragment
+    }
     override fun getCount() = 4
 
     override fun getPageTitle(position: Int) = when (position) {
@@ -68,6 +66,4 @@ class UserMPagerAdapter(
         2 -> activity.getString(R.string.bookmark)
         else -> activity.getString(R.string.abouts)
     }
-
-
 }

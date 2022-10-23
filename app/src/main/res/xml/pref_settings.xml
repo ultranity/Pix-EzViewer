@@ -87,7 +87,7 @@
             app:summary="@string/refreshTab_summary"/>
         <SwitchPreference
             android:summary="@string/animation_summary"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:key="animation"
             app:title="@string/animation" />
         <SwitchPreference

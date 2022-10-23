@@ -96,6 +96,7 @@ class PictureXFragment : BaseFragment() {
     }
 
     override fun onResume() {
+        isLoaded = pictureXViewModel.illustDetail.value!=null
         super.onResume()
         pictureXAdapter?.imageViewGif?.startPlay()
     }
@@ -139,13 +140,12 @@ class PictureXFragment : BaseFragment() {
                         }
                         binding.blocktagTextview.text = i
                         binding.blockView.visibility = View.VISIBLE
+                        break
                     }
                 }
                 binding.illust = it
 
-                position = if (it.meta_pages.isNotEmpty())
-                    it.meta_pages.size
-                else 1
+                position = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
                 pictureXAdapter =
                     PictureXAdapter(pictureXViewModel, it, requireContext()).also {
                         it.setListener {
@@ -187,17 +187,13 @@ class PictureXFragment : BaseFragment() {
                     true
                 }
                 binding.imageViewUserPicX.setOnClickListener { _ ->
-                    val intent = Intent(context, UserMActivity::class.java)
-                    intent.putExtra("data", it.user.id)
-
-                    if (PxEZApp.animationEnable) {
-                        val options = ActivityOptions.makeSceneTransitionAnimation(
+                    val options = if (PxEZApp.animationEnable) {
+                        ActivityOptions.makeSceneTransitionAnimation(
                             context as Activity,
-                            Pair.create(binding.imageViewUserPicX, "UserImage")
-                        )
-                        startActivity(intent, options.toBundle())
-                    } else
-                        startActivity(intent)
+                            Pair.create(binding.imageViewUserPicX, "userimage")
+                        ).toBundle()
+                    } else null
+                    UserMActivity.start(requireContext(), it.user, options)
                 }
                 binding.fab.show()
             } else {
@@ -208,7 +204,9 @@ class PictureXFragment : BaseFragment() {
             }
         }
         pictureXViewModel.relatedPics.observe(viewLifecycleOwner) {
-            pictureXAdapter?.setRelatedPics(it)
+            if (it != null) {
+                pictureXAdapter?.setRelatedPics(it)
+            }
         }
         pictureXViewModel.likeIllust.observe(viewLifecycleOwner) {
             if (it != null) {

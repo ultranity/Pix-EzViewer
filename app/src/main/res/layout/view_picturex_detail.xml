@@ -173,7 +173,8 @@
                 android:src="@drawable/ic_action_share_black"
                 app:layout_constraintEnd_toStartOf="@+id/imagebutton_download"
                 app:layout_constraintTop_toTopOf="@+id/textview12"
-                app:tint="?android:attr/textColorPrimary" />
+                app:tint="?android:attr/textColorPrimary"
+                android:contentDescription="@string/share" />
             <ImageButton
                 android:id="@+id/imagebutton_download"
                 android:layout_width="40dp"
@@ -184,7 +185,8 @@
                 android:src="@drawable/ic_action_download"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textview12"
-                app:tint="?android:attr/textColorPrimary" />
+                app:tint="?android:attr/textColorPrimary"
+                android:contentDescription="@string/download" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.zhy.view.flowlayout.TagFlowLayout

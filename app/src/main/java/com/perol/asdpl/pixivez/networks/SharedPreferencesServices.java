@@ -90,4 +90,17 @@ public class SharedPreferencesServices {
     public int getInt(String key, int value) {
         return sp.getInt(key, value);
     }
+
+    public void setLong(String key, long value) {
+        sp.edit().putLong(key, value).apply();
+    }
+
+    public long getLong(String key) {
+        return sp.getLong(key, 0);
+    }
+
+    public long getLong(String key, long value) {
+        return sp.getLong(key, value);
+    }
+
 }

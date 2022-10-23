@@ -35,7 +35,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsAdapter
-import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
+import com.perol.asdpl.pixivez.responses.TagsBean
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 
 class TagsBookMarkDialog : DialogFragment() {
@@ -63,11 +63,12 @@ class TagsBookMarkDialog : DialogFragment() {
                 if (editText.text.isNotBlank() && pictureXViewModel.tags.value != null) {
                     tagsAdapter.addData(
                         0,
-                        BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
-                        is_registered = true
+                        TagsBean(
+                            is_registered = true,
                             name = editText.text.toString()
-                            editText.text.clear()
-                    })
+                        )
+                    )
+                    editText.text.clear()
                     recyclerView.smoothScrollToPosition(0)
                 }
             }
@@ -75,14 +76,14 @@ class TagsBookMarkDialog : DialogFragment() {
                 ViewModelProvider(requireParentFragment())[PictureXViewModel::class.java]
             pictureXViewModel.illustDetail.value?.let{
                 tagsAdapter.setNewInstance(it.tags.map {
-                    BookMarkDetailResponse.BookmarkDetailBean.TagsBean().apply {
-                        is_registered = false
+                    TagsBean(
+                        is_registered = false,
                         name = it.toString()
-                    }
+                        )
                 }.toMutableList())
             }
-            pictureXViewModel.tags.observe(viewLifecycleOwner) {
-                tagsAdapter.setNewInstance(it.tags)
+            pictureXViewModel.tags.observe(this) {
+                tagsAdapter.setNewInstance(it.tags.toMutableList())
             }
             pictureXViewModel.fabOnLongClick()
             builder

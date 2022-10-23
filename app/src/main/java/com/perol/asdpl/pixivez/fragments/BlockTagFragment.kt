@@ -48,10 +48,6 @@ class BlockTagFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun getChip(blockTagEntity: BlockTagEntity): Chip {
         val chip = Chip(requireContext())
-        val paddingDp = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 5f,
-            resources.displayMetrics
-        ).toInt()
         chip.text = "${blockTagEntity.name} ${blockTagEntity.translateName}"
 
         chip.setOnLongClickListener {
@@ -87,10 +83,6 @@ class BlockTagFragment : Fragment() {
                 binding.chipgroup.addView(getChip(v))
             }
             val chip = Chip(requireContext())
-            val paddingDp = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 5f,
-                resources.displayMetrics
-            ).toInt()
             chip.text = "+"
             chip.setOnClickListener {
                 MaterialDialog(requireContext()).show {

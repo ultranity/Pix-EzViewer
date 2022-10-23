@@ -35,15 +35,16 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
+import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMmyBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.HelloMMyViewModel
 import kotlinx.coroutines.runBlocking
@@ -63,7 +64,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class HelloMMyFragment : BaseFragment() {
     override fun loadData() {
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -73,12 +73,12 @@ class HelloMMyFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            rankingAdapter.blockTags = blockTags
+            rankingAdapter.filter.blockTags = blockTags
             rankingAdapter.notifyDataSetChanged()
         }
     }
 
-    private lateinit var rankingAdapter: PicListBtnAdapter
+    private lateinit var rankingAdapter: PicItemAdapterBase
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
     private fun initViewModel() {
@@ -107,10 +107,10 @@ class HelloMMyFragment : BaseFragment() {
         }
         viewmodel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
-                PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
+                PxEZApp.instance.pre.edit().putBoolean(
                     "hide_bookmark_item_in_mmy", it
                 ).apply()
-                rankingAdapter.hideBookmarked = if (it) 1 else 0
+                rankingAdapter.filter.hideBookmarked = if (it) 1 else 0
             }
         }
         viewmodel.isRefreshing.observe(viewLifecycleOwner) {
@@ -139,23 +139,21 @@ class HelloMMyFragment : BaseFragment() {
     }
 
     private var exitTime = 0L
+    lateinit var filter: IllustFilter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        viewmodel.hideBookmarked.value = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
-            .getBoolean(
-                "hide_bookmark_item_in_mmy", false
-            )
-        rankingAdapter = PicListBtnAdapter(
+        viewmodel.hideBookmarked.value = PxEZApp.instance.pre
+            .getBoolean("hide_bookmark_item_in_mmy", false)
+        filter = IllustFilter(isR18on, blockTags, if (viewmodel.hideBookmarked.value!!) 1 else 0)
+        rankingAdapter = PicListXBtnAdapter(
             R.layout.view_recommand_item,
             null,
-            isR18on,
-            blockTags,
-            if(viewmodel.hideBookmarked.value!!) 1 else 0
+            filter
         )
         binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                1 + context.resources.configuration.orientation,
+                2*context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = rankingAdapter
@@ -190,10 +188,7 @@ class HelloMMyFragment : BaseFragment() {
                 viewmodel.onRefreshListener(restrict)
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
         //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)

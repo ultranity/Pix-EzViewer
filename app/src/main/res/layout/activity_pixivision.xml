@@ -26,10 +26,11 @@
                 android:layout_marginBottom="18dp"
                 android:layout_marginEnd="25dp"
                 android:textColor="@color/dark"
-                android:text="@string/pixivision_desc"
+                android:text="@string/pixivision_desc2"
                 android:layout_gravity="bottom|center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAlignment="center"
                 app:drawableTopCompat="@drawable/pixivision_color_logo" />
 
             <com.google.android.material.appbar.MaterialToolbar

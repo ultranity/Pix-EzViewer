@@ -33,8 +33,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMThViewPager
-import com.perol.asdpl.pixivez.databinding.FragmentHelloMthBinding
 import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
 import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
@@ -63,21 +63,19 @@ class HelloMThFragment : Fragment() {
         }
     }
 
-
-    private lateinit var binding: FragmentHelloMthBinding
+    private lateinit var binding: FragmentHelloMainBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        binding = FragmentHelloMthBinding.inflate(inflater, container, false)
-        return binding.root
+		binding = FragmentHelloMainBinding.inflate(inflater, container, false)
+		return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch{
-            val userid = AppDataRepository.getUser().userid
+            val userid = AppDataRepository.currentUser.userid
 
             binding.viewpager.adapter =
                 HelloMThViewPager(this@HelloMThFragment, childFragmentManager, userid)

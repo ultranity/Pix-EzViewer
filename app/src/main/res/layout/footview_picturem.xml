@@ -224,7 +224,7 @@
             android:orientation="vertical">
 
             <com.zhy.view.flowlayout.TagFlowLayout
-                android:id="@+id/search_page_flowlayout"
+                android:id="@+id/chipgroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"

@@ -29,7 +29,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
@@ -60,7 +59,6 @@ class AccountActivity : RinkActivity() {
                     }.setNeutralButton(android.R.string.cancel) { i, j ->
 
                     }.create().show()
-
             }
         }
         return super.onOptionsItemSelected(item)
@@ -81,20 +79,17 @@ private lateinit var binding: ActivityAccountBinding
 
             ).apply {
                 setOnItemClickListener { adapter, view, position ->
-                    PreferenceManager.getDefaultSharedPreferences(this@AccountActivity).edit()
-                        .putInt("usernum", position).apply()
+                    AppDataRepository.pre.setInt("usernum", position)
+                    AppDataRepository.currentUser = users[position]
                     this.notifyDataSetChanged()
                     PxEZApp.ActivityCollector.recreate()
                 }
             }
-
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.account, menu)
         return true
     }
-
 }

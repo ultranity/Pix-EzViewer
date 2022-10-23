@@ -33,7 +33,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
@@ -43,6 +42,7 @@ import com.perol.asdpl.pixivez.databinding.FragmentUserIllustBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
@@ -78,6 +78,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     override fun onResume() {
+        isLoaded = viewModel.data.value!=null
         super.onResume()
         Log.d("UserIllustFragment","UserIllustFragment resume")
     }
@@ -86,12 +87,12 @@ class UserIllustFragment : BaseFragment() {
         picListBtnAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
-        binding.mrefreshlayout.setOnRefreshListener {
+        binding.refreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, param2!!)
         }
-        binding.mrecyclerview.apply {
+        binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                1 + context.resources.configuration.orientation,
+                2*context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListBtnAdapter
@@ -112,6 +113,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     private fun initViewModel() {
+        //TODO: ViewModelProvider by activity
         viewModel = ViewModelProvider(this)[UserMillustViewModel::class.java]
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
@@ -124,7 +126,7 @@ class UserIllustFragment : BaseFragment() {
         viewActivity = requireActivity() as UserMActivity
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                binding.mrefreshlayout.isRefreshing = false
+                binding.refreshlayout.isRefreshing = false
                 picListBtnAdapter.setNewInstance(it.toMutableList())
             }
         }
@@ -144,8 +146,8 @@ class UserIllustFragment : BaseFragment() {
         initView()
     }
 
-    lateinit var viewModel: UserMillustViewModel
-    lateinit var filter: IllustFilter
+    private lateinit var viewModel: UserMillustViewModel
+    private lateinit var filter: IllustFilter
     private lateinit var viewActivity: UserMActivity
 
     private lateinit var picListBtnAdapter: PicItemAdapterBase
@@ -156,8 +158,7 @@ class UserIllustFragment : BaseFragment() {
     ): View {
         filter = IllustFilter(isR18on,
                 blockTags,
-                PreferenceManager.getDefaultSharedPreferences(requireActivity())
-                    .getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0))
+                PxEZApp.instance.pre.getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0))
         // Inflate the layout for this fragment
         picListBtnAdapter = PicListXBtnAdapter(
             R.layout.view_recommand_item,
@@ -174,17 +175,17 @@ class UserIllustFragment : BaseFragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param userid Parameter 1.
+         * @param tag Parameter 2.
          * @return A new instance of fragment UserIllustFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long, param2: String) =
+        fun newInstance(userid: Long, tag: String) =
             UserIllustFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putLong(ARG_PARAM1, userid)
+                    putString(ARG_PARAM2, tag)
                 }
             }
     }

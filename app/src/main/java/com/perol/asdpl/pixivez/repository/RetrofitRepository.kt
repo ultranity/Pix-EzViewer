@@ -39,7 +39,6 @@ import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 
-
 class RetrofitRepository {
 
     var sharedPreferencesServices: SharedPreferencesServices = SharedPreferencesServices.getInstance()
@@ -48,10 +47,10 @@ class RetrofitRepository {
     var reFreshFunction: ReFreshFunction = ReFreshFunction.getInstance()
 
     init {
-        if (System.currentTimeMillis() - AppDataRepository.pre.getLong("lastRefresh",0)
+        if (System.currentTimeMillis() - AppDataRepository.pre.getLong("lastRefresh", 0)
                 > 59 * 60 * 1000){
             val init = Observable.just(1).flatMap{
-                //Log.d("init", "Observable init")
+                Log.d("init", "Observable init")
                 reFreshFunction.reFreshToken()
             }.subscribe({
                 Log.d("Retrofit","Observable inited")}, {}, {})
@@ -83,7 +82,6 @@ class RetrofitRepository {
         duration: String?
     ): Observable<SearchIllustResponse> {
         return Request(appApiPixivService.getSearchIllustPreview(word ,sort ,search_target ,bookmark_num ,duration))
-
     }
 
     fun getSearchIllust(
@@ -125,17 +123,17 @@ class RetrofitRepository {
     fun getIllustTrendTags(): Observable<TrendingtagResponse> =
         Request(appApiPixivService.getIllustTrendTags())
 
-    fun postLikeIllust(int: Long): Observable<ResponseBody> =
-        Request(appApiPixivService.postLikeIllust(int, "public", null))
+    fun postLikeIllust(illust_id: Long): Observable<ResponseBody> =
+        Request(appApiPixivService.postLikeIllust(illust_id, "public", null))
 
     fun postLikeIllustWithTags(
-        int: Long,
+        illust_id: Long,
         string: String = "public",
         tagList: ArrayList<String>? = null
-    ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(int, string, tagList))
+    ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(illust_id, string, tagList))
 
 
-    fun getIllust(long: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(long)).also{Log.d("getIllust",long.toString())}
+    fun getIllust(illust_id: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(illust_id)).also{Log.d("getIllust",illust_id.toString())}
 
     suspend fun getIllustCor(long: Long): IllustDetailResponse? {
         var illustDetailResponse: IllustDetailResponse? = null
@@ -175,7 +173,10 @@ class RetrofitRepository {
             Log.d("Retrofit","Request ${T::class.java.canonicalName}")
             observable
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen(reFreshFunction)
+            .retryWhen {
+                Log.d("Retrofit","Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+                reFreshFunction.apply(it)
+            }
     }
 
     fun <T> create(observable: Observable<T>): Observable<T> {
@@ -192,7 +193,10 @@ class RetrofitRepository {
                 Observable.just(Gson().fromJson(it.string(), T::class.java))
             }
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen(reFreshFunction)
+            .retryWhen{
+                Log.d("Retrofit","Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+                reFreshFunction.apply(it)
+            }
 
     fun getNextUser(url: String): Observable<SearchUserResponse> = getNext(url)
 
@@ -221,7 +225,6 @@ class RetrofitRepository {
             return instance!!
         }
     }
-
 }
 
 

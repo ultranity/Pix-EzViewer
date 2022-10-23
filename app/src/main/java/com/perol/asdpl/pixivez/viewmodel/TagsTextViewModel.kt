@@ -29,7 +29,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Tags
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
-import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
+import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

@@ -73,7 +73,7 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
         apiAddress.forEach { k ->
             try {
                 val response = service.queryDns(name = k).blockingSingle()
-                response.answer.flatMap { InetAddress.getAllByName(it.data).toList() }.also {
+                response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
                     addressList[k]=it
                 }
             } catch (e: Exception) {
@@ -122,7 +122,7 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
         val addressList = mutableListOf<InetAddress>()
         try {
             val response = service.queryDns(name = hostname).blockingSingle()
-            response.answer.flatMap { InetAddress.getAllByName(it.data).toList() }.also {
+            response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
                 addressList.addAll(it)
             }
         } catch (e: Exception) {

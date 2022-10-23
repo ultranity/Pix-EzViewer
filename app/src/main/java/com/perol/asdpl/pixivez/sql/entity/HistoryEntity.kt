@@ -23,14 +23,21 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.sql
+package com.perol.asdpl.pixivez.sql.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/*@Entity(tableName = "history")
+class SearchHistoryEntity (
+    @PrimaryKey var word: String
+    )*/
 @Entity(tableName = "history")
-class SearchHistoryEntity constructor(@ColumnInfo(name = "word") var word: String) {
+class SearchHistoryEntity (
+        @ColumnInfo(name = "word")
+        var word: String
+) {
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
 }
@@ -70,14 +77,13 @@ class DownUserEntity constructor(
     var Id: Long = 0
 }
 */
+
 @Entity(tableName = "illusthistory")
 class IllustBeanEntity(
-        @PrimaryKey(autoGenerate = true)
-        var Id: Long? = 0,
-        @ColumnInfo(name = "imageurl")
-        var imageurl: String,
-        @ColumnInfo(name = "illustid")
-        var illustid: Long
-
+    @ColumnInfo(name = "illustid")
+    var illustid: Long,
+    @ColumnInfo(name = "imageurl")
+    var imageurl: String,
+    @PrimaryKey(autoGenerate = true)
+    var Id: Long? = null
 )
-

@@ -39,18 +39,21 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.responses.ProfileImageUrls
+import com.perol.asdpl.pixivez.responses.User
+import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,16 +62,28 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
+
 class UserMActivity : RinkActivity() {
     companion object {
         const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
         const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
         const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
-        var menuD: Menu? = null
-        fun start(context: Context, id: Long) {
+        fun start(context: Context, id: Long, bundle: Bundle?=null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
-            context.startActivity(intent)
+            context.startActivity(intent, bundle)
+        }
+        fun start(context: Context, user: UserEntity, bundle: Bundle?=null) {
+            val intent = Intent(context, UserMActivity::class.java)
+            intent.putExtra("user",
+                User(user.userid, user.username, "", ProfileImageUrls(user.userimage), "",false)
+            )
+            context.startActivity(intent, bundle)
+        }
+        fun start(context: Context, user: User, bundle: Bundle?=null) {
+            val intent = Intent(context, UserMActivity::class.java)
+            intent.putExtra("user", user)
+            context.startActivity(intent, bundle)
         }
     }
 
@@ -97,10 +112,10 @@ class UserMActivity : RinkActivity() {
     }
 
     override fun onDestroy() {
-        menuD = null
         super.onDestroy()
     }
 
+    private var exitTime = 0L
     lateinit var viewModel: UserMViewModel
     lateinit var pre: SharedPreferences
     private lateinit var binding: ActivityUserMBinding
@@ -114,42 +129,60 @@ class UserMActivity : RinkActivity() {
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = Color.TRANSPARENT
-
-        id = intent.getLongExtra("data", 1)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar!!.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+        }
         viewModel = ViewModelProvider(this)[UserMViewModel::class.java]
-        pre = PreferenceManager.getDefaultSharedPreferences(this)
+        pre = PxEZApp.instance.pre
+        if (intent.extras!!.containsKey("user")){
+            val user = intent.getSerializableExtra("user") as User
+            id = user.id
+            binding.user = UserDetailResponse(user)
+            viewModel.isfollow.value = user.is_followed
+        }
+        else {
+            id = intent.getLongExtra("data", 0)
+        }
         viewModel.getData(id)
+        binding.mviewpager.adapter = UserMPagerAdapter(
+            this, supportFragmentManager, id,
+        )
+        binding.mtablayout.setupWithViewPager(binding.mviewpager)
+        binding.mtablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    (binding.mviewpager.adapter as UserMPagerAdapter).currentFragment?.view
+                        ?.findViewById<RecyclerView>(R.id.recyclerview)
+                        ?.scrollToPosition(0)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab) {}
+        })
+        if (viewModel.isSelfPage(id)) {
+            viewModel.currentTab.value = 2
+        }
+        else {
+            binding.fab.show()
+        }
+        viewModel.currentTab.observe(this){
+            binding.mviewpager.currentItem = it
+        }
         viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
         viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
-        viewModel.hideDownloaded.observe(this){
-            if (it)
-                FileUtil.getFileList()
-        }
         viewModel.userDetail.observe(this) {
             if (it != null) {
-                binding.fab.show()
-                viewModel.disposables.add(viewModel.isuser(id).subscribe({
-                    if (it) { //用户自己
-                        binding.fab.hide()
-                        viewModel.hideBookmarked.value = 0
-                        binding.mviewpager.currentItem = 2
-                        menuD!!.getItem(1).isVisible = false
-                        menuD!!.getItem(2).isVisible = true
-                        menuD!!.getItem(2).isEnabled = true
-                    } else {
-                        viewModel.hideBookmarked.observe(this) {
-                            menuD!!.getItem(1).isChecked = it % 2 == 1
-                        }
-                    }
-                }, {}))
-
                 binding.user = it
-
-                binding.mviewpager.adapter = UserMPagerAdapter(
-                    this, supportFragmentManager,
-                    id, UserInfoFragment.newInstance(it)
-                )
-                binding.mtablayout.setupWithViewPager(binding.mviewpager)
             }
         }
         viewModel.isfollow.observe(this) {
@@ -159,13 +192,6 @@ class UserMActivity : RinkActivity() {
                 } else
                     binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
             }
-
-
-        }
-        setSupportActionBar(binding.toolbar)
-        supportActionBar!!.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowTitleEnabled(false)
         }
 
         binding.fab.setOnClickListener {
@@ -178,66 +204,63 @@ class UserMActivity : RinkActivity() {
         }
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
         binding.imageviewUserimage.setOnClickListener {
-            viewModel.disposables.add(viewModel.isuser(id).subscribe({
-                var array = resources.getStringArray(R.array.user_profile)
-                if (!it) {
-                    array = array.copyOfRange(0, 2)
-                }
-                MaterialAlertDialogBuilder(this).setItems(array) { i, which ->
-                    when (which) {
-                        0 -> {
-                            val clipboard =
-                                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip: ClipData = ClipData.newPlainText("simple text", shareLink)
-                            clipboard.setPrimaryClip(clip)
+            var array = resources.getStringArray(R.array.user_profile)
+            if (!viewModel.isSelfPage(id)) {
+                array = array.sliceArray(0..1)
+            }
+            MaterialAlertDialogBuilder(this).setItems(array) { i, which ->
+                when (which) {
+                    0 -> {
+                        val clipboard =
+                            getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip: ClipData = ClipData.newPlainText("share Link", shareLink)
+                        clipboard.setPrimaryClip(clip)
+                        Toasty.info(
+                            this@UserMActivity,
+                            getString(R.string.copied),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    1 -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            var file: File
+                            withContext(Dispatchers.IO) {
+                                val f = GlideApp.with(this@UserMActivity).asFile()
+                                    .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
+                                    .submit()
+                                file = f.get()
+                                val target = File(
+                                    PxEZApp.storepath,
+                                    "user_${viewModel.userDetail.value!!.user.id}.png"
+                                )
+                                file.copyTo(target, overwrite = true)
+                                MediaScannerConnection.scanFile(
+                                    PxEZApp.instance, arrayOf(target.path), arrayOf(
+                                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                            target.extension
+                                        )
+                                    )
+                                ) { _, _ ->
+                                }
+                            }
+
                             Toasty.info(
                                 this@UserMActivity,
-                                getString(R.string.copied),
+                                getString(R.string.saved),
                                 Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        1 -> {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                var file: File
-                                withContext(Dispatchers.IO) {
-                                    val f = GlideApp.with(this@UserMActivity).asFile()
-                                        .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
-                                        .submit()
-                                    file = f.get()
-                                    val target = File(
-                                        PxEZApp.storepath,
-                                        "user_${viewModel.userDetail.value!!.user.id}.png"
-                                    )
-                                    file.copyTo(target, overwrite = true)
-                                    MediaScannerConnection.scanFile(
-                                        PxEZApp.instance, arrayOf(target.path), arrayOf(
-                                            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                                target.extension
-                                            )
-                                        )
-                                    ) { _, _ ->
-
-                                    }
-                                }
-
-                                Toasty.info(
-                                    this@UserMActivity,
-                                    getString(R.string.saved),
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                        }
-                        else -> {
-                            val intent = Intent(
-                                Intent.ACTION_PICK,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                             )
-                            startActivityForResult(intent, SELECT_IMAGE)
+                                .show()
                         }
                     }
-                }.create().show()
-            }, {}))
+                    else -> {
+                        val intent = Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        )
+                        startActivityForResult(intent, SELECT_IMAGE)
+                    }
+                }
+            }.create().show()
         }
     }
 
@@ -248,13 +271,22 @@ class UserMActivity : RinkActivity() {
         if(viewModel.hideBookmarked.value!! > 1) {
                 menu.getItem(1).title = getString(R.string.only_bookmarked)
         }
-        menuD = menu
-        menu.findItem(R.id.action_hideDownloaded).apply {
-            isVisible = false
-            isEnabled = false
-            isChecked = pre.getBoolean(
-                HIDE_DOWNLOADED_ITEM, false
-            )
+        if (viewModel.isSelfPage(id)) {
+            viewModel.hideBookmarked.value = 0
+            menu.getItem(1).isVisible = false
+            menu.getItem(2).isVisible = true
+            menu.getItem(2).isEnabled = true
+        } else {
+            viewModel.hideBookmarked.observe(this) {
+                menu.getItem(1).isChecked = it % 2 == 1
+            }
+            menu.findItem(R.id.action_hideDownloaded).apply {
+                isVisible = false
+                isEnabled = false
+            }
+        }
+        viewModel.hideDownloaded.observe(this){
+            menu.findItem(R.id.action_hideDownloaded).isChecked = it
         }
         return true
     }

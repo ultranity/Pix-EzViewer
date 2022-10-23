@@ -23,9 +23,11 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.sql
+package com.perol.asdpl.pixivez.sql.dao
 
 import androidx.room.*
+import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
+import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
 import io.reactivex.Flowable
 
 /*@Dao

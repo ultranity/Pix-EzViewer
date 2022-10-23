@@ -34,6 +34,6 @@ class TagsShowAdapter(layoutResId: Int, data: List<String>?, var counts: ArrayLi
 
     override fun convert(holder: BaseViewHolder, item: String) {
         holder.setText(R.id.textview_tagname, item)
-            .setText(R.id.textView24, counts[holder.adapterPosition].toString())
+            .setText(R.id.textView_tagnum, counts[holder.bindingAdapterPosition].toString())
     }
 }

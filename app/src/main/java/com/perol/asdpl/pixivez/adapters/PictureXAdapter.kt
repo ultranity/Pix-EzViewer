@@ -51,7 +51,6 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -97,7 +96,8 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
-
+//TODO: support double panel in Tablet
+//TODO: save zip ugoira by default
 class PictureXAdapter(
     private val pictureXViewModel: PictureXViewModel,
     private val data: Illust,
@@ -105,14 +105,13 @@ class PictureXAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val imageUrls = ArrayList<String>()
     private val imageThumbnailUrls = ArrayList<String>()
-    val pre = PreferenceManager.getDefaultSharedPreferences(mContext)!!
+    val pre = PxEZApp.instance.pre
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
     private lateinit var mBookmarkedUserListen: () -> Unit
     private lateinit var mUserPicLongClick: () -> Unit
     fun setUserPicLongClick(listener: () -> Unit) {
         this.mUserPicLongClick = listener
-
     }
 
     fun setListener(listener: () -> Unit) {
@@ -229,16 +228,13 @@ class PictureXAdapter(
                 true
             }
             imageViewUser.setOnClickListener {
-                val intent = Intent(mContext, UserMActivity::class.java)
-                intent.putExtra("data", illust.user.id)
-                if (PxEZApp.animationEnable) {
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                val options = if (PxEZApp.animationEnable) {
+                    ActivityOptions.makeSceneTransitionAnimation(
                         mContext as Activity,
-                        Pair.create(imageViewUser, "UserImage")
-                    )
-                    mContext.startActivity(intent, options.toBundle())
-                } else
-                    mContext.startActivity(intent)
+                        Pair.create(imageViewUser, "userimage")
+                    ).toBundle()
+                } else null
+                UserMActivity.start(mContext, illust.user, options)
             }
             if (illust.caption.isNotBlank())
                 binding.html = Html.fromHtml(illust.caption)
@@ -440,7 +436,7 @@ class PictureXAdapter(
             }
             ITEM_TYPE.ITEM_TYPE_BLANK.ordinal -> {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.view_picturex_firstdetail, parent, false)
+                    .inflate(R.layout.view_picturex_blank, parent, false)
                 return BlankViewHolder(view)
             }
             ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal -> {

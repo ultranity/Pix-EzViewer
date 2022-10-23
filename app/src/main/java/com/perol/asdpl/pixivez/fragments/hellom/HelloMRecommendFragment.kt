@@ -38,8 +38,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -56,6 +55,7 @@ import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.ScreenUtil
+import com.perol.asdpl.pixivez.objects.sharedViewModel
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.LinearItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloMRecomModel
@@ -78,6 +78,7 @@ private const val ARG_PARAM2 = "param2"
 class HelloMRecommendFragment : BaseFragment() {
     override fun loadData() {
         viewmodel.onRefreshListener()
+        pixivisionModel.onRefreshListener()
     }
 
     override fun onResume() {
@@ -102,9 +103,8 @@ class HelloMRecommendFragment : BaseFragment() {
             binding.swiperefreshRecom.isRefreshing = false
             if (it != null) {
                 picListXAdapter.setNewInstance(it)
-                binding.recyclerviewRecom.smoothScrollToPosition(0)
-
-                pixivisionModel.onRefreshListener()
+                //binding.recyclerviewRecom.smoothScrollToPosition(0)
+                //pixivisionModel.onRefreshListener()
             } else {
                 picListXAdapter.loadMoreFail()
             }
@@ -123,14 +123,19 @@ class HelloMRecommendFragment : BaseFragment() {
                 picListXAdapter.loadMoreComplete()
             }
         }
-        pixivisionModel = ViewModelProvider(this)[PixivisionModel::class.java]
         pixivisionModel.banners.observe(viewLifecycleOwner) {
             pixiVisionAdapter.setNewInstance(it)
             val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
+            val autoLoop = PxEZApp.instance.pre
+                .getBoolean("banner_auto_loop", true)
+            if (autoLoop) {
+                spotlightView.layoutManager =
+                    LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+            }
             spotlightView.layoutAnimation = LayoutAnimationController(
                 AnimationUtils.loadAnimation(
                     context,
-                    R.anim.left_in
+                    R.anim.right_in
                 )
             ).also {
                 it.order = LayoutAnimationController.ORDER_NORMAL
@@ -159,8 +164,8 @@ class HelloMRecommendFragment : BaseFragment() {
 
     private lateinit var picListXAdapter: PicItemAdapterBase
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
-    private lateinit var viewmodel: HelloMRecomModel
-    private lateinit var pixivisionModel: PixivisionModel
+    private val viewmodel: HelloMRecomModel by activityViewModels()
+    private val pixivisionModel: PixivisionModel by sharedViewModel("pixivision")
 
     private var param1: String? = null
     private var param2: String? = null
@@ -171,7 +176,7 @@ class HelloMRecommendFragment : BaseFragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewmodel = ViewModelProvider(this)[HelloMRecomModel::class.java]
+        //viewmodel = ViewModelProvider(requireActivity())[HelloMRecomModel::class.java]
     }
 
     private var exitTime = 0L
@@ -188,19 +193,20 @@ class HelloMRecommendFragment : BaseFragment() {
         }
         binding.swiperefreshRecom.setOnRefreshListener {
             viewmodel.onRefreshListener()
+            pixivisionModel.onRefreshListener()
         }
         picListXAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMorePicRequested()
         }
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(context,
-                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false))
+                if (PxEZApp.instance.pre.getBoolean("disableproxy",false))
                     WebViewActivity::class.java else OKWebViewActivity::class.java)
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)
             view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
         }
-        val autoLoop = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+        val autoLoop = PxEZApp.instance.pre
                 .getBoolean("banner_auto_loop", true)
         if (!autoLoop){
             pixiVisionAdapter.loadMoreModule.setOnLoadMoreListener {
@@ -217,17 +223,14 @@ class HelloMRecommendFragment : BaseFragment() {
         val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
         spotlightView.adapter = pixiVisionAdapter
         if (autoLoop){
-            spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
-            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dip2px(4.0f)))
+            //spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
             //spotlightView.addItemDecoration(LinePagerIndicatorDecoration(headerNum = 0))
             //LoopingSnapHelper().attachToRecyclerView(spotlightView)
         }
         else {
-            val manager = LinearLayoutManager(requireContext())
-            manager.orientation = LinearLayoutManager.HORIZONTAL
-            spotlightView.layoutManager = manager
-            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dip2px(4.0f)))
+            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
             //LinearSnapHelper().attachToRecyclerView(spotlightView)
             //CardScaleHelper(true).run{
@@ -235,15 +238,14 @@ class HelloMRecommendFragment : BaseFragment() {
             //    attachToRecyclerView(spotlightView)
             //}
         }
+        spotlightView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         spotlightView.layoutAnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {}
-
+            override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
                 //spotlightView.smoothScrollToPosition(2)
                 spotlightView.layoutAnimation = null //show animation only at first time
             }
-
-            override fun onAnimationRepeat(animation: Animation) {}
         }
 
         binding.swiperefreshRecom.isRefreshing = true
@@ -272,9 +274,9 @@ class HelloMRecommendFragment : BaseFragment() {
     ): View {
         filter = IllustFilter(isR18on)
         picListXAdapter =
-            if(PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+            if(PxEZApp.instance.pre
                     .getBoolean("use_picX_layout_main",true)) {
-                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                if (PxEZApp.instance.pre
                         .getBoolean("show_user_img_main", true)
                 ) {
                     PicListXUserAdapter(
@@ -292,7 +294,7 @@ class HelloMRecommendFragment : BaseFragment() {
                 }
             }
             else {
-                if (PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+                if (PxEZApp.instance.pre
                         .getBoolean("show_user_img_main", true)
                 ) {
                     PicListXBtnUserAdapter(

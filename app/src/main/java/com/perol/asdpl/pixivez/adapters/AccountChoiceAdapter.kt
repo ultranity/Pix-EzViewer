@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -51,7 +50,7 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
                 this@AccountChoiceAdapter.remove(item)
             }
         }
-        if (holder.layoutPosition == PreferenceManager.getDefaultSharedPreferences(context).getInt(
+        if (holder.layoutPosition == AppDataRepository.pre.getInt(
                 "usernum",
                 0
             )

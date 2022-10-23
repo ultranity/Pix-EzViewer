@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Intent
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
@@ -50,18 +49,13 @@ class UserListAdapter(layoutResId: Int) :
 
     init {
         setOnItemClickListener { adapter, view, position ->
-            val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("data", this.data[position].id)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-
-            if (PxEZApp.animationEnable) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(view.findViewById(R.id.imageview_usershow), "UserImage")
-                )
-                context.startActivity(intent, options.toBundle())
-            } else
-                context.startActivity(intent)
+                    Pair.create(view.findViewById(R.id.imageview_usershow), "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(context, this.data[position], options)
         }
     }
 

@@ -30,16 +30,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.HistoryAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityHistoryMBinding
-import com.perol.asdpl.pixivez.sql.IllustBeanEntity
 import com.perol.asdpl.pixivez.viewmodel.HistoryMViewModel
 
 class HistoryMActivity : RinkActivity() {
+    private lateinit var historyAdapter: HistoryAdapter
     private lateinit var binding: ActivityHistoryMBinding
     private var historyMViewModel: HistoryMViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +82,7 @@ class HistoryMActivity : RinkActivity() {
         historyMViewModel = ViewModelProvider(this)[HistoryMViewModel::class.java]
 
         historyMViewModel!!.illustBeans.observe(this){
-            illustBeans(it)
+            historyAdapter.setNewInstance(it)
         }
         historyMViewModel!!.first()
 
@@ -97,15 +96,13 @@ class HistoryMActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private val historyAdapter = HistoryAdapter(R.layout.view_recommand_itemh)
-    private fun illustBeans(it: ArrayList<IllustBeanEntity>?) {
-        historyAdapter.setNewInstance(it)
-    }
 
     private fun initView() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        binding.recyclerviewHistorym.layoutManager = GridLayoutManager(this, 2, RecyclerView.VERTICAL, false)
+        binding.recyclerviewHistorym.layoutManager = GridLayoutManager(this, 2*resources.configuration.orientation)
+
+        historyAdapter = HistoryAdapter(R.layout.view_recommand_itemh)
         binding.recyclerviewHistorym.adapter = historyAdapter
 
         binding.recyclerviewHistorym.smoothScrollToPosition(historyAdapter.data.size)

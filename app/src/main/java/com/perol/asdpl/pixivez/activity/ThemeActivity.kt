@@ -38,7 +38,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
@@ -75,7 +74,7 @@ class ThemeActivity : RinkActivity() {
 
             findPreference<Preference>("theme")?.apply {
                 summary =
-                    items[PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt(
+                    items[PxEZApp.instance.pre.getInt(
                         "colorint",
                         0
                     )].title
@@ -90,7 +89,7 @@ class ThemeActivity : RinkActivity() {
                             title(R.string.title_change_theme)
                             gridItems(items) { _, index, item ->
                                 it.summary = item.title
-                                PreferenceManager.getDefaultSharedPreferences(requireContext())
+                                PxEZApp.instance.pre
                                     .apply {
                                         putInt("colorint", index)
                                     }
@@ -167,7 +166,7 @@ class ThemeActivity : RinkActivity() {
 //            layoutManager = LinearLayoutManager(this@ThemeActivity)
 //            adapter = ColorfulAdapter(R.layout.view_colorfulitem, list).apply {
 //                onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-//                    PreferenceManager.getDefaultSharedPreferences(this@ThemeActivity).edit().putInt("colorint", position).apply()
+//                    PxEZApp.instance.pre.edit().putInt("colorint", position).apply()
 //                    setResult(Activity.RESULT_OK)
 //                    finish()
 //                }

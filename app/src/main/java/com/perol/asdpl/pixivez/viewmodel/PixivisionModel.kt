@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.responses.SpotlightResponse
@@ -52,7 +51,7 @@ class PixivisionModel : BaseViewModel() {
 
     fun onRefreshListener() {
         retrofitRepository.getPixivison("all").subscribe({
-                if (!PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("banner_auto_loop",true)) {
+                if (!PxEZApp.instance.pre.getBoolean("banner_auto_loop",true)) {
                     nextPixivisonUrl.value = it.next_url
                 }
                 banners.value = it.spotlight_articles

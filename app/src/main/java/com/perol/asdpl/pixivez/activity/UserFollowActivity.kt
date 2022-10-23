@@ -31,12 +31,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserFollowBinding
+import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.ListUserResponse
@@ -44,7 +45,6 @@ import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.runBlocking
 
 class UserFollowActivity : RinkActivity() {
     companion object {
@@ -61,7 +61,6 @@ class UserFollowActivity : RinkActivity() {
     private var userListAdapter: UserListAdapter? = null
     private var Next_url: String? = null
     private var recyclerviewusersearch: RecyclerView? = null
-    private var linearLayoutManager: LinearLayoutManager? = null
     private val retrofitRepository = RetrofitRepository.getInstance()
     private val username: String? = null //TODO: title?
     private var bundle: Bundle? = null
@@ -80,21 +79,26 @@ class UserFollowActivity : RinkActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarUserfollow)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        binding.spinner.visibility = View.GONE
+        binding.recyclerviewUsersearch.layoutManager =
+            GridLayoutManager(this, getMaxColumn(400))
+        //FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+
         bundle = this.intent.extras
         if(bundle!!.containsKey("illust_id")) {
             illust_id = bundle!!.getLong("illust_id")
             supportActionBar!!.setTitle(R.string.bookmark)
-            binding.textView8.text =  getString(R.string.bookmark)
+            binding.textView8.text = getString(R.string.bookmark)
             initIllustData()
         }
         else{
             userid = bundle!!.getLong("user")
             getFollower = bundle!!.getBoolean("getFollower", false)
             supportActionBar!!.setTitle(R.string.following)
-            binding.textView8.text =   getString(R.string.following)
+            binding.textView8.text = getString(R.string.following)
             initFollowData()
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,16 +109,9 @@ class UserFollowActivity : RinkActivity() {
     }
 
     private fun initFollowData() {
-        binding.spinner.visibility = View.GONE
-        linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-        recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
-        recyclerviewusersearch!!.layoutManager = linearLayoutManager
-
-
         val getUsers = if (getFollower!!) {
             retrofitRepository.getUserFollower(userid)
-        } else
-            retrofitRepository.getUserFollowing(userid, restrict)
+        } else retrofitRepository.getUserFollowing(userid, restrict)
         getUsers.subscribe(object : Observer<SearchUserResponse> {
             override fun onSubscribe(d: Disposable) {}
             override fun onNext(searchUserResponse: SearchUserResponse) {
@@ -124,79 +121,67 @@ class UserFollowActivity : RinkActivity() {
                 userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
                 userShowAdapter!!.setNewInstance(searchUserResponse.user_previews)
                 recyclerviewusersearch!!.adapter = userShowAdapter
-                runBlocking {
-                    val user = AppDataRepository.getUser()
-                    if (userid == user.userid && !getFollower!!) {
-                        binding.spinner.visibility = View.VISIBLE
-                        binding.spinner.onItemSelectedListener =
-                            object : AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    parent: AdapterView<*>,
-                                    view: View,
-                                    position: Int,
-                                    id: Long
-                                ) {
-                                    when (position) {
-                                        0 -> {
-                                            restrict = "public"
-                                            againrefresh()
-                                        }
-                                        1 -> {
-                                            restrict = "private"
-                                                againrefresh()
-                                            }
-                                        }
+                userShowAdapter!!.loadMoreModule.setOnLoadMoreListener {
+                    if (Next_url != null) {
+                        retrofitRepository.getNextUser(Next_url!!).subscribe {
+                                Next_url = it.next_url
+                                userShowAdapter!!.addData(it.user_previews)
+                                userShowAdapter!!.loadMoreModule.loadMoreComplete()
+                            }.add()
+                    } else {
+                        userShowAdapter!!.loadMoreModule.loadMoreEnd()
+                    }
+                }
+                val user = AppDataRepository.currentUser
+                if (userid == user.userid && !getFollower!!) {
+                    binding.spinner.visibility = View.VISIBLE
+                    binding.spinner.onItemSelectedListener =
+                        object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: AdapterView<*>, view: View, position: Int, id: Long
+                            ) {
+                                when (position) {
+                                    0 -> {
+                                        restrict = "public"
+                                        againrefresh()
                                     }
-
-                                    override fun onNothingSelected(parent: AdapterView<*>) {
-
+                                    1 -> {
+                                        restrict = "private"
+                                        againrefresh()
                                     }
                                 }
+                            }
 
-                            } else {
-                                binding.spinner.visibility = View.GONE
+                            override fun onNothingSelected(parent: AdapterView<*>) {
                             }
                         }
 
-                        userShowAdapter!!.loadMoreModule.setOnLoadMoreListener {
-                            if (Next_url != null) {
-                                retrofitRepository.getNextUser(Next_url!!)
-                                    .subscribe {
-                                        Next_url = it.next_url
-                                        userShowAdapter!!.addData(it.user_previews)
-                                        userShowAdapter!!.loadMoreModule.loadMoreComplete()
-                                    }.add()
-                            } else {
-                                userShowAdapter!!.loadMoreModule.loadMoreEnd()
-                            }
-                        }
+                } else {
+                    binding.spinner.visibility = View.GONE
+                }
             }
 
             override fun onError(e: Throwable) {}
             override fun onComplete() {}
         })
-
     }
 
     var disposables = CompositeDisposable()
     fun Disposable.add() {
         disposables.add(this)
     }
+
     override fun finish() {
         disposables.clear()
         super.finish()
     }
+
     private fun initIllustData() {
-        binding.spinner.visibility = View.GONE
-        linearLayoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-        recyclerviewusersearch = findViewById(R.id.recyclerview_usersearch)
-        recyclerviewusersearch!!.layoutManager = linearLayoutManager
-        retrofitRepository.getIllustBookmarkUsers(illust_id)
-            .subscribe( {
+        retrofitRepository.getIllustBookmarkUsers(illust_id).subscribe({
                 illustData = it
                 Next_url = it.next_url
-                    userListAdapter = UserListAdapter(R.layout.view_usershow_item)
-                    recyclerviewusersearch!!.adapter = userListAdapter
+                userListAdapter = UserListAdapter(R.layout.view_usershow_item)
+                recyclerviewusersearch!!.adapter = userListAdapter
                 userListAdapter!!.setNewInstance(it.users)
                 userListAdapter!!.loadMoreModule.setOnLoadMoreListener {
                     if (Next_url == null) {
@@ -204,8 +189,7 @@ class UserFollowActivity : RinkActivity() {
                     } else {
                         //retrofitRepository.getIllustBookmarkUsers(illust_id,
                         //    Next_url!!.substringAfter("offset=").toInt())
-                        retrofitRepository.getNext<ListUserResponse>(Next_url!!)
-                            .subscribe({
+                        retrofitRepository.getNext<ListUserResponse>(Next_url!!).subscribe({
                                 illustData = it
                                 Next_url = it.next_url
                                 userListAdapter!!.addData(it.users)
@@ -214,24 +198,24 @@ class UserFollowActivity : RinkActivity() {
                                 userListAdapter!!.loadMoreModule.loadMoreFail()
                                 it.printStackTrace()
                             }, {}).add()
-                        }
                     }
-                },{},{}).add()
+                }
+            }, {}, {}).add()
     }
 
     private fun againrefresh() {
         retrofitRepository.getUserFollowing(userid, restrict)
-                .subscribe(object : Observer<SearchUserResponse> {
-                    override fun onSubscribe(d: Disposable) {}
-                    override fun onNext(searchUserResponse: SearchUserResponse) {
-                        data = searchUserResponse
-                        Next_url = searchUserResponse.next_url
-                        userShowAdapter!!.setNewInstance(data!!.user_previews)
-                    }
+            .subscribe(object : Observer<SearchUserResponse> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onNext(searchUserResponse: SearchUserResponse) {
+                    data = searchUserResponse
+                    Next_url = searchUserResponse.next_url
+                    userShowAdapter!!.setNewInstance(data!!.user_previews)
+                }
 
-                    override fun onError(e: Throwable) {}
-                    override fun onComplete() {}
-                })
+                override fun onError(e: Throwable) {}
+                override fun onComplete() {}
+            })
 
     }
 }

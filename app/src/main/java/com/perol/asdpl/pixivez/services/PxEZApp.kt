@@ -43,12 +43,11 @@ import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
 import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.CrashHandler
-import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.objects.LanguageUtil
-import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.*
+import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 
@@ -78,6 +77,7 @@ class PxEZApp : Application() {
                             .getMimeTypeFromExtension(targetFile.extension)
                     )
                 ) { _, _ ->
+                    FileUtil.ListLog.add(illustD.id.toInt())
                 }
                 sourceFile.delete()
 
@@ -93,6 +93,7 @@ class PxEZApp : Application() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         //https://developer.android.com/guide/app-bundle/sideload-check#missing_splits
         /*if (BuildConfig.ISGOOGLEPLAY)
@@ -101,8 +102,12 @@ class PxEZApp : Application() {
                 return
             }*/
         super.onCreate()
+        instance = this
         //LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
+        CoroutineScope(Dispatchers.IO).launch{
+                AppDataRepository.getUser()
+        }
         Aria.init(this)
         Aria.download(this).register()
 
@@ -116,14 +121,13 @@ class PxEZApp : Application() {
                 isNotNetRetry = true
             }
         }
-
-        Thread {
+        CoroutineScope(Dispatchers.IO).launch{
             //Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
                 if ((System.currentTimeMillis() - it.completeTime) > 10 * 60 * 1000)
                     Aria.download(this).load(it.id).cancel()
             }
-            Thread.sleep(10000)
+            delay(10000)
             if (pre.getBoolean("resume_unfinished_task", true)
             //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
             ) {
@@ -143,7 +147,7 @@ class PxEZApp : Application() {
                     }
                 }
             }
-        }.start()
+        }
 
         initBugly(this)
         RxJavaPlugins.setErrorHandler {
@@ -153,14 +157,13 @@ class PxEZApp : Application() {
         if (pre.getBoolean("infoCache", true))
             MMKV.initialize(this)
         ToastUtils.init(this)
-        instance = this
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
                 "dark_mode",
                 "-1"
             )!!.toInt()
         )
-        animationEnable = pre.getBoolean("animation", true)
+        animationEnable = pre.getBoolean("animation", false)
         ShowDownloadToast = pre.getBoolean("ShowDownloadToast", true)
         CollectMode = pre.getString("CollectMode", "0")?.toInt() ?: 0
         R18Private = pre.getBoolean("R18Private", true)
@@ -267,7 +270,6 @@ class PxEZApp : Application() {
         var CollectMode: Int = 0
 
         lateinit var instance: PxEZApp
-        var autochecked = false
 
         @JvmStatic
         var TagSeparator: String = "#"

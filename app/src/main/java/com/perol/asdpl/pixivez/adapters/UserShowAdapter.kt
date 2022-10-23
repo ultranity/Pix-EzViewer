@@ -45,17 +45,16 @@ import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.shehuan.niv.NiceImageView
 
-
+//TODO: fling optimize
 class UserShowAdapter(layoutResId: Int) :
     BaseQuickAdapter<SearchUserResponse.UserPreviewsBean, BaseViewHolder>(layoutResId),
     LoadMoreModule {
-
+    private var mSharedPool = RecyclerView.RecycledViewPool()
 
     init {
         setOnItemClickListener { adapter, view, position ->
@@ -63,23 +62,38 @@ class UserShowAdapter(layoutResId: Int) :
             intent.putExtra("data", this.data[position].user.id)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
 
-            if (PxEZApp.animationEnable) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(view.findViewById(R.id.imageview_usershow), "UserImage")
-                )
-                context.startActivity(intent, options.toBundle())
-            } else
-                context.startActivity(intent)
+                    Pair.create(view.findViewById(R.id.imageview_usershow), "userimage")
+                ).toBundle()
+            } else null
+            context.startActivity(intent, options)
         }
     }
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
         val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        val userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
-        //        helper.addOnClickListener(R.id.cardview).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
+        val userSearchillustAdapter:UserSearchIllustAdapter
+        //        holder.addOnClickListener(R.id.cardview).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
         val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
+        if (recyclerView.adapter == null){
+            recyclerView.apply{
+                userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
+                adapter = userSearchillustAdapter
+                layoutManager = linearLayoutManager
+                setRecycledViewPool(mSharedPool)
+                setHasFixedSize(true)
+                isNestedScrollingEnabled = false
+            }
+        }
+        else {
+            userSearchillustAdapter = recyclerView.adapter as UserSearchIllustAdapter
+            val oldlen = userSearchillustAdapter.data.size
+            userSearchillustAdapter.data = item.illusts
+            userSearchillustAdapter.notifyItemRangeChanged(0, oldlen)
+        }
         val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)
         val username = holder.getView<TextView>(R.id.textview_usershowname)
         val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
@@ -88,31 +102,24 @@ class UserShowAdapter(layoutResId: Int) :
             userImage.setBorderColor(badgeTextColor) // Color.YELLOW
         else
             userImage.setBorderColor(colorPrimary)
-        recyclerView.layoutManager = linearLayoutManager
         userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
+            val intent = Intent(context, PictureActivity::class.java)
             val bundle = Bundle()
             bundle.putInt("position", position)
-            bundle.putLong("illustid", item.illusts[position].id)
-            DataHolder.setIllustsList(item.illusts as ArrayList<Illust>)
-            val intent = Intent(context, PictureActivity::class.java)
+            bundle.putLong("illustid", userSearchillustAdapter.data[position].id)
+            DataHolder.setIllustsList(userSearchillustAdapter.data)
             intent.putExtras(bundle)
-            if (PxEZApp.animationEnable) {
+            val options = if (PxEZApp.animationEnable) {
                 val mainimage = view.findViewById<ImageView>(R.id.imageview_usersearchillust)
-
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+                ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(
-                        mainimage,
-                        "mainimage"
-                    ),
+                    Pair.create(mainimage, "mainimage"),
                     Pair.create(username, "username"),
                     Pair.create(userImage, "userimage")
-                )
-                ContextCompat.startActivity(context, intent, options.toBundle())
-            } else
-                ContextCompat.startActivity(context, intent, null)
+                ).toBundle()
+            } else null
+            ContextCompat.startActivity(context, intent, options)
         }
-        recyclerView.adapter = userSearchillustAdapter
         username.text = "${item.user.name} : ${item.user.account}"
         GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)

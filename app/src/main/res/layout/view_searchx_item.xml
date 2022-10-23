@@ -23,7 +23,6 @@
     <ImageButton
         android:paddingEnd="10dp"
         android:background="#00000000"
-        style="@style/Widget.AppCompat.ImageButton"
         android:src="@drawable/ic_close_black_24dp"
         android:id="@+id/button_searchx_del"
         android:layout_width="50dp"

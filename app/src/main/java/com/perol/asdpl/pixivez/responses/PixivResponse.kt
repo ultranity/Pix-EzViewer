@@ -30,5 +30,5 @@ data class PixivResponse(
 
 data class Tags(
         val name: String,
-        val translated_name: String
+        val translated_name: String?
 )

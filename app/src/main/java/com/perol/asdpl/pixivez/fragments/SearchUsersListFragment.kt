@@ -25,9 +25,7 @@
 
 package com.perol.asdpl.pixivez.fragments
 
-
 import android.app.ActivityOptions
-import android.content.Intent
 import android.os.Bundle
 import android.util.Pair
 import android.view.LayoutInflater
@@ -35,12 +33,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserslistBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
+import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
 
@@ -60,30 +59,34 @@ class SearchUsersListFragment : LazyFragment() {
         userViewModel.getSearchUser(keyword!!)
     }
 
+    override fun onResume() {
+        isLoaded = userShowAdapter.data.isNotEmpty()
+        super.onResume()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
         binding.recyclerviewUser.adapter = userShowAdapter
-        binding.recyclerviewUser.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerviewUser.layoutManager =
+            GridLayoutManager(requireContext(), getMaxColumn(400))
+        //FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
+        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
             if (userViewModel.nextUrl.value != null)
                 userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
 
         }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
-            val intent = Intent(requireActivity().applicationContext, UserMActivity::class.java)
-            intent.putExtra("data", userShowAdapter.data[position].user.id)
-
-            if (PxEZApp.animationEnable) {
+            val options = if (PxEZApp.animationEnable) {
                 val userImage = view.findViewById<View>(R.id.imageview_usershow)
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+                 ActivityOptions.makeSceneTransitionAnimation(
                     requireActivity(),
-                    Pair.create(userImage, "UserImage")
-                )
-                startActivity(intent, options.toBundle())
-            } else
-                startActivity(intent)
+                    Pair.create(userImage, "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(requireContext(), userShowAdapter.data[position].user, options)
         }
     }
 
@@ -110,15 +113,13 @@ class SearchUsersListFragment : LazyFragment() {
     }
 
     private fun initViewModel() {
-
         userViewModel.users.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.addData(it.user_previews)
+                userShowAdapter.setNewInstance(it.user_previews)
             } else {
                 userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
-
         userViewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.loadMoreModule.loadMoreComplete()

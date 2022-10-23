@@ -125,18 +125,13 @@ class PicListXBtnUserAdapter(
             //imageViewUser.alpha = 0.5F
         }
         imageViewUser.setOnClickListener {
-            val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("data", item.user.id)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-            if (PxEZApp.animationEnable) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(imageViewUser, "UserImage")
-                )
-                context.startActivity(intent, options.toBundle())
-            } else
-                context.startActivity(intent)
+                    Pair.create(imageViewUser, "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(context, item.user, options)
         }
         imageViewUser.setOnLongClickListener {
             val id = item.user.id

@@ -76,7 +76,7 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
             if (PxEZApp.animationEnable) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(userImage, "UserImage")
+                    Pair.create(userImage, "userimage")
                 )
                 context.startActivity(intent, options.toBundle())
             } else

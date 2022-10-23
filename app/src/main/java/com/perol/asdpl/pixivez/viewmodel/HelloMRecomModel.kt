@@ -43,7 +43,7 @@ class HelloMRecomModel : BaseViewModel() {
     fun onLoadMorePicRequested() {
         retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
-            addillusts.value = it.illusts as ArrayList<Illust>?
+            addillusts.value = it.illusts
         }, {
             addillusts.value = null
         }, {}).add()
@@ -54,7 +54,7 @@ class HelloMRecomModel : BaseViewModel() {
         retrofitRepository.getRecommend().subscribe({
             Log.d("init","getRecommend")
             nextUrl.value = it.next_url
-            illusts.value = it.illusts as ArrayList<Illust>?
+            illusts.value = it.illusts
         }, {
             Log.d("init","getRecommend fail $it")
             illusts.value = null

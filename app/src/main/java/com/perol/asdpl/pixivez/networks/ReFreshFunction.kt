@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import android.widget.Toast
-import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
@@ -43,20 +42,12 @@ import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
-import java.lang.Long
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.Any
-import kotlin.Exception
-import kotlin.String
-import kotlin.Throwable
-import kotlin.Throws
-import kotlin.also
 import kotlin.math.pow
-import kotlin.synchronized
 
 class ReFreshFunction private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
@@ -76,6 +67,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
     @Throws(Exception::class)
     override fun apply(throwableObservable: Observable<Throwable>): ObservableSource<*> {
         return throwableObservable.flatMap(Function<Throwable, ObservableSource<*>> { throwable ->
+            Log.d("reFreshFunction", throwable.message.toString())
             if (throwable is TimeoutException || throwable is SocketTimeoutException
                     || throwable is ConnectException) {
                 return@Function Observable.error<Any>(throwable)
@@ -98,13 +90,15 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                     }
                     retryCount++
                     Log.d("init","400 retryCount $retryCount refreshing $refreshing")
-                        if (refreshing && retryCount <= maxRetries-1)
+                        if (refreshing && retryCount <= maxRetries-1) {
                             return@Function Observable.timer(
-                                (2000*(0.8).pow(retryCount)).toLong(),
+                                (2000 * (0.8).pow(retryCount)).toLong(),
                                 TimeUnit.MILLISECONDS
                             )
-                        else if (retryCount <= maxRetries)
+                        }
+                        else if (retryCount <= maxRetries) {
                             return@Function reFreshToken()
+                        }
                         else{
                             retryCount = 0
                             return@Function Observable.error<Any>(throwable)
@@ -137,26 +131,24 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
         })
 
     }
-
+    @Synchronized
     fun reFreshToken(): ObservableSource<*> {
         if(refreshing)
             return Observable.timer(2000,TimeUnit.MILLISECONDS)
         refreshing = true
-        var userEntity: UserEntity?
-//                        TToast.retoken(PxEZApp.instance)
-
+        val user:UserEntity
         runBlocking {
-            userEntity = AppDataRepository.getUser()
-        }
-        return reFreshToken(userEntity!!)
-    }
-
-    private fun reFreshToken(it: UserEntity): ObservableSource<*> {
+            user = AppDataRepository.getUser()!!
             Toasty.info(
                 PxEZApp.instance,
                 "reFreshToken",
                 Toast.LENGTH_SHORT
             ).show()
+        }
+        return reFreshToken(user)
+    }
+
+    private fun reFreshToken(it: UserEntity): ObservableSource<*> {
         Log.d("init","reFreshToken")
         //SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthTokenX(
@@ -166,18 +158,16 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
             .doOnNext { pixivOAuthResponse ->
                     val user = pixivOAuthResponse.response.user
                     val userEntity = UserEntity(
-                        user.profile_image_urls.px_170x170,
-                        Long.parseLong(
-                            user.id
-                        ),
+                        user.id,
                         user.name,
                         user.mail_address,
                         user.is_premium,
+                        user.profile_image_urls.px_170x170,
                         "OAuth2",//pixivOAuthResponse.response.device_token,
                         pixivOAuthResponse.response.refresh_token,
-                        "Bearer " + pixivOAuthResponse.response.access_token
+                        "Bearer " + pixivOAuthResponse.response.access_token,
+                        AppDataRepository.currentUser.Id
                     )
-                    userEntity.Id = it.Id
                     runBlocking {
                         AppDataRepository.updateUser(userEntity)
                         Toasty.info(
@@ -186,11 +176,9 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.d("init","reFreshToken end")
-                        PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putLong("lastRefresh",System.currentTimeMillis()).apply()
-                    }
-                Observable.timer(200, TimeUnit.MILLISECONDS)
-                    .subscribe {
-                        refreshing = false
+
+                        AppDataRepository.pre.setInt("user_x_restrict", user.x_restrict)
+                        AppDataRepository.pre.setLong("lastRefresh", System.currentTimeMillis())
                     }
                 }.doOnError {
                 it.printStackTrace()
@@ -199,8 +187,9 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                         PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + it.message,
                         Toast.LENGTH_SHORT
                     ).show()
-                refreshing = false
-                }.doFinally {
+                }.delay(500, TimeUnit.MILLISECONDS)
+                .doFinally {
+                        refreshing = false
                 }
     }
 

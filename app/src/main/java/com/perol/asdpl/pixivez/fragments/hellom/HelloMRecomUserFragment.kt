@@ -31,12 +31,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecomUserBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
+import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
 
 /**
@@ -47,13 +48,15 @@ import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
  */
 class HelloMRecomUserFragment : BaseFragment() {
     override fun loadData() {
-        viewmodel.reData()
+        viewmodel.onRefresh()
     }
 
-    lateinit var viewmodel: HelloRecomUserViewModel
+    override fun onResume() {
+        isLoaded = userShowAdapter.data.isNotEmpty()
+        super.onResume()
+    }
+    private val viewmodel: HelloRecomUserViewModel by viewModels()
     private fun initViewModel() {
-        viewmodel = ViewModelProvider(this)[HelloRecomUserViewModel::class.java]
-
         viewmodel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
@@ -62,7 +65,11 @@ class HelloMRecomUserFragment : BaseFragment() {
             }
         }
         viewmodel.data.observe(viewLifecycleOwner) {
-            userShowAdapter.setNewInstance(it.toMutableList())
+            if (it != null) {
+                userShowAdapter.setNewInstance(it.toMutableList())
+            }else{
+                userShowAdapter.loadMoreModule.loadMoreFail()
+            }
             binding.swipe.isRefreshing = false
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
@@ -72,13 +79,6 @@ class HelloMRecomUserFragment : BaseFragment() {
                 userShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
-
-
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     private val userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
@@ -87,16 +87,16 @@ class HelloMRecomUserFragment : BaseFragment() {
         initViewModel()
         binding.recyclerView.apply {
             adapter = userShowAdapter
-            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = GridLayoutManager(requireContext(), getMaxColumn(400))
+            //FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
+            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.getNext()
         }
         binding.swipe.setOnRefreshListener {
-            viewmodel.reData()
-
+            viewmodel.onRefresh()
         }
-
     }
 
     private lateinit var binding: FragmentRecomUserBinding
@@ -118,8 +118,15 @@ class HelloMRecomUserFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HelloRecomUserFragment.
          */
+        private const val ARG_PARAM1 = "param1"
+        private const val ARG_PARAM2 = "param2"
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            HelloMRecomUserFragment()
+            HelloMRecomUserFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
     }
 }

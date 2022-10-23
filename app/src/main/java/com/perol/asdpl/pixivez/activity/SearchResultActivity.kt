@@ -94,9 +94,7 @@ class SearchResultActivity : RinkActivity() {
                 position: Int,
                 positionOffset: Float,
                 positionOffsetPixels: Int
-            ) {
-
-            }
+            ) {}
 
             override fun onPageSelected(position: Int) {
                 when (position) {
@@ -109,10 +107,7 @@ class SearchResultActivity : RinkActivity() {
                 }
             }
 
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
+            override fun onPageScrollStateChanged(state: Int) {}
         })
         binding.searchtext.setOnClickListener {
             setResult(Activity.RESULT_OK, Intent().apply {
@@ -120,7 +115,5 @@ class SearchResultActivity : RinkActivity() {
             })
             finish()
         }
-
     }
-
 }

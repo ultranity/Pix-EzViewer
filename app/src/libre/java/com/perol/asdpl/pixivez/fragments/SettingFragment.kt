@@ -69,7 +69,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        pre = activity?.let { PreferenceManager.getDefaultSharedPreferences(it) }!!
+        pre = PxEZApp.instance.pre
         defaultComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =

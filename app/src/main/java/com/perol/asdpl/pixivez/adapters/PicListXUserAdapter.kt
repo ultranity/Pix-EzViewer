@@ -132,7 +132,7 @@ class PicListXUserAdapter(
             if (PxEZApp.animationEnable) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(imageViewUser, "UserImage")
+                    Pair.create(imageViewUser, "userimage")
                 )
                 context.startActivity(intent, options.toBundle())
             } else

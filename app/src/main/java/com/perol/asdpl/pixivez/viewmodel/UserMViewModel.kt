@@ -30,7 +30,6 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import io.reactivex.Observable
-import io.reactivex.Single
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -38,11 +37,12 @@ import okhttp3.ResponseBody
 import java.io.File
 
 class UserMViewModel : BaseViewModel() {
-    var retrofitRepository = RetrofitRepository.getInstance()
-    var userDetail = MutableLiveData<UserDetailResponse>()
-    var isfollow = MutableLiveData<Boolean>()
-    var hideBookmarked = MutableLiveData(0)
-    var hideDownloaded = MutableLiveData(false)
+    val retrofitRepository = RetrofitRepository.getInstance()
+    val userDetail = MutableLiveData<UserDetailResponse>()
+    val isfollow = MutableLiveData<Boolean>()
+    val hideBookmarked = MutableLiveData(0)
+    val hideDownloaded = MutableLiveData(false)
+    val currentTab = MutableLiveData(0)
 
     fun getData(userid: Long) {
         retrofitRepository.getUserDetail(userid).subscribe({
@@ -79,12 +79,8 @@ class UserMViewModel : BaseViewModel() {
         }, {}, {}).add()
     }
 
-    fun isuser(id: Long) = Single.create<Boolean> {
-        launchUI {
-            val pt = AppDataRepository.getUser()
-            it.onSuccess(id == pt.userid)
-        }
-
+    fun isSelfPage(id: Long):Boolean {
+           return AppDataRepository.currentUser.userid == id
     }
 
     fun tryToChangeProfile(path: String): Observable<ResponseBody> {

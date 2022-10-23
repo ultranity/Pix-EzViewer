@@ -31,7 +31,6 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.responses.Illust
-import io.reactivex.Single
 
 class UserBookMarkViewModel : BaseViewModel() {
     val retrofit = RetrofitRepository.getInstance()
@@ -48,12 +47,8 @@ class UserBookMarkViewModel : BaseViewModel() {
             }, {}, {}).add()
     }
 
-    private fun isUser(id: Long) = Single.create<Boolean> {
-        launchUI {
-            val pt = AppDataRepository.getUser()
-            val isuser = id == pt.userid
-            it.onSuccess(isuser)
-        }
+    fun isSelfPage(id: Long):Boolean {
+        return AppDataRepository.currentUser.userid == id
     }
 
     fun onRefreshListener(id: Long, string: String, tag: String?) {
@@ -63,7 +58,7 @@ class UserBookMarkViewModel : BaseViewModel() {
         }, {}, {}).add()
     }
 
-    fun first(id: Long, string: String): Single<Boolean> {
+    fun first(id: Long, string: String) {
         retrofit.getLikeIllust(id, string, null).subscribe({
             data.value = it.illusts
             nextUrl.value = it.next_url
@@ -71,6 +66,8 @@ class UserBookMarkViewModel : BaseViewModel() {
         retrofit.getIllustBookmarkTags(id, string).subscribe({
             tags.value = it
         }, {}, {}).add()
-        return isUser(id)
+    }
+    fun nextTags(){
+
     }
 }

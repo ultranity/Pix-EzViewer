@@ -37,6 +37,7 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
 import java.util.*
 
@@ -67,24 +68,30 @@ class HelloMTrendingFragment : LazyFragment() {
         //viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
             ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
-        for (i in modelist.indices)
-            binding.tablayoutRankingm.addTab(binding.tablayoutRankingm.newTab().setText(titles[i]))
+        val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
+        for (i in modelist.indices) {
+            if (!titles[i].contains("r18") or isR18on) {
+                binding.tablayoutRankingm.addTab(
+                    binding.tablayoutRankingm.newTab().setText(titles[i])
+                )
+            }
+        }
         childFragmentManager.fragments.forEach {
             childFragmentManager.beginTransaction().remove(it).commit()
         }
         childFragmentManager.beginTransaction()
-            .add(R.id.content_view,RankingMFragment.newInstance(modelist[0], 0)).commit()
+            .add(R.id.content_view, RankingMFragment.newInstance(modelist[0], 0)).commit()
         binding.tablayoutRankingm.getTabAt(0)!!.select()
         binding.tablayoutRankingm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
+            override fun onTabReselected(tab: TabLayout.Tab) {}
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 childFragmentManager.beginTransaction().remove(childFragmentManager.fragments[0])
-                    .add(R.id.content_view,RankingMFragment.newInstance(modelist[tab.position], tab.position)).commit()
+                    .add(R.id.content_view,
+                        RankingMFragment.newInstance(modelist[tab.position], tab.position))
+                    .commit()
             }
         })
         //tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
@@ -131,7 +138,6 @@ class HelloMTrendingFragment : LazyFragment() {
 
 
     private var param1: String? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
@@ -141,7 +147,6 @@ class HelloMTrendingFragment : LazyFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
-
         }
     }
 
@@ -169,7 +174,6 @@ class HelloMTrendingFragment : LazyFragment() {
             HelloMTrendingFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-
                 }
             }
     }

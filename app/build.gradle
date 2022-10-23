@@ -50,6 +50,14 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true"]
+            }
+        }
     }
 
     flavorDimensions "version"
@@ -315,5 +323,7 @@ dependencies {
     //buglyImplementation 'com.tencent.bugly:crashreport:4.0.4'
     buglyImplementation 'com.tencent.bugly:crashreport_upgrade:1.6.1'
 
-    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'io.github.knight-zxw:blockcanary:0.0.4'
+    debugImplementation 'io.github.knight-zxw:blockcanary-ui:0.0.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 }

@@ -26,13 +26,12 @@
 package com.perol.asdpl.pixivez.networks
 
 
-import androidx.preference.PreferenceManager
+import android.util.Log
 import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import kotlinx.coroutines.runBlocking
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -53,7 +52,7 @@ object RestClient {
     private val httpDns by lazy { RubyHttpDns }
     private val imageDns by lazy { ImageHttpDns }
     val local = LanguageUtil.langToLocale(PxEZApp.language)
-    private val disableProxy by lazy { PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getBoolean("disableproxy",false)}
+    private val disableProxy by lazy { PxEZApp.instance.pre.getBoolean("disableproxy",false)}
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(object : Interceptor {
@@ -148,15 +147,14 @@ object RestClient {
                     SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
                 val isoDate = ISO8601DATETIMEFORMAT.format(Date())
                 val original = chain.request()
-                var Authorization = ""
-                runBlocking {
-                    try {
-                        Authorization = AppDataRepository.getUser().Authorization
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                var Authorization =""
+                try {
+                    Authorization = AppDataRepository.currentUser.Authorization
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.d("OkHttpClient", "get Authorization failed")
                 }
-                //Log.d("OkHttpClient","Request $Authorization and original ${original.header("Authorization")}")
+                Log.d("OkHttpClient","Request $Authorization and original ${original.header("Authorization")}")
                 val requestBuilder = original.newBuilder()
                     .removeHeader("User-Agent")
                     .addHeader(
@@ -208,10 +206,7 @@ object RestClient {
     }
 
     private fun buildRetrofit(baseUrl:String, client: OkHttpClient)
-            = retrofit {
-        baseUrl(baseUrl)
-            .client(client)
-    }
+            = retrofit { baseUrl(baseUrl).client(client) }
 
     private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
         return Retrofit.Builder().apply(block)

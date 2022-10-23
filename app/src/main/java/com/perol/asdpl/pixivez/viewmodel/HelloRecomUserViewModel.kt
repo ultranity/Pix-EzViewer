@@ -33,13 +33,13 @@ class HelloRecomUserViewModel : BaseViewModel() {
     val retrofit = RetrofitRepository.getInstance()
     val nextUrl = MutableLiveData<String>()
     val adddata = MutableLiveData<List<SearchUserResponse.UserPreviewsBean>?>()
-    val data = MutableLiveData<List<SearchUserResponse.UserPreviewsBean>>()
-    fun reData() {
+    val data = MutableLiveData<List<SearchUserResponse.UserPreviewsBean>?>()
+    fun onRefresh() {
         retrofit.getUserRecommanded().subscribe({
             nextUrl.value = it.next_url
             data.value = it.user_previews
         }, {
-
+            data.value = null
         }, {}).add()
     }
 

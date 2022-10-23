@@ -33,8 +33,8 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -119,11 +119,9 @@ class TagsShowDialog : DialogFragment() {
             this.dismiss()
         }
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(p0: TabLayout.Tab?) {
-            }
+            override fun onTabReselected(p0: TabLayout.Tab?) {}
 
-            override fun onTabUnselected(p0: TabLayout.Tab?) {
-            }
+            override fun onTabUnselected(p0: TabLayout.Tab?) {}
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
                 if (p0 != null)
@@ -147,7 +145,6 @@ class TagsShowDialog : DialogFragment() {
                             }
                                 it.bookmark_tags.map { ot ->
                                     x.add(ot.name)
-
                                     tagsShowAdapter.counts.add(ot.count)
                                 }
                             tagsShowAdapter.setNewInstance(x)
@@ -175,7 +172,7 @@ class TagsShowDialog : DialogFragment() {
                 tagsShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
-        recyclerView.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView.layoutManager = GridLayoutManager(context, 1)
         builder.setView(dialogView)
         return builder.create()
 

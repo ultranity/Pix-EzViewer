@@ -29,24 +29,27 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
+import com.perol.asdpl.pixivez.responses.BookmarkDetailBean
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.UnzipUtil
 import com.perol.asdpl.pixivez.sql.AppDatabase
-import com.perol.asdpl.pixivez.sql.IllustBeanEntity
+import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
     val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
-    val relatedPics = MutableLiveData<ArrayList<Illust>>()
+    val relatedPics = MutableLiveData<ArrayList<Illust>?>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()
-    var tags = MutableLiveData<BookMarkDetailResponse.BookmarkDetailBean>()
+    var tags = MutableLiveData<BookmarkDetailBean>()
     val progress = MutableLiveData<ProgressInfo>()
     val downloadGifSuccess = MutableLiveData<Boolean>()
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
@@ -115,41 +118,26 @@ class PictureXViewModel : BaseViewModel() {
 
         }, {}, {}).add()
     }
-    fun firstGet(param2: Illust){
-            illustDetail.value = param2
-            likeIllust.value = param2.is_bookmarked
-            Thread {
-                val ee = appDatabase.illusthistoryDao().getHistoryOne(param2.id)
-                if (ee.isNotEmpty()) {
-                    appDatabase.illusthistoryDao().deleteOne(ee[0])
-                }
-                appDatabase.illusthistoryDao().insert(
-                    IllustBeanEntity(
-                        null,
-                        param2.image_urls.square_medium,
-                        param2.id
-                    )
+    fun firstGet(illust: Illust){
+        illustDetail.value = illust
+        likeIllust.value = illust.is_bookmarked
+        CoroutineScope(Dispatchers.IO).launch {
+            val ee = appDatabase.illusthistoryDao().getHistoryOne(illust.id)
+            if (ee.isNotEmpty()) {
+                appDatabase.illusthistoryDao().deleteOne(ee[0])
+            }
+            appDatabase.illusthistoryDao().insert(
+                IllustBeanEntity(
+                    illust.id,
+                    illust.image_urls.square_medium,
                 )
-            }.start()
+            )
         }
+    }
 
     fun firstGet(toLong: Long) {
         retrofitRepository.getIllust(toLong).subscribe({
-            illustDetail.value = it!!.illust
-            likeIllust.value = it.illust.is_bookmarked
-            Observable.just(1).observeOn(Schedulers.io()).subscribe { ot ->
-                val ee = appDatabase.illusthistoryDao().getHistoryOne(it.illust.id)
-                if (ee.isNotEmpty()) {
-                    appDatabase.illusthistoryDao().deleteOne(ee[0])
-                }
-                appDatabase.illusthistoryDao().insert(
-                    IllustBeanEntity(
-                        null,
-                        it.illust.image_urls.square_medium,
-                        it.illust.id
-                    )
-                )
-            }.add()
+            firstGet(it.illust)
         }, {
             Toasty.warning(
                 PxEZApp.instance,
@@ -163,7 +151,9 @@ class PictureXViewModel : BaseViewModel() {
     fun getRelative(long: Long) {
         retrofitRepository.getIllustRelated(long).subscribe({
             relatedPics.value = it.illusts
-        }, {}, {}).add()
+        }, {
+            relatedPics.value = null
+        }, {}).add()
     }
 
     fun fabClick() {

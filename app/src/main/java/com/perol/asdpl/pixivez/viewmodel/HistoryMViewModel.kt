@@ -27,7 +27,7 @@ package com.perol.asdpl.pixivez.viewmodel
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
-import com.perol.asdpl.pixivez.sql.IllustBeanEntity
+import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -40,7 +40,7 @@ class HistoryMViewModel : BaseViewModel() {
         appDatabase.illusthistoryDao().getIllustHistory().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                illustBeans.value = ArrayList<IllustBeanEntity>(it.reversed())
+                illustBeans.value = ArrayList(it.reversed())
             }.add()
 
     }

@@ -51,7 +51,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     var nextUrl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData(false)
-    var pre = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
+    var pre = PxEZApp.instance.pre!!
     var hideBookmarked = MutableLiveData(
         pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )

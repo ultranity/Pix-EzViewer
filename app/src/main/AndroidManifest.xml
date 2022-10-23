@@ -91,11 +91,11 @@
         </activity-alias>
 
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".activity.PictureActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".activity.ZoomActivity" />
@@ -190,7 +190,6 @@
             android:name=".activity.SearchResultActivity"
             android:label="@string/title_activity_search_result" />
         <activity android:name=".activity.HistoryMActivity" />
-        <activity android:name=".activity.UserShowActivity" />
         <activity android:name=".activity.UserMActivity" />
         <activity android:name=".manager.DownloadManagerActivity" />
     </application>

@@ -32,7 +32,6 @@ import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
@@ -47,6 +46,7 @@ import com.perol.asdpl.pixivez.networks.ProgressInterceptor
 import com.perol.asdpl.pixivez.networks.ProgressListener
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.io.File
 
@@ -69,7 +69,7 @@ class ZoomPagerAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val large = PreferenceManager.getDefaultSharedPreferences(context).getString(
+        val large = PxEZApp.instance.pre.getString(
                 "quality",
                 "0"
             )!!.toInt() != 0

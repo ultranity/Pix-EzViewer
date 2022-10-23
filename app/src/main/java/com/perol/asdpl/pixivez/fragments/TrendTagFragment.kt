@@ -25,12 +25,15 @@
 
 package com.perol.asdpl.pixivez.fragments
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.util.TypedValue
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -41,6 +44,7 @@ import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
 import com.perol.asdpl.pixivez.databinding.TrendTagFragmentBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.TrendTagViewModel
 import io.reactivex.disposables.CompositeDisposable
 
@@ -93,9 +97,16 @@ class TrendTagFragment : Fragment() {
                     bundle.putInt("position", position)
                     bundle.putLong("illustid", it.trend_tags[position].illust.id)
                     DataHolder.setIllustsList(it.trend_tags.map { it.illust })
-                    val intent2 = Intent(requireActivity(), PictureActivity::class.java)
-                    intent2.putExtras(bundle)
-                    startActivity(intent2)
+                    val intent = Intent(requireActivity(), PictureActivity::class.java)
+                    intent.putExtras(bundle)
+                    val options = if (PxEZApp.animationEnable) {
+                        val mainimage = view.findViewById<ImageView>(R.id.imageview_trendingtag)
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            context as Activity,
+                            Pair.create(mainimage, "mainimage"),
+                        ).toBundle()
+                    } else null
+                    startActivity(intent, options)
                     true
                 }
             }
@@ -120,10 +131,6 @@ class TrendTagFragment : Fragment() {
 
     private fun getChip(word: String): Chip {
         val chip = Chip(activity)
-        val paddingDp = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 5f,
-            resources.displayMetrics
-        ).toInt()
         chip.text = word
         chip.setOnClickListener {
             upToPage(word)

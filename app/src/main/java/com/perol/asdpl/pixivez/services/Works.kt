@@ -29,7 +29,6 @@ import android.content.SharedPreferences
 import android.media.MediaScannerConnection
 import android.os.Looper
 import android.webkit.MimeTypeMap
-import androidx.preference.PreferenceManager
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
 import com.google.gson.Gson
@@ -83,7 +82,7 @@ fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit:In
 }
 object Works {
 
-    val pre: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+    val pre: SharedPreferences = PxEZApp.instance.pre
     fun parseSaveFormat(illust: Illust, part: Int?=null): String {
         return parseSaveFormat(illust, part, PxEZApp.saveformat,PxEZApp.TagSeparator,PxEZApp.R18Folder )
     }
@@ -171,13 +170,14 @@ object Works {
                 arrayOf(
                     MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
                 )
-            ) { _, _ -> }
+            ) { _, _ ->
+                FileUtil.ListLog.add(illust.id.toInt())}
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
     suspend fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true){
-        for (item in data.toList()) {
+        for (item in data) {
             if (hideDownloaded && FileUtil.isDownloaded(item)) {
                 imageDownloadAll(item)
             }

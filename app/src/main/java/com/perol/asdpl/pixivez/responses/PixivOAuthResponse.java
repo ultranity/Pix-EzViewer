@@ -128,7 +128,7 @@ public class PixivOAuthResponse {
         public static class UserBean {
 
             private ProfileImageUrlsBean profile_image_urls;
-            private String id;
+            private Long id;
             private String name;
             private String account;
             private String mail_address;
@@ -144,11 +144,11 @@ public class PixivOAuthResponse {
                 this.profile_image_urls = profile_image_urls;
             }
 
-            public String getId() {
+            public Long getId() {
                 return id;
             }
 
-            public void setId(String id) {
+            public void setId(Long id) {
                 this.id = id;
             }
 

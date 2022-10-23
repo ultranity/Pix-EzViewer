@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.fragments
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,17 +34,18 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
+import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
 import kotlin.properties.Delegates
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,7 +60,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     override fun loadData() {
-        viewModel!!.onRefresh(userid, restrict, getFollowing)
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -72,37 +71,38 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 restrict = "private"
             }
         }
-        viewModel!!.onRefresh(userid, restrict, getFollowing)
+        viewModel.onRefresh(userid, restrict, getFollowing)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
 
     private lateinit var userShowAdapter: UserShowAdapter
-    var viewModel: IllustratorViewModel? = null
+    private lateinit var viewModel: IllustratorViewModel
     var restrict: String = "public"
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         binding.recyclerviewIllustrator.adapter = userShowAdapter
-        binding.recyclerviewIllustrator.layoutManager = LinearLayoutManager(requireActivity().applicationContext, RecyclerView.VERTICAL, false)
+        binding.recyclerviewIllustrator.layoutManager =
+            GridLayoutManager(requireContext(), getMaxColumn(400))
+        //FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         binding.spinnerIllustrator.onItemSelectedListener = this
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewModel!!.onLoadMore(viewModel!!.nextUrl.value!!)
+            viewModel.onLoadMore(viewModel.nextUrl.value!!)
         }
         binding.swiperefreshIllustrator.setOnRefreshListener {
-            viewModel!!.onRefresh(userid, restrict, getFollowing)
+            viewModel.onRefresh(userid, restrict, getFollowing)
         }
         userShowAdapter.setOnItemClickListener { _, _, position ->
-            val intent = Intent(requireActivity().applicationContext, UserMActivity::class.java)
-            val userid = viewModel!!.userpreviews.value!![position].user.id
-            intent.putExtra("data", userid)
-            startActivity(intent)
+            UserMActivity.start(requireContext(), userShowAdapter.data[position].user)
         }
 
         //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
-        ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(1)
+        ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)
+            ?.getTabAt(1)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
                     Toast.makeText(
@@ -118,18 +118,18 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun initViewModel() {
-        viewModel!!.userpreviews.observe(viewLifecycleOwner) {
+        viewModel.userpreviews.observe(viewLifecycleOwner) {
             userpreviews(it)
         }
-        viewModel!!.nextUrl.observe(viewLifecycleOwner) {
+        viewModel.nextUrl.observe(viewLifecycleOwner) {
             nextUrl(it)
         }
-        viewModel!!.adduserpreviews.observe(viewLifecycleOwner) {
+        viewModel.adduserpreviews.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             }
         }
-        viewModel!!.isRefreshing.observe(viewLifecycleOwner) {
+        viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swiperefreshIllustrator.isRefreshing = it
         }
 
@@ -186,11 +186,11 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(userid: Long, getFollowing: Boolean) =
-                IllustratorFragment().apply {
-                    arguments = Bundle().apply {
-                        putLong(ARG_PARAM1, userid)
-                        putBoolean(ARG_PARAM2, getFollowing)
-                    }
+            IllustratorFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(ARG_PARAM1, userid)
+                    putBoolean(ARG_PARAM2, getFollowing)
                 }
+            }
     }
 }

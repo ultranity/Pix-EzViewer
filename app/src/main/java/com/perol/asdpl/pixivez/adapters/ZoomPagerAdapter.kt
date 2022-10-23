@@ -54,13 +54,15 @@ class ZoomPagerAdapter(
     val context: Context,
     val illust: Illust
 ) : PagerAdapter() {
-    private var origin:List<String>? = null
-    private var preview:List<String>? = null
+    private var origin: List<String>? = null
+    private var preview: List<String>? = null
     override fun getCount(): Int {
-        return if (illust.meta_pages.isEmpty())
-                1
-            else
-                illust.meta_pages.size
+        return if (illust.meta_pages.isEmpty()) {
+            1
+        }
+        else {
+            illust.meta_pages.size
+        }
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -70,79 +72,89 @@ class ZoomPagerAdapter(
     @SuppressLint("ClickableViewAccessibility")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val large = PxEZApp.instance.pre.getString(
-                "quality",
-                "0"
-            )!!.toInt() != 0
+            "quality",
+            "0"
+        )!!.toInt() != 0
         if (illust.meta_pages.isEmpty()) {
             origin = listOf(illust.meta_single_page.original_image_url!!)
-            preview = if(large)
-                        listOf(illust.image_urls.large)
-                    else
-                        listOf(illust.image_urls.medium)
-        } else {
+            preview = if (large) {
+                listOf(illust.image_urls.large)
+            } 
+            else {
+                listOf(illust.image_urls.medium)
+            }
+        } 
+        else {
             origin = illust.meta_pages.map { it.image_urls.original }
-            preview = if(large)
-                        illust.meta_pages.map {it.image_urls.large}
-                    else
-                        illust.meta_pages.map {it.image_urls.medium}
+            preview = if (large) {
+                illust.meta_pages.map { it.image_urls.large }
+            } 
+            else {
+                illust.meta_pages.map { it.image_urls.medium }
+            }
         }
         val layoutInflater = LayoutInflater.from(context)
         val view = layoutInflater.inflate(R.layout.view_pager_zoom, container, false)
         val photoView = view.findViewById<SubsamplingScaleImageView>(R.id.photoview_zoom)
         photoView.isEnabled = true
         val progressBar = view.findViewById<CircleProgressBar>(R.id.progressbar_origin)
-        //val buttonOrigin = view.findViewById<MaterialButton>(R.id.button_origin)
+        // val buttonOrigin = view.findViewById<MaterialButton>(R.id.button_origin)
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val dm = DisplayMetrics()
         wm.defaultDisplay.getMetrics(dm)
         var resourceFile: File? = null
         val gestureDetector =
-            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onFling(
-                    e1: MotionEvent,
-                    e2: MotionEvent,
-                    velocityX: Float,
-                    velocityY: Float
-                ): Boolean {
+            GestureDetector(
+                context,
+                object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onFling(
+                        e1: MotionEvent,
+                        e2: MotionEvent,
+                        velocityX: Float,
+                        velocityY: Float
+                    ): Boolean {
 /*                    if ((e2.rawY - e1.rawY) > dm.heightPixels / 3) {
                         (context as Activity).finish()
                     }*/
-                    return false
-                }
+                        return false
+                    }
 
-                override fun onLongPress(e: MotionEvent) {
-                    super.onLongPress(e)
-                    if (resourceFile != null) {
-                        MaterialDialog(context).show {
-                            title(R.string.saveselectpic1)
-                            positiveButton(android.R.string.ok) {
-                                if (illust.meta_pages.isNotEmpty()) {
-                                    Works.imageDownloadWithFile(illust, resourceFile!!, position)
-                                } else Works.imageDownloadWithFile(illust, resourceFile!!, null)
-
+                    override fun onLongPress(e: MotionEvent) {
+                        super.onLongPress(e)
+                        if (resourceFile != null) {
+                            MaterialDialog(context).show {
+                                title(R.string.saveselectpic1)
+                                positiveButton(android.R.string.ok) {
+                                    if (illust.meta_pages.isNotEmpty()) {
+                                        Works.imageDownloadWithFile(illust, resourceFile!!, position)
+                                    }
+                                    else {
+                                        Works.imageDownloadWithFile(illust, resourceFile!!, null)
+                                    }
+                                }
+                                negativeButton(android.R.string.cancel)
+                                lifecycleOwner((this@ZoomPagerAdapter.context as AppCompatActivity))
                             }
-                            negativeButton(android.R.string.cancel)
-                            lifecycleOwner((this@ZoomPagerAdapter.context as AppCompatActivity))
                         }
                     }
                 }
-            })
+            )
         photoView.setOnTouchListener { v, event ->
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
 
-        GlideApp.with(context).asFile().load(origin!![position]).apply( RequestOptions().onlyRetrieveFromCache(true))
+        GlideApp.with(context).asFile().load(origin!![position]).apply(RequestOptions().onlyRetrieveFromCache(true))
             .into(object : CustomTarget<File>() {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    //super.onLoadFailed(errorDrawable)
+                    // super.onLoadFailed(errorDrawable)
                     GlideApp.with(context).asFile()
                         .load(preview!![position])
-                        .apply( RequestOptions().onlyRetrieveFromCache(true))
+                        .apply(RequestOptions().onlyRetrieveFromCache(true))
                         .into(object : CustomTarget<File>() {
                             override fun onLoadCleared(placeholder: Drawable?) {
                             }
                             override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                                //Log.d("origin","load preview")
+                                // Log.d("origin","load preview")
                                 photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                                 resourceFile = resource
                             }
@@ -151,34 +163,37 @@ class ZoomPagerAdapter(
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    //Log.d("origin","from cache")
-                    //buttonOrigin.visibility =View.GONE
+                    // Log.d("origin","from cache")
+                    // buttonOrigin.visibility =View.GONE
                     photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
                     progressBar.visibility = View.GONE
                 }
             })
-        //buttonOrigin.setOnClickListener {
+        // buttonOrigin.setOnClickListener {
         //    buttonOrigin.visibility =View.GONE
-            progressBar.visibility =View.VISIBLE
-            ProgressInterceptor.addListener(origin!![position],object: ProgressListener {
-                override fun onProgress(progress: Int){
+        progressBar.visibility = View.VISIBLE
+        ProgressInterceptor.addListener(
+            origin!![position],
+            object : ProgressListener {
+                override fun onProgress(progress: Int) {
                     progressBar.progress = progress
                 }
+            }
+        )
+        GlideApp.with(context).asFile().load(origin!![position])
+            .into(object : CustomTarget<File>() {
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                    resourceFile = resource
+                    progressBar.visibility = View.GONE
+                    // Log.d("origin","load from net")
+                    ProgressInterceptor.removeListener(origin!![position])
+                }
             })
-            GlideApp.with(context).asFile().load(origin!![position])
-                .into(object : CustomTarget<File>() {
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                        photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
-                        resourceFile = resource
-                        progressBar.visibility = View.GONE
-                        //Log.d("origin","load from net")
-                        ProgressInterceptor.removeListener(origin!![position])
-                    }
-                })
-        //}
+        // }
         container.addView(view)
         return view
     }

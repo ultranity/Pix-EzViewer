@@ -44,7 +44,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.dialog.ThanksDialog
 
-
 class ThanksFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -56,7 +55,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/LuckXuemo",
                 R.drawable.xuemo,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/LuckXuemo")
                 true
@@ -68,7 +68,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/ultranity",
                 R.drawable.xuemo,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/ultranity")
                 true
@@ -79,7 +80,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/hunterx9",
                 R.drawable.hunterx9,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/hunterx9")
                 true
@@ -90,7 +92,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/Skimige",
                 R.drawable.skimige,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/Skimige")
                 true
@@ -102,7 +105,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/TragicLifeHu",
                 R.drawable.skimige,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/TragicLifeHu")
                 true
@@ -113,7 +117,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 "https://avatars.githubusercontent.com/MISONLN41",
                 R.drawable.skimige,
                 onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it })
+                onResourceReady = { icon = it }
+            )
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 startActivityByUri("https://github.com/MISONLN41")
                 true
@@ -155,7 +160,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            //"support" -> startActivityByUri("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
+            // "support" -> startActivityByUri("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
             /*  "pr" -> startActivityByUri("https://github.com/ultranity/Pix-EzViewer/pulls")*/
             "thanks" -> {
                 val thanksDialog = ThanksDialog()
@@ -175,22 +180,20 @@ class ThanksFragment : PreferenceFragmentCompat() {
 //                }
 
 //                MaterialDialog(requireContext()).show {
-////                    title(text = "")
+// //                    title(text = "")
 //                    message(R.string.summary)
 //                    listItems(items = ThanksDialog().array)
 //                    cornerRadius(2.0F)
 //                    lifecycleOwner(this@ThanksFragment)
 //                }
             }
-            "support" ->    SupportDialog().show(parentFragmentManager, "supportdialog")
-            "Ultranity" ->  SupportDialog().show(parentFragmentManager, "supportdialog")
+            "support" -> SupportDialog().show(parentFragmentManager, "supportdialog")
+            "Ultranity" -> SupportDialog().show(parentFragmentManager, "supportdialog")
             "Notsfsssf" -> {
                 val view = requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_notsfsssf, null)
                 MaterialAlertDialogBuilder(requireActivity()).setView(view).setPositiveButton(android.R.string.ok) { _, _ ->
                 }.show()
-
             }
-
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -206,7 +209,8 @@ class ThanksFragment : PreferenceFragmentCompat() {
     }
 
     private fun loadDrawableByUrl(
-        url: String, @DrawableRes placeholder: Int,
+        url: String,
+        @DrawableRes placeholder: Int,
         onLoadCleared: (Drawable?) -> Unit,
         onResourceReady: (Drawable) -> Unit
     ) {

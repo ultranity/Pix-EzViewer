@@ -14,7 +14,6 @@ class BlockViewModel : ViewModel() {
             appDatabase.blockTagDao().getAllTags()
         }
 
-
     suspend fun deleteSingleTag(blockTagEntity: BlockTagEntity) =
         appDatabase.blockTagDao().deleteTag(blockTagEntity)
 

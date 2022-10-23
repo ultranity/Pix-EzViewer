@@ -48,14 +48,16 @@ class RetrofitRepository {
 
     init {
         if (System.currentTimeMillis() - AppDataRepository.pre.getLong("lastRefresh", 0)
-                > 59 * 60 * 1000){
-            val init = Observable.just(1).flatMap{
+        > 59 * 60 * 1000
+        ) {
+            val init = Observable.just(1).flatMap {
                 Log.d("init", "Observable init")
                 reFreshFunction.reFreshToken()
             }.subscribe({
-                Log.d("Retrofit","Observable inited")}, {}, {})
+                Log.d("Retrofit", "Observable inited")
+            }, {}, {})
         }
-        Log.d("Retrofit","RetrofitRepository inited")
+        Log.d("Retrofit", "RetrofitRepository inited")
     }
 
     fun getLikeIllust(userid: Long, pub: String, tag: String?): Observable<IllustNext> = Request(appApiPixivService.getLikeIllust(userid, pub, tag))
@@ -81,7 +83,7 @@ class RetrofitRepository {
         bookmark_num: Int?,
         duration: String?
     ): Observable<SearchIllustResponse> {
-        return Request(appApiPixivService.getSearchIllustPreview(word ,sort ,search_target ,bookmark_num ,duration))
+        return Request(appApiPixivService.getSearchIllustPreview(word, sort, search_target, bookmark_num, duration))
     }
 
     fun getSearchIllust(
@@ -91,7 +93,7 @@ class RetrofitRepository {
         start_date: String?,
         end_date: String?,
         bookmark_num: Int?
-    ): Observable<SearchIllustResponse> = Request(appApiPixivService.getSearchIllust(word, sort, search_target ,start_date ,end_date ,bookmark_num))
+    ): Observable<SearchIllustResponse> = Request(appApiPixivService.getSearchIllust(word, sort, search_target, start_date, end_date, bookmark_num))
 
     fun postUserProfileEdit(part: MultipartBody.Part): Observable<ResponseBody> = Request(appApiPixivService.postUserProfileEdit(part))
 
@@ -132,8 +134,7 @@ class RetrofitRepository {
         tagList: ArrayList<String>? = null
     ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(illust_id, string, tagList))
 
-
-    fun getIllust(illust_id: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(illust_id)).also{Log.d("getIllust",illust_id.toString())}
+    fun getIllust(illust_id: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(illust_id)).also { Log.d("getIllust", illust_id.toString()) }
 
     suspend fun getIllustCor(long: Long): IllustDetailResponse? {
         var illustDetailResponse: IllustDetailResponse? = null
@@ -169,12 +170,12 @@ class RetrofitRepository {
 
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
         return Observable.just(1).flatMap {
-            //resetToken()
-            Log.d("Retrofit","Request ${T::class.java.canonicalName}")
+            // resetToken()
+            Log.d("Retrofit", "Request ${T::class.java.canonicalName}")
             observable
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen {
-                Log.d("Retrofit","Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+                Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
                 reFreshFunction.apply(it)
             }
     }
@@ -188,13 +189,13 @@ class RetrofitRepository {
 
     inline fun <reified T> getNext(url: String): Observable<T> =
         Observable.just(1).flatMap {
-            Log.d("Retrofit","getNext ${T::class.java.simpleName} from $url")
+            Log.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
             appApiPixivService.getUrl(url).flatMap {
                 Observable.just(Gson().fromJson(it.string(), T::class.java))
             }
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen{
-                Log.d("Retrofit","Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+            .retryWhen {
+                Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
                 reFreshFunction.apply(it)
             }
 
@@ -226,6 +227,3 @@ class RetrofitRepository {
         }
     }
 }
-
-
-

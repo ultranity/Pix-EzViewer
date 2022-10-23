@@ -44,13 +44,13 @@ class SpacesItemDecoration(private val space: Int) : ItemDecoration() {
         }
         val params =
             view.layoutParams as StaggeredGridLayoutManager.LayoutParams
-        if (params.spanIndex % 2 == 0){
+        if (params.spanIndex % 2 == 0) {
             outRect.left = space
             outRect.right = space / 2
-        } else  {
+        }
+        else {
             outRect.left = space / 2
             outRect.right = space
         }
     }
-
 }

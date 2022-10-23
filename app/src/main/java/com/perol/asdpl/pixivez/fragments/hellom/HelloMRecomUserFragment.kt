@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,14 +59,16 @@ class HelloMRecomUserFragment : BaseFragment() {
         viewmodel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
-            } else {
+            }
+            else {
                 userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
         viewmodel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.setNewInstance(it.toMutableList())
-            }else{
+            }
+            else {
                 userShowAdapter.loadMoreModule.loadMoreFail()
             }
             binding.swipe.isRefreshing = false
@@ -75,7 +76,8 @@ class HelloMRecomUserFragment : BaseFragment() {
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.loadMoreModule.loadMoreComplete()
-            } else {
+            }
+            else {
                 userShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
@@ -88,7 +90,7 @@ class HelloMRecomUserFragment : BaseFragment() {
         binding.recyclerView.apply {
             adapter = userShowAdapter
             layoutManager = GridLayoutManager(requireContext(), getMaxColumn(400))
-            //FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
+            // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
@@ -101,13 +103,13 @@ class HelloMRecomUserFragment : BaseFragment() {
 
     private lateinit var binding: FragmentRecomUserBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentRecomUserBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     companion object {
         /**
@@ -120,6 +122,7 @@ class HelloMRecomUserFragment : BaseFragment() {
          */
         private const val ARG_PARAM1 = "param1"
         private const val ARG_PARAM2 = "param2"
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HelloMRecomUserFragment().apply {

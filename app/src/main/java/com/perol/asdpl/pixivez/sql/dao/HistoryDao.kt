@@ -51,7 +51,6 @@ abstract class  DownUserDao {
 @Dao
 abstract class SearchHistoryDao {
 
-
     @Query("SELECT * FROM history")
     abstract fun getSearchHistory(): Flowable<List<SearchHistoryEntity>>
 

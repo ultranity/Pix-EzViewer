@@ -55,5 +55,4 @@ class UserMillustViewModel : BaseViewModel() {
             nextUrl.value = it.next_url
         }, {}, {}).add()
     }
-
 }

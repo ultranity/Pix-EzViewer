@@ -33,28 +33,28 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 
-
 class LinearItemDecoration(private val space: Int) : ItemDecoration() {
     override fun getItemOffsets(
-        outRect: Rect, view: View,
-        parent: RecyclerView, state: RecyclerView.State
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
     ) {
         outRect.right = space
         if (parent.getChildAdapterPosition(view) == 0) {
-            outRect.left = 3*space
+            outRect.left = 3 * space
         }
     }
-
 }
 
-//edited from https://github.com/bleeding182/recyclerviewItemDecorations/blob/master/app/src/main/java/com/github/bleeding182/recyclerviewdecorations/viewpager/LinePagerIndicatorDecoration.java
+// edited from https://github.com/bleeding182/recyclerviewItemDecorations/blob/master/app/src/main/java/com/github/bleeding182/recyclerviewdecorations/viewpager/LinePagerIndicatorDecoration.java
 class LinePagerIndicatorDecoration(
-    private val itemPadding:Int=6,
-    private val indicatorHeight:Int=8,
-    private val indicatorStrokeWidth:Int=2,
-    private val indicatorItemLength:Int=16,
-    private val indicatorItemPadding:Int=4,
-    private val headerNum:Int=0,
+    private val itemPadding: Int = 6,
+    private val indicatorHeight: Int = 8,
+    private val indicatorStrokeWidth: Int = 2,
+    private val indicatorItemLength: Int = 16,
+    private val indicatorItemPadding: Int = 4,
+    private val headerNum: Int = 0
 ) : ItemDecoration() {
     private val colorActive = -0x1
     private val colorInactive = 0x66FFFFFF
@@ -81,13 +81,13 @@ class LinePagerIndicatorDecoration(
      * Indicator width.
      */
     private val mIndicatorItemLength
-        get()  = DP * indicatorItemLength
+        get() = DP * indicatorItemLength
 
     /**
      * Padding between indicators.
      */
     private val mIndicatorItemPadding
-        get()  = DP * indicatorItemPadding
+        get() = DP * indicatorItemPadding
 
     /**
      * Some more natural animation interpolation
@@ -116,7 +116,6 @@ class LinePagerIndicatorDecoration(
         // center vertically in the allotted space
         val indicatorPosY = parent.height - mIndicatorHeight / 2f
         drawInactiveIndicators(c, indicatorStartX, indicatorPosY, itemCount)
-
 
         // find active page (which should be highlighted)
         val layoutManager: LoopingLayoutManager = parent.layoutManager as LoopingLayoutManager
@@ -156,8 +155,12 @@ class LinePagerIndicatorDecoration(
     }
 
     private fun drawHighlights(
-        c: Canvas, indicatorStartX: Float, indicatorPosY: Float,
-        highlightPosition: Int, progress: Float, itemCount: Int
+        c: Canvas,
+        indicatorStartX: Float,
+        indicatorPosY: Float,
+        highlightPosition: Int,
+        progress: Float,
+        itemCount: Int
     ) {
         mPaint.color = colorActive
 
@@ -167,8 +170,11 @@ class LinePagerIndicatorDecoration(
             // no swipe, draw a normal indicator
             val highlightStart = indicatorStartX + itemWidth * highlightPosition
             c.drawLine(
-                highlightStart, indicatorPosY,
-                highlightStart + mIndicatorItemLength, indicatorPosY, mPaint
+                highlightStart,
+                indicatorPosY,
+                highlightStart + mIndicatorItemLength,
+                indicatorPosY,
+                mPaint
             )
         }
         else {
@@ -178,16 +184,22 @@ class LinePagerIndicatorDecoration(
 
             // draw the cut off highlight
             c.drawLine(
-                highlightStart + partialLength, indicatorPosY,
-                highlightStart + mIndicatorItemLength, indicatorPosY, mPaint
+                highlightStart + partialLength,
+                indicatorPosY,
+                highlightStart + mIndicatorItemLength,
+                indicatorPosY,
+                mPaint
             )
 
             // draw the highlight overlapping to the next item as well
             if (highlightPosition < itemCount - 1) {
                 highlightStart += itemWidth
                 c.drawLine(
-                    highlightStart, indicatorPosY,
-                    highlightStart + partialLength, indicatorPosY, mPaint
+                    highlightStart,
+                    indicatorPosY,
+                    highlightStart + partialLength,
+                    indicatorPosY,
+                    mPaint
                 )
             }
         }
@@ -201,7 +213,7 @@ class LinePagerIndicatorDecoration(
     ) {
         super.getItemOffsets(outRect, view, parent, state)
         outRect.right = mItemPadding
-        //outRect.bottom = mIndicatorHeight
+        // outRect.bottom = mIndicatorHeight
     }
 
     companion object {

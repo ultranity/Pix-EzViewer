@@ -25,13 +25,11 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.widget.ImageView
-
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.TrendingtagResponse
 import com.perol.asdpl.pixivez.services.GlideApp
-
 
 class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendTagsBean>?) :
     BaseQuickAdapter<TrendingtagResponse.TrendTagsBean, BaseViewHolder>(
@@ -46,6 +44,4 @@ class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendT
             .placeholder(R.mipmap.ic_noimage)
             .into(imageView)
     }
-
-
 }

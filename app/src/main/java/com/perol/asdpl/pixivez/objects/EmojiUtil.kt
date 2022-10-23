@@ -10,7 +10,7 @@ object EmojiUtil {
     private const val EMOJI_103 = "(serious)"
     private const val EMOJI_104 = "(heaven)"
     private const val EMOJI_105 = "(happy)"
-    private const val EMOJI_106 = "(excited)" //为你写诗，为你静止 //-1s
+    private const val EMOJI_106 = "(excited)" // 为你写诗，为你静止 //-1s
     private const val EMOJI_107 = "(sing)"
     private const val EMOJI_108 = "(cry)"
 
@@ -47,6 +47,7 @@ object EmojiUtil {
     private const val EMOJI_501 = "(heart)"
     private const val EMOJI_502 = "(teardrop)"
     private const val EMOJI_503 = "(star)"
+
     // resource from https://s.pximg.net/common/images/emoji/101.png
     private val RESOURCE = arrayOf(
         "101.png", "102.png", "103.png", "104.png", "105.png", "106.png", "107.png", "108.png",
@@ -76,8 +77,8 @@ object EmojiUtil {
         if (TextUtils.isEmpty(origin)) {
             return origin
         }
-        val final = EMOJI_REGEX.replace(origin){
-            (map[it.value]?.let{ "$HEAD$it$EOF" }?:it.value).toString()
+        val final = EMOJI_REGEX.replace(origin) {
+            (map[it.value]?.let { "$HEAD$it$EOF" } ?: it.value).toString()
         }
         return final
     }

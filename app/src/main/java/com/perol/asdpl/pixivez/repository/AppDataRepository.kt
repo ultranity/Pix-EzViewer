@@ -35,21 +35,23 @@ import kotlinx.coroutines.withContext
 
 object AppDataRepository {
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val pre = SharedPreferencesServices.getInstance() //PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
+    val pre = SharedPreferencesServices.getInstance() // PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
     lateinit var currentUser: UserEntity
     suspend fun getUser(): UserEntity? {
         val result = withContext(Dispatchers.IO) {
             appDatabase.userDao().getUsers()
         }
-        if (result.isEmpty()){
+        if (result.isEmpty()) {
             return null
         }
         currentUser = if (result.size == 1) {
             result[0]
-        } else {
+        }
+        else {
             val num = pre.getInt("usernum", 0)
-            if ((result.size <= num))
+            if ((result.size <= num)) {
                 result[0]
+            }
             else {
                 result[num]
             }

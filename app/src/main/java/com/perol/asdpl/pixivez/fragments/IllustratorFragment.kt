@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +44,6 @@ import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
 import kotlin.properties.Delegates
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -87,7 +85,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         binding.recyclerviewIllustrator.adapter = userShowAdapter
         binding.recyclerviewIllustrator.layoutManager =
             GridLayoutManager(requireContext(), getMaxColumn(400))
-        //FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+        // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
         //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         binding.spinnerIllustrator.onItemSelectedListener = this
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
@@ -100,7 +98,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             UserMActivity.start(requireContext(), userShowAdapter.data[position].user)
         }
 
-        //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
+        // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)
             ?.getTabAt(1)
             ?.view?.setOnClickListener {
@@ -111,7 +109,8 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerviewIllustrator.scrollToPosition(0)
                 }
             }
@@ -132,13 +131,13 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swiperefreshIllustrator.isRefreshing = it
         }
-
     }
 
     private fun nextUrl(it: String?) {
         if (it != null) {
             userShowAdapter.loadMoreModule.loadMoreComplete()
-        } else {
+        }
+        else {
             userShowAdapter.loadMoreModule.loadMoreEnd()
         }
     }
@@ -163,8 +162,11 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     private lateinit var binding: FragmentIllustratorBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
 
@@ -172,7 +174,6 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
 
         return binding.root
     }
-
 
     companion object {
         /**

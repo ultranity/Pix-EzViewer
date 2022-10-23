@@ -38,7 +38,7 @@ import com.perol.asdpl.pixivez.services.Works
 import com.shehuan.niv.NiceImageView
 
 // simple Adapter for image item with heart icon
-//TODO: rename
+// TODO: rename
 open class PicListXAdapter(
     layoutResId: Int,
     data: List<Illust>?,
@@ -51,26 +51,28 @@ open class PicListXAdapter(
         if (PxEZApp.CollectMode == 1) {
             holder.getView<NiceImageView>(R.id.imageview_like).apply {
                 setOnClickListener {
-                    //download
+                    // download
                     setBorderColor(colorPrimaryDark)
                     Works.imageDownloadAll(item)
-                    //set like
+                    // set like
                     if (!item.is_bookmarked) {
-                        InteractionUtil.like(item, null){
+                        InteractionUtil.like(item, null) {
                             setUILike(true, this)
                         }
                     }
                 }
             }
-        } else {
+        }
+        else {
             holder.getView<NiceImageView>(R.id.imageview_like).apply {
                 setOnClickListener {
                     if (item.is_bookmarked) {
-                        InteractionUtil.unlike(item){
+                        InteractionUtil.unlike(item) {
                             setUILike(false, this)
                         }
-                    } else {
-                        InteractionUtil.like(item, null){
+                    }
+                    else {
+                        InteractionUtil.like(item, null) {
                             setUILike(true, this)
                         }
                     }
@@ -85,27 +87,30 @@ open class PicListXAdapter(
 
         holder.getView<NiceImageView>(R.id.imageview_like).apply {
             setUILike(item.is_bookmarked, this)
-            setUIDownload(if(FileUtil.isDownloaded(item)) 2 else 0, this)
+            setUIDownload(if (FileUtil.isDownloaded(item)) 2 else 0, this)
         }
     }
 
-    private fun NiceImageView.setLike(status:Boolean) {
+    private fun NiceImageView.setLike(status: Boolean) {
         if (status) {
-            //setImageResource(R.drawable.heart_red)
+            // setImageResource(R.drawable.heart_red)
             GlideApp.with(context).load(R.drawable.heart_red).into(this)
-            //alpha = 0.9F
-        } else {
-            //setImageResource(R.drawable.ic_action_heart)
+            // alpha = 0.9F
+        }
+        else {
+            // setImageResource(R.drawable.ic_action_heart)
             GlideApp.with(context).load(R.drawable.ic_action_heart).into(this)
-            //alpha = 0.8F
+            // alpha = 0.8F
         }
     }
 
     override fun setUILike(status: Boolean, position: Int) {
-        (getViewByAdapterPosition(
-            position,
-            R.id.imageview_like
-        ) as NiceImageView?)?.let { setUILike(status, it) }
+        (
+            getViewByAdapterPosition(
+                position,
+                R.id.imageview_like
+            ) as NiceImageView?
+            )?.let { setUILike(status, it) }
     }
 
     override fun setUILike(status: Boolean, view: View) {
@@ -122,22 +127,24 @@ open class PicListXAdapter(
     }
 
     override fun setUIDownload(status: Int, position: Int) {
-        (getViewByAdapterPosition(
-            position,
-            R.id.imageview_like
-        ) as NiceImageView?)?.let { setUIDownload(status, it) }
+        (
+            getViewByAdapterPosition(
+                position,
+                R.id.imageview_like
+            ) as NiceImageView?
+            )?.let { setUIDownload(status, it) }
     }
 
     override fun setUIDownload(status: Int, view: View) {
         val like = view as NiceImageView
         when (status) {
-            0 -> { //not downloaded
+            0 -> { // not downloaded
                 like.setBorderColor(colorTransparent)
             }
-            1 -> { //Downloading
+            1 -> { // Downloading
                 like.setBorderColor(colorPrimaryDark)
             }
-            2 -> {//Downloaded
+            2 -> { // Downloaded
                 like.setBorderColor(badgeTextColor)
             }
         }

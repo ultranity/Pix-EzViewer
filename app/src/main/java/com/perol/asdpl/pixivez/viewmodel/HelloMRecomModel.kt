@@ -50,13 +50,13 @@ class HelloMRecomModel : BaseViewModel() {
     }
 
     fun onRefreshListener() {
-        Log.d("init","gettingRecommend")
+        Log.d("init", "gettingRecommend")
         retrofitRepository.getRecommend().subscribe({
-            Log.d("init","getRecommend")
+            Log.d("init", "getRecommend")
             nextUrl.value = it.next_url
             illusts.value = it.illusts
         }, {
-            Log.d("init","getRecommend fail $it")
+            Log.d("init", "getRecommend fail $it")
             illusts.value = null
         }, {}).add()
     }

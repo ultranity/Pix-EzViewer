@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.user
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -78,9 +77,9 @@ class UserIllustFragment : BaseFragment() {
     }
 
     override fun onResume() {
-        isLoaded = viewModel.data.value!=null
+        isLoaded = viewModel.data.value != null
         super.onResume()
-        Log.d("UserIllustFragment","UserIllustFragment resume")
+        Log.d("UserIllustFragment", "UserIllustFragment resume")
     }
 
     private fun initView() {
@@ -92,13 +91,12 @@ class UserIllustFragment : BaseFragment() {
         }
         binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                2*context.resources.configuration.orientation,
+                2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListBtnAdapter
-            //addItemDecoration(GridItemDecoration())
-            }
-
+            // addItemDecoration(GridItemDecoration())
+        }
     }
 
     private var param1: Long? = null
@@ -113,13 +111,14 @@ class UserIllustFragment : BaseFragment() {
     }
 
     private fun initViewModel() {
-        //TODO: ViewModelProvider by activity
+        // TODO: ViewModelProvider by activity
         viewModel = ViewModelProvider(this)[UserMillustViewModel::class.java]
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 picListBtnAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 picListBtnAdapter.loadMoreComplete()
             }
         }
@@ -134,7 +133,8 @@ class UserIllustFragment : BaseFragment() {
             if (it != null) {
                 picListBtnAdapter.addData(it)
                 picListBtnAdapter.loadMoreComplete()
-            } else {
+            }
+            else {
                 picListBtnAdapter.loadMoreModule.loadMoreFail()
             }
         }
@@ -153,12 +153,15 @@ class UserIllustFragment : BaseFragment() {
     private lateinit var picListBtnAdapter: PicItemAdapterBase
     private lateinit var binding: FragmentUserIllustBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        filter = IllustFilter(isR18on,
-                blockTags,
-                PxEZApp.instance.pre.getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0))
+        filter = IllustFilter(
+            isR18on,
+            blockTags,
+            PxEZApp.instance.pre.getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
+        )
         // Inflate the layout for this fragment
         picListBtnAdapter = PicListXBtnAdapter(
             R.layout.view_recommand_item,
@@ -168,7 +171,6 @@ class UserIllustFragment : BaseFragment() {
         binding = FragmentUserIllustBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     companion object {
         /**

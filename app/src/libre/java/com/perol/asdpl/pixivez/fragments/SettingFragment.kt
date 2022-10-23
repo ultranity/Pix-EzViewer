@@ -135,8 +135,9 @@ class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
         findPreference<SwitchPreference>("disableproxy")!!.apply {
-            if (Works.mirrorLinkDownload||Works.mirrorLinkView)
-                summary = getString(R.string.mirror)+":"+Works.mirrorURL
+            if (Works.mirrorLinkDownload || Works.mirrorLinkView) {
+                summary = getString(R.string.mirror) + ":" + Works.mirrorURL
+            }
             setOnPreferenceClickListener {
                 showMirrorLinkDialog()
                 Works.spximg = Works.lookup(Works.opximg)
@@ -274,7 +275,8 @@ class SettingFragment : PreferenceFragmentCompat() {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (requireContext().allPermissionsGranted(storagePermissions)) {
                 showDirectorySelectionDialog()
-            } else {
+            }
+            else {
                 Toast.makeText(
                     requireContext(),
                     "Permissions not granted by the user",
@@ -284,30 +286,26 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
     }
 
-
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             "me" -> {
                 try {
-
                     val binding = DialogMeBinding.inflate(layoutInflater)
                     val dialog = MaterialDialog(requireContext(), BottomSheet()).show {
                         cornerRadius(16f)
                         customView(view = binding.root)
-
                     }
                     binding.bg.setOnClickListener {
                         val url = if (BuildConfig.ISGOOGLEPLAY) {
                             "https://youtu.be/Wu4fVGsEn8s"
-                        } else {
+                        }
+                        else {
                             "https://www.bilibili.com/video/BV1E741137mf"
                         }
                         val uri = Uri.parse(url)
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     }
-
-
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -327,7 +325,8 @@ class SettingFragment : PreferenceFragmentCompat() {
                     } catch (e: Exception) {
                         Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
                     }
-                } else {
+                }
+                else {
                     checkUpdate()
                 }
             }
@@ -336,7 +335,8 @@ class SettingFragment : PreferenceFragmentCompat() {
 
                 if (requireContext().allPermissionsGranted(storagePermissions)) {
                     showDirectorySelectionDialog()
-                } else {
+                }
+                else {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         storagePermissions,
@@ -347,7 +347,8 @@ class SettingFragment : PreferenceFragmentCompat() {
             "filesaveformat" -> {
                 if (requireContext().allPermissionsGranted(storagePermissions)) {
                     showSaveFormatDialog()
-                } else {
+                }
+                else {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         storagePermissions,
@@ -356,7 +357,8 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "R18Folder" -> {
-                if (PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
+                if (PxEZApp.R18Folder) {
+                    // onPreferenceTreeClick called after switch change
                     MaterialDialog(requireContext()).show {
                         title(R.string.block_tag)
                         message(R.string.R18_folder)
@@ -365,10 +367,12 @@ class SettingFragment : PreferenceFragmentCompat() {
                             hint = "xRestrict/"
                         ) { dialog, text ->
                             PxEZApp.R18FolderPath =
-                                if (text.isBlank())
+                                if (text.isBlank()) {
                                     "xRestrict/"
-                                else
+                                }
+                                else {
                                     text.toString().removePrefix("/").removeSuffix("/") + "/"
+                                }
                         }
                         positiveButton(R.string.save) { dialog ->
                             pre.apply {
@@ -381,6 +385,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                         negativeButton(android.R.string.cancel)
                         lifecycleOwner(this@SettingFragment)
                     }
+                }
             }
             "version" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -416,10 +421,8 @@ class SettingFragment : PreferenceFragmentCompat() {
                 val dialogBuild = MaterialAlertDialogBuilder(requireActivity())
                 dialogBuild.setMessage(string).setTitle("这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者")
                     .setPositiveButton(android.R.string.ok) { _, _ ->
-
                     }
                     .create().show()
-
             }
         }
 
@@ -432,8 +435,8 @@ class SettingFragment : PreferenceFragmentCompat() {
         val formatInput = binding.formatInput
         val mirrorLinkDownload = binding.mirrorLinkDownload
         val mirrorLinkView = binding.mirrorLinkView
-        mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView",false)
-        mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload",false)
+        mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView", false)
+        mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload", false)
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
         val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
@@ -443,16 +446,16 @@ class SettingFragment : PreferenceFragmentCompat() {
             positiveButton(R.string.save) { dialog ->
                 Works.mirrorURL = "${urlInput.text}"
                 Works.mirrorFormat = "${formatInput.text}"
-                Works.mirrorLinkView=mirrorLinkView.isChecked
-                Works.mirrorLinkDownload=mirrorLinkDownload.isChecked
+                Works.mirrorLinkView = mirrorLinkView.isChecked
+                Works.mirrorLinkDownload = mirrorLinkDownload.isChecked
                 findPreference<Preference>("disableproxy")!!.apply {
-                    summary = Works.mirrorURL+Works.mirrorFormat
+                    summary = Works.mirrorURL + Works.mirrorFormat
                 }
                 pre.apply {
                     putString("mirrorURL", Works.mirrorURL)
                     putString("mirrorFormat", Works.mirrorFormat)
-                    putBoolean("mirrorLinkView",Works.mirrorLinkView)
-                    putBoolean("mirrorLinkDownload",Works.mirrorLinkDownload)
+                    putBoolean("mirrorLinkView", Works.mirrorLinkView)
+                    putBoolean("mirrorLinkDownload", Works.mirrorLinkDownload)
                 }
             }
             negativeButton(android.R.string.cancel)
@@ -531,7 +534,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             BasicGridItem(R.mipmap.ic_launcher, "MD"),
             BasicGridItem(R.mipmap.ic_launcherep, "Triangle"),
             BasicGridItem(R.mipmap.ic_launchermd, "Probe")
-        )//my bad
+        ) // my bad
 
         MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT)).show {
             title(R.string.title_change_icon)

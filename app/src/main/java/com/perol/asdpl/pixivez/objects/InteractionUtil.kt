@@ -21,27 +21,28 @@ object InteractionUtil {
     fun x_restrict(restrict: Boolean): String {
         return if (restrict) {
             "private"
-        } else {
+        }
+        else {
             "public"
         }
     }
 
     fun toDetailString(it: Illust, caption: Boolean = true) =
         "id:${it.id} " + (if (caption) "caption:${Html.fromHtml(it.caption)}" else "") +
-                "\nuser:${it.user.name} account:${it.user.account}\n" +
-                "create_date:${it.create_date}\n" +
-                "width:${it.width} height:${it.height}\n" +
-         "tags:${it.tags}\n" +
-         "total_bookmarks:${it.total_bookmarks} total_view:${it.total_view}\n" +
-         "tools:${it.tools}\n" +
-         "type:${it.type} page_count:${it.page_count}\n" +
-         "visible:${it.visible} is_muted:${it.is_muted}\n" +
-         "sanity_level:${it.sanity_level} restrict:${it.restrict} x_restrict:${it.x_restrict}"
-        //"meta_pages:" + illust.meta_pages.toString() + "\n" +
-        //"meta_single_page:" + illust.meta_single_page.toString() + "\n" +
-        //"image_urls:" + illust.image_urls.toString()
+            "\nuser:${it.user.name} account:${it.user.account}\n" +
+            "create_date:${it.create_date}\n" +
+            "width:${it.width} height:${it.height}\n" +
+            "tags:${it.tags}\n" +
+            "total_bookmarks:${it.total_bookmarks} total_view:${it.total_view}\n" +
+            "tools:${it.tools}\n" +
+            "type:${it.type} page_count:${it.page_count}\n" +
+            "visible:${it.visible} is_muted:${it.is_muted}\n" +
+            "sanity_level:${it.sanity_level} restrict:${it.restrict} x_restrict:${it.x_restrict}"
+    // "meta_pages:" + illust.meta_pages.toString() + "\n" +
+    // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
+    // "image_urls:" + illust.image_urls.toString()
 
-    fun like(item:Illust, tagList: ArrayList<String>?=null, callback: () -> Unit){
+    fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit) {
         retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), tagList).subscribe({
             item.is_bookmarked = true
             callback()

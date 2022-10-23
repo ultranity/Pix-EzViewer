@@ -25,12 +25,10 @@ import java.io.File
 
 class DownloadManagerActivity : RinkActivity() {
 
-
-
     private lateinit var binding: ActivityDownloadManagerBinding
     private lateinit var viewModel: DownLoadManagerViewModel
     private lateinit var downloadTaskAdapter: DownloadTaskAdapter
-    private lateinit var  aria: DownloadReceiver
+    private lateinit var aria: DownloadReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
@@ -51,8 +49,9 @@ class DownloadManagerActivity : RinkActivity() {
         }
         binding.downloadlistrefreshlayout.setOnRefreshListener {
             val taskList = aria.taskList
-            if (taskList?.isNotEmpty() == true)
+            if (taskList?.isNotEmpty() == true) {
                 downloadTaskAdapter.setNewInstance(taskList.asReversed())
+            }
             binding.downloadlistrefreshlayout.isRefreshing = false
         }
     }
@@ -69,10 +68,9 @@ class DownloadManagerActivity : RinkActivity() {
             if (index != -1) {
                 downloadTaskAdapter.data[index] = it.entity
                 downloadTaskAdapter.notifyItemChanged(index, it.entity)
-
             }
         }
-        viewModel.progress.value = "${aria.allNotCompleteTask?.size?:0}/${aria.taskList?.size?:0}"
+        viewModel.progress.value = "${aria.allNotCompleteTask?.size ?: 0}/${aria.taskList?.size ?: 0}"
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,7 +79,6 @@ class DownloadManagerActivity : RinkActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this, ManagerSettingsActivity::class.java))
@@ -95,9 +92,9 @@ class DownloadManagerActivity : RinkActivity() {
                         if (it.state == 0) {
                             Aria.download(this).load(it.id).cancel(true)
                             Thread.sleep(500)
-                            //val illustD = Gson().fromJson(it.str, IllustD::class.java)
+                            // val illustD = Gson().fromJson(it.str, IllustD::class.java)
                             Aria.download(this).load(it.url)
-                                .setFilePath(it.filePath) //设置文件保存的完整路径
+                                .setFilePath(it.filePath) // 设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
                                 .setExtendField(it.str)
                                 .option(Works.option)
@@ -107,14 +104,15 @@ class DownloadManagerActivity : RinkActivity() {
                     }
                     runOnUiThread {
                         val taskList = Aria.download(this).taskList
-                        if (taskList?.isNotEmpty() == true)
+                        if (taskList?.isNotEmpty() == true) {
                             downloadTaskAdapter.setNewInstance(taskList.asReversed())
+                        }
                     }
                 }.start()
                 Aria.download(this).resumeAllTask()
             }
             R.id.action_cancel -> {
-                MaterialAlertDialogBuilder(this).apply{
+                MaterialAlertDialogBuilder(this).apply {
                     setMessage(R.string.all_cancel)
                         .setPositiveButton(android.R.string.ok) { _, _ ->
                             Aria.download(this).removeAllTask(false)
@@ -138,9 +136,10 @@ class DownloadManagerActivity : RinkActivity() {
             R.id.action_export -> {
                 MaterialDialog(this).show {
                     folderChooser(
-                        allowFolderCreation = true
-                        , context = context) { _, folder ->
-                        val writer  = File(folder.absolutePath+ File.separatorChar+"download.log")
+                        allowFolderCreation = true,
+                        context = context
+                    ) { _, folder ->
+                        val writer = File(folder.absolutePath + File.separatorChar + "download.log")
                             .writer()
                         Aria.download(this).taskList.map {
                             writer.appendLine(it.url.substringAfterLast("/"))
@@ -152,17 +151,20 @@ class DownloadManagerActivity : RinkActivity() {
             }
             R.id.action_import -> {
                 MaterialDialog(this).show {
-                    fileChooser(filter = { it.isDirectory || it.extension=="log"}, context = context)
-                    { _, file ->
+                    fileChooser(filter = { it.isDirectory || it.extension == "log" }, context = context) { _, file ->
                         Thread {
                             file.readLines().forEach {
-                                val pid = (Regex("(?<=(pid)?_?)(\\d{7,9})")
-                                    .find(it)?.value ?: "").toLongOrNull()
+                                val pid = (
+                                    Regex("(?<=(pid)?_?)(\\d{7,9})")
+                                        .find(it)?.value ?: ""
+                                    ).toLongOrNull()
                                 val dot = it.lastIndexOf(".")
-                                val part = (Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
-                                    .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
-                                    ?: "").toIntOrNull()
-                                if (pid != null && part != null && !FileUtil.isDownloaded(pid)){
+                                val part = (
+                                    Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
+                                        .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
+                                        ?: ""
+                                    ).toIntOrNull()
+                                if (pid != null && part != null && !FileUtil.isDownloaded(pid)) {
                                     Works.imgD(pid, part)
                                     Thread.sleep(300)
                                 }
@@ -179,8 +181,9 @@ class DownloadManagerActivity : RinkActivity() {
             }
         }
         val taskList = Aria.download(this).taskList
-        if (taskList?.isNotEmpty() == true)
+        if (taskList?.isNotEmpty() == true) {
             downloadTaskAdapter.setNewInstance(taskList.asReversed())
+        }
         return true
     }
 
@@ -188,6 +191,7 @@ class DownloadManagerActivity : RinkActivity() {
     fun onPre(task: DownloadTask) {
         refreshSingle(task)
     }
+
     @Download.onTaskPre
     fun onTaskPre(task: DownloadTask) {
         refreshSingle(task)
@@ -239,6 +243,7 @@ class DownloadManagerActivity : RinkActivity() {
     fun onWait(task: DownloadTask) {
         refreshSingle(task)
     }
+
     @Download.onTaskFail
     fun onTaskFail(task: DownloadTask?) {
         refreshSingle(task)
@@ -247,13 +252,12 @@ class DownloadManagerActivity : RinkActivity() {
     override fun onDestroy() {
         Aria.download(this).unRegister()
         super.onDestroy()
-
     }
 
     override fun onResume() {
         super.onResume()
         val taskList = aria.taskList
-        if (taskList?.isNotEmpty() == true){
+        if (taskList?.isNotEmpty() == true) {
             downloadTaskAdapter.setNewInstance(taskList.asReversed())
         }
     }

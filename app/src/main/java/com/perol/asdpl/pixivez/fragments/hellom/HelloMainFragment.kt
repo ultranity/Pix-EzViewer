@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +45,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class HelloMainFragment : Fragment() {
 
-
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -61,10 +59,10 @@ class HelloMainFragment : Fragment() {
 
     private lateinit var binding: FragmentHelloMainBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentHelloMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,7 +72,6 @@ class HelloMainFragment : Fragment() {
         binding.viewpager.adapter =
             HelloMRecomViewPager(this, childFragmentManager)
         binding.tablayout.setupWithViewPager(binding.viewpager)
-
     }
 
     companion object {

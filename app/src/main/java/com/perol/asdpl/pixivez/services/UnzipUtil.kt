@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.services
 import net.lingala.zip4j.ZipFile
 import java.io.File
 
-
 class UnzipUtil {
     companion object {
         const val TAG = "ZIP"
@@ -38,5 +37,4 @@ class UnzipUtil {
             ZipFile(file).extractAll(outPathString)
         }
     }
-
 }

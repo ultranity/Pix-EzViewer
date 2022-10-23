@@ -48,7 +48,7 @@ class PixivsionActivity : RinkActivity() {
         setSupportActionBar(binding.toobarPixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         initbind()
-        if(viewmodel.banners.value==null) {
+        if (viewmodel.banners.value == null) {
             viewmodel.onRefreshListener()
         }
     }
@@ -68,17 +68,19 @@ class PixivsionActivity : RinkActivity() {
             R.layout.view_pixivision_item,
             null
         )
-        viewmodel.banners.observe(this)  {
+        viewmodel.banners.observe(this) {
             if (it != null) {
                 pixiVisionAdapter.setNewInstance(it)
-            } else {
+            }
+            else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
         viewmodel.addbanners.observe(this) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
-            } else {
+            }
+            else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
@@ -86,7 +88,8 @@ class PixivsionActivity : RinkActivity() {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreModule.loadMoreEnd()
-                } else {
+                }
+                else {
                     pixiVisionAdapter.loadMoreModule.loadMoreComplete()
                 }
             }
@@ -95,9 +98,15 @@ class PixivsionActivity : RinkActivity() {
         binding.recyclerviewPixivision.adapter = pixiVisionAdapter
         pixiVisionAdapter.addChildClickViewIds(R.id.imageView_pixivision)
         pixiVisionAdapter.setOnItemChildClickListener { adapter, view, position ->
-            val intent = Intent(this@PixivsionActivity,
-                if (PxEZApp.instance.pre.getBoolean("disableproxy",false))
-                    WebViewActivity::class.java else OKWebViewActivity::class.java)
+            val intent = Intent(
+                this@PixivsionActivity,
+                if (PxEZApp.instance.pre.getBoolean("disableproxy", false)) {
+                    WebViewActivity::class.java
+                }
+                else {
+                    OKWebViewActivity::class.java
+                }
+            )
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)
         }

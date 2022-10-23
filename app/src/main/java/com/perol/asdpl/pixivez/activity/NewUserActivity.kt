@@ -47,7 +47,6 @@ class NewUserActivity : RinkActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             if (url.startsWith("pixiv://account/login")) {
-
                 val code = Uri.parse(url).getQueryParameter("code").toString()
                 if (code.isBlank()) {
                     Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG)
@@ -69,7 +68,7 @@ class NewUserActivity : RinkActivity() {
         setContentView(binding.root)
         binding.ext.setOnClickListener {
             val url: String = "https://app-api.pixiv.net/web/v1/login?code_challenge=" +
-                    Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
+                Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
             val uri = Uri.parse(url)
             val intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)
@@ -95,7 +94,8 @@ class NewUserActivity : RinkActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null)
             CookieManager.getInstance().flush()
-        } else {
+        }
+        else {
             val cookieSyncMngr = CookieSyncManager.createInstance(applicationContext)
             cookieSyncMngr.startSync()
             val cookieManager = CookieManager.getInstance()

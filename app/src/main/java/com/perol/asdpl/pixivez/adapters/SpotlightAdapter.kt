@@ -45,7 +45,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
     BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data?.toMutableList()) {
 
-
     override fun convert(holder: BaseViewHolder, item: Spotlight) {
         val numLayout = holder.itemView.findViewById<View>(R.id.layout_num)
         numLayout.visibility = View.GONE
@@ -79,8 +78,10 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
                     Pair.create(userImage, "userimage")
                 )
                 context.startActivity(intent, options.toBundle())
-            } else
+            }
+            else {
                 context.startActivity(intent)
+            }
         }
     }
 }

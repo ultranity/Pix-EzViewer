@@ -55,12 +55,16 @@ fun resourceIdToUri(context: Context, resourceId: Int): String =
 
 @BindingAdapter("userUrl")
 fun loadUserImage(imageView: ImageView, url: String?) {
-    if (url != null)
+    if (url != null) {
         GlideApp.with(imageView.context)
-            .load(if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png"))
-                        GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
-                  else
-                        url)
+            .load(
+                if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
+                    GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
+                }
+                else {
+                    url
+                }
+            )
             .circleCrop()
             .placeholder(R.mipmap.ic_noimage_round)
             .listener(object : RequestListener<Drawable> {
@@ -87,11 +91,12 @@ fun loadUserImage(imageView: ImageView, url: String?) {
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .error(R.mipmap.ic_noimage_round)
             .transition(withCrossFade()).into(imageView)
+    }
 }
 
 @BindingAdapter("url")
 fun loadBGImage(imageView: ImageView, url: String?) {
-    if (url != null){
+    if (url != null) {
         imageView.setOnClickListener {
             MaterialAlertDialogBuilder(imageView.context).setMessage(url).setPositiveButton(R.string.download) { _, _ ->
                 runBlocking {
@@ -107,13 +112,14 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                         )
                         file.copyTo(target, overwrite = true)
                         MediaScannerConnection.scanFile(
-                            PxEZApp.instance, arrayOf(target.path), arrayOf(
+                            PxEZApp.instance,
+                            arrayOf(target.path),
+                            arrayOf(
                                 MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                                     target.extension
                                 )
                             )
                         ) { _, _ ->
-
                         }
                     }
 
@@ -135,10 +141,3 @@ fun loadBGImage(imageView: ImageView, url: String?) {
         GlideApp.with(imageView.context).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
     }
 }
-
-
-
-
-
-
-

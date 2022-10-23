@@ -40,14 +40,15 @@ class UserBookMarkViewModel : BaseViewModel() {
     val tags = MutableLiveData<BookMarkTagsResponse>()
     val preference = SharedPreferencesServices.getInstance()!!
     fun onLoadMoreListener() {
-        if (nextUrl.value != null)
+        if (nextUrl.value != null) {
             retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
                 adddata.value = it.illusts
                 nextUrl.value = it.next_url
             }, {}, {}).add()
+        }
     }
 
-    fun isSelfPage(id: Long):Boolean {
+    fun isSelfPage(id: Long): Boolean {
         return AppDataRepository.currentUser.userid == id
     }
 
@@ -67,7 +68,6 @@ class UserBookMarkViewModel : BaseViewModel() {
             tags.value = it
         }, {}, {}).add()
     }
-    fun nextTags(){
-
+    fun nextTags() {
     }
 }

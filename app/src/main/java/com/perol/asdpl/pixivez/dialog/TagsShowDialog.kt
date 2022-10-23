@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.dialog
 
-
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -45,13 +44,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-//UserBookMarkFragment
+// UserBookMarkFragment
 class TagsShowDialog : DialogFragment() {
 
     fun show(fragmentManager: FragmentManager) {
         show(fragmentManager, "tagshowDialog")
     }
-
 
     val disposables = CompositeDisposable()
     fun Disposable.add() {
@@ -67,11 +65,15 @@ class TagsShowDialog : DialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         val tabLayout = getDialog()?.findViewById<TabLayout>(R.id.tablayout_tagsshow)
         if (tabLayout != null) {
-            callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
-                "public"
-            } else {
-                "private"
-            })
+            callback!!.onClick(
+                "",
+                if (tabLayout.selectedTabPosition == 0) {
+                    "public"
+                }
+                else {
+                    "private"
+                }
+            )
         }
         super.onCancel(dialog)
     }
@@ -82,11 +84,10 @@ class TagsShowDialog : DialogFragment() {
 
     interface Callback {
         fun onClick(string: String, public: String)
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val retrofitRepository  = RetrofitRepository.getInstance()
+        val retrofitRepository = RetrofitRepository.getInstance()
 
         val bundle = arguments
         val inflater = LayoutInflater.from(activity)
@@ -103,19 +104,27 @@ class TagsShowDialog : DialogFragment() {
         val tagsShowAdapter = TagsShowAdapter(R.layout.view_tagsshow_item, tagList, countList!!)
         recyclerView.adapter = tagsShowAdapter
         tagsShowAdapter.setOnItemClickListener { adapter, view, position ->
-            callback!!.onClick(tagsShowAdapter.data[position], if (tabLayout.selectedTabPosition == 0) {
-                "public"
-            } else {
-                "private"
-            })
+            callback!!.onClick(
+                tagsShowAdapter.data[position],
+                if (tabLayout.selectedTabPosition == 0) {
+                    "public"
+                }
+                else {
+                    "private"
+                }
+            )
             this.dismiss()
         }
         all.setOnClickListener {
-            callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
-                "public"
-            } else {
-                "private"
-            })
+            callback!!.onClick(
+                "",
+                if (tabLayout.selectedTabPosition == 0) {
+                    "public"
+                }
+                else {
+                    "private"
+                }
+            )
             this.dismiss()
         }
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -124,36 +133,45 @@ class TagsShowDialog : DialogFragment() {
             override fun onTabUnselected(p0: TabLayout.Tab?) {}
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
-                if (p0 != null)
-                    retrofitRepository.getIllustBookmarkTags(id, if (p0.position == 0) {
-                        "public"
-                    } else {
-                        "private"
-                    })
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.io()).subscribe({
-                                nextUrl = it.next_url
-                                val x = ArrayList<String>()
+                if (p0 != null) {
+                    retrofitRepository.getIllustBookmarkTags(
+                        id,
+                        if (p0.position == 0) {
+                            "public"
+                        }
+                        else {
+                            "private"
+                        }
+                    )
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io()).subscribe({
+                            nextUrl = it.next_url
+                            val x = ArrayList<String>()
                             tagsShowAdapter.counts.clear()
-                            if (it.bookmark_tags.isNullOrEmpty()){
-                                callback!!.onClick("", if (tabLayout.selectedTabPosition == 0) {
-                                    "public"
-                                } else {
-                                    "private"
-                                })
+                            if (it.bookmark_tags.isNullOrEmpty()) {
+                                callback!!.onClick(
+                                    "",
+                                    if (tabLayout.selectedTabPosition == 0) {
+                                        "public"
+                                    }
+                                    else {
+                                        "private"
+                                    }
+                                )
                                 this@TagsShowDialog.dismiss()
                             }
-                                it.bookmark_tags.map { ot ->
-                                    x.add(ot.name)
-                                    tagsShowAdapter.counts.add(ot.count)
-                                }
+                            it.bookmark_tags.map { ot ->
+                                x.add(ot.name)
+                                tagsShowAdapter.counts.add(ot.count)
+                            }
                             tagsShowAdapter.setNewInstance(x)
-                            }, {}, {}).add()
+                        }, {}, {}).add()
+                }
             }
         })
         tagsShowAdapter.loadMoreModule.setOnLoadMoreListener {
             if (!nextUrl.isNullOrBlank()) {
-                retrofitRepository.getNextTags( nextUrl!!)
+                retrofitRepository.getNextTags(nextUrl!!)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(
@@ -167,14 +185,15 @@ class TagsShowDialog : DialogFragment() {
                             tagsShowAdapter.addData(arrayList)
                         },
                         { tagsShowAdapter.loadMoreModule.loadMoreFail() },
-                        { tagsShowAdapter.loadMoreModule.loadMoreComplete() }).add()
-            } else {
+                        { tagsShowAdapter.loadMoreModule.loadMoreComplete() }
+                    ).add()
+            }
+            else {
                 tagsShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         builder.setView(dialogView)
         return builder.create()
-
     }
 }

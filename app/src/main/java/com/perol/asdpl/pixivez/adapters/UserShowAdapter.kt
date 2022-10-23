@@ -50,7 +50,7 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.shehuan.niv.NiceImageView
 
-//TODO: fling optimize
+// TODO: fling optimize
 class UserShowAdapter(layoutResId: Int) :
     BaseQuickAdapter<SearchUserResponse.UserPreviewsBean, BaseViewHolder>(layoutResId),
     LoadMoreModule {
@@ -67,7 +67,10 @@ class UserShowAdapter(layoutResId: Int) :
                     context as Activity,
                     Pair.create(view.findViewById(R.id.imageview_usershow), "userimage")
                 ).toBundle()
-            } else null
+            }
+            else {
+                null
+            }
             context.startActivity(intent, options)
         }
     }
@@ -75,11 +78,11 @@ class UserShowAdapter(layoutResId: Int) :
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
         val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        val userSearchillustAdapter:UserSearchIllustAdapter
+        val userSearchillustAdapter: UserSearchIllustAdapter
         //        holder.addOnClickListener(R.id.cardview).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
         val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
-        if (recyclerView.adapter == null){
-            recyclerView.apply{
+        if (recyclerView.adapter == null) {
+            recyclerView.apply {
                 userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
                 adapter = userSearchillustAdapter
                 layoutManager = linearLayoutManager
@@ -97,11 +100,13 @@ class UserShowAdapter(layoutResId: Int) :
         val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)
         val username = holder.getView<TextView>(R.id.textview_usershowname)
         val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
-        val badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
-        if (item.user.is_followed)
+        val badgeTextColor = ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
+        if (item.user.is_followed) {
             userImage.setBorderColor(badgeTextColor) // Color.YELLOW
-        else
+        }
+        else {
             userImage.setBorderColor(colorPrimary)
+        }
         userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(context, PictureActivity::class.java)
             val bundle = Bundle()
@@ -117,12 +122,14 @@ class UserShowAdapter(layoutResId: Int) :
                     Pair.create(username, "username"),
                     Pair.create(userImage, "userimage")
                 ).toBundle()
-            } else null
+            }
+            else {
+                null
+            }
             ContextCompat.startActivity(context, intent, options)
         }
         username.text = "${item.user.name} : ${item.user.account}"
         GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
-
     }
 }

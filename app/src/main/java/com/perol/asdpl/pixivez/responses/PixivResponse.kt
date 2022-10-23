@@ -25,10 +25,10 @@
 package com.perol.asdpl.pixivez.responses
 
 data class PixivResponse(
-        val tags: List<Tags>
+    val tags: List<Tags>
 )
 
 data class Tags(
-        val name: String,
-        val translated_name: String?
+    val name: String,
+    val translated_name: String?
 )

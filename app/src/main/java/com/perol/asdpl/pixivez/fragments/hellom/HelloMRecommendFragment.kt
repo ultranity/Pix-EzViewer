@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -63,7 +62,6 @@ import com.perol.asdpl.pixivez.viewmodel.PixivisionModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -103,23 +101,26 @@ class HelloMRecommendFragment : BaseFragment() {
             binding.swiperefreshRecom.isRefreshing = false
             if (it != null) {
                 picListXAdapter.setNewInstance(it)
-                //binding.recyclerviewRecom.smoothScrollToPosition(0)
-                //pixivisionModel.onRefreshListener()
-            } else {
+                // binding.recyclerviewRecom.smoothScrollToPosition(0)
+                // pixivisionModel.onRefreshListener()
+            } 
+            else {
                 picListXAdapter.loadMoreFail()
             }
         }
         viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListXAdapter.addData(it)
-            } else {
+            }
+            else {
                 picListXAdapter.loadMoreFail()
             }
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 picListXAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 picListXAdapter.loadMoreComplete()
             }
         }
@@ -146,7 +147,8 @@ class HelloMRecommendFragment : BaseFragment() {
         pixivisionModel.addbanners.observe(viewLifecycleOwner) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
-            } else {
+            }
+            else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
@@ -154,13 +156,13 @@ class HelloMRecommendFragment : BaseFragment() {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreModule.loadMoreEnd()
-                } else {
+                }
+                else {
                     pixiVisionAdapter.loadMoreModule.loadMoreComplete()
                 }
             }
         }
     }
-
 
     private lateinit var picListXAdapter: PicItemAdapterBase
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
@@ -176,7 +178,7 @@ class HelloMRecommendFragment : BaseFragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        //viewmodel = ViewModelProvider(requireActivity())[HelloMRecomModel::class.java]
+        // viewmodel = ViewModelProvider(requireActivity())[HelloMRecomModel::class.java]
     }
 
     private var exitTime = 0L
@@ -186,7 +188,7 @@ class HelloMRecommendFragment : BaseFragment() {
 
         binding.recyclerviewRecom.apply {
             layoutManager = StaggeredGridLayoutManager(
-                2*context.resources.configuration.orientation,
+                2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListXAdapter
@@ -199,16 +201,22 @@ class HelloMRecommendFragment : BaseFragment() {
             viewmodel.onLoadMorePicRequested()
         }
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
-            val intent = Intent(context,
-                if (PxEZApp.instance.pre.getBoolean("disableproxy",false))
-                    WebViewActivity::class.java else OKWebViewActivity::class.java)
+            val intent = Intent(
+                context,
+                if (PxEZApp.instance.pre.getBoolean("disableproxy", false)) {
+                    WebViewActivity::class.java
+                }
+                else {
+                    OKWebViewActivity::class.java
+                }
+            )
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)
             view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
         }
         val autoLoop = PxEZApp.instance.pre
-                .getBoolean("banner_auto_loop", true)
-        if (!autoLoop){
+            .getBoolean("banner_auto_loop", true)
+        if (!autoLoop) {
             pixiVisionAdapter.loadMoreModule.setOnLoadMoreListener {
                 pixivisionModel.onLoadMoreBannerRequested()
             }
@@ -222,34 +230,34 @@ class HelloMRecommendFragment : BaseFragment() {
 
         val spotlightView = bannerView.findViewById<RecyclerView>(R.id.pixivisionList)
         spotlightView.adapter = pixiVisionAdapter
-        if (autoLoop){
-            //spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+        if (autoLoop) {
+            // spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
             spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
-            //spotlightView.addItemDecoration(LinePagerIndicatorDecoration(headerNum = 0))
-            //LoopingSnapHelper().attachToRecyclerView(spotlightView)
+            // spotlightView.addItemDecoration(LinePagerIndicatorDecoration(headerNum = 0))
+            // LoopingSnapHelper().attachToRecyclerView(spotlightView)
         }
         else {
             spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
-            //LinearSnapHelper().attachToRecyclerView(spotlightView)
-            //CardScaleHelper(true).run{
+            // LinearSnapHelper().attachToRecyclerView(spotlightView)
+            // CardScaleHelper(true).run{
             //    mCurrentItemOffset=393
             //    attachToRecyclerView(spotlightView)
-            //}
+            // }
         }
         spotlightView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         spotlightView.layoutAnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {}
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
-                //spotlightView.smoothScrollToPosition(2)
-                spotlightView.layoutAnimation = null //show animation only at first time
+                // spotlightView.smoothScrollToPosition(2)
+                spotlightView.layoutAnimation = null // show animation only at first time
             }
         }
 
         binding.swiperefreshRecom.isRefreshing = true
-        //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
+        // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
@@ -259,7 +267,8 @@ class HelloMRecommendFragment : BaseFragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerviewRecom.scrollToPosition(0)
                 }
             }
@@ -269,15 +278,17 @@ class HelloMRecommendFragment : BaseFragment() {
     private lateinit var binding: FragmentRecommendBinding
     private lateinit var filter: IllustFilter
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         filter = IllustFilter(isR18on)
         picListXAdapter =
-            if(PxEZApp.instance.pre
-                    .getBoolean("use_picX_layout_main",true)) {
+            if (PxEZApp.instance.pre
+                .getBoolean("use_picX_layout_main", true)
+            ) {
                 if (PxEZApp.instance.pre
-                        .getBoolean("show_user_img_main", true)
+                    .getBoolean("show_user_img_main", true)
                 ) {
                     PicListXUserAdapter(
                         R.layout.view_ranking_item_s,
@@ -295,14 +306,15 @@ class HelloMRecommendFragment : BaseFragment() {
             }
             else {
                 if (PxEZApp.instance.pre
-                        .getBoolean("show_user_img_main", true)
+                    .getBoolean("show_user_img_main", true)
                 ) {
                     PicListXBtnUserAdapter(
                         R.layout.view_ranking_item,
                         null,
                         filter
                     )
-                } else {
+                }
+                else {
                     PicListXBtnAdapter(
                         R.layout.view_recommand_item,
                         null,
@@ -310,7 +322,7 @@ class HelloMRecommendFragment : BaseFragment() {
                     )
                 }
             }
-        //picListXAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        // picListXAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
         pixiVisionAdapter = PixiVisionAdapter(
             R.layout.view_pixivision_item_small,

@@ -19,14 +19,10 @@ class BlockActivity : RinkActivity() {
             .add(R.id.fragmentContainer, BlockTagFragment.newInstance("", "")).commit()
     }
 
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

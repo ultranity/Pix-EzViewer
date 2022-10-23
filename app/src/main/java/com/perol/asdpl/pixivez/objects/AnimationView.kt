@@ -35,7 +35,7 @@ import android.view.SurfaceView
 import java.util.*
 import kotlin.math.max
 
-//Pixiv动图的帧动画解决方案，如果需要拿去用把Copyright带上或者提一下我的id吧，研究了挺久的
+// Pixiv动图的帧动画解决方案，如果需要拿去用把Copyright带上或者提一下我的id吧，研究了挺久的
 class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     private val drawPool: MutableList<String> =
@@ -86,7 +86,6 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
         painterHandler?.post(this)
     }
 
-
     lateinit var onStart: () -> Unit
     lateinit var onEnd: () -> Unit
     fun onStartListener(listener: () -> Unit) {
@@ -100,7 +99,6 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
     override fun surfaceCreated(holder: SurfaceHolder) {
         isSurfaceCreated = true
         needToDraw = true
-
     }
 
     override fun surfaceChanged(
@@ -149,11 +147,11 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
                             delayTime - duration
                         )
                     )
-
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            } else {
+            }
+            else {
                 break
             }
         }
@@ -180,5 +178,4 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
             holder.unlockCanvasAndPost(canvas)
         }
     }
-
 }

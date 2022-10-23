@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -85,7 +84,8 @@ class HelloMMyFragment : BaseFragment() {
         viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 rankingAdapter.addData(it)
-            } else {
+            }
+            else {
                 rankingAdapter.loadMoreFail()
             }
         }
@@ -93,7 +93,8 @@ class HelloMMyFragment : BaseFragment() {
             binding.swiperefreshLayout.isRefreshing = false
             if (it == null) {
                 rankingAdapter.loadMoreFail()
-            } else {
+            }
+            else {
                 rankingAdapter.setNewInstance(it)
                 binding.recyclerview.scrollToPosition(0)
             }
@@ -101,14 +102,16 @@ class HelloMMyFragment : BaseFragment() {
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 rankingAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 rankingAdapter.loadMoreComplete()
             }
         }
         viewmodel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
                 PxEZApp.instance.pre.edit().putBoolean(
-                    "hide_bookmark_item_in_mmy", it
+                    "hide_bookmark_item_in_mmy",
+                    it
                 ).apply()
                 rankingAdapter.filter.hideBookmarked = if (it) 1 else 0
             }
@@ -117,7 +120,6 @@ class HelloMMyFragment : BaseFragment() {
             binding.swiperefreshLayout.isRefreshing = it
         }
     }
-
 
     private var param1: String? = null
     private var param2: String? = null
@@ -132,8 +134,11 @@ class HelloMMyFragment : BaseFragment() {
     }
 
     private lateinit var binding: FragmentHelloMmyBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentHelloMmyBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -153,14 +158,14 @@ class HelloMMyFragment : BaseFragment() {
         )
         binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                2*context.resources.configuration.orientation,
+                2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = rankingAdapter
         }
         binding.swiperefreshLayout.setOnRefreshListener {
-                viewmodel.onRefreshListener(restrict)
-            }
+            viewmodel.onRefreshListener(restrict)
+        }
         rankingAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMoreRequested()
         }
@@ -190,7 +195,7 @@ class HelloMMyFragment : BaseFragment() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        //parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
+        // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
@@ -200,7 +205,8 @@ class HelloMMyFragment : BaseFragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerview.scrollToPosition(0)
                 }
             }

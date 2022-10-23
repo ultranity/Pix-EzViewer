@@ -33,17 +33,14 @@ import com.perol.asdpl.pixivez.networks.RestClient.imageProxySocket
 import okhttp3.OkHttpClient
 import java.io.InputStream
 
-
 class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     private val modelCache = ModelCache<String, GlideUrl>(250)
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<String, InputStream> {
-
-        //添加拦截器到Glide
+        // 添加拦截器到Glide
         val builder = OkHttpClient.Builder().imageProxySocket()
         val okHttpClient = builder.build()
         return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
     }
-
 
     override fun teardown() { /* nothing to free */
     }
@@ -64,8 +61,8 @@ class OkHttpUrlHeaderLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, 
                 "User-Agent",
                 "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
             )
-                .setHeader("referer", "https://app-api.pixiv.net/")
-                .build()
+            .setHeader("referer", "https://app-api.pixiv.net/")
+            .build()
     }
 
     override fun buildLoadData(

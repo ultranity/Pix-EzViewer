@@ -13,5 +13,4 @@ abstract class BlockTagDao {
 
     @Delete
     abstract suspend fun deleteTag(blockTagEntity: BlockTagEntity)
-
 }

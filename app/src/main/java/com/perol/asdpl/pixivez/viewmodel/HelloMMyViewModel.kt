@@ -53,7 +53,6 @@ class HelloMMyViewModel : BaseViewModel() {
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {
             illusts.value = null
-           }, {isRefreshing.value=false}).add()
+        }, { isRefreshing.value = false }).add()
     }
-
 }

@@ -24,7 +24,6 @@
 
 package com.perol.asdpl.pixivez.services
 
-
 import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
@@ -33,13 +32,14 @@ import com.bumptech.glide.module.AppGlideModule
 import com.perol.asdpl.pixivez.networks.HeaderLoaderFactory
 import java.io.InputStream
 
-
 @GlideModule
 class CustomGlideModule : AppGlideModule() {
 
-
-    override fun registerComponents(context: Context, glide: Glide,
-                                    registry: Registry) {
+    override fun registerComponents(
+        context: Context,
+        glide: Glide,
+        registry: Registry
+    ) {
         registry.replace(String::class.java, InputStream::class.java, HeaderLoaderFactory())
     }
 
@@ -47,5 +47,4 @@ class CustomGlideModule : AppGlideModule() {
     override fun isManifestParsingEnabled(): Boolean {
         return false
     }
-
 }

@@ -47,7 +47,6 @@ import com.perol.asdpl.pixivez.viewmodel.UserViewModel
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "keyword"
 
-
 /**
  * A simple [Fragment] subclass.
  * Use the [SearchUsersListFragment.newInstance] factory method to
@@ -71,21 +70,24 @@ class SearchUsersListFragment : LazyFragment() {
         binding.recyclerviewUser.adapter = userShowAdapter
         binding.recyclerviewUser.layoutManager =
             GridLayoutManager(requireContext(), getMaxColumn(400))
-        //FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
+        // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
         //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            if (userViewModel.nextUrl.value != null)
+            if (userViewModel.nextUrl.value != null) {
                 userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
-
+            }
         }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
             val options = if (PxEZApp.animationEnable) {
                 val userImage = view.findViewById<View>(R.id.imageview_usershow)
-                 ActivityOptions.makeSceneTransitionAnimation(
+                ActivityOptions.makeSceneTransitionAnimation(
                     requireActivity(),
                     Pair.create(userImage, "userimage")
                 ).toBundle()
-            } else null
+            }
+            else {
+                null
+            }
             UserMActivity.start(requireContext(), userShowAdapter.data[position].user, options)
         }
     }
@@ -103,7 +105,8 @@ class SearchUsersListFragment : LazyFragment() {
 
     private lateinit var binding: FragmentUserslistBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
@@ -116,14 +119,16 @@ class SearchUsersListFragment : LazyFragment() {
         userViewModel.users.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.setNewInstance(it.user_previews)
-            } else {
+            }
+            else {
                 userShowAdapter.loadMoreModule.loadMoreFail()
             }
         }
         userViewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.loadMoreModule.loadMoreComplete()
-            } else {
+            }
+            else {
                 userShowAdapter.loadMoreModule.loadMoreEnd()
             }
         }

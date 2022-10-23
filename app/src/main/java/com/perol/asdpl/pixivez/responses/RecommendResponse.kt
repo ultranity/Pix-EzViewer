@@ -37,5 +37,5 @@ data class RecommendResponse(
     val contest_exists: Boolean = false,
     val next_url: String,
     val illusts: ArrayList<Illust>,
-    val ranking_illusts: ArrayList<Illust>,
+    val ranking_illusts: ArrayList<Illust>
 ) : Parcelable

@@ -18,7 +18,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
-
 /**
  * Assets Image Getter using AssetManager
  * Load image from assets folder
@@ -36,7 +35,7 @@ class HtmlAssetsImageGetter(context: Context, val folder: String = "") : ImageGe
                 }*/
             val inputStream: InputStream = mContext.assets.open("$folder/$source")
             val d = Drawable.createFromStream(inputStream, null)
-            d!!.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight) //54? 56?
+            d!!.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight) // 54? 56?
             d
         } catch (e: IOException) {
             // prevent a crash if the resource still can't be found
@@ -50,7 +49,7 @@ class HtmlAssetsImageGetter(context: Context, val folder: String = "") : ImageGe
  * Assets Image Getter using Glide for bitmap reuse
  * Load image from assets folder by Uri parsing
  */
-class GlideAssetsImageGetter(textView: TextView, val folder: String = ""):GlideImageGetter(textView){
+class GlideAssetsImageGetter(textView: TextView, val folder: String = "") : GlideImageGetter(textView) {
     override fun getDrawable(source: String): Drawable {
         val drawable = BitmapDrawablePlaceholder()
         container.get()?.apply {
@@ -91,9 +90,9 @@ open class GlideImageGetter(textView: TextView) : ImageGetter {
     }
 
     inner class BitmapDrawablePlaceholder : BitmapDrawable(
-        container.get()?.resources,
-        Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-    ), Target<Bitmap> {
+            container.get()?.resources,
+            Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        ), Target<Bitmap> {
 
         var drawable: Drawable? = null
             set(value) {
@@ -107,7 +106,8 @@ open class GlideImageGetter(textView: TextView) : ImageGetter {
                         val calculatedHeight = maxWidth * drawableHeight / drawableWidth
                         drawable.setBounds(0, 0, maxWidth, calculatedHeight)
                         setBounds(0, 0, maxWidth, calculatedHeight)
-                    } else {
+                    }
+                    else {
                         drawable.setBounds(0, 0, drawableWidth, drawableHeight)
                         setBounds(0, 0, drawableWidth, drawableHeight)
                     }

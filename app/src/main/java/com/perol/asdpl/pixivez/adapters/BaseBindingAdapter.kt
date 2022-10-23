@@ -12,7 +12,7 @@ import com.perol.asdpl.pixivez.adapters.BaseBindingAdapter.BaseVBViewHolder
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 
-//from https://github.com/CymChad/BaseRecyclerViewAdapterHelper/issues/3138
+// from https://github.com/CymChad/BaseRecyclerViewAdapterHelper/issues/3138
 inline fun <reified VB : ViewBinding> Activity.inflate() = lazy {
     inflateBinding<VB>(layoutInflater).apply { setContentView(root) }
 }
@@ -58,7 +58,7 @@ abstract class BaseBindingAdapter<T, VB : ViewBinding>(layoutResId: Int, VBClass
         return binding
     }
 
-    class BaseVBViewHolder<VB:ViewBinding>(bd: VB) : BaseViewHolder(bd.root) {
+    class BaseVBViewHolder<VB : ViewBinding>(bd: VB) : BaseViewHolder(bd.root) {
         var binding: VB = bd
     }
 }

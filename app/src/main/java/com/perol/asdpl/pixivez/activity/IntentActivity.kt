@@ -49,7 +49,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class IntentActivity : RinkActivity() {
-    companion object{
+    companion object {
         fun start(context: Context, string: String) {
             val intent = Intent(context, IntentActivity::class.java)
             intent.data = Uri.parse(string)
@@ -79,7 +79,8 @@ class IntentActivity : RinkActivity() {
                             tryLogin(code)
                             finish()
                             return
-                        } else if (host.contains("users")) {
+                        }
+                        else if (host.contains("users")) {
                             try {
                                 UserMActivity.start(this, segment[0].toLong())
                                 finish()
@@ -87,7 +88,8 @@ class IntentActivity : RinkActivity() {
                             } catch (e: Exception) {
                                 Toasty.error(this, getString(R.string.wrong_id))
                             }
-                        } else if (host.contains("illusts")) {
+                        }
+                        else if (host.contains("illusts")) {
                             try {
                                 PictureActivity.start(this, segment[0].toLong())
                                 finish()
@@ -99,7 +101,7 @@ class IntentActivity : RinkActivity() {
                     }
                 }
                 else if (scheme.contains("pixez")) {
-                    //TODO: add pixez
+                    // TODO: add pixez
                 }
             }
             if (uri.host?.equals("pixiv.me") == true) {
@@ -118,7 +120,7 @@ class IntentActivity : RinkActivity() {
                 }
                 return
             }
-            //en/user/xxxx
+            // en/user/xxxx
             if (segment.size == 2 || segment.size == 3) {
                 if ((segment[segment.size - 2] == "users") or (segment[segment.size - 2] == "u")) {
                     val id = segment[segment.size - 1]
@@ -170,7 +172,6 @@ class IntentActivity : RinkActivity() {
                         Toasty.error(this, getString(R.string.wrong_id))
                     }
                 }
-
             }
         }
     }
@@ -182,11 +183,11 @@ class IntentActivity : RinkActivity() {
         map["grant_type"] = "authorization_code"
         map["code"] = code
         map["code_verifier"] = Pkce.getPkce().verify
-        //map["username"] = username!!
-        //map["password"] = password!!
-        //map["device_token"] = SharedPreferencesServices.getInstance().getString("Device_token") ?: "pixiv"
+        // map["username"] = username!!
+        // map["password"] = password!!
+        // map["device_token"] = SharedPreferencesServices.getInstance().getString("Device_token") ?: "pixiv"
         map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
-        //map["get_secure_url"] = true
+        // map["get_secure_url"] = true
         map["include_policy"] = true
         val oAuthSecureService =
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
@@ -209,15 +210,17 @@ class IntentActivity : RinkActivity() {
                             user.mail_address,
                             user.is_premium,
                             user.profile_image_urls.px_170x170,
-                            code,//pixivOAuthResponse.response.device_token,
+                            code, // pixivOAuthResponse.response.device_token,
                             pixivOAuthResponse.response.refresh_token,
                             "Bearer " + pixivOAuthResponse.response.access_token
                         )
                     )
-                    //sharedPreferencesServices.setBoolean("isnone", false)
-                    //sharedPreferencesServices.setString("username", username)
-                    //sharedPreferencesServices.setString("password", password)
-                    //sharedPreferencesServices.setString("Device_token", pixivOAuthResponse.response.device_token)
+                    // TODO: user_x_restrict
+                    AppDataRepository.pre.setInt("user_x_restrict", user.x_restrict)
+                    // sharedPreferencesServices.setBoolean("isnone", false)
+                    // sharedPreferencesServices.setString("username", username)
+                    // sharedPreferencesServices.setString("password", password)
+                    // sharedPreferencesServices.setString("Device_token", pixivOAuthResponse.response.device_token)
                 }
             }
             .doOnError { e ->
@@ -237,7 +240,8 @@ class IntentActivity : RinkActivity() {
                                 )
                             ) {
                                 getString(R.string.error_invalid_account_password)
-                            } else {
+                            }
+                            else {
                                 getString(R.string.error_unknown) + "\n" + errMsg
                             }
 
@@ -249,8 +253,8 @@ class IntentActivity : RinkActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                     }
-
-                } else {
+                }
+                else {
                     Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
                         .show()
                 }

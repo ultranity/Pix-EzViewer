@@ -15,24 +15,24 @@ import java.io.Serializable
  */
 @Parcelize
 data class DnsQueryResponse(
-        @SerializedName("AD")
-        val aD: Boolean = false,
-        @SerializedName("Answer")
-        val answer: List<Answer> = listOf(),
-        @SerializedName("Authority")
-        val authority: List<Authority> = listOf(),
-        @SerializedName("CD")
-        val cD: Boolean = false,
-        @SerializedName("Question")
-        val question: List<Question> = listOf(),
-        @SerializedName("RA")
-        val rA: Boolean = false,
-        @SerializedName("RD")
-        val rD: Boolean = false,
-        @SerializedName("Status")
-        val status: Int = 0,
-        @SerializedName("TC")
-        val tC: Boolean = false
+    @SerializedName("AD")
+    val aD: Boolean = false,
+    @SerializedName("Answer")
+    val answer: List<Answer> = listOf(),
+    @SerializedName("Authority")
+    val authority: List<Authority> = listOf(),
+    @SerializedName("CD")
+    val cD: Boolean = false,
+    @SerializedName("Question")
+    val question: List<Question> = listOf(),
+    @SerializedName("RA")
+    val rA: Boolean = false,
+    @SerializedName("RD")
+    val rD: Boolean = false,
+    @SerializedName("Status")
+    val status: Int = 0,
+    @SerializedName("TC")
+    val tC: Boolean = false
 ) : Parcelable, Serializable {
 
     /**
@@ -43,26 +43,26 @@ data class DnsQueryResponse(
      */
     @Parcelize
     data class Answer(
-            @SerializedName("data")
-            val data: String = "",
-            @SerializedName("name")
-            val name: String = "",
-            @SerializedName("TTL")
-            val tTL: Int = 0,
-            @SerializedName("type")
-            val type: Int = 0
+        @SerializedName("data")
+        val data: String = "",
+        @SerializedName("name")
+        val name: String = "",
+        @SerializedName("TTL")
+        val tTL: Int = 0,
+        @SerializedName("type")
+        val type: Int = 0
     ) : Parcelable, Serializable
 
     @Parcelize
     data class Authority(
-            @SerializedName("data")
-            val data: String = "",
-            @SerializedName("name")
-            val name: String = "",
-            @SerializedName("TTL")
-            val tTL: Int = 0,
-            @SerializedName("type")
-            val type: Int = 0
+        @SerializedName("data")
+        val data: String = "",
+        @SerializedName("name")
+        val name: String = "",
+        @SerializedName("TTL")
+        val tTL: Int = 0,
+        @SerializedName("type")
+        val type: Int = 0
     ) : Parcelable, Serializable
 
     /**
@@ -71,9 +71,9 @@ data class DnsQueryResponse(
      */
     @Parcelize
     data class Question(
-            @SerializedName("name")
-            val name: String = "",
-            @SerializedName("type")
-            val type: Int = 0
+        @SerializedName("name")
+        val name: String = "",
+        @SerializedName("type")
+        val type: Int = 0
     ) : Parcelable, Serializable
 }

@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.networks
 
-
 import android.util.Log
 import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.objects.LanguageUtil
@@ -46,13 +45,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
     private val httpDns by lazy { RubyHttpDns }
     private val imageDns by lazy { ImageHttpDns }
     val local = LanguageUtil.langToLocale(PxEZApp.language)
-    private val disableProxy by lazy { PxEZApp.instance.pre.getBoolean("disableproxy",false)}
+    private val disableProxy by lazy { PxEZApp.instance.pre.getBoolean("disableproxy", false) }
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(object : Interceptor {
@@ -60,9 +58,9 @@ object RestClient {
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
                     .header("Accept-Language", "${local.language}_${local.country}")
-                    .header("Access-Control-Allow-Origin","*")
+                    .header("Access-Control-Allow-Origin", "*")
                     .header("referer", "https://app-api.pixiv.net/")
-                    //.addHeader("Host", "https://app-api.pixiv.net")
+                // .addHeader("Host", "https://app-api.pixiv.net")
                 val request = requestBuilder.build()
                 return chain.proceed(request)
             }
@@ -92,15 +90,15 @@ object RestClient {
             return builder.build()
         }
 
-
     private val gson = GsonBuilder().create()
-    val retrofitAppApi : Retrofit
-    get() {
-       return buildRetrofit("https://app-api.pixiv.net",okHttpClient("app-api.pixiv.net"))
-    }
-    val gifAppApi = buildRetrofit("https://oauth.secure.pixiv.net",imageHttpClient)
-    //val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
-    //val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
+    val retrofitAppApi: Retrofit
+        get() {
+            return buildRetrofit("https://app-api.pixiv.net", okHttpClient("app-api.pixiv.net"))
+        }
+    val gifAppApi = buildRetrofit("https://oauth.secure.pixiv.net", imageHttpClient)
+
+    // val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
+    // val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
     val retrofitOauthSecure = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
     val retrofitOauthSecureDirect = buildRetrofit(
         "https://oauth.secure.pixiv.net",
@@ -123,14 +121,13 @@ object RestClient {
                 sb.append(hexString)
             }
             return sb.toString()
-
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
         }
         return ""
     }
 
-    private fun okHttpClient(host:String, disableProxy:Boolean=false): OkHttpClient {
+    private fun okHttpClient(host: String, disableProxy: Boolean = false): OkHttpClient {
         /*val httpLoggingInterceptor =
             HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
@@ -142,38 +139,40 @@ object RestClient {
             }*/
         val builder = OkHttpClient.Builder()
         builder.apply {
-            addInterceptor(Interceptor { chain ->
-                val ISO8601DATETIMEFORMAT =
-                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
-                val isoDate = ISO8601DATETIMEFORMAT.format(Date())
-                val original = chain.request()
-                var Authorization =""
-                try {
-                    Authorization = AppDataRepository.currentUser.Authorization
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Log.d("OkHttpClient", "get Authorization failed")
+            addInterceptor(
+                Interceptor { chain ->
+                    val ISO8601DATETIMEFORMAT =
+                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
+                    val isoDate = ISO8601DATETIMEFORMAT.format(Date())
+                    val original = chain.request()
+                    var Authorization = ""
+                    try {
+                        Authorization = AppDataRepository.currentUser.Authorization
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("OkHttpClient", "get Authorization failed")
+                    }
+                    Log.d("OkHttpClient", "Request $Authorization and original ${original.header("Authorization")}")
+                    val requestBuilder = original.newBuilder()
+                        .removeHeader("User-Agent")
+                        .addHeader(
+                            "User-Agent",
+                            "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
+                        )
+                        .addHeader("Accept-Language", "${local.language}_${local.country}")
+                        .header("Authorization", Authorization)
+                        .addHeader("App-OS", "Android")
+                        .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
+                        .header("App-Version", "5.0.234")
+                        .addHeader("X-Client-Time", isoDate)
+                        .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
+                        .addHeader("Host", host)
+                    val request = requestBuilder.build()
+                    chain.proceed(request)
                 }
-                Log.d("OkHttpClient","Request $Authorization and original ${original.header("Authorization")}")
-                val requestBuilder = original.newBuilder()
-                    .removeHeader("User-Agent")
-                    .addHeader(
-                        "User-Agent",
-                        "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                    )
-                    .addHeader("Accept-Language", "${local.language}_${local.country}")
-                    .header("Authorization", Authorization)
-                    .addHeader("App-OS", "Android")
-                    .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
-                    .header("App-Version", "5.0.234")
-                    .addHeader("X-Client-Time", isoDate)
-                    .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
-                    .addHeader("Host", host)
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            })
-            //addInterceptor(httpLoggingInterceptor)
-            if(!disableProxy){
+            )
+            // addInterceptor(httpLoggingInterceptor)
+            if (!disableProxy) {
                 apiProxySocket()
             }
             connectTimeout(10, TimeUnit.SECONDS)
@@ -185,15 +184,16 @@ object RestClient {
 
     private fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
     fun OkHttpClient.Builder.imageProxySocket() = apply {
-        if (Works.mirrorLinkView)
+        if (Works.mirrorLinkView) {
             addInterceptor {
                 val original = it.request()
                 val requestBuilder = original.newBuilder()
                 val mirror = Works.mirrorLinkView(original.url.toString())
                 requestBuilder.url(mirror)
-                //Log.d("mirrorLinkView","Request ${original.url} to $mirror")
+                // Log.d("mirrorLinkView","Request ${original.url} to $mirror")
                 it.proceed(requestBuilder.build())
             }
+        }
         proxySocket(imageDns)
     }
     private fun OkHttpClient.Builder.proxySocket(dns: Dns = apiDns): OkHttpClient.Builder {
@@ -205,8 +205,8 @@ object RestClient {
         return this
     }
 
-    private fun buildRetrofit(baseUrl:String, client: OkHttpClient)
-            = retrofit { baseUrl(baseUrl).client(client) }
+    private fun buildRetrofit(baseUrl: String, client: OkHttpClient) =
+        retrofit { baseUrl(baseUrl).client(client) }
 
     private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
         return Retrofit.Builder().apply(block)

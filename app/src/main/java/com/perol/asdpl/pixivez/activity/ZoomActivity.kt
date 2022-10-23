@@ -42,7 +42,8 @@ class ZoomActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityZoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -50,7 +51,8 @@ class ZoomActivity : RinkActivity() {
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 // Hide the nav bar and status bar
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+            )
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -61,10 +63,12 @@ class ZoomActivity : RinkActivity() {
         val num = bundle.getInt("num", 0)
         val zoomPagerAdapter = ZoomPagerAdapter(this, illust)
         val size =
-            if (illust.meta_pages.isEmpty())
+            if (illust.meta_pages.isEmpty()) {
                 1
-            else
+            }
+            else {
                 illust.meta_pages.size
+            }
         binding.textviewZoom.text = getString(R.string.fractional, 1, size)
         binding.viewpageZoom.adapter = zoomPagerAdapter
         binding.viewpageZoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -73,7 +77,6 @@ class ZoomActivity : RinkActivity() {
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-
             }
 
             override fun onPageSelected(position: Int) {
@@ -82,7 +85,6 @@ class ZoomActivity : RinkActivity() {
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-
             }
         })
         binding.viewpageZoom.currentItem = num
@@ -94,5 +96,4 @@ class ZoomActivity : RinkActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

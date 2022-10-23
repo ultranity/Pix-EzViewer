@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-abstract class BaseFragment: Fragment() {
+abstract class BaseFragment : Fragment() {
     var isR18on = false
     var blockTags = emptyList<String>()
     var isLoaded = false
@@ -57,7 +57,6 @@ abstract class BaseFragment: Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: AdapterRefreshEvent) {
-
     }
 
     lateinit var blockViewModel: BlockViewModel
@@ -78,7 +77,4 @@ abstract class BaseFragment: Fragment() {
             e.printStackTrace()
         }
     }
-
-
 }
-

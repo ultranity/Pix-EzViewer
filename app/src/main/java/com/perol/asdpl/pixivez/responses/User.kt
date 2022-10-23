@@ -40,7 +40,7 @@ data class User(
     val account: String,
     val profile_image_urls: ProfileImageUrls,
     var comment: String = "",
-    var is_followed: Boolean,
+    var is_followed: Boolean
 ) : java.io.Serializable
 
 /**

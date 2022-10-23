@@ -74,10 +74,12 @@ class ThemeActivity : RinkActivity() {
 
             findPreference<Preference>("theme")?.apply {
                 summary =
-                    items[PxEZApp.instance.pre.getInt(
-                        "colorint",
-                        0
-                    )].title
+                    items[
+                        PxEZApp.instance.pre.getInt(
+                            "colorint",
+                            0
+                        )
+                    ].title
                 onPreferenceClickListener =
                     Preference.OnPreferenceClickListener {
                         MaterialDialog(
@@ -178,7 +180,6 @@ class ThemeActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-
         }
         return super.onOptionsItemSelected(item)
     }

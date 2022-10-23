@@ -50,13 +50,13 @@ class IllustratorViewModel : BaseViewModel() {
             retrofitRepository.getUserFollowing(user_id, restrict).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nextUrl.value = it.next_url
-            }, {}, {isRefreshing.value = false}).add()
-        } else {
+            }, {}, { isRefreshing.value = false }).add()
+        }
+        else {
             retrofitRepository.getUserFollower(user_id).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nextUrl.value = it.next_url
-            }, {}, {isRefreshing.value = false}).add()
+            }, {}, { isRefreshing.value = false }).add()
         }
     }
-
 }

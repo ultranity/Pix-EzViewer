@@ -13,9 +13,10 @@ import android.content.Context
  */
 object ClipBoardUtil {
     private lateinit var mApplication: Application
-    fun init( application: Application){
+    fun init(application: Application) {
         mApplication = application
     }
+
     @JvmOverloads
     fun putTextIntoClipboard(context: Context, text: String, showHint: Boolean = true) {
         val clipboardManager =

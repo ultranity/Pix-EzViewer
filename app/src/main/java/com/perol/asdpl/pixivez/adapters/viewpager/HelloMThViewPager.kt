@@ -39,14 +39,14 @@ class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager
     ) {
 
     override fun getPageTitle(position: Int): CharSequence =
-            when (position) {
-                0 -> {
-                    fragment.getString(R.string.new1)
-                }
-                else -> {
-                    fragment.getString(R.string.painter)
-                }
+        when (position) {
+            0 -> {
+                fragment.getString(R.string.new1)
             }
+            else -> {
+                fragment.getString(R.string.painter)
+            }
+        }
 
     override fun getItem(position: Int) = when (position) {
         0 -> {
@@ -55,9 +55,7 @@ class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager
         else -> {
             IllustratorFragment.newInstance(userid, true)
         }
-
     }
 
     override fun getCount() = 2
-
 }

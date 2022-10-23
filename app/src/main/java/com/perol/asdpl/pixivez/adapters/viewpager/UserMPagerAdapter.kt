@@ -37,13 +37,16 @@ import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
 class UserMPagerAdapter(
     var activity: Activity,
     fm: FragmentManager,
-    var userid: Long,
+    var userid: Long
 ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItemPosition(`object`: Any): Int {
         return if (`object`.javaClass.name == "com.perol.asdpl.pixivez.fragments.User.UserIllustFragment") {
             POSITION_NONE
-        } else super.getItemPosition(`object`)
+        }
+        else {
+            super.getItemPosition(`object`)
+        }
     }
 
     override fun getItem(position: Int) = when (position) {

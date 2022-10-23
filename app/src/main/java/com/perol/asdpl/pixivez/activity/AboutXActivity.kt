@@ -31,7 +31,7 @@ import com.perol.asdpl.pixivez.databinding.ActivityAboutXBinding
 
 class AboutXActivity : RinkActivity() {
 
-private lateinit var binding: ActivityAboutXBinding
+    private lateinit var binding: ActivityAboutXBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAboutXBinding.inflate(layoutInflater)
@@ -43,7 +43,6 @@ private lateinit var binding: ActivityAboutXBinding
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-
         }
         return super.onOptionsItemSelected(item)
     }

@@ -52,7 +52,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 // simple Adapter for image item with user imageView and heart icon
-//TODO: rename
+// TODO: rename
 class PicListXUserAdapter(
     layoutResId: Int,
     data: List<Illust>?,
@@ -61,10 +61,10 @@ class PicListXUserAdapter(
     PicListXAdapter(layoutResId, data, filter), LoadMoreModule {
 
     override fun viewPics(view: View, position: Int) {
-        //super.viewPics(view, position)
+        // super.viewPics(view, position)
         val bundle = Bundle()
-        DataHolder.setIllustsList(this.data.subList(max(position-30,0), min(this.data.size,max(position-30,0)+60)))
-        bundle.putInt("position",position - max(position-30,0))
+        DataHolder.setIllustsList(this.data.subList(max(position - 30, 0), min(this.data.size, max(position - 30, 0) + 60)))
+        bundle.putInt("position", position - max(position - 30, 0))
         bundle.putLong("illustid", this.data[position].id)
         val intent = Intent(context, PictureActivity::class.java)
         intent.putExtras(bundle)
@@ -73,7 +73,7 @@ class PicListXUserAdapter(
             val userImage = view.findViewById<View>(R.id.imageview_user)
 
             val options =
-                if (this.data[position].meta_pages.size>1)
+                if (this.data[position].meta_pages.size > 1) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         context as Activity,
                         Pair.create(
@@ -81,33 +81,38 @@ class PicListXUserAdapter(
                             "mainimage"
                         )
                     )
-                else
+                }
+                else {
                     ActivityOptions.makeSceneTransitionAnimation(
                         context as Activity,
                         Pair.create(mainimage, "mainimage"),
                         Pair.create(userImage, "userimage")
                     )
+                }
             ContextCompat.startActivity(context, intent, options.toBundle())
-        } else
+        }
+        else {
             ContextCompat.startActivity(context, intent, null)
-
+        }
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {
-        (getViewByAdapterPosition(
-            position,
-            R.id.imageview_user
-        ) as NiceImageView?)?.let { setUIFollow(status, it) }
+        (
+            getViewByAdapterPosition(
+                position,
+                R.id.imageview_user
+            ) as NiceImageView?
+            )?.let { setUIFollow(status, it) }
     }
 
     override fun setUIFollow(status: Boolean, view: View) {
         val user = view as NiceImageView
-        if (status){
-            //user.alpha = 0.9F
+        if (status) {
+            // user.alpha = 0.9F
             user.setBorderColor(badgeTextColor) // Color.YELLOW
         }
         else {
-            //user.alpha = 0.5F
+            // user.alpha = 0.5F
             user.setBorderColor(colorPrimary)
         }
     }
@@ -115,7 +120,6 @@ class PicListXUserAdapter(
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
         convertUser(holder, item)
-
     }
 
     private fun convertUser(
@@ -135,20 +139,23 @@ class PicListXUserAdapter(
                     Pair.create(imageViewUser, "userimage")
                 )
                 context.startActivity(intent, options.toBundle())
-            } else
+            }
+            else {
                 context.startActivity(intent)
+            }
         }
         imageViewUser.setOnLongClickListener {
             val id = item.user.id
             if (!item.user.is_followed) {
                 InteractionUtil.follow(item) {
                     imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
-                    //imageViewUser.alpha = 0.9F
+                    // imageViewUser.alpha = 0.9F
                 }
-            } else {
+            }
+            else {
                 InteractionUtil.unfollow(item) {
                     imageViewUser.setBorderColor(colorPrimary)
-                    //imageViewUser.alpha = 0.5F
+                    // imageViewUser.alpha = 0.5F
                 }
             }
             true
@@ -168,7 +175,6 @@ class PicListXUserAdapter(
                 ) {
                     if (item.user.profile_image_urls.medium === imageViewUser.getTag(R.id.tag_first)) {
                         super.onResourceReady(resource, transition)
-
                     }
                 }
             })

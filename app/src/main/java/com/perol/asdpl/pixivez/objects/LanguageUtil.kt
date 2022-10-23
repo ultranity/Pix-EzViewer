@@ -22,7 +22,8 @@ object LanguageUtil {
             LocaleList.setDefault(localeList)
             configuration.setLocales(localeList)
             context.createConfigurationContext(configuration)
-        } else {
+        }
+        else {
             configuration.setLocale(newLocale)
             context.createConfigurationContext(configuration)
         }
@@ -50,7 +51,8 @@ object LanguageUtil {
     fun getLang(): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Resources.getSystem().configuration.locales.get(0).language
-        } else {
+        }
+        else {
             Resources.getSystem().configuration.locale.language
         }
     }
@@ -60,7 +62,8 @@ object LanguageUtil {
             Language.SYSTEM -> {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Resources.getSystem().configuration.locales[0]
-                } else {
+                }
+                else {
                     Resources.getSystem().configuration.locale
                 }
             }
@@ -88,7 +91,7 @@ object LanguageUtil {
             const val ENGLISH = 1 // 英语
             const val SIMPLIFIED_CHINESE = 0 // 简体中文
             const val TRADITIONAL_CHINESE = 2 // 繁体中文
-            const val JAPANESE = 3//日语
+            const val JAPANESE = 3 // 日语
         }
     }
 }

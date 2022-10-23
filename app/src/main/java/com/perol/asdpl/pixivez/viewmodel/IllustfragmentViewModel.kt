@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
@@ -79,7 +78,8 @@ class IllustfragmentViewModel : BaseViewModel() {
         }
         if (isPreview) {
             setPreview(word, sortT[sort.value!!], searchTargetT[searchTarget.value!!], null)
-        } else
+        } 
+        else {
             retrofitRepository.getSearchIllust(
                 word,
                 sortT[sort.value!!],
@@ -89,20 +89,25 @@ class IllustfragmentViewModel : BaseViewModel() {
                 null
             )
                 .subscribe({
-                    illusts.value = if(sort.value== 2) ArrayList(it.illusts.apply{sortByDescending{ it.total_bookmarks }})
-                                    else  ArrayList(it.illusts)
+                    illusts.value = if (sort.value == 2) {
+                        ArrayList(it.illusts.apply { sortByDescending { it.total_bookmarks } })
+                    }
+                    else {
+                        ArrayList(it.illusts)
+                    }
                     nextUrl.value = it.next_url
                     isRefresh.value = false
                 }, {
                     it.printStackTrace()
                 }, {}).add()
+        }
     }
 
     fun onLoadMoreListen() {
         if (nextUrl.value != null) {
             retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
                 if (sort.value == 2) {
-                    it.illusts.sortByDescending { it.total_bookmarks } //in-place sort
+                    it.illusts.sortByDescending { it.total_bookmarks } // in-place sort
                 }
                 addIllusts.value = it.illusts
                 nextUrl.value = it.next_url
@@ -110,9 +115,5 @@ class IllustfragmentViewModel : BaseViewModel() {
                 addIllusts.value = null
             }, {}).add()
         }
-
     }
-
-
 }
-

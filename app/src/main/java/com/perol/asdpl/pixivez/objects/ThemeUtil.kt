@@ -44,13 +44,14 @@ class ThemeUtil {
             R.style.AppThemeBase_green,
             R.style.AppThemeBase_indigo,
             R.style.AppThemeBase_red,
-            R.style.AppThemeBase_now,
+            R.style.AppThemeBase_now
         )
-        var colorPrimary:Int?=null
-        var badgeTextColor:Int = R.color.yellow
+        var colorPrimary: Int? = null
+        var badgeTextColor: Int = R.color.yellow
 
         const val halftrans = 0x089a9a9a
         const val transparent = 0x00000000
+
         /**
          * Returns a color associated with a particular attr ID
          * <p>
@@ -64,7 +65,7 @@ class ThemeUtil {
          * @throws android.content.res.Resources.NotFoundException if the given ID
          *         does not exist.
          */
-        fun getColor(context: Context, attrId:Int): Int {
+        fun getColor(context: Context, attrId: Int): Int {
             val typedValue = TypedValue()
             context.theme.resolveAttribute(attrId, typedValue, true)
             return ContextCompat.getColor(context, typedValue.resourceId)
@@ -74,10 +75,10 @@ class ThemeUtil {
         fun themeInit(activity: AppCompatActivity) {
             activity.apply {
                 var intColor = PxEZApp.instance.pre.getInt("colorint", 0)
-                if (intColor >= themeArray.size)
+                if (intColor >= themeArray.size) {
                     intColor = 0
+                }
                 setTheme(themeArray[intColor])
-
             }
 //            Colorful().apply(activity)
             //  activity.window.statusBarColor = Colorful().getPrimaryColor().getColorPack().normal().asInt()

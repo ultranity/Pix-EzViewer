@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments
 
-
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -60,7 +59,6 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_ILLUSTID = "param1"
@@ -80,10 +78,12 @@ class PictureXFragment : BaseFragment() {
     override fun loadData() {
 //        val item = activity?.intent?.extras
 //        val illust = item?.getParcelable<Illust>(param1.toString())
-        if (param2 != null)
+        if (param2 != null) {
             pictureXViewModel.firstGet(param2!!)
-        else
+        }
+        else {
             pictureXViewModel.firstGet(param1!!)
+        }
     }
 
     override fun onDestroy() {
@@ -92,11 +92,10 @@ class PictureXFragment : BaseFragment() {
         pictureXAdapter?.setBookmarkedUserListen { }
         pictureXAdapter?.setUserPicLongClick { }
         super.onDestroy()
-
     }
 
     override fun onResume() {
-        isLoaded = pictureXViewModel.illustDetail.value!=null
+        isLoaded = pictureXViewModel.illustDetail.value != null
         super.onResume()
         pictureXAdapter?.imageViewGif?.startPlay()
     }
@@ -104,7 +103,6 @@ class PictureXFragment : BaseFragment() {
     override fun onPause() {
         pictureXAdapter?.imageViewGif?.pausePlay()
         super.onPause()
-
     }
 
     private var pictureXAdapter: PictureXAdapter? = null
@@ -158,14 +156,13 @@ class PictureXFragment : BaseFragment() {
                                 )
                             }
                             pictureXViewModel.getRelative(param1!!)
-
                         }
                         it.setViewCommentListen {
                             val commentDialog =
                                 CommentDialog.newInstance(pictureXViewModel.illustDetail.value!!.id)
                             commentDialog.show(childFragmentManager)
                         }
-                        it.setBookmarkedUserListen  {
+                        it.setBookmarkedUserListen {
                             val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
                             val bundle = Bundle()
                             bundle.putLong("illust_id", pictureXViewModel.illustDetail.value!!.id)
@@ -178,9 +175,10 @@ class PictureXFragment : BaseFragment() {
                     }
 
                 binding.recyclerview.adapter = pictureXAdapter
-                if (it.user.is_followed)
+                if (it.user.is_followed) {
                     binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
-                //else
+                }
+                // else
                 //    binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
                 binding.imageViewUserPicX.setOnLongClickListener {
                     pictureXViewModel.likeUser()
@@ -192,15 +190,21 @@ class PictureXFragment : BaseFragment() {
                             context as Activity,
                             Pair.create(binding.imageViewUserPicX, "userimage")
                         ).toBundle()
-                    } else null
+                    } 
+                    else {
+                        null
+                    }
                     UserMActivity.start(requireContext(), it.user, options)
                 }
                 binding.fab.show()
-            } else {
-                if (parentFragmentManager.backStackEntryCount <= 1)
+            }
+            else {
+                if (parentFragmentManager.backStackEntryCount <= 1) {
                     activity?.finish()
-                else
+                }
+                else {
                     parentFragmentManager.popBackStack()
+                }
             }
         }
         pictureXViewModel.relatedPics.observe(viewLifecycleOwner) {
@@ -212,18 +216,23 @@ class PictureXFragment : BaseFragment() {
             if (it != null) {
                 if (it) {
                     GlideApp.with(this).load(R.drawable.heart_red).into(binding.fab)
-                } else {
+                }
+                else {
                     GlideApp.with(this).load(R.drawable.ic_action_heart).into(binding.fab)
                 }
-
             }
         }
         pictureXViewModel.followUser.observe(viewLifecycleOwner) {
             binding.imageViewUserPicX.setBorderColor(
-                if (it) Color.YELLOW else ThemeUtil.getColor(
-                    requireContext(),
-                    androidx.appcompat.R.attr.colorPrimary
-                )
+                if (it) {
+                    Color.YELLOW
+                }
+                else {
+                    ThemeUtil.getColor(
+                        requireContext(),
+                        androidx.appcompat.R.attr.colorPrimary
+                    )
+                }
             )
             pictureXAdapter?.setUserPicColor(it)
         }
@@ -231,7 +240,6 @@ class PictureXFragment : BaseFragment() {
             pictureXAdapter?.setProgress(it)
         }
         pictureXViewModel.downloadGifSuccess.observe(viewLifecycleOwner) {
-
             pictureXAdapter?.setProgressComplete(it)
         }
         pictureXAdapter?.notifyDataSetChanged()
@@ -275,14 +283,14 @@ class PictureXFragment : BaseFragment() {
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
                             findLastVisibleItemPosition().toString()+" "+position)*/
-                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position -1) {
+                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position - 1) {
                         binding.constraintLayoutFold.visibility = View.INVISIBLE
-                    } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position ) {
+                    }
+                    else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position) {
                         binding.constraintLayoutFold.visibility = View.VISIBLE
                     }
                 }
-
-                }
+            }
         })
     }
 
@@ -297,28 +305,27 @@ class PictureXFragment : BaseFragment() {
 
     lateinit var binding: FragmentPictureXBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        if(! this::binding.isInitialized) {
+        if (!this::binding.isInitialized) {
             binding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
                 lifecycleOwner = this@PictureXFragment
             }
         }
-        position = param2?.meta_pages?.size?: 1
+        position = param2?.meta_pages?.size ?: 1
         return binding.root
     }
 
     var position = 0
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         initView()
     }
-
 
     companion object {
         /**
@@ -331,13 +338,14 @@ class PictureXFragment : BaseFragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long?,param2: Illust?) =
+        fun newInstance(param1: Long?, param2: Illust?) =
             PictureXFragment().apply {
                 arguments = Bundle().apply {
                     if (param2 != null) {
                         putParcelable(ARG_ILLUSTOBJ, param2)
                         putLong(ARG_ILLUSTID, param2.id)
-                    } else {
+                    }
+                    else {
                         putLong(ARG_ILLUSTID, param1!!)
                     }
 /*                    putParcelable("illust", illust)*/

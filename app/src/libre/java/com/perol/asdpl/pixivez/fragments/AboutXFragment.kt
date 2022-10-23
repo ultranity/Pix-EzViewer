@@ -31,10 +31,9 @@ import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.mikepenz.aboutlibraries.LibsBuilder
-//import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+// import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
-
 
 class AboutXFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -56,7 +55,6 @@ class AboutXFragment : PreferenceFragmentCompat() {
                 val uri = Uri.parse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
-
             }
             "about_feedback_qq" -> {
                 val url = "https://jq.qq.com/?_wv=1027&k=524mCLy"

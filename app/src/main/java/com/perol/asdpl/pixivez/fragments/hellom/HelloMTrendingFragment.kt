@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -41,11 +40,9 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
 import java.util.*
 
-
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
-
 
 /**
  * A simple [Fragment] subclass.
@@ -55,17 +52,14 @@ private const val ARG_PARAM1 = "param1"
  */
 class HelloMTrendingFragment : LazyFragment() {
     override fun loadData() {
-
     }
 
-
     private val modelist = arrayOf(
-        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18"
-        , "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
+        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
-    private val titles by lazy {resources.getStringArray(R.array.modellist)}
+    private val titles by lazy { resources.getStringArray(R.array.modellist) }
     private fun initView() {
-        //viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
+        // viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
             ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
@@ -89,12 +83,14 @@ class HelloMTrendingFragment : LazyFragment() {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 childFragmentManager.beginTransaction().remove(childFragmentManager.fragments[0])
-                    .add(R.id.content_view,
-                        RankingMFragment.newInstance(modelist[tab.position], tab.position))
+                    .add(
+                        R.id.content_view,
+                        RankingMFragment.newInstance(modelist[tab.position], tab.position)
+                    )
                     .commit()
             }
         })
-        //tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
+        // tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
 /*        TabLayoutMediator(tablayout_rankingm, viewpage_rankingm) { tab, position ->
             tab.text = resources.getStringArray(R.array.modellist)[position]
             viewpage_rankingm.setCurrentItem(tab.position, true)
@@ -113,13 +109,13 @@ class HelloMTrendingFragment : LazyFragment() {
                             val monthR = month1 + 1
                             picDateShare.value = if ("$year1-$monthR-$day1" == dateNow) {
                                 null
-                            } else {
+                            }
+                            else {
                                 "$year1-$monthR-$day1"
                             }
                             year.value = year1
                             month.value = month1
                             day.value = day1
-
                         },
                         year.value!!,
                         month.value!!,
@@ -136,7 +132,6 @@ class HelloMTrendingFragment : LazyFragment() {
         }
     }
 
-
     private var param1: String? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -152,13 +147,13 @@ class HelloMTrendingFragment : LazyFragment() {
 
     private lateinit var binding: FragmentHelloMdynamicsBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHelloMdynamicsBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     companion object {
         /**

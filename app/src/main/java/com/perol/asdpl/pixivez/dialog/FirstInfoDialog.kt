@@ -20,7 +20,7 @@ class FirstInfoDialog : DialogFragment() {
             normalDialog.setNegativeButton(R.string.other) { _, _ ->
                 MaterialDialog(it).show {
                     title(R.string.other)
-                    message(text = getString(R.string.app_features)+getString(R.string.hide_downloaded_summary)+getString(R.string.hide_downloaded_detail)){
+                    message(text = getString(R.string.app_features) + getString(R.string.hide_downloaded_summary) + getString(R.string.hide_downloaded_detail)) {
                         html()
                     }
                     positiveButton(android.R.string.ok) {}

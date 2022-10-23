@@ -64,7 +64,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
-
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Deprecated("Deprecated in Java")
@@ -158,7 +157,8 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 Toast.LENGTH_SHORT
             ).show()
             exitTime = System.currentTimeMillis()
-        } else {
+        }
+        else {
             finish()
         }
     }
@@ -218,60 +218,63 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                         ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
                 }
             }
-
         }
     }
 
     override fun onResume() {
         super.onResume()
-        this.window.decorView.post(Runnable {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            if (!clipboard.hasPrimaryClip())
-                return@Runnable
-            val clipData =  clipboard.primaryClip
-            if (null != clipData && clipData.itemCount > 0) {
-                //for (item in 0 until clipData.itemCount){
-                //    val content = item.text.toString()
-                //}
-                //clipboard.addPrimaryClipChangedListener {
-                val text = clipData.getItemAt(0)?.text ?: return@Runnable
-                var item = Regex("""\d{7,9}""")
-                    .find(text)
-                    ?.value?:Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
-                    .find(text)?.groupValues?.last()?.trim()
-                    ?: return@Runnable
-
-                val pre =PxEZApp.instance.pre
-                if (item==pre.getString("lastclip2",""))
+        this.window.decorView.post(
+            Runnable {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                if (!clipboard.hasPrimaryClip()) {
                     return@Runnable
-                MaterialDialog(this).show {
-                    title(R.string.clipboard_detected)
-                    message(R.string.jumpto)
-                    input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
-                    positiveButton(android.R.string.ok) {
-                        item = getInputField().text.toString()
-                        pre.edit().putString("lastclip2",item).apply()
-                        if((item).toLongOrNull() != null)
-                        {
-                            PictureActivity.start(this@HelloMActivity, item.toLong())
-                        }else{
-                            val bundle = Bundle()
-                            bundle.putString("searchword", item)
-                            bundle.putInt("type", 1)
-                            val intent = Intent(this@HelloMActivity, SearchResultActivity::class.java)
-                            intent.putExtras(bundle)
-                            startActivityForResult(intent, 775)
-                        }
-                    }
-                    neutralButton(R.string.not_this_one){
-                        pre.edit().putString("lastclip2", item).apply()
-                    }
-                    negativeButton(android.R.string.cancel)
                 }
+                val clipData = clipboard.primaryClip
+                if (null != clipData && clipData.itemCount > 0) {
+                    // for (item in 0 until clipData.itemCount){
+                    //    val content = item.text.toString()
+                    // }
+                    // clipboard.addPrimaryClipChangedListener {
+                    val text = clipData.getItemAt(0)?.text ?: return@Runnable
+                    var item = Regex("""\d{7,9}""")
+                        .find(text)
+                        ?.value ?: Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
+                        .find(text)?.groupValues?.last()?.trim()
+                        ?: return@Runnable
 
-                //}
+                    val pre = PxEZApp.instance.pre
+                    if (item == pre.getString("lastclip2", "")) {
+                        return@Runnable
+                    }
+                    MaterialDialog(this).show {
+                        title(R.string.clipboard_detected)
+                        message(R.string.jumpto)
+                        input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
+                        positiveButton(android.R.string.ok) {
+                            item = getInputField().text.toString()
+                            pre.edit().putString("lastclip2", item).apply()
+                            if ((item).toLongOrNull() != null) {
+                                PictureActivity.start(this@HelloMActivity, item.toLong())
+                            }
+                            else {
+                                val bundle = Bundle()
+                                bundle.putString("searchword", item)
+                                bundle.putInt("type", 1)
+                                val intent = Intent(this@HelloMActivity, SearchResultActivity::class.java)
+                                intent.putExtras(bundle)
+                                startActivityForResult(intent, 775)
+                            }
+                        }
+                        neutralButton(R.string.not_this_one) {
+                            pre.edit().putString("lastclip2", item).apply()
+                        }
+                        negativeButton(android.R.string.cancel)
+                    }
+
+                    // }
+                }
             }
-        })
+        )
     }
 
     override fun onStart() {
@@ -288,7 +291,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             if (hasPermission == PackageManager.PERMISSION_GRANTED) {
                 it.remove()
             }
-
         }
         if (list.size == 0) {
             return
@@ -308,7 +310,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     this@HelloMActivity,
                     Pair.create(header.imageView, "userimage")
                 ).toBundle()
-            } else null
+            }
+            else {
+                null
+            }
             UserMActivity.start(this@HelloMActivity, AppDataRepository.currentUser, options)
         }
 
@@ -338,10 +343,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     //    supportFragmentManager.beginTransaction().remove(it).commit()
                     //}
             }
-        } else {
+        }
+        else {
             curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
         }*/
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -358,9 +363,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             }
             else -> super.onOptionsItemSelected(item)
         }
-
     }
-
 
     private fun clean() {
         val normalDialog = MaterialAlertDialogBuilder(this)
@@ -368,7 +371,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         normalDialog.setPositiveButton(
             getString(R.string.ok)
         ) { _, _ ->
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 GlideApp.get(applicationContext).clearDiskCache()
                 deleteDir(applicationContext.cacheDir)
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
@@ -391,5 +394,4 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
         return dir!!.delete()
     }
-
 }

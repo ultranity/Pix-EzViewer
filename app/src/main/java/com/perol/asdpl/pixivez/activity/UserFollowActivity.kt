@@ -56,13 +56,13 @@ class UserFollowActivity : RinkActivity() {
         }
     }
 
-    //TODO: view model
+    // TODO: view model
     private var userShowAdapter: UserShowAdapter? = null
     private var userListAdapter: UserListAdapter? = null
     private var Next_url: String? = null
     private var recyclerviewusersearch: RecyclerView? = null
     private val retrofitRepository = RetrofitRepository.getInstance()
-    private val username: String? = null //TODO: title?
+    private val username: String? = null // TODO: title?
     private var bundle: Bundle? = null
     private var userid: Long = 0
     private var illust_id: Long = 0
@@ -82,17 +82,17 @@ class UserFollowActivity : RinkActivity() {
         binding.spinner.visibility = View.GONE
         binding.recyclerviewUsersearch.layoutManager =
             GridLayoutManager(this, getMaxColumn(400))
-        //FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+        // FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
         //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
 
         bundle = this.intent.extras
-        if(bundle!!.containsKey("illust_id")) {
+        if (bundle!!.containsKey("illust_id")) {
             illust_id = bundle!!.getLong("illust_id")
             supportActionBar!!.setTitle(R.string.bookmark)
             binding.textView8.text = getString(R.string.bookmark)
             initIllustData()
         }
-        else{
+        else {
             userid = bundle!!.getLong("user")
             getFollower = bundle!!.getBoolean("getFollower", false)
             supportActionBar!!.setTitle(R.string.following)
@@ -111,7 +111,10 @@ class UserFollowActivity : RinkActivity() {
     private fun initFollowData() {
         val getUsers = if (getFollower!!) {
             retrofitRepository.getUserFollower(userid)
-        } else retrofitRepository.getUserFollowing(userid, restrict)
+        }
+        else {
+            retrofitRepository.getUserFollowing(userid, restrict)
+        }
         getUsers.subscribe(object : Observer<SearchUserResponse> {
             override fun onSubscribe(d: Disposable) {}
             override fun onNext(searchUserResponse: SearchUserResponse) {
@@ -124,11 +127,12 @@ class UserFollowActivity : RinkActivity() {
                 userShowAdapter!!.loadMoreModule.setOnLoadMoreListener {
                     if (Next_url != null) {
                         retrofitRepository.getNextUser(Next_url!!).subscribe {
-                                Next_url = it.next_url
-                                userShowAdapter!!.addData(it.user_previews)
-                                userShowAdapter!!.loadMoreModule.loadMoreComplete()
-                            }.add()
-                    } else {
+                            Next_url = it.next_url
+                            userShowAdapter!!.addData(it.user_previews)
+                            userShowAdapter!!.loadMoreModule.loadMoreComplete()
+                        }.add()
+                    }
+                    else {
                         userShowAdapter!!.loadMoreModule.loadMoreEnd()
                     }
                 }
@@ -138,7 +142,10 @@ class UserFollowActivity : RinkActivity() {
                     binding.spinner.onItemSelectedListener =
                         object : AdapterView.OnItemSelectedListener {
                             override fun onItemSelected(
-                                parent: AdapterView<*>, view: View, position: Int, id: Long
+                                parent: AdapterView<*>,
+                                view: View,
+                                position: Int,
+                                id: Long
                             ) {
                                 when (position) {
                                     0 -> {
@@ -155,8 +162,8 @@ class UserFollowActivity : RinkActivity() {
                             override fun onNothingSelected(parent: AdapterView<*>) {
                             }
                         }
-
-                } else {
+                }
+                else {
                     binding.spinner.visibility = View.GONE
                 }
             }
@@ -178,29 +185,30 @@ class UserFollowActivity : RinkActivity() {
 
     private fun initIllustData() {
         retrofitRepository.getIllustBookmarkUsers(illust_id).subscribe({
-                illustData = it
-                Next_url = it.next_url
-                userListAdapter = UserListAdapter(R.layout.view_usershow_item)
-                recyclerviewusersearch!!.adapter = userListAdapter
-                userListAdapter!!.setNewInstance(it.users)
-                userListAdapter!!.loadMoreModule.setOnLoadMoreListener {
-                    if (Next_url == null) {
-                        userListAdapter!!.loadMoreModule.loadMoreEnd()
-                    } else {
-                        //retrofitRepository.getIllustBookmarkUsers(illust_id,
-                        //    Next_url!!.substringAfter("offset=").toInt())
-                        retrofitRepository.getNext<ListUserResponse>(Next_url!!).subscribe({
-                                illustData = it
-                                Next_url = it.next_url
-                                userListAdapter!!.addData(it.users)
-                                userListAdapter!!.loadMoreModule.loadMoreComplete()
-                            }, {
-                                userListAdapter!!.loadMoreModule.loadMoreFail()
-                                it.printStackTrace()
-                            }, {}).add()
-                    }
+            illustData = it
+            Next_url = it.next_url
+            userListAdapter = UserListAdapter(R.layout.view_usershow_item)
+            recyclerviewusersearch!!.adapter = userListAdapter
+            userListAdapter!!.setNewInstance(it.users)
+            userListAdapter!!.loadMoreModule.setOnLoadMoreListener {
+                if (Next_url == null) {
+                    userListAdapter!!.loadMoreModule.loadMoreEnd()
                 }
-            }, {}, {}).add()
+                else {
+                    // retrofitRepository.getIllustBookmarkUsers(illust_id,
+                    //    Next_url!!.substringAfter("offset=").toInt())
+                    retrofitRepository.getNext<ListUserResponse>(Next_url!!).subscribe({
+                        illustData = it
+                        Next_url = it.next_url
+                        userListAdapter!!.addData(it.users)
+                        userListAdapter!!.loadMoreModule.loadMoreComplete()
+                    }, {
+                        userListAdapter!!.loadMoreModule.loadMoreFail()
+                        it.printStackTrace()
+                    }, {}).add()
+                }
+            }
+        }, {}, {}).add()
     }
 
     private fun againrefresh() {
@@ -216,6 +224,5 @@ class UserFollowActivity : RinkActivity() {
                 override fun onError(e: Throwable) {}
                 override fun onComplete() {}
             })
-
     }
 }

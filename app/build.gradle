@@ -25,9 +25,10 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'org.jmailen.kotlinter'
 }
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-parcelize'
 
 //apply plugin: 'AndResGuard'
 if (getGradle().getStartParameter().getTaskRequests()

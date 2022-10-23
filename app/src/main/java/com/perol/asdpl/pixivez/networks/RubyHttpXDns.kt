@@ -46,18 +46,19 @@ object RubyHttpXDns : Dns {
     )
 
     private val defaultApiAddress = listOf(
-        "210.140.131.220", //"210.140.131.208" //app-api.pixiv.net
-        "210.140.131.219",//"oauth.secure.pixiv.net",
-        "210.140.131.219",//"accounts.pixiv.net",
-        "210.140.92.141", //"s.pximg.net"
-        "210.140.92.140",//"i.pximg.net",
-        "210.140.131.145",//"imgaz.pixiv.net",
-        "210.140.170.179",//"sketch.pixiv.net",
-        "210.140.131.223",//"www.pixiv.net",
-        "203.208.41.34",//"www.recaptcha.net",
-        "203.208.40.66"//"www.gstatic.cn"
+        "210.140.131.220", // "210.140.131.208" //app-api.pixiv.net
+        "210.140.131.219", // "oauth.secure.pixiv.net",
+        "210.140.131.219", // "accounts.pixiv.net",
+        "210.140.92.141", // "s.pximg.net"
+        "210.140.92.140", // "i.pximg.net",
+        "210.140.131.145", // "imgaz.pixiv.net",
+        "210.140.170.179", // "sketch.pixiv.net",
+        "210.140.131.223", // "www.pixiv.net",
+        "203.208.41.34", // "www.recaptcha.net",
+        "203.208.40.66" // "www.gstatic.cn"
 
     )
+
     /*
     D/httpdns addressList: {app-api.pixiv.net=[app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, app-api.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199], oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.31.199, /104.18.30.199], accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, accounts.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.30.199, /104.18.31.199], s.pximg.net=[/210.140.92.138, /210.140.92.142, /210.140.92.146, /210.140.92.139, /210.140.92.140, /210.140.92.143, /210.140.92.147, /210.140.92.141, /210.140.92.144, /210.140.92.145], i.pximg.net=[/210.140.92.140, /210.140.92.141, /210.140.92.144, /210.140.92.145, /210.140.92.147, /210.140.92.142, /210.140.92.146, /210.140.92.139, /210.140.92.143, /210.140.92.138], imgaz.pixiv.net=[/210.140.131.147, /210.140.131.144, /210.140.131.153, /210.140.131.145], sketch.pixiv.net=[/210.140.174.37, /210.140.170.179, /210.140.175.130], www.pixiv.net=[www.pixiv.net.cdn.cloudflare.net./104.18.30.199, www.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.31.199, /104.18.30.199]}
 D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/103.228.130.27, app-api.pixiv.net/2001::45ab:ef0b], oauth.secure.pixiv.net=[oauth.secure.pixiv.net/31.13.64.33, oauth.secure.pixiv.net/2001::9a55:661e], accounts.pixiv.net=[accounts.pixiv.net/108.160.163.116, accounts.pixiv.net/2001::453f:b00b], s.pximg.net=[s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.141, s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.143, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.147, s.pximg.net/210.140.92.139], i.pximg.net=[i.pximg.net/108.160.169.186, i.pximg.net/2001::6ca0:a36a], imgaz.pixiv.net=[imgaz.pixiv.net/128.121.146.101, imgaz.pixiv.net/2001::48e8:aa10], sketch.pixiv.net=[sketch.pixiv.net/31.13.66.6, sketch.pixiv.net/2001::7a0a:5504], www.pixiv.net=[www.pixiv.net/31.13.65.1, www.pixiv.net/2001::453f:ba1e]}
@@ -68,13 +69,13 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
     fun dlookup(): List<InetAddress> {
         val addressList = mutableMapOf<String, List<InetAddress>>()
         val addressListX = mutableMapOf<String, List<InetAddress>>()
-        apiAddress.forEach { addressListX[it]= InetAddress.getAllByName(it).asList()}
+        apiAddress.forEach { addressListX[it] = InetAddress.getAllByName(it).asList() }
         Log.d("httpdns", "========================================")
         apiAddress.forEach { k ->
             try {
                 val response = service.queryDns(name = k).blockingSingle()
                 response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
-                    addressList[k]=it
+                    addressList[k] = it
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -88,20 +89,20 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
         }
     }
     override fun lookup(hostname: String): List<InetAddress> {
-        if (!inited){
+        if (!inited) {
             inited = true
-            //Log.d("httpdns init", "========================================")
-            //Log.d("httpdns", dlookup().toString())
-            //Log.d("httpdns", "========================================")
+            // Log.d("httpdns init", "========================================")
+            // Log.d("httpdns", dlookup().toString())
+            // Log.d("httpdns", "========================================")
             apiAddress.forEachIndexed { index, host ->
                 InetAddress.getByName(defaultApiAddress[index]).also {
-                    //addressCache[host]= it
-                    addressCacheX[host]= listOf(it)
+                    // addressCache[host]= it
+                    addressCacheX[host] = listOf(it)
                 }
             }
         }
-        //return if full ip
-        if (hostname.matches("((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex())){
+        // return if full ip
+        if (hostname.matches("((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex())) {
             return listOf(InetAddress.getByName(hostname))
         }
         /*try {
@@ -113,11 +114,12 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
             Log.d("httpdns", "UnknownHostException $e")
 
         }*/
-       //if (addressCache.contains(hostname))
+        // if (addressCache.contains(hostname))
         //    return listOf(addressCache[hostname]!!)
-        if (addressCacheX.contains(hostname))
+        if (addressCacheX.contains(hostname)) {
             return addressCacheX[hostname]!!
-        //if (addressList.isNotEmpty()) return addressList
+        }
+        // if (addressList.isNotEmpty()) return addressList
         Log.d("httpdns", "========================================")
         val addressList = mutableListOf<InetAddress>()
         try {
@@ -130,10 +132,10 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
         }
         Log.d("httpdns", addressList.toString())
         Log.d("httpdns end", "========================================")
-        if (addressList.isNotEmpty()){
+        if (addressList.isNotEmpty()) {
             addressCache[hostname] = addressList[0]
             addressCacheX[hostname] = addressList
         }
-        return  addressList
+        return addressList
     }
 }

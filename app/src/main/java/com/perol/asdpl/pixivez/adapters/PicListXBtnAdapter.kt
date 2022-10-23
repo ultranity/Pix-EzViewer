@@ -37,7 +37,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 
 // simple Adapter for image item with heart icon
-//TODO: rename
+// TODO: rename
 open class PicListXBtnAdapter(
     layoutResId: Int,
     data: List<Illust>?,
@@ -51,9 +51,11 @@ open class PicListXBtnAdapter(
         holder.setText(R.id.title, item.title)
 
         holder.setTextColor(
-            R.id.save, if (FileUtil.isDownloaded(item)) {
+            R.id.save,
+            if (FileUtil.isDownloaded(item)) {
                 badgeTextColor
-            } else {
+            }
+            else {
                 colorPrimary
             }
         )
@@ -63,12 +65,13 @@ open class PicListXBtnAdapter(
                 holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
                 if (!item.is_bookmarked) {
-                    InteractionUtil.like(item, null){
-                            holder.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
-                        }
+                    InteractionUtil.like(item, null) {
+                        holder.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
+                    }
                 }
             }
-        } else {
+        }
+        else {
             holder.getView<MaterialButton>(R.id.save).setOnClickListener {
                 holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
@@ -77,13 +80,13 @@ open class PicListXBtnAdapter(
 
         holder.getView<MaterialButton>(R.id.like).apply {
             setOnClickListener { v ->
-                if (!item.is_bookmarked){
-                    InteractionUtil.like(item, null){
+                if (!item.is_bookmarked) {
+                    InteractionUtil.like(item, null) {
                         setUILike(true, v)
                     }
                 }
                 else {
-                    InteractionUtil.unlike(item){
+                    InteractionUtil.unlike(item) {
                         setUILike(false, v)
                     }
                 }
@@ -93,15 +96,17 @@ open class PicListXBtnAdapter(
     }
 
     override fun setUILike(status: Boolean, position: Int) {
-        (getViewByAdapterPosition(
-            position,
-            R.id.like
-        ) as MaterialButton?)?.let { setUILike(status, it) }
+        (
+            getViewByAdapterPosition(
+                position,
+                R.id.like
+            ) as MaterialButton?
+            )?.let { setUILike(status, it) }
     }
 
     override fun setUILike(status: Boolean, view: View) {
         val like = view as MaterialButton
-        like.setTextColor( if (status) badgeTextColor else colorPrimary )
+        like.setTextColor(if (status) badgeTextColor else colorPrimary)
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {
@@ -113,22 +118,24 @@ open class PicListXBtnAdapter(
     }
 
     override fun setUIDownload(status: Int, position: Int) {
-        (getViewByAdapterPosition(
-            position,
-            R.id.save
-        ) as MaterialButton?)?.let { setUIDownload(status, it) }
+        (
+            getViewByAdapterPosition(
+                position,
+                R.id.save
+            ) as MaterialButton?
+            )?.let { setUIDownload(status, it) }
     }
 
     override fun setUIDownload(status: Int, view: View) {
         val save = view as MaterialButton
         when (status) {
-            0 -> { //not downloaded
+            0 -> { // not downloaded
                 save.setTextColor(colorPrimary)
             }
-            1 -> { //Downloading
+            1 -> { // Downloading
                 save.setTextColor(colorPrimaryDark)
             }
-            2 -> {//Downloaded
+            2 -> { // Downloaded
                 save.setTextColor(badgeTextColor)
             }
         }

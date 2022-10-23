@@ -58,7 +58,8 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
             (delete.parent as ViewGroup).isClickable = false
             delete.isClickable = false
             holder.setImageResource(R.id.imageview_delete, R.drawable.ic_check_black_24dp)
-        } else {
+        }
+        else {
             (delete.parent as ViewGroup).isClickable = true
             delete.isClickable = true
             holder.setImageResource(R.id.imageview_delete, R.drawable.ic_close_black_24dp)

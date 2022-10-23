@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.activity
 
-
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -50,7 +49,8 @@ class SearchRActivity : RinkActivity() {
             android.R.id.home -> {
                 if (searchRActivityFragment.isHidden) {
                     this.finish()
-                } else {
+                }
+                else {
                     supportFragmentManager.beginTransaction().hide(searchRActivityFragment)
                         .show(trendTagFragment).commit()
                 }
@@ -66,7 +66,8 @@ class SearchRActivity : RinkActivity() {
         if (resultCode == Activity.RESULT_OK && data != null) {
             val word = data.getStringExtra("word")
             binding.searchviewSearchm.setQuery(word, false)
-        } else if (intent.extras != null) {
+        }
+        else if (intent.extras != null) {
             finish()
         }
     }
@@ -92,7 +93,8 @@ class SearchRActivity : RinkActivity() {
                 hide(searchRActivityFragment)
             }
             transaction.commit()
-        } else {
+        }
+        else {
             searchRActivityFragment = supportFragmentManager.getFragment(
                 savedInstanceState,
                 "searchRActivityFragment"
@@ -110,7 +112,8 @@ class SearchRActivity : RinkActivity() {
                 if (tab != null) {
                     if (tab.position == 0) {
                         binding.searchviewSearchm.inputType = EditorInfo.TYPE_CLASS_TEXT
-                    } else {
+                    }
+                    else {
                         binding.searchviewSearchm.inputType = EditorInfo.TYPE_CLASS_NUMBER
                     }
                 }
@@ -121,18 +124,17 @@ class SearchRActivity : RinkActivity() {
         binding.searchviewSearchm.onActionViewExpanded()
         binding.searchviewSearchm.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-
-                if (query != null && query.isNotBlank())
+                if (query != null && query.isNotBlank()) {
                     when (binding.tablayoutSearchm.selectedTabPosition) {
                         0 -> {
-
                             trendTagViewModel.addhistory(query)
                             uptopage(query)
                         }
                         1 -> {
                             for (i in query) {
-                                if (!i.isDigit())
+                                if (!i.isDigit()) {
                                     return true
+                                }
                             }
                             val bundle = Bundle()
                             val arrayList = LongArray(1)
@@ -145,12 +147,15 @@ class SearchRActivity : RinkActivity() {
                         }
                         2 -> {
                             for (i in query) {
-                                if (!i.isDigit())
+                                if (!i.isDigit()) {
                                     return true
+                                }
                             }
                             UserMActivity.start(applicationContext, query.toLong())
                         }
-                    } else {
+                    }
+                }
+                else {
                     supportFragmentManager.beginTransaction().hide(searchRActivityFragment)
                         .show(trendTagFragment).commit()
                 }
@@ -162,13 +167,13 @@ class SearchRActivity : RinkActivity() {
                 if (binding.tablayoutSearchm.selectedTabPosition != 0) {
                     return true
                 }
-                if (!newText.isNullOrBlank())
+                if (!newText.isNullOrBlank()) {
                     tagsTextViewModel.onQueryTextChange(newText)
+                }
                 supportFragmentManager.beginTransaction().hide(trendTagFragment)
                     .show(searchRActivityFragment).commit()
                 return true
             }
-
         })
 
         if (intent.extras != null) {
@@ -192,6 +197,5 @@ class SearchRActivity : RinkActivity() {
         val intent = Intent(this, SearchResultActivity::class.java)
         intent.putExtras(bundle)
         startActivityForResult(intent, 775)
-
     }
 }

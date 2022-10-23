@@ -95,13 +95,19 @@ object WebviewDnsInterceptUtil {
             request.url.scheme?.matches(Regex("https?")) == true
         ) {
             getWebResourceFromUrl(request.url)
-        } else null
+        } 
+        else {
+            null
+        }
     }
 
     fun getDnsInterceptUrl(view: WebView?, url: Uri): WebResourceResponse? {
         return if (url.toString().isNotEmpty() && url.scheme != null) {
-            getWebResourceFromUrl(url)//.toString())
-        } else null
+            getWebResourceFromUrl(url) // .toString())
+        } 
+        else {
+            null
+        }
     }
 
     private fun getWebResourceFromUrl(url: Uri): WebResourceResponse? {
@@ -120,8 +126,9 @@ object WebviewDnsInterceptUtil {
             }
         }).httpProxySocket()*/
         Log.d(TAG, "try load url: $url")
-        if (url.toString().contains("recaptcha"))
-            Log.d(TAG,"recaptcha")
+        if (url.toString().contains("recaptcha")) {
+            Log.d(TAG, "recaptcha")
+        }
         try {
             val url = URL(url.toString())
             var response = RestClient.pixivOkHttpClient.newCall(
@@ -148,7 +155,7 @@ object WebviewDnsInterceptUtil {
                 it.responseHeaders["Access-Control-Allow-Origin"] = "*"
             }
         } catch (e: Exception) {
-            //Log.e(TAG, e.printStackTrace().toString())
+            // Log.e(TAG, e.printStackTrace().toString())
             try {
                 val url = URL(url.toString())
                 val response = RestClient.pixivOkHttpClient.newCall(
@@ -169,7 +176,7 @@ object WebviewDnsInterceptUtil {
                     it.responseHeaders["Access-Control-Allow-Origin"] = "*"
                 }
             } catch (e: Exception) {
-                Log.e(TAG,"Load $url failed")
+                Log.e(TAG, "Load $url failed")
                 Log.e(TAG, e.printStackTrace().toString())
                 return null
             }
@@ -204,8 +211,8 @@ object WebviewDnsInterceptUtil {
                 connection.setRequestProperty("Host", oldUrl.host)
                 connection.setRequestProperty("Referer", "https://app-api.pixiv.net/")
                 Log.d(TAG, "ContentType a: " + connection.contentType)
-                //有可能是text/html; charset=utf-8的形式，只需要第一个
-                val type = connection.contentType?.split(";")?.get(0) ?:"text/html"
+                // 有可能是text/html; charset=utf-8的形式，只需要第一个
+                val type = connection.contentType?.split(";")?.get(0) ?: "text/html"
                 return WebResourceResponse(type, "UTF-8", connection.inputStream)
             } catch (e: Exception) {
                 Log.e(TAG, e.printStackTrace().toString())
@@ -260,6 +267,7 @@ object WebviewDnsInterceptUtil {
 class OKWebViewActivity : RinkActivity() {
     private lateinit var binding: ActivityWebViewBinding
     private lateinit var mWebview: WebView
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -270,8 +278,8 @@ class OKWebViewActivity : RinkActivity() {
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"
-        mWebview.loadUrl(intent.getStringExtra("url")!!.replace("/ja/", "/${local}/"))
-        //mWebview.title
+        mWebview.loadUrl(intent.getStringExtra("url")!!.replace("/ja/", "/$local/"))
+        // mWebview.title
         val settings = mWebview.settings
         settings.blockNetworkImage = false
         settings.blockNetworkLoads = false
@@ -280,46 +288,49 @@ class OKWebViewActivity : RinkActivity() {
         settings.databaseEnabled = true
         settings.allowUniversalAccessFromFileURLs = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
-        //settings.setAppCacheEnabled(true)
+        // settings.setAppCacheEnabled(true)
         WebviewDnsInterceptUtil.userAgentString = settings.userAgentString
-        //settings.builtInZoomControls = true
-        //settings.displayZoomControls = false
-        //settings.loadWithOverviewMode = true
-        val isNightMode = ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
-                == Configuration.UI_MODE_NIGHT_YES)
+        // settings.builtInZoomControls = true
+        // settings.displayZoomControls = false
+        // settings.loadWithOverviewMode = true
+        val isNightMode = (
+            (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES
+            )
         /*
         mUiModeManager = (UiModeManager) mContext.getSystemService(Context.UI_MODE_SERVICE);
         if (mUiModeManager.getNightMode() == UiModeManager.MODE_NIGHT_YES)
          */
-        if (isNightMode){
+        if (isNightMode) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 mWebview.settings.forceDark = WebSettings.FORCE_DARK_ON
-            }else {
+            } 
+            else {
                 mWebview.setBackgroundColor(Color.BLACK)
                 injectCSS(mWebview)
             }
         }
-        mWebview.webChromeClient = object: WebChromeClient(){
+        mWebview.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
             }
         }
-        //mWebview.loadData("","text/html","UTF-8")
+        // mWebview.loadData("","text/html","UTF-8")
         mWebview.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest
             ): WebResourceResponse? {
                 Log.d("shouldInterceptRequest", request.url.toString())
-                //no analytics & platform
+                // no analytics & platform
                 if (listOf(
                         "d.pixiv.org",
                         "connect.facebook.net",
                         "platform.twitter.com",
                         "www.google-analytics.com"
                     )
-                        .contains(request.url.host))
-                {
+                    .contains(request.url.host)
+                ) {
                     return WebResourceResponse(
                         "application/javascript",
                         "UTF-8",
@@ -337,20 +348,22 @@ class OKWebViewActivity : RinkActivity() {
                 }*/
                 if ((request.url.host?.contains("pximg.net") == true)
                     or (request.url.host?.contains("pixiv.net") == true)
-                    or (request.url.host?.contains("gstatic") == true))
+                    or (request.url.host?.contains("gstatic") == true)
+                ) {
                     return WebviewDnsInterceptUtil.getDnsInterceptRequest(view, request)
+                }
                 /*if (listOf(
                         "www.recaptcha.net",
                         "www.gstatic.cn"
                     ).contains(request.url.host))*/
-                if ((request.url.host?.contains("recaptcha.net") == true))
-                return WebviewDnsInterceptUtil.getWebResourceFromUrl(request.url.toString())
+                if ((request.url.host?.contains("recaptcha.net") == true)) {
+                    return WebviewDnsInterceptUtil.getWebResourceFromUrl(request.url.toString())
+                }
                 return super.shouldInterceptRequest(view, request)
-
             }
-            //override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            // override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
             //    return false
-            //}
+            // }
 
             override fun shouldOverrideUrlLoading(
                 view: WebView,
@@ -388,7 +401,8 @@ class OKWebViewActivity : RinkActivity() {
                                             return true
                                         }
                                         else if (segment.size == 1 && request.url.toString()
-                                                .contains("/member.php?id=")) {
+                                            .contains("/member.php?id=")
+                                        ) {
                                             request.url.getQueryParameter("id")?.let {
                                                 UserMActivity.start(
                                                     this@OKWebViewActivity,
@@ -403,7 +417,7 @@ class OKWebViewActivity : RinkActivity() {
                             }
                         }
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     Log.e("OverrideUrlLoading", e.printStackTrace().toString())
                 }
                 return false
@@ -476,7 +490,9 @@ class OKWebViewActivity : RinkActivity() {
                     .setMessage(
                         String.format(
                             "Error: %s\nURL: %s\n\nCertificate:\n%s",
-                            errorStr, error.url, certificateToStr(error.certificate)
+                            errorStr,
+                            error.url,
+                            certificateToStr(error.certificate)
                         )
                     )
                     .setPositiveButton(
@@ -497,17 +513,18 @@ class OKWebViewActivity : RinkActivity() {
         }
     }
 
-
     fun injectCSS(webview: WebView) {
         try {
             val css =
-                ("*, :after, :before {background-color: #161a1e !important; color: #61615f !important; border-color: #212a32 !important; background-image:none !important; outline-color: #161a1e !important; z-index: 1 !important} " +
+                (
+                    "*, :after, :before {background-color: #161a1e !important; color: #61615f !important; border-color: #212a32 !important; background-image:none !important; outline-color: #161a1e !important; z-index: 1 !important} " +
                         "svg, img {filter: grayscale(100%) brightness(50%) !important; -webkit-filter: grayscale(100%) brightness(50%) !important} " +
                         "input {background-color: black !important;}" +
                         "select, option, textarea, button, input {color:#aaa !important; background-color: black !important; border:1px solid #212a32 !important}" +
                         "a, a * {text-decoration: none !important; color:#32658b !important}" +
                         "a:visited, a:visited * {color: #783b78 !important}" +
-                        "* {max-width: 100vw !important} pre {white-space: pre-wrap !important}")
+                        "* {max-width: 100vw !important} pre {white-space: pre-wrap !important}"
+                    )
             /*
             String cssDolphin = "*,:before,:after,html *{color:#61615f!important;-webkit-border-image:none!important;border-image:none!important;background:none!important;background-image:none!important;box-shadow:none!important;text-shadow:none!important;border-color:#212a32!important}\n" +
                     "\n" +
@@ -528,8 +545,9 @@ class OKWebViewActivity : RinkActivity() {
                     "html ::-webkit-input-placeholder{color:#4e4e4e!important}\n";
 */
             val styleElementId = "night_mode_style_4398357" // should be unique
-            //if (isNightMode) {
-            val js: String = ("if (document.head) {" +
+            // if (isNightMode) {
+            val js: String = (
+                "if (document.head) {" +
                     "if (!window.night_mode_id_list) night_mode_id_list = new Set();" +
                     "var newset = new Set();" +
                     "   for (var n of document.querySelectorAll(':not(a)')) { " +
@@ -559,7 +577,8 @@ class OKWebViewActivity : RinkActivity() {
                     "   style.type = 'text/css';" +
                     "   style.innerHTML = '" + css + "';" +
                     "   fr.contentDocument.head.appendChild(style);" +
-                    "}")
+                    "}"
+                )
             webview.evaluateJavascript("javascript:(function() {$js})()", null)
             /*if (isDesktopUA) {
                 webview.evaluateJavascript(
@@ -595,12 +614,12 @@ class OKWebViewActivity : RinkActivity() {
             val encoded = Base64.encodeToString(buffer, Base64.NO_WRAP)
             mWebview.loadUrl(
                 "javascript:(function() {" +
-                        "var parent = document.getElementsByTagName('head').item(0);" +
-                        "var style = document.createElement('style');" +
-                        "style.type = 'text/css';" +  // Tell the browser to BASE64-decode the string into your script !!!
-                        "style.innerHTML = window.atob('" + encoded + "');" +
-                        "parent.appendChild(style)" +
-                        "})()"
+                    "var parent = document.getElementsByTagName('head').item(0);" +
+                    "var style = document.createElement('style');" +
+                    "style.type = 'text/css';" + // Tell the browser to BASE64-decode the string into your script !!!
+                    "style.innerHTML = window.atob('" + encoded + "');" +
+                    "parent.appendChild(style)" +
+                    "})()"
             )
         } catch (e: Exception) {
             Log.e("injectCSS", e.printStackTrace().toString())

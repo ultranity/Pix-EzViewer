@@ -49,8 +49,5 @@ class TagsAdapter(
             }
         }
         holder.setText(R.id.textview_tag1, item.name)
-
-
     }
-
 }

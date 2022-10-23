@@ -36,7 +36,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.ThanksAdapter
 
 class ThanksDialog : DialogFragment() {
-    companion object{
+    companion object {
         val array = listOf(
             "**涛",
             "**涵",

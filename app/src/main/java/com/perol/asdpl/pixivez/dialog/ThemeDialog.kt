@@ -37,7 +37,6 @@ class ThemeDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_theme, null)
             val switchMaterial = view.findViewById<SwitchMaterial>(R.id.switchmaterial)
@@ -49,7 +48,8 @@ class ThemeDialog : DialogFragment() {
 //                    }
                     val mode = if (b) {
                         AppCompatDelegate.MODE_NIGHT_YES
-                    } else {
+                    }
+                    else {
                         AppCompatDelegate.MODE_NIGHT_NO
                     }
                     AppCompatDelegate.setDefaultNightMode(mode)
@@ -68,12 +68,11 @@ class ThemeDialog : DialogFragment() {
 //                }
 //            }
             val builder = MaterialAlertDialogBuilder(it)
-                    .setView(view)
+                .setView(view)
             builder.setMessage("Theme")
 
             // Create the AlertDialog object and return it
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
-
 }

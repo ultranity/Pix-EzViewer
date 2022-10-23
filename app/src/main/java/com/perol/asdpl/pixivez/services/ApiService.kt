@@ -6,6 +6,4 @@ import retrofit2.http.GET
 interface ApiService {
     @GET("/v1/user/recommended?filter=for_android")
     suspend fun getUserRecommended(): SearchUserResponse
-
-
 }

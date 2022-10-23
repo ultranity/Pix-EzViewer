@@ -74,13 +74,15 @@ class TagsBookMarkDialog : DialogFragment() {
             }
             pictureXViewModel =
                 ViewModelProvider(requireParentFragment())[PictureXViewModel::class.java]
-            pictureXViewModel.illustDetail.value?.let{
-                tagsAdapter.setNewInstance(it.tags.map {
-                    TagsBean(
-                        is_registered = false,
-                        name = it.toString()
+            pictureXViewModel.illustDetail.value?.let {
+                tagsAdapter.setNewInstance(
+                    it.tags.map {
+                        TagsBean(
+                            is_registered = false,
+                            name = it.toString()
                         )
-                }.toMutableList())
+                    }.toMutableList()
+                )
             }
             pictureXViewModel.tags.observe(this) {
                 tagsAdapter.setNewInstance(it.tags.toMutableList())
@@ -91,16 +93,14 @@ class TagsBookMarkDialog : DialogFragment() {
                 .setNegativeButton(
                     android.R.string.cancel
                 ) { dialog, id ->
-
                 }
                 .setPositiveButton(R.string.bookmark_public) { _, _ ->
-                    //if (pictureXViewModel.tags.value != null)
-                        pictureXViewModel.onDialogClick(false)
+                    // if (pictureXViewModel.tags.value != null)
+                    pictureXViewModel.onDialogClick(false)
                 }
-
                 .setNeutralButton(R.string.bookmark_private) { _, _ ->
-                    //if (pictureXViewModel.tags.value != null)
-                        pictureXViewModel.onDialogClick(true)
+                    // if (pictureXViewModel.tags.value != null)
+                    pictureXViewModel.onDialogClick(true)
                 }
             // Create the AlertDialog object and return it
             builder.create()

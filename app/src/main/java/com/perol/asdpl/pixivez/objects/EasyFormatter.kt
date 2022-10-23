@@ -34,14 +34,17 @@ import javax.xml.transform.stream.StreamSource
 class EasyFormatter private constructor(private val builder: Builder) {
 
     private val indent = "    "
-    private val list = mutableListOf<Any>()// 用于临时存放当前已被解析的类。防止出现循环引用导致栈溢出
+    private val list = mutableListOf<Any>() // 用于临时存放当前已被解析的类。防止出现循环引用导致栈溢出
 
     fun formatWithArgs(message: String, vararg args: Any): String {
         val array = arrayOfNulls<String>(args.size)
         args.forEachIndexed { index, any -> array[index] = format(any) }
         return if (array.filterNotNull().isEmpty()) {
             message
-        } else String.format("$message %s", *array)
+        }
+        else {
+            String.format("$message %s", *array)
+        }
     }
 
     /**
@@ -58,12 +61,14 @@ class EasyFormatter private constructor(private val builder: Builder) {
                 if (index < builder.maxLines - 1) {
                     result.append(value)
                     result.append("\n")
-                } else {
+                }
+                else {
                     result.append(value.trimIndent())
                 }
             }
             result.toString()
-        } else {
+        }
+        else {
             format.toString()
         }
     }
@@ -87,14 +92,19 @@ class EasyFormatter private constructor(private val builder: Builder) {
     }
 
     private fun formatString(data: String): StringBuilder {
-        if (data.startsWith("{")
-            && data.endsWith("}")) {
+        if (data.startsWith("{") &&
+            data.endsWith("}")
+        ) {
             return formatJSONObject(data)
-        } else if (data.startsWith("[")
-            && data.endsWith("]")) {
+        }
+        else if (data.startsWith("[") &&
+            data.endsWith("]")
+        ) {
             return formatJSONArray(data)
-        } else if (data.startsWith("<")
-            && data.endsWith(">")) {
+        }
+        else if (data.startsWith("<") &&
+            data.endsWith(">")
+        ) {
             return formatXML(data)
         }
 
@@ -115,7 +125,8 @@ class EasyFormatter private constructor(private val builder: Builder) {
             val result = StringBuilder()
             if (isFlat.not()) {
                 result.append(output)
-            } else {
+            }
+            else {
                 lines.forEach { result.append(it.trimIndent()) }
             }
             result
@@ -198,11 +209,12 @@ class EasyFormatter private constructor(private val builder: Builder) {
     }
 
     private fun formatOther(any: Any): StringBuilder {
-        val name = any.javaClass.canonicalName?:""
-        if (name.startsWith("android")
-            || name.startsWith("java")
-            || name.startsWith("javax")
-            || name.startsWith("kotlin")) {
+        val name = any.javaClass.canonicalName ?: ""
+        if (name.startsWith("android") ||
+            name.startsWith("java") ||
+            name.startsWith("javax") ||
+            name.startsWith("kotlin")
+        ) {
             // 不对系统提供的类进行格式化
             return StringBuilder(any.toString())
         }
@@ -218,7 +230,6 @@ class EasyFormatter private constructor(private val builder: Builder) {
         return result
     }
 
-
     private fun formatAny(any: Any?): StringBuilder =
         when (any) {
             null -> StringBuilder()
@@ -232,9 +243,11 @@ class EasyFormatter private constructor(private val builder: Builder) {
             else -> checkIfFormatted(any) { return@checkIfFormatted formatOther(any) }
         }
 
-    private fun appendIterator(container: StringBuilder, /*数据存储容器*/
-                               iterator: Iterator<*>,
-                               isFlat: Boolean) {
+    private fun appendIterator(
+        container: StringBuilder, /*数据存储容器*/
+        iterator: Iterator<*>,
+        isFlat: Boolean
+    ) {
         var hasNext = iterator.hasNext()
         while (hasNext) {
             if (!isFlat) {
@@ -247,7 +260,8 @@ class EasyFormatter private constructor(private val builder: Builder) {
                 sub.append(formatAny(next.key))
                     .append(":")
                     .append(formatAny(next.value))
-            } else {
+            }
+            else {
                 sub.append(formatAny(next))
             }
 
@@ -269,7 +283,8 @@ class EasyFormatter private constructor(private val builder: Builder) {
                 if (!isFlat) container.append(indent)
                 container.append(value)
                 if (lines.size > 1) container.append("\n")
-            } else if (value.isNotEmpty()) {
+            }
+            else if (value.isNotEmpty()) {
                 container.append(indent).append(value)
                     .append(if (index == lines.size - 1) "" else "\n")
             }
@@ -277,11 +292,12 @@ class EasyFormatter private constructor(private val builder: Builder) {
     }
 
     private fun scanFields(any: Any, clazz: Class<*>, container: MutableMap<String, Any>) {
-        val name = clazz.canonicalName?:""
-        if (name.startsWith("android")
-            || name.startsWith("java")
-            || name.startsWith("javax")
-            || name.startsWith("kotlin")) {
+        val name = clazz.canonicalName ?: ""
+        if (name.startsWith("android") ||
+            name.startsWith("java") ||
+            name.startsWith("javax") ||
+            name.startsWith("kotlin")
+        ) {
             // 不对系统提供的类进行格式化
             return
         }
@@ -307,7 +323,8 @@ class EasyFormatter private constructor(private val builder: Builder) {
     private fun checkIfFormatted(any: Any, invoke: () -> StringBuilder): StringBuilder {
         return if (list.contains(any)) {
             StringBuilder("{(circle ref):${any.javaClass.simpleName}}")
-        } else {
+        }
+        else {
             list.add(any)
             invoke.invoke()
         }

@@ -33,6 +33,4 @@ class ThanksAdapter(layoutResId: Int, data: List<String>?) :
     override fun convert(holder: BaseViewHolder, item: String) {
         holder.setText(R.id.name, item)
     }
-
-
 }

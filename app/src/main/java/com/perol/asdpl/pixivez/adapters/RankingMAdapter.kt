@@ -37,8 +37,7 @@ class RankingMAdapter(var fragment: Fragment, fragmentManager: FragmentManager) 
         BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
     ) {
     private val modelist = arrayOf(
-        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18"
-        , "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
+        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
 
     override fun getItem(position: Int) = RankingMFragment.newInstance(modelist[position], position)
@@ -48,5 +47,4 @@ class RankingMAdapter(var fragment: Fragment, fragmentManager: FragmentManager) 
         fragment.resources.getStringArray(R.array.modellist)[position]
 /*    override fun getItemCount() = modelist.size
     override fun createFragment(position: Int) = RankingMFragment.newInstance(modelist[position])*/
-
 }

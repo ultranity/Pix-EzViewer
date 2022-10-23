@@ -33,7 +33,7 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
 
-//TODO: reuse
+// TODO: reuse
 class HistoryAdapter(layoutResId: Int) : BaseQuickAdapter<IllustBeanEntity, BaseViewHolder>(layoutResId) {
     override fun convert(holder: BaseViewHolder, item: IllustBeanEntity) {
         val imageView = holder.getView<ImageView>(R.id.item_img)

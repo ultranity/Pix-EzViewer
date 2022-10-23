@@ -74,7 +74,6 @@ class SaucenaoActivity : RinkActivity() {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
             startActivityForResult(intent, IMAGE)
-
         }
         val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
             override fun log(message: String) {
@@ -127,7 +126,7 @@ class SaucenaoActivity : RinkActivity() {
         if (intent != null) {
             val action = intent.action
             val type = intent.type
-            if (action != null && type != null)
+            if (action != null && type != null) {
                 if (action == Intent.ACTION_SEND && type.startsWith("image/")) {
                     val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
 
@@ -191,13 +190,12 @@ class SaucenaoActivity : RinkActivity() {
                                     }
                                 },
                                 {
-                                })
-
-
+                                }
+                            )
                     }
                 }
+            }
         }
-
     }
 
     lateinit var api: SaucenaoService
@@ -236,14 +234,13 @@ class SaucenaoActivity : RinkActivity() {
                     ).toLong()
                     arrayList.add(id)
                 }
-
             }
         }
         val bundle = Bundle()
 
         if (arrayList.isNotEmpty()) {
             val it = arrayList.toLongArray()
-            Toasty.success(this, "id: "+it[0].toString(), Toast.LENGTH_LONG).show()
+            Toasty.success(this, "id: " + it[0].toString(), Toast.LENGTH_LONG).show()
             bundle.putLongArray("illustidlist", it)
             bundle.putLong("illustid", it[0])
             val intent2 = Intent(applicationContext, PictureActivity::class.java)
@@ -257,10 +254,10 @@ class SaucenaoActivity : RinkActivity() {
                     R.drawable.buzhisuocuo
                 )
             ).into(binding.imageview)
-            //prevent CORS
-            binding.webview.loadDataWithBaseURL("https://saucenao.com", string,"text/html","UTF-8","")
+            // prevent CORS
+            binding.webview.loadDataWithBaseURL("https://saucenao.com", string, "text/html", "UTF-8", "")
             binding.webview.settings.blockNetworkImage = false
-            //webview.settings.javaScriptEnabled = true
+            // webview.settings.javaScriptEnabled = true
             binding.webview.settings.userAgentString
             binding.webview.visibility = View.VISIBLE
         }
@@ -269,7 +266,6 @@ class SaucenaoActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-
         }
         return super.onOptionsItemSelected(item)
     }

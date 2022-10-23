@@ -41,65 +41,66 @@ object RubyHttpDns : Dns {
         "accounts.pixiv.net",
         "s.pximg.net",
         "i.pximg.net",
-        "imgaz.pixiv.net", ///210.140.131.144
+        "imgaz.pixiv.net", // /210.140.131.144
         "sketch.pixiv.net",
         "www.pixiv.net"
     )
+
 /* 200-250ms
-D/httpdns addressList: {app-api.pixiv.net=[ ], 
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.31.199 ], 
-s.pximg.net=[/210.140.92.142, /210.140.92.138 ], 
-i.pximg.net=[/210.140.92.144, /210.140.92.139, /210.140.92.142 ], 
-imgaz.pixiv.net=[/210.140.131.153, /210.140.131.147, /210.140.131.144 ], 
-sketch.pixiv.net=[ ], 
+D/httpdns addressList: {app-api.pixiv.net=[ ],
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199 ],
+accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.31.199 ],
+s.pximg.net=[/210.140.92.142, /210.140.92.138 ],
+i.pximg.net=[/210.140.92.144, /210.140.92.139, /210.140.92.142 ],
+imgaz.pixiv.net=[/210.140.131.153, /210.140.131.147, /210.140.131.144 ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[]}
-D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/104.18.30.199 ], 
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.30.199, oauth.secure.pixiv.net/104.18.31.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net/104.18.30.199, accounts.pixiv.net/104.18.31.199 ], 
-s.pximg.net=[s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.147 ], 
-i.pximg.net=[i.pximg.net/210.140.92.138, i.pximg.net/210.140.92.139, i.pximg.net/210.140.92.143, i.pximg.net/210.140.92.147 ], 
-imgaz.pixiv.net=[ ], 
-sketch.pixiv.net=[ ], 
+D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/104.18.30.199 ],
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.30.199, oauth.secure.pixiv.net/104.18.31.199 ],
+accounts.pixiv.net=[accounts.pixiv.net/104.18.30.199, accounts.pixiv.net/104.18.31.199 ],
+s.pximg.net=[s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.147 ],
+i.pximg.net=[i.pximg.net/210.140.92.138, i.pximg.net/210.140.92.139, i.pximg.net/210.140.92.143, i.pximg.net/210.140.92.147 ],
+imgaz.pixiv.net=[ ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[]}
  */
 /* 250-300ms
-D/httpdns addressList: {app-api.pixiv.net=[app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, app-api.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199 ], 
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199, /104.18.30.199 ], 
-s.pximg.net=[/210.140.92.145, /210.140.92.144, /210.140.92.140, /210.140.92.143, /210.140.92.139, /210.140.92.142, /210.140.92.147, /210.140.92.141, /210.140.92.138, /210.140.92.146 ], 
-i.pximg.net=[/210.140.92.140, /210.140.92.147, /210.140.92.145, /210.140.92.143, /210.140.92.139, /210.140.92.144, /210.140.92.141, /210.140.92.138, /210.140.92.142, /210.140.92.146 ], 
-imgaz.pixiv.net=[/210.140.131.147, /210.140.131.144, /210.140.131.153 ], 
-sketch.pixiv.net=[ ], 
+D/httpdns addressList: {app-api.pixiv.net=[app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, app-api.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199 ],
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199, /104.18.31.199 ],
+accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199, /104.18.30.199 ],
+s.pximg.net=[/210.140.92.145, /210.140.92.144, /210.140.92.140, /210.140.92.143, /210.140.92.139, /210.140.92.142, /210.140.92.147, /210.140.92.141, /210.140.92.138, /210.140.92.146 ],
+i.pximg.net=[/210.140.92.140, /210.140.92.147, /210.140.92.145, /210.140.92.143, /210.140.92.139, /210.140.92.144, /210.140.92.141, /210.140.92.138, /210.140.92.142, /210.140.92.146 ],
+imgaz.pixiv.net=[/210.140.131.147, /210.140.131.144, /210.140.131.153 ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[www.pixiv.net.cdn.cloudflare.net./104.18.30.199, www.pixiv.net.cdn.cloudflare.net./104.18.31.199, /104.18.31.199]}
-D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/104.18.31.199 ], 
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.31.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net/104.18.30.199, accounts.pixiv.net/104.18.31.199 ], 
-s.pximg.net=[s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.139, s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.143, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.147 ], 
-i.pximg.net=[i.pximg.net/210.140.92.138, i.pximg.net/210.140.92.140, i.pximg.net/210.140.92.141, i.pximg.net/210.140.92.142, i.pximg.net/210.140.92.143, i.pximg.net/210.140.92.144, i.pximg.net/210.140.92.145, i.pximg.net/210.140.92.146, i.pximg.net/210.140.92.147 ], 
-imgaz.pixiv.net=[imgaz.pixiv.net/210.140.131.144, imgaz.pixiv.net/210.140.131.145, imgaz.pixiv.net/210.140.131.147, imgaz.pixiv.net/210.140.131.153 ], 
-sketch.pixiv.net=[ ], 
+D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/104.18.31.199 ],
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.31.199 ],
+accounts.pixiv.net=[accounts.pixiv.net/104.18.30.199, accounts.pixiv.net/104.18.31.199 ],
+s.pximg.net=[s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.139, s.pximg.net/210.140.92.140, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.143, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.147 ],
+i.pximg.net=[i.pximg.net/210.140.92.138, i.pximg.net/210.140.92.140, i.pximg.net/210.140.92.141, i.pximg.net/210.140.92.142, i.pximg.net/210.140.92.143, i.pximg.net/210.140.92.144, i.pximg.net/210.140.92.145, i.pximg.net/210.140.92.146, i.pximg.net/210.140.92.147 ],
+imgaz.pixiv.net=[imgaz.pixiv.net/210.140.131.144, imgaz.pixiv.net/210.140.131.145, imgaz.pixiv.net/210.140.131.147, imgaz.pixiv.net/210.140.131.153 ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[]}
  */
     /* 300-500ms
 D/httpdns addressList: {
 app-api.pixiv.net=[app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, app-api.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.30.199 ],
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199, /104.18.30.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199 ], 
-s.pximg.net=[/210.140.92.143, /210.140.92.141, /210.140.92.145, /210.140.92.140, /210.140.92.138, /210.140.92.147 ], 
-i.pximg.net=[/210.140.92.146, /210.140.92.138, /210.140.92.144, /210.140.92.147, /210.140.92.139, /210.140.92.140, /210.140.92.145, /210.140.92.143 ], 
-imgaz.pixiv.net=[/210.140.131.144, /210.140.131.153, /210.140.131.145 ], 
-sketch.pixiv.net=[ ], 
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199, /104.18.30.199 ],
+accounts.pixiv.net=[accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199 ],
+s.pximg.net=[/210.140.92.143, /210.140.92.141, /210.140.92.145, /210.140.92.140, /210.140.92.138, /210.140.92.147 ],
+i.pximg.net=[/210.140.92.146, /210.140.92.138, /210.140.92.144, /210.140.92.147, /210.140.92.139, /210.140.92.140, /210.140.92.145, /210.140.92.143 ],
+imgaz.pixiv.net=[/210.140.131.144, /210.140.131.153, /210.140.131.145 ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[www.pixiv.net.cdn.cloudflare.net./104.18.30.199, /104.18.31.199, /104.18.30.199]}
 
 D/httpdns addressListX: {
 app-api.pixiv.net=[app-api.pixiv.net/104.18.30.199, app-api.pixiv.net/104.18.31.199 ],
-oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.30.199, oauth.secure.pixiv.net/104.18.31.199 ], 
-accounts.pixiv.net=[accounts.pixiv.net/104.18.31.199 ], 
-s.pximg.net=[s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.141, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.147, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.139, s.pximg.net/210.140.92.143 ], 
-i.pximg.net=[ ], 
-imgaz.pixiv.net=[imgaz.pixiv.net/210.140.131.144, imgaz.pixiv.net/210.140.131.147, imgaz.pixiv.net/210.140.131.153 ], 
-sketch.pixiv.net=[ ], 
+oauth.secure.pixiv.net=[oauth.secure.pixiv.net/104.18.30.199, oauth.secure.pixiv.net/104.18.31.199 ],
+accounts.pixiv.net=[accounts.pixiv.net/104.18.31.199 ],
+s.pximg.net=[s.pximg.net/210.140.92.146, s.pximg.net/210.140.92.138, s.pximg.net/210.140.92.141, s.pximg.net/210.140.92.142, s.pximg.net/210.140.92.147, s.pximg.net/210.140.92.144, s.pximg.net/210.140.92.145, s.pximg.net/210.140.92.139, s.pximg.net/210.140.92.143 ],
+i.pximg.net=[ ],
+imgaz.pixiv.net=[imgaz.pixiv.net/210.140.131.144, imgaz.pixiv.net/210.140.131.147, imgaz.pixiv.net/210.140.131.153 ],
+sketch.pixiv.net=[ ],
 www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
      */
     var inited = true
@@ -118,7 +119,7 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
                     InetAddress.getAllByName(it.data)
                         .filter { it.isReachable(250) }
                 }.also {
-                    addressList[k]=it
+                    addressList[k] = it
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -132,7 +133,7 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
         }
     }
     override fun lookup(hostname: String): List<InetAddress> {
-        if (!inited){
+        if (!inited) {
             inited = true
             Log.d("httpdns init", "========================================")
             Log.d("httpdns", dlookup().toString())
@@ -140,15 +141,18 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
         }
         val addressList = mutableListOf<InetAddress>()
         InetAddress.getByName(hostname).also {
-            if (it.hostAddress?.equals(hostname) == true)
+            if (it.hostAddress?.equals(hostname) == true) {
                 return listOf(it)
+            }
         }
-        if (addressCache.contains(hostname))
+        if (addressCache.contains(hostname)) {
             return listOf(addressCache[hostname]!!)
-        if (addressCacheX.contains(hostname))
+        }
+        if (addressCacheX.contains(hostname)) {
             return addressCacheX[hostname]!!
-        //if (addressList.isNotEmpty()) return addressList
-        val defaultList = listOf(//app-api.pixiv.net
+        }
+        // if (addressList.isNotEmpty()) return addressList
+        val defaultList = listOf( // app-api.pixiv.net
             "210.140.131.218",
             "210.140.131.188",
             "210.140.131.209",
@@ -161,21 +165,20 @@ www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
         try {
             val response = service.queryDns(name = hostname).blockingSingle()
 
-            response.answer.flatMap { InetAddress.getAllByName(it.data).asList()}
-                .filter { it.isReachable(250) } .also {
-                addressList.addAll(it)
-            }
+            response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }
+                .filter { it.isReachable(250) }.also {
+                    addressList.addAll(it)
+                }
         } catch (e: Exception) {
-
         }
-        //if (addressList.isEmpty())
-            addressList.addAll(defaultList)
+        // if (addressList.isEmpty())
+        addressList.addAll(defaultList)
         Log.d("httpdns", addressList.toString())
         Log.d("httpdns end", "========================================")
-        if (addressList.isNotEmpty()){
+        if (addressList.isNotEmpty()) {
             addressCache[hostname] = addressList[0]
             addressCacheX[hostname] = addressList
         }
-        return  addressList
+        return addressList
     }
 }

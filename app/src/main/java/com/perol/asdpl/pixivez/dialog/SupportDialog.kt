@@ -28,7 +28,6 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.*
 
-
 class SupportDialog : DialogFragment() {
 
     private val thanksArray = listOf(
@@ -202,7 +201,7 @@ class SupportDialog : DialogFragment() {
         "2021:",
         "*风",
         "*尔",
-        "+*+",
+        "+*+"
     )
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")
@@ -210,8 +209,8 @@ class SupportDialog : DialogFragment() {
         intent.putExtra("LauncherUI.From.Scaner.Shortcut", true)
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
         )
         try {
             startActivity(intent)
@@ -225,8 +224,8 @@ class SupportDialog : DialogFragment() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
         )
         try {
             startActivity(intent)
@@ -238,7 +237,9 @@ class SupportDialog : DialogFragment() {
         runBlocking {
             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             MediaScannerConnection.scanFile(
-                PxEZApp.instance, arrayOf(path.absolutePath), arrayOf(
+                PxEZApp.instance,
+                arrayOf(path.absolutePath),
+                arrayOf(
                     MimeTypeMap.getSingleton()
                         .getMimeTypeFromExtension(
                             file.extension
@@ -256,9 +257,11 @@ class SupportDialog : DialogFragment() {
         return activity?.let {
             val calendar = Calendar.getInstance()
             val sharedPreferencesServices = SharedPreferencesServices.getInstance()
-            sharedPreferencesServices.setInt("lastsupport",
-                calendar.get(Calendar.DAY_OF_YEAR)*24+calendar.get(Calendar.HOUR_OF_DAY))
-            val totaldownloadcount = sharedPreferencesServices.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size?:0)
+            sharedPreferencesServices.setInt(
+                "lastsupport",
+                calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
+            )
+            val totaldownloadcount = sharedPreferencesServices.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size ?: 0)
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_thanks, null)
@@ -283,10 +286,9 @@ class SupportDialog : DialogFragment() {
             re.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 
             builder.setTitle(getString(R.string.support_popup_title))
-                    .setView(view).apply {
-                    if(full){
-                        setNegativeButton(R.string.wechat)
-                        { _, _ ->
+                .setView(view).apply {
+                    if (full) {
+                        setNegativeButton(R.string.wechat) { _, _ ->
                             gotoWeChat()
                             sharedPreferencesServices.setInt(
                                 "lastsupport",
@@ -297,8 +299,7 @@ class SupportDialog : DialogFragment() {
                                 sharedPreferencesServices.getInt("supports") + 1
                             )
                         }
-                        setPositiveButton(R.string.ali)
-                        { _, _ ->
+                        setPositiveButton(R.string.ali) { _, _ ->
                             val clipboard =
                                 requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val clip: ClipData = ClipData.newPlainText(
@@ -306,7 +307,7 @@ class SupportDialog : DialogFragment() {
                                 String(
                                     Base64.decode(
                                         "I+e7meaIkei9rOi0piPplb/mjInlpI3liLbmraTmnaHmtojmga/vvIzljrvmlK/ku5jlrp3pppbp\n" +
-                                                "obXov5vooYzmkJzntKLnspjotLTljbPlj6/nu5nmiJHovazotKZUaFlXMlhqNzBTdyM=\n",
+                                            "obXov5vooYzmkJzntKLnspjotLTljbPlj6/nu5nmiJHovazotKZUaFlXMlhqNzBTdyM=\n",
                                         Base64.DEFAULT
                                     )
                                 )
@@ -322,11 +323,14 @@ class SupportDialog : DialogFragment() {
                                 sharedPreferencesServices.getInt("supports") + 1
                             )
                         }
-                    }else{
-                        setPositiveButton(R.string.supporttitle){ _, _ ->
-                            startActivity(Intent(requireActivity(), SettingActivity::class.java).apply {
-                                putExtra("page",1)
-                            })
+                    }
+                    else {
+                        setPositiveButton(R.string.supporttitle) { _, _ ->
+                            startActivity(
+                                Intent(requireActivity(), SettingActivity::class.java).apply {
+                                    putExtra("page", 1)
+                                }
+                            )
                         }
                     }
                 }.create()
@@ -336,6 +340,7 @@ class SupportDialog : DialogFragment() {
     companion object {
 
         private const val ARG_PARAM1 = "full"
+
         @JvmStatic
         fun newInstance(param1: Boolean) =
             SupportDialog().apply {

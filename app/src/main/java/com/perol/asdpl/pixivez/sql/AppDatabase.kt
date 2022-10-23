@@ -33,7 +33,7 @@ import com.perol.asdpl.pixivez.sql.entity.*
 
 @Database(
     entities = [SearchHistoryEntity::class, IllustBeanEntity::class, UserEntity::class, Illust::class, BlockTagEntity::class],
-    version = 6,
+    version = 6
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun searchhistoryDao(): SearchHistoryDao
@@ -54,7 +54,8 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                AppDatabase::class.java, "app.db"
+                AppDatabase::class.java,
+                "app.db"
             ).fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }

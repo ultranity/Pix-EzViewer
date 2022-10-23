@@ -34,9 +34,9 @@ class SearchHistoryEntity (
     @PrimaryKey var word: String
     )*/
 @Entity(tableName = "history")
-class SearchHistoryEntity (
-        @ColumnInfo(name = "word")
-        var word: String
+class SearchHistoryEntity(
+    @ColumnInfo(name = "word")
+    var word: String
 ) {
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0

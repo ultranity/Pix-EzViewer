@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.dialog
 
-
 import android.app.Activity
 import android.app.ActivityOptions
 import android.app.Dialog
@@ -55,9 +54,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 
-//TODO: Refactor as Bottom Sheet
-//TODO: comment select emoji
-//TODO: panel helper
+// TODO: Refactor as Bottom Sheet
+// TODO: comment select emoji
+// TODO: panel helper
 class CommentDialog : BaseDialogFragment() {
 
     private lateinit var recyclerview: RecyclerView
@@ -95,25 +94,26 @@ class CommentDialog : BaseDialogFragment() {
             edittextComment.text.toString(),
             if (parent_comment_id == 1) null else parent_comment_id
         ).subscribe({
-                retrofitRepository.getIllustComments(
-                    id!!
-                ).subscribe({
-                        commentAdapter!!.setNewInstance(it.comments)
-                        Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
-                        edittextComment.setText("")
-                    parent_comment_id = 1
-                    edittextComment.hint = ""
-                    },{e->
-                        if ((e as HttpException).response()!!.code() == 403) {
-                            Toasty.warning(requireContext(), getString(R.string.rate_limited), Toast.LENGTH_SHORT)
-                                .show()
-                        } else if (e.response()!!.code() == 404) {
-                            e.printStackTrace()
-                        }
-                    },{}) .add()
-            },{},{
-                button.isEnabled = true
-            }).add()
+            retrofitRepository.getIllustComments(
+                id!!
+            ).subscribe({
+                commentAdapter!!.setNewInstance(it.comments)
+                Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
+                edittextComment.setText("")
+                parent_comment_id = 1
+                edittextComment.hint = ""
+            }, { e ->
+                if ((e as HttpException).response()!!.code() == 403) {
+                    Toasty.warning(requireContext(), getString(R.string.rate_limited), Toast.LENGTH_SHORT)
+                        .show()
+                }
+                else if (e.response()!!.code() == 404) {
+                    e.printStackTrace()
+                }
+            }, {}).add()
+        }, {}, {
+            button.isEnabled = true
+        }).add()
     }
 
     override fun onStart() {
@@ -122,7 +122,7 @@ class CommentDialog : BaseDialogFragment() {
         val params = window!!.attributes
         params.gravity = Gravity.BOTTOM
         params.width = WindowManager.LayoutParams.MATCH_PARENT
-        //params.height = screenHeightPx()/2
+        // params.height = screenHeightPx()/2
         window.attributes = params
         window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
     }
@@ -148,7 +148,7 @@ class CommentDialog : BaseDialogFragment() {
                 DividerItemDecoration.HORIZONTAL
             )
         )
-        //recyclerview.layoutParams.height = screenHeightPx()/2 - 50
+        // recyclerview.layoutParams.height = screenHeightPx()/2 - 50
         commentAdapter!!.setOnItemClickListener { adapter, view, position ->
             val comment = commentAdapter!!.data[position].comment
             MaterialAlertDialogBuilder(requireContext())
@@ -170,8 +170,10 @@ class CommentDialog : BaseDialogFragment() {
                         Pair.create(view, "userimage")
                     )
                     startActivity(intent, options.toBundle())
-                } else
+                }
+                else {
                     startActivity(intent)
+                }
             }
             if (view.id == R.id.reply_to_hit) {
                 parent_comment_id = commentAdapter!!.data[position].id
@@ -191,7 +193,8 @@ class CommentDialog : BaseDialogFragment() {
                     commentAdapter!!.loadMoreModule.loadMoreFail()
                     it.printStackTrace()
                 }, {}).add()
-            } else {
+            }
+            else {
                 commentAdapter!!.loadMoreModule.loadMoreEnd()
             }
         }
@@ -205,7 +208,6 @@ class CommentDialog : BaseDialogFragment() {
         getData()
         return builder.create()
     }
-
 
     companion object {
 

@@ -57,14 +57,13 @@ class AccountActivity : RinkActivity() {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         )
                     }.setNeutralButton(android.R.string.cancel) { i, j ->
-
                     }.create().show()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-private lateinit var binding: ActivityAccountBinding
+    private lateinit var binding: ActivityAccountBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountBinding.inflate(layoutInflater)
@@ -76,12 +75,12 @@ private lateinit var binding: ActivityAccountBinding
             val users = AppDataRepository.getAllUser()
             binding.recyclerviewAccount.adapter = AccountChoiceAdapter(
                 R.layout.view_account_item, users
-
             ).apply {
                 setOnItemClickListener { adapter, view, position ->
+                    this.notifyItemChanged(AppDataRepository.pre.getInt("usernum"))
                     AppDataRepository.pre.setInt("usernum", position)
                     AppDataRepository.currentUser = users[position]
-                    this.notifyDataSetChanged()
+                    this.notifyItemChanged(position)
                     PxEZApp.ActivityCollector.recreate()
                 }
             }

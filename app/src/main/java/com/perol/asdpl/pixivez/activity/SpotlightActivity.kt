@@ -54,14 +54,14 @@ import java.util.regex.Pattern
 // parsed pixvision - for now use webview PixivisionActivity instead
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
-    private val retrofitRepository  = RetrofitRepository.getInstance()
+    private val retrofitRepository = RetrofitRepository.getInstance()
     private var sharedPreferencesServices: SharedPreferencesServices? = null
     private var spotlightAdapter: SpotlightAdapter? = null
     private val list = ArrayList<Spotlight>()
     private var url = ""
     private var num = 0
 
-private lateinit var binding: ActivitySpotlightBinding
+    private lateinit var binding: ActivitySpotlightBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySpotlightBinding.inflate(layoutInflater)
@@ -92,48 +92,40 @@ private lateinit var binding: ActivitySpotlightBinding
             val result = response.body!!.string()
             emitter.onNext(result)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<String> {
-                    override fun onSubscribe(d: Disposable) {
+            .subscribe(object : Observer<String> {
+                override fun onSubscribe(d: Disposable) {
+                }
 
+                override fun onNext(s: String) {
+                    val urls = getImgStra(s)
+
+                    val doc = Jsoup.parse(s)
+
+                    val elements1 = doc.select("div[class=am__description _medium-editor-text]")
+                    val articletitle = ""
+                    val stringBuilder = StringBuilder(articletitle)
+
+                    for (element in elements1) {
+                        stringBuilder.append(element.text())
                     }
-
-                    override fun onNext(s: String) {
-                        val urls = getImgStra(s)
-
-                        val doc = Jsoup.parse(s)
-
-                        val elements1 = doc.select("div[class=am__description _medium-editor-text]")
-                        val articletitle = ""
-                        val stringBuilder = StringBuilder(articletitle)
-
-
-                        for (element in elements1) {
-                            stringBuilder.append(element.text())
-
+                    binding.textViewTest.text = stringBuilder
+                    for (string in urls) {
+                        if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
+                            reurls.add(Integer.valueOf(string.replace("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=", "")))
                         }
-                        binding.textViewTest.text = stringBuilder
-                        for (string in urls) {
-                            if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
-                                reurls.add(Integer.valueOf(string.replace("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=", "")))
-                            }
-                        }
-                        getspolight()
-
                     }
+                    getspolight()
+                }
 
-                    override fun onError(e: Throwable) {
+                override fun onError(e: Throwable) {
+                }
 
-                    }
-
-                    override fun onComplete() {
-
-                    }
-                })
-
+                override fun onComplete() {
+                }
+            })
     }
 
     private fun getspolight() {
-
         Observable.create { emitter ->
             num = 0
             for (id in reurls) {
@@ -141,57 +133,45 @@ private lateinit var binding: ActivitySpotlightBinding
                 retrofitRepository.getIllust(id.toLong())
                     .subscribe(object : Observer<IllustDetailResponse> {
                         override fun onSubscribe(d: Disposable) {
-
                         }
 
                         override fun onNext(illustDetailResponse: IllustDetailResponse) {
                             emitter.onNext(illustDetailResponse)
-
-
                         }
 
                         override fun onError(e: Throwable) {
-
                         }
 
                         override fun onComplete() {
-
                         }
                     })
-
             }
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<IllustDetailResponse> {
-                    override fun onSubscribe(d: Disposable) {
+            .subscribe(object : Observer<IllustDetailResponse> {
+                override fun onSubscribe(d: Disposable) {
+                }
 
+                override fun onNext(illustDetailResponse: IllustDetailResponse) {
+                    val name = illustDetailResponse.illust.user.name
+                    val title = illustDetailResponse.illust.title
+                    list.add(Spotlight(title, name, illustDetailResponse.illust.user.profile_image_urls.medium, illustDetailResponse.illust.image_urls.large, illustDetailResponse.illust.id.toString(), illustDetailResponse.illust.user.id))
+                    if (num == reurls.size) {
+                        onComplete()
                     }
+                }
 
-                    override fun onNext(illustDetailResponse: IllustDetailResponse) {
+                override fun onError(e: Throwable) {
+                }
 
-                        val name = illustDetailResponse.illust.user.name
-                        val title = illustDetailResponse.illust.title
-                        list.add(Spotlight(title, name, illustDetailResponse.illust.user.profile_image_urls.medium, illustDetailResponse.illust.image_urls.large, illustDetailResponse.illust.id.toString(), illustDetailResponse.illust.user.id))
-                        if (num == reurls.size) {
-                            onComplete()
+                override fun onComplete() {
+                    spotlightAdapter = SpotlightAdapter(R.layout.view_spotlight_item, list)
+                    binding.recyclerviewSpotlight.layoutManager =
+                        LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
 
-                        }
-                    }
-
-                    override fun onError(e: Throwable) {
-
-                    }
-
-                    override fun onComplete() {
-                        spotlightAdapter = SpotlightAdapter(R.layout.view_spotlight_item, list)
-                        binding.recyclerviewSpotlight.layoutManager =
-                            LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-
-                        binding.recyclerviewSpotlight.adapter = spotlightAdapter
-                        binding.recyclerviewSpotlight.isNestedScrollingEnabled = false
-                    }
-                })
-
-
+                    binding.recyclerviewSpotlight.adapter = spotlightAdapter
+                    binding.recyclerviewSpotlight.isNestedScrollingEnabled = false
+                }
+            })
     }
 
     companion object {

@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.hellom
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +66,6 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class RankingMFragment : BaseFragment() {
-
 
     private var picDate: String? = null
     private lateinit var viewmodel: RankingMViewModel
@@ -114,7 +112,8 @@ class RankingMFragment : BaseFragment() {
         viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addData(it)
-            } else {
+            }
+            else {
                 picListAdapter.loadMoreFail()
             }
         }
@@ -122,14 +121,16 @@ class RankingMFragment : BaseFragment() {
             binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
                 picListAdapter.setNewInstance(it)
-            } else {
+            }
+            else {
                 picListAdapter.loadMoreFail()
             }
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 picListAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 picListAdapter.loadMoreComplete()
             }
         }
@@ -154,8 +155,12 @@ class RankingMFragment : BaseFragment() {
         }
         headerView.findViewById<Spinner>(R.id.spinner_CoM).onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?,
-                    view: View?, position: Int, id: Long) {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
                     sharemodel.sortCoM.value = position
                 }
 
@@ -168,7 +173,8 @@ class RankingMFragment : BaseFragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         picDate = if (sharemodel.picDateShare.value == "$year-$month-$day") {
             null
-        } else {
+        }
+        else {
             sharemodel.picDateShare.value
         }
         binding.swiperefreshLayout.setOnRefreshListener {
@@ -179,7 +185,7 @@ class RankingMFragment : BaseFragment() {
         }
         binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                2*context.resources.configuration.orientation,
+                2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListAdapter
@@ -194,10 +200,10 @@ class RankingMFragment : BaseFragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerview.scrollToPosition(0)
                 }
-
             }
     }
 
@@ -220,7 +226,8 @@ class RankingMFragment : BaseFragment() {
     private lateinit var filter: IllustFilter
     private lateinit var binding: FragmentSwiperefreshRecyclerviewBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)

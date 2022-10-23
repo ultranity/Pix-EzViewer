@@ -59,7 +59,8 @@ class TrendTagFragment : Fragment() {
 
     private lateinit var binding: TrendTagFragmentBinding
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = TrendTagFragmentBinding.inflate(inflater, container, false)
@@ -72,53 +73,62 @@ class TrendTagFragment : Fragment() {
             viewModel.sethis()
         }
         viewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
-        mDisposable.add(viewModel.getIllustTrendTags().subscribe({
-            if (it != null) {
-                binding.recyclerviewSearhm.layoutManager =
-                    StaggeredGridLayoutManager(requireContext().resources.configuration.orientation*3, StaggeredGridLayoutManager.VERTICAL)
-                val trendingtagAdapter =
-                    TrendingTagAdapter(R.layout.view_trendingtag_item, it.trend_tags)
-                binding.recyclerviewSearhm.adapter = trendingtagAdapter
-                binding.recyclerviewSearhm.isNestedScrollingEnabled = false
-                trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
-                    val searchword = it.trend_tags[position].tag
-                    upToPage(searchword)
-                    viewModel.addhistory(searchword)
+        mDisposable.add(
+            viewModel.getIllustTrendTags().subscribe({
+                if (it != null) {
+                    binding.recyclerviewSearhm.layoutManager =
+                        StaggeredGridLayoutManager(requireContext().resources.configuration.orientation * 3, StaggeredGridLayoutManager.VERTICAL)
+                    val trendingtagAdapter =
+                        TrendingTagAdapter(R.layout.view_trendingtag_item, it.trend_tags)
+                    binding.recyclerviewSearhm.adapter = trendingtagAdapter
+                    binding.recyclerviewSearhm.isNestedScrollingEnabled = false
+                    trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
+                        val searchword = it.trend_tags[position].tag
+                        upToPage(searchword)
+                        viewModel.addhistory(searchword)
+                    }
+                    trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
+                        val bundle = Bundle()
+                        // var id = it.trend_tags[position].illust.id
+                        // val arrayList = LongArray(1)
+                        // arrayList[0] = id
+                        // bundle.putLongArray("illustidlist", arrayList)
+                        // bundle.putLong("illustid", id)
+                        // //val arrayList = ArrayList<Illust>(1)
+                        // //arrayList.add(it.trend_tags[position].illust)
+                        bundle.putInt("position", position)
+                        bundle.putLong("illustid", it.trend_tags[position].illust.id)
+                        DataHolder.setIllustsList(it.trend_tags.map { it.illust })
+                        val intent = Intent(requireActivity(), PictureActivity::class.java)
+                        intent.putExtras(bundle)
+                        val options = if (PxEZApp.animationEnable) {
+                            val mainimage = view.findViewById<ImageView>(R.id.imageview_trendingtag)
+                            ActivityOptions.makeSceneTransitionAnimation(
+                                context as Activity,
+                                Pair.create(mainimage, "mainimage")
+                            ).toBundle()
+                        }
+                        else {
+                            null
+                        }
+                        startActivity(intent, options)
+                        true
+                    }
                 }
-                trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
-                    val bundle = Bundle()
-                    //var id = it.trend_tags[position].illust.id
-                    //val arrayList = LongArray(1)
-                    //arrayList[0] = id
-                    //bundle.putLongArray("illustidlist", arrayList)
-                    //bundle.putLong("illustid", id)
-                    ////val arrayList = ArrayList<Illust>(1)
-                    ////arrayList.add(it.trend_tags[position].illust)
-                    bundle.putInt("position", position)
-                    bundle.putLong("illustid", it.trend_tags[position].illust.id)
-                    DataHolder.setIllustsList(it.trend_tags.map { it.illust })
-                    val intent = Intent(requireActivity(), PictureActivity::class.java)
-                    intent.putExtras(bundle)
-                    val options = if (PxEZApp.animationEnable) {
-                        val mainimage = view.findViewById<ImageView>(R.id.imageview_trendingtag)
-                        ActivityOptions.makeSceneTransitionAnimation(
-                            context as Activity,
-                            Pair.create(mainimage, "mainimage"),
-                        ).toBundle()
-                    } else null
-                    startActivity(intent, options)
-                    true
-                }
-            }
-        }, {}))
+            }, {})
+        )
         viewModel.searchhistroy.observe(viewLifecycleOwner) { it ->
             binding.chipgroup.removeAllViews()
             it.forEach {
                 binding.chipgroup.addView(getChip(it))
             }
 
-            if (it.isNotEmpty()) binding.textViewClearn.visibility = View.VISIBLE
-            else binding.textViewClearn.visibility = View.GONE
+            if (it.isNotEmpty()) {
+                binding.textViewClearn.visibility = View.VISIBLE
+            }
+            else {
+                binding.textViewClearn.visibility = View.GONE
+            }
         }
     }
 

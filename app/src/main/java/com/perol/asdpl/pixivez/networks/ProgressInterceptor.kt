@@ -9,11 +9,9 @@ import okio.*
 import java.io.IOException
 import java.util.*
 
-
 interface ProgressListener {
     fun onProgress(progress: Int)
 }
-
 
 class ProgressInterceptor : Interceptor {
     @Throws(IOException::class)
@@ -29,12 +27,12 @@ class ProgressInterceptor : Interceptor {
         val LISTENER_MAP: MutableMap<String, ProgressListener> =
             WeakHashMap()
 
-        //入注册下载监听
+        // 入注册下载监听
         fun addListener(url: String, listener: ProgressListener) {
             LISTENER_MAP[url] = listener
         }
 
-        //取消注册下载监听
+        // 取消注册下载监听
         fun removeListener(url: String?) {
             LISTENER_MAP.remove(url)
         }
@@ -71,18 +69,18 @@ class ProgressResponseBody(url: String?, private val responseBody: ResponseBody)
             val fullLength = responseBody.contentLength()
             if (bytesRead == -1L) {
                 totalBytesRead = fullLength
-            } else {
+            }
+            else {
                 totalBytesRead += bytesRead
             }
-            if (listener != null){
+            if (listener != null) {
                 val progress = (100f * totalBytesRead / fullLength).toInt()
                 Log.d("GlideProgress", "download progress is $progress")
-                if( progress != currentProgress) {
+                if (progress != currentProgress) {
                     listener!!.onProgress(progress)
                 }
                 if (listener != null && totalBytesRead == fullLength) {
                     listener = null
-
                 }
                 currentProgress = progress
             }

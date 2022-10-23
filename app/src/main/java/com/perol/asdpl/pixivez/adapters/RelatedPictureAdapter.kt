@@ -36,11 +36,13 @@ class RelatedPictureAdapter(layoutResId: Int) : BaseQuickAdapter<String, BaseVie
 
     override fun convert(holder: BaseViewHolder, item: String) {
         val imageView = holder.getView<ImageView>(R.id.imageview_relatedpic)
-        if (holder.layoutPosition % 2 != 0)
+        if (holder.layoutPosition % 2 != 0) {
             GlideApp.with(imageView.context).load(item).placeholder(R.color.transparent)
                 .transition(withCrossFade()).centerInside().into(imageView)
-        else
+        }
+        else {
             GlideApp.with(imageView.context).load(item).placeholder(R.color.gray)
                 .transition(withCrossFade()).centerInside().into(imageView)
+        }
     }
 }

@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.dialog
 
-
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -54,7 +53,6 @@ class SearchSectionDialog : DialogFragment() {
     val thisMonth01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
     val halfYear01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
 
-
     @SuppressLint("SetTextI18n")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val word = arguments?.getString("word", "")
@@ -72,11 +70,9 @@ class SearchSectionDialog : DialogFragment() {
             searchTargeti?.let { getTabAt(it)?.select() }
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(tab: TabLayout.Tab?) {
-
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab?) {
-
                 }
 
                 override fun onTabSelected(tab: TabLayout.Tab) {
@@ -104,30 +100,31 @@ class SearchSectionDialog : DialogFragment() {
             setOnCheckedChangeListener { buttonView, isChecked ->
                 view.findViewById<LinearLayout>(R.id.pick_date_layout).visibility = if (isChecked) {
                     View.VISIBLE
-                } else {
+                }
+                else {
                     View.GONE
                 }
             }
             isChecked = viewModel.endDate.value != null && viewModel.startDate.value != null
-
         }
         var hideBookmarked = viewModel.hideBookmarked.value!!
         val toggleShowTitle = view.findViewById<TextView>(R.id.toggleShowTitle)
         val toggleShow = view.findViewById<ToggleButton>(R.id.toggleShow).apply {
             isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
-                if (viewModel.pre.getBoolean("enableonlybookmarked",false)){
-                    when(hideBookmarked) {
-                        3->{
+                if (viewModel.pre.getBoolean("enableonlybookmarked", false)) {
+                    when (hideBookmarked) {
+                        3 -> {
                             toggleShowTitle.text = getString(R.string.hide_bookmarked)
                         }
-                        1->{
+                        1 -> {
                             toggleShowTitle.text = getString(R.string.only_bookmarked)
                         }
                     }
-                    hideBookmarked = (hideBookmarked+1)%4
-                }else{
-                    hideBookmarked = (hideBookmarked+1)%2
+                    hideBookmarked = (hideBookmarked + 1) % 4
+                }
+                else {
+                    hideBookmarked = (hideBookmarked + 1) % 2
                 }
             }
         }
@@ -145,7 +142,7 @@ class SearchSectionDialog : DialogFragment() {
                     requireActivity(),
                     { p0, year1, month1, day1 ->
                         val monthR = month1 + 1
-                        text = "${year1}-${monthR}-${day1}"
+                        text = "$year1-$monthR-$day1"
                         val calendar1 = Calendar.getInstance()
                         calendar1.set(year1, month1, day1)
                         viewModel.startDate.value = calendar1
@@ -156,7 +153,6 @@ class SearchSectionDialog : DialogFragment() {
                 )
                 dateDialog.datePicker.maxDate = System.currentTimeMillis()
                 dateDialog.show()
-
             }
         }
         view.findViewById<Button>(R.id.pick_end_button).apply {
@@ -166,8 +162,6 @@ class SearchSectionDialog : DialogFragment() {
                 this.text = viewModel.endDate.value.generateDateString()
             }
             setOnClickListener {
-
-
                 val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH)
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -178,7 +172,7 @@ class SearchSectionDialog : DialogFragment() {
                         val monthR = month1 + 1
                         val calendar1 = Calendar.getInstance()
                         calendar1.set(year1, month1, day1)
-                        text = "${year1}-${monthR}-${day1}"
+                        text = "$year1-$monthR-$day1"
                         viewModel.endDate.value = calendar1
                     },
                     year,
@@ -192,14 +186,14 @@ class SearchSectionDialog : DialogFragment() {
 
         builder.setView(view)
         builder.setNegativeButton(android.R.string.cancel) { p0, p1 ->
-
         }
         builder.setPositiveButton(android.R.string.ok) { p0, p1 ->
             viewModel.hideBookmarked.value = hideBookmarked
             viewModel.sort.value = sorti
             viewModel.searchTarget.value = searchTargeti
-            if (word != null)
+            if (word != null) {
                 viewModel.firstSetData(word)
+            }
         }
 
         return builder.create()

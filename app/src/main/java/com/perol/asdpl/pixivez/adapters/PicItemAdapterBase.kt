@@ -63,35 +63,36 @@ import kotlin.math.max
 import kotlin.math.min
 
 // basic Adapter for image item
-//TODO: reuse more code
-//TODO: fling optimize
+// TODO: reuse more code
+// TODO: fling optimize
 abstract class PicItemAdapterBase(
     layoutResId: Int,
     data: List<Illust>?,
     val filter: IllustFilter
 ) :
-    BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule{
+    BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
     var colorPrimary: Int = R.color.colorPrimary
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
     var quality = 0
-    fun x_restrict(item: Illust): String{
+    fun x_restrict(item: Illust): String {
         return if (PxEZApp.R18Private && item.x_restrict == 1) {
             "private"
-        } else {
+        }
+        else {
             "public"
         }
     }
 
-    private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan:Boolean ) {
+    private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan: Boolean) {
         val layoutParams = holder.itemView.layoutParams
         if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
             layoutParams.isFullSpan = isFullSpan
         }
     }
-    
+
     fun loadMoreEnd() {
         this.loadMoreModule.loadMoreEnd()
     }
@@ -104,17 +105,17 @@ abstract class PicItemAdapterBase(
         this.loadMoreModule.loadMoreFail()
     }
 
-    private fun setAction(CollectMode:Int){
+    private fun setAction(CollectMode: Int) {
         if (CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
-                (adapter.data as ArrayList<Illust>)[position].let {item ->
+                (adapter.data as ArrayList<Illust>)[position].let { item ->
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
-                    if (!item.is_bookmarked){
-                        InteractionUtil.like(item){ setUILike(true, position) }
+                    if (!item.is_bookmarked) {
+                        InteractionUtil.like(item) { setUILike(true, position) }
                     }
                     if (!item.user.is_followed) {
-                        InteractionUtil.follow(item){ setUIFollow(true, position) }
+                        InteractionUtil.follow(item) { setUIFollow(true, position) }
                     }
                 }
             }
@@ -128,7 +129,7 @@ abstract class PicItemAdapterBase(
                 viewPics(view, position)
             }
             setOnItemLongClickListener { adapter, view, position ->
-                //show detail of illust
+                // show detail of illust
                 (adapter.data as ArrayList<Illust>)[position].let { item ->
                     val detailstring = InteractionUtil.toDetailString(item)
                     MaterialAlertDialogBuilder(context as Activity)
@@ -138,11 +139,11 @@ abstract class PicItemAdapterBase(
                             Works.imageDownloadAll(item)
                             setUIDownload(1, position)
                         }
-                        .setNeutralButton(R.string.like){ _, _ ->
-                            InteractionUtil.like(item){ setUILike(true, position) }
+                        .setNeutralButton(R.string.like) { _, _ ->
+                            InteractionUtil.like(item) { setUILike(true, position) }
                         }
-                        .setNegativeButton(R.string.follow){ _, _ ->
-                            InteractionUtil.follow(item){ setUIFollow(true, position) }
+                        .setNegativeButton(R.string.follow) { _, _ ->
+                            InteractionUtil.follow(item) { setUIFollow(true, position) }
                         }
                         .create().show()
                 }
@@ -154,7 +155,8 @@ abstract class PicItemAdapterBase(
     open fun viewPics(view: View, position: Int) {
         DataHolder.setIllustsList(
             this.data.subList(
-                max(position - 30, 0), min(
+                max(position - 30, 0),
+                min(
                     this.data.size,
                     max(position - 30, 0) + 60
                 )
@@ -166,7 +168,10 @@ abstract class PicItemAdapterBase(
                 context as Activity,
                 Pair.create(mainimage, "mainimage")
             ).toBundle()
-        } else null
+        }
+        else {
+            null
+        }
         val bundle = Bundle()
         bundle.putInt("position", position - max(position - 30, 0))
         bundle.putLong("illustid", this.data[position].id)
@@ -182,10 +187,10 @@ abstract class PicItemAdapterBase(
         animationEnable = PxEZApp.animationEnable
         this.loadMoreModule.preLoadNumber = 12
         colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
-        colorPrimaryDark= ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
-        badgeTextColor= ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
+        colorPrimaryDark = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
+        badgeTextColor = ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
         setAction(PxEZApp.CollectMode)
-        quality = PxEZApp.instance.pre.getString("quality","0")?.toInt()?: 0
+        quality = PxEZApp.instance.pre.getString("quality", "0")?.toInt() ?: 0
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
@@ -203,8 +208,8 @@ abstract class PicItemAdapterBase(
             height = LinearLayout.LayoutParams.WRAP_CONTENT
             width = LinearLayout.LayoutParams.MATCH_PARENT
         }
-        //if (context.resources.configuration.orientation==1)
-            setFullSpan(holder, (1.0*item.width/item.height > 2.1))
+        // if (context.resources.configuration.orientation==1)
+        setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
         val numLayout =
             holder.itemView.findViewById<View>(R.id.layout_num)
@@ -218,9 +223,11 @@ abstract class PicItemAdapterBase(
                 holder.setText(R.id.textview_num, "GIF")
                 numLayout.visibility = View.VISIBLE
             }
-            else -> { //"manga"
-                holder.setText(R.id.textview_num,
-                    "C" + if (item.meta_pages.isEmpty()) "" else item.meta_pages.size.toString())
+            else -> { // "manga"
+                holder.setText(
+                    R.id.textview_num,
+                    "C" + if (item.meta_pages.isEmpty()) "" else item.meta_pages.size.toString()
+                )
                 numLayout.visibility = View.VISIBLE
             }
         }
@@ -228,23 +235,25 @@ abstract class PicItemAdapterBase(
         mainImage.setTag(R.id.tag_first, item.image_urls.medium)
 
         // Load Images
-        val needSmall = if(quality == 1)
-                            (1.0*item.height/item.width > 3) ||(item.width/item.height > 4)
-                        else
-                            item.height > 1800
+        val needSmall = if (quality == 1) {
+            (1.0 * item.height / item.width > 3) || (item.width / item.height > 4)
+        }
+        else {
+            item.height > 1800
+        }
         val loadUrl = if (needSmall) {
             item.image_urls.square_medium
         }
         else {
             item.image_urls.medium
         }
-        //val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+        // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
         if (!filter.R18on && item.x_restrict == 1) {
-                GlideApp.with(mainImage.context)
-                    .load(R.drawable.h).transition(withCrossFade())
-                    .placeholder(R.drawable.h)
-                    .into(mainImage)
-            }
+            GlideApp.with(mainImage.context)
+                .load(R.drawable.h).transition(withCrossFade())
+                .placeholder(R.drawable.h)
+                .into(mainImage)
+        }
         else {
             GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(ColorDrawable(ThemeUtil.halftrans))
@@ -262,7 +271,6 @@ abstract class PicItemAdapterBase(
                         if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
                             super.onResourceReady(resource, transition)
                         }
-
                     }
                 })
         }
@@ -274,19 +282,19 @@ abstract class PicItemAdapterBase(
 
     override fun addData(newData: Collection<Illust>) {
         super.addData(newData)
-        DataHolder.pictureAdapter?.notifyDataSetChanged().also{
-            DataHolder.pictureAdapter=null
+        DataHolder.pictureAdapter?.notifyDataSetChanged().also {
+            DataHolder.pictureAdapter = null
         }
     }
 
     fun getViewByAdapterPosition(position: Int, @IdRes viewId: Int): View? {
-        return getViewByPosition(position+headerLayoutCount, viewId)
+        return getViewByPosition(position + headerLayoutCount, viewId)
     }
     abstract fun setUILike(status: Boolean, position: Int)
     abstract fun setUIFollow(status: Boolean, position: Int)
-    abstract fun setUIDownload(status:Int, position: Int)
+    abstract fun setUIDownload(status: Int, position: Int)
 
     abstract fun setUILike(status: Boolean, view: View)
     abstract fun setUIFollow(status: Boolean, view: View)
-    abstract fun setUIDownload(status:Int, view: View)
+    abstract fun setUIDownload(status: Int, view: View)
 }

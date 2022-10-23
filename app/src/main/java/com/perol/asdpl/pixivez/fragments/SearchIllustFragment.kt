@@ -54,11 +54,9 @@ import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "word"
-
 
 /**
 
@@ -71,7 +69,6 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -96,21 +93,20 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                         viewModel.isPreview = true
                         Toasty.error(PxEZApp.instance, "not premium!").show()
                         viewModel.setPreview(param1!!, sort[position], null, null)
-                    } else {
+                    }
+                    else {
                         viewModel.isPreview = false
                         viewModel.sort.value = position
                         viewModel.firstSetData(param1!!)
                     }
-
                 }
-            } else {
+            }
+            else {
                 viewModel.isPreview = false
                 viewModel.sort.value = position
                 viewModel.firstSetData(param1!!)
             }
         }
-
-
     }
 
     private lateinit var filter: IllustFilter
@@ -121,21 +117,25 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
         filter = IllustFilter(isR18on, blockTags)
         searchIllustAdapter =
-            if(PxEZApp.instance.pre.getBoolean("show_user_img_searchr",true)){
-            PicListXBtnUserAdapter(
-                R.layout.view_ranking_item,
-                null,
-                filter)
-                //singleLine = false
-        } else{
-            PicListXBtnAdapter(
-                R.layout.view_recommand_item,
-                null,
-                filter)
-        }
+            if (PxEZApp.instance.pre.getBoolean("show_user_img_searchr", true)) {
+                PicListXBtnUserAdapter(
+                    R.layout.view_ranking_item,
+                    null,
+                    filter
+                )
+                // singleLine = false
+            }
+            else {
+                PicListXBtnAdapter(
+                    R.layout.view_recommand_item,
+                    null,
+                    filter
+                )
+            }
         searchIllustAdapter.apply {
             val searchResultHeaderView = LayoutInflater.from(requireContext()).inflate(
-                R.layout.header_search_result, null
+                R.layout.header_search_result,
+                null
             )
             searchResultHeaderView.findViewById<Spinner>(R.id.spinner_result).onItemSelectedListener =
                 this@SearchIllustFragment
@@ -145,26 +145,30 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         binding.recyclerview.apply {
             adapter = searchIllustAdapter
             layoutManager =
-                StaggeredGridLayoutManager(2*context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(2 * context.resources.configuration.orientation, StaggeredGridLayoutManager.VERTICAL)
         }
         binding.fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val arrayList = arrayOfNulls<String>(starnum.size)
             for (i in starnum.indices) {
-                if (starnum[i] == 0)
+                if (starnum[i] == 0) {
                     arrayList[i] = ("$param1 users入り")
-                else
+                }
+                else {
                     arrayList[i] = (param1 + " " + starnum[i].toString() + "users入り")
+                }
             }
             builder.setTitle("users入り")
                 .setItems(
                     arrayList
                 ) { _, which ->
 
-                    val query = if (starnum[which] == 0)
+                    val query = if (starnum[which] == 0) {
                         "$param1 users入り"
-                    else
+                    }
+                    else {
                         param1 + " " + starnum[which].toString() + "users入り"
+                    }
                     viewModel.firstSetData(query)
                     binding.recyclerview.scrollToPosition(0)
                 }
@@ -192,7 +196,8 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                         search_target[selectTarget],
                         duration[selectDuration]
                     )
-                } else {
+                }
+                else {
                     viewModel.firstSetData(
                         param1!!
                     )
@@ -203,10 +208,10 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerview.smoothScrollToPosition(0)
                 }
-
             }
     }
 
@@ -247,23 +252,23 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         return binding.root
     }
 
-
     private fun initViewModel() {
-
         viewModel.illusts.observe(viewLifecycleOwner) {
             updateillust(it)
         }
         viewModel.addIllusts.observe(viewLifecycleOwner) {
             if (it != null) {
                 searchIllustAdapter.addData(it)
-            } else {
+            }
+            else {
                 searchIllustAdapter.loadMoreFail()
             }
         }
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
                 searchIllustAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 searchIllustAdapter.loadMoreComplete()
             }
         }
@@ -276,7 +281,8 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         viewModel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
                 PxEZApp.instance.pre.edit().putInt(
-                    "hide_bookmark_item_in_search2", it
+                    "hide_bookmark_item_in_search2",
+                    it
                 ).apply()
                 filter.hideBookmarked = it
             }
@@ -298,7 +304,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private fun updateillust(it: ArrayList<Illust>?) {
         if (it != null) {
             searchIllustAdapter.setNewInstance(it)
-            if(it.size == 0){
+            if (it.size == 0) {
                 param1!!.toLongOrNull()?.let {
                     val bundle = Bundle()
                     val arrayList = LongArray(1)
@@ -327,7 +333,6 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             SearchIllustFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-
                 }
             }
     }

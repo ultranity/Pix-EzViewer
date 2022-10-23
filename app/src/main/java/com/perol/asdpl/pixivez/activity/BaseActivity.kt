@@ -44,7 +44,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 // base activity with i18n +Theme support
 abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
 
-
     companion object {
         const val ASK_URI = 42
         fun newInstance(intent: Intent?, context: Context) {
@@ -73,7 +72,8 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
             colorMatrix.setSaturation(0.0f)
             grayPaint.colorFilter = ColorMatrixColorFilter(colorMatrix)
             window.decorView.setLayerType(View.LAYER_TYPE_HARDWARE, grayPaint)
-        } else {
+        }
+        else {
             val normalPaint = Paint()
             window.decorView.setLayerType(View.LAYER_TYPE_HARDWARE, normalPaint)
         }
@@ -103,7 +103,7 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
             "dimen",
             "android"
         )
-        //Log.v("dbg", "Navi height:$height")
+        // Log.v("dbg", "Navi height:$height")
         return resources.getDimensionPixelSize(resourceId)
     }
 
@@ -113,10 +113,10 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
         try {
             LanguageUtil.setLanguage(this, PxEZApp.language)
             ThemeUtil.themeInit(this)
-            if(getNavigationBarHeight()<88) {
+            if (getNavigationBarHeight() < 88) {
                 window.decorView.systemUiVisibility =
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                //window.decorView.fitsSystemWindows = true
+                // window.decorView.fitsSystemWindows = true
                 window.navigationBarColor = Color.TRANSPARENT
                 window.statusBarColor = getColorPrimary()
             }
@@ -142,6 +142,3 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
         }
     }
 }
-
-
-

@@ -46,17 +46,17 @@ class PixivisionModel : BaseViewModel() {
             addbanners.value = it.spotlight_articles
         }, {
             addbanners.value = null
-           }, {}).add()
+        }, {}).add()
     }
 
     fun onRefreshListener() {
         retrofitRepository.getPixivison("all").subscribe({
-                if (!PxEZApp.instance.pre.getBoolean("banner_auto_loop",true)) {
-                    nextPixivisonUrl.value = it.next_url
-                }
-                banners.value = it.spotlight_articles
-            }, {
-                Log.d("init","getBanner fail $it")
-            }, {}).add()
+            if (!PxEZApp.instance.pre.getBoolean("banner_auto_loop", true)) {
+                nextPixivisonUrl.value = it.next_url
+            }
+            banners.value = it.spotlight_articles
+        }, {
+            Log.d("init", "getBanner fail $it")
+        }, {}).add()
     }
 }

@@ -37,10 +37,10 @@ import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import java.io.ByteArrayInputStream
 
-
 class WebViewActivity : RinkActivity() {
 
     private lateinit var binding: ActivityWebViewBinding
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +51,10 @@ class WebViewActivity : RinkActivity() {
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"
         binding.webview.loadUrl(intent.getStringExtra("url")!!.replace("ja", local))
-        //binding.webview.title
+        // binding.webview.title
         binding.webview.settings.blockNetworkImage = false
         binding.webview.settings.javaScriptEnabled = true
-        //WebView.setWebContentsDebuggingEnabled(true)
+        // WebView.setWebContentsDebuggingEnabled(true)
         binding.webview.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView?,
@@ -107,7 +107,8 @@ class WebViewActivity : RinkActivity() {
                                             return true
                                         }
                                         else if (segment.size == 1 && request.url.toString()
-                                                .contains("/member.php?id=")) {
+                                            .contains("/member.php?id=")
+                                        ) {
                                             request.url.getQueryParameter("id")?.let {
                                                 UserMActivity.start(
                                                     this@WebViewActivity,
@@ -121,7 +122,7 @@ class WebViewActivity : RinkActivity() {
                             }
                         }
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
                 return false

@@ -25,17 +25,14 @@
 
 package com.perol.asdpl.pixivez.adapters
 
-
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.perol.asdpl.pixivez.R
 
-
 class SearchResultAdapter(var context: Context, fm: FragmentManager, private var arrayList: ArrayList<Fragment>) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getCount(): Int = arrayList.size
-
 
     override fun getItem(position: Int): Fragment = arrayList[position]
 
@@ -47,6 +44,4 @@ class SearchResultAdapter(var context: Context, fm: FragmentManager, private var
             context.getString(R.string.painter)
         }
     }
-
-
 }

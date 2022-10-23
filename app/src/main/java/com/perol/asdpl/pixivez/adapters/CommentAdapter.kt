@@ -43,27 +43,38 @@ class CommentAdapter(
 ) : BaseQuickAdapter<CommentsBean, BaseViewHolder>(layoutResId, data), LoadMoreModule {
     override fun convert(holder: BaseViewHolder, item: CommentsBean) {
         holder.setText(R.id.commentdate, item.date)
-        if (item.parent_comment.user != null) holder.setText(
-            R.id.commentusername,
-            item.user.name + " to " + item.parent_comment.user.name
-        ) else holder.setText(
-            R.id.commentusername, item.user.name
-        )
+        if (item.parent_comment.user != null) {
+            holder.setText(
+                R.id.commentusername,
+                item.user.name + " to " + item.parent_comment.user.name
+            )
+        }
+        else {
+            holder.setText(
+                R.id.commentusername,
+                item.user.name
+            )
+        }
         val commentdetail = holder.getView<TextView>(R.id.commentdetail)
         val comment = EmojiUtil.transform(item.comment)
-        commentdetail.text = if (comment.hashCode() == item.comment.hashCode())
+        commentdetail.text = if (comment.hashCode() == item.comment.hashCode()) {
             item.comment
-        else
+        }
+        else {
             Html.fromHtml(comment, GlideAssetsImageGetter(commentdetail, "Emoji"), null)
+        }
 
         if (!item.user.profile_image_urls.medium!!
-                .contentEquals("https://source.pixiv.net/common/images/no_profile.png")
+            .contentEquals("https://source.pixiv.net/common/images/no_profile.png")
         ) {
             GlideApp.with(context).load(item.user.profile_image_urls.medium)
                 .placeholder(R.mipmap.ic_noimage_foreground).circleCrop().into(
                     (holder.getView<View>(R.id.commentuserimage) as ImageView)
                 )
-        } else GlideApp.with(context).load(R.mipmap.ic_noimage_round)
-            .into((holder.getView<View>(R.id.commentuserimage) as ImageView))
+        }
+        else {
+            GlideApp.with(context).load(R.mipmap.ic_noimage_round)
+                .into((holder.getView<View>(R.id.commentuserimage) as ImageView))
+        }
     }
 }

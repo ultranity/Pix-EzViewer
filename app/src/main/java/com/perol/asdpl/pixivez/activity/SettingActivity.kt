@@ -63,7 +63,7 @@ class SettingActivity : RinkActivity() {
         return true
     }
 
-private lateinit var binding: ActivitySettingBinding
+    private lateinit var binding: ActivitySettingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingBinding.inflate(layoutInflater)
@@ -72,7 +72,6 @@ private lateinit var binding: ActivitySettingBinding
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.tablayoutSetting.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
-
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -104,24 +103,26 @@ private lateinit var binding: ActivitySettingBinding
                 binding.tablayoutSetting.getTabAt(position)?.select()
             }
         })
-        binding.contentSetting.viewpageSetting.currentItem = intent.getIntExtra("page",0)
+        binding.contentSetting.viewpageSetting.currentItem = intent.getIntExtra("page", 0)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR == "bugly" && (calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
-                Calendar.HOUR_OF_DAY
-            )
-                    - SharedPreferencesServices.getInstance()
-                .getInt(
-                    "lastsupport",
-                    calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
-                )
-                    ) >= 30 * 24
+        if (BuildConfig.FLAVOR == "bugly" && (
+            calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
+                    Calendar.HOUR_OF_DAY
+                ) -
+                SharedPreferencesServices.getInstance()
+                    .getInt(
+                            "lastsupport",
+                            calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
+                        )
+            ) >= 30 * 24
         ) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
-        } else {
+        }
+        else {
             SharedPreferencesServices.getInstance()
                 .setInt(
                     "lastsupport",

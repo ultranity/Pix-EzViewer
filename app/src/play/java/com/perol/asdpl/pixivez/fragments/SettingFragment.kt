@@ -61,7 +61,6 @@ import java.io.FilenameFilter
 class SettingFragment : PreferenceFragmentCompat() {
     private val storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -217,9 +216,9 @@ class SettingFragment : PreferenceFragmentCompat() {
         findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.CollectMode = (newValue as String).toInt()
             Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-            .setAction(R.string.restart_now) {
-                PxEZApp.ActivityCollector.recreate()
-            }.show()
+                .setAction(R.string.restart_now) {
+                    PxEZApp.ActivityCollector.recreate()
+                }.show()
             true
         }
     }
@@ -252,7 +251,8 @@ class SettingFragment : PreferenceFragmentCompat() {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (requireContext().allPermissionsGranted(storagePermissions)) {
                 showDirectorySelectionDialog()
-            } else {
+            }
+            else {
                 Toast.makeText(
                     requireContext(),
                     "Permissions not granted by the user",
@@ -262,39 +262,34 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
     }
 
-
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "me" -> {
                 try {
-
                     val binding = DialogMeBinding.inflate(layoutInflater)
                     val dialog = MaterialDialog(requireContext(), BottomSheet()).show {
                         cornerRadius(16f)
                         customView(view = binding.root)
-
                     }
                     binding.bg.setOnClickListener {
                         val url = if (BuildConfig.ISGOOGLEPLAY) {
                             "https://youtu.be/Wu4fVGsEn8s"
-                        } else {
+                        }
+                        else {
                             "https://www.bilibili.com/video/BV1E741137mf"
                         }
                         val uri = Uri.parse(url)
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     }
-
-
                 } catch (e: Exception) {
-
                 }
             }
             "me0" -> {
-                        val url = "https://github.com/ultranity"
-                        val uri = Uri.parse(url)
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        startActivity(intent)
+                val url = "https://github.com/ultranity"
+                val uri = Uri.parse(url)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
             }
             "check" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -313,7 +308,8 @@ class SettingFragment : PreferenceFragmentCompat() {
 
                 if (requireContext().allPermissionsGranted(storagePermissions)) {
                     showDirectorySelectionDialog()
-                } else {
+                }
+                else {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         storagePermissions,
@@ -324,7 +320,8 @@ class SettingFragment : PreferenceFragmentCompat() {
             "filesaveformat" -> {
                 if (requireContext().allPermissionsGranted(storagePermissions)) {
                     showCustomViewDialog()
-                } else {
+                }
+                else {
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         storagePermissions,
@@ -333,16 +330,19 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "R18Folder" -> {
-                if(PxEZApp.R18Folder) //onPreferenceTreeClick called after switch change
+                if (PxEZApp.R18Folder) {
+                    // onPreferenceTreeClick called after switch change
                     MaterialDialog(requireContext()).show {
                         title(R.string.block_tag)
                         message(R.string.R18_folder)
-                        input (prefill = PxEZApp.R18FolderPath,hint = "xRestrict/"){ dialog, text ->
+                        input(prefill = PxEZApp.R18FolderPath, hint = "xRestrict/") { dialog, text ->
                             PxEZApp.R18FolderPath =
-                                if (text.isBlank())
+                                if (text.isBlank()) {
                                     "xRestrict/"
-                                else
-                                    text.toString().removePrefix("/").removeSuffix("/")+"/"
+                                }
+                                else {
+                                    text.toString().removePrefix("/").removeSuffix("/") + "/"
+                                }
                         }
                         positiveButton(R.string.save) { dialog ->
                             PxEZApp.instance.pre.apply {
@@ -355,6 +355,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                         negativeButton(android.R.string.cancel)
                         lifecycleOwner(this@SettingFragment)
                     }
+                }
             }
             "version" -> {
                 if (BuildConfig.ISGOOGLEPLAY) {
@@ -390,10 +391,8 @@ class SettingFragment : PreferenceFragmentCompat() {
                 val dialogBuild = MaterialAlertDialogBuilder(requireActivity())
                 dialogBuild.setMessage(string).setTitle("这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者")
                     .setPositiveButton(android.R.string.ok) { _, _ ->
-
                     }
                     .create().show()
-
             }
         }
 
@@ -429,21 +428,21 @@ class SettingFragment : PreferenceFragmentCompat() {
             lifecycleOwner(this@SettingFragment)
         }
         val InputEditable = Input.editableText
-        for (i in 1..descTable.childCount-1)
+        for (i in 1..descTable.childCount - 1)
             descTable.getChildAt(i).setOnClickListener {
-                InputEditable.insert(Input.selectionStart,it.tag.toString())
+                InputEditable.insert(Input.selectionStart, it.tag.toString())
             }
         for (i in 1 until sampleTable.childCount)
             sampleTable.getChildAt(i).setOnClickListener {
                 InputEditable.clear()
-                InputEditable.insert(0,it.tag.toString())
+                InputEditable.insert(0, it.tag.toString())
             }
     }
 
     private fun showDirectorySelectionDialog() {
         MaterialDialog(requireContext()).show {
             title(R.string.title_save_path)
-            folderChooser(initialDirectory=File(PxEZApp.storepath),allowFolderCreation = true) { _, folder ->
+            folderChooser(initialDirectory = File(PxEZApp.storepath), allowFolderCreation = true) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
                     PxEZApp.instance.pre.apply {
@@ -466,7 +465,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             BasicGridItem(R.mipmap.ic_launcher, "MD"),
             BasicGridItem(R.mipmap.ic_launcherep, "Triangle"),
             BasicGridItem(R.mipmap.ic_launchermd, "Probe")
-        )//my bad
+        ) // my bad
 
         MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT)).show {
             title(R.string.title_change_icon)

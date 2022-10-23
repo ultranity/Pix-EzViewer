@@ -29,8 +29,10 @@ import android.content.res.Resources
 object ScreenUtil {
     @JvmStatic
     fun dp2px(dpValue: Float): Int {
-        return (0.5f + dpValue * Resources.getSystem()
-            .displayMetrics.density).toInt()
+        return (
+            0.5f + dpValue * Resources.getSystem()
+                .displayMetrics.density
+            ).toInt()
     }
 
     @JvmStatic
@@ -39,7 +41,7 @@ object ScreenUtil {
     }
 
     @JvmStatic
-    fun getMaxColumn(widthDp:Int):Int {
+    fun getMaxColumn(widthDp: Int): Int {
         return 1.coerceAtLeast(Resources.getSystem().configuration.screenWidthDp / widthDp)
     }
 
@@ -47,11 +49,11 @@ object ScreenUtil {
     fun screenWidthDp() = Resources.getSystem().configuration.screenWidthDp
 
     @JvmStatic
-    fun screenWidthPx() =Resources.getSystem().displayMetrics.widthPixels
+    fun screenWidthPx() = Resources.getSystem().displayMetrics.widthPixels
 
     @JvmStatic
     fun screenHeightDp() = Resources.getSystem().configuration.screenHeightDp
 
     @JvmStatic
-    fun screenHeightPx() =Resources.getSystem().displayMetrics.heightPixels
+    fun screenHeightPx() = Resources.getSystem().displayMetrics.heightPixels
 }

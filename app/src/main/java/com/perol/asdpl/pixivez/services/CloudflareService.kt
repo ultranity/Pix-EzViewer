@@ -21,11 +21,11 @@ interface CloudflareService {
      */
     @GET("dns-query")
     fun queryDns(
-            @Header("accept") accept: String = "application/dns-json",
-            @Query("name") name: String,
-            @Query("type") type: String = "A",
-            @Query("do") `do`: Boolean? = null,
-            @Query("cd") cd: Boolean? = null
+        @Header("accept") accept: String = "application/dns-json",
+        @Query("name") name: String,
+        @Query("type") type: String = "A",
+        @Query("do") `do`: Boolean? = null,
+        @Query("cd") cd: Boolean? = null
     ): Observable<DnsQueryResponse>
 
     companion object {

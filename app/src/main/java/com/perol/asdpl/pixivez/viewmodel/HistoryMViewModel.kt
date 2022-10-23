@@ -42,7 +42,6 @@ class HistoryMViewModel : BaseViewModel() {
             .subscribe {
                 illustBeans.value = ArrayList(it.reversed())
             }.add()
-
     }
 
     fun fabOnClick() {

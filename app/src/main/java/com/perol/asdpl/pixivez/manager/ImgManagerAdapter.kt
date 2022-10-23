@@ -36,14 +36,13 @@ import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.GlideApp
 
-
 class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewHolder>(layoutResId) {
 
     override fun convert(holder: BaseViewHolder, item: FileInfo) {
         val icon = holder.getView<ImageView>(R.id.item_img)
         GlideApp.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
             .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(icon)
-        //holder.getView<ConstraintLayout>(R.id.layout).background
+        // holder.getView<ConstraintLayout>(R.id.layout).background
         holder.getView<TextView>(R.id.item_name).text = item.name
         holder.getView<TextView>(R.id.item_pid).text = item.pid.toString()
         holder.getView<TextView>(R.id.item_part).text = item.part
@@ -59,9 +58,9 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
         if (!item.isPic()) {
             item.checked = false
             check.visibility = View.GONE
-        } else {
+        }
+        else {
             check.visibility = View.VISIBLE
         }
     }
-
 }

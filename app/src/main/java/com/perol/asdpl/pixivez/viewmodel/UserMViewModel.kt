@@ -60,7 +60,8 @@ class UserMViewModel : BaseViewModel() {
             }, {
                 it.printStackTrace()
             }, {}).add()
-        } else {
+        }
+        else {
             retrofitRepository.postFollowUser(userid, "public").subscribe({
                 isfollow.value = true
             }, {
@@ -70,21 +71,23 @@ class UserMViewModel : BaseViewModel() {
     }
 
     fun onFabLongClick(userid: Long) {
-        if (isfollow.value!!)
+        if (isfollow.value!!) {
             retrofitRepository.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
-        else retrofitRepository.postFollowUser(userid, "private").subscribe({
-            isfollow.value = true
-        }, {}, {}).add()
+        }
+        else {
+            retrofitRepository.postFollowUser(userid, "private").subscribe({
+                isfollow.value = true
+            }, {}, {}).add()
+        }
     }
 
-    fun isSelfPage(id: Long):Boolean {
-           return AppDataRepository.currentUser.userid == id
+    fun isSelfPage(id: Long): Boolean {
+        return AppDataRepository.currentUser.userid == id
     }
 
     fun tryToChangeProfile(path: String): Observable<ResponseBody> {
-
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -92,5 +95,4 @@ class UserMViewModel : BaseViewModel() {
         builder.addFormDataPart("profile_image", file.name, body)
         return retrofitRepository.postUserProfileEdit(builder.build().part(0))
     }
-
 }

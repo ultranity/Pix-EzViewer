@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.user
 
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -51,7 +50,6 @@ import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -91,8 +89,9 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                     null,
                     filter
                 )
-                //singleLine = false,
-            } else {
+                // singleLine = false,
+            }
+            else {
                 PicListXBtnAdapter(
                     R.layout.view_recommand_item,
                     null,
@@ -100,10 +99,9 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 )
             }
 
-
         binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
-                2*context.resources.configuration.orientation,
+                2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picItemAdapter
@@ -125,7 +123,8 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     binding.recyclerview.scrollToPosition(0)
                 }
             }*/
@@ -133,14 +132,16 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     override fun onClick(string: String, public: String) {
         viewModel!!.onRefreshListener(
-            param1!!, public, string.ifBlank {
+            param1!!,
+            public,
+            string.ifBlank {
                 null
             }
         )
     }
 
     override fun onResume() {
-        isLoaded = viewModel.data.value!=null
+        isLoaded = viewModel.data.value != null
         super.onResume()
         Log.d("UserBookMarkFragment", "UserBookMarkFragment resume")
     }
@@ -152,7 +153,8 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
                 picItemAdapter.loadMoreEnd()
-            } else {
+            }
+            else {
                 picItemAdapter.loadMoreComplete()
             }
         }
@@ -166,13 +168,14 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
-            } else {
+            }
+            else {
                 picItemAdapter.loadMoreFail()
             }
         }
-        //viewModel!!.tags.observe(viewLifecycleOwner) {
+        // viewModel!!.tags.observe(viewLifecycleOwner) {
         //
-        //}
+        // }
     }
 
     private var param1: Long? = null
@@ -189,7 +192,6 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     lateinit var viewModel: UserBookMarkViewModel
     private lateinit var viewActivity: UserMActivity
-
 
     private fun showTagDialog() {
         val arrayList = ArrayList<String>()
@@ -222,11 +224,17 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             picItemAdapter.filter.hideBookmarked =
                 if (param1 != id) {
                     viewActivity.viewModel.hideBookmarked.value!!
-                } else 0
+                }
+                else {
+                    0
+                }
             picItemAdapter.filter.hideDownloaded =
                 if (param1 == id) {
                     viewActivity.viewModel.hideDownloaded.value!!
-                } else false
+                }
+                else {
+                    false
+                }
             picItemAdapter.filter.blockTags = blockTags
             picItemAdapter.notifyDataSetChanged()
         }
@@ -236,14 +244,14 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     private lateinit var binding: FragmentUserBookMarkBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentUserBookMarkBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     companion object {
         /**

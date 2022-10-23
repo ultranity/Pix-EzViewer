@@ -40,7 +40,9 @@ object ImageHttpDns : Dns {
     override fun lookup(hostname: String): List<InetAddress> {
         if (addressList.isNotEmpty()) return addressList
         val defaultList = listOf(
-            "210.140.92.140", "210.140.92.137", "210.140.92.145"
+            "210.140.92.140",
+            "210.140.92.137",
+            "210.140.92.145"
         ).map { InetAddress.getByName(it) }
         try {
             runBlocking(Dispatchers.IO) {

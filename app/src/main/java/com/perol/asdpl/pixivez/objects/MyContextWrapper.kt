@@ -41,7 +41,8 @@ class MyContextWrapper(base: Context) : ContextWrapper(base) {
                 LocaleList.setDefault(localeList)
                 configuration.setLocales(localeList)
                 context.createConfigurationContext(configuration)
-            } else {
+            }
+            else {
                 configuration.setLocale(newLocale)
                 context.createConfigurationContext(configuration)
             }

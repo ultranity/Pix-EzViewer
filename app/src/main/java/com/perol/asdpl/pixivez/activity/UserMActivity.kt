@@ -62,25 +62,25 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
-
 class UserMActivity : RinkActivity() {
     companion object {
         const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
         const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
         const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
-        fun start(context: Context, id: Long, bundle: Bundle?=null) {
+        fun start(context: Context, id: Long, bundle: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
             context.startActivity(intent, bundle)
         }
-        fun start(context: Context, user: UserEntity, bundle: Bundle?=null) {
+        fun start(context: Context, user: UserEntity, bundle: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("user",
-                User(user.userid, user.username, "", ProfileImageUrls(user.userimage), "",false)
+            intent.putExtra(
+                "user",
+                User(user.userid, user.username, "", ProfileImageUrls(user.userimage), "", false)
             )
             context.startActivity(intent, bundle)
         }
-        fun start(context: Context, user: User, bundle: Bundle?=null) {
+        fun start(context: Context, user: User, bundle: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("user", user)
             context.startActivity(intent, bundle)
@@ -101,12 +101,14 @@ class UserMActivity : RinkActivity() {
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
             Toasty.info(this, getString(R.string.uploading), Toast.LENGTH_SHORT).show()
-            viewModel.disposables.add(viewModel.tryToChangeProfile(imagePath).subscribe({
-                Toasty.info(this, getString(R.string.upload_success), Toast.LENGTH_SHORT)
-                    .show()
-            }, {
-                it.printStackTrace()
-            }, {}))
+            viewModel.disposables.add(
+                viewModel.tryToChangeProfile(imagePath).subscribe({
+                    Toasty.info(this, getString(R.string.upload_success), Toast.LENGTH_SHORT)
+                        .show()
+                }, {
+                    it.printStackTrace()
+                }, {})
+            )
             c.close()
         }
     }
@@ -136,7 +138,7 @@ class UserMActivity : RinkActivity() {
         }
         viewModel = ViewModelProvider(this)[UserMViewModel::class.java]
         pre = PxEZApp.instance.pre
-        if (intent.extras!!.containsKey("user")){
+        if (intent.extras!!.containsKey("user")) {
             val user = intent.getSerializableExtra("user") as User
             id = user.id
             binding.user = UserDetailResponse(user)
@@ -147,7 +149,9 @@ class UserMActivity : RinkActivity() {
         }
         viewModel.getData(id)
         binding.mviewpager.adapter = UserMPagerAdapter(
-            this, supportFragmentManager, id,
+            this,
+            supportFragmentManager,
+            id
         )
         binding.mtablayout.setupWithViewPager(binding.mviewpager)
         binding.mtablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -159,7 +163,8 @@ class UserMActivity : RinkActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                     exitTime = System.currentTimeMillis()
-                } else {
+                }
+                else {
                     (binding.mviewpager.adapter as UserMPagerAdapter).currentFragment?.view
                         ?.findViewById<RecyclerView>(R.id.recyclerview)
                         ?.scrollToPosition(0)
@@ -175,7 +180,7 @@ class UserMActivity : RinkActivity() {
         else {
             binding.fab.show()
         }
-        viewModel.currentTab.observe(this){
+        viewModel.currentTab.observe(this) {
             binding.mviewpager.currentItem = it
         }
         viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
@@ -189,8 +194,10 @@ class UserMActivity : RinkActivity() {
             if (it != null) {
                 if (it) {
                     binding.fab.setImageResource(R.drawable.ic_check_white_24dp)
-                } else
+                }
+                else {
                     binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
+                }
             }
         }
 
@@ -235,7 +242,9 @@ class UserMActivity : RinkActivity() {
                                 )
                                 file.copyTo(target, overwrite = true)
                                 MediaScannerConnection.scanFile(
-                                    PxEZApp.instance, arrayOf(target.path), arrayOf(
+                                    PxEZApp.instance,
+                                    arrayOf(target.path),
+                                    arrayOf(
                                         MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                                             target.extension
                                         )
@@ -267,16 +276,17 @@ class UserMActivity : RinkActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_userx, menu)
-        menu.getItem(1).isChecked = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)%2 != 0
-        if(viewModel.hideBookmarked.value!! > 1) {
-                menu.getItem(1).title = getString(R.string.only_bookmarked)
+        menu.getItem(1).isChecked = pre.getInt(HIDE_BOOKMARKED_ITEM, 0) % 2 != 0
+        if (viewModel.hideBookmarked.value!! > 1) {
+            menu.getItem(1).title = getString(R.string.only_bookmarked)
         }
         if (viewModel.isSelfPage(id)) {
             viewModel.hideBookmarked.value = 0
             menu.getItem(1).isVisible = false
             menu.getItem(2).isVisible = true
             menu.getItem(2).isEnabled = true
-        } else {
+        }
+        else {
             viewModel.hideBookmarked.observe(this) {
                 menu.getItem(1).isChecked = it % 2 == 1
             }
@@ -285,7 +295,7 @@ class UserMActivity : RinkActivity() {
                 isEnabled = false
             }
         }
-        viewModel.hideDownloaded.observe(this){
+        viewModel.hideDownloaded.observe(this) {
             menu.findItem(R.id.action_hideDownloaded).isChecked = it
         }
         return true
@@ -306,7 +316,8 @@ class UserMActivity : RinkActivity() {
                         }
                     }
                     viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!! + 1) % 4
-                } else {
+                }
+                else {
                     viewModel.hideBookmarked.value = (viewModel.hideBookmarked.value!! + 1) % 2
                 }
                 item.isChecked = !item.isChecked
@@ -324,7 +335,8 @@ class UserMActivity : RinkActivity() {
                         }
                         positiveButton(R.string.I_know) {
                             pre.edit().putBoolean(
-                                "init$HIDE_DOWNLOADED_ITEM", true
+                                "init$HIDE_DOWNLOADED_ITEM",
+                                true
                             ).apply()
                             val uri = Uri.parse(getString(R.string.plink))
                             val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -332,7 +344,8 @@ class UserMActivity : RinkActivity() {
                         }
                         neutralButton(R.string.share) {
                             pre.edit().putBoolean(
-                                "init$HIDE_DOWNLOADED_ITEM", true
+                                "init$HIDE_DOWNLOADED_ITEM",
+                                true
                             ).apply()
                             val textIntent = Intent(Intent.ACTION_SEND)
                             textIntent.type = "text/plain"
@@ -350,7 +363,8 @@ class UserMActivity : RinkActivity() {
                     }
                 }
                 pre.edit().putBoolean(
-                    HIDE_DOWNLOADED_ITEM, item.isChecked
+                    HIDE_DOWNLOADED_ITEM,
+                    item.isChecked
                 ).apply()
                 EventBus.getDefault().post(AdapterRefreshEvent())
             }
@@ -358,7 +372,7 @@ class UserMActivity : RinkActivity() {
 //                val intent =Intent(this,WorkActivity::class.java)
 //                intent.putExtra("id",id)
 //                startActivity(intent)
-                //var curr = supportFragmentManager.fragments[binding.mviewpager.currentItem]
+                // var curr = supportFragmentManager.fragments[binding.mviewpager.currentItem]
             }
         }
         return super.onOptionsItemSelected(item)

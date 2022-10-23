@@ -35,5 +35,4 @@ class PathProviderAdapter(layoutResId: Int, data: List<File>) :
         holder.setText(R.id.path_textview, item.name)
             .setImageResource(R.id.imageView2, R.drawable.ic_action_folder)
     }
-
 }

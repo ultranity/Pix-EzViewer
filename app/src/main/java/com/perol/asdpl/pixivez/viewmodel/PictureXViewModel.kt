@@ -71,10 +71,10 @@ class PictureXViewModel : BaseViewModel() {
                 file.delete()
                 reDownLoadGif(medium)
             }, {}).add()
-        } else {
+        }
+        else {
             reDownLoadGif(medium)
         }
-
     }
 
     fun loadGif(id: Long) = retrofitRepository.getUgoiraMetadata(id)
@@ -115,10 +115,9 @@ class PictureXViewModel : BaseViewModel() {
             }, {
                 it.printStackTrace()
             }).add()
-
         }, {}, {}).add()
     }
-    fun firstGet(illust: Illust){
+    fun firstGet(illust: Illust) {
         illustDetail.value = illust
         likeIllust.value = illust.is_bookmarked
         CoroutineScope(Dispatchers.IO).launch {
@@ -129,7 +128,7 @@ class PictureXViewModel : BaseViewModel() {
             appDatabase.illusthistoryDao().insert(
                 IllustBeanEntity(
                     illust.id,
-                    illust.image_urls.square_medium,
+                    illust.image_urls.square_medium
                 )
             )
         }
@@ -160,7 +159,8 @@ class PictureXViewModel : BaseViewModel() {
         val id = illustDetail.value!!.id
         val x_restrict = if (PxEZApp.R18Private && illustDetail.value!!.x_restrict == 1) {
             "private"
-        } else {
+        } 
+        else {
             "public"
         }
         if (illustDetail.value!!.is_bookmarked) {
@@ -168,9 +168,9 @@ class PictureXViewModel : BaseViewModel() {
                 likeIllust.value = false
                 illustDetail.value!!.is_bookmarked = false
             }, {
-
             }, {}, {}).add()
-        } else {
+        }
+        else {
             retrofitRepository.postLikeIllustWithTags(id, x_restrict, null).subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
@@ -179,12 +179,15 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun fabOnLongClick() {
-        if (illustDetail.value != null)
+        if (illustDetail.value != null) {
             retrofitRepository
                 .getBookmarkDetail(illustDetail.value!!.id)
                 .subscribe(
-                    { tags.value = it.bookmark_detail }
-                    , {}, {}).add()
+                    { tags.value = it.bookmark_detail },
+                    {},
+                    {}
+                ).add()
+        }
         else {
             val a = illustDetail.value
             print(a)
@@ -196,7 +199,8 @@ class PictureXViewModel : BaseViewModel() {
         if (!illustDetail.value!!.is_bookmarked or private) {
             val string = if (!private) {
                 "public"
-            } else {
+            }
+            else {
                 "private"
             }
             val arrayList = ArrayList<String>()
@@ -211,8 +215,8 @@ class PictureXViewModel : BaseViewModel() {
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
             }, {}, {}).add()
-
-        } else {
+        }
+        else {
             retrofitRepository.postUnlikeIllust(toLong)
                 .subscribe({
                     likeIllust.value = false
@@ -228,15 +232,18 @@ class PictureXViewModel : BaseViewModel() {
                 followUser.value = true
                 illustDetail.value!!.user.is_followed = true
             }, {}, {}).add()
-        } else {
-            retrofitRepository.postUnfollowUser(id).subscribe({
-                followUser.value = false
-                illustDetail.value!!.user.is_followed = false
-            }, {}, {}
+        }
+        else {
+            retrofitRepository.postUnfollowUser(id).subscribe(
+                {
+                    followUser.value = false
+                    illustDetail.value!!.user.is_followed = false
+                },
+                {},
+                {}
             ).add()
         }
     }
-
 }
 
 data class ProgressInfo(var now: Long, var all: Long)

@@ -76,8 +76,8 @@ data class Illust(
     val tools: List<String>,
     val total_bookmarks: Int,
     val total_view: Int,
-    //val total_comments: Int,
-    val type: String, //illust, ugoira, manga
+    // val total_comments: Int,
+    val type: String, // illust, ugoira, manga
     val user: User,
     var visible: Boolean,
     val width: Int,
@@ -86,7 +86,7 @@ data class Illust(
 
 @Parcelize
 data class MetaPage(
-        val image_urls: ImageUrlsX
+    val image_urls: ImageUrlsX
 ) : Parcelable
 
 /**
@@ -108,7 +108,6 @@ data class ImageUrls(
     val medium: String,
     val square_medium: String
 ) : Parcelable
-
 
 /**
  * original_image_url : https://i.pximg.net/img-original/img/2017/12/03/05/15/02/66137839_p0.png

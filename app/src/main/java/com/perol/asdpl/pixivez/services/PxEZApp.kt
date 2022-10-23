@@ -25,7 +25,7 @@
 
 package com.perol.asdpl.pixivez.services
 
-//import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
+// import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
@@ -61,13 +61,15 @@ class PxEZApp : Application() {
             val illustD = Gson().fromJson(extendField, IllustD::class.java)
             val title = illustD.title
             val sourceFile = File(it.filePath)
-            if(sourceFile.isFile){
+            if (sourceFile.isFile) {
                 val needCreateFold = pre.getBoolean("needcreatefold", false)
                 val name = illustD.userName?.toLegal()
-                val targetFile = File("$storepath/" +
+                val targetFile = File(
+                    "$storepath/" +
                         (if (R18Folder && sourceFile.name.startsWith("？")) R18FolderPath else "") +
                         if (needCreateFold) "${name}_${illustD.userId}" else "",
-                    sourceFile.name.removePrefix("？"))
+                    sourceFile.name.removePrefix("？")
+                )
                 sourceFile.copyTo(targetFile, overwrite = true)
                 MediaScannerConnection.scanFile(
                     this,
@@ -81,7 +83,7 @@ class PxEZApp : Application() {
                 }
                 sourceFile.delete()
 
-                if(ShowDownloadToast) {
+                if (ShowDownloadToast) {
                     Toasty.success(
                         this,
                         "${title}${getString(R.string.savesuccess)}",
@@ -95,7 +97,7 @@ class PxEZApp : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
-        //https://developer.android.com/guide/app-bundle/sideload-check#missing_splits
+        // https://developer.android.com/guide/app-bundle/sideload-check#missing_splits
         /*if (BuildConfig.ISGOOGLEPLAY)
             if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
                 // Skip app initialization.
@@ -103,10 +105,10 @@ class PxEZApp : Application() {
             }*/
         super.onCreate()
         instance = this
-        //LeakCanary.install(this);
+        // LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
-        CoroutineScope(Dispatchers.IO).launch{
-                AppDataRepository.getUser()
+        CoroutineScope(Dispatchers.IO).launch {
+            AppDataRepository.getUser()
         }
         Aria.init(this)
         Aria.download(this).register()
@@ -121,24 +123,25 @@ class PxEZApp : Application() {
                 isNotNetRetry = true
             }
         }
-        CoroutineScope(Dispatchers.IO).launch{
-            //Aria.download(this).removeAllTask(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            // Aria.download(this).removeAllTask(true)
             Aria.download(this).allCompleteTask?.forEach {
-                if ((System.currentTimeMillis() - it.completeTime) > 10 * 60 * 1000)
+                if ((System.currentTimeMillis() - it.completeTime) > 10 * 60 * 1000) {
                     Aria.download(this).load(it.id).cancel()
+                }
             }
             delay(10000)
             if (pre.getBoolean("resume_unfinished_task", true)
-            //&& Aria.download(this).allNotCompleteTask?.isNotEmpty()
+                // && Aria.download(this).allNotCompleteTask?.isNotEmpty()
             ) {
-                //Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
+                // Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
                         Thread.sleep(500)
-                        //val illustD = Gson().fromJson(it.str, IllustD::class.java)
+                        // val illustD = Gson().fromJson(it.str, IllustD::class.java)
                         Aria.download(this).load(it.url)
-                            .setFilePath(it.filePath) //设置文件保存的完整路径
+                            .setFilePath(it.filePath) // 设置文件保存的完整路径
                             .ignoreFilePathOccupy()
                             .setExtendField(it.str)
                             .option(Works.option)
@@ -154,8 +157,9 @@ class PxEZApp : Application() {
             Log.e("onRxJavaErrorHandler", "${it.message}")
             it.printStackTrace()
         }
-        if (pre.getBoolean("infoCache", true))
+        if (pre.getBoolean("infoCache", true)) {
             MMKV.initialize(this)
+        }
         ToastUtils.init(this)
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
@@ -174,13 +178,13 @@ class PxEZApp : Application() {
             "storepath1",
             Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
         )!!
-        saveformat = pre.getString("filesaveformat","{illustid}({userid})_{title}_{part}{type}")!!
+        saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
             CrashHandler.getInstance().init(this)
         }
-        locale = LanguageUtil.getLocale() //System locale
+        locale = LanguageUtil.getLocale() // System locale
         language = pre.getString("language", "-1")?.toIntOrNull()
-                    ?: LanguageUtil.localeToLang(locale) //try to detect language from system locale if not configured
+            ?: LanguageUtil.localeToLang(locale) // try to detect language from system locale if not configured
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -277,4 +281,3 @@ class PxEZApp : Application() {
         private const val TAG = "PxEZApp"
     }
 }
-

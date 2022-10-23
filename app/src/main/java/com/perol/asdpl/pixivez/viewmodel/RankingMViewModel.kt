@@ -47,7 +47,7 @@ class RankingMViewModel : BaseViewModel() {
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {
             illusts.value = null
-           }, {}).add()
+        }, {}).add()
     }
 
     fun onLoadMore() {

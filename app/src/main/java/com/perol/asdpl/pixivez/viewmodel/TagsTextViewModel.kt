@@ -50,11 +50,7 @@ class TagsTextViewModel : BaseViewModel() {
             // resethistory()
             it.onNext(1)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
-
         }.subscribe {
-
-
         }.add()
-
     }
 }

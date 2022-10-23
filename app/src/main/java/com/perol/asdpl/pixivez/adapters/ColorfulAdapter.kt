@@ -34,7 +34,5 @@ class ColorfulAdapter(layoutResId: Int, data: ArrayList<ColorData>) : BaseQuickA
     override fun convert(holder: BaseViewHolder, item: ColorData) {
         holder.setBackgroundColor(R.id.imagevew_colorful, item.color)
             .setText(R.id.name, item.name)
-
     }
-
 }

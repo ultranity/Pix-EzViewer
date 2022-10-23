@@ -7,21 +7,22 @@ import com.tencent.bugly.Bugly
 import com.tencent.bugly.beta.Beta
 import com.tencent.bugly.crashreport.BuglyLog
 
-inline fun checkUpdate(){
+inline fun checkUpdate() {
     Beta.checkUpgrade()
 }
 
-inline fun initBugly(context:PxEZApp) {
+inline fun initBugly(context: PxEZApp) {
     Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog
     Beta.enableHotfix = false
     Beta.initDelay = 1 * 1000
-    //Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
+    // Beta.autoCheckUpgrade = pre.getBoolean("autocheck",true)
     Beta.storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     Bugly.init(context, "5f21ff45b7", BuildConfig.DEBUG)
     if (BuildConfig.DEBUG) {
         Bugly.setAppChannel(context, "DeBug")
         BuglyLog.d("settings", context.pre.all.toString())
-    } else {
+    }
+    else {
         Bugly.setAppChannel(context, "InApp")
     }
 }

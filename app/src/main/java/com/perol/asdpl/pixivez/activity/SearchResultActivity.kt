@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.activity
 
-
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -60,7 +59,6 @@ class SearchResultActivity : RinkActivity() {
             type = intent.extras!!.getInt("type")
         }
         initView()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,9 +79,7 @@ class SearchResultActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-
     private fun initView() {
-
         binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
         arrayList.add(SearchIllustFragment.newInstance(searchword))
         arrayList.add(SearchUsersListFragment.newInstance(searchword))
@@ -110,9 +106,12 @@ class SearchResultActivity : RinkActivity() {
             override fun onPageScrollStateChanged(state: Int) {}
         })
         binding.searchtext.setOnClickListener {
-            setResult(Activity.RESULT_OK, Intent().apply {
-                putExtra("word", binding.searchtext.text.toString())
-            })
+            setResult(
+                Activity.RESULT_OK,
+                Intent().apply {
+                    putExtra("word", binding.searchtext.text.toString())
+                }
+            )
             finish()
         }
     }

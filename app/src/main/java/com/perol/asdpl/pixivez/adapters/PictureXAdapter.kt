@@ -96,8 +96,8 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
-//TODO: support double panel in Tablet
-//TODO: save zip ugoira by default
+// TODO: support double panel in Tablet
+// TODO: save zip ugoira by default
 class PictureXAdapter(
     private val pictureXViewModel: PictureXViewModel,
     private val data: Illust,
@@ -127,12 +127,13 @@ class PictureXAdapter(
 
     init {
         val quality =
-            pre.getString("quality","0")?.toInt()?: 0
+            pre.getString("quality", "0")?.toInt() ?: 0
         when (quality) {
             0 -> {
                 if (data.meta_pages.isEmpty()) {
                     imageUrls.add(data.image_urls.medium)
-                } else {
+                }
+                else {
                     data.meta_pages.map {
                         imageUrls.add(it.image_urls.medium)
                     }
@@ -141,20 +142,23 @@ class PictureXAdapter(
             else -> {
                 if (data.meta_pages.isEmpty()) {
                     imageUrls.add(data.image_urls.large)
-                } else {
+                }
+                else {
                     data.meta_pages.map {
                         imageUrls.add(it.image_urls.large)
                     }
                 }
             }
         }
-        val needSmall =if(quality == 1)
-                            (data.height/data.width > 3) ||(data.width/data.height >= 3)
-                        else
-                            data.height > 1800
+        val needSmall = if (quality == 1) {
+            (data.height / data.width > 3) || (data.width / data.height >= 3)
+        } 
+        else {
+            data.height > 1800
+        }
         if (needSmall) {
             imageThumbnailUrls.add(data.image_urls.square_medium)
-        }
+        } 
         else {
             imageThumbnailUrls.add(data.image_urls.medium)
         }
@@ -162,7 +166,8 @@ class PictureXAdapter(
         /*if (needSmall) {
             if (data.meta_pages.isEmpty()) {
                 imageThumbnailUrls.add(data.image_urls.square_medium)
-            } else {
+            } 
+            else {
                 data.meta_pages.map {
                     imageThumbnailUrls.add(it.image_urls.square_medium)
                 }
@@ -171,7 +176,8 @@ class PictureXAdapter(
         else {
             if (data.meta_pages.isEmpty()) {
                 imageUrls.add(data.image_urls.medium)
-            } else {
+            } 
+            else {
                 data.meta_pages.map {
                     imageUrls.add(it.image_urls.medium)
                 }
@@ -179,24 +185,19 @@ class PictureXAdapter(
         }*/
     }
 
-    class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    }
+    class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    }
+    class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class SurfaceGifViewHolder(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer {
+        RecyclerView.ViewHolder(containerView), LayoutContainer
 
-    }
-
-    class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    }
+    class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
-    )
-        : RecyclerView.ViewHolder(binding.root) {
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
         private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
         private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
         private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
@@ -215,14 +216,16 @@ class PictureXAdapter(
             mUserPicLongClick: () -> Unit
         ) {
             binding.illust = illust
-            //captionTextView.autoLinkMask = Linkify.WEB_URLS
+            // captionTextView.autoLinkMask = Linkify.WEB_URLS
             val colorPrimary = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimary)
             val colorPrimaryDark = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimaryDark)
-            val badgeTextColor= ThemeUtil.getColor(mContext, com.google.android.material.R.attr.badgeTextColor)
-            if (illust.user.is_followed)
+            val badgeTextColor = ThemeUtil.getColor(mContext, com.google.android.material.R.attr.badgeTextColor)
+            if (illust.user.is_followed) {
                 imageViewUser.setBorderColor(badgeTextColor)
-            else
+            } 
+            else {
                 imageViewUser.setBorderColor(colorPrimary)
+            }
             imageViewUser.setOnLongClickListener {
                 mUserPicLongClick.invoke()
                 true
@@ -233,36 +236,41 @@ class PictureXAdapter(
                         mContext as Activity,
                         Pair.create(imageViewUser, "userimage")
                     ).toBundle()
-                } else null
+                }
+                else {
+                    null
+                }
                 UserMActivity.start(mContext, illust.user, options)
             }
-            if (illust.caption.isNotBlank())
+            if (illust.caption.isNotBlank()) {
                 binding.html = Html.fromHtml(illust.caption)
-            else
+            } 
+            else {
                 binding.html = Html.fromHtml("~")
+            }
             Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
             Log.d("url", captionTextView.urls.toString())
             captionTextView.movementMethod = LinkMovementMethod.getInstance()
-            //viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
+            // viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }
             bookmarkedUserNum.setOnClickListener {
                 mBookmarkedUserListen.invoke()
             }
-            //google translate app btn click listener
+            // google translate app btn click listener
             val intent = Intent()
                 .setType("text/plain")
             var componentPackageName = ""
             var componentName = ""
             var isGoogleTranslateEnabled = false
-            //check google translate
+            // check google translate
             for (resolveInfo: ResolveInfo in mContext.packageManager.queryIntentActivities(
                 intent,
                 0
             )) {
                 try {
-                    //emui null point exception
+                    // emui null point exception
                     if (resolveInfo.activityInfo.packageName.contains("com.google.android.apps.translate")) {
                         isGoogleTranslateEnabled = true
                         componentPackageName = resolveInfo.activityInfo.packageName
@@ -271,16 +279,17 @@ class PictureXAdapter(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
             }
-            if (!isGoogleTranslateEnabled) btnTranslate.visibility = View.GONE
+            if (!isGoogleTranslateEnabled) {
+                btnTranslate.visibility = View.GONE
+            }
             else {
                 btnTranslate.setOnClickListener {
-
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         intent.action = Intent.ACTION_PROCESS_TEXT
                         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, captionTextView.text.toString())
-                    } else {
+                    }
+                    else {
                         intent.action = Intent.ACTION_SEND
                         intent.putExtra(Intent.EXTRA_TEXT, captionTextView.text.toString())
                     }
@@ -289,7 +298,6 @@ class PictureXAdapter(
                         componentName
                     )
                     mContext.startActivity(intent)
-
                 }
             }
 
@@ -370,8 +378,6 @@ class PictureXAdapter(
                         return tv
                     }
                 }
-
-
             }
             binding.imagebuttonShare.setOnClickListener {
                 val textIntent = Intent(Intent.ACTION_SEND)
@@ -382,25 +388,28 @@ class PictureXAdapter(
                 )
                 mContext.startActivity(Intent.createChooser(textIntent, mContext.getString(R.string.share)))
             }
-            if(FileUtil.isDownloaded(illust))
+            if (FileUtil.isDownloaded(illust)) {
                 imageButtonDownload.drawable.setTint(badgeTextColor)
-            if (illust.type == "ugoira") //gif
+            }
+            if (illust.type == "ugoira") {
+                // gif
                 imageButtonDownload.setOnClickListener {
-
                     MaterialAlertDialogBuilder(mContext as Activity)
                         .setTitle(R.string.download)
                         .setPositiveButton(R.string.savefirst) { _, _ ->
                             Works.imageDownloadAll(illust)
                         }.show()
                 }
-            else
+            }
+            else {
                 imageButtonDownload.setOnClickListener {
                     imageButtonDownload.drawable.setTint(colorPrimaryDark)
                     Works.imageDownloadAll(illust)
                 }
+            }
             imageButtonDownload.setOnLongClickListener {
-                //show detail of illust
-                val detailstring =InteractionUtil.toDetailString(illust, false)
+                // show detail of illust
+                val detailstring = InteractionUtil.toDetailString(illust, false)
                 MaterialAlertDialogBuilder(mContext as Activity)
                     .setMessage(detailstring)
                     .setTitle("Detail")
@@ -414,12 +423,11 @@ class PictureXAdapter(
 
     class RelatedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun updateWithPage(s: RelatedPictureAdapter, mContext: Context) {
-            recyclerView.layoutManager = GridLayoutManager(mContext, 1+2*mContext.resources.configuration.orientation)
+            recyclerView.layoutManager = GridLayoutManager(mContext, 1 + 2 * mContext.resources.configuration.orientation)
             recyclerView.adapter = s
         }
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_related)!!
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -452,14 +460,10 @@ class PictureXAdapter(
                 )
                 return DetailViewHolder(binding)
             }
-
         }
-
     }
 
-    class BlankViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-    }
+    class BlankViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
@@ -468,33 +472,33 @@ class PictureXAdapter(
             imageUrls.size + 2 -> ITEM_TYPE.ITEM_TYPE_BLANK.ordinal
 
             else -> {
-                if (data.type != "ugoira")
+                if (data.type != "ugoira") {
                     ITEM_TYPE.ITEM_TYPE_PICTURE.ordinal
-                else
+                }
+                else {
                     ITEM_TYPE.ITEM_TYPE_GIF.ordinal
+                }
             }
         }
     }
-
 
     enum class ITEM_TYPE {
         ITEM_TYPE_PICTURE,
         ITEM_TYPE_BLANK,
         ITEM_TYPE_DETAIL,
         ITEM_TYPE_RELATIVE,
-        ITEM_TYPE_GIF,
+        ITEM_TYPE_GIF
     }
 
     override fun getItemCount() = imageUrls.size + 3
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val position = holder.bindingAdapterPosition
-        when(holder) {
+        when (holder) {
             is PictureViewHolder -> {
                 val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if(position % 2 == 1) R.color.transparent  else R.color.halftrans)
-                    .thumbnail(GlideApp.with(mContext).load(if(position == 0) imageThumbnailUrls[0]  else ColorDrawable(ThemeUtil.halftrans)))
+                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
+                    .thumbnail(GlideApp.with(mContext).load(if (position == 0) imageThumbnailUrls[0] else ColorDrawable(ThemeUtil.halftrans)))
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
                         override fun onLoadFailed(
@@ -504,8 +508,9 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            if (position == 0)
+                            if (position == 0) {
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            }
                             return false
                         }
 
@@ -527,12 +532,12 @@ class PictureXAdapter(
                         override fun setResource(resource: Drawable?) {
                             mainImage.setImageDrawable(resource)
                         }
-                    })//.into(mainImage)
+                    }) // .into(mainImage)
                 mainImage.apply {
                     setOnLongClickListener {
                         val builder = MaterialAlertDialogBuilder(mContext as Activity)
                         builder.setTitle(mContext.resources.getString(R.string.saveselectpic1))
-                        //show detail of illust
+                        // show detail of illust
                         val detailstring = InteractionUtil.toDetailString(data)
                         builder.setMessage(detailstring)
                         builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
@@ -540,7 +545,6 @@ class PictureXAdapter(
                             Works.imgD(data, position)
                         }
                         builder.setNegativeButton(mContext.resources.getString(android.R.string.cancel)) { dialog, which ->
-
                         }
                         if (data.meta_pages.isNotEmpty()) {
                             builder.setNeutralButton(R.string.multichoicesave) { _, which ->
@@ -550,7 +554,7 @@ class PictureXAdapter(
                                     list.add(ot.image_urls.original)
                                 }
                                 val mSelectedItems =
-                                    ArrayList<Int>()  // Where we track the selected items
+                                    ArrayList<Int>() // Where we track the selected items
                                 val builder = MaterialAlertDialogBuilder(mContext)
                                 val showlist = ArrayList<String>()
                                 for (i in list.indices) {
@@ -562,34 +566,36 @@ class PictureXAdapter(
                                 }
                                 builder.setTitle(R.string.choice)
                                     .setMultiChoiceItems(
-                                        showlist.toTypedArray(), boolean
+                                        showlist.toTypedArray(),
+                                        boolean
                                     ) { _, which, isChecked ->
                                         if (isChecked) {
                                             // If the user checked the item, add it to the selected items
 
                                             mSelectedItems.add(which)
-                                        } else if (mSelectedItems.contains(which)) {
+                                        }
+                                        else if (mSelectedItems.contains(which)) {
                                             // Else, if the item is already in the array, remove it
                                             mSelectedItems.remove(Integer.valueOf(which))
                                         }
                                     }
-                                    // Set the action buttons
+                                // Set the action buttons
                                 builder.setPositiveButton(android.R.string.ok) { dialog, id ->
-                                        TToast.startDownload()
-                                        mSelectedItems.map {
-                                            Works.imgD(data, it)
-                                        }
+                                    TToast.startDownload()
+                                    mSelectedItems.map {
+                                        Works.imgD(data, it)
                                     }
+                                }
                                     .setNegativeButton(android.R.string.cancel) { dialog, id -> }
                                     .setNeutralButton(R.string.selectAll) { _, id ->
-                                        //see below
+                                        // see below
                                     }
                                 val dialog = builder.create()
                                 dialog.show()
                                 dialog.getButton(BUTTON_NEUTRAL).setOnClickListener {
                                     for (i in boolean.indices) {
                                         boolean[i] = true
-                                        dialog.listView.setItemChecked(i,true)
+                                        dialog.listView.setItemChecked(i, true)
                                     }
                                     mSelectedItems.clear()
                                     for (i in showlist.indices) {
@@ -604,7 +610,6 @@ class PictureXAdapter(
                         true
                     }
                     setOnClickListener {
-
                         val intent = Intent(mContext, ZoomActivity::class.java)
                         val bundle = Bundle()
                         bundle.putInt("num", position)
@@ -642,7 +647,7 @@ class PictureXAdapter(
                         height = finalHeight.toInt()
                     }
                 }
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if(position % 2 == 1) R.color.transparent  else R.color.halftrans)
+                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -651,8 +656,9 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            if (position == 0)
+                            if (position == 0) {
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            }
                             return false
                         }
 
@@ -664,14 +670,15 @@ class PictureXAdapter(
                             isFirstResource: Boolean
                         ): Boolean {
                             mListen.invoke()
-                            if (position == 0)
+                            if (position == 0) {
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                            }
                             return false
                         }
                     }).into(binding.preview)
                 previewImageView = binding.preview
-                val path2 = PxEZApp.storepath + File.separatorChar + (if(PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "") +
-                        Works.parseSaveFormat(data).substringBeforeLast(".").removePrefix("？") + ".gif"
+                val path2 = PxEZApp.storepath + File.separatorChar + (if (PxEZApp.R18Folder && data.x_restrict == 1) PxEZApp.R18FolderPath else "") +
+                    Works.parseSaveFormat(data).substringBeforeLast(".").removePrefix("？") + ".gif"
                 imageViewGif!!.setOnLongClickListener {
                     if (gifProgressBar?.visibility != View.VISIBLE) {
                         MaterialDialog(mContext).show {
@@ -691,7 +698,7 @@ class PictureXAdapter(
                                                 file1.parentFile.mkdirs()
                                             }
                                             val ob = encodingGif()
-                                            //TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
+                                            // TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
                                             if (ob != null) {
                                                 ob.subscribe({
                                                     runBlocking {
@@ -708,7 +715,6 @@ class PictureXAdapter(
                                                                     )
                                                             )
                                                         ) { _, _ ->
-
                                                         }
                                                         isEncoding = false
                                                         File(path).delete()
@@ -717,7 +723,6 @@ class PictureXAdapter(
                                                             R.string.savegifsuccess,
                                                             Toast.LENGTH_SHORT
                                                         ).show()
-
                                                     }
                                                 }, {
                                                     isEncoding = false
@@ -726,17 +731,18 @@ class PictureXAdapter(
                                                         R.string.savegifsuccesserr,
                                                         Toast.LENGTH_SHORT
                                                     ).show()
-
                                                 }, {
-
                                                 })
-                                            } else {
+                                            }
+                                            else {
                                                 runBlocking {
                                                     withContext(Dispatchers.IO) {
                                                         File(path).copyTo(file1, true)
                                                     }
                                                     MediaScannerConnection.scanFile(
-                                                        PxEZApp.instance, arrayOf(path2), arrayOf(
+                                                        PxEZApp.instance,
+                                                        arrayOf(path2),
+                                                        arrayOf(
                                                             MimeTypeMap.getSingleton()
                                                                 .getMimeTypeFromExtension(
                                                                     file1.extension
@@ -751,9 +757,9 @@ class PictureXAdapter(
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
-
                                             }
-                                        } else {
+                                        }
+                                        else {
                                             Toasty.info(
                                                 PxEZApp.instance,
                                                 mContext.getString(R.string.already_encoding),
@@ -766,7 +772,7 @@ class PictureXAdapter(
                                         val file1 = File(zipPath)
                                         if (file1.exists()) {
                                             file1.copyTo(
-                                                File(path2.substringBeforeLast(".")+".zip"),
+                                                File(path2.substringBeforeLast(".") + ".zip"),
                                                 overwrite = true
                                             )
                                             Toasty.info(
@@ -797,10 +803,9 @@ class PictureXAdapter(
                         play.visibility = View.VISIBLE
                     }, {})
                 }
-
             }
             is DetailViewHolder ->
-                holder.updateWithPage(mContext, data, mViewCommentListen,mBookmarkedUserListen, mUserPicLongClick)
+                holder.updateWithPage(mContext, data, mViewCommentListen, mBookmarkedUserListen, mUserPicLongClick)
             is RelatedHolder -> {
 //            aboutPictureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
                 holder.updateWithPage(relatedPictureAdapter, mContext)
@@ -845,16 +850,12 @@ class PictureXAdapter(
                     gifEncoder.encodeFrame(bitmap, duration)
                     Log.d("progressset", i.toString())
                 }
-
             }
             gifEncoder.close()
             fileOk.mkdirs()
             it.onNext(1)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
-
     }
-
 
     var size = 1
     var duration: Int = 50
@@ -867,16 +868,15 @@ class PictureXAdapter(
         }
         val list = it.map { it.image_urls.square_medium }.toMutableList()
 
-
         relatedPictureAdapter.setNewInstance(list)
         relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
-            //val id = it[position].id
-            //val arrayList = ArrayList<Long>()
-            //it.forEach {
+            // val id = it[position].id
+            // val arrayList = ArrayList<Long>()
+            // it.forEach {
             //    arrayList.add(it.id)
-            //}
-            //bundle.putLongArray("illustidlist", arrayList.toLongArray())
+            // }
+            // bundle.putLongArray("illustidlist", arrayList.toLongArray())
             bundle.putLong("illustid", it[position].id)
             bundle.putInt("position", position)
             DataHolder.setIllustsList(it)
@@ -896,7 +896,6 @@ class PictureXAdapter(
     fun setUserPicColor(it: Boolean) {
         data.user.is_followed = it
         notifyItemChanged(imageUrls.size)
-
     }
 
     private var previewImageView: ImageView? = null
@@ -911,10 +910,8 @@ class PictureXAdapter(
             it.path
         }
         imageViewGif?.onStartListener {
-
         }
         imageViewGif?.onEndListener {
-
         }
 
         imageViewGif?.delayTime = duration.toLong()

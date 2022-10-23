@@ -24,18 +24,14 @@
 
 package com.perol.asdpl.pixivez.services
 
-
 import com.perol.asdpl.pixivez.responses.PixivAccountsEditResponse
 import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
-
-
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Header
 import retrofit2.http.POST
-
 
 interface AccountPixivService {
     @FormUrlEncoded
@@ -48,14 +44,15 @@ interface AccountPixivService {
 
     @FormUrlEncoded
     @POST("/api/login")
-    fun login(@Field("pixiv_id") pixiv_id: String,
-              @Field("password") password: String,
-              @Field("captcha") captcha: String,
-              @Field("g_recaptcha_response") g_recaptcha_response: String,
-              @Field("ref") ref: String,
-              @Field("source") source: String,
-              @Field("return_to") return_to: String,
-              @Field("recaptcha_enterprise_score_token") recaptcha_enterprise_score_token: String
+    fun login(
+        @Field("pixiv_id") pixiv_id: String,
+        @Field("password") password: String,
+        @Field("captcha") captcha: String,
+        @Field("g_recaptcha_response") g_recaptcha_response: String,
+        @Field("ref") ref: String,
+        @Field("source") source: String,
+        @Field("return_to") return_to: String,
+        @Field("recaptcha_enterprise_score_token") recaptcha_enterprise_score_token: String
     ): Observable<ResponseBody>
 
     @FormUrlEncoded

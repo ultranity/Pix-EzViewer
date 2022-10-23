@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "blockTag")
 class BlockTagEntity(
-    //@PrimaryKey
+    // @PrimaryKey
     var name: String,
     var translateName: String
 ) {

@@ -45,7 +45,7 @@ object TToast {
     }
 
     fun startDownload() {
-        //val toast = Toast.makeText(context, PxEZApp.instance.getString(R.string.join_download_queue), Toast.LENGTH_SHORT)
+        // val toast = Toast.makeText(context, PxEZApp.instance.getString(R.string.join_download_queue), Toast.LENGTH_SHORT)
 //            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 //            val view = inflater.inflate(R.layout.toast_startdownload, null)
 //            toast.view = view

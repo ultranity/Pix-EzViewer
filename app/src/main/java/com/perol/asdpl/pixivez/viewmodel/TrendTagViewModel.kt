@@ -49,18 +49,13 @@ class TrendTagViewModel : BaseViewModel() {
             reloadSearchHistory()
             it.onNext(1)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
-
         }.subscribe {
-
-
         }.add()
-
     }
 
     fun sethis() {
         Observable.create<Int> {
             appDatabase.searchhistoryDao().deletehistory()
-
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe({}, { }, {}).add()
     }
@@ -78,7 +73,7 @@ class TrendTagViewModel : BaseViewModel() {
     }
 
     fun getIllustTrendTags() = retrofitRepository.getIllustTrendTags()
-    fun deleteHistory(word: String) = Observable.just(1).subscribeOn(Schedulers.io()).map{
+    fun deleteHistory(word: String) = Observable.just(1).subscribeOn(Schedulers.io()).map {
         appDatabase.searchhistoryDao().deleteHistory(word)
     }.observeOn(AndroidSchedulers.mainThread()).subscribe()!!
 
@@ -86,6 +81,4 @@ class TrendTagViewModel : BaseViewModel() {
         appDatabase.searchhistoryDao().deleteHistoryEntity(searchHistoryEntity)
         it.onNext(1)
     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-
-
 }

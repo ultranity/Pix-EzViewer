@@ -42,12 +42,14 @@ class UserViewModel : BaseViewModel() {
 
     fun getSearchUser(word: String) {
         retrofitRepository.getSearchUser(word).subscribe(
-                {
-                    users.value = it
-                    nextUrl.value = it.next_url
-                }, {
-
-        }, {}, {}
+            {
+                users.value = it
+                nextUrl.value = it.next_url
+            },
+            {
+            },
+            {},
+            {}
         ).add()
     }
 }

@@ -29,16 +29,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.fragments.hellom.HelloMRecommendFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMRecomUserFragment
-
+import com.perol.asdpl.pixivez.fragments.hellom.HelloMRecommendFragment
 
 class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManager) :
     FragmentStatePagerAdapter(
         fragmentManager,
         BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
     ) {
-
 
     override fun getItem(position: Int) = when (position) {
         0 -> HelloMRecommendFragment.newInstance("", "")
@@ -54,6 +52,4 @@ class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManag
             context.getString(R.string.painter)
         }
     }
-
-
 }

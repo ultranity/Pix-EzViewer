@@ -37,7 +37,6 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 import com.perol.asdpl.pixivez.services.GlideApp
 
-
 class PixiVisionAdapter(
     layoutResId: Int,
     data: MutableList<SpotlightArticlesBean>?

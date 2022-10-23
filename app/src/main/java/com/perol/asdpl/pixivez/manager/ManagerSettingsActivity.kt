@@ -10,7 +10,7 @@ import com.perol.asdpl.pixivez.activity.RinkActivity
 import com.perol.asdpl.pixivez.databinding.SettingsActivityBinding
 class ManagerSettingsActivity : RinkActivity() {
 
-private lateinit var binding: SettingsActivityBinding
+    private lateinit var binding: SettingsActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = SettingsActivityBinding.inflate(layoutInflater)
@@ -23,9 +23,7 @@ private lateinit var binding: SettingsActivityBinding
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.toolbar.setNavigationOnClickListener { finish() }
-
     }
-
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -38,7 +36,7 @@ private lateinit var binding: SettingsActivityBinding
             }
             findPreference<ListPreference>("thread_num")!!.setOnPreferenceChangeListener { preference, newValue ->
                 Aria.get(requireActivity()).downloadConfig.apply {
-                    threadNum  = (newValue as String).toInt()
+                    threadNum = (newValue as String).toInt()
                 }
                 true
             }

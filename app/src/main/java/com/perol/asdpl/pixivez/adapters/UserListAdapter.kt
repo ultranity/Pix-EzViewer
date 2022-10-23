@@ -41,11 +41,9 @@ import com.perol.asdpl.pixivez.responses.User
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
-
 class UserListAdapter(layoutResId: Int) :
     BaseQuickAdapter<User, BaseViewHolder>(layoutResId),
     LoadMoreModule {
-
 
     init {
         setOnItemClickListener { adapter, view, position ->
@@ -54,21 +52,23 @@ class UserListAdapter(layoutResId: Int) :
                     context as Activity,
                     Pair.create(view.findViewById(R.id.imageview_usershow), "userimage")
                 ).toBundle()
-            } else null
+            }
+            else {
+                null
+            }
             UserMActivity.start(context, this.data[position], options)
         }
     }
 
     override fun convert(holder: BaseViewHolder, item: User) {
-        //val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        //val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
+        // val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
+        // val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         val userImage = holder.getView<View>(R.id.imageview_usershow) as ImageView
         val username = holder.getView<View>(R.id.textview_usershowname) as TextView
-        //recyclerView.layoutManager = linearLayoutManager
+        // recyclerView.layoutManager = linearLayoutManager
         username.text = item.name
         GlideApp.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
             .into(userImage)
-
     }
 }

@@ -44,8 +44,8 @@ import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import io.noties.markwon.Markwon
 
 class LoginActivity : RinkActivity() {
-    //private var username: String? = null
-    //private var password: String? = null
+    // private var username: String? = null
+    // private var password: String? = null
     lateinit var sharedPreferencesServices: SharedPreferencesServices
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +82,6 @@ class LoginActivity : RinkActivity() {
     private fun initBind() {
         sharedPreferencesServices = SharedPreferencesServices.getInstance()
         try {
-
             if (sharedPreferencesServices.getString("password") != null) {
                 binding.editPassword.setText(sharedPreferencesServices.getString("password"))
                 binding.editUsername.setText(sharedPreferencesServices.getString("username"))
@@ -107,7 +106,6 @@ class LoginActivity : RinkActivity() {
             // use it on a TextView
             markwon.setParsedMarkdown(webView, markdown)
             builder.setPositiveButton(android.R.string.ok) { _, _ ->
-
             }
             builder.setView(view)
             builder.create().show()
@@ -154,16 +152,16 @@ class LoginActivity : RinkActivity() {
                 return@setOnClickListener
             }
             binding.loginBtn.isEnabled = false*/
-            //sharedPreferencesServices.setString("username", username)
-            //sharedPreferencesServices.setString("password", password)
+            // sharedPreferencesServices.setString("username", username)
+            // sharedPreferencesServices.setString("password", password)
             MaterialDialog(this).show {
                 title(R.string.login_help)
                 message(R.string.login_help_new)
                 positiveButton(R.string.I_know) {
                     val url: String = "https://app-api.pixiv.net/web/v1/login?code_challenge=" +
-                            Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
-                    //WeissUtil.start()
-                    //WeissUtil.proxy()
+                        Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
+                    // WeissUtil.start()
+                    // WeissUtil.proxy()
                     val intent = Intent(this@LoginActivity, OKWebViewActivity::class.java)
                     intent.putExtra("url", url)
                     startActivity(intent)
@@ -173,7 +171,7 @@ class LoginActivity : RinkActivity() {
         }
 
         binding.loginBtn.setOnClickListener {
-            //binding.loginBtn.isEnabled = false
+            // binding.loginBtn.isEnabled = false
             val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
             startActivity(intent)
         }

@@ -42,7 +42,6 @@ import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 
-
 @SuppressLint("CheckResult")
 class DownloadTaskAdapter :
     BaseQuickAdapter<DownloadEntity, BaseViewHolder>(R.layout.item_download_task) {
@@ -60,8 +59,8 @@ class DownloadTaskAdapter :
                     when (index) {
                         0 -> {
                             Aria.download(PxEZApp.instance)
-                                .load(item.url) //读取下载地址
-                                .setFilePath(item.filePath) //设置文件保存的完整路径
+                                .load(item.url) // 读取下载地址
+                                .setFilePath(item.filePath) // 设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
                                 .setExtendField(item.str)
                                 .option(Works.option)
@@ -78,15 +77,14 @@ class DownloadTaskAdapter :
                         }
                     }
                     val taskList = Aria.download(this).taskList
-                    if (taskList?.isNotEmpty() == true)
+                    if (taskList?.isNotEmpty() == true) {
                         this@DownloadTaskAdapter.setNewInstance(taskList.asReversed())
+                    }
                 }
             }
             true
         }
-
     }
-
 
     override fun onItemViewHolderCreated(
         viewHolder: BaseViewHolder,

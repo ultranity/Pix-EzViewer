@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse
@@ -38,7 +37,6 @@ class UserBookMarkViewModel : BaseViewModel() {
     val adddata = MutableLiveData<List<Illust>>()
     val nextUrl = MutableLiveData<String>()
     val tags = MutableLiveData<BookMarkTagsResponse>()
-    val preference = SharedPreferencesServices.getInstance()!!
     fun onLoadMoreListener() {
         if (nextUrl.value != null) {
             retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({

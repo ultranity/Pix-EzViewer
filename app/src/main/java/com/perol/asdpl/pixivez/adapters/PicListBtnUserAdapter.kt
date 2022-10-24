@@ -53,12 +53,12 @@ import kotlin.math.min
 
 // simple Adapter for image item with user imageView and heart icon
 // TODO: rename
-class PicListXBtnUserAdapter(
+class PicListBtnUserAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     filter: IllustFilter
 ) :
-    PicListXBtnAdapter(layoutResId, data, filter), LoadMoreModule {
+    PicListBtnAdapter(layoutResId, data, filter), LoadMoreModule {
 
     override fun viewPics(view: View, position: Int) {
         // super.viewPics(view, position)

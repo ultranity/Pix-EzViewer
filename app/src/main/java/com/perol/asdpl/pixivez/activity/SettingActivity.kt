@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.fragments.AboutXFragment
 import com.perol.asdpl.pixivez.fragments.SettingFragment
 import com.perol.asdpl.pixivez.fragments.ThanksFragment
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import java.util.*
 
 class SettingActivity : RinkActivity() {
@@ -113,7 +113,7 @@ class SettingActivity : RinkActivity() {
             calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
                     Calendar.HOUR_OF_DAY
                 ) -
-                SharedPreferencesServices.getInstance()
+                UserInfoSharedPreferences.getInstance()
                     .getInt(
                             "lastsupport",
                             calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
@@ -123,10 +123,10 @@ class SettingActivity : RinkActivity() {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         }
         else {
-            SharedPreferencesServices.getInstance()
+            UserInfoSharedPreferences.getInstance()
                 .setInt(
                     "lastsupport",
-                    SharedPreferencesServices.getInstance().getInt("lastsupport") - 24
+                    UserInfoSharedPreferences.getInstance().getInt("lastsupport") - 24
                 )
             super.onBackPressed()
         }

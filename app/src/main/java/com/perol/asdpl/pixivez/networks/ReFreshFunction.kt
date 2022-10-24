@@ -155,7 +155,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
 
     private fun reFreshToken(it: UserEntity): ObservableSource<*> {
         Log.d("init", "reFreshToken")
-        // SharedPreferencesServices.getInstance().setString("Device_token", it.Device_token)
+        // UserInfoSharedPreferences.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthTokenX(
             client_id,
             client_secret,

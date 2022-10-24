@@ -38,9 +38,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
-import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
-import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListXBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import com.perol.asdpl.pixivez.dialog.SearchSectionDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -118,7 +118,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         filter = IllustFilter(isR18on, blockTags)
         searchIllustAdapter =
             if (PxEZApp.instance.pre.getBoolean("show_user_img_searchr", true)) {
-                PicListXBtnUserAdapter(
+                PicListBtnUserAdapter(
                     R.layout.view_ranking_item,
                     null,
                     filter
@@ -126,7 +126,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 // singleLine = false
             }
             else {
-                PicListXBtnAdapter(
+                PicListBtnAdapter(
                     R.layout.view_recommand_item,
                     null,
                     filter
@@ -217,7 +217,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
     private var param1: String? = null
-    private lateinit var searchIllustAdapter: PicItemAdapterBase
+    private lateinit var searchIllustAdapter: PicListAdapter
     var sort = arrayOf("date_desc", "date_asc", "popular_desc")
     private var search_target =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")

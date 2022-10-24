@@ -35,9 +35,9 @@ import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.responses.ErrorResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
 import com.perol.asdpl.pixivez.services.OAuthSecureService
@@ -63,7 +63,7 @@ class IntentActivity : RinkActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPreferencesServices = SharedPreferencesServices.getInstance()
+        val userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
         val uri = intent.data
         if (uri != null) {
             val scheme = uri.scheme
@@ -75,7 +75,7 @@ class IntentActivity : RinkActivity() {
                     if (!host.isNullOrBlank()) {
                         if (host.contains("account") && segment.contains("login")) {
                             val code = uri.getQueryParameter("code").toString()
-                            sharedPreferencesServices.setString("last_login_code", code)
+                            userInfoSharedPreferences.setString("last_login_code", code)
                             tryLogin(code)
                             finish()
                             return
@@ -185,7 +185,7 @@ class IntentActivity : RinkActivity() {
         map["code_verifier"] = Pkce.getPkce().verify
         // map["username"] = username!!
         // map["password"] = password!!
-        // map["device_token"] = SharedPreferencesServices.getInstance().getString("Device_token") ?: "pixiv"
+        // map["device_token"] = UserInfoSharedPreferences.getInstance().getString("Device_token") ?: "pixiv"
         map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
         // map["get_secure_url"] = true
         map["include_policy"] = true
@@ -217,10 +217,10 @@ class IntentActivity : RinkActivity() {
                     )
                     // TODO: user_x_restrict
                     AppDataRepository.pre.setInt("user_x_restrict", user.x_restrict)
-                    // sharedPreferencesServices.setBoolean("isnone", false)
-                    // sharedPreferencesServices.setString("username", username)
-                    // sharedPreferencesServices.setString("password", password)
-                    // sharedPreferencesServices.setString("Device_token", pixivOAuthResponse.response.device_token)
+                    // userInfoSharedPreferences.setBoolean("isnone", false)
+                    // userInfoSharedPreferences.setString("username", username)
+                    // userInfoSharedPreferences.setString("password", password)
+                    // userInfoSharedPreferences.setString("Device_token", pixivOAuthResponse.response.device_token)
                 }
             }
             .doOnError { e ->

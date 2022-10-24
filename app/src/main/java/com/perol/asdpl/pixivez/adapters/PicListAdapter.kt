@@ -1,28 +1,3 @@
-/*
- * MIT License
- *
- * Copyright (c) 2020 ultranity
- * Copyright (c) 2019 Perol_Notsfsssf
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE
- */
-
 package com.perol.asdpl.pixivez.adapters
 
 import android.app.Activity
@@ -65,7 +40,7 @@ import kotlin.math.min
 // basic Adapter for image item
 // TODO: reuse more code
 // TODO: fling optimize
-abstract class PicItemAdapterBase(
+abstract class PicListAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     val filter: IllustFilter
@@ -77,14 +52,6 @@ abstract class PicItemAdapterBase(
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
     var quality = 0
-    fun x_restrict(item: Illust): String {
-        return if (PxEZApp.R18Private && item.x_restrict == 1) {
-            "private"
-        }
-        else {
-            "public"
-        }
-    }
 
     private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan: Boolean) {
         val layoutParams = holder.itemView.layoutParams
@@ -105,10 +72,14 @@ abstract class PicItemAdapterBase(
         this.loadMoreModule.loadMoreFail()
     }
 
+    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener) {
+        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
+    }
+
     private fun setAction(CollectMode: Int) {
         if (CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
-                (adapter.data as ArrayList<Illust>)[position].let { item ->
+                (adapter.data as List<Illust>)[position].let { item ->
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
                     if (!item.is_bookmarked) {
@@ -130,7 +101,7 @@ abstract class PicItemAdapterBase(
             }
             setOnItemLongClickListener { adapter, view, position ->
                 // show detail of illust
-                (adapter.data as ArrayList<Illust>)[position].let { item ->
+                (adapter.data as List<Illust>)[position].let { item ->
                     val detailstring = InteractionUtil.toDetailString(item)
                     MaterialAlertDialogBuilder(context as Activity)
                         .setMessage(detailstring)
@@ -274,10 +245,6 @@ abstract class PicItemAdapterBase(
                     }
                 })
         }
-    }
-
-    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener, recyclerView: RecyclerView?) {
-        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 
     override fun addData(newData: Collection<Illust>) {

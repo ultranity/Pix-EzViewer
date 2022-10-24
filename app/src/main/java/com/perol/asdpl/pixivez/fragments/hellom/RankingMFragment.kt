@@ -38,8 +38,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
-import com.perol.asdpl.pixivez.adapters.PicListXBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSwiperefreshRecyclerviewBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -70,7 +70,7 @@ class RankingMFragment : BaseFragment() {
     private var picDate: String? = null
     private lateinit var viewmodel: RankingMViewModel
     private lateinit var sharemodel: RankingShareViewModel
-    private lateinit var picListAdapter: PicItemAdapterBase
+    private lateinit var picListAdapter: PicListAdapter
     private var param1: String? = null
     private var param2: Int? = null
 
@@ -141,7 +141,7 @@ class RankingMFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         filter = IllustFilter(isR18on, blockTags)
-        picListAdapter = PicListXBtnUserAdapter(
+        picListAdapter = PicListBtnUserAdapter(
             R.layout.view_ranking_item,
             null,
             filter

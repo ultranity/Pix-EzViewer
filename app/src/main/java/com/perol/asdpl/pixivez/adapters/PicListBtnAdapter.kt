@@ -38,12 +38,12 @@ import com.perol.asdpl.pixivez.services.Works
 
 // simple Adapter for image item with heart icon
 // TODO: rename
-open class PicListXBtnAdapter(
+open class PicListBtnAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     filter: IllustFilter
 ) :
-    PicItemAdapterBase(layoutResId, data?.toMutableList(), filter) {
+    PicListAdapter(layoutResId, data?.toMutableList(), filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

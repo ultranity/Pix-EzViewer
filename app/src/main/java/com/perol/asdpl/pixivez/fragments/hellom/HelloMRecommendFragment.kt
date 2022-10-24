@@ -164,7 +164,7 @@ class HelloMRecommendFragment : BaseFragment() {
         }
     }
 
-    private lateinit var picListXAdapter: PicItemAdapterBase
+    private lateinit var picListXAdapter: PicListAdapter
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private val viewmodel: HelloMRecomModel by activityViewModels()
     private val pixivisionModel: PixivisionModel by sharedViewModel("pixivision")
@@ -308,14 +308,14 @@ class HelloMRecommendFragment : BaseFragment() {
                 if (PxEZApp.instance.pre
                     .getBoolean("show_user_img_main", true)
                 ) {
-                    PicListXBtnUserAdapter(
+                    PicListBtnUserAdapter(
                         R.layout.view_ranking_item,
                         null,
                         filter
                     )
                 }
                 else {
-                    PicListXBtnAdapter(
+                    PicListBtnAdapter(
                         R.layout.view_recommand_item,
                         null,
                         filter

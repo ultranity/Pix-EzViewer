@@ -6,7 +6,7 @@ import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 
 class FirstInfoDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -15,7 +15,7 @@ class FirstInfoDialog : DialogFragment() {
             normalDialog.setMessage(R.string.app_help)
             normalDialog.setTitle(R.string.read_it)
             normalDialog.setPositiveButton(R.string.I_know) { _, _ ->
-                SharedPreferencesServices.getInstance().setBoolean("firstinfo", true)
+                UserInfoSharedPreferences.getInstance().setBoolean("firstinfo", true)
             }
             normalDialog.setNegativeButton(R.string.other) { _, _ ->
                 MaterialDialog(it).show {

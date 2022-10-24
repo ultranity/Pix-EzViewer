@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.networks;
+package com.perol.asdpl.pixivez.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,32 +31,31 @@ import android.content.SharedPreferences;
 import com.perol.asdpl.pixivez.services.PxEZApp;
 
 
-public class SharedPreferencesServices {
+public class UserInfoSharedPreferences {
 
     private final SharedPreferences sp;
     private final String FILE_NAME = "userinfo";
 
-    public SharedPreferencesServices(Context context) {
+    public UserInfoSharedPreferences(Context context) {
         sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }
 
-    public SharedPreferencesServices() {
+    public UserInfoSharedPreferences() {
         sp = PxEZApp.instance.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
 
     }
 
     private static final class InstanceHolder {
-        static final SharedPreferencesServices instance = new SharedPreferencesServices();//单例模式
+        static final UserInfoSharedPreferences instance = new UserInfoSharedPreferences();//单例模式
     }
 
-    public static SharedPreferencesServices getInstance() {
+    public static UserInfoSharedPreferences getInstance() {
         return InstanceHolder.instance;
     }
 
 
     public void setString(String key, String value) {
         sp.edit().putString(key, value).apply();
-
     }
 
     public String getString(String key) {

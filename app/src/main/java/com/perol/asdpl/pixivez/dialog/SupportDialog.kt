@@ -22,7 +22,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.SettingActivity
 import com.perol.asdpl.pixivez.adapters.ThanksAdapter
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -256,12 +256,12 @@ class SupportDialog : DialogFragment() {
         }
         return activity?.let {
             val calendar = Calendar.getInstance()
-            val sharedPreferencesServices = SharedPreferencesServices.getInstance()
-            sharedPreferencesServices.setInt(
+            val userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
+            userInfoSharedPreferences.setInt(
                 "lastsupport",
                 calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
             )
-            val totaldownloadcount = sharedPreferencesServices.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size ?: 0)
+            val totaldownloadcount = userInfoSharedPreferences.getInt("totaldownloadcount", File(PxEZApp.storepath).list()?.size ?: 0)
             val builder = MaterialAlertDialogBuilder(requireActivity())
             val inflater = requireActivity().layoutInflater
             val view = inflater.inflate(R.layout.dialog_thanks, null)
@@ -290,13 +290,13 @@ class SupportDialog : DialogFragment() {
                     if (full) {
                         setNegativeButton(R.string.wechat) { _, _ ->
                             gotoWeChat()
-                            sharedPreferencesServices.setInt(
+                            userInfoSharedPreferences.setInt(
                                 "lastsupport",
                                 calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                             )
-                            sharedPreferencesServices.setInt(
+                            userInfoSharedPreferences.setInt(
                                 "supports",
-                                sharedPreferencesServices.getInt("supports") + 1
+                                userInfoSharedPreferences.getInt("supports") + 1
                             )
                         }
                         setPositiveButton(R.string.ali) { _, _ ->
@@ -314,13 +314,13 @@ class SupportDialog : DialogFragment() {
                             )
                             clipboard.setPrimaryClip(clip)
                             gotoAliPay()
-                            sharedPreferencesServices.setInt(
+                            userInfoSharedPreferences.setInt(
                                 "lastsupport",
                                 calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                             )
-                            sharedPreferencesServices.setInt(
+                            userInfoSharedPreferences.setInt(
                                 "supports",
-                                sharedPreferencesServices.getInt("supports") + 1
+                                userInfoSharedPreferences.getInt("supports") + 1
                             )
                         }
                     }

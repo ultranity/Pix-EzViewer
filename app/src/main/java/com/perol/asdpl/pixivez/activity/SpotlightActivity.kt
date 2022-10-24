@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SpotlightAdapter
 import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
@@ -55,7 +54,6 @@ import java.util.regex.Pattern
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
     private val retrofitRepository = RetrofitRepository.getInstance()
-    private var sharedPreferencesServices: SharedPreferencesServices? = null
     private var spotlightAdapter: SpotlightAdapter? = null
     private val list = ArrayList<Spotlight>()
     private var url = ""
@@ -66,7 +64,6 @@ class SpotlightActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySpotlightBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        sharedPreferencesServices = SharedPreferencesServices.getInstance()
         getData()
     }
 

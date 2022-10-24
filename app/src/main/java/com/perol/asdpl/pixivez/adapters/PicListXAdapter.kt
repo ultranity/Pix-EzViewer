@@ -44,7 +44,7 @@ open class PicListXAdapter(
     data: List<Illust>?,
     filter: IllustFilter
 ) :
-    PicItemAdapterBase(layoutResId, data?.toMutableList(), filter) {
+    PicListAdapter(layoutResId, data?.toMutableList(), filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

@@ -84,7 +84,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         filter = IllustFilter(isR18on, blockTags)
         picItemAdapter =
             if (PxEZApp.instance.pre.getBoolean("show_user_img_bookmarked", true)) {
-                PicListXBtnUserAdapter(
+                PicListBtnUserAdapter(
                     R.layout.view_ranking_item,
                     null,
                     filter
@@ -92,7 +92,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 // singleLine = false,
             }
             else {
-                PicListXBtnAdapter(
+                PicListBtnAdapter(
                     R.layout.view_recommand_item,
                     null,
                     filter
@@ -240,7 +240,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         }
     }
 
-    private lateinit var picItemAdapter: PicItemAdapterBase
+    private lateinit var picItemAdapter: PicListAdapter
     private lateinit var binding: FragmentUserBookMarkBinding
 
     override fun onCreateView(

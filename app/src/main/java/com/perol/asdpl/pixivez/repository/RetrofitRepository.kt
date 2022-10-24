@@ -29,7 +29,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.networks.ReFreshFunction
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.responses.*
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import io.reactivex.Observable
@@ -41,7 +40,6 @@ import retrofit2.HttpException
 
 class RetrofitRepository {
 
-    var sharedPreferencesServices: SharedPreferencesServices = SharedPreferencesServices.getInstance()
     var appApiPixivService: AppApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
     private var gifApiPixivService: AppApiPixivService = RestClient.gifAppApi.create(AppApiPixivService::class.java)
     var reFreshFunction: ReFreshFunction = ReFreshFunction.getInstance()

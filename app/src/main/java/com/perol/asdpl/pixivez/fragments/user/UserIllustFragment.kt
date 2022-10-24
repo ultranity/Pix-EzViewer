@@ -35,8 +35,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
-import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserIllustBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -70,9 +70,9 @@ class UserIllustFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
-            picListBtnAdapter.filter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
-            picListBtnAdapter.filter.blockTags = blockTags
-            picListBtnAdapter.notifyDataSetChanged()
+            picListAdapter.filter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
+            picListAdapter.filter.blockTags = blockTags
+            picListAdapter.notifyDataSetChanged()
         }
     }
 
@@ -83,7 +83,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     private fun initView() {
-        picListBtnAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
         binding.refreshlayout.setOnRefreshListener {
@@ -94,7 +94,7 @@ class UserIllustFragment : BaseFragment() {
                 2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = picListBtnAdapter
+            adapter = picListAdapter
             // addItemDecoration(GridItemDecoration())
         }
     }
@@ -116,26 +116,26 @@ class UserIllustFragment : BaseFragment() {
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                picListBtnAdapter.loadMoreEnd()
+                picListAdapter.loadMoreEnd()
             }
             else {
-                picListBtnAdapter.loadMoreComplete()
+                picListAdapter.loadMoreComplete()
             }
         }
         viewActivity = requireActivity() as UserMActivity
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.refreshlayout.isRefreshing = false
-                picListBtnAdapter.setNewInstance(it.toMutableList())
+                picListAdapter.setNewInstance(it.toMutableList())
             }
         }
         viewModel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListBtnAdapter.addData(it)
-                picListBtnAdapter.loadMoreComplete()
+                picListAdapter.addData(it)
+                picListAdapter.loadMoreComplete()
             }
             else {
-                picListBtnAdapter.loadMoreModule.loadMoreFail()
+                picListAdapter.loadMoreModule.loadMoreFail()
             }
         }
     }
@@ -150,7 +150,7 @@ class UserIllustFragment : BaseFragment() {
     private lateinit var filter: IllustFilter
     private lateinit var viewActivity: UserMActivity
 
-    private lateinit var picListBtnAdapter: PicItemAdapterBase
+    private lateinit var picListAdapter: PicListAdapter
     private lateinit var binding: FragmentUserIllustBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -163,7 +163,7 @@ class UserIllustFragment : BaseFragment() {
             PxEZApp.instance.pre.getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
         )
         // Inflate the layout for this fragment
-        picListBtnAdapter = PicListXBtnAdapter(
+        picListAdapter = PicListBtnAdapter(
             R.layout.view_recommand_item,
             null,
             filter

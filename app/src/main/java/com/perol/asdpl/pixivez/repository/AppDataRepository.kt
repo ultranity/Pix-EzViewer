@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.repository
 
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
@@ -35,7 +34,7 @@ import kotlinx.coroutines.withContext
 
 object AppDataRepository {
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val pre = SharedPreferencesServices.getInstance() // PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
+    val pre = UserInfoSharedPreferences.getInstance() // PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
     lateinit var currentUser: UserEntity
     suspend fun getUser(): UserEntity? {
         val result = withContext(Dispatchers.IO) {

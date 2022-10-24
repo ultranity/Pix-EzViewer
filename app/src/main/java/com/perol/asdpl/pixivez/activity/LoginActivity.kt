@@ -40,13 +40,13 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
 import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
 import com.perol.asdpl.pixivez.networks.Pkce
-import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
+import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import io.noties.markwon.Markwon
 
 class LoginActivity : RinkActivity() {
     // private var username: String? = null
     // private var password: String? = null
-    lateinit var sharedPreferencesServices: SharedPreferencesServices
+    lateinit var userInfoSharedPreferences: UserInfoSharedPreferences
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,13 +80,13 @@ class LoginActivity : RinkActivity() {
     }
 
     private fun initBind() {
-        sharedPreferencesServices = SharedPreferencesServices.getInstance()
+        userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
         try {
-            if (sharedPreferencesServices.getString("password") != null) {
-                binding.editPassword.setText(sharedPreferencesServices.getString("password"))
-                binding.editUsername.setText(sharedPreferencesServices.getString("username"))
+            if (userInfoSharedPreferences.getString("password") != null) {
+                binding.editPassword.setText(userInfoSharedPreferences.getString("password"))
+                binding.editUsername.setText(userInfoSharedPreferences.getString("username"))
             }
-            if (!sharedPreferencesServices.getBoolean("firstinfo")) {
+            if (!userInfoSharedPreferences.getBoolean("firstinfo")) {
                 FirstInfoDialog().show(this.supportFragmentManager, "infodialog")
             }
         } catch (e: Exception) {
@@ -152,8 +152,8 @@ class LoginActivity : RinkActivity() {
                 return@setOnClickListener
             }
             binding.loginBtn.isEnabled = false*/
-            // sharedPreferencesServices.setString("username", username)
-            // sharedPreferencesServices.setString("password", password)
+            // userInfoSharedPreferences.setString("username", username)
+            // userInfoSharedPreferences.setString("password", password)
             MaterialDialog(this).show {
                 title(R.string.login_help)
                 message(R.string.login_help_new)

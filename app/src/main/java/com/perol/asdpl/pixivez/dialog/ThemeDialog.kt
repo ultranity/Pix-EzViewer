@@ -60,7 +60,7 @@ class ThemeDialog : DialogFragment() {
 //                layoutManager = GridLayoutManager(requireActivity(), 4)
 //                adapter = ColorfulAdapter(R.layout.view_colorfulitem, list).apply {
 //                    onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-//                        SharedPreferencesServices.getInstance().setInt("colornum", position)
+//                        UserInfoSharedPreferences.getInstance().setInt("colornum", position)
 //                        Colorful().edit().setPrimaryColor(list[position]).apply(requireActivity()) {
 //                            requireActivity().recreate()
 //                        }

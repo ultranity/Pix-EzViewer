@@ -38,8 +38,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.PicItemAdapterBase
-import com.perol.asdpl.pixivez.adapters.PicListXBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMmyBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -77,7 +77,7 @@ class HelloMMyFragment : BaseFragment() {
         }
     }
 
-    private lateinit var rankingAdapter: PicItemAdapterBase
+    private lateinit var rankingAdapter: PicListAdapter
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
     private fun initViewModel() {
@@ -151,7 +151,7 @@ class HelloMMyFragment : BaseFragment() {
         viewmodel.hideBookmarked.value = PxEZApp.instance.pre
             .getBoolean("hide_bookmark_item_in_mmy", false)
         filter = IllustFilter(isR18on, blockTags, if (viewmodel.hideBookmarked.value!!) 1 else 0)
-        rankingAdapter = PicListXBtnAdapter(
+        rankingAdapter = PicListBtnAdapter(
             R.layout.view_recommand_item,
             null,
             filter

@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ScreenUtil.dp2px
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.GlideApp
@@ -54,38 +55,33 @@ import com.shehuan.niv.NiceImageView
 class UserShowAdapter(layoutResId: Int) :
     BaseQuickAdapter<SearchUserResponse.UserPreviewsBean, BaseViewHolder>(layoutResId),
     LoadMoreModule {
+    companion object{
+        const val itemWidth:Int = 400
+        val itemWidthPx:Int = dp2px(400f)
+    }
     private var mSharedPool = RecyclerView.RecycledViewPool()
 
     init {
         setOnItemClickListener { adapter, view, position ->
-            val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("data", this.data[position].user.id)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(view.findViewById(R.id.imageview_usershow), "userimage")
+                    Pair(view.findViewById(R.id.imageview_usershow), "userimage")
                 ).toBundle()
-            }
-            else {
-                null
-            }
-            context.startActivity(intent, options)
+            } else null
+            UserMActivity.start(context, this.data[position].user, options)
         }
     }
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
-        val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
         val userSearchillustAdapter: UserSearchIllustAdapter
-        //        holder.addOnClickListener(R.id.cardview).addOnClickListener(R.id.imageview_usershow).addOnClickListener(R.id.textview_usershowname);
         val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (recyclerView.adapter == null) {
             recyclerView.apply {
                 userSearchillustAdapter = UserSearchIllustAdapter(R.layout.view_usersearchillust_item, item.illusts)
                 adapter = userSearchillustAdapter
-                layoutManager = linearLayoutManager
+                layoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
                 setRecycledViewPool(mSharedPool)
                 setHasFixedSize(true)
                 isNestedScrollingEnabled = false
@@ -93,14 +89,14 @@ class UserShowAdapter(layoutResId: Int) :
         }
         else {
             userSearchillustAdapter = recyclerView.adapter as UserSearchIllustAdapter
-            val oldlen = userSearchillustAdapter.data.size
+            val itemCount = userSearchillustAdapter.data.size
             userSearchillustAdapter.data = item.illusts
-            userSearchillustAdapter.notifyItemRangeChanged(0, oldlen)
+            userSearchillustAdapter.notifyItemRangeChanged(0, itemCount)
         }
         val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)
         val username = holder.getView<TextView>(R.id.textview_usershowname)
-        val colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
-        val badgeTextColor = ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
+        val colorPrimary = ThemeUtil.getColorPrimary(context)
+        val badgeTextColor = ThemeUtil.getColorHighlight(context)
         if (item.user.is_followed) {
             userImage.setBorderColor(badgeTextColor) // Color.YELLOW
         }
@@ -118,14 +114,11 @@ class UserShowAdapter(layoutResId: Int) :
                 val mainimage = view.findViewById<ImageView>(R.id.imageview_usersearchillust)
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(mainimage, "mainimage"),
-                    Pair.create(username, "username"),
-                    Pair.create(userImage, "userimage")
+                    Pair(mainimage, "mainimage"),
+                    Pair(username, "username"),
+                    Pair(userImage, "userimage")
                 ).toBundle()
-            }
-            else {
-                null
-            }
+            } else null
             ContextCompat.startActivity(context, intent, options)
         }
         username.text = "${item.user.name} : ${item.user.account}"

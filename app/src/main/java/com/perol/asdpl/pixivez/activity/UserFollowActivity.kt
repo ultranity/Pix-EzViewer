@@ -32,7 +32,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.UserListAdapter
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
@@ -42,6 +41,7 @@ import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.ListUserResponse
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -60,7 +60,6 @@ class UserFollowActivity : RinkActivity() {
     private var userShowAdapter: UserShowAdapter? = null
     private var userListAdapter: UserListAdapter? = null
     private var Next_url: String? = null
-    private var recyclerviewusersearch: RecyclerView? = null
     private val retrofitRepository = RetrofitRepository.getInstance()
     private val username: String? = null // TODO: title?
     private var bundle: Bundle? = null
@@ -80,11 +79,13 @@ class UserFollowActivity : RinkActivity() {
         setSupportActionBar(binding.toolbarUserfollow)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.spinner.visibility = View.GONE
-        binding.recyclerviewUsersearch.layoutManager =
-            GridLayoutManager(this, getMaxColumn(400))
-        // FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
-        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
-
+        binding.recyclerviewUsersearch.apply{
+            layoutManager =
+                GridLayoutManager(this@UserFollowActivity, getMaxColumn(UserShowAdapter.itemWidth))
+            // FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+            addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
+        }
         bundle = this.intent.extras
         if (bundle!!.containsKey("illust_id")) {
             illust_id = bundle!!.getLong("illust_id")
@@ -123,7 +124,7 @@ class UserFollowActivity : RinkActivity() {
                 Next_url = searchUserResponse.next_url
                 userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
                 userShowAdapter!!.setNewInstance(searchUserResponse.user_previews)
-                recyclerviewusersearch!!.adapter = userShowAdapter
+                binding.recyclerviewUsersearch.adapter = userShowAdapter
                 userShowAdapter!!.loadMoreModule.setOnLoadMoreListener {
                     if (Next_url != null) {
                         retrofitRepository.getNextUser(Next_url!!).subscribe {
@@ -188,7 +189,7 @@ class UserFollowActivity : RinkActivity() {
             illustData = it
             Next_url = it.next_url
             userListAdapter = UserListAdapter(R.layout.view_usershow_item)
-            recyclerviewusersearch!!.adapter = userListAdapter
+            binding.recyclerviewUsersearch.adapter = userListAdapter
             userListAdapter!!.setNewInstance(it.users)
             userListAdapter!!.loadMoreModule.setOnLoadMoreListener {
                 if (Next_url == null) {

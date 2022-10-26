@@ -37,6 +37,7 @@ import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecomUserBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
+import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloRecomUserViewModel
 
 /**
@@ -89,7 +90,8 @@ class HelloMRecomUserFragment : BaseFragment() {
         initViewModel()
         binding.recyclerView.apply {
             adapter = userShowAdapter
-            layoutManager = GridLayoutManager(requireContext(), getMaxColumn(400))
+            layoutManager = GridLayoutManager(requireContext(), getMaxColumn(UserShowAdapter.itemWidth))
+            addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
             // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }

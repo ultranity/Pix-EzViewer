@@ -25,10 +25,8 @@
 
 package com.perol.asdpl.pixivez.dialog
 
-import android.app.Activity
 import android.app.ActivityOptions
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Pair
@@ -38,7 +36,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -158,22 +156,13 @@ class CommentDialog : BaseDialogFragment() {
         commentAdapter!!.addChildClickViewIds(R.id.commentuserimage, R.id.reply_to_hit)
         commentAdapter!!.setOnItemChildClickListener { adapter, view, position ->
             if (view.id == R.id.commentuserimage) {
-                val intent = Intent(context, UserMActivity::class.java)
-                intent.putExtra(
-                    "data",
-                    commentAdapter!!.data[position].user.id
-                )
-
-                if (PxEZApp.animationEnable) {
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
-                        context as Activity,
-                        Pair.create(view, "userimage")
-                    )
-                    startActivity(intent, options.toBundle())
-                }
-                else {
-                    startActivity(intent)
-                }
+                val options = if (PxEZApp.animationEnable) {
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        requireActivity(),
+                        Pair(view, "userimage")
+                    ).toBundle()
+                } else null
+                UserMActivity.start(requireContext(), commentAdapter!!.data[position].user.id, options)
             }
             if (view.id == R.id.reply_to_hit) {
                 parent_comment_id = commentAdapter!!.data[position].id

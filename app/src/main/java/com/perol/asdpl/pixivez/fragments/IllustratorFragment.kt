@@ -42,6 +42,7 @@ import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
 import kotlin.properties.Delegates
 
@@ -82,11 +83,14 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        binding.recyclerviewIllustrator.adapter = userShowAdapter
-        binding.recyclerviewIllustrator.layoutManager =
-            GridLayoutManager(requireContext(), getMaxColumn(400))
-        // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
-        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+        binding.recyclerviewIllustrator.apply {
+            adapter = userShowAdapter
+            layoutManager =
+                GridLayoutManager(requireContext(), getMaxColumn(UserShowAdapter.itemWidth))
+            addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
+            // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+        }
         binding.spinnerIllustrator.onItemSelectedListener = this
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
             viewModel.onLoadMore(viewModel.nextUrl.value!!)

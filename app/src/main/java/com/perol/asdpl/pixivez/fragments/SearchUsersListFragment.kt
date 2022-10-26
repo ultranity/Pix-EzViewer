@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.databinding.FragmentUserslistBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.UserViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -67,27 +68,26 @@ class SearchUsersListFragment : LazyFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
-        binding.recyclerviewUser.adapter = userShowAdapter
-        binding.recyclerviewUser.layoutManager =
-            GridLayoutManager(requireContext(), getMaxColumn(400))
-        // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
-        //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
-        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            if (userViewModel.nextUrl.value != null) {
-                userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
-            }
+        binding.recyclerviewUser.apply {
+            adapter = userShowAdapter
+            layoutManager = GridLayoutManager(requireContext(), getMaxColumn(UserShowAdapter.itemWidth))
+            // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
+            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+            addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
         }
+        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+                if (userViewModel.nextUrl.value != null) {
+                    userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
+                }
+            }
         userShowAdapter.setOnItemClickListener { adapter, view, position ->
             val options = if (PxEZApp.animationEnable) {
                 val userImage = view.findViewById<View>(R.id.imageview_usershow)
                 ActivityOptions.makeSceneTransitionAnimation(
                     requireActivity(),
-                    Pair.create(userImage, "userimage")
+                    Pair(userImage, "userimage")
                 ).toBundle()
-            }
-            else {
-                null
-            }
+            } else null
             UserMActivity.start(requireContext(), userShowAdapter.data[position].user, options)
         }
     }

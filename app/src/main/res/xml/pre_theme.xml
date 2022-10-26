@@ -16,6 +16,18 @@
             app:key="theme"
             app:summary="TODO"
             app:title="@string/title_theme_color" />
+    </PreferenceCategory>
 
+    <PreferenceCategory app:title="Material">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="material3"
+            app:summary="experimental"
+            android:title="Material3" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="dynamicColor"
+            app:summary="experimental"
+            android:title="Dynamic Color" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

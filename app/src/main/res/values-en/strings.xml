@@ -78,7 +78,7 @@
     <string name="by">by</string>
     <string name="search_by">search by</string>
     <string name="search">search for</string>
-    <string name="some_as_tag">some as tag</string>
+    <string name="same_as_tag">some as tag</string>
     <string name="painterid">Artist ID</string>
     <string name="word">WORD</string>
     <string name="goodpfriend">P</string>
@@ -239,7 +239,7 @@
     <string name="welcomePR">If you want and have the ability to help improve this application, submit PR to us!</string>
     <string name="donate">Donate</string>
     <string name="sample_title">Sample: click auto set</string>
-    <string name="hide_downloaded_detail">Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzous.com/iQB4Rigc7yh"> PC packaged program here</a> </string>
+    <string name="hide_downloaded_detail">Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzoux.com/iQB4Rigc7yh"> PC packaged program here</a> </string>
     <string name="hide_downloaded_summary">Hide download function can record additional non-native:</string>
     <string name="selectAll">Select all</string>
     <string name="sortPic">Sort / filter</string>
@@ -269,4 +269,5 @@
     <string name="use_bottom_layout_subtext">up side down~</string>
     <string name="use_picX_layout_main">Use new Card UI in main page</string>
     <string name="use_picX_layout_subtext">modern view UX</string>
+    <string name="dynamicColorAPIAlert">DynamicColors needs Android 12/S+ (API 31+)</string>
 </resources>

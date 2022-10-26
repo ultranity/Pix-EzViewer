@@ -25,7 +25,7 @@
 
 package com.perol.asdpl.pixivez.activity
 
-import android.content.SharedPreferences
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.TypedValue
@@ -36,6 +36,7 @@ import android.widget.LinearLayout
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.LayoutMode
@@ -45,6 +46,8 @@ import com.afollestad.materialdialogs.bottomsheets.GridItem
 import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityThemeBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -71,14 +74,31 @@ class ThemeActivity : RinkActivity() {
                 BackgroundGridItem(R.color.md_red_500, "Red"),
                 BackgroundGridItem(R.color.now, "Pale green")
             )
-
+            findPreference<Preference>("material3")?.setOnPreferenceChangeListener { preference, newValue ->
+                PxEZApp.ActivityCollector.recreate()
+                snackbarForceRestart()
+                true
+            }
+            findPreference<Preference>("dynamicColor")?.apply{
+                if (!DynamicColors.isDynamicColorAvailable()){
+                    summary = getString(R.string.dynamicColorAPIAlert)
+                    isEnabled = false
+                }
+                else {
+                    setOnPreferenceChangeListener { preference, newValue ->
+                        /*if ((newValue as Boolean) and DynamicColors.isDynamicColorAvailable()){
+                            DynamicColors.applyToActivitiesIfAvailable(PxEZApp.instance)
+                        }
+                        PxEZApp.ActivityCollector.recreate()*/
+                        snackbarForceRestart()
+                        true
+                    }
+                }
+            }
             findPreference<Preference>("theme")?.apply {
                 summary =
                     items[
-                        PxEZApp.instance.pre.getInt(
-                            "colorint",
-                            0
-                        )
+                        PxEZApp.instance.pre.getInt("colorint", 0)
                     ].title
                 onPreferenceClickListener =
                     Preference.OnPreferenceClickListener {
@@ -89,13 +109,11 @@ class ThemeActivity : RinkActivity() {
                             var action: (() -> Unit)? = null
 
                             title(R.string.title_change_theme)
-                            gridItems(items) { _, index, item ->
+                            val gridItems = gridItems(items) { _, index, item ->
                                 it.summary = item.title
-                                PxEZApp.instance.pre
-                                    .apply {
-                                        putInt("colorint", index)
-                                    }
-
+                                PxEZApp.instance.pre.edit {
+                                    putInt("colorint", index)
+                                }
                                 action = {
                                     PxEZApp.ActivityCollector.recreate()
                                 }
@@ -113,8 +131,14 @@ class ThemeActivity : RinkActivity() {
             }
         }
 
-        private inline fun SharedPreferences.apply(modifier: SharedPreferences.Editor.() -> Unit) {
-            edit().apply { modifier() }.run { apply() }
+        private fun snackbarForceRestart() {
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    val intent = Intent(context, HelloMActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    requireContext().startActivity(intent)
+                }
+                .show()
         }
     }
 
@@ -152,29 +176,6 @@ class ThemeActivity : RinkActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_theme, ThemeFragment()).commit()
-//        return
-//        val list = arrayListOf(
-//                ColorData(ContextCompat.getColor(this, R.color.colorPrimary), "Primary"),
-//                ColorData(ContextCompat.getColor(this, R.color.md_blue_300), "Blue"),
-//                ColorData(ContextCompat.getColor(this, R.color.pink), "Pink"),
-//                ColorData(ContextCompat.getColor(this, R.color.miku), "Miku"),
-//            ColorData(ContextCompat.getColor(this, R.color.md_purple_500), "Purple"),
-//                ColorData(ContextCompat.getColor(this, R.color.md_cyan_300), "Cyan"),
-//                ColorData(ContextCompat.getColor(this, R.color.md_green_300), "Green"),
-//                ColorData(ContextCompat.getColor(this, R.color.md_indigo_300), "Indigo"),
-//                ColorData(ContextCompat.getColor(this, R.color.md_red_500), "Red"),
-//                ColorData(ContextCompat.getColor(this, R.color.now), "Pale green"))
-//        recyclerview.apply {
-//            layoutManager = LinearLayoutManager(this@ThemeActivity)
-//            adapter = ColorfulAdapter(R.layout.view_colorfulitem, list).apply {
-//                onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-//                    PxEZApp.instance.pre.edit().putInt("colorint", position).apply()
-//                    setResult(Activity.RESULT_OK)
-//                    finish()
-//                }
-//            }
-//            isNestedScrollingEnabled = false
-//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

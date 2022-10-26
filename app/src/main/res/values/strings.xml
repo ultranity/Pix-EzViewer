@@ -99,7 +99,7 @@
     <string name="by">按照顺序</string>
     <string name="search_by">搜索筛选</string>
     <string name="search">搜索</string>
-    <string name="some_as_tag">与标签一致</string>
+    <string name="same_as_tag">与标签一致</string>
     <string name="painterid">画师ID</string>
     <string name="word">综合</string>
     <string name="goodpfriend">好P友</string>
@@ -284,9 +284,9 @@
     <string name="welcomePR">如果你希望且有能力帮助改进这个应用，欢迎PR</string>
     <string name="donate">捐赠</string>
     <string name="sample_title">Sample:点击自动设置</string>
-    <string name="hide_downloaded_detail"><![CDATA[默认检索当前下载路径及子文件夹，使用配套python脚本可获取更多图库pid记录,方便起见提供<a href ="https://wwa.lanzous.com/iQB4Rigc7yh">PC打包蓝奏云</a>，将生成数据置于当前下载路径]]></string>
+    <string name="hide_downloaded_detail"><![CDATA[默认检索当前下载路径及子文件夹，使用配套python脚本可获取更多图库pid记录,方便起见提供<a href ="https://wwa.lanzoux.com/iQB4Rigc7yh">PC打包蓝奏云</a>，将生成数据置于当前下载路径]]></string>
     <string name="hide_downloaded_summary">隐藏已下载功能可以附加非本机记录：</string>
-    <string name="plink" translatable="false">https://wwa.lanzous.com/iQB4Rigc7yh</string>
+    <string name="plink" translatable="false">https://wwa.lanzoux.com/iQB4Rigc7yh</string>
     <string name="selectAll">全选</string>
     <string name="sortPic">排序/筛选</string>
     <string name="sort_by">排序规则</string>
@@ -317,4 +317,5 @@
     <string name="use_picX_layout_main">首页使用新式卡片布局</string>
     <string name="use_picX_layout_subtext">简明体验，只为看图</string>
     <string name="fractional" translatable="false">%d/%d</string>
+    <string name="dynamicColorAPIAlert">动态颜色系统要求 Android 12/S+ (API 31+)</string>
 </resources>

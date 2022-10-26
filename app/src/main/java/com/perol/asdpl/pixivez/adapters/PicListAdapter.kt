@@ -157,9 +157,9 @@ abstract class PicListAdapter(
         setAnimationWithDefault(AnimationType.ScaleIn)
         animationEnable = PxEZApp.animationEnable
         this.loadMoreModule.preLoadNumber = 12
-        colorPrimary = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimary)
-        colorPrimaryDark = ThemeUtil.getColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
-        badgeTextColor = ThemeUtil.getColor(context, com.google.android.material.R.attr.badgeTextColor)
+        colorPrimary = ThemeUtil.getColorPrimary(context)
+        colorPrimaryDark = ThemeUtil.getColorPrimaryDark(context)
+        badgeTextColor = ThemeUtil.getColorHighlight(context)
         setAction(PxEZApp.CollectMode)
         quality = PxEZApp.instance.pre.getString("quality", "0")?.toInt() ?: 0
     }

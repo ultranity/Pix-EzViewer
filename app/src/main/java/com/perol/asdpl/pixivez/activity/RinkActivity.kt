@@ -36,23 +36,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 // base activity with i18n +Theme support
 abstract class RinkActivity : AppCompatActivity() {
     protected var className = javaClass.simpleName + " "
-    private fun getColorPrimary() =
-        ThemeUtil.getColor(this, androidx.appcompat.R.attr.colorPrimary)
-
-    /*fun getColorPrimaryDark(): Int {
-        val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true)
-        return typedValue.data
-    }
-
-    fun getColorAccent(): Int {
-        val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
-        return typedValue.data
-    }*/
-
-    fun getColorHighlight(): Int =
-        ThemeUtil.getColor(this, com.google.android.material.R.attr.badgeTextColor)
 
     private fun getNavigationBarHeight(): Int {
         val resourceId: Int = this.resources.getIdentifier(
@@ -72,7 +55,7 @@ abstract class RinkActivity : AppCompatActivity() {
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             // window.decorView.fitsSystemWindows = true
             window.navigationBarColor = Color.TRANSPARENT
-            window.statusBarColor = getColorPrimary()
+            window.statusBarColor = ThemeUtil.getColorPrimary(this)
         }
     }
 }

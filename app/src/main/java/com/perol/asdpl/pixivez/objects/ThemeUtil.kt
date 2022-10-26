@@ -29,6 +29,7 @@ import android.content.Context
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.color.DynamicColors
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
 
@@ -44,13 +45,27 @@ class ThemeUtil {
             R.style.AppThemeBase_green,
             R.style.AppThemeBase_indigo,
             R.style.AppThemeBase_red,
-            R.style.AppThemeBase_now
+            R.style.AppThemeBase_now,
+        )
+        private val theme3Array = arrayOf(
+            R.style.AppThemeBase3,
         )
         var colorPrimary: Int? = null
+        var colorPrimaryDark: Int? = null
+        var colorHighlight: Int? = null
         var badgeTextColor: Int = R.color.yellow
 
         const val halftrans = 0x089a9a9a
         const val transparent = 0x00000000
+
+        fun getColorPrimary(context: Context) =
+            colorPrimary?:getColor(context, androidx.appcompat.R.attr.colorPrimary).also { colorPrimary=it }
+
+        fun getColorPrimaryDark(context: Context) =
+            colorPrimaryDark?:getColor(context, androidx.appcompat.R.attr.colorPrimaryDark).also { colorPrimaryDark=it }
+
+        fun getColorHighlight(context: Context) =
+            colorHighlight?:getColor(context, com.google.android.material.R.attr.badgeTextColor).also { colorHighlight=it }
 
         /**
          * Returns a color associated with a particular attr ID
@@ -65,7 +80,7 @@ class ThemeUtil {
          * @throws android.content.res.Resources.NotFoundException if the given ID
          *         does not exist.
          */
-        fun getColor(context: Context, attrId: Int): Int {
+        private fun getColor(context: Context, attrId: Int): Int {
             val typedValue = TypedValue()
             context.theme.resolveAttribute(attrId, typedValue, true)
             return ContextCompat.getColor(context, typedValue.resourceId)
@@ -74,11 +89,22 @@ class ThemeUtil {
         @JvmStatic
         fun themeInit(activity: AppCompatActivity) {
             activity.apply {
-                var intColor = PxEZApp.instance.pre.getInt("colorint", 0)
-                if (intColor >= themeArray.size) {
-                    intColor = 0
+                val theme3 = PxEZApp.instance.pre.getBoolean("material3", false)
+                val dynamicColor = PxEZApp.instance.pre.getBoolean("dynamicColor", false)
+                if (theme3) {
+                    setTheme(theme3Array[0])
+                    if (dynamicColor and DynamicColors.isDynamicColorAvailable()){
+                        DynamicColors.applyToActivityIfAvailable(activity)
+                    }
+                    //DynamicColors.applyToActivitiesIfAvailable(PxEZApp.instance)
+
                 }
-                setTheme(themeArray[intColor])
+                else {
+                    val intColor = PxEZApp.instance.pre.getInt("colorint", 0).run {
+                        if ((this >=0) and (this < themeArray.size)) { this } else 0
+                    }
+                    setTheme(themeArray[intColor])
+                }
             }
 //            Colorful().apply(activity)
             //  activity.window.statusBarColor = Colorful().getPrimaryColor().getColorPack().normal().asInt()

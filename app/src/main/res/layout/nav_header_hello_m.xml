@@ -10,14 +10,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Light">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:scaleType="centerCrop"
-        android:transitionName="userimage"
+        android:transitionName="CurrentUserImage"
         android:contentDescription="@string/nav_header_desc"
         app:srcCompat="@mipmap/ic_noimage_foreground" />
 

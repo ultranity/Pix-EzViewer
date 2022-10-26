@@ -1,27 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ MIT License
-  ~
-  ~ Copyright (c) 2019 Perol_Notsfsssf
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
-  ~ of this software and associated documentation files (the "Software"), to deal
-  ~ in the Software without restriction, including without limitation the rights
-  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  ~ copies of the Software, and to permit persons to whom the Software is
-  ~ furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in all
-  ~ copies or substantial portions of the Software.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  ~ SOFTWARE
-  -->
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,42 +6,26 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.perol.asdpl.pixivez.activity.ThemeActivity">
-<com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
-        android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        app:title="Theme"
-        app:titleTextColor="?android:attr/textColorPrimaryInverse"
-        android:theme="@style/MyToolbar"
-        android:background="?attr/colorPrimary"
-        android:layout_height="wrap_content"/>
-</com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-
-        android:layout_width="match_parent"
+    <com.google.android.material.appbar.AppBarLayout
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <RelativeLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:id="@+id/fragment_theme"
-            android:layout_height="wrap_content" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="8dp"
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            app:title="Theme"
+            app:titleTextColor="?android:attr/textColorPrimaryInverse"
+            android:theme="@style/MyToolbar"
+            android:background="?attr/colorPrimary"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.appbar.AppBarLayout>
 
-
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_theme"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:name="com.perol.asdpl.pixivez.activity.ThemeActivity$ThemeFragment"
+        tools:layout="@layout/activity_theme" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

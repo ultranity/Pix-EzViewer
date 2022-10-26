@@ -78,7 +78,7 @@
     <string name="by">按照順序</string>
     <string name="search_by">搜索篩選</string>
     <string name="search">搜索</string>
-    <string name="some_as_tag">與標簽一致</string>
+    <string name="same_as_tag">與標簽一致</string>
     <string name="painterid">畫師ID</string>
     <string name="word">綜合</string>
     <string name="goodpfriend">好P友</string>
@@ -269,4 +269,5 @@
     <string name="use_bottom_layout_subtext">顛倒上下~</string>
     <string name="use_picX_layout_main">首頁使用新式卡片佈局</string>
     <string name="use_picX_layout_subtext">簡明體驗，只為看圖</string>
+    <string name="dynamicColorAPIAlert">動態顏色系統要求 Android 12/S+ (API 31+)</string>
 </resources>

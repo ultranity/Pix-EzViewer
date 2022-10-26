@@ -78,7 +78,7 @@
     <string name="by">ソート順</string>
     <string name="search_by">検索フィルタ</string>
     <string name="search">検索する</string>
-    <string name="some_as_tag">some as tag</string>
+    <string name="same_as_tag">some as tag</string>
     <string name="painterid">PAINTER</string>
     <string name="word">WORD</string>
     <string name="goodpfriend">P</string>
@@ -239,7 +239,7 @@
     <string name="welcomePR">あなたがしたいと、このアプリケーションを改善するための能力を持っている場合は、PRを歓迎しました</string>
     <string name="donate">寄付</string>
     <string name="sample_title">サンプル：クリック自動設定</string>
-    <string name="hide_downloaded_detail">現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzous.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID  </string>
+    <string name="hide_downloaded_detail">現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzoux.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID  </string>
     <string name="hide_downloaded_summary">隠すダウンロード機能は、追加の非ネイティブ記録することができます：</string>
     <string name="selectAll">すべて選択</string>
     <string name="sortPic">ソート/フィルタ</string>
@@ -269,4 +269,5 @@
     <string name="use_bottom_layout_subtext">ひっくり返って〜</string>
     <string name="use_picX_layout_main">ホームページは最新のカード レイアウトを使用しています</string>
     <string name="use_picX_layout_subtext">写真を見るだけの簡潔な体験</string>
+    <string name="dynamicColorAPIAlert">カラーチェンジ機能 Android 12/S+ (API31+)</string>
 </resources>

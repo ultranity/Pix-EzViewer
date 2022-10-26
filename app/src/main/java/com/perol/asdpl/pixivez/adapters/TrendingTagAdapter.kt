@@ -24,10 +24,12 @@
 
 package com.perol.asdpl.pixivez.adapters
 
+import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.TrendingtagResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 
@@ -41,7 +43,7 @@ class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendT
         val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
         GlideApp.with(imageView.context)
             .load(item.illust.image_urls.square_medium)
-            .placeholder(R.mipmap.ic_noimage)
+            .placeholder(ColorDrawable(ThemeUtil.halftrans))
             .into(imageView)
     }
 }

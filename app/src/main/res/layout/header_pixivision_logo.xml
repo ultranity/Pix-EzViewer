@@ -30,6 +30,6 @@
         android:layout_marginBottom="15dp"
         android:text="@string/pixivision_desc2"
         android:textAlignment="center"
-        android:textColor="?android:textColorPrimary"
+        android:textColor="@color/dark"
         android:textSize="16sp" />
 </com.google.android.material.card.MaterialCardView>

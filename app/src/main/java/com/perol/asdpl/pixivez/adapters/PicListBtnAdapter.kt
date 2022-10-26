@@ -36,8 +36,9 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 
-// simple Adapter for image item with heart icon
-// TODO: rename
+/**
+ *  simple Adapter for image item with save/like button
+ */
 open class PicListBtnAdapter(
     layoutResId: Int,
     data: List<Illust>?,

@@ -25,34 +25,18 @@
 
 package com.perol.asdpl.pixivez.adapters
 
-import android.app.Activity
-import android.app.ActivityOptions
-import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Pair
 import android.view.View
-import androidx.core.content.ContextCompat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.ImageViewTarget
-import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
-import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
-import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.shehuan.niv.NiceImageView
-import kotlin.math.max
-import kotlin.math.min
 
-// simple Adapter for image item with user imageView and heart icon
-// TODO: rename
+/**
+ *  simple Adapter for image item with user imageView and save/like button
+ */
 class PicListBtnUserAdapter(
     layoutResId: Int,
     data: List<Illust>?,
@@ -60,120 +44,24 @@ class PicListBtnUserAdapter(
 ) :
     PicListBtnAdapter(layoutResId, data, filter), LoadMoreModule {
 
-    override fun viewPics(view: View, position: Int) {
-        // super.viewPics(view, position)
-        val bundle = Bundle()
-        DataHolder.setIllustsList(this.data.subList(max(position - 30, 0), min(this.data.size, max(position - 30, 0) + 60)))
-        bundle.putInt("position", position - max(position - 30, 0))
-        bundle.putLong("illustid", this.data[position].id)
-        val intent = Intent(context, PictureActivity::class.java)
-        intent.putExtras(bundle)
-        if (PxEZApp.animationEnable) {
-            val mainimage = view.findViewById<View>(R.id.item_img)
-            val userImage = view.findViewById<View>(R.id.imageview_user)
-
-            val options =
-                if (this.data[position].meta_pages.size > 1) {
-                    ActivityOptions.makeSceneTransitionAnimation(
-                        context as Activity,
-                        Pair.create(
-                            mainimage,
-                            "mainimage"
-                        )
-                    )
-                }
-                else {
-                    ActivityOptions.makeSceneTransitionAnimation(
-                        context as Activity,
-                        Pair.create(mainimage, "mainimage"),
-                        Pair.create(userImage, "userimage")
-                    )
-                }
-            ContextCompat.startActivity(context, intent, options.toBundle())
-        }
-        else {
-            ContextCompat.startActivity(context, intent, null)
-        }
+    override fun viewPicsOptions(view: View, illust: Illust): Bundle {
+        return PicListXUserAdapter.viewOptions(this, view, illust)
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {
-        (
-            getViewByAdapterPosition(
-                position,
-                R.id.imageview_user
-            ) as NiceImageView?
-            )?.let { setUIFollow(status, it) }
+        (getViewByAdapterPosition(
+            position, R.id.imageview_user
+        ) as NiceImageView?)?.let { PicListXUserAdapter.badgeUIFollow(this, status, it) }
     }
 
     override fun setUIFollow(status: Boolean, view: View) {
         val user = view as NiceImageView
-        if (status) {
-            // user.alpha = 0.9F
-            user.setBorderColor(badgeTextColor) // Color.YELLOW
-        }
-        else {
-            // user.alpha = 0.5F
-            user.setBorderColor(colorPrimary)
-        }
+        PicListXUserAdapter.badgeUIFollow(this, status, user)
     }
+
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
-
-        val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
-        if (item.user.is_followed) {
-            imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
-            // imageViewUser.alpha = 0.9F
-        }
-        else {
-            imageViewUser.setBorderColor(colorPrimary) // setBorderColor(colorPrimary)
-            // imageViewUser.alpha = 0.5F
-        }
-        imageViewUser.setOnClickListener {
-            val options = if (PxEZApp.animationEnable) {
-                ActivityOptions.makeSceneTransitionAnimation(
-                    context as Activity,
-                    Pair.create(imageViewUser, "userimage")
-                ).toBundle()
-            }
-            else {
-                null
-            }
-            UserMActivity.start(context, item.user, options)
-        }
-        imageViewUser.setOnLongClickListener {
-            val id = item.user.id
-            if (!item.user.is_followed) {
-                InteractionUtil.follow(item) {
-                    imageViewUser.setBorderColor(badgeTextColor) // Color.YELLOW
-                    // imageViewUser.alpha = 0.9F
-                }
-            }
-            else {
-                InteractionUtil.unfollow(item) {
-                    imageViewUser.setBorderColor(colorPrimary)
-                    // imageViewUser.alpha = 0.5F
-                }
-            }
-            true
-        }
-        imageViewUser.setTag(R.id.tag_first, item.user.profile_image_urls.medium)
-
-        GlideApp.with(imageViewUser.context).load(item.user.profile_image_urls.medium).circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(object : ImageViewTarget<Drawable>(imageViewUser) {
-                override fun setResource(resource: Drawable?) {
-                    imageViewUser.setImageDrawable(resource)
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable,
-                    transition: Transition<in Drawable>?
-                ) {
-                    if (item.user.profile_image_urls.medium === imageViewUser.getTag(R.id.tag_first)) {
-                        super.onResourceReady(resource, transition)
-                    }
-                }
-            })
+        PicListXUserAdapter.convertUser(this, holder, item)
     }
 }

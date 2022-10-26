@@ -2,7 +2,6 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -37,9 +36,11 @@ import com.perol.asdpl.pixivez.services.Works
 import kotlin.math.max
 import kotlin.math.min
 
-// basic Adapter for image item
-// TODO: reuse more code
-// TODO: fling optimize
+/**
+ * basic Adapter for image item
+*/
+//TODO: reuse more code
+//TODO: fling optimize
 abstract class PicListAdapter(
     layoutResId: Int,
     data: List<Illust>?,
@@ -51,8 +52,11 @@ abstract class PicListAdapter(
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
-    var quality = 0
+    private var quality = 0
 
+    /*override fun onCreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        return createBaseViewHolder(parent, layoutResId)
+    }*/
     private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan: Boolean) {
         val layoutParams = holder.itemView.layoutParams
         if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
@@ -123,7 +127,7 @@ abstract class PicListAdapter(
         }
     }
 
-    open fun viewPics(view: View, position: Int) {
+    private fun viewPics(view: View, position: Int) {
         DataHolder.setIllustsList(
             this.data.subList(
                 max(position - 30, 0),
@@ -133,22 +137,17 @@ abstract class PicListAdapter(
                 )
             )
         )
-        val options = if (PxEZApp.animationEnable) {
-            val mainimage = view.findViewById<View>(R.id.item_img)
-            ActivityOptions.makeSceneTransitionAnimation(
-                context as Activity,
-                Pair.create(mainimage, "mainimage")
-            ).toBundle()
-        }
-        else {
-            null
-        }
-        val bundle = Bundle()
-        bundle.putInt("position", position - max(position - 30, 0))
-        bundle.putLong("illustid", this.data[position].id)
-        val intent = Intent(context, PictureActivity::class.java)
-        intent.putExtras(bundle)
-        ContextCompat.startActivity(context, intent, options)
+        val illust = this.data[position]
+        val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust)  else null
+        PictureActivity.start(context,illust.id, position,30, options)
+    }
+
+    open fun viewPicsOptions(view: View, illust:Illust): Bundle {
+        val mainimage = view.findViewById<View>(R.id.item_img)
+        return ActivityOptions.makeSceneTransitionAnimation(
+            context as Activity,
+            Pair(mainimage, "mainimage")
+        ).toBundle()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -179,7 +178,7 @@ abstract class PicListAdapter(
             height = LinearLayout.LayoutParams.WRAP_CONTENT
             width = LinearLayout.LayoutParams.MATCH_PARENT
         }
-        // if (context.resources.configuration.orientation==1)
+        // if (!context.resources.configuration.orientation==ORIENTATION_LANDSCAPE)
         setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
         val numLayout =
@@ -247,6 +246,7 @@ abstract class PicListAdapter(
         }
     }
 
+    //TODO: ?????
     override fun addData(newData: Collection<Illust>) {
         super.addData(newData)
         DataHolder.pictureAdapter?.notifyDataSetChanged().also {

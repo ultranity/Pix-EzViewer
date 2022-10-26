@@ -37,7 +37,22 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.shehuan.niv.NiceImageView
 
-// simple Adapter for image item with heart icon
+fun NiceImageView.setLike(status: Boolean) {
+    if (status) {
+        // setImageResource(R.drawable.heart_red)
+        GlideApp.with(this.context).load(R.drawable.heart_red).into(this)
+        // alpha = 0.9F
+    }
+    else {
+        // setImageResource(R.drawable.ic_action_heart)
+        GlideApp.with(this.context).load(R.drawable.ic_action_heart).into(this)
+        // alpha = 0.8F
+    }
+}
+
+/**
+ *  simple Adapter for image item with heart icon
+ */
 // TODO: rename
 open class PicListXAdapter(
     layoutResId: Int,
@@ -91,31 +106,17 @@ open class PicListXAdapter(
         }
     }
 
-    private fun NiceImageView.setLike(status: Boolean) {
-        if (status) {
-            // setImageResource(R.drawable.heart_red)
-            GlideApp.with(context).load(R.drawable.heart_red).into(this)
-            // alpha = 0.9F
-        }
-        else {
-            // setImageResource(R.drawable.ic_action_heart)
-            GlideApp.with(context).load(R.drawable.ic_action_heart).into(this)
-            // alpha = 0.8F
-        }
-    }
-
     override fun setUILike(status: Boolean, position: Int) {
         (
             getViewByAdapterPosition(
                 position,
                 R.id.imageview_like
             ) as NiceImageView?
-            )?.let { setUILike(status, it) }
+        )?.setLike(status)
     }
 
     override fun setUILike(status: Boolean, view: View) {
-        val like = view as NiceImageView
-        like.setLike(status)
+        (view as NiceImageView).setLike(status)
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {

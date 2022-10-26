@@ -40,6 +40,7 @@ import com.perol.asdpl.pixivez.databinding.ActivityPictureBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlin.math.max
 
 class PictureActivity : RinkActivity() {
     companion object {
@@ -50,6 +51,15 @@ class PictureActivity : RinkActivity() {
             val intent = Intent(context, PictureActivity::class.java)
             intent.putExtras(bundle)
             context.startActivity(intent)
+        }
+
+        fun start(context: Context, id: Long, position:Int, limit:Int=30, options: Bundle? = null) {
+            val bundle = Bundle()
+            bundle.putInt("position", position - max(position - limit, 0))
+            bundle.putLong("illustid", id)
+            val intent = Intent(context, PictureActivity::class.java)
+            intent.putExtras(bundle)
+            context.startActivity(intent, options)
         }
 
         fun start(context: Context, illust: Illust, arrayList: LongArray? = LongArray(1) { illust.id }) {

@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.OKWebViewActivity
@@ -322,13 +323,16 @@ class HelloMRecommendFragment : BaseFragment() {
                     )
                 }
             }
-        // picListXAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         bannerView = inflater.inflate(R.layout.header_pixivision, container, false)
         pixiVisionAdapter = PixiVisionAdapter(
             R.layout.view_pixivision_item_small,
             null
         )
         picListXAdapter.apply {
+            setAnimationWithDefault(BaseQuickAdapter.AnimationType.SlideInBottom)
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            headerWithEmptyEnable = true
+            footerWithEmptyEnable = true
             addHeaderView(bannerView)
         }
 

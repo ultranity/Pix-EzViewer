@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.databindingadapter
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
@@ -42,6 +43,7 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -55,18 +57,16 @@ fun resourceIdToUri(context: Context, resourceId: Int): String =
 
 @BindingAdapter("userUrl")
 fun loadUserImage(imageView: ImageView, url: String?) {
-    if (url != null) {
+    if ((url == null) or url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
+        GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_foreground).circleCrop()
+            .transition(withCrossFade()).into(imageView)
+        (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
+    }
+    else {
         GlideApp.with(imageView.context)
-            .load(
-                if (url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
-                    GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_round).circleCrop().transition(withCrossFade()).into(imageView)
-                }
-                else {
-                    url
-                }
-            )
-            .circleCrop()
+            .load(url)
             .placeholder(R.mipmap.ic_noimage_round)
+            .circleCrop()
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -89,7 +89,6 @@ fun loadUserImage(imageView: ImageView, url: String?) {
                 }
             })
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .error(R.mipmap.ic_noimage_round)
             .transition(withCrossFade()).into(imageView)
     }
 }
@@ -130,7 +129,8 @@ fun loadBGImage(imageView: ImageView, url: String?) {
         GlideApp.with(imageView.context).load(url)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(withCrossFade())
-            .error(R.drawable.chobi01).placeholder(R.drawable.chobi01)
+            .placeholder(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
+            .error(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
             .into(object : ImageViewTarget<Drawable>(imageView) {
                 override fun setResource(resource: Drawable?) {
                     imageView.setImageDrawable(resource)
@@ -138,6 +138,8 @@ fun loadBGImage(imageView: ImageView, url: String?) {
             })
     }
     else {
-        GlideApp.with(imageView.context).load(R.drawable.chobi01).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(imageView)
+        GlideApp.with(imageView.context)
+            .load(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
+            .into(imageView)
     }
 }

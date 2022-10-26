@@ -24,13 +24,31 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
-import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.set
+import kotlin.concurrent.schedule
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.memberProperties
 
-class DataHolder {
+fun <T : Any> T.copyFrom(src:T) {
+    //if (!this::class.isData) {
+    //    return
+    //}
+    this::class.memberProperties
+        .filter{ it.visibility == KVisibility.PUBLIC }
+        .filterIsInstance<KMutableProperty<*>>()
+        .forEach {
+            it.setter.call(this, it.getter.call(src))
+        }
+}
+
+class DataHolder{
     companion object {
         private var illustsList: Stack<List<Illust>?> = Stack<List<Illust>?>()
         var pictureAdapter: PagerAdapter? = null
@@ -38,24 +56,23 @@ class DataHolder {
         fun peekIllustsList(): List<Illust>? {
             return if (this.illustsList.empty()) {
                 null
-            }
-            else {
+            } else {
                 this.illustsList.peek()
             }
         }
+
         fun checkIllustsList(pos: Int, id: Long): Boolean {
             return if (this.illustsList.empty()) {
                 false
-            }
-            else {
+            } else {
                 (this.illustsList.peek()?.get(pos)?.id ?: -1) == id
             }
         }
+
         fun getIllustsList(): List<Illust>? {
             return if (this.illustsList.empty()) {
                 null
-            }
-            else {
+            } else {
                 this.illustsList.pop()
             }
         }
@@ -64,16 +81,53 @@ class DataHolder {
             this.illustsList.push(illustList)
         }
     }
+}
 
-    var data: MutableMap<String, WeakReference<Any>> =
-        HashMap()
+val HoldingData = HashMap<String, DataStore<*>>()
+class DataStore<T>(private val key:String, private val clearBindDelay: Long = 2000) {
+    companion object{
+        inline fun <reified T> save(id: String, data: T): DataStore<T> {
+            val ds = DataStore<T>(id).also { it.data = data }
+            HoldingData[id] = ds
+            return ds
+        }
 
-    fun save(id: String, `object`: Any?) {
-        data[id] = WeakReference<Any>(`object`)
+        inline fun <reified T : Any> update(id: String, data: T):T? {
+            return (HoldingData[id]?.data as? T)?.apply{ copyFrom(data) }
+        }
+
+        inline fun <reified T>  retrieve(id: String): T? {
+            return HoldingData[id]?.data as? T
+        }
+
+        fun register(id: String, host: LifecycleOwner) {
+            HoldingData[id]?.register(host)
+        }
     }
+    var data: T? = null
+    private val bindTargets = ArrayList<LifecycleOwner>()
 
-    fun retrieve(id: String): Any? {
-        val objectWeakReference: WeakReference<Any>? = data[id]
-        return objectWeakReference?.get()
+    fun register(host: LifecycleOwner) {
+        if (!bindTargets.contains(host)) {
+            bindTargets.add(host)
+            host.lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        host.lifecycle.removeObserver(this)
+                        bindTargets.remove(host)
+                        Timer().schedule(clearBindDelay) {
+                            if (bindTargets.isEmpty()) { // 如果当前没有关联对象，则释放资源
+                                data = null
+                                HoldingData.remove(key)
+                                /*HoldingData.entries.find { it.value == this@DataStore }?.also {
+                                    data = null
+                                    HoldingData.remove(it.key)
+                                }*/
+                            }
+                        }
+                    }
+                }
+            })
+        }
     }
 }

@@ -38,6 +38,7 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -47,6 +48,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.DataStore
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.ProfileImageUrls
 import com.perol.asdpl.pixivez.responses.User
@@ -67,23 +69,25 @@ class UserMActivity : RinkActivity() {
         const val HIDE_BOOKMARKED_ITEM = "hide_bookmark_item2"
         const val HIDE_DOWNLOADED_ITEM = "hide_downloaded_item"
         const val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
-        fun start(context: Context, id: Long, bundle: Bundle? = null) {
+        fun start(context: Context, id: Long, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra("data", id)
-            context.startActivity(intent, bundle)
+            context.startActivity(intent, options)
         }
-        fun start(context: Context, user: UserEntity, bundle: Bundle? = null) {
+        fun start(context: Context, user: UserEntity, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra(
                 "user",
                 User(user.userid, user.username, "", ProfileImageUrls(user.userimage), "", false)
             )
-            context.startActivity(intent, bundle)
+            context.startActivity(intent, options)
         }
-        fun start(context: Context, user: User, bundle: Bundle? = null) {
+        fun start(context: Context, user: User, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("user", user)
-            context.startActivity(intent, bundle)
+            //intent.putExtra("user", user)
+            intent.putExtra("userid", user.id)
+            DataStore.save("user${user.id}", user)//.register()
+            context.startActivity(intent, options)
         }
     }
 
@@ -113,16 +117,14 @@ class UserMActivity : RinkActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     private var exitTime = 0L
     lateinit var viewModel: UserMViewModel
     lateinit var pre: SharedPreferences
     private lateinit var binding: ActivityUserMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent.extras == null)
+            return
         binding = ActivityUserMBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.lifecycleOwner = this
@@ -138,13 +140,22 @@ class UserMActivity : RinkActivity() {
         }
         viewModel = ViewModelProvider(this)[UserMViewModel::class.java]
         pre = PxEZApp.instance.pre
+        if (intent.extras!!.containsKey("userid")) {
+            id = intent.extras!!.getLong("userid")
+            val user = DataStore.retrieve("user$id") as User?
+            DataStore.register("user$id", this)
+            user?.let {
+                binding.user = UserDetailResponse(user)
+                viewModel.isfollow.value = user.is_followed
+            }
+        }
         if (intent.extras!!.containsKey("user")) {
             val user = intent.getSerializableExtra("user") as User
             id = user.id
             binding.user = UserDetailResponse(user)
             viewModel.isfollow.value = user.is_followed
         }
-        else {
+        else if (intent.extras!!.containsKey("data")){
             id = intent.getLongExtra("data", 0)
         }
         viewModel.getData(id)
@@ -157,11 +168,7 @@ class UserMActivity : RinkActivity() {
         binding.mtablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(PxEZApp.instance, getString(R.string.back_to_the_top), Toast.LENGTH_SHORT).show()
                     exitTime = System.currentTimeMillis()
                 }
                 else {
@@ -183,15 +190,20 @@ class UserMActivity : RinkActivity() {
         viewModel.currentTab.observe(this) {
             binding.mviewpager.currentItem = it
         }
-        viewModel.hideBookmarked.value = pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
+        viewModel.hideBookmarked.value = if (viewModel.isSelfPage(id)) 0 else pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
         viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
         viewModel.userDetail.observe(this) {
             if (it != null) {
                 binding.user = it
+                val user = DataStore.update("user${it.user.id}", it.user)
+                if (user != null) {
+                    binding.user?.user =  user
+                }
             }
         }
         viewModel.isfollow.observe(this) {
             if (it != null) {
+                binding.user?.user?.is_followed = it
                 if (it) {
                     binding.fab.setImageResource(R.drawable.ic_check_white_24dp)
                 }
@@ -281,7 +293,6 @@ class UserMActivity : RinkActivity() {
             menu.getItem(1).title = getString(R.string.only_bookmarked)
         }
         if (viewModel.isSelfPage(id)) {
-            viewModel.hideBookmarked.value = 0
             menu.getItem(1).isVisible = false
             menu.getItem(2).isVisible = true
             menu.getItem(2).isEnabled = true
@@ -296,7 +307,7 @@ class UserMActivity : RinkActivity() {
             }
         }
         viewModel.hideDownloaded.observe(this) {
-            menu.findItem(R.id.action_hideDownloaded).isChecked = it
+            menu.findItem(R.id.action_hideDownloaded)?.isChecked = it
         }
         return true
     }
@@ -325,8 +336,8 @@ class UserMActivity : RinkActivity() {
                 EventBus.getDefault().post(AdapterRefreshEvent())
             }
             R.id.action_hideDownloaded -> {
-                viewModel.hideDownloaded.value = !item.isChecked
-                item.isChecked = !item.isChecked
+                var status = !item.isChecked
+                viewModel.hideDownloaded.value = status
                 if (!pre.getBoolean("init$HIDE_DOWNLOADED_ITEM", false)) {
                     MaterialDialog(this).show {
                         title(R.string.hide_downloaded)
@@ -353,19 +364,16 @@ class UserMActivity : RinkActivity() {
                             startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
                         }
                         negativeButton {
-                            viewModel.hideDownloaded.value = !item.isChecked
-                            item.isChecked = !item.isChecked
+                            status = !status
+                            viewModel.hideDownloaded.value = status
                         }
                         setOnCancelListener {
-                            viewModel.hideDownloaded.value = !item.isChecked
-                            item.isChecked = !item.isChecked
+                            status = !status
+                            viewModel.hideDownloaded.value = status
                         }
                     }
                 }
-                pre.edit().putBoolean(
-                    HIDE_DOWNLOADED_ITEM,
-                    item.isChecked
-                ).apply()
+                pre.edit { putBoolean(HIDE_DOWNLOADED_ITEM, status) }
                 EventBus.getDefault().post(AdapterRefreshEvent())
             }
             R.id.action_download -> {

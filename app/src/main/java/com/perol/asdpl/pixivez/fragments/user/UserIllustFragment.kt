@@ -41,7 +41,6 @@ import com.perol.asdpl.pixivez.databinding.FragmentUserIllustBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
@@ -113,6 +112,7 @@ class UserIllustFragment : BaseFragment() {
     private fun initViewModel() {
         // TODO: ViewModelProvider by activity
         viewModel = ViewModelProvider(this)[UserMillustViewModel::class.java]
+        viewActivity = requireActivity() as UserMActivity
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
@@ -122,7 +122,6 @@ class UserIllustFragment : BaseFragment() {
                 picListAdapter.loadMoreComplete()
             }
         }
-        viewActivity = requireActivity() as UserMActivity
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.refreshlayout.isRefreshing = false
@@ -143,6 +142,17 @@ class UserIllustFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
+        filter = IllustFilter(
+            isR18on,
+            blockTags,
+            hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!,
+            hideDownloaded = viewActivity.viewModel.hideDownloaded.value!!)
+        // Inflate the layout for this fragment
+        picListAdapter = PicListBtnAdapter(
+            R.layout.view_recommand_item,
+            null,
+            filter
+        )
         initView()
     }
 
@@ -157,17 +167,6 @@ class UserIllustFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        filter = IllustFilter(
-            isR18on,
-            blockTags,
-            PxEZApp.instance.pre.getInt(UserMActivity.HIDE_BOOKMARKED_ITEM, 0)
-        )
-        // Inflate the layout for this fragment
-        picListAdapter = PicListBtnAdapter(
-            R.layout.view_recommand_item,
-            null,
-            filter
-        )
         binding = FragmentUserIllustBinding.inflate(inflater, container, false)
         return binding.root
     }

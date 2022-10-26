@@ -81,7 +81,9 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        filter = IllustFilter(isR18on, blockTags)
+        filter = IllustFilter(isR18on, blockTags,
+            hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!,
+            hideDownloaded = viewActivity.viewModel.hideDownloaded.value!!)
         picItemAdapter =
             if (PxEZApp.instance.pre.getBoolean("show_user_img_bookmarked", true)) {
                 PicListBtnUserAdapter(

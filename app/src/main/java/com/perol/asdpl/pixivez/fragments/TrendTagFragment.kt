@@ -105,12 +105,9 @@ class TrendTagFragment : Fragment() {
                             val mainimage = view.findViewById<ImageView>(R.id.imageview_trendingtag)
                             ActivityOptions.makeSceneTransitionAnimation(
                                 context as Activity,
-                                Pair.create(mainimage, "mainimage")
+                                Pair(mainimage, "mainimage")
                             ).toBundle()
-                        }
-                        else {
-                            null
-                        }
+                        } else null
                         startActivity(intent, options)
                         true
                     }

@@ -188,12 +188,9 @@ class PictureXFragment : BaseFragment() {
                     val options = if (PxEZApp.animationEnable) {
                         ActivityOptions.makeSceneTransitionAnimation(
                             context as Activity,
-                            Pair.create(binding.imageViewUserPicX, "userimage")
+                            Pair(binding.imageViewUserPicX, "userimage")
                         ).toBundle()
-                    } 
-                    else {
-                        null
-                    }
+                    } else null
                     UserMActivity.start(requireContext(), it.user, options)
                 }
                 binding.fab.show()
@@ -228,10 +225,7 @@ class PictureXFragment : BaseFragment() {
                     Color.YELLOW
                 }
                 else {
-                    ThemeUtil.getColor(
-                        requireContext(),
-                        androidx.appcompat.R.attr.colorPrimary
-                    )
+                    ThemeUtil.getColorPrimary(requireContext())
                 }
             )
             pictureXAdapter?.setUserPicColor(it)
@@ -267,8 +261,7 @@ class PictureXFragment : BaseFragment() {
             binding.recyclerview.scrollToPosition(position)
             binding.constraintLayoutFold.visibility = View.INVISIBLE
         }
-        val linearLayoutManager = LinearLayoutManager(requireActivity())
-        binding.recyclerview.layoutManager = linearLayoutManager
+        binding.recyclerview.layoutManager =  LinearLayoutManager(requireActivity())
         binding.recyclerview.setHasFixedSize(true)
         binding.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

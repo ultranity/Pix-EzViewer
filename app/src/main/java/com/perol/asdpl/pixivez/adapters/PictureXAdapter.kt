@@ -218,9 +218,9 @@ class PictureXAdapter(
         ) {
             binding.illust = illust
             // captionTextView.autoLinkMask = Linkify.WEB_URLS
-            val colorPrimary = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimary)
-            val colorPrimaryDark = ThemeUtil.getColor(mContext, androidx.appcompat.R.attr.colorPrimaryDark)
-            val badgeTextColor = ThemeUtil.getColor(mContext, com.google.android.material.R.attr.badgeTextColor)
+            val colorPrimary = ThemeUtil.getColorPrimary(mContext)
+            val colorPrimaryDark = ThemeUtil.getColorPrimaryDark(mContext)
+            val badgeTextColor = ThemeUtil.getColorHighlight(mContext)
             if (illust.user.is_followed) {
                 imageViewUser.setBorderColor(badgeTextColor)
             } 
@@ -235,12 +235,9 @@ class PictureXAdapter(
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         mContext as Activity,
-                        Pair.create(imageViewUser, "userimage")
+                        Pair(imageViewUser, "userimage")
                     ).toBundle()
-                }
-                else {
-                    null
-                }
+                } else null
                 UserMActivity.start(mContext, illust.user, options)
             }
             if (illust.caption.isNotBlank()) {

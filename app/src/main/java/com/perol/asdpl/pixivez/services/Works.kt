@@ -67,10 +67,7 @@ fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: I
             !tags.minusElement(it).any { ot -> ot.contains(it) }
         ) {
             it
-        }
-        else {
-            null
-        }
+        } else null
     }
         .joinToString(TagSeparator)
         .toLegal()
@@ -93,10 +90,7 @@ object Works {
         val url: String
         val tag = if (saveformat.contains("{tag")) {
             illust.tags
-        }
-        else {
-            null
-        }
+        } else null
         var filename = saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
             .replace("{name}", illust.user.name.let { if (it.length > 8) it.substringBeforeLast("@") else it }.toLegal())

@@ -53,7 +53,7 @@ class RankingMViewModel : BaseViewModel() {
     fun onLoadMore() {
         retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
-            addillusts.value = it.illusts as ArrayList<Illust>?
+            addillusts.value = it.illusts
         }, {
             addillusts.value = null
         }, {}).add()

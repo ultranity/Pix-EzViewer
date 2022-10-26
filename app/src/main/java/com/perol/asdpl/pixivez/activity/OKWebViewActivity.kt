@@ -95,19 +95,13 @@ object WebviewDnsInterceptUtil {
             request.url.scheme?.matches(Regex("https?")) == true
         ) {
             getWebResourceFromUrl(request.url)
-        } 
-        else {
-            null
-        }
+        } else null
     }
 
     fun getDnsInterceptUrl(view: WebView?, url: Uri): WebResourceResponse? {
         return if (url.toString().isNotEmpty() && url.scheme != null) {
             getWebResourceFromUrl(url) // .toString())
-        } 
-        else {
-            null
-        }
+        } else null
     }
 
     private fun getWebResourceFromUrl(url: Uri): WebResourceResponse? {

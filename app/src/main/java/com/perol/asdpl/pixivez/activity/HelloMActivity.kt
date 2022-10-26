@@ -308,12 +308,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     this@HelloMActivity,
-                    Pair.create(header.imageView, "userimage")
+                    Pair(header.imageView, "userimage")
                 ).toBundle()
-            }
-            else {
-                null
-            }
+            } else null
             UserMActivity.start(this@HelloMActivity, AppDataRepository.currentUser, options)
         }
 

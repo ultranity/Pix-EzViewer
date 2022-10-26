@@ -44,7 +44,6 @@ class TagsBookMarkDialog : DialogFragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var editText: EditText
     private lateinit var pictureXViewModel: PictureXViewModel
-    lateinit var imageButton: ImageButton
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -57,9 +56,7 @@ class TagsBookMarkDialog : DialogFragment() {
                 adapter = tagsAdapter
             }
             editText = view.findViewById(R.id.edittext)
-            imageButton = view.findViewById(R.id.add)
-
-            imageButton.setOnClickListener {
+            view.findViewById<ImageButton>(R.id.add).setOnClickListener {
                 if (editText.text.isNotBlank() && pictureXViewModel.tags.value != null) {
                     tagsAdapter.addData(
                         0,

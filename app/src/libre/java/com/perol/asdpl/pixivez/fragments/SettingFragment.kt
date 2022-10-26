@@ -142,7 +142,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                 showMirrorLinkDialog()
                 Works.spximg = Works.lookup(Works.opximg)
                 Works.smirrorURL = Works.lookup(Works.mirrorURL)
-                snackbar_force_restart()
+                snackbarForceRestart()
                 true
             }
             setOnPreferenceChangeListener { preference, newValue ->
@@ -172,32 +172,32 @@ class SettingFragment : PreferenceFragmentCompat() {
         findPreference<ListPreference>("language")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.language = newValue.toString().toInt()
             PxEZApp.locale = LanguageUtil.langToLocale(PxEZApp.language)
-            snackbar_force_restart()
+            snackbarForceRestart()
             true
         }
         findPreference<SwitchPreference>("needactionbar")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
         findPreference<SwitchPreference>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
         findPreference<SwitchPreference>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
         findPreference<SwitchPreference>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
 
         findPreference<SwitchPreference>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbar_restart()
+            snackbarRestart()
             true
         }
         findPreference<SwitchPreference>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -223,27 +223,25 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
         findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.CollectMode = (newValue as String).toInt()
-            snackbar_restart()
+            snackbarRestart()
             true
         }
     }
 
-    private fun snackbar_force_restart() {
+    private fun snackbarForceRestart() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
                 val intent = Intent(context, HelloMActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 requireContext().startActivity(intent)
-            }
-            .show()
+            }.show()
     }
 
-    private fun snackbar_restart() {
+    private fun snackbarRestart() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
                 PxEZApp.ActivityCollector.recreate()
-            }
-            .show()
+            }.show()
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

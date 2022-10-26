@@ -66,8 +66,8 @@ private const val ARG_PARAM2 = "param2"
 class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     @SuppressLint("InflateParams")
     override fun loadData() {
-        viewModel!!.first(param1!!, pub)
-        if (viewModel!!.isSelfPage(param1!!)) {
+        viewModel.first(param1!!, pub)
+        if (viewModel.isSelfPage(param1!!)) {
             val view = layoutInflater.inflate(R.layout.header_bookmark, null)
             picItemAdapter.addHeaderView(view)
             val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
@@ -131,7 +131,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     override fun onClick(string: String, public: String) {
-        viewModel!!.onRefreshListener(
+        viewModel.onRefreshListener(
             param1!!,
             public,
             string.ifBlank {
@@ -173,7 +173,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
                 picItemAdapter.loadMoreFail()
             }
         }
-        // viewModel!!.tags.observe(viewLifecycleOwner) {
+        // viewModel.tags.observe(viewLifecycleOwner) {
         //
         // }
     }
@@ -196,17 +196,17 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     private fun showTagDialog() {
         val arrayList = ArrayList<String>()
         val arrayList1 = ArrayList<Int>()
-        if (viewModel!!.tags.value != null) {
+        if (viewModel.tags.value != null) {
             val tagsShowDialog = TagsShowDialog()
             tagsShowDialog.callback = this
-            for (i in viewModel!!.tags.value!!.bookmark_tags) {
+            for (i in viewModel.tags.value!!.bookmark_tags) {
                 arrayList.add(i.name)
                 arrayList1.add(i.count)
             }
             val bundle = Bundle()
             bundle.putStringArrayList("tags", arrayList)
             bundle.putIntegerArrayList("counts", arrayList1)
-            bundle.putString("nextUrl", viewModel!!.tags.value!!.next_url)
+            bundle.putString("nextUrl", viewModel.tags.value!!.next_url)
             bundle.putLong("id", param1!!)
             tagsShowDialog.arguments = bundle
             tagsShowDialog.show(childFragmentManager)
@@ -224,17 +224,11 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             picItemAdapter.filter.hideBookmarked =
                 if (param1 != id) {
                     viewActivity.viewModel.hideBookmarked.value!!
-                }
-                else {
-                    0
-                }
+                } else { 0 }
             picItemAdapter.filter.hideDownloaded =
                 if (param1 == id) {
                     viewActivity.viewModel.hideDownloaded.value!!
-                }
-                else {
-                    false
-                }
+                } else { false }
             picItemAdapter.filter.blockTags = blockTags
             picItemAdapter.notifyDataSetChanged()
         }

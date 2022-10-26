@@ -46,7 +46,6 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
-import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -151,7 +150,7 @@ class SpotlightActivity : RinkActivity() {
                 override fun onNext(illustDetailResponse: IllustDetailResponse) {
                     val name = illustDetailResponse.illust.user.name
                     val title = illustDetailResponse.illust.title
-                    list.add(Spotlight(title, name, illustDetailResponse.illust.user.profile_image_urls.medium, illustDetailResponse.illust.image_urls.large, illustDetailResponse.illust.id.toString(), illustDetailResponse.illust.user.id))
+                    list.add(Spotlight(title, name, illustDetailResponse.illust))
                     if (num == reurls.size) {
                         onComplete()
                     }

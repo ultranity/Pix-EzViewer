@@ -27,8 +27,6 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Intent
-import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
@@ -52,36 +50,23 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         holder.setText(R.id.textview_context, item.username)
             .setText(R.id.title, item.title)
-        GlideApp.with(mainImage.context).load(item.pictureurl).error(R.drawable.ai)
-            .transition(withCrossFade()).into(mainImage)
-        GlideApp.with(userImage.context).load(item.userpic).transition(withCrossFade()).circleCrop()
+        GlideApp.with(mainImage.context).load(item.illust.image_urls.medium)
+            .error(R.drawable.ai).transition(withCrossFade()).into(mainImage)
+        GlideApp.with(userImage.context).load(item.illust.user.profile_image_urls.medium)
+            .placeholder(R.mipmap.ic_noimage_foreground)
+            .transition(withCrossFade()).circleCrop()
             .into(userImage)
         mainImage.setOnClickListener {
-            val bundle = Bundle()
-            val arrayList = LongArray(1)
-            arrayList[0] = item.illustrateid.toLong()
-            bundle.putLongArray("illustidlist", arrayList)
-            bundle.putLong("illustid", item.illustrateid.toLong())
-            val intent = Intent(context, PictureActivity::class.java)
-            intent.putExtras(bundle)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+            PictureActivity.start(context, item.illust)
         }
         userImage.setOnClickListener {
-            val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra("data", item.userid.toLong())
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-            if (PxEZApp.animationEnable) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair.create(userImage, "userimage")
-                )
-                context.startActivity(intent, options.toBundle())
-            }
-            else {
-                context.startActivity(intent)
-            }
+                    Pair(userImage, "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(context, item.illust.user, options)
         }
     }
 }

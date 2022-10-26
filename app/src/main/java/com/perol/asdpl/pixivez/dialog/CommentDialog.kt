@@ -138,7 +138,7 @@ class CommentDialog : BaseDialogFragment() {
         commentAdapter = CommentAdapter(R.layout.view_comment_item, null)
         recyclerview.isNestedScrollingEnabled = false
         recyclerview.layoutManager =
-            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            GridLayoutManager(context, resources.configuration.orientation, RecyclerView.VERTICAL, false)
         recyclerview.adapter = commentAdapter
         recyclerview.addItemDecoration(
             DividerItemDecoration(

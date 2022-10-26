@@ -33,6 +33,7 @@ import android.content.Context
 import android.content.DialogInterface.BUTTON_NEUTRAL
 import android.content.Intent
 import android.content.pm.ResolveInfo
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -497,8 +498,14 @@ class PictureXAdapter(
         when (holder) {
             is PictureViewHolder -> {
                 val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
-                    .thumbnail(GlideApp.with(mContext).load(if (position == 0) imageThumbnailUrls[0] else ColorDrawable(ThemeUtil.halftrans)))
+                if (mContext.resources.configuration.orientation==ORIENTATION_LANDSCAPE) {
+                    mainImage.maxHeight = ScreenUtil.screenHeightPx()
+                    mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                }
+                GlideApp.with(mContext).load(imageUrls[position])
+                    .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
+                    .thumbnail(GlideApp.with(mContext)
+                    .load(if (position == 0) imageThumbnailUrls[0] else ColorDrawable(ThemeUtil.halftrans)))
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
                         override fun onLoadFailed(

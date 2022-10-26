@@ -54,11 +54,11 @@ import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.ScreenUtil
-import com.perol.asdpl.pixivez.objects.sharedViewModel
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.LinearItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.HelloMRecomModel
 import com.perol.asdpl.pixivez.viewmodel.PixivisionModel
+import com.perol.asdpl.pixivez.viewmodel.factory.sharedViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

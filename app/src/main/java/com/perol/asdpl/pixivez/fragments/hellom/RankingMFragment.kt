@@ -47,7 +47,7 @@ import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
-import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
+import com.perol.asdpl.pixivez.viewmodel.RankingShareViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

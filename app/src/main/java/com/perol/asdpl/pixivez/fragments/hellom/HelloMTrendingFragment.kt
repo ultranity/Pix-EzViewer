@@ -37,7 +37,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.viewmodel.factory.RankingShareViewModel
+import com.perol.asdpl.pixivez.viewmodel.RankingShareViewModel
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match

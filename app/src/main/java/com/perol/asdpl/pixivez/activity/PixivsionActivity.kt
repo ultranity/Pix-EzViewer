@@ -32,9 +32,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityPixivisionBinding
-import com.perol.asdpl.pixivez.objects.sharedViewModel
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.PixivisionModel
+import com.perol.asdpl.pixivez.viewmodel.factory.sharedViewModel
 
 class PixivsionActivity : RinkActivity() {
     private lateinit var binding: ActivityPixivisionBinding

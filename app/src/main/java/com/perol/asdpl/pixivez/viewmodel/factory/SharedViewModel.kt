@@ -1,4 +1,4 @@
-package com.perol.asdpl.pixivez.objects
+package com.perol.asdpl.pixivez.viewmodel.factory
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*

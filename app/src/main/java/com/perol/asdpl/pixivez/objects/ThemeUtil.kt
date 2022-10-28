@@ -57,7 +57,11 @@ class ThemeUtil {
 
         const val halftrans = 0x089a9a9a
         const val transparent = 0x00000000
-
+        fun resetColor(context: Context){
+            colorPrimary = null
+            colorPrimaryDark = null
+            colorHighlight = null
+        }
         fun getColorPrimary(context: Context) =
             colorPrimary?:getColor(context, androidx.appcompat.R.attr.colorPrimary).also { colorPrimary=it }
 

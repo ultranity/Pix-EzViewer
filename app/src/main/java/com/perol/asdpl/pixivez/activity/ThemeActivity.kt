@@ -50,6 +50,7 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityThemeBinding
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class ThemeActivity : RinkActivity() {
@@ -75,7 +76,8 @@ class ThemeActivity : RinkActivity() {
                 BackgroundGridItem(R.color.now, "Pale green")
             )
             findPreference<Preference>("material3")?.setOnPreferenceChangeListener { preference, newValue ->
-                PxEZApp.ActivityCollector.recreate()
+                //PxEZApp.ActivityCollector.recreate()
+                ThemeUtil.resetColor(requireActivity())
                 snackbarForceRestart()
                 true
             }
@@ -90,6 +92,7 @@ class ThemeActivity : RinkActivity() {
                             DynamicColors.applyToActivitiesIfAvailable(PxEZApp.instance)
                         }
                         PxEZApp.ActivityCollector.recreate()*/
+                        ThemeUtil.resetColor(requireActivity())
                         snackbarForceRestart()
                         true
                     }
@@ -114,6 +117,7 @@ class ThemeActivity : RinkActivity() {
                                 PxEZApp.instance.pre.edit {
                                     putInt("colorint", index)
                                 }
+                                ThemeUtil.resetColor(requireActivity())
                                 action = {
                                     PxEZApp.ActivityCollector.recreate()
                                 }

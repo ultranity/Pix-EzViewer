@@ -319,4 +319,16 @@
     <string name="fractional" translatable="false">%d/%d</string>
     <string name="dynamicColorAPIAlert">动态颜色系统要求 Android 12/S+ (API 31+)</string>
     <string name="hold_to_delete">长按删除</string>
+    <string name="bookmarked">已收藏</string>
+    <string name="not_bookmarked">未收藏</string>
+    <string name="downloaded">已下载</string>
+    <string name="not_downloaded">未下载</string>
+    <string name="state_filter">状态筛选</string>
+    <string name="not_followed">未关注用户</string>
+    <string name="show_user_img">显示头像</string>
+    <string name="no_button_layout">简化布局</string>
+    <string name="button_layout">按键布局</string>
+    <string name="hide_user_img">隐藏头像</string>
+    <string name="layout_config">布局设置</string>
+    <string name="span_num">列数(默认 竖屏2 横屏4)</string>
 </resources>

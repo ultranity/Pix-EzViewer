@@ -271,4 +271,16 @@
     <string name="use_picX_layout_subtext">modern view UX</string>
     <string name="dynamicColorAPIAlert">DynamicColors needs Android 12/S+ (API 31+)</string>
     <string name="hold_to_delete">long press to delete</string>
+    <string name="bookmarked">collected</string>
+    <string name="not_bookmarked">Not favorited</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="not_downloaded">not downloaded</string>
+    <string name="state_filter">Status filter</string>
+    <string name="not_followed">User not following</string>
+    <string name="show_user_img">show avatar</string>
+    <string name="no_button_layout">Simplified layout</string>
+    <string name="button_layout">key layout</string>
+    <string name="hide_user_img">hide avatar</string>
+    <string name="layout_config">Layout settings</string>
+    <string name="span_num">Number of columns (default portrait 2 landscape 4)</string>
 </resources>

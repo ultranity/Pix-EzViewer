@@ -49,12 +49,8 @@ class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager
         }
 
     override fun getItem(position: Int) = when (position) {
-        0 -> {
-            HelloMMyFragment.newInstance("1", "2")
-        }
-        else -> {
-            IllustratorFragment.newInstance(userid, true)
-        }
+        0 -> HelloMMyFragment.newInstance("MyFollow", 0)
+        else -> IllustratorFragment.newInstance(userid, true)
     }
 
     override fun getCount() = 2

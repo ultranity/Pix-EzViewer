@@ -94,10 +94,10 @@ class HelloMRecommendFragment : BaseFragment() {
 
     private fun initViewModel() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
-            binding.swiperefreshRecom.isRefreshing = false
+            binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
                 picListAdapter.setNewInstance(it)
-                // binding.recyclerviewRecom.smoothScrollToPosition(0)
+                // binding.recyclerview.smoothScrollToPosition(0)
                 // pixivisionModel.onRefreshListener()
             } 
             else {
@@ -182,14 +182,14 @@ class HelloMRecommendFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
 
-        binding.recyclerviewRecom.apply {
+        binding.recyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(
                 2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListAdapter
         }
-        binding.swiperefreshRecom.setOnRefreshListener {
+        binding.swiperefreshLayout.setOnRefreshListener {
             viewmodel.onRefreshListener()
             pixivisionModel.onRefreshListener()
         }
@@ -252,7 +252,7 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         }
 
-        binding.swiperefreshRecom.isRefreshing = true
+        binding.swiperefreshLayout.isRefreshing = true
         // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {
@@ -265,7 +265,7 @@ class HelloMRecommendFragment : BaseFragment() {
                     exitTime = System.currentTimeMillis()
                 }
                 else {
-                    binding.recyclerviewRecom.scrollToPosition(0)
+                    binding.recyclerview.scrollToPosition(0)
                 }
             }
     }

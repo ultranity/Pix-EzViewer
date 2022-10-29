@@ -271,4 +271,16 @@
     <string name="use_picX_layout_subtext">写真を見るだけの簡潔な体験</string>
     <string name="dynamicColorAPIAlert">カラーチェンジ機能 Android 12/S+ (API31+)</string>
     <string name="hold_to_delete">长按删除</string>
+    <string name="bookmarked">集めました</string>
+    <string name="not_bookmarked">お気に入りに追加されていません</string>
+    <string name="downloaded">ダウンロード済み</string>
+    <string name="not_downloaded">ダウンロードしていない</string>
+    <string name="state_filter">ステータス フィルタ</string>
+    <string name="not_followed">ユーザーがフォローしていません</string>
+    <string name="show_user_img">アバターを表示</string>
+    <string name="no_button_layout">簡素化されたレイアウト</string>
+    <string name="button_layout">キー配列</string>
+    <string name="hide_user_img">アバターを隠す</string>
+    <string name="layout_config">レイアウト設定</string>
+    <string name="span_num">列の数 (デフォルトの縦 2 横 4)</string>
 </resources>

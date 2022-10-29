@@ -38,6 +38,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.*
 import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
+import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -66,14 +67,6 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     @SuppressLint("InflateParams")
     override fun loadData() {
         viewModel.first(param1!!, pub)
-        if (viewModel.isSelfPage(param1!!)) {
-            val view = layoutInflater.inflate(R.layout.header_bookmark, null)
-            picItemAdapter.addHeaderView(view)
-            val imagebutton = view.findViewById<View>(R.id.imagebutton_showtags)
-            imagebutton.setOnClickListener {
-                showTagDialog()
-            }
-        }
     }
 
     private lateinit var filter: IllustFilter
@@ -115,20 +108,13 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         binding.refreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, pub, null)
         }
-        /*requireActivity().findViewById<TabLayout>(R.id.mtablayout)?.getTabAt(2)
-            ?.view?.setOnClickListener {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    exitTime = System.currentTimeMillis()
-                }
-                else {
-                    binding.recyclerview.scrollToPosition(0)
-                }
-            }*/
+        if (viewModel.isSelfPage(param1!!)) {
+            val header = HeaderBookmarkBinding.inflate(layoutInflater)
+            picItemAdapter.addHeaderView(header.root)
+            header.imagebuttonShowtags.setOnClickListener {
+                showTagDialog()
+            }
+        }
     }
 
     override fun onClick(string: String, public: String) {

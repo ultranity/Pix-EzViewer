@@ -42,6 +42,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -49,6 +50,7 @@ import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.DataStore
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.ProfileImageUrls
 import com.perol.asdpl.pixivez.responses.User
@@ -56,6 +58,7 @@ import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
+import com.perol.asdpl.pixivez.ui.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -181,12 +184,6 @@ class UserMActivity : RinkActivity() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab) {}
         })
-        if (viewModel.isSelfPage(id)) {
-            viewModel.currentTab.value = 2
-        }
-        else {
-            binding.fab.show()
-        }
         viewModel.currentTab.observe(this) {
             binding.mviewpager.currentItem = it
         }
@@ -282,6 +279,33 @@ class UserMActivity : RinkActivity() {
                     }
                 }
             }.create().show()
+        }
+        binding.appBar.addOnOffsetChangedListener(object: AppBarStateChangeListener(140){
+            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+                when (state){
+                    State.COLLAPSED ->{
+                        binding.mtablayout.setTabTextColors(
+                            ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimary),
+                            ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimaryInverse)
+                        )
+                        binding.mtablayout.translationX = -15f
+                    }
+                    State.EXPANDED -> {
+                        binding.mtablayout.setTabTextColors(
+                            ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimary),
+                            ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.colorPrimary)
+                        )
+                        binding.mtablayout.translationX = 0f
+                    }
+                    else -> { }
+                }
+            }
+        })
+        if (viewModel.isSelfPage(id)) {
+            viewModel.currentTab.value = 2
+        }
+        else {
+            binding.fab.show()
         }
     }
 

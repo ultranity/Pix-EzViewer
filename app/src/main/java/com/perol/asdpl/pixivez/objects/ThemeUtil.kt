@@ -50,26 +50,20 @@ class ThemeUtil {
         private val theme3Array = arrayOf(
             R.style.AppThemeBase3,
         )
-        var colorPrimary: Int? = null
-        var colorPrimaryDark: Int? = null
-        var colorHighlight: Int? = null
-        var badgeTextColor: Int = R.color.yellow
-
+        val colorMap = HashMap<Int, Int>()
         const val halftrans = 0x089a9a9a
         const val transparent = 0x00000000
         fun resetColor(context: Context){
-            colorPrimary = null
-            colorPrimaryDark = null
-            colorHighlight = null
+            colorMap.clear()
         }
         fun getColorPrimary(context: Context) =
-            colorPrimary?:getColor(context, androidx.appcompat.R.attr.colorPrimary).also { colorPrimary=it }
+            getAttrColor(context, androidx.appcompat.R.attr.colorPrimary)
 
         fun getColorPrimaryDark(context: Context) =
-            colorPrimaryDark?:getColor(context, androidx.appcompat.R.attr.colorPrimaryDark).also { colorPrimaryDark=it }
+            getAttrColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
 
         fun getColorHighlight(context: Context) =
-            colorHighlight?:getColor(context, com.google.android.material.R.attr.badgeTextColor).also { colorHighlight=it }
+            getAttrColor(context, com.google.android.material.R.attr.badgeTextColor)
 
         /**
          * Returns a color associated with a particular attr ID
@@ -84,10 +78,14 @@ class ThemeUtil {
          * @throws android.content.res.Resources.NotFoundException if the given ID
          *         does not exist.
          */
-        private fun getColor(context: Context, attrId: Int): Int {
-            val typedValue = TypedValue()
-            context.theme.resolveAttribute(attrId, typedValue, true)
-            return ContextCompat.getColor(context, typedValue.resourceId)
+        fun getAttrColor(context: Context, attrId: Int): Int {
+            return colorMap[attrId]?: run {
+                val typedValue = TypedValue()
+                context.theme.resolveAttribute(attrId, typedValue, true)
+                ContextCompat.getColor(context, typedValue.resourceId).also{
+                    colorMap[attrId] = it
+                }
+            }
         }
 
         @JvmStatic

@@ -21,13 +21,14 @@
             app:title="@string/setting">
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tablayout_setting"
+                android:id="@+id/tablayout"
                 style="@style/Widget.MaterialComponents.TabLayout.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabIndicatorFullWidth="true"
                 app:tabIndicatorHeight="0dp"
-                app:tabMode="scrollable">
+                app:tabMode="fixed"
+                app:tabGravity="fill">
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -47,9 +48,10 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include
-        android:id="@+id/content_setting"
-        layout="@layout/content_setting" />
-
+    <androidx.viewpager2.widget.ViewPager2
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

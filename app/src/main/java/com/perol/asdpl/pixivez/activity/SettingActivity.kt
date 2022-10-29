@@ -30,8 +30,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
@@ -70,40 +69,25 @@ class SettingActivity : RinkActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        binding.tablayoutSetting.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                binding.contentSetting.viewpageSetting.currentItem = tab?.position ?: 0
-            }
-        })
-        binding.contentSetting.viewpageSetting.adapter = object : FragmentStateAdapter(this) {
+        binding.viewpager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = 3
 
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> {
-                        SettingFragment()
-                    }
-                    1 -> {
-                        ThanksFragment()
-                    }
-                    else -> {
-                        AboutXFragment()
-                    }
+                    0 -> SettingFragment()
+                    1 -> ThanksFragment()
+                    else -> AboutXFragment()
                 }
             }
         }
-        binding.contentSetting.viewpageSetting.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                binding.tablayoutSetting.getTabAt(position)?.select()
+        TabLayoutMediator(binding.tablayout, binding.viewpager){ tab, position ->
+            tab.text = when (position) {
+                0 -> getString(R.string.setting)
+                1 -> getString(R.string.supporttitle)
+                else -> getString(R.string.abouts)
             }
-        })
-        binding.contentSetting.viewpageSetting.currentItem = intent.getIntExtra("page", 0)
+        }.attach()
+        binding.viewpager.currentItem = intent.getIntExtra("page", 0)
     }
 
     @Deprecated("Deprecated in Java")

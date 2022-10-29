@@ -1,0 +1,13 @@
+##1.8.5:
+- [x] feature: Experimental Material3 theme (need to enable manually)
+- [x] optim: global object reuse, non-blocking acquisition, less file access => speed++
+- [x] feature: Comments display emoji and pop up the total number of comments, horizontal screen double column
+- [x] feature: automatic user span (depending on screen width) and evenly distributed
+- [x] feature: button ripple effect
+- [x] fix: banner display
+- [x] fix: theme colors
+- [x] fix: content overlapping after rotation, repeated loading
+- [x] update: block canary; SharedViewModel; android-ktx
+- [x] optim: user information display
+- [x] optim: dns parsing
+- [x] optim: code cleanup and other tweaks

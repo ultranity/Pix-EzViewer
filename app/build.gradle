@@ -46,8 +46,8 @@ android {
         minSdkVersion 21
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 114
-        versionName "1.8.3"
+        versionCode 115
+        versionName "1.8.5"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
@@ -211,7 +211,7 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.9'
 
     //implementation 'androidx.annotation:annotation:1.5.0'
-    //implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.10'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
 
     def room_version = "2.4.3"
     implementation "androidx.room:room-runtime:$room_version"
@@ -323,7 +323,6 @@ dependencies {
 
     //buglyImplementation 'com.tencent.bugly:crashreport:4.0.4'
     buglyImplementation 'com.tencent.bugly:crashreport_upgrade:1.6.1'
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
 
     debugImplementation 'io.github.knight-zxw:blockcanary:0.0.4'
     debugImplementation 'io.github.knight-zxw:blockcanary-ui:0.0.4'

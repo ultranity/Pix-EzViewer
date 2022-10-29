@@ -31,7 +31,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -70,7 +69,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         if (viewModel.isSelfPage(param1!!)) {
             val view = layoutInflater.inflate(R.layout.header_bookmark, null)
             picItemAdapter.addHeaderView(view)
-            val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
+            val imagebutton = view.findViewById<View>(R.id.imagebutton_showtags)
             imagebutton.setOnClickListener {
                 showTagDialog()
             }
@@ -218,20 +217,15 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
             val id = AppDataRepository.currentUser.userid
-            picItemAdapter.filter.hideBookmarked =
+            picItemAdapter.illustFilter.hideBookmarked =
                 if (param1 != id) {
                     viewActivity.viewModel.hideBookmarked.value!!
                 } else { 0 }
-            picItemAdapter.filter.hideDownloaded =
+            picItemAdapter.illustFilter.hideDownloaded =
                 if (param1 == id) {
                     viewActivity.viewModel.hideDownloaded.value!!
                 } else { false }
-            picItemAdapter.filter.blockTags = blockTags
             picItemAdapter.notifyDataSetChanged()
         }
     }

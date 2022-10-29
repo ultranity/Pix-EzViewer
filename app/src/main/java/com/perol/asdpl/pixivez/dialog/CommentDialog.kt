@@ -140,12 +140,7 @@ class CommentDialog : BaseDialogFragment() {
         recyclerview.layoutManager =
             GridLayoutManager(context, resources.configuration.orientation, RecyclerView.VERTICAL, false)
         recyclerview.adapter = commentAdapter
-        recyclerview.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.HORIZONTAL
-            )
-        )
+        recyclerview.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL))
         // recyclerview.layoutParams.height = screenHeightPx()/2 - 50
         commentAdapter!!.setOnItemClickListener { adapter, view, position ->
             val comment = commentAdapter!!.data[position].comment
@@ -200,10 +195,10 @@ class CommentDialog : BaseDialogFragment() {
 
     companion object {
 
-        fun newInstance(id: Long?): CommentDialog {
+        fun newInstance(id: Long): CommentDialog {
             val commentDialog = CommentDialog()
             val bundle = Bundle()
-            bundle.putLong("id", id!!)
+            bundle.putLong("id", id)
             commentDialog.arguments = bundle
             return commentDialog
         }

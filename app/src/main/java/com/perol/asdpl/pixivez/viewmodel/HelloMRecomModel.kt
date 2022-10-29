@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.RecommendResponse
 import io.reactivex.Observable
@@ -36,12 +35,11 @@ class HelloMRecomModel : BaseViewModel() {
     val illusts = MutableLiveData<ArrayList<Illust>?>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
     var nextUrl = MutableLiveData<String>()
-    private var retrofitRepository = RetrofitRepository.getInstance()
-    fun firstRxGet(): Observable<RecommendResponse> = retrofitRepository.getRecommend()
-    fun onLoadMoreRxRequested(nextUrl: String) = retrofitRepository.getNextIllustRecommended(nextUrl)
+    fun onRefreshRx(): Observable<RecommendResponse> = retrofit.getRecommend()
+    fun onLoadMoreRx(nextUrl: String) = retrofit.getNextIllustRecommended(nextUrl)
 
     fun onLoadMorePicRequested() {
-        retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
+        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
             addillusts.value = it.illusts
         }, {
@@ -51,7 +49,7 @@ class HelloMRecomModel : BaseViewModel() {
 
     fun onRefreshListener() {
         Log.d("init", "gettingRecommend")
-        retrofitRepository.getRecommend().subscribe({
+        retrofit.getRecommend().subscribe({
             Log.d("init", "getRecommend")
             nextUrl.value = it.next_url
             illusts.value = it.illusts

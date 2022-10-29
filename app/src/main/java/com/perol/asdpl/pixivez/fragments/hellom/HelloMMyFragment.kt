@@ -63,48 +63,49 @@ private const val ARG_PARAM2 = "param2"
  */
 class HelloMMyFragment : BaseFragment() {
     override fun loadData() {
+        viewmodel.onRefresh(restrict)
+    }
+
+    override fun onResume() {
+        isLoaded = picListAdapter.data.isNotEmpty()
+        super.onResume()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
-            rankingAdapter.filter.blockTags = blockTags
-            rankingAdapter.notifyDataSetChanged()
+            picListAdapter.notifyDataSetChanged()
         }
     }
 
-    private lateinit var rankingAdapter: PicListAdapter
+    private lateinit var picListAdapter: PicListAdapter
     lateinit var viewmodel: HelloMMyViewModel
     var restrict = "all"
     private fun initViewModel() {
-        viewmodel.addillusts.observe(viewLifecycleOwner) {
-            if (it != null) {
-                rankingAdapter.addData(it)
-            }
-            else {
-                rankingAdapter.loadMoreFail()
-            }
-        }
         viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = false
             if (it == null) {
-                rankingAdapter.loadMoreFail()
+                picListAdapter.loadMoreFail()
             }
             else {
-                rankingAdapter.setNewInstance(it)
+                picListAdapter.setNewInstance(it)
                 binding.recyclerview.scrollToPosition(0)
+            }
+        }
+        viewmodel.addillusts.observe(viewLifecycleOwner) {
+            if (it != null) {
+                picListAdapter.addData(it)
+            }
+            else {
+                picListAdapter.loadMoreFail()
             }
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
-                rankingAdapter.loadMoreEnd()
+                picListAdapter.loadMoreEnd()
             }
             else {
-                rankingAdapter.loadMoreComplete()
+                picListAdapter.loadMoreComplete()
             }
         }
         viewmodel.hideBookmarked.observe(viewLifecycleOwner) {
@@ -113,7 +114,7 @@ class HelloMMyFragment : BaseFragment() {
                     "hide_bookmark_item_in_mmy",
                     it
                 ).apply()
-                rankingAdapter.filter.hideBookmarked = if (it) 1 else 0
+                picListAdapter.illustFilter.hideBookmarked = if (it) 1 else 0
             }
         }
         viewmodel.isRefreshing.observe(viewLifecycleOwner) {
@@ -151,7 +152,7 @@ class HelloMMyFragment : BaseFragment() {
         viewmodel.hideBookmarked.value = PxEZApp.instance.pre
             .getBoolean("hide_bookmark_item_in_mmy", false)
         filter = IllustFilter(isR18on, blockTags, if (viewmodel.hideBookmarked.value!!) 1 else 0)
-        rankingAdapter = PicListBtnAdapter(
+        picListAdapter = PicListBtnAdapter(
             R.layout.view_recommand_item,
             null,
             filter
@@ -161,36 +162,34 @@ class HelloMMyFragment : BaseFragment() {
                 2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = rankingAdapter
+            adapter = picListAdapter
         }
         binding.swiperefreshLayout.setOnRefreshListener {
-            viewmodel.onRefreshListener(restrict)
+            viewmodel.onRefresh(restrict)
         }
-        rankingAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewmodel.onLoadMoreRequested()
+        picListAdapter.loadMoreModule.setOnLoadMoreListener {
+            viewmodel.onLoadMore()
         }
         val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
-        rankingAdapter.addHeaderView(headerView)
+        picListAdapter.addHeaderView(headerView)
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = viewmodel.hideBookmarked.value!!
             setOnCheckedChangeListener { _, state ->
                 viewmodel.hideBookmarked.value = state
             }
         }
-        headerView.findViewById<Spinner>(R.id.spinner_mmy).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        headerView.findViewById<Spinner>(R.id.spinner_mmy).apply {
+            setSelection(0, false)
+            }
+            .onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when (position) {
-                    0 -> {
-                        restrict = "all"
-                    }
-                    1 -> {
-                        restrict = "public"
-                    }
-                    2 -> {
-                        restrict = "private"
-                    }
+                restrict = when (position) {
+                    0 -> "all"
+                    1 -> "public"
+                    2 -> "private"
+                    else -> "all"
                 }
-                viewmodel.onRefreshListener(restrict)
+                viewmodel.onRefresh(restrict)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

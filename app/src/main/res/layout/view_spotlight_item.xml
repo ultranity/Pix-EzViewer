@@ -1,113 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:clickable="true"
+    android:paddingBottom="1dp"-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="vertical">
-    <!--<com.mcxtzhang.swipemenulib.SwipeMenuLayout-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="100dp"-->
-    <!--android:clickable="true"-->
-    <!--android:paddingBottom="1dp">-->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardview"
+    android:layout_gravity="center"
+    android:layout_margin="8dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
+    tools:layout_editor_absoluteX="8dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        app:cardPreventCornerOverlap="true"
-        android:layout_margin="8dp"
-        app:cardUseCompatPadding="true">
-            <LinearLayout
-                android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/item_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="?attr/colorPrimary" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageview_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/item_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:src="?attr/colorPrimary" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/imageview_user"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_marginBottom="2dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="2dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/title"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
 
 
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="2dp"
-                            android:text="圣诞特辑"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/imageview_user"
-                            app:layout_constraintTop_toBottomOf="@+id/textview_context" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="圣诞特辑"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageview_user"
+                app:layout_constraintTop_toBottomOf="@+id/textview_context" />
 
-                        <TextView
-                            android:id="@+id/textview_context"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
+            <TextView
+                android:id="@+id/textview_context"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
 
-                            android:text="shaonvqianxian"
-                            android:textColor="?attr/colorPrimary"
-                            app:layout_constraintStart_toEndOf="@+id/imageview_user"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </LinearLayout>
+                android:text="shaonvqianxian"
+                android:textColor="?attr/colorPrimary"
+                app:layout_constraintStart_toEndOf="@+id/imageview_user"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <FrameLayout
-                    android:layout_gravity="end"
-                    android:layout_width="wrap_content"
-                    android:background="#e0000000"
-                    android:alpha="0.3"
-                    android:id="@+id/layout_num"
-                    android:layout_height="wrap_content">
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/textview_num"
-                        android:layout_width="wrap_content"
+    </LinearLayout>
 
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="1dp"
-
-                        android:layout_marginEnd="3dp"
-                        android:layout_marginStart="3dp"
-                        android:layout_marginTop="1dp"
-                        android:text="11"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
-                </FrameLayout>
-            </LinearLayout>
+    <TextView
+        android:id="@+id/textview_num"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_gravity="bottom|end"
+        android:alpha="0.3"
+        android:background="#e0000000"
+        android:text="11"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
 
 
-    </com.google.android.material.card.MaterialCardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

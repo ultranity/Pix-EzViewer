@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnLoadMoreListener
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -46,15 +47,14 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ScreenUtil.dp2px
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.shehuan.niv.NiceImageView
 
 // TODO: fling optimize
 class UserShowAdapter(layoutResId: Int) :
-    BaseQuickAdapter<SearchUserResponse.UserPreviewsBean, BaseViewHolder>(layoutResId),
-    LoadMoreModule {
+    BaseQuickAdapter<UserPreviewsBean, BaseViewHolder>(layoutResId), LoadMoreModule {
     companion object{
         const val itemWidth:Int = 400
         val itemWidthPx:Int = dp2px(400f)
@@ -74,7 +74,7 @@ class UserShowAdapter(layoutResId: Int) :
     }
 
     @SuppressLint("SetTextI18n")
-    override fun convert(holder: BaseViewHolder, item: SearchUserResponse.UserPreviewsBean) {
+    override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
         val userSearchillustAdapter: UserSearchIllustAdapter
         val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (recyclerView.adapter == null) {
@@ -124,5 +124,22 @@ class UserShowAdapter(layoutResId: Int) :
         username.text = "${item.user.name} : ${item.user.account}"
         GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
+    }
+
+
+    fun loadMoreEnd() {
+        this.loadMoreModule.loadMoreEnd()
+    }
+
+    fun loadMoreComplete() {
+        this.loadMoreModule.loadMoreComplete()
+    }
+
+    fun loadMoreFail() {
+        this.loadMoreModule.loadMoreFail()
+    }
+
+    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener) {
+        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 }

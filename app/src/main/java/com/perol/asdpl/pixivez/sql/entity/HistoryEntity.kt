@@ -36,11 +36,10 @@ class SearchHistoryEntity (
 @Entity(tableName = "history")
 class SearchHistoryEntity(
     @ColumnInfo(name = "word")
-    var word: String
-) {
+    var word: String,
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
-}
+)
 /*
 @Entity(tableName = "downillusts")
 class DownIllustsEntity constructor(

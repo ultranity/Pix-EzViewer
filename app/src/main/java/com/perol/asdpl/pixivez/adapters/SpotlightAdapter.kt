@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.adapters
 import android.app.Activity
 import android.app.ActivityOptions
 import android.util.Pair
-import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -44,8 +43,10 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
     BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data?.toMutableList()) {
 
     override fun convert(holder: BaseViewHolder, item: Spotlight) {
-        val numLayout = holder.itemView.findViewById<View>(R.id.layout_num)
-        numLayout.visibility = View.GONE
+        if (item.illust.meta_pages.isNotEmpty()) {
+            holder.setText(R.id.textview_num, item.illust.meta_pages.size.toString())
+        }
+        holder.setGone(R.id.textview_num, item.illust.meta_pages.isNotEmpty())
         val userImage = holder.getView<ImageView>(R.id.imageview_user)
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         holder.setText(R.id.textview_context, item.username)

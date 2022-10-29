@@ -78,8 +78,8 @@ import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.shehuan.niv.NiceImageView
@@ -335,15 +335,11 @@ class PictureXAdapter(
                                 negativeButton(android.R.string.cancel)
                                 positiveButton(android.R.string.ok) {
                                     runBlocking {
-                                        withContext(Dispatchers.IO) {
-                                            AppDatabase.getInstance(PxEZApp.instance).blockTagDao()
-                                                .insert(
-                                                    BlockTagEntity(
-                                                        name = t.name,
-                                                        translateName = "${t.translated_name}"
-                                                    )
-                                                )
-                                        }
+                                        BlockViewModel.insertBlockTag(
+                                            BlockTagEntity(
+                                                name = t.name,
+                                                translateName = t.translated_name?:""
+                                            ))
                                         EventBus.getDefault().post(AdapterRefreshEvent())
                                     }
                                 }
@@ -357,15 +353,11 @@ class PictureXAdapter(
                                 negativeButton(android.R.string.cancel)
                                 positiveButton(android.R.string.ok) {
                                     runBlocking {
-                                        withContext(Dispatchers.IO) {
-                                            AppDatabase.getInstance(PxEZApp.instance).blockTagDao()
-                                                .insert(
-                                                    BlockTagEntity(
-                                                        name = t.name,
-                                                        translateName = "${t.translated_name}"
-                                                    )
-                                                )
-                                        }
+                                        BlockViewModel.insertBlockTag(
+                                            BlockTagEntity(
+                                                name = t.name,
+                                                translateName = t.translated_name?:""
+                                            ))
                                         EventBus.getDefault().post(AdapterRefreshEvent())
                                     }
                                 }
@@ -687,7 +679,7 @@ class PictureXAdapter(
                     if (gifProgressBar?.visibility != View.VISIBLE) {
                         MaterialDialog(mContext).show {
                             title(R.string.choice)
-                            listItems(
+                            val listitems = listItems(
                                 items = arrayListOf(
                                     mContext.getString(R.string.encodinggif),
                                     mContext.getString(R.string.save_zip)

@@ -26,23 +26,21 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 
 class RankingMViewModel : BaseViewModel() {
-    val retrofitRepository = RetrofitRepository.getInstance()
     val nextUrl = MutableLiveData<String>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
     val illusts = MutableLiveData<ArrayList<Illust>??>()
     fun first(mode: String, picdata: String?) {
-        retrofitRepository.getIllustRanking(mode, picdata).subscribe({
+        retrofit.getIllustRanking(mode, picdata).subscribe({
             nextUrl.value = it.next_url
             illusts.value = ArrayList(it.illusts)
         }, { it.printStackTrace() }, {}).add()
     }
 
     fun onRefresh(mode: String, picdata: String?) {
-        retrofitRepository.getIllustRanking(mode, picdata).subscribe({
+        retrofit.getIllustRanking(mode, picdata).subscribe({
             nextUrl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {
@@ -51,7 +49,7 @@ class RankingMViewModel : BaseViewModel() {
     }
 
     fun onLoadMore() {
-        retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
+        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
             addillusts.value = it.illusts
         }, {
@@ -60,7 +58,7 @@ class RankingMViewModel : BaseViewModel() {
     }
 
     fun datePick(mode: String, pickDate: String?) {
-        retrofitRepository.getIllustRanking(mode, pickDate).subscribe({
+        retrofit.getIllustRanking(mode, pickDate).subscribe({
             nextUrl.value = it.next_url
             illusts.value = ArrayList(it.illusts)
         }, {

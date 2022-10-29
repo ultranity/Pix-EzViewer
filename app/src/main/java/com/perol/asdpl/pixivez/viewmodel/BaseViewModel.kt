@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +35,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 open class BaseViewModel : ViewModel(), LifecycleObserver {
+    val retrofit = RetrofitRepository.getInstance()
     val disposables = CompositeDisposable()
     fun launchUI(block: suspend CoroutineScope.() -> Unit) {
         try {

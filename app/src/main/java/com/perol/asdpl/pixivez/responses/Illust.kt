@@ -116,12 +116,3 @@ data class ImageUrls(
 data class MetaSinglePage(
     val original_image_url: String?
 ) : Parcelable
-
-/**
- * name : 97式
- */
-@Parcelize
-data class Tag(
-    val name: String,
-    val translated_name: String? = null
-) : Parcelable

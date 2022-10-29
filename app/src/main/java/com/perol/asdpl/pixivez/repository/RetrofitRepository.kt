@@ -209,8 +209,6 @@ class RetrofitRepository {
 
     fun getNextPixivisionArticles(url: String): Observable<SpotlightResponse> = getNext(url)
 
-    fun getUserRecommandedUrl(url: String) = getNext<SearchUserResponse>(url)
-
     companion object {
         private var instance: RetrofitRepository? = null
         fun getInstance(): RetrofitRepository {

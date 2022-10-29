@@ -81,19 +81,14 @@ class HelloMRecommendFragment : BaseFragment() {
     }
 
     override fun onResume() {
-        isLoaded = picListXAdapter.data.isNotEmpty()
+        isLoaded = picListAdapter.data.isNotEmpty()
         super.onResume()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
-            picListXAdapter.filter.blockTags = blockTags
-            picListXAdapter.notifyDataSetChanged()
+            picListAdapter.notifyDataSetChanged()
         }
     }
 
@@ -101,28 +96,28 @@ class HelloMRecommendFragment : BaseFragment() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshRecom.isRefreshing = false
             if (it != null) {
-                picListXAdapter.setNewInstance(it)
+                picListAdapter.setNewInstance(it)
                 // binding.recyclerviewRecom.smoothScrollToPosition(0)
                 // pixivisionModel.onRefreshListener()
             } 
             else {
-                picListXAdapter.loadMoreFail()
+                picListAdapter.loadMoreFail()
             }
         }
         viewmodel.addillusts.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListXAdapter.addData(it)
+                picListAdapter.addData(it)
             }
             else {
-                picListXAdapter.loadMoreFail()
+                picListAdapter.loadMoreFail()
             }
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it == null) {
-                picListXAdapter.loadMoreEnd()
+                picListAdapter.loadMoreEnd()
             }
             else {
-                picListXAdapter.loadMoreComplete()
+                picListAdapter.loadMoreComplete()
             }
         }
         pixivisionModel.banners.observe(viewLifecycleOwner) {
@@ -165,7 +160,7 @@ class HelloMRecommendFragment : BaseFragment() {
         }
     }
 
-    private lateinit var picListXAdapter: PicListAdapter
+    private lateinit var picListAdapter: PicListAdapter
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private val viewmodel: HelloMRecomModel by activityViewModels()
     private val pixivisionModel: PixivisionModel by sharedViewModel("pixivision")
@@ -192,13 +187,13 @@ class HelloMRecommendFragment : BaseFragment() {
                 2 * context.resources.configuration.orientation,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = picListXAdapter
+            adapter = picListAdapter
         }
         binding.swiperefreshRecom.setOnRefreshListener {
             viewmodel.onRefreshListener()
             pixivisionModel.onRefreshListener()
         }
-        picListXAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMorePicRequested()
         }
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
@@ -284,7 +279,7 @@ class HelloMRecommendFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         filter = IllustFilter(isR18on)
-        picListXAdapter =
+        picListAdapter =
             if (PxEZApp.instance.pre
                 .getBoolean("use_picX_layout_main", true)
             ) {
@@ -328,7 +323,7 @@ class HelloMRecommendFragment : BaseFragment() {
             R.layout.view_pixivision_item_small,
             null
         )
-        picListXAdapter.apply {
+        picListAdapter.apply {
             setAnimationWithDefault(BaseQuickAdapter.AnimationType.SlideInBottom)
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             headerWithEmptyEnable = true

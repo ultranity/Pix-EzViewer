@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import io.reactivex.Observable
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,7 +36,6 @@ import okhttp3.ResponseBody
 import java.io.File
 
 class UserMViewModel : BaseViewModel() {
-    val retrofitRepository = RetrofitRepository.getInstance()
     val userDetail = MutableLiveData<UserDetailResponse>()
     val isfollow = MutableLiveData<Boolean>()
     val hideBookmarked = MutableLiveData(0)
@@ -45,7 +43,7 @@ class UserMViewModel : BaseViewModel() {
     val currentTab = MutableLiveData(0)
 
     fun getData(userid: Long) {
-        retrofitRepository.getUserDetail(userid).subscribe({
+        retrofit.getUserDetail(userid).subscribe({
             userDetail.value = it
             isfollow.value = it.user.is_followed
         }, {
@@ -55,14 +53,14 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabClick(userid: Long) {
         if (isfollow.value!!) {
-            retrofitRepository.postUnfollowUser(userid).subscribe({
+            retrofit.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {
                 it.printStackTrace()
             }, {}).add()
         }
         else {
-            retrofitRepository.postFollowUser(userid, "public").subscribe({
+            retrofit.postFollowUser(userid, "public").subscribe({
                 isfollow.value = true
             }, {
                 it.printStackTrace()
@@ -72,12 +70,12 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabLongClick(userid: Long) {
         if (isfollow.value!!) {
-            retrofitRepository.postUnfollowUser(userid).subscribe({
+            retrofit.postUnfollowUser(userid).subscribe({
                 isfollow.value = false
             }, {}, {}).add()
         }
         else {
-            retrofitRepository.postFollowUser(userid, "private").subscribe({
+            retrofit.postFollowUser(userid, "private").subscribe({
                 isfollow.value = true
             }, {}, {}).add()
         }
@@ -93,6 +91,6 @@ class UserMViewModel : BaseViewModel() {
         builder.setType(MultipartBody.FORM)
         val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         builder.addFormDataPart("profile_image", file.name, body)
-        return retrofitRepository.postUserProfileEdit(builder.build().part(0))
+        return retrofit.postUserProfileEdit(builder.build().part(0))
     }
 }

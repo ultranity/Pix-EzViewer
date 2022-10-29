@@ -243,7 +243,7 @@
     <string name="pixivision_desc">PIXIV为不甘于沉闷生活的人提供的创作型媒体！</string>
     <string name="use_ssl">使用SSL</string>
     <string name="search_results">搜索结果</string>
-    <string name="attention">关注</string>
+    <string name="attention">注意</string>
     <string name="customformat_token">Token</string>
     <string name="customformat_result">Result（点击自动填入）</string>
     <string name="post_comment" translatable="false">send</string>
@@ -318,4 +318,5 @@
     <string name="use_picX_layout_subtext">简明体验，只为看图</string>
     <string name="fractional" translatable="false">%d/%d</string>
     <string name="dynamicColorAPIAlert">动态颜色系统要求 Android 12/S+ (API 31+)</string>
+    <string name="hold_to_delete">长按删除</string>
 </resources>

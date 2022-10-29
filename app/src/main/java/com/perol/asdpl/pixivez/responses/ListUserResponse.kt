@@ -21,30 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.responses
 
-package com.perol.asdpl.pixivez.responses;
-
-import java.util.List;
-
-
-public class ListUserResponse {
-
-    private String next_url;
-    private List<User> users;
-
-    public String getNext_url() {
-        return next_url;
-    }
-
-    public void setNext_url(String next_url) {
-        this.next_url = next_url;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-}
+class ListUserResponse (
+    val next_url: String?,
+    val users: MutableList<User>
+)

@@ -96,7 +96,7 @@ class HelloMRecomUserFragment : BaseFragment() {
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewmodel.getNext()
+            viewmodel.onLoadMore()
         }
         binding.swipe.setOnRefreshListener {
             viewmodel.onRefresh()

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -44,7 +45,7 @@ import kotlin.math.min
 abstract class PicListAdapter(
     layoutResId: Int,
     data: List<Illust>?,
-    val filter: IllustFilter
+    val illustFilter: IllustFilter
 ) :
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
 
@@ -155,7 +156,8 @@ abstract class PicListAdapter(
         addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         setAnimationWithDefault(AnimationType.ScaleIn)
         animationEnable = PxEZApp.animationEnable
-        this.loadMoreModule.preLoadNumber = 12
+        //recyclerView.setItemViewCacheSize(12)
+        loadMoreModule.preLoadNumber = 12
         colorPrimary = ThemeUtil.getColorPrimary(context)
         colorPrimaryDark = ThemeUtil.getColorPrimaryDark(context)
         badgeTextColor = ThemeUtil.getColorHighlight(context)
@@ -164,7 +166,8 @@ abstract class PicListAdapter(
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
-        if (filter.needHide(item) || filter.needBlock(item)) {
+        //val pos = holder.bindingAdapterPosition - headerLayoutCount
+        if (illustFilter.needHide(item) || illustFilter.needBlock(item)) { //(mFilterList[pos]){//
             holder.itemView.visibility = View.GONE
             holder.itemView.layoutParams.apply {
                 height = 0
@@ -181,25 +184,18 @@ abstract class PicListAdapter(
         // if (!context.resources.configuration.orientation==ORIENTATION_LANDSCAPE)
         setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
-        val numLayout =
-            holder.itemView.findViewById<View>(R.id.layout_num)
-        numLayout.visibility = View.INVISIBLE
-        when (item.type) {
-            "illust" -> if (item.meta_pages.isNotEmpty()) {
-                holder.setText(R.id.textview_num, item.meta_pages.size.toString())
-                numLayout.visibility = View.VISIBLE
+        val numLayout = holder.getView<TextView>(R.id.textview_num)
+        if (item.meta_pages.isEmpty())
+            numLayout.visibility = View.GONE
+        else {
+            val meta_pages_size = item.meta_pages.size.toString()
+            // "manga"
+            numLayout.text = when (item.type) {
+                "illust" -> meta_pages_size
+                "ugoira" -> "GIF"
+                else -> "C$meta_pages_size"
             }
-            "ugoira" -> {
-                holder.setText(R.id.textview_num, "GIF")
-                numLayout.visibility = View.VISIBLE
-            }
-            else -> { // "manga"
-                holder.setText(
-                    R.id.textview_num,
-                    "C" + if (item.meta_pages.isEmpty()) "" else item.meta_pages.size.toString()
-                )
-                numLayout.visibility = View.VISIBLE
-            }
+            numLayout.visibility = View.VISIBLE
         }
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         mainImage.setTag(R.id.tag_first, item.image_urls.medium)
@@ -218,7 +214,7 @@ abstract class PicListAdapter(
             item.image_urls.medium
         }
         // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-        if (!filter.R18on && item.x_restrict == 1) {
+        if (!illustFilter.R18on && item.x_restrict == 1) {
             GlideApp.with(mainImage.context)
                 .load(R.drawable.h).transition(withCrossFade())
                 .placeholder(R.drawable.h)

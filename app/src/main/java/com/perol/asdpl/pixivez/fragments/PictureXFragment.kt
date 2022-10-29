@@ -54,10 +54,12 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.properties.Delegates
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,17 +74,17 @@ private const val ARG_ILLUSTOBJ = "param2"
  */
 class PictureXFragment : BaseFragment() {
 
-    private var param1: Long? = null
-    private var param2: Illust? = null
+    private var illustid by Delegates.notNull<Long>()
+    private var illustobj: Illust? = null
     private lateinit var pictureXViewModel: PictureXViewModel
     override fun loadData() {
 //        val item = activity?.intent?.extras
 //        val illust = item?.getParcelable<Illust>(param1.toString())
-        if (param2 != null) {
-            pictureXViewModel.firstGet(param2!!)
+        if (illustobj != null) {
+            pictureXViewModel.firstGet(illustobj!!)
         }
         else {
-            pictureXViewModel.firstGet(param1!!)
+            pictureXViewModel.firstGet(illustid)
         }
     }
 
@@ -110,10 +112,7 @@ class PictureXFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         lifecycleScope.launch {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
+            blockTags = BlockViewModel.getBlockTagString()
             var needBlock = false
             pictureXViewModel.illustDetail.value?.tags?.forEach {
                 if (blockTags.contains(it.name)) needBlock = true
@@ -155,19 +154,15 @@ class PictureXFragment : BaseFragment() {
                                     0
                                 )
                             }
-                            pictureXViewModel.getRelative(param1!!)
+                            pictureXViewModel.getRelated(illustid)
                         }
                         it.setViewCommentListen {
                             val commentDialog =
-                                CommentDialog.newInstance(pictureXViewModel.illustDetail.value!!.id)
+                                CommentDialog.newInstance(illustid)
                             commentDialog.show(childFragmentManager)
                         }
                         it.setBookmarkedUserListen {
-                            val intent = Intent(requireActivity().applicationContext, UserFollowActivity::class.java)
-                            val bundle = Bundle()
-                            bundle.putLong("illust_id", pictureXViewModel.illustDetail.value!!.id)
-                            intent.putExtras(bundle)
-                            startActivity(intent)
+                            UserFollowActivity.start(requireContext(), illustid)
                         }
                         it.setUserPicLongClick {
                             pictureXViewModel.likeUser()
@@ -290,8 +285,8 @@ class PictureXFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getLong(ARG_ILLUSTID)
-            param2 = it.getParcelable(ARG_ILLUSTOBJ)
+            illustid = it.getLong(ARG_ILLUSTID)
+            illustobj = it.getParcelable(ARG_ILLUSTOBJ)
         }
         pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
     }
@@ -308,7 +303,7 @@ class PictureXFragment : BaseFragment() {
                 lifecycleOwner = this@PictureXFragment
             }
         }
-        position = param2?.meta_pages?.size ?: 1
+        position = illustobj?.meta_pages?.size ?: 1
         return binding.root
     }
 
@@ -325,21 +320,21 @@ class PictureXFragment : BaseFragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param id Parameter 1.
+         * @param illust Parameter 2.
          * @return A new instance of fragment PictureXFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long?, param2: Illust?) =
+        fun newInstance(id: Long?, illust: Illust?) =
             PictureXFragment().apply {
                 arguments = Bundle().apply {
-                    if (param2 != null) {
-                        putParcelable(ARG_ILLUSTOBJ, param2)
-                        putLong(ARG_ILLUSTID, param2.id)
+                    if (illust != null) {
+                        putParcelable(ARG_ILLUSTOBJ, illust)
+                        putLong(ARG_ILLUSTID, illust.id)
                     }
                     else {
-                        putLong(ARG_ILLUSTID, param1!!)
+                        putLong(ARG_ILLUSTID, id!!)
                     }
 /*                    putParcelable("illust", illust)*/
                 }

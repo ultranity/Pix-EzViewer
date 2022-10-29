@@ -26,14 +26,13 @@ package com.perol.asdpl.pixivez.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 
 abstract class BaseFragment : Fragment() {
     var isR18on = false
@@ -59,19 +58,14 @@ abstract class BaseFragment : Fragment() {
     fun onMessageEvent(event: AdapterRefreshEvent) {
     }
 
-    lateinit var blockViewModel: BlockViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
         isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
-        blockViewModel = ViewModelProvider(requireActivity())[BlockViewModel::class.java]
         try {
             runBlocking {
-                val result = blockViewModel.getAllTags()
-                blockTags = result.map {
-                    it.name
-                }
-                if (blockTags.isEmpty()) blockTags = emptyList()
+                blockTags = LinkedList<String>()//BlockViewModel.getAllTags()
+                //if (blockTags.isEmpty()) blockTags = emptyList()
             }
         } catch (e: Exception) {
             e.printStackTrace()

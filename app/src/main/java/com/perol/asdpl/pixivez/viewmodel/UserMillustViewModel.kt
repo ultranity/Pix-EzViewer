@@ -25,11 +25,9 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 
 class UserMillustViewModel : BaseViewModel() {
-    val retrofit = RetrofitRepository.getInstance()
     val data = MutableLiveData<List<Illust>>()
     val adddata = MutableLiveData<List<Illust>>()
     val nextUrl = MutableLiveData<String>()

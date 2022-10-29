@@ -25,38 +25,34 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 
 class IllustratorViewModel : BaseViewModel() {
-    val retrofitRepository = RetrofitRepository.getInstance()
-    val userpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>>()
-    val adduserpreviews = MutableLiveData<ArrayList<SearchUserResponse.UserPreviewsBean>?>()
-    val nextUrl = MutableLiveData<String>()
+    val data = MutableLiveData<MutableList<UserPreviewsBean>?>()
+    val adddata = MutableLiveData<MutableList<UserPreviewsBean>?>()
+    val nextUrl = MutableLiveData<String?>()
     val isRefreshing = MutableLiveData(false)
 
-    fun onLoadMore(string: String) {
-        retrofitRepository.getNextUser(string).subscribe({
-            adduserpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
+    fun onLoadMore() {
+        retrofit.getNextUser(nextUrl.value!!).subscribe({
+            adddata.value = it.user_previews
             nextUrl.value = it.next_url
         }, {
-            adduserpreviews.value = null
+            adddata.value = null
         }, {}).add()
     }
 
     fun onRefresh(user_id: Long, restrict: String, get_following: Boolean) {
         isRefreshing.value = true
-        if (get_following) {
-            retrofitRepository.getUserFollowing(user_id, restrict).subscribe({
-                userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
+        (if (get_following)
+            retrofit.getUserFollowing(user_id, restrict)
+         else
+            retrofit.getUserFollower(user_id)
+        ).subscribe({
+                data.value = it.user_previews
                 nextUrl.value = it.next_url
-            }, {}, { isRefreshing.value = false }).add()
-        }
-        else {
-            retrofitRepository.getUserFollower(user_id).subscribe({
-                userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
-                nextUrl.value = it.next_url
-            }, {}, { isRefreshing.value = false }).add()
-        }
+                },
+            { data.value = null },
+            { isRefreshing.value = false }).add()
     }
 }

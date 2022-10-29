@@ -62,6 +62,7 @@ interface AppApiPixivService {
     @GET("/v1/user/recommended?filter=for_android")
     fun getUserRecommended(
         // @Header("Authorization") paramString: String
+        @Query("offset") offset: Int?=0
     ): Observable<SearchUserResponse>
 
     @Streaming

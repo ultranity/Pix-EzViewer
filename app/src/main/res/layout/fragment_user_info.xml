@@ -47,7 +47,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView1" />
                 <TextView
-                    android:id="@+id/textView_follower_num"
+                    android:id="@+id/textView_following"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:layout_marginBottom="0dp"
@@ -68,7 +68,7 @@
                     android:layout_marginTop="8dp"
                     android:text="@string/goodpfriend"
                     app:layout_constraintBaseline_toBaselineOf="@+id/register"
-                    app:layout_constraintStart_toEndOf="@+id/textView_follower_num" />
+                    app:layout_constraintStart_toEndOf="@+id/textView_following" />
                 <TextView
                     android:id="@+id/textView_fans"
                     android:layout_width="wrap_content"

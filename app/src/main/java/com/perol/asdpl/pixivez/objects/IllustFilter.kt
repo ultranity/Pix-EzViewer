@@ -1,6 +1,7 @@
 package com.perol.asdpl.pixivez.objects
 
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 
 class IllustFilter(
     var R18on: Boolean = false,
@@ -17,15 +18,19 @@ class IllustFilter(
             )
     }
     fun needBlock(item: Illust): Boolean {
-        if (blockTags.isNullOrEmpty()) {
+        val blockTagString = BlockViewModel.getBlockTagString()
+        if (blockTags.isNullOrEmpty() and blockTagString.isEmpty()) {
             return false
         }
-        val tags = item.tags.map {
-            it.name
-        }
-        if (blockTags!!.isNotEmpty() && tags.isNotEmpty()) {
-            // if (blockTags.intersect(tags).isNotEmpty())
-            for (i in blockTags!!) {
+
+        val tags = item.tags.map { it.name }
+        if (tags.isNotEmpty()) {
+            blockTags?.let { for (i in it) {
+                if (tags.contains(i)) {
+                    return true
+                }
+            }}
+            for (i in blockTagString) {
                 if (tags.contains(i)) {
                     return true
                 }

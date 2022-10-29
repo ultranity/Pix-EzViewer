@@ -270,4 +270,5 @@
     <string name="use_picX_layout_main">ホームページは最新のカード レイアウトを使用しています</string>
     <string name="use_picX_layout_subtext">写真を見るだけの簡潔な体験</string>
     <string name="dynamicColorAPIAlert">カラーチェンジ機能 Android 12/S+ (API31+)</string>
+    <string name="hold_to_delete">长按删除</string>
 </resources>

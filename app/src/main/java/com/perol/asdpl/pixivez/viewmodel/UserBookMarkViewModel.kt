@@ -27,12 +27,10 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.responses.Illust
 
 class UserBookMarkViewModel : BaseViewModel() {
-    val retrofit = RetrofitRepository.getInstance()
     val data = MutableLiveData<List<Illust>>()
     val adddata = MutableLiveData<List<Illust>>()
     val nextUrl = MutableLiveData<String>()

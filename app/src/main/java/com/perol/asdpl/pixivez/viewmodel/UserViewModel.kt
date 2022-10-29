@@ -25,31 +25,23 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.SearchUserResponse
 
 class UserViewModel : BaseViewModel() {
     var users = MutableLiveData<SearchUserResponse>()
 
-    var retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl = MutableLiveData<String>()
     fun getNextUsers(word: String) {
-        retrofitRepository.getNextUser(word).subscribe({
+        retrofit.getNextUser(word).subscribe({
             users.value = it
             nextUrl.value = it.next_url
         }, {}, {}).add()
     }
 
     fun getSearchUser(word: String) {
-        retrofitRepository.getSearchUser(word).subscribe(
-            {
+        retrofit.getSearchUser(word).subscribe({
                 users.value = it
                 nextUrl.value = it.next_url
-            },
-            {
-            },
-            {},
-            {}
-        ).add()
+            }, {}, {}, {}).add()
     }
 }

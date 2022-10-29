@@ -33,6 +33,7 @@ import android.widget.TextView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnLoadMoreListener
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -42,8 +43,7 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class UserListAdapter(layoutResId: Int) :
-    BaseQuickAdapter<User, BaseViewHolder>(layoutResId),
-    LoadMoreModule {
+    BaseQuickAdapter<User, BaseViewHolder>(layoutResId), LoadMoreModule {
 
     init {
         setOnItemClickListener { adapter, view, position ->
@@ -67,5 +67,22 @@ class UserListAdapter(layoutResId: Int) :
         GlideApp.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
             .into(userImage)
+    }
+
+
+    fun loadMoreEnd() {
+        this.loadMoreModule.loadMoreEnd()
+    }
+
+    fun loadMoreComplete() {
+        this.loadMoreModule.loadMoreComplete()
+    }
+
+    fun loadMoreFail() {
+        this.loadMoreModule.loadMoreFail()
+    }
+
+    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener) {
+        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 }

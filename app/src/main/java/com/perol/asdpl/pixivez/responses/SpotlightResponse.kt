@@ -29,8 +29,8 @@ package com.perol.asdpl.pixivez.responses
  * next_url : https://app-api.pixiv.net/v1/spotlight/articles?filter=for_ios&category=all&offset=10
  */
 data class SpotlightResponse(
-    var next_url: String? = null,
-    var spotlight_articles: ArrayList<SpotlightArticlesBean>
+    val next_url: String? = null,
+    val spotlight_articles: ArrayList<SpotlightArticlesBean>
 )
 
 /**

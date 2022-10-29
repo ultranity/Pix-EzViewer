@@ -10,67 +10,55 @@
     android:layout_marginEnd="2dp"
     app:cardElevation="5dp">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/item_img"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:maxHeight="720dp"
+        android:src="?attr/colorSurface"
+        android:transitionName="mainimage"
+        android:contentDescription="main image" />
 
-        <ImageView
-            android:id="@+id/item_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:maxHeight="720dp"
-            android:src="?attr/colorSurface"
-            android:transitionName="mainimage" />
+    <TextView
+        android:id="@+id/textview_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_gravity="end"
+        android:alpha="0.3"
+        android:background="#e0000000"
+        tools:text="11"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+    <com.shehuan.niv.NiceImageView
+        android:id="@+id/imageview_user"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="-8dp"
+        android:alpha="0.8"
+        android:background="@drawable/round_ripple"
+        tools:src="@mipmap/ic_noimage"
+        android:transitionName="userimage"
+        android:translationX="-8dp"
+        app:border_color="@color/transparent"
+        app:border_width="2dp"
+        app:is_circle="true" />
 
-        <com.shehuan.niv.NiceImageView
-            android:id="@+id/imageview_user"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="-8dp"
-            android:alpha="0.8"
-            android:background="?android:attr/selectableItemBackground"
-            tools:src="@mipmap/ic_noimage"
-            android:transitionName="userimage"
-            android:translationX="-8dp"
-            app:border_color="@color/transparent"
-            app:border_width="2dp"
-            app:is_circle="true" />
-
-            <com.shehuan.niv.NiceImageView
-                android:id="@+id/imageview_like"
-                android:transitionName="iconlike"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginEnd="2dp"
-                android:alpha="0.9"
-                android:background="?android:attr/selectableItemBackground"
-                android:src="@drawable/ic_action_heart"
-                app:border_width="2dp"
-                app:is_circle="true"
-                android:layout_gravity="bottom|end"/>
-
-        <FrameLayout
-            android:id="@+id/layout_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:alpha="0.3"
-            android:background="#e0000000">
-
-            <TextView
-                android:id="@+id/textview_num"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginBottom="1dp"
-                android:text="11"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-        </FrameLayout >
-    </FrameLayout>
-
+    <com.shehuan.niv.NiceImageView
+        android:id="@+id/imageview_like"
+        android:transitionName="iconlike"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="2dp"
+        android:padding="2dp"
+        android:alpha="0.9"
+        android:src="@drawable/ic_action_heart"
+        android:background="@drawable/round_ripple"
+        android:hapticFeedbackEnabled="true"
+        app:border_width="2dp"
+        app:is_circle="true"
+        android:layout_gravity="bottom|end"/>
 </com.google.android.material.card.MaterialCardView>
 

@@ -25,32 +25,26 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.Tags
+import androidx.lifecycle.viewModelScope
+import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TagsTextViewModel : BaseViewModel() {
-    val retrofitRepository = RetrofitRepository.getInstance()
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val tags = MutableLiveData<List<Tags>>()
+    val tags = MutableLiveData<List<Tag>>()
     fun onQueryTextChange(newText: String) {
-        retrofitRepository.getSearchAutoCompleteKeywords(newText).subscribe({
+        retrofit.getSearchAutoCompleteKeywords(newText).subscribe({
             tags.value = it.tags
         }, {}).add()
     }
 
-    fun addhistory(searchword: String) {
-        Observable.create<Int> {
-            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(searchword))
-            // resethistory()
-            it.onNext(1)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
-        }.subscribe {
-        }.add()
+    fun addhistory(tag: Tag) = viewModelScope.launch { withContext(Dispatchers.IO){
+            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(tag.vis()))
+        }
     }
 }

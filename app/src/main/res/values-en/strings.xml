@@ -206,7 +206,7 @@
     <string name="pixivision_desc">PIXIV: a creative media that delivers the \"the best works of creative originality including drawings, manga, and novels\"</string>
     <string name="use_ssl">Use SSL</string>
     <string name="search_results">Search results</string>
-    <string name="attention">Follow</string>
+    <string name="attention">Attention</string>
     <string name="customformat_token">Token</string>
     <string name="customformat_result">Result (click to insert)</string>
     <string name="summary_thanks">Thanks to:</string>
@@ -270,4 +270,5 @@
     <string name="use_picX_layout_main">Use new Card UI in main page</string>
     <string name="use_picX_layout_subtext">modern view UX</string>
     <string name="dynamicColorAPIAlert">DynamicColors needs Android 12/S+ (API 31+)</string>
+    <string name="hold_to_delete">long press to delete</string>
 </resources>

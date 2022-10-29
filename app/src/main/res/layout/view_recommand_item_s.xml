@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -25,37 +26,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/layout_num"
+        <TextView
+            android:id="@+id/textview_num"
             android:layout_width="wrap_content"
-            android:layout_height="29dp"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
             android:layout_gravity="end"
             android:alpha="0.3"
             android:background="#e0000000"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/textview_num"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginBottom="1dp"
-                android:text="11"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"/>
-
-        </FrameLayout>
-
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="11"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
 
         <com.shehuan.niv.NiceImageView
             android:id="@+id/imageview_like"
             android:transitionName="iconlike"
             android:src="@drawable/ic_action_heart"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="@drawable/round_ripple"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:alpha="0.9"

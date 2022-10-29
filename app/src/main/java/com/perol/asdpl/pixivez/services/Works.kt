@@ -143,7 +143,7 @@ object Works {
         else if (saveformat.contains("{tagso")) {
             filename = filename.replace(
                 "{tagso}",
-                tag!!.map { it.name }
+                tag!!.map{ it.name }
                     .distinct().sortedBy { it.length }
                     .joinToString(TagSeparator).take(110 - filename.length).toLegal()
             )

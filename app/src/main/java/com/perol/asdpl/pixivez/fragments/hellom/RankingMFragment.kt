@@ -40,7 +40,7 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PicListAdapter
 import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
-import com.perol.asdpl.pixivez.databinding.FragmentSwiperefreshRecyclerviewBinding
+import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
@@ -71,11 +71,11 @@ class RankingMFragment : BaseFragment() {
     private lateinit var viewmodel: RankingMViewModel
     private lateinit var sharemodel: RankingShareViewModel
     private lateinit var picListAdapter: PicListAdapter
-    private var param1: String? = null
-    private var param2: Int? = null
+    private var mode: String? = null
+    private var tabPosition: Int? = null
 
     override fun loadData() {
-        viewmodel.first(param1!!, picDate)
+        viewmodel.first(mode!!, picDate)
     }
 
     override fun onResume() {
@@ -86,26 +86,21 @@ class RankingMFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
-            picListAdapter.filter.blockTags = blockTags
-            picListAdapter.filter.hideBookmarked = sharemodel.hideBookmarked.value!!
+            picListAdapter.illustFilter.hideBookmarked = sharemodel.hideBookmarked.value!!
             picListAdapter.notifyDataSetChanged()
         }
     }
 
     private fun initViewModel() {
         sharemodel.sortCoM.observe(viewLifecycleOwner) {
-            picListAdapter.filter.sortCoM = it
+            picListAdapter.illustFilter.sortCoM = it
             EventBus.getDefault().post(AdapterRefreshEvent())
         }
         sharemodel.picDateShare.observe(viewLifecycleOwner) {
-            viewmodel.datePick(param1!!, it)
+            viewmodel.datePick(mode!!, it)
         }
         sharemodel.hideBookmarked.observe(viewLifecycleOwner) {
-            picListAdapter.filter.hideBookmarked = it
+            picListAdapter.illustFilter.hideBookmarked = it
             EventBus.getDefault().post(AdapterRefreshEvent())
         }
 
@@ -178,7 +173,7 @@ class RankingMFragment : BaseFragment() {
             sharemodel.picDateShare.value
         }
         binding.swiperefreshLayout.setOnRefreshListener {
-            viewmodel.onRefresh(param1!!, picDate)
+            viewmodel.onRefresh(mode!!, picDate)
         }
         picListAdapter.loadMoreModule.setOnLoadMoreListener {
             viewmodel.onLoadMore()
@@ -191,7 +186,7 @@ class RankingMFragment : BaseFragment() {
             adapter = picListAdapter
             addItemDecoration(GridItemDecoration())
         }
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(tabPosition!!)
             ?.view?.setOnClickListener {
                 if ((System.currentTimeMillis() - exitTime) > 3000) {
                     Toast.makeText(
@@ -209,28 +204,28 @@ class RankingMFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(param2!!)
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(tabPosition!!)
             ?.view?.setOnClickListener(null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getInt(ARG_PARAM2)
+            mode = it.getString(ARG_PARAM1)
+            tabPosition = it.getInt(ARG_PARAM2)
         }
         viewmodel = ViewModelProvider(this)[RankingMViewModel::class.java]
         sharemodel = ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
     }
 
     private lateinit var filter: IllustFilter
-    private lateinit var binding: FragmentSwiperefreshRecyclerviewBinding
+    private lateinit var binding: FragmentIllustListBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSwiperefreshRecyclerviewBinding.inflate(inflater, container, false)
+        binding = FragmentIllustListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -239,17 +234,17 @@ class RankingMFragment : BaseFragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param position Parameter 2.
+         * @param mode Parameter 1.
+         * @param tabPosition Parameter 2.
          * @return A new instance of fragment RankingMFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, position: Int) =
+        fun newInstance(mode: String, tabPosition: Int) =
             RankingMFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putInt(ARG_PARAM2, position)
+                    putString(ARG_PARAM1, mode)
+                    putInt(ARG_PARAM2, tabPosition)
                 }
             }
     }

@@ -9,7 +9,7 @@ abstract class BlockTagDao {
     abstract suspend fun insert(query: BlockTagEntity)
 
     @Query("SELECT * FROM blockTag")
-    abstract suspend fun getAllTags(): List<BlockTagEntity>
+    abstract suspend fun getAllTags(): MutableList<BlockTagEntity>
 
     @Delete
     abstract suspend fun deleteTag(blockTagEntity: BlockTagEntity)

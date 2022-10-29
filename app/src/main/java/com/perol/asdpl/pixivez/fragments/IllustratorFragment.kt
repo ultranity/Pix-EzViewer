@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
-import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
@@ -57,23 +57,13 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
+class IllustratorFragment : BaseFragment() {
     override fun loadData() {
-    }
-
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        when (p2) {
-            0 -> {
-                restrict = "public"
-            }
-            1 -> {
-                restrict = "private"
-            }
-        }
         viewModel.onRefresh(userid, restrict, getFollowing)
     }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
+    override fun onResume() {
+        isLoaded = userShowAdapter.data.isNotEmpty()
+        super.onResume()
     }
 
     private lateinit var userShowAdapter: UserShowAdapter
@@ -91,9 +81,23 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
-        binding.spinnerIllustrator.onItemSelectedListener = this
+        binding.spinnerIllustrator.apply {
+                setSelection(0, false)
+            }
+            .onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                restrict = when (position) {
+                    0 -> "public"
+                    1 -> "private"
+                    else -> "public"
+                }
+                viewModel.onRefresh(userid, restrict, getFollowing)
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
         userShowAdapter.loadMoreModule.setOnLoadMoreListener {
-            viewModel.onLoadMore(viewModel.nextUrl.value!!)
+            viewModel.onLoadMore()
         }
         binding.swiperefreshIllustrator.setOnRefreshListener {
             viewModel.onRefresh(userid, restrict, getFollowing)
@@ -121,13 +125,15 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun initViewModel() {
-        viewModel.userpreviews.observe(viewLifecycleOwner) {
-            userpreviews(it)
+        viewModel.data.observe(viewLifecycleOwner) {
+            if (it != null) {
+                userpreviews(it)
+            }
         }
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             nextUrl(it)
         }
-        viewModel.adduserpreviews.observe(viewLifecycleOwner) {
+        viewModel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             }
@@ -146,7 +152,7 @@ class IllustratorFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private fun userpreviews(it: ArrayList<SearchUserResponse.UserPreviewsBean>?) {
+    private fun userpreviews(it: MutableList<UserPreviewsBean>?) {
         if (it != null) {
             userShowAdapter.setNewInstance(it)
         }

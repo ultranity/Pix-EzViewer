@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
@@ -37,7 +36,6 @@ import io.reactivex.schedulers.Schedulers
 class TrendTagViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     var searchhistroy = MutableLiveData<MutableList<String>>()
-    var retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
 
     init {
         reloadSearchHistory()
@@ -72,7 +70,7 @@ class TrendTagViewModel : BaseViewModel() {
         appDatabase.searchhistoryDao().deletehistory()
     }
 
-    fun getIllustTrendTags() = retrofitRepository.getIllustTrendTags()
+    fun getIllustTrendTags() = retrofit.getIllustTrendTags()
     fun deleteHistory(word: String) = Observable.just(1).subscribeOn(Schedulers.io()).map {
         appDatabase.searchhistoryDao().deleteHistory(word)
     }.observeOn(AndroidSchedulers.mainThread()).subscribe()!!

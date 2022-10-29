@@ -65,12 +65,7 @@ class UserIllustFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
-            val allTags = blockViewModel.getAllTags()
-            blockTags = allTags.map {
-                it.name
-            }
-            picListAdapter.filter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
-            picListAdapter.filter.blockTags = blockTags
+            picListAdapter.illustFilter.hideBookmarked = viewActivity.viewModel.hideBookmarked.value!!
             picListAdapter.notifyDataSetChanged()
         }
     }

@@ -7,8 +7,7 @@ import androidx.room.PrimaryKey
 class BlockTagEntity(
     // @PrimaryKey
     var name: String,
-    var translateName: String
-) {
+    var translateName: String,
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
-}
+)

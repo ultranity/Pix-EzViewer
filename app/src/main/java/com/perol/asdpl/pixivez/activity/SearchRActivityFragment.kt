@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsTextAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
-import com.perol.asdpl.pixivez.responses.Tags
+import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
 
 /**
@@ -63,16 +63,9 @@ class SearchRActivityFragment : Fragment() {
         binding.recyclerview.adapter = tagsTextAdapter
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
             val tag = tags[position]
-            tagsTextViewModel.addhistory(
-                if (tag.translated_name.isNullOrBlank()) {
-                    tag.name
-                }
-                else {
-                    tag.name + "|" + tag.translated_name
-                }
-            )
+            tagsTextViewModel.addhistory(tag)
             val bundle = Bundle()
-            bundle.putString("searchword", tags[position].name)
+            bundle.putString("searchword", tag.name)
             val intent = Intent(requireActivity(), SearchResultActivity::class.java)
             intent.putExtras(bundle)
             startActivityForResult(intent, 775)
@@ -85,5 +78,5 @@ class SearchRActivityFragment : Fragment() {
         }
     }
 
-    val tags = ArrayList<Tags>()
+    val tags = ArrayList<Tag>()
 }

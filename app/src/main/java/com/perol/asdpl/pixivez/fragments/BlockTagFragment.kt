@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.chip.Chip
@@ -32,7 +31,7 @@ class BlockTagFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    lateinit var viewModel: BlockViewModel
+    private val viewModel = BlockViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +39,6 @@ class BlockTagFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        viewModel = ViewModelProvider(this)[BlockViewModel::class.java]
     }
 
     @SuppressLint("SetTextI18n")
@@ -69,43 +67,46 @@ class BlockTagFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         getTagList()
     }
 
     private fun getTagList() {
-        runBlocking {
-            val it = viewModel.getAllTags()
-            binding.chipgroup.removeAllViews()
-            it.forEach { v ->
-                binding.chipgroup.addView(getChip(v))
-            }
-            val chip = Chip(requireContext())
-            chip.text = "+"
-            chip.setOnClickListener {
-                MaterialDialog(requireContext()).show {
-                    title(R.string.block_tag)
-                    input { dialog, text ->
-                        if (text.isBlank()) return@input
-                        runBlocking {
-                            viewModel.insertBlockTag(
-                                BlockTagEntity(
-                                    text.toString(),
-                                    text.toString()
-                                )
-                            )
-                            getTagList()
-                        }
-
-                        EventBus.getDefault().post(AdapterRefreshEvent())
-                    }
-                    positiveButton()
-                    negativeButton()
-                }
-            }
-            binding.chipgroup.addView(chip)
+        val it = runBlocking {
+            viewModel.fetchAllTags()
         }
+        binding.chipgroup.removeAllViews()
+        var chip = Chip(requireContext())
+        chip.text = requireContext().getText(R.string.hold_to_delete)
+        binding.chipgroup.addView(chip)
+        it.forEach { v ->
+            binding.chipgroup.addView(getChip(v))
+        }
+        chip = Chip(requireContext())
+        chip.text = "+"
+        chip.setOnClickListener {
+            MaterialDialog(requireContext()).show {
+                title(R.string.block_tag)
+                val inputitem = input { dialog, text ->
+                    if (text.isBlank()) return@input
+                    runBlocking {
+                        viewModel.insertBlockTag(
+                            BlockTagEntity(
+                                text.toString(),
+                                text.toString()
+                            )
+                        )
+                        getTagList()
+                    }
+
+                    EventBus.getDefault().post(AdapterRefreshEvent())
+                }
+                positiveButton()
+                negativeButton()
+            }
+        }
+        binding.chipgroup.addView(chip)
     }
 
     companion object {

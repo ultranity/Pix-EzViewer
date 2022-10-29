@@ -27,10 +27,10 @@ package com.perol.asdpl.pixivez.adapters
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.responses.Tags
+import com.perol.asdpl.pixivez.responses.Tag
 
-class TagsTextAdapter(layoutResId: Int) : BaseQuickAdapter<Tags, BaseViewHolder>(layoutResId) {
-    override fun convert(holder: BaseViewHolder, item: Tags) {
+class TagsTextAdapter(layoutResId: Int) : BaseQuickAdapter<Tag, BaseViewHolder>(layoutResId) {
+    override fun convert(holder: BaseViewHolder, item: Tag) {
         holder.setText(R.id.name, item.name).setText(R.id.translated_name, item.translated_name)
     }
 }

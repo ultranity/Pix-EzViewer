@@ -35,11 +35,13 @@ import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.postDelayed
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
@@ -118,11 +120,11 @@ class UserInfoFragment : Fragment() {
         binding.textViewUserId.text = userDetail.user.id.toString()
         binding.textViewFans.text = userDetail.profile.total_mypixiv_users.toString()
         binding.textViewFans.setOnClickListener {
-            UserFollowActivity.start(requireContext(), userDetail.user.id, true)
-        }
-        binding.textViewFollowerNum.text = userDetail.profile.total_follow_users.toString()
-        binding.textViewFollowerNum.setOnClickListener {
             UserFollowActivity.start(requireContext(), userDetail.user.id, false)
+        }
+        binding.textViewFollowing.text = userDetail.profile.total_follow_users.toString()
+        binding.textViewFollowing.setOnClickListener {
+            UserFollowActivity.start(requireContext(), userDetail.user.id, true)
         }
 
         if (!userDetail.profile.twitter_account.isNullOrBlank()) {
@@ -131,7 +133,7 @@ class UserInfoFragment : Fragment() {
                     "twitter@" + userDetail.profile.twitter_account,
                     "twitter",
                     userDetail.profile.twitter_url
-                ).also { it.setTextColor(Color.BLUE) }
+                ).also { it.setTextColor(ContextCompat.getColor(requireContext(), R.color.splash)) }
             )
         }
         if (userDetail.profile_publicity.isPawoo) {

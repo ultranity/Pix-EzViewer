@@ -79,13 +79,12 @@ class ThemeUtil {
          *         does not exist.
          */
         fun getAttrColor(context: Context, attrId: Int): Int {
-            return colorMap[attrId]?: run {
+            if (colorMap[attrId] == null) {
                 val typedValue = TypedValue()
                 context.theme.resolveAttribute(attrId, typedValue, true)
-                ContextCompat.getColor(context, typedValue.resourceId).also{
-                    colorMap[attrId] = it
-                }
+                colorMap[attrId] = ContextCompat.getColor(context, typedValue.resourceId)
             }
+            return colorMap[attrId]!!
         }
 
         @JvmStatic

@@ -32,8 +32,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
@@ -110,10 +112,9 @@ class HelloMMyFragment : BaseFragment() {
         }
         viewmodel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {
-                PxEZApp.instance.pre.edit().putBoolean(
-                    "hide_bookmark_item_in_mmy",
-                    it
-                ).apply()
+                PxEZApp.instance.pre.edit {
+                    putBoolean("hide_bookmark_item_in_mmy", it)
+                }
                 picListAdapter.illustFilter.hideBookmarked = if (it) 1 else 0
             }
         }
@@ -171,7 +172,12 @@ class HelloMMyFragment : BaseFragment() {
             viewmodel.onLoadMore()
         }
         val headerView = layoutInflater.inflate(R.layout.header_mmy, null)
-        picListAdapter.addHeaderView(headerView)
+        picListAdapter.apply {
+            addHeaderView(headerView)
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            headerWithEmptyEnable = true
+            footerWithEmptyEnable = true
+        }
         headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
             isChecked = viewmodel.hideBookmarked.value!!
             setOnCheckedChangeListener { _, state ->
@@ -183,13 +189,15 @@ class HelloMMyFragment : BaseFragment() {
             }
             .onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                restrict = when (position) {
-                    0 -> "all"
+                val value = when (position) {
                     1 -> "public"
                     2 -> "private"
                     else -> "all"
                 }
-                viewmodel.onRefresh(restrict)
+                if (restrict != value) {
+                    restrict = value
+                    viewmodel.onRefresh(restrict)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

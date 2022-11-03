@@ -34,6 +34,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
@@ -161,7 +162,12 @@ class RankingMFragment : BaseFragment() {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
-        picListAdapter.addHeaderView(headerView)
+        picListAdapter.apply {
+            addHeaderView(headerView)
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            headerWithEmptyEnable = true
+            footerWithEmptyEnable = true
+        }
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1

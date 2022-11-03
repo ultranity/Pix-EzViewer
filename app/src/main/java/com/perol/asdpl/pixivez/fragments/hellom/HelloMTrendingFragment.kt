@@ -51,14 +51,11 @@ private const val ARG_PARAM1 = "param1"
  *
  */
 class HelloMTrendingFragment : LazyFragment() {
-    override fun loadData() {
-    }
-
     private val modelist = arrayOf(
         "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
     private val titles by lazy { resources.getStringArray(R.array.modellist) }
-    private fun initView() {
+    override fun loadData() {
         // viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
             ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
@@ -135,7 +132,7 @@ class HelloMTrendingFragment : LazyFragment() {
     private var param1: String? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
+        //initView()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -32,6 +32,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMRecomViewPager
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
+import com.perol.asdpl.pixivez.objects.LazyFragment
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -43,7 +45,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class HelloMainFragment : Fragment() {
+class HelloMainFragment : LazyFragment() {
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -67,8 +69,7 @@ class HelloMainFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun loadData() {
         binding.viewpager.adapter =
             HelloMRecomViewPager(this, childFragmentManager)
         binding.tablayout.setupWithViewPager(binding.viewpager)

@@ -45,6 +45,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
+import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
+import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 
@@ -53,7 +55,7 @@ import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
  * Use the [UserInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class UserInfoFragment : Fragment() {
+class UserInfoFragment : LazyFragment() { // Required empty public constructor
 
     // TODO: Rename and change types of parameters
     lateinit var viewModel: UserMViewModel
@@ -62,10 +64,6 @@ class UserInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[UserMViewModel::class.java]
-        viewModel.userDetail.value?.let {
-            userDetail = it
-            initData()
-        }
     }
 
     private fun getChip(word: String, hint: String? = null, url: String? = null, onclickAction: ((Chip) -> Unit)? = null): Chip {
@@ -97,7 +95,20 @@ class UserInfoFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun initData() {
+    override fun loadData() {
+        viewModel.userDetail.value?.let {
+            userDetail = it
+        }
+        if (::userDetail.isInitialized.not()) {
+            isLoaded = false
+            viewModel.userDetail.observeOnce(viewLifecycleOwner) {
+                if (::userDetail.isInitialized.not()) {
+                    userDetail = it
+                    loadData()
+                }
+            }
+            return
+        }
         binding.textViewUsercomment.run {
             autoLinkMask = Linkify.WEB_URLS
             text =
@@ -171,23 +182,23 @@ class UserInfoFragment : Fragment() {
                 getChip(userDetail.profile.webpage, "webpage", userDetail.profile.webpage)
             )
         }
-        val chips = ArrayList<String>().apply {
-            add(userDetail.profile.gender)
-            add(userDetail.profile.birth)
-            add("${userDetail.profile.region} ${userDetail.profile.country_code}")
-            add(userDetail.profile.job)
-            add(userDetail.workspace.tool)
-            add(userDetail.workspace.tablet)
-            add(userDetail.workspace.printer)
-            add(userDetail.workspace.monitor)
-            add(userDetail.workspace.chair)
+        val chips = ArrayList<Pair<String?, String>>().apply {
+            add(userDetail.profile.gender to "gender")
+            add(userDetail.profile.birth to "birth")
+            add("${userDetail.profile.region} ${userDetail.profile.country_code}" to "country")
+            add(userDetail.profile.job to "job")
+            add(userDetail.workspace.tool to "tool")
+            add(userDetail.workspace.tablet to "tablet")
+            add(userDetail.workspace.printer to "printer")
+            add(userDetail.workspace.monitor to "monitor")
+            add(userDetail.workspace.chair to "chair")
         }
-        chips.filter { it.isNotBlank() }.forEach {
-            binding.chipgroup.addView(getChip(it))
+        chips.filter { it.first.isNullOrBlank().not() }.forEach {
+            binding.chipgroup.addView(getChip(it.first!!, it.second))
         }
         if (binding.chipgroup.size <= 2) {
             binding.chipgroup.addView(
-                getChip("╮(╯▽╰)╭") { chip ->
+                getChip("╮(╯▽╰)╭", "2333") { chip ->
                     chip.setOnLongClickListener {
                         chip.text = chip.contentDescription.also { chip.contentDescription = chip.text }
                         it.postDelayed(5000) {
@@ -201,6 +212,7 @@ class UserInfoFragment : Fragment() {
     }
 
     private var param1: Long? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -240,4 +252,4 @@ class UserInfoFragment : Fragment() {
             return fragment
         }
     }
-} // Required empty public constructor
+}

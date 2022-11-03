@@ -86,12 +86,14 @@ class IllustratorFragment : BaseFragment() {
             }
             .onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                restrict = when (position) {
-                    0 -> "public"
+                val value = when (position) {
                     1 -> "private"
                     else -> "public"
                 }
-                viewModel.onRefresh(userid, restrict, getFollowing)
+                if (restrict != value) {
+                    restrict = value
+                    viewModel.onRefresh(userid, restrict, getFollowing)
+                }
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}

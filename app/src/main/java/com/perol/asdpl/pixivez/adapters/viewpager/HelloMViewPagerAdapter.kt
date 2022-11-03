@@ -40,18 +40,9 @@ class HelloMViewPagerAdapter(fragmentManager: FragmentManager) :
     override fun getItem(position: Int): Fragment {
         if (fragments[position] == null) {
             fragments[position] = when (position) {
-                0 -> {
-                    HelloMainFragment.newInstance("s", "s")
-                }
-                1 -> {
-                    HelloMTrendingFragment.newInstance("d")
-                }
-                2 -> {
-                    HelloMThFragment.newInstance("d", "c")
-                }
-                else -> {
-                    HelloMThFragment.newInstance("d", "c")
-                }
+                0 -> HelloMainFragment.newInstance("s", "s")
+                1 -> HelloMTrendingFragment.newInstance("d")
+                else -> HelloMThFragment.newInstance("d", "c")
             }
         }
         return fragments[position]!!

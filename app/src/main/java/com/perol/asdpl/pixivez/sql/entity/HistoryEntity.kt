@@ -33,6 +33,8 @@ import androidx.room.PrimaryKey
 class SearchHistoryEntity (
     @PrimaryKey var word: String
     )*/
+
+// TODO: fix duplicate
 @Entity(tableName = "history")
 class SearchHistoryEntity(
     @ColumnInfo(name = "word")

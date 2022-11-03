@@ -33,19 +33,11 @@ import com.perol.asdpl.pixivez.fragments.IllustratorFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMMyFragment
 
 class HelloMThViewPager(var fragment: Fragment, fragmentManager: FragmentManager, var userid: Long) :
-    FragmentStatePagerAdapter(
-        fragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
+    FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    override fun getPageTitle(position: Int): CharSequence =
-        when (position) {
-            0 -> {
-                fragment.getString(R.string.new1)
-            }
-            else -> {
-                fragment.getString(R.string.painter)
-            }
+    override fun getPageTitle(position: Int): CharSequence = when (position) {
+            0 -> fragment.getString(R.string.new1)
+            else -> fragment.getString(R.string.painter)
         }
 
     override fun getItem(position: Int) = when (position) {

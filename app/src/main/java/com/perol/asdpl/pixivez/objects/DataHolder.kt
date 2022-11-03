@@ -36,6 +36,9 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
+/**
+ * copy member from another instance
+ */
 fun <T : Any> T.copyFrom(src:T) {
     //if (!this::class.isData) {
     //    return

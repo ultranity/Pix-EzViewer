@@ -32,12 +32,6 @@ class RankingMViewModel : BaseViewModel() {
     val nextUrl = MutableLiveData<String>()
     val addillusts = MutableLiveData<ArrayList<Illust>?>()
     val illusts = MutableLiveData<ArrayList<Illust>??>()
-    fun first(mode: String, picdata: String?) {
-        retrofit.getIllustRanking(mode, picdata).subscribe({
-            nextUrl.value = it.next_url
-            illusts.value = ArrayList(it.illusts)
-        }, { it.printStackTrace() }, {}).add()
-    }
 
     fun onRefresh(mode: String, picdata: String?) {
         retrofit.getIllustRanking(mode, picdata).subscribe({

@@ -203,20 +203,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
         for (i in 0..2) {
             val tabItem = binding.tablayoutHellom.getTabAt(i)!!
-
-            when (i) {
-                0 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_home_white)
-                }
-                1 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_ranking_white)
-                }
-                2 -> {
-                    tabItem.icon =
-                        ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
-                }
+            tabItem.icon = when (i) {
+                0    -> ContextCompat.getDrawable(this, R.drawable.ic_action_home_white)
+                1    -> ContextCompat.getDrawable(this, R.drawable.ic_action_ranking_white)
+                else -> ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
             }
         }
     }
@@ -257,12 +247,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                                 PictureActivity.start(this@HelloMActivity, item.toLong())
                             }
                             else {
-                                val bundle = Bundle()
-                                bundle.putString("searchword", item)
-                                bundle.putInt("type", 1)
-                                val intent = Intent(this@HelloMActivity, SearchResultActivity::class.java)
-                                intent.putExtras(bundle)
-                                startActivityForResult(intent, 775)
+                                SearchResultActivity.start(this@HelloMActivity, item, 1)
                             }
                         }
                         neutralButton(R.string.not_this_one) {
@@ -275,10 +260,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 }
             }
         )
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     private fun checkAndRequestPermissions(permissionList: ArrayList<String>) {

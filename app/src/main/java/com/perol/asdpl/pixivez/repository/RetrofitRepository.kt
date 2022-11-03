@@ -66,7 +66,7 @@ class RetrofitRepository {
 
     fun getIllustRelated(id: Long): Observable<RecommendResponse> = Request(appApiPixivService.getIllustRecommended(id))
 
-    fun getIllustRanking(mode: String, pickdata: String?): Observable<IllustNext> = Request(appApiPixivService.getIllustRanking(mode, pickdata))
+    fun getIllustRanking(mode: String, date: String?): Observable<IllustNext> = Request(appApiPixivService.getIllustRanking(mode, date))
 
     fun getSearchAutoCompleteKeywords(newText: String): Observable<PixivResponse> = Request(appApiPixivService.getSearchAutoCompleteKeywords(newText))
 

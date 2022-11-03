@@ -50,13 +50,13 @@ interface AppApiPixivService {
     fun getIllustBookmarkTags(
         // @Header("Authorization") paramString1: String,
         @Query("user_id") paramLong: Long,
-        @Query("restrict") paramString2: String
+        @Query("restrict") restrict: String
     ): Observable<BookMarkTagsResponse>
 
     @GET("/v1/spotlight/articles?filter=for_android")
     fun getPixivisionArticles(
         // @Header("Authorization") paramString1: String,
-        @Query("category") paramString2: String
+        @Query("category") category: String
     ): Observable<SpotlightResponse>
 
     @GET("/v1/user/recommended?filter=for_android")
@@ -91,30 +91,30 @@ interface AppApiPixivService {
     fun getLikeIllust(
         // @Header("Authorization") paramString1: String,
         @Query("user_id") paramLong: Long,
-        @Query("restrict") paramString2: String,
-        @Query("tag") paramString3: String?
+        @Query("restrict") restrict: String,
+        @Query("tag") tag: String?
     ): Observable<IllustNext>
 
     @FormUrlEncoded
     @POST("/v1/user/follow/delete")
     fun postUnfollowUser(
         // @Header("Authorization") paramString: String,
-        @Field("user_id") paramLong: Long
+        @Field("user_id") user_id: Long
     ): Observable<ResponseBody>
 
     @FormUrlEncoded
     @POST("/v1/user/follow/add")
     fun postFollowUser(
         // @Header("Authorization") paramString1: String,
-        @Field("user_id") paramLong: Long,
-        @Field("restrict") paramString2: String
+        @Field("user_id") user_id: Long,
+        @Field("restrict") restrict: String
     ): Observable<ResponseBody>
 
     @FormUrlEncoded
     @POST("/v1/illust/bookmark/delete")
     fun postUnlikeIllust(
         // @Header("Authorization") paramString: String,
-        @Field("illust_id") paramLong: Long
+        @Field("illust_id") illust_id: Long
     ): Observable<ResponseBody>
 
     @FormUrlEncoded
@@ -123,13 +123,13 @@ interface AppApiPixivService {
         // @Header("Authorization") paramString1: String,
         @Field("illust_id") illust_id: Long,
         @Field("restrict") restrict: String,
-        @Field("tags[]") paramList: List<String>?
+        @Field("tags[]") tagList: List<String>?
     ): Observable<ResponseBody>
 
     @GET("/v2/search/autocomplete?merge_plain_keyword_results=true")
     fun getSearchAutoCompleteKeywords(
         // @Header("Authorization") paramString1: String,
-        @Query("word") paramString2: String?
+        @Query("word") word: String?
     ): Observable<PixivResponse>
 
     @GET("/v1/trending-tags/illust?filter=for_android")
@@ -141,7 +141,7 @@ interface AppApiPixivService {
     @GET("/v1/search/illust?filter=for_android&merge_plain_keyword_results=true")
     fun getSearchIllust(
         // @Header("Authorization") paramString5: String,
-        @Query("word") paramString1: String,
+        @Query("word") word: String,
         @Query("sort") sort: String,
         @Query("search_target") search_target: String?,
         @Query("start_date") start_date: String?,
@@ -152,35 +152,35 @@ interface AppApiPixivService {
     @GET("/v1/search/popular-preview/illust?filter=for_android&merge_plain_keyword_results=true")
     fun getSearchIllustPreview(
         // @Header("Authorization") paramString5: String,
-        @Query("word") paramString1: String,
-        @Query("sort") paramString2: String,
-        @Query("search_target") paramString3: String?,
+        @Query("word") word: String,
+        @Query("sort") sort: String,
+        @Query("search_target") search_target: String?,
         @Query("bookmark_num") paramInteger: Int?,
-        @Query("duration") paramString4: String?
+        @Query("duration") duration: String?
     ): Observable<SearchIllustResponse>
 
     @GET("/v1/search/popular-preview/illust?filter=for_android")
     fun getPopularPreviewIllust(
         // @Header("Authorization") paramString1: String,
-        @Query("word") paramString2: String,
-        @Query("search_target") paramString3: String,
-        @Query("duration") paramString4: String
+        @Query("word") word: String,
+        @Query("search_target") search_target: String,
+        @Query("duration") duration: String
     ): Call<PixivResponse>
 
     @GET("/v1/search/novel")
     fun getSearchNovel(
         // @Header("Authorization") paramString1: String,
-        @Query("word") paramString2: String,
-        @Query("sort") paramString3: String,
-        @Query("search_target") paramString4: String,
+        @Query("word") word: String,
+        @Query("sort") sort: String,
+        @Query("search_target") search_target: String,
         @Query("bookmark_num") paramInteger: Int?,
-        @Query("duration") paramString5: String
+        @Query("duration") duration: String
     ): Call<PixivResponse>
 
     @GET("/v1/search/user?filter=for_android")
     fun getSearchUser(
         // @Header("Authorization") paramString1: String,
-        @Query("word") paramString2: String
+        @Query("word") word: String
     ): Observable<SearchUserResponse>
 
     @GET("/v1/user/follower?filter=for_android")
@@ -193,7 +193,7 @@ interface AppApiPixivService {
     fun getUserFollowing(
         // @Header("Authorization") paramString1: String,
         @Query("user_id") paramLong: Long,
-        @Query("restrict") paramString2: String
+        @Query("restrict") restrict: String
     ): Observable<SearchUserResponse>
 
     @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true")
@@ -223,27 +223,27 @@ interface AppApiPixivService {
     @POST("/v2/user/browsing-history/illust/add")
     fun postAddIllustBrowsingHistory(
         // @Header("Authorization") paramString: String,
-        @Field("illust_ids[]") paramList: List<Long>
+        @Field("illust_ids[]") illust_idList: List<Long>
     ): Observable<ResponseBody>
 
     @GET("/v1/illust/ranking?filter=for_android")
     fun getIllustRanking(
         // @Header("Authorization") paramString1: String,
-        @Query("mode") paramString2: String,
-        @Query("date") paramString3: String?
+        @Query("mode") mode: String,
+        @Query("date") date: String?
     ): Observable<IllustNext>
 
     @GET("/v1/illust/ranking?filter=for_android")
     fun getIllustRanking1(
         // @Header("Authorization") paramString1: String,
-        @Query("mode") paramString2: String,
-        @Query("date") paramString3: String
+        @Query("mode") mode: String,
+        @Query("date") date: String
     ): Observable<ResponseBody>
 
     @GET("/v2/illust/follow")
     fun getFollowIllusts(
         // @Header("Authorization") paramString1: String,
-        @Query("restrict") paramString2: String
+        @Query("restrict") restrict: String
     ): Observable<IllustNext>
 
     @GET("/v1/illust/bookmark/users")
@@ -280,7 +280,7 @@ interface AppApiPixivService {
     fun getUserIllusts(
         // @Header("Authorization") paramString1: String,
         @Query("user_id") paramLong: Long,
-        @Query("type") paramString2: String
+        @Query("type") type: String
     ): Observable<IllustNext>
 
     @GET

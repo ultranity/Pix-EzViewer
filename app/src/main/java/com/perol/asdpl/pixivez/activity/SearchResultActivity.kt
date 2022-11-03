@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -40,7 +41,15 @@ import com.perol.asdpl.pixivez.fragments.SearchIllustFragment
 import com.perol.asdpl.pixivez.fragments.SearchUsersListFragment
 
 class SearchResultActivity : RinkActivity() {
-    private var searchword: String = "1"
+    companion object{
+        fun start(context:Context, searchword:String, type:Int=0){
+            val intent = Intent(context, SearchResultActivity::class.java)
+            intent.putExtra("searchword", searchword)
+            intent.putExtra("type", type)
+            context.startActivity(intent)
+        }
+    }
+    private var searchword: String = ""
     var type: Int = 0
 
     lateinit var binding: ActivitySearchResultBinding

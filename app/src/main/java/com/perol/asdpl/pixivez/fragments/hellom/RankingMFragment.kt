@@ -75,7 +75,7 @@ class RankingMFragment : BaseFragment() {
     private var tabPosition: Int? = null
 
     override fun loadData() {
-        viewmodel.first(mode!!, picDate)
+        viewmodel.onRefresh(mode!!, picDate)
     }
 
     override fun onResume() {

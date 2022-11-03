@@ -33,10 +33,7 @@ import com.perol.asdpl.pixivez.fragments.hellom.HelloMRecomUserFragment
 import com.perol.asdpl.pixivez.fragments.hellom.HelloMRecommendFragment
 
 class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManager) :
-    FragmentStatePagerAdapter(
-        fragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
+    FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int) = when (position) {
         0 -> HelloMRecommendFragment.newInstance("", "")
@@ -45,11 +42,7 @@ class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManag
 
     override fun getCount() = 2
     override fun getPageTitle(position: Int) = when (position) {
-        0 -> {
-            context.getString(R.string.illust)
-        }
-        else -> {
-            context.getString(R.string.painter)
-        }
+        0 -> context.getString(R.string.illust)
+        else -> context.getString(R.string.painter)
     }
 }

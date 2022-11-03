@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.services
 
 import android.content.SharedPreferences
 import android.media.MediaScannerConnection
-import android.os.Looper
 import android.webkit.MimeTypeMap
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
@@ -41,6 +40,9 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 fun String.toLegal(): String {
@@ -203,18 +205,15 @@ object Works {
         if (PxEZApp.ShowDownloadToast) {
             TToast.startDownload()
         }
-
-        if (illust.meta_pages.isEmpty()) {
-            imgD(illust, null)
-        }
-        else {
-            Thread({
-                Looper.prepare()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (illust.meta_pages.isEmpty()) {
+                imgD(illust, null)
+            }
+            else {
                 for (i in illust.meta_pages.indices) {
                     imgD(illust, i)
                 }
-                Looper.loop()
-            }).start()
+            }
         }
     }
 

@@ -99,18 +99,17 @@ object Works {
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
         if (part != null && illust.meta_pages.isNotEmpty()) {
-            url = illust.meta_pages[
-                if (part < illust.meta_pages.size - 1) {
-                    part
-                }
-                else {
-                    illust.meta_pages.size - 1
-                }
-            ].image_urls.large
+            val i = if (part < illust.meta_pages.size - 1) {
+                part
+            }
+            else {
+                illust.meta_pages.size - 1
+            }
+            url = getQualityUrl(illust, i)
             filename = filename.replace("{part}", part.toString())
         }
-        else if (illust.meta_pages.isEmpty()) {
-            url = illust.image_urls.large
+        else if (illust.meta_single_page.original_image_url != null) {
+            url = getQualityUrl(illust)
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
@@ -287,10 +286,10 @@ object Works {
     fun imgD(illust: Illust, part: Int?) {
         var url = (
             if (part != null && illust.meta_pages.isNotEmpty()) {
-                illust.meta_pages[part].image_urls.large
+                getQualityUrl(illust, part)
             }
             else {
-                illust.image_urls.large
+                getQualityUrl(illust)
             }
             )
         // url = mirror(illust, part, url)
@@ -328,6 +327,35 @@ object Works {
             .setExtendField(Gson().toJson(illustD))
             .option(option)
             .create()
+    }
+
+    fun getQualityUrl(illust: Illust, part: Int): String {
+        val urls = illust.meta_pages[part].image_urls
+        return when (pre.getString("quality_download", "0")?.toInt() ?: 0) {
+            0 -> {
+                urls.original
+            }
+            1 -> {
+                urls.medium
+            }
+            else -> { // 2
+                urls.large
+            }
+        }
+    }
+    fun getQualityUrl(illust: Illust): String {
+        val urls = illust.image_urls
+        return when (pre.getString("quality_download", "0")?.toInt() ?: 0) {
+            0 -> {
+                illust.meta_single_page.original_image_url!!
+            }
+            1 -> {
+                urls.medium
+            }
+            else -> { // 2
+                urls.large
+            }
+        }
     }
 
 /*

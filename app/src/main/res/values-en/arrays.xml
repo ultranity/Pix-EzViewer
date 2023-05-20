@@ -23,6 +23,11 @@
         <item>medium (fast)</item>
         <item>high (slow)</item>
     </string-array>
+    <string-array name="quality_download">
+        <item>original (large)</item>
+        <item>medium (very low quality)</item>
+        <item>large (low quality)</item>
+    </string-array>
     <string-array name="modellist">
         <item>day</item>
         <item>day_male</item>

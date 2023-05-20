@@ -42,12 +42,12 @@ android {
 
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.perol.asdpl.play.pixivez"
+        applicationId "com.perol.asdpl.play.pixivez.gholk_variant"
         minSdkVersion 21
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
-        versionCode 115
-        versionName "1.8.5"
+        versionCode 116
+        versionName "1.9.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true

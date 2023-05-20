@@ -107,11 +107,11 @@ object Works {
                 else {
                     illust.meta_pages.size - 1
                 }
-            ].image_urls.original
+            ].image_urls.large
             filename = filename.replace("{part}", part.toString())
         }
-        else if (illust.meta_single_page.original_image_url != null) {
-            url = illust.meta_single_page.original_image_url
+        else if (illust.meta_pages.isEmpty()) {
+            url = illust.image_urls.large
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
@@ -285,10 +285,10 @@ object Works {
     fun imgD(illust: Illust, part: Int?) {
         var url = (
             if (part != null && illust.meta_pages.isNotEmpty()) {
-                illust.meta_pages[part].image_urls.original
+                illust.meta_pages[part].image_urls.large
             }
             else {
-                illust.meta_single_page.original_image_url!!
+                illust.image_urls.large
             }
             )
         // url = mirror(illust, part, url)

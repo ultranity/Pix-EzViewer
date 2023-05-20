@@ -100,13 +100,7 @@ object Works {
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
         if (part != null && illust.meta_pages.isNotEmpty()) {
-            val i = if (part < illust.meta_pages.size - 1) {
-                part
-            }
-            else {
-                illust.meta_pages.size - 1
-            }
-            url = getQualityUrl(illust, i)
+            url = getQualityUrl(illust, part)
             filename = filename.replace("{part}", part.toString())
         }
         else if (illust.meta_single_page.original_image_url != null) {
@@ -328,8 +322,10 @@ object Works {
     }
 
     fun getQualityUrl(illust: Illust, part: Int): String {
+        //TODO: is this necessary?
+        //val part = part.coerceAtMost(illust.meta_pages.size - 1)
         val urls = illust.meta_pages[part].image_urls
-        return when (pre.getString("quality_download", "0")?.toInt() ?: 0) {
+        return when (pre.getString("quality_download", "0")?.toInt()) {
             0 -> {
                 urls.original
             }
@@ -343,7 +339,7 @@ object Works {
     }
     fun getQualityUrl(illust: Illust): String {
         val urls = illust.image_urls
-        return when (pre.getString("quality_download", "0")?.toInt() ?: 0) {
+        return when (pre.getString("quality_download", "0")?.toInt()) {
             0 -> {
                 illust.meta_single_page.original_image_url!!
             }

@@ -30,7 +30,8 @@
     <string name="img_manager">ピクチャー</string>
     <string name="checkupdate">確認</string>
     <string name="_18">R-18コンテンツを隠さない</string>
-    <string name="picturequality">画像サムネイルの画質</string>
+    <string name="pic_quality">画像サムネイルの画質</string>
+    <string name="pic_quality_download">下載画質</string>
     <string name="origin">ロード画像</string>
     <string name="searchsource">元画像を検索</string>
     <string name="cleancatche">キャッシュを削除</string>

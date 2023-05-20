@@ -30,8 +30,8 @@
     <string name="img_manager">Pictures</string>
     <string name="checkupdate">Check for updates</string>
     <string name="_18">Show R-18 image previews</string>
-    <string name="picturequality">Picture quality</string>
-    <string name="picturequality_download">Download picture quality</string>
+    <string name="pic_quality">Picture quality</string>
+    <string name="pic_quality_download">Download picture quality</string>
     <string name="origin">Show original</string>
     <string name="searchsource">SauceNAO</string>
     <string name="cleancatche">Clear cache</string>

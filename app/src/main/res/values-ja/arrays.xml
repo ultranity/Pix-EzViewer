@@ -23,6 +23,11 @@
         <item>標準画質（高速）</item>
         <item>高画質（低速）</item>
     </string-array>
+    <string-array name="quality_download">
+        <item>原画質（低低速)</item>
+        <item>標準画質（高速）</item>
+        <item>高画質（低速）</item>
+    </string-array>
     <string-array name="modellist">
         <item>一日以内</item>
         <item>男性向け</item>

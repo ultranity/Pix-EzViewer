@@ -28,7 +28,6 @@
         <item>中圖（低畫質）</item>
         <item>大圖（中畫質）</item>
     </string-array>
-
     <string-array name="modellist">
         <item>每日</item>
         <item>男性</item>

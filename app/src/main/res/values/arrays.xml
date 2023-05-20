@@ -34,9 +34,9 @@
         <item>大图（高配）</item>
     </string-array>
     <string-array name="quality_download">
-        <item>原始大小（較大）</item>
-        <item>中圖（低畫質）</item>
-        <item>大圖（中畫質）</item>
+        <item>原始大小（较大）</item>
+        <item>中图（低画质）</item>
+        <item>大图（中画质）</item>
     </string-array>
 
     <string-array name="quality_value">

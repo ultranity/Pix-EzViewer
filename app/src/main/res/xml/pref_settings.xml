@@ -156,6 +156,13 @@
             app:title="@string/picturequality"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
+            android:entryValues="@array/quality_download_value"
+            app:defaultValue="0"
+            app:entries="@array/quality_download"
+            app:key="quality_download"
+            app:title="@string/picturequality_download"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
             android:entries="@array/language"
             android:entryValues="@array/language_values"
             app:defaultValue="-1"

@@ -23,6 +23,11 @@
         <item>中圖（更快）</item>
         <item>大圖（高配）</item>
     </string-array>
+    <string-array name="quality_download">
+        <item>原始大小（較大）</item>
+        <item>中圖（低畫質）</item>
+        <item>大圖（中畫質）</item>
+    </string-array>
 
     <string-array name="modellist">
         <item>每日</item>

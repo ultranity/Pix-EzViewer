@@ -31,6 +31,7 @@
     <string name="checkupdate">檢查更新</string>
     <string name="_18">隐藏遮罩</string>
     <string name="picturequality">圖像品質</string>
+    <string name="picturequality_download">下載圖像品質</string>
     <string name="origin">加載原圖</string>
     <string name="searchsource">以圖搜源</string>
     <string name="cleancatche">清除快取</string>

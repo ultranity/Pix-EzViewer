@@ -29,14 +29,14 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.responses.Illust
 
 class RankingMViewModel : BaseViewModel() {
-    val nextUrl = MutableLiveData<String>()
-    val addillusts = MutableLiveData<ArrayList<Illust>?>()
-    val illusts = MutableLiveData<ArrayList<Illust>??>()
+    val illusts = MutableLiveData<List<Illust>?>()
+    val addillusts = MutableLiveData<List<Illust>?>()
+    val nextUrl = MutableLiveData<String?>()
 
-    fun onRefresh(mode: String, picdata: String?) {
-        retrofit.getIllustRanking(mode, picdata).subscribe({
+    fun onRefresh(mode: String, pickDate: String?) {
+        retrofit.getIllustRanking(mode, pickDate).subscribe({
             nextUrl.value = it.next_url
-            illusts.value = it.illusts as ArrayList<Illust>?
+            illusts.value = it.illusts
         }, {
             illusts.value = null
         }, {}).add()
@@ -48,15 +48,6 @@ class RankingMViewModel : BaseViewModel() {
             addillusts.value = it.illusts
         }, {
             addillusts.value = null
-        }, {}).add()
-    }
-
-    fun datePick(mode: String, pickDate: String?) {
-        retrofit.getIllustRanking(mode, pickDate).subscribe({
-            nextUrl.value = it.next_url
-            illusts.value = ArrayList(it.illusts)
-        }, {
-            illusts.value = null
         }, {}).add()
     }
 }

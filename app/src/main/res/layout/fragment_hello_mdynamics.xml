@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,7 +19,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tablayout_rankingm"
+                android:id="@+id/tablayout"
                 style="@style/Widget.MaterialComponents.TabLayout.Colored"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
@@ -27,7 +28,7 @@
                 app:tabMode="scrollable" />
 
             <ImageView
-                android:id="@+id/imageview_triangle"
+                android:id="@+id/imageview_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -36,15 +37,15 @@
                 app:tint="?android:attr/textColorPrimaryInverse" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
-    <!--androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpage_rankingm"
+    <androidx.viewpager2.widget.ViewPager2
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" /-->
-    <androidx.fragment.app.FragmentContainerView
+        android:layout_height="match_parent" />
+    <!--androidx.fragment.app.FragmentContainerView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/content_view"
         android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent" /-->
 
 </LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true"
+        android:color="?attr/colorAccent"/> <!-- selected -->
+    <item android:state_checked="true"
+        android:color="@color/yellow"/> <!-- checked -->
+    <item android:color="@color/halftrans"/> <!-- default -->
+</selector>

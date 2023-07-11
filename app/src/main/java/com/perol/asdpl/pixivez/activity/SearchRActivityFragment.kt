@@ -72,7 +72,7 @@ class SearchRActivityFragment : Fragment() {
         }
         tagsTextViewModel = ViewModelProvider(requireActivity())[TagsTextViewModel::class.java]
         tagsTextViewModel.tags.observe(viewLifecycleOwner) {
-            tagsTextAdapter.setNewInstance(it.toMutableList())
+            tagsTextAdapter.setList(it)
             tags.clear()
             tags.addAll(it)
         }

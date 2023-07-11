@@ -29,27 +29,35 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
 import com.perol.asdpl.pixivez.responses.Illust
-import java.util.*
+import com.perol.asdpl.pixivez.responses.User
+import java.util.Stack
+import java.util.Timer
 import kotlin.collections.set
 import kotlin.concurrent.schedule
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.memberProperties
 
 /**
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.memberProperties
+
  * copy member from another instance
- */
 fun <T : Any> T.copyFrom(src:T) {
     //if (!this::class.isData) {
     //    return
     //}
     this::class.memberProperties
-        .filter{ it.visibility == KVisibility.PUBLIC }
         .filterIsInstance<KMutableProperty<*>>()
         .forEach {
             it.setter.call(this, it.getter.call(src))
         }
+    return
+    this.javaClass.declaredFields
+        //.filter{ it.modifiers == Modifier.PUBLIC }
+        .forEach {
+            it.isAccessible = true
+            it.set(this, it.get(src))
+        }
 }
+ */
 
 class DataHolder{
     companion object {
@@ -95,8 +103,13 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
             return ds
         }
 
+        /*
         inline fun <reified T : Any> update(id: String, data: T):T? {
             return (HoldingData[id]?.data as? T)?.apply{ copyFrom(data) }
+        }*/
+
+        fun update(id: String, data: User): User? {
+            return (HoldingData[id]?.data as? User)?.apply{ copyFrom(data) }
         }
 
         inline fun <reified T>  retrieve(id: String): T? {

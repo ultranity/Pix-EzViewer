@@ -302,8 +302,7 @@ class EasyFormatter private constructor(private val builder: Builder) {
             return
         }
 
-        val fields = clazz.declaredFields
-        for (field in fields) {
+        for (field in clazz.declaredFields) {
             val modifiers = field.modifiers
             if (Modifier.isNative(modifiers)) {
                 continue

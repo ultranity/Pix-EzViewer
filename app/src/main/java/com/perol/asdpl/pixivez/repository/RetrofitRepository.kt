@@ -29,7 +29,20 @@ import android.util.Log
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.networks.ReFreshFunction
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.responses.*
+import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
+import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse
+import com.perol.asdpl.pixivez.responses.IllustCommentsResponse
+import com.perol.asdpl.pixivez.responses.IllustDetailResponse
+import com.perol.asdpl.pixivez.responses.IllustNext
+import com.perol.asdpl.pixivez.responses.ListUserResponse
+import com.perol.asdpl.pixivez.responses.PixivResponse
+import com.perol.asdpl.pixivez.responses.RecommendResponse
+import com.perol.asdpl.pixivez.responses.SearchIllustResponse
+import com.perol.asdpl.pixivez.responses.SearchUserResponse
+import com.perol.asdpl.pixivez.responses.SpotlightResponse
+import com.perol.asdpl.pixivez.responses.TrendingtagResponse
+import com.perol.asdpl.pixivez.responses.UgoiraMetadataResponse
+import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -167,35 +180,30 @@ class RetrofitRepository {
     fun getUserRecommanded() = Request(appApiPixivService.getUserRecommended())
 
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
-        return Observable.just(1).flatMap {
+        return observable.map {
             // resetToken()
             Log.d("Retrofit", "Request ${T::class.java.canonicalName}")
-            observable
+            it
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen {
-                Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
-                reFreshFunction.apply(it)
-            }
+        .retryWhen {
+            Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+            reFreshFunction.apply(it)
+        }
     }
 
     fun <T> create(observable: Observable<T>): Observable<T> {
-        return Observable.just(1).flatMap {
-            observable
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+        return observable.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen(reFreshFunction)
     }
 
-    inline fun <reified T> getNext(url: String): Observable<T> =
-        Observable.just(1).flatMap {
+    inline fun <reified T> getNext(url: String): Observable<T> = appApiPixivService.getUrl(url).flatMap {
             Log.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
-            appApiPixivService.getUrl(url).flatMap {
-                Observable.just(Gson().fromJson(it.string(), T::class.java))
-            }
+            Observable.just(Gson().fromJson(it.string(), T::class.java))
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen {
-                Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
-                reFreshFunction.apply(it)
-            }
+        .retryWhen {
+            Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")
+            reFreshFunction.apply(it)
+        }
 
     fun getNextUser(url: String): Observable<SearchUserResponse> = getNext(url)
 

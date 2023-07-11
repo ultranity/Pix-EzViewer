@@ -54,8 +54,8 @@ class AverageGridItemDecoration(private val itemWidthPx:Int, private val padding
         if ((padding.not()) and (spanCount == 1))
             return
         val spanMargin = (parentWidth - itemWidthPx * spanCount) / (if (padding) (spanCount + 1) else (spanCount - 1))
-        val spanSizeLookup = layoutManager.spanSizeLookup
-        val adapterPosition = parent.getChildAdapterPosition(view)
+        //val spanSizeLookup = layoutManager.spanSizeLookup
+        //val adapterPosition = parent.getChildAdapterPosition(view)
         //val columnIndex = spanSizeLookup.getSpanIndex(adapterPosition, spanCount)
         // 核心代码:
         // 左边的间距 = 期望的left- 默认的left

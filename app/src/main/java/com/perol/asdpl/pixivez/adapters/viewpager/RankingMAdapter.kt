@@ -23,28 +23,30 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.adapters
+package com.perol.asdpl.pixivez.adapters.viewpager
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import com.perol.asdpl.pixivez.R
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.fragments.hellom.RankingMFragment
+import java.util.*
 
-class RankingMAdapter(var fragment: Fragment, fragmentManager: FragmentManager) :
-    FragmentPagerAdapter(
-        fragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
-    private val modelist = arrayOf(
-        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
+class RankingMAdapter(var fragment: Fragment, var isR18on: Boolean) :
+    FragmentStateAdapter(fragment) {
+
+    private val modelist =arrayOf(
+        "day", "day_male", "day_female", "day_ai", "week_original", "week_rookie", "week", "month",
+        "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
 
-    override fun getItem(position: Int) = RankingMFragment.newInstance(modelist[position], position)
+    override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5
 
-    override fun getCount() = modelist.size
-    override fun getPageTitle(position: Int): String =
-        fragment.resources.getStringArray(R.array.modellist)[position]
+    val fragments = WeakHashMap<Int, RankingMFragment>(3)
+    override fun createFragment(position: Int): Fragment {
+        if (fragments[position] ==null) {
+            fragments[position] = RankingMFragment.newInstance(modelist[position], position)
+        }
+       return fragments[position]!!
+    }
 /*    override fun getItemCount() = modelist.size
     override fun createFragment(position: Int) = RankingMFragment.newInstance(modelist[position])*/
 }

@@ -18,7 +18,12 @@ import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
-import com.perol.asdpl.pixivez.viewmodel.*
+import com.perol.asdpl.pixivez.viewmodel.ADAPTER_VERSION
+import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
+import com.perol.asdpl.pixivez.viewmodel.FilterViewModel
+import com.perol.asdpl.pixivez.viewmodel.PicListViewModel
+import com.perol.asdpl.pixivez.viewmodel.RESTRICT_TYPE
+import com.perol.asdpl.pixivez.viewmodel.checkUpdate
 import kotlinx.coroutines.runBlocking
 
 fun Boolean.toInt() = if (this) 1 else 0
@@ -39,12 +44,12 @@ open class PicListFragment() : Fragment() {
     }
 
     var TAG = "PicListFragment"
-
+    var tabPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             TAG = it.getString(ARG_PARAM1)!!
-            val tabPosition = it.getInt(ARG_PARAM2)
+            tabPosition = it.getInt(ARG_PARAM2)
         }
         viewModel.setonLoadFirstRx(TAG)
     }
@@ -62,7 +67,7 @@ open class PicListFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentIllustListBinding.inflate(inflater, container, false)
-        _headerBinding = HeaderBookmarkBinding.inflate(layoutInflater)
+        _headerBinding = HeaderBookmarkBinding.inflate(inflater)
         return binding.root
     }
 
@@ -78,14 +83,14 @@ open class PicListFragment() : Fragment() {
     fun initViewModel() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.setNewInstance(it.toMutableList())
+                picListAdapter.setList(it)
             } else {
                 picListAdapter.loadMoreFail()
             }
             isLoaded = true
             binding.swiperefreshLayout.isRefreshing = false
         }
-        viewModel.adddata.observe(viewLifecycleOwner) {
+        viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addData(it)
             } else {

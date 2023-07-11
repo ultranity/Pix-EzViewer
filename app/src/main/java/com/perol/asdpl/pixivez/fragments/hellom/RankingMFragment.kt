@@ -31,7 +31,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -45,7 +44,6 @@ import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.RankingMViewModel
 import com.perol.asdpl.pixivez.viewmodel.RankingShareViewModel
@@ -98,7 +96,7 @@ class RankingMFragment : BaseFragment() {
             EventBus.getDefault().post(AdapterRefreshEvent())
         }
         sharemodel.picDateShare.observe(viewLifecycleOwner) {
-            viewmodel.datePick(mode!!, it)
+            viewmodel.onRefresh(mode!!, it)
         }
         sharemodel.hideBookmarked.observe(viewLifecycleOwner) {
             picListAdapter.illustFilter.hideBookmarked = it
@@ -116,7 +114,7 @@ class RankingMFragment : BaseFragment() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
-                picListAdapter.setNewInstance(it)
+                picListAdapter.setList(it)
             }
             else {
                 picListAdapter.loadMoreFail()
@@ -132,7 +130,6 @@ class RankingMFragment : BaseFragment() {
         }
     }
 
-    private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
@@ -190,27 +187,14 @@ class RankingMFragment : BaseFragment() {
                 StaggeredGridLayoutManager.VERTICAL
             )
             adapter = picListAdapter
+            //setRecycledViewPool(sharemodel.pool)
             addItemDecoration(GridItemDecoration())
         }
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(tabPosition!!)
-            ?.view?.setOnClickListener {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    exitTime = System.currentTimeMillis()
-                }
-                else {
-                    binding.recyclerview.scrollToPosition(0)
-                }
-            }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_rankingm)?.getTabAt(tabPosition!!)
+        parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(tabPosition!!)
             ?.view?.setOnClickListener(null)
     }
 
@@ -225,7 +209,7 @@ class RankingMFragment : BaseFragment() {
     }
 
     private lateinit var filter: IllustFilter
-    private lateinit var binding: FragmentIllustListBinding
+    lateinit var binding: FragmentIllustListBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

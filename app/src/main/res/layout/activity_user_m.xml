@@ -88,7 +88,7 @@
                     app:layout_collapseMode="pin" />
 
                 <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/mtablayout"
+                    android:id="@+id/tablayout"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_gravity="bottom|center_horizontal"
@@ -101,8 +101,8 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/mviewpager"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />

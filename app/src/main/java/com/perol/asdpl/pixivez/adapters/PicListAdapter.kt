@@ -84,6 +84,8 @@ abstract class PicListAdapter(
     private fun setAction(CollectMode: Int) {
         if (CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
+                if (position>adapter.data.size)
+                        return@setOnItemClickListener
                 (adapter.data as List<Illust>)[position].let { item ->
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
@@ -95,16 +97,18 @@ abstract class PicListAdapter(
                     }
                 }
             }
-            setOnItemLongClickListener { _, view, position ->
-                viewPics(view, position)
+            setOnItemLongClickListener { adapter, view, position ->
+                viewPics(adapter as PicListAdapter,view, position)
                 true
             }
         }
         else {
-            setOnItemClickListener { _, view, position ->
-                viewPics(view, position)
+            setOnItemClickListener { adapter, view, position ->
+                viewPics(adapter as PicListAdapter, view, position)
             }
             setOnItemLongClickListener { adapter, view, position ->
+                if (position>adapter.data.size)
+                    return@setOnItemLongClickListener true
                 // show detail of illust
                 (adapter.data as List<Illust>)[position].let { item ->
                     val detailstring = InteractionUtil.toDetailString(item)
@@ -128,17 +132,17 @@ abstract class PicListAdapter(
         }
     }
 
-    private fun viewPics(view: View, position: Int) {
+    private fun viewPics(adapter:PicListAdapter, view: View, position: Int) {
         DataHolder.setIllustsList(
-            this.data.subList(
+            adapter.data.subList(
                 max(position - 30, 0),
                 min(
-                    this.data.size,
+                    adapter.data.size,
                     max(position - 30, 0) + 60
                 )
             )
         )
-        val illust = this.data[position]
+        val illust = adapter.data[position]
         val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust)  else null
         PictureActivity.start(context,illust.id, position,30, options)
     }

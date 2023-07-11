@@ -30,7 +30,7 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
-import java.util.*
+import java.util.Calendar
 
 fun Calendar?.generateDateString(): String? {
     if (this == null) {
@@ -44,28 +44,29 @@ class IllustfragmentViewModel : BaseViewModel() {
     private var searchTargetT =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
     var isPreview = false
-    var illusts = MutableLiveData<ArrayList<Illust>>()
-    var addIllusts = MutableLiveData<ArrayList<Illust>??>()
-    var retrofitRepository = RetrofitRepository.getInstance()
+    var illusts = MutableLiveData<List<Illust>?>()
+    var addIllusts = MutableLiveData<List<Illust>?>()
+    private var retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl = MutableLiveData<String>()
-    var bookmarkid = MutableLiveData<Long>()
+    var bookmarkID = MutableLiveData<Long>()
     var isRefresh = MutableLiveData(false)
-    var pre = PxEZApp.instance.pre!!
+    var pre = PxEZApp.instance.pre
     var hideBookmarked = MutableLiveData(
         pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )
     val sort = MutableLiveData(0)
     val searchTarget = MutableLiveData(0)
-    val startDate = MutableLiveData<Calendar??>()
-    val endDate = MutableLiveData<Calendar??>()
+    val startDate = MutableLiveData<Calendar?>()
+    val endDate = MutableLiveData<Calendar?>()
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefresh.value = true
         retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
             .subscribe({
-                illusts.value = ArrayList(it.illusts)
+                illusts.value = it.illusts
                 nextUrl.value = it.next_url
                 isRefresh.value = false
             }, {
+                illusts.value = null
                 it.printStackTrace()
             }, {}).add()
     }
@@ -106,11 +107,12 @@ class IllustfragmentViewModel : BaseViewModel() {
     fun onLoadMoreListen() {
         if (nextUrl.value != null) {
             retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
-                if (sort.value == 2) {
-                    it.illusts.sortByDescending { it.total_bookmarks } // in-place sort
-                }
-                addIllusts.value = it.illusts
                 nextUrl.value = it.next_url
+                var illusts = it.illusts
+                if (sort.value == 2) {
+                    illusts = it.illusts.sortedByDescending{ it.total_bookmarks } // in-place sort
+                }
+                addIllusts.value = illusts
             }, {
                 addIllusts.value = null
             }, {}).add()

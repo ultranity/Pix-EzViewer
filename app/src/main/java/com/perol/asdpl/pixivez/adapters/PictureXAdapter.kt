@@ -249,7 +249,7 @@ class PictureXAdapter(
             Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
             Log.d("url", captionTextView.urls.toString())
             captionTextView.movementMethod = LinkMovementMethod.getInstance()
-            // viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
+            viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }
@@ -858,13 +858,13 @@ class PictureXAdapter(
     private var gifProgressBar: CircleProgressBar? = null
     var imageViewGif: AnimationView? = null
     private val relatedPictureAdapter = RelatedPictureAdapter(R.layout.view_relatedpic_item)
-    fun setRelatedPics(it: ArrayList<Illust>) {
+    fun setRelatedPics(it: List<Illust>) {
         if (it.isEmpty()) {
             return
         }
-        val list = it.map { it.image_urls.square_medium }.toMutableList()
+        val list = it.map { it.image_urls.square_medium }
 
-        relatedPictureAdapter.setNewInstance(list)
+        relatedPictureAdapter.setList(list)
         relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             val bundle = Bundle()
             // val id = it[position].id

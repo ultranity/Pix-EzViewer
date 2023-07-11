@@ -59,6 +59,8 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import com.perol.asdpl.pixivez.ui.AppBarStateChangeListener
+import com.perol.asdpl.pixivez.ui.AutoTabLayoutMediator
+import com.perol.asdpl.pixivez.ui.TabSelectedStrategy
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -162,30 +164,27 @@ class UserMActivity : RinkActivity() {
             id = intent.getLongExtra("data", 0)
         }
         viewModel.getData(id)
-        binding.mviewpager.adapter = UserMPagerAdapter(
-            this,
-            supportFragmentManager,
-            id
-        )
-        binding.mtablayout.setupWithViewPager(binding.mviewpager)
-        binding.mtablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(PxEZApp.instance, getString(R.string.back_to_the_top), Toast.LENGTH_SHORT).show()
-                    exitTime = System.currentTimeMillis()
-                }
-                else {
-                    (binding.mviewpager.adapter as UserMPagerAdapter).currentFragment?.view
-                        ?.findViewById<RecyclerView>(R.id.recyclerview)
-                        ?.scrollToPosition(0)
+        binding.viewpager.adapter = UserMPagerAdapter(this, id)
+        AutoTabLayoutMediator(binding.tablayout, binding.viewpager){ tab, position ->
+            tab.text = getString(UserMPagerAdapter.getPageTitle(position))
+        }.attach().apply {
+            onTabReSelectedStrategy = object : TabSelectedStrategy {
+                override fun invoke(tab: TabLayout.Tab) {
+                    if ((System.currentTimeMillis() - exitTime) > 3000) {
+                        Toast.makeText(PxEZApp.instance, getString(R.string.back_to_the_top), Toast.LENGTH_SHORT).show()
+                        exitTime = System.currentTimeMillis()
+                    }
+                    else {
+                        (binding.viewpager.adapter as UserMPagerAdapter)
+                            .fragments[binding.viewpager.currentItem]?.view
+                            ?.findViewById<RecyclerView>(R.id.recyclerview)
+                            ?.scrollToPosition(0)
+                    }
                 }
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabSelected(tab: TabLayout.Tab) {}
-        })
+        }
         viewModel.currentTab.observe(this) {
-            binding.mviewpager.currentItem = it
+            binding.viewpager.currentItem = it
         }
         viewModel.hideBookmarked.value = if (viewModel.isSelfPage(id)) 0 else pre.getInt(HIDE_BOOKMARKED_ITEM, 0)
         viewModel.hideDownloaded.value = pre.getBoolean(HIDE_DOWNLOADED_ITEM, false)
@@ -194,7 +193,7 @@ class UserMActivity : RinkActivity() {
                 binding.user = it
                 val user = DataStore.update("user${it.user.id}", it.user)
                 if (user != null) {
-                    binding.user?.user =  user
+                    binding.user!!.user =  user
                 }
             }
         }
@@ -284,24 +283,25 @@ class UserMActivity : RinkActivity() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 when (state){
                     State.COLLAPSED ->{
-                        binding.mtablayout.setTabTextColors(
+                        binding.tablayout.setTabTextColors(
                             ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimary),
                             ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimaryInverse)
                         )
-                        binding.mtablayout.translationX = -15f
+                        binding.tablayout.translationX = -15f
                     }
                     State.EXPANDED -> {
-                        binding.mtablayout.setTabTextColors(
+                        binding.tablayout.setTabTextColors(
                             ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.textColorPrimary),
                             ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.colorPrimary)
                         )
-                        binding.mtablayout.translationX = 0f
+                        binding.tablayout.translationX = 0f
                     }
                     else -> { }
                 }
             }
         })
         if (viewModel.isSelfPage(id)) {
+            binding.imageviewUserimage.transitionName = "CurrentUserImage"
             viewModel.currentTab.value = 2
         }
         else {
@@ -404,7 +404,7 @@ class UserMActivity : RinkActivity() {
 //                val intent =Intent(this,WorkActivity::class.java)
 //                intent.putExtra("id",id)
 //                startActivity(intent)
-                // var curr = supportFragmentManager.fragments[binding.mviewpager.currentItem]
+                // var curr = supportFragmentManager.fragments[binding.viewpager.currentItem]
             }
         }
         return super.onOptionsItemSelected(item)

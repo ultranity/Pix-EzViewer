@@ -31,6 +31,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -128,30 +129,19 @@ class SearchRActivity : RinkActivity() {
                     when (binding.tablayoutSearchm.selectedTabPosition) {
                         0 -> {
                             trendTagViewModel.addhistory(query)
-                            uptopage(query)
+                            searchFor(query)
                         }
                         1 -> {
-                            for (i in query) {
-                                if (!i.isDigit()) {
-                                    return true
-                                }
+                            if (!query.isDigitsOnly()) {
+                                return true
                             }
-                            val bundle = Bundle()
-                            val arrayList = LongArray(1)
-                            arrayList[0] = query.toLong()
-                            bundle.putLongArray("illustidlist", arrayList)
-                            bundle.putLong("illustid", query.toLong())
-                            val intent = Intent(this@SearchRActivity, PictureActivity::class.java)
-                            intent.putExtras(bundle)
-                            startActivity(intent)
+                            PictureActivity.start(this@SearchRActivity, query.toLong())
                         }
                         2 -> {
-                            for (i in query) {
-                                if (!i.isDigit()) {
-                                    return true
-                                }
+                            if (!query.isDigitsOnly()) {
+                                return true
                             }
-                            UserMActivity.start(applicationContext, query.toLong())
+                            UserMActivity.start(this@SearchRActivity, query.toLong())
                         }
                     }
                 }
@@ -191,7 +181,7 @@ class SearchRActivity : RinkActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun uptopage(query: String) {
+    private fun searchFor(query: String) {
         val bundle = Bundle()
         bundle.putString("searchword", query)
         val intent = Intent(this, SearchResultActivity::class.java)

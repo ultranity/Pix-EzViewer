@@ -24,49 +24,43 @@
 
 package com.perol.asdpl.pixivez.adapters.viewpager
 
-import android.app.Activity
-import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.fragments.user.UserBookMarkFragment
 import com.perol.asdpl.pixivez.fragments.user.UserIllustFragment
 import com.perol.asdpl.pixivez.fragments.user.UserInfoFragment
+import java.util.WeakHashMap
 
 class UserMPagerAdapter(
-    var activity: Activity,
-    fm: FragmentManager,
+    var activity: AppCompatActivity,
     var userid: Long
-) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+) : FragmentStateAdapter(activity) {
 
-    override fun getItemPosition(`object`: Any): Int {
-        return if (`object`.javaClass.name == "com.perol.asdpl.pixivez.fragments.User.UserIllustFragment") {
-            POSITION_NONE
+    val fragments = WeakHashMap<Int, Fragment>(4)
+    override fun getItemCount(): Int {
+        return 4
+    }
+
+    override fun createFragment(position: Int): Fragment {
+        if (fragments[position] == null) {
+            fragments[position] = when (position) {
+                0 -> UserIllustFragment.newInstance(userid, "illust")
+                1 -> UserIllustFragment.newInstance(userid, "manga")
+                2 -> UserBookMarkFragment.newInstance(userid, "1")
+                else -> UserInfoFragment.newInstance(userid)
+            }
         }
-        else {
-            super.getItemPosition(`object`)
+        return fragments[position]!!
+    }
+
+    companion object {
+        fun getPageTitle(position: Int) = when (position) {
+            0    -> R.string.illust
+            1    -> R.string.manga
+            2    -> R.string.bookmark
+            else -> R.string.abouts
         }
-    }
-
-    override fun getItem(position: Int) = when (position) {
-        0 -> UserIllustFragment.newInstance(userid, "illust")
-        1 -> UserIllustFragment.newInstance(userid, "manga")
-        2 -> UserBookMarkFragment.newInstance(userid, "1")
-        else -> UserInfoFragment.newInstance(userid)
-    }
-
-    var currentFragment: Fragment? = null
-    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
-        super.setPrimaryItem(container, position, `object`)
-        currentFragment = `object` as Fragment
-    }
-    override fun getCount() = 4
-
-    override fun getPageTitle(position: Int) = when (position) {
-        0 -> activity.getString(R.string.illust)
-        1 -> activity.getString(R.string.manga)
-        2 -> activity.getString(R.string.bookmark)
-        else -> activity.getString(R.string.abouts)
     }
 }

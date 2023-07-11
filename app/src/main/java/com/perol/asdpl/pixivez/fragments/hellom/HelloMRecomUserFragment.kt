@@ -57,7 +57,7 @@ class HelloMRecomUserFragment : BaseFragment() {
     }
     private val viewmodel: HelloRecomUserViewModel by viewModels()
     private fun initViewModel() {
-        viewmodel.adddata.observe(viewLifecycleOwner) {
+        viewmodel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             }
@@ -67,7 +67,7 @@ class HelloMRecomUserFragment : BaseFragment() {
         }
         viewmodel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.setNewInstance(it.toMutableList())
+                userShowAdapter.setList(it)
             }
             else {
                 userShowAdapter.loadMoreModule.loadMoreFail()

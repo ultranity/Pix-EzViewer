@@ -32,8 +32,8 @@ import com.perol.asdpl.pixivez.responses.RecommendResponse
 import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
-    val illusts = MutableLiveData<ArrayList<Illust>?>()
-    val addillusts = MutableLiveData<ArrayList<Illust>?>()
+    val illusts = MutableLiveData<List<Illust>?>()
+    val addillusts = MutableLiveData<List<Illust>?>()
     var nextUrl = MutableLiveData<String>()
     fun onRefreshRx(): Observable<RecommendResponse> = retrofit.getRecommend()
     fun onLoadMoreRx(nextUrl: String) = retrofit.getNextIllustRecommended(nextUrl)

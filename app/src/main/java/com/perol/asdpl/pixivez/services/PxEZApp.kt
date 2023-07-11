@@ -138,7 +138,7 @@ class PxEZApp : Application() {
                 Aria.download(this).allNotCompleteTask?.forEach {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
-                        Thread.sleep(500)
+                        delay(500)
                         // val illustD = Gson().fromJson(it.str, IllustD::class.java)
                         Aria.download(this).load(it.url)
                             .setFilePath(it.filePath) // 设置文件保存的完整路径
@@ -146,7 +146,7 @@ class PxEZApp : Application() {
                             .setExtendField(it.str)
                             .option(Works.option)
                             .create()
-                        Thread.sleep(300)
+                        delay(300)
                     }
                 }
             }

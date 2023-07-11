@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.IllustNext
 import io.reactivex.Observable
@@ -47,8 +48,8 @@ fun <T> MutableLiveData<T>.checkUpdate(value:T): Boolean {
 }
 class PicListViewModel : BaseViewModel() {
     val data = MutableLiveData<List<Illust>?>()
-    val adddata = MutableLiveData<List<Illust>?>()
-    val nextUrl = MutableLiveData<String>()
+    val dataAdded = MutableLiveData<List<Illust>?>()
+    val nextUrl = MutableLiveData<String?>()
     val isRefreshing = MutableLiveData(false)
     val restrict = MutableLiveData(RESTRICT_TYPE.all)
     lateinit var onLoadFirstRx :()->Observable<IllustNext>
@@ -60,6 +61,7 @@ class PicListViewModel : BaseViewModel() {
             "MyFollow" -> { { retrofit.getFollowIllusts(restrict.value!!.name) } }
             "UserIllust" -> { { retrofit.getRecommend().map{ IllustNext(it.illusts, it.next_url) } }}
             "UserBookmark" -> { { retrofit.getRecommend().map{ IllustNext(it.illusts, it.next_url) } }}
+            "Collect" ->{ {Observable.just(DataHolder.getIllustsList()).map{ IllustNext(it, null) }} }
             else -> { { retrofit.getRecommend().map{ IllustNext(it.illusts, it.next_url) } } }
         }
     }
@@ -80,10 +82,10 @@ class PicListViewModel : BaseViewModel() {
     fun onLoadMore() {
         if (nextUrl.value != null) {
             retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                adddata.value = it.illusts
+                dataAdded.value = it.illusts
                 nextUrl.value = it.next_url
             }, {
-               adddata.value = null
+               dataAdded.value = null
             }, {}).add()
         }
     }

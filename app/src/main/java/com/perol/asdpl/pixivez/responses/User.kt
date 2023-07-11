@@ -35,13 +35,22 @@ import kotlinx.parcelize.Parcelize
  * is_followed : false
  */
 data class User(
-    val id: Long,
-    val name: String,
-    val account: String,
-    val profile_image_urls: ProfileImageUrls,
+    var id: Long,
+    var name: String,
+    var account: String,
+    var profile_image_urls: ProfileImageUrls,
     var comment: String = "",
     var is_followed: Boolean
-) : java.io.Serializable
+) : java.io.Serializable{
+    fun copyFrom(src:User){
+        id = src.id
+        name = src.name
+        account = src.account
+        profile_image_urls = src.profile_image_urls
+        comment = src.comment
+        is_followed = src.is_followed
+    }
+}
 
 /**
  * {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}

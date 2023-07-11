@@ -30,8 +30,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -39,28 +39,19 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsShowAdapter
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 // UserBookMarkFragment
-class TagsShowDialog : DialogFragment() {
+class TagsShowDialog : BaseDialogFragment() {
 
     fun show(fragmentManager: FragmentManager) {
-        show(fragmentManager, "tagshowDialog")
+        show(fragmentManager, "TagShowDialog")
     }
 
-    val disposables = CompositeDisposable()
-    fun Disposable.add() {
-        disposables.add(this)
-    }
+    val viewModel: UserBookMarkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     var callback: Callback? = null
-    override fun onDestroy() {
-        super.onDestroy()
-        callback = null
-        disposables.clear()
-    }
 
     override fun onCancel(dialog: DialogInterface) {
         val tabLayout = getDialog()?.findViewById<TabLayout>(R.id.tablayout_tagsshow)
@@ -78,10 +69,6 @@ class TagsShowDialog : DialogFragment() {
         super.onCancel(dialog)
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-    }
-
     interface Callback {
         fun onClick(string: String, public: String)
     }
@@ -89,23 +76,19 @@ class TagsShowDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val retrofitRepository = RetrofitRepository.getInstance()
 
-        val bundle = arguments
         val inflater = LayoutInflater.from(activity)
-        val tagList = bundle!!.getStringArrayList("tags")
-        val countList = bundle.getIntegerArrayList("counts")
-        val id = bundle.getLong("id")
-        var nextUrl = bundle.getString("nextUrl")
+        var nextUrl = viewModel.tags.value!!.next_url
         val builder = MaterialAlertDialogBuilder(requireActivity())
         val dialogView = inflater.inflate(R.layout.view_tagsshow, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerview_tags)
         val all = dialogView.findViewById<ConstraintLayout>(R.id.all)
 //        val viewPager = dialogView.findViewById<ViewPager>(R.id.viewpager)
         val tabLayout = dialogView.findViewById<TabLayout>(R.id.tablayout_tagsshow)
-        val tagsShowAdapter = TagsShowAdapter(R.layout.view_tagsshow_item, tagList, countList!!)
+        val tagsShowAdapter = TagsShowAdapter(R.layout.view_tagsshow_item, viewModel.tags.value!!.bookmark_tags)
         recyclerView.adapter = tagsShowAdapter
         tagsShowAdapter.setOnItemClickListener { adapter, view, position ->
             callback!!.onClick(
-                tagsShowAdapter.data[position],
+                tagsShowAdapter.data[position].name,
                 if (tabLayout.selectedTabPosition == 0) {
                     "public"
                 }
@@ -134,37 +117,21 @@ class TagsShowDialog : DialogFragment() {
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
                 if (p0 != null) {
-                    retrofitRepository.getIllustBookmarkTags(
-                        id,
-                        if (p0.position == 0) {
-                            "public"
-                        }
-                        else {
-                            "private"
-                        }
-                    )
+                    val pub = if (p0.position == 0) {
+                        "public"
+                    }
+                    else {
+                        "private"
+                    }
+                    retrofitRepository.getIllustBookmarkTags(viewModel.id, pub)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io()).subscribe({
                             nextUrl = it.next_url
-                            val x = ArrayList<String>()
-                            tagsShowAdapter.counts.clear()
                             if (it.bookmark_tags.isNullOrEmpty()) {
-                                callback!!.onClick(
-                                    "",
-                                    if (tabLayout.selectedTabPosition == 0) {
-                                        "public"
-                                    }
-                                    else {
-                                        "private"
-                                    }
-                                )
+                                callback!!.onClick("", pub)
                                 this@TagsShowDialog.dismiss()
                             }
-                            it.bookmark_tags.map { ot ->
-                                x.add(ot.name)
-                                tagsShowAdapter.counts.add(ot.count)
-                            }
-                            tagsShowAdapter.setNewInstance(x)
+                            tagsShowAdapter.setList(it.bookmark_tags)
                         }, {}, {}).add()
                 }
             }
@@ -177,16 +144,9 @@ class TagsShowDialog : DialogFragment() {
                     .subscribe(
                         {
                             nextUrl = it.next_url
-                            val arrayList = ArrayList<String>()
-                            it.bookmark_tags.map {
-                                arrayList.add(it.name)
-                                tagsShowAdapter.counts.add(it.count)
-                            }
-                            tagsShowAdapter.addData(arrayList)
-                        },
-                        { tagsShowAdapter.loadMoreModule.loadMoreFail() },
-                        { tagsShowAdapter.loadMoreModule.loadMoreComplete() }
-                    ).add()
+                            tagsShowAdapter.addData(it.bookmark_tags)
+                            tagsShowAdapter.loadMoreModule.loadMoreComplete()
+                        }, { tagsShowAdapter.loadMoreModule.loadMoreFail() }, {}).add()
             }
             else {
                 tagsShowAdapter.loadMoreModule.loadMoreEnd()

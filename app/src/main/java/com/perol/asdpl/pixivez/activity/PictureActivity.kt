@@ -32,7 +32,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PicturePagerAdapter
@@ -53,7 +52,13 @@ class PictureActivity : RinkActivity() {
             context.startActivity(intent)
         }
 
-        fun start(context: Context, id: Long, position:Int, limit:Int=30, options: Bundle? = null) {
+        fun start(
+            context: Context,
+            id: Long,
+            position: Int,
+            limit: Int = 30,
+            options: Bundle? = null
+        ) {
             val bundle = Bundle()
             bundle.putInt("position", position - max(position - limit, 0))
             bundle.putLong("illustid", id)
@@ -62,7 +67,11 @@ class PictureActivity : RinkActivity() {
             context.startActivity(intent, options)
         }
 
-        fun start(context: Context, illust: Illust, arrayList: LongArray? = LongArray(1) { illust.id }) {
+        fun start(
+            context: Context,
+            illust: Illust,
+            arrayList: LongArray? = LongArray(1) { illust.id }
+        ) {
             val bundle = Bundle()
             bundle.putLongArray("illustidlist", arrayList)
             bundle.putParcelable("illust", illust)
@@ -83,18 +92,17 @@ class PictureActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPictureBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportPostponeEnterTransition()
         if (!PxEZApp.instance.pre
-            .getBoolean("needstatusbar", false)
+                .getBoolean("needstatusbar", false)
         ) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            //WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.decorView.fitsSystemWindows = false
+            //window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = Color.TRANSPARENT
             // window.navigationBarColor = Color.TRANSPARENT
-        }
-        else {
+        } else {
             window.decorView.fitsSystemWindows = true
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
@@ -109,12 +117,12 @@ class PictureActivity : RinkActivity() {
                 binding.viewpagePicture.adapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList!!)
             }
+
             DataHolder.checkIllustsList(nowPosition, illustId) -> {
                 illustList = DataHolder.getIllustsList() // ?.toList()
                 illustIdList = if (illustList != null) {
                     illustList!!.map { it.id }.toLongArray()
-                }
-                else {
+                } else {
                     LongArray(1) { illustId }
                 }
 
@@ -122,6 +130,7 @@ class PictureActivity : RinkActivity() {
                     PicturePagerAdapter(supportFragmentManager, illustIdList, illustList)
                 DataHolder.pictureAdapter = binding.viewpagePicture.adapter
             }
+
             else -> {
                 illustIdList = LongArray(1) { illustId }
                 nowPosition = 0 // illustIdList!!.indexOf(illustId)
@@ -131,20 +140,16 @@ class PictureActivity : RinkActivity() {
         }
         binding.viewpagePicture.currentItem = nowPosition
 
-        if (PxEZApp.instance.pre
-            .getBoolean("needactionbar", false)
-        ) {
+        if (PxEZApp.instance.pre.getBoolean("needactionbar", false)) {
             setSupportActionBar(binding.toolbar)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setDisplayShowTitleEnabled(false)
-        }
-        else {
+        } else {
             binding.toolbar.visibility = View.GONE
         }
 
         binding.viewpagePicture.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
+            override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(
                 position: Int,
@@ -157,6 +162,7 @@ class PictureActivity : RinkActivity() {
                 nowPosition = position
             }
         })
+        supportPostponeEnterTransition()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -168,6 +174,7 @@ class PictureActivity : RinkActivity() {
         when (item.itemId) {
             android.R.id.home ->
                 finishAfterTransition()
+
             R.id.action_share -> share()
         }
         return super.onOptionsItemSelected(item)

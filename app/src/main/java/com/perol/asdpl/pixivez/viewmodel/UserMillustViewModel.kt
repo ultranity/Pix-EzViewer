@@ -29,12 +29,12 @@ import com.perol.asdpl.pixivez.responses.Illust
 
 class UserMillustViewModel : BaseViewModel() {
     val data = MutableLiveData<List<Illust>>()
-    val adddata = MutableLiveData<List<Illust>>()
-    val nextUrl = MutableLiveData<String>()
+    val dataAdded = MutableLiveData<List<Illust>>()
+    val nextUrl = MutableLiveData<String?>()
     fun onLoadMoreListener() {
         if (nextUrl.value != null) {
             retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                adddata.value = it.illusts
+                dataAdded.value = it.illusts
                 nextUrl.value = it.next_url
             }, {}, {}).add()
         }

@@ -331,4 +331,5 @@
     <string name="hide_user_img">隐藏头像</string>
     <string name="layout_config">布局设置</string>
     <string name="span_num">列数(默认 竖屏2 横屏4)</string>
+    <string name="crash_title">这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者</string>
 </resources>

@@ -25,18 +25,19 @@
 
 package com.perol.asdpl.pixivez.fragments.user
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
-import com.perol.asdpl.pixivez.adapters.*
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentUserBookMarkBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
@@ -64,7 +65,6 @@ private const val ARG_PARAM2 = "param2"
  */
 
 class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
-    @SuppressLint("InflateParams")
     override fun loadData() {
         viewModel.first(param1!!, pub)
     }
@@ -108,7 +108,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         binding.refreshlayout.setOnRefreshListener {
             viewModel.onRefreshListener(param1!!, pub, null)
         }
-        if (viewModel.isSelfPage(param1!!)) {
+        if (viewModel.isSelfPage()) {
             val header = HeaderBookmarkBinding.inflate(layoutInflater)
             picItemAdapter.addHeaderView(header.root)
             header.imagebuttonShowtags.setOnClickListener {
@@ -134,7 +134,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(requireActivity())[UserBookMarkViewModel::class.java]
+        viewModel.id = param1!!
         this.viewActivity = activity as UserMActivity
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
@@ -148,10 +148,13 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.refreshlayout.isRefreshing = false
-                picItemAdapter.setNewInstance(it.toMutableList())
+                picItemAdapter.setList(it)
+            }
+            else {
+                picItemAdapter.loadMoreFail()
             }
         }
-        viewModel.adddata.observe(viewLifecycleOwner) {
+        viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picItemAdapter.addData(it)
                 picItemAdapter.loadMoreComplete()
@@ -177,23 +180,14 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     private var pub = "public"
 
-    lateinit var viewModel: UserBookMarkViewModel
+    val viewModel: UserBookMarkViewModel by viewModels()
     private lateinit var viewActivity: UserMActivity
 
     private fun showTagDialog() {
-        val arrayList = ArrayList<String>()
-        val arrayList1 = ArrayList<Int>()
         if (viewModel.tags.value != null) {
             val tagsShowDialog = TagsShowDialog()
             tagsShowDialog.callback = this
-            for (i in viewModel.tags.value!!.bookmark_tags) {
-                arrayList.add(i.name)
-                arrayList1.add(i.count)
-            }
             val bundle = Bundle()
-            bundle.putStringArrayList("tags", arrayList)
-            bundle.putIntegerArrayList("counts", arrayList1)
-            bundle.putString("nextUrl", viewModel.tags.value!!.next_url)
             bundle.putLong("id", param1!!)
             tagsShowDialog.arguments = bundle
             tagsShowDialog.show(childFragmentManager)

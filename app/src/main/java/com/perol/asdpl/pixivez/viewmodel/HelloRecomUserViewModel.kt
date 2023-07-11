@@ -29,9 +29,10 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 
 class HelloRecomUserViewModel : BaseViewModel() {
-    val nextUrl = MutableLiveData<String?>()
-    val adddata = MutableLiveData<List<UserPreviewsBean>?>()
     val data = MutableLiveData<List<UserPreviewsBean>?>()
+    val dataAdded = MutableLiveData<List<UserPreviewsBean>?>()
+    val nextUrl = MutableLiveData<String?>()
+
     fun onRefresh() {
         retrofit.getUserRecommanded().subscribe({
             nextUrl.value = it.next_url
@@ -42,11 +43,13 @@ class HelloRecomUserViewModel : BaseViewModel() {
     }
 
     fun onLoadMore() {
-        retrofit.getNextUser(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            adddata.value = it.user_previews
-        }, {
-            adddata.value = null
-        }, {}).add()
+        if (nextUrl.value != null) {
+            retrofit.getNextUser(nextUrl.value!!).subscribe({
+                nextUrl.value = it.next_url
+                dataAdded.value = it.user_previews
+            }, {
+                dataAdded.value = null
+            }, {}).add()
+        }
     }
 }

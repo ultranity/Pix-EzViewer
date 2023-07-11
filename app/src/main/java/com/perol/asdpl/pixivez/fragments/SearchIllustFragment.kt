@@ -31,7 +31,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -239,7 +244,12 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
 
     private fun initViewModel() {
         viewModel.illusts.observe(viewLifecycleOwner) {
-            updateillust(it)
+            if (it != null) {
+                updateillust(it)
+            }
+            else {
+                searchIllustAdapter.loadMoreFail()
+            }
         }
         viewModel.addIllusts.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -257,7 +267,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 searchIllustAdapter.loadMoreComplete()
             }
         }
-        viewModel.bookmarkid.observe(viewLifecycleOwner) {
+        viewModel.bookmarkID.observe(viewLifecycleOwner) {
             changeToBlue(it)
         }
         viewModel.isRefresh.observe(viewLifecycleOwner) {
@@ -286,9 +296,9 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         }
     }
 
-    private fun updateillust(it: ArrayList<Illust>?) {
+    private fun updateillust(it: List<Illust>?) {
         if (it != null) {
-            searchIllustAdapter.setNewInstance(it)
+            searchIllustAdapter.setList(it)
             if (it.size == 0) {
                 param1!!.toLongOrNull()?.let {
                     val bundle = Bundle()

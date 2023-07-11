@@ -96,7 +96,7 @@ class HelloMRecommendFragment : BaseFragment() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
             binding.swiperefreshLayout.isRefreshing = false
             if (it != null) {
-                picListAdapter.setNewInstance(it)
+                picListAdapter.setList(it)
                 // binding.recyclerview.smoothScrollToPosition(0)
                 // pixivisionModel.onRefreshListener()
             } 

@@ -29,22 +29,24 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.responses.Illust
+import kotlin.properties.Delegates
 
 class UserBookMarkViewModel : BaseViewModel() {
-    val data = MutableLiveData<List<Illust>>()
-    val adddata = MutableLiveData<List<Illust>>()
-    val nextUrl = MutableLiveData<String>()
+    var id by Delegates.notNull<Long>()
+    val data = MutableLiveData<List<Illust>?>()
+    val dataAdded = MutableLiveData<List<Illust>?>()
+    val nextUrl = MutableLiveData<String?>()
     val tags = MutableLiveData<BookMarkTagsResponse>()
     fun onLoadMoreListener() {
         if (nextUrl.value != null) {
             retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                adddata.value = it.illusts
+                dataAdded.value = it.illusts
                 nextUrl.value = it.next_url
-            }, {}, {}).add()
+            }, {dataAdded.value = null}, {}).add()
         }
     }
 
-    fun isSelfPage(id: Long): Boolean {
+    fun isSelfPage(): Boolean {
         return AppDataRepository.currentUser.userid == id
     }
 
@@ -52,18 +54,16 @@ class UserBookMarkViewModel : BaseViewModel() {
         retrofit.getLikeIllust(id, string, tag).subscribe({
             data.value = it.illusts
             nextUrl.value = it.next_url
-        }, {}, {}).add()
+        }, {data.value = null}, {}).add()
     }
 
     fun first(id: Long, string: String) {
         retrofit.getLikeIllust(id, string, null).subscribe({
             data.value = it.illusts
             nextUrl.value = it.next_url
-        }, {}, {}).add()
+        }, {data.value = null}, {}).add()
         retrofit.getIllustBookmarkTags(id, string).subscribe({
             tags.value = it
         }, {}, {}).add()
-    }
-    fun nextTags() {
     }
 }

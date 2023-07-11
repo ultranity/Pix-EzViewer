@@ -28,12 +28,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse.BookmarkTagsBean
 
-class TagsShowAdapter(layoutResId: Int, data: List<String>?, var counts: ArrayList<Int>) :
-    BaseQuickAdapter<String, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
+class TagsShowAdapter(layoutResId: Int, data: List<BookmarkTagsBean>) :
+    BaseQuickAdapter<BookmarkTagsBean, BaseViewHolder>(layoutResId, data.toMutableList()), LoadMoreModule {
 
-    override fun convert(holder: BaseViewHolder, item: String) {
-        holder.setText(R.id.textview_tagname, item)
-            .setText(R.id.textView_tagnum, counts[holder.bindingAdapterPosition].toString())
+    override fun convert(holder: BaseViewHolder, item: BookmarkTagsBean) {
+        holder.setText(R.id.textview_tagname, item.name)
+            .setText(R.id.textView_tagnum, item.count.toString())
     }
 }

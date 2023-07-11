@@ -27,6 +27,7 @@
         <item>day</item>
         <item>day_male</item>
         <item>day_female</item>
+        <item>AI_generated</item>
         <item>week_original</item>
         <item>week_rookie</item>
         <item>week</item>

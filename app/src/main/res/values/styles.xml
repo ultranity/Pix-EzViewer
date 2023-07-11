@@ -25,6 +25,8 @@
 <resources>
 
     <style name="AppThemeBase3" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions">true</item>
     </style>
     <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -34,6 +36,8 @@
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/windowAnimationStyle</item>
     </style>
 

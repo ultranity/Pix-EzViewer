@@ -30,13 +30,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.Tab
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.adapters.viewpager.RankingMAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMdynamicsBinding
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.NotCrossScrollableLinearLayoutManager
 import com.perol.asdpl.pixivez.viewmodel.RankingShareViewModel
 import java.util.*
 
@@ -51,53 +56,70 @@ private const val ARG_PARAM1 = "param1"
  *
  */
 class HelloMTrendingFragment : LazyFragment() {
-    private val modelist = arrayOf(
-        "day", "day_male", "day_female", "week_original", "week_rookie", "week", "month", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
-    )
     private val titles by lazy { resources.getStringArray(R.array.modellist) }
+    var exitTime :Long = 0
     override fun loadData() {
-        // viewpage_rankingm.adapter = RankingMAdapter(this, childFragmentManager)
         val shareModel =
             ViewModelProvider(requireActivity())[RankingShareViewModel::class.java]
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
-        for (i in modelist.indices) {
-            if (!titles[i].contains("r18") or isR18on) {
-                binding.tablayoutRankingm.addTab(
-                    binding.tablayoutRankingm.newTab().setText(titles[i])
-                )
+        binding.viewpager.adapter = RankingMAdapter(this, isR18on)
+        //binding.viewpager.isUserInputEnabled = false
+
+        /** do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
+        AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
+            tab.text = titles[position]
+        }.apply {
+            onTabReSelectedStrategy = object : TabSelectedStrategy {
+                override fun invoke(tab: Tab) {
+                    if ((System.currentTimeMillis() - exitTime) > 3000) {
+                        Toast.makeText(
+                            PxEZApp.instance,
+                            getString(R.string.back_to_the_top),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        exitTime = System.currentTimeMillis()
+                    }
+                    else {
+                        (binding.viewpager.adapter as RankingMAdapter)
+                            .fragments[tab.position]?.view
+                            ?.findViewById<RecyclerView>(R.id.recyclerview)
+                            ?.scrollToPosition(0)
+                    }
+                }
             }
-        }
-        childFragmentManager.fragments.forEach {
-            childFragmentManager.beginTransaction().remove(it).commit()
-        }
-        childFragmentManager.beginTransaction()
-            .add(R.id.content_view, RankingMFragment.newInstance(modelist[0], 0)).commit()
-        binding.tablayoutRankingm.getTabAt(0)!!.select()
-        binding.tablayoutRankingm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {}
+        }.attach()
+        */
+        binding.tablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: Tab) {
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                }
+                else {
+                    (binding.viewpager.adapter as RankingMAdapter)
+                        .fragments[tab.position]?.view
+                        ?.findViewById<RecyclerView>(R.id.recyclerview)
+                        ?.scrollToPosition(0)
+                }
+            }
+            override fun onTabUnselected(tab: Tab) {}
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                childFragmentManager.beginTransaction().remove(childFragmentManager.fragments[0])
-                    .add(
-                        R.id.content_view,
-                        RankingMFragment.newInstance(modelist[tab.position], tab.position)
-                    )
-                    .commit()
+            override fun onTabSelected(tab: Tab) {
+                binding.viewpager.setCurrentItem(tab.position, false)
             }
         })
-        // tablayout_rankingm.setupWithViewPager(viewpage_rankingm)
-/*        TabLayoutMediator(tablayout_rankingm, viewpage_rankingm) { tab, position ->
-            tab.text = resources.getStringArray(R.array.modellist)[position]
-            viewpage_rankingm.setCurrentItem(tab.position, true)
-        }.attach()*/
+        //binding.viewpager.isUserInputEnabled = false
+        //binding.tablayout.setupWithViewPager(binding.viewpager)
         val calendar = Calendar.getInstance()
         val yearNow = calendar.get(Calendar.YEAR)
         val monthNow = calendar.get(Calendar.MONTH) + 1
         val dayNow = calendar.get(Calendar.DAY_OF_MONTH)
         val dateNow = "$yearNow-$monthNow-$dayNow"
-        binding.imageviewTriangle.apply {
+        binding.imageviewDate.apply {
             setOnClickListener {
                 shareModel.apply {
                     val dateDialog = DatePickerDialog(
@@ -130,10 +152,6 @@ class HelloMTrendingFragment : LazyFragment() {
     }
 
     private var param1: String? = null
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //initView()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,6 +167,31 @@ class HelloMTrendingFragment : LazyFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHelloMdynamicsBinding.inflate(inflater, container, false)
+        binding.tablayout.removeAllTabs()
+        for (i in titles) {
+            val tab = binding.tablayout.newTab()
+            tab.text = i
+            binding.tablayout.addTab(tab, false)
+        }
+        binding.tablayout.selectTab(binding.tablayout.getTabAt(0))
+
+        // use custom layout manager to prevent nested scrolling
+        (binding.viewpager.getChildAt(0) as RecyclerView).apply {
+            //var m = binding.viewpager.javaClass.getDeclaredField("mAccessibilityProvider")
+            //m.isAccessible = true
+            //val mAccessibilityProvider = m.get(binding.viewpager)
+            val mLayoutManager = NotCrossScrollableLinearLayoutManager(this.context, this, binding.viewpager)
+            layoutManager = mLayoutManager
+            var m = binding.viewpager.javaClass.getDeclaredField("mLayoutManager")
+            m.isAccessible = true
+            m.set(binding.viewpager, mLayoutManager)
+            m = binding.viewpager.javaClass.getDeclaredField("mPageTransformerAdapter")
+            m.isAccessible = true
+            val s = m.get(binding.viewpager)
+            m = s.javaClass.getDeclaredField("mLayoutManager")
+            m.isAccessible = true
+            m.set(s, mLayoutManager)
+        }
         return binding.root
     }
 

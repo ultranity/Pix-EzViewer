@@ -30,15 +30,15 @@ import com.perol.asdpl.pixivez.responses.Illust
 
 class HelloMMyViewModel : BaseViewModel() {
     var isRefreshing = MutableLiveData(false)
-    val illusts = MutableLiveData<ArrayList<Illust>?>()
-    val addillusts = MutableLiveData<ArrayList<Illust>?>()
-    val nextUrl = MutableLiveData<String>()
+    val illusts = MutableLiveData<List<Illust>?>()
+    val addillusts = MutableLiveData<List<Illust>?>()
+    val nextUrl = MutableLiveData<String?>()
     val hideBookmarked = MutableLiveData<Boolean>()
 
     fun onLoadMore() {
         retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
             nextUrl.value = it.next_url
-            addillusts.value = it.illusts as ArrayList<Illust>?
+            addillusts.value = it.illusts
         }, {
             addillusts.value = null
         }, {}).add()
@@ -48,7 +48,7 @@ class HelloMMyViewModel : BaseViewModel() {
         isRefreshing.value = true
         retrofit.getFollowIllusts(restrict).subscribe({
             nextUrl.value = it.next_url
-            illusts.value = it.illusts as ArrayList<Illust>?
+            illusts.value = it.illusts
         }, {
             illusts.value = null
         }, { isRefreshing.value = false }).add()

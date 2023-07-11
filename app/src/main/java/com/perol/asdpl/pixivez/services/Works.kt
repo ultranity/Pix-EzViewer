@@ -194,7 +194,7 @@ object Works {
             e.printStackTrace()
         }
     }
-    suspend fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true) {
+    fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true) {
         for (item in data) {
             if (hideDownloaded && FileUtil.isDownloaded(item)) {
                 imageDownloadAll(item)
@@ -238,7 +238,7 @@ object Works {
             url
         }
         else {
-            ImageHttpDns.lookup(url)[0].hostAddress
+            ImageHttpDns.lookup(url)[0].hostAddress!!
         }
     }
     fun mirrorLinkView(url: String) = mirror(url, mirrorLinkView)

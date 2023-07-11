@@ -25,10 +25,16 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.R
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.transition.platform.MaterialArcMotion
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -46,10 +52,31 @@ abstract class RinkActivity : AppCompatActivity() {
         // Log.v("dbg", "Navi height:$height")
         return resources.getDimensionPixelSize(resourceId)
     }
+
+    protected fun buildContainerTransform(entering: Boolean, contentTarget:Boolean=true, duration: Long=300): MaterialContainerTransform {
+        val transform = MaterialContainerTransform(this, entering)
+        // Use all 3 container layer colors since this transform can be configured using any fade mode
+        // and some of the start views don't have a background and the end view doesn't have a
+        // background.
+        //transform.setAllContainerColors(
+        //    MaterialColors.getColor(findViewById(R.id.content), com.google.android.material.R.attr.colorSurface)
+        //)
+        if (contentTarget)
+            transform.addTarget(R.id.content)
+        transform.duration = duration
+        transform.interpolator = FastOutSlowInInterpolator()
+        transform.pathMotion = MaterialArcMotion()
+        transform.fadeMode = MaterialContainerTransform.FADE_MODE_IN
+        return transform
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LanguageUtil.setLanguage(this, PxEZApp.language)
         ThemeUtil.themeInit(this)
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        window.sharedElementsUseOverlay = false
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         if (getNavigationBarHeight() < 88) {
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE

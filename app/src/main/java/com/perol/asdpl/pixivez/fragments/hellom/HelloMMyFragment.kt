@@ -90,7 +90,7 @@ class HelloMMyFragment : BaseFragment() {
                 picListAdapter.loadMoreFail()
             }
             else {
-                picListAdapter.setNewInstance(it)
+                picListAdapter.setList(it)
                 binding.recyclerview.scrollToPosition(0)
             }
         }

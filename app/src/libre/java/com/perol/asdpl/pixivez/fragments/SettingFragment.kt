@@ -175,10 +175,6 @@ class SettingFragment : PreferenceFragmentCompat() {
             snackbarForceRestart()
             true
         }
-        findPreference<SwitchPreference>("needactionbar")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbarRestart()
-            true
-        }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarRestart()
             true
@@ -408,16 +404,19 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
             "viewreport" -> {
                 val list = getCrashReportFiles()
-                var string = ""
+                var report = ""
                 for (a in list!!.indices) {
                     if (a > 10) {
                         continue
                     }
                     val cr = File(activity?.filesDir, list[a])
-                    string += cr.readText()
+                    report += cr.readText()
                 }
+                report = report.replace("\\n", "\n")
+                    .replace("\\t", "\t")
+                    .replace("\\:", ":")
                 val dialogBuild = MaterialAlertDialogBuilder(requireActivity())
-                dialogBuild.setMessage(string).setTitle("这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者")
+                dialogBuild.setMessage(report).setTitle(getString(R.string.crash_title))
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                     }
                     .create().show()

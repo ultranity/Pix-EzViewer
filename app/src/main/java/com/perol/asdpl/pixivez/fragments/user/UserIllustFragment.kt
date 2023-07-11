@@ -120,10 +120,10 @@ class UserIllustFragment : BaseFragment() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.refreshlayout.isRefreshing = false
-                picListAdapter.setNewInstance(it.toMutableList())
+                picListAdapter.setList(it)
             }
         }
-        viewModel.adddata.observe(viewLifecycleOwner) {
+        viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addData(it)
                 picListAdapter.loadMoreComplete()

@@ -230,6 +230,9 @@ class AutoTabLayoutMediator(
         private val viewPager: ViewPager2, private val smoothScroll: Boolean
     ) : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
+            if (viewPager.currentItem == tab.position){
+                return
+            }
             if (onPageChangeCallback != null) {
                 if (onPageChangeCallback!!.previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING) {
                     viewPager.setCurrentItem(tab.position, true)

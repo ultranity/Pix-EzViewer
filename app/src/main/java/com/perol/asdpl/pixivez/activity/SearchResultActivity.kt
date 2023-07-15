@@ -59,7 +59,6 @@ class SearchResultActivity : RinkActivity() {
 
         binding = ActivitySearchResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.lifecycleOwner = this
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

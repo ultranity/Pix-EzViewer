@@ -1,395 +1,391 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout  xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-    </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:text="@string/filesaveformatstring"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView7"
+        <requestFocus />
+    </TextView>
+
+    <EditText
+        android:id="@+id/customizedformat"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="text"
+        android:text=""
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/textView7"
+        tools:ignore="Autofill,HardcodedText,LabelFor" />
+
+    <TableLayout
+        android:id="@+id/format_desc_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/table_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customizedformat">
+
+        <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:text="@string/filesaveformatstring"
-            android:textColor="?android:textColorPrimary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:showDividers="middle">
 
-            <requestFocus />
-        </TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/customformat_token"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/customizedformat"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:layout_marginTop="1dp"
+                android:text="@string/customformat_result"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+        </TableRow>
+
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{illustid}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{illustid}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Illust_id_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{title}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{title}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Title_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{userid}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{userid}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Painter_id_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{name}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{name}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Painter_Name_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{account}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{account}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Painter_Account_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{tags}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{tags}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/tag_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{part}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{part}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/Which_part_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:tag="{type}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="{type}"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/type_desc"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/format_sample_table"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/table_bg"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="@+id/format_desc_table"
+        app:layout_constraintStart_toStartOf="@+id/format_desc_table"
+        app:layout_constraintTop_toBottomOf="@+id/format_desc_table">
+
+
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:inputType="text"
-            android:text=""
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"
-            tools:ignore="Autofill,HardcodedText,LabelFor" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="2dp"
+            android:showDividers="middle">
 
-        <TableLayout
-            android:id="@+id/format_desc_table"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/table_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/customizedformat">
-
-            <TableRow
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:showDividers="middle">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="@string/sample_title"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/customformat_token"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:layout_marginTop="1dp"
-                    android:text="@string/customformat_result"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="16sp" />
-            </TableRow>
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:tag="{illustid}_p{part}{type}">
 
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{illustid}">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="P站:id_p+part"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{illustid}"
-                    android:textColor="?android:textColorSecondary" />
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:tag="{userid}_{illustid}_{part}{type}">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Illust_id_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{title}">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="血书:userid_id_part"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{title}"
-                    android:textColor="?android:textColorSecondary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Title_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:tag="{illustid}_{title}_{part}{type}">
 
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{userid}">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="特殊:id_title_part"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{userid}"
-                    android:textColor="?android:textColorSecondary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Painter_id_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
+
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:tag="{illustid}({userid})_{title}_{part}{type}">
+
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{name}">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="增强:id(userid)_title_part"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{name}"
-                    android:textColor="?android:textColorSecondary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Painter_Name_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
+        <TableRow
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:tag="{illustid}({userid}_{name})_{title}_[{tags}]_{part}{type}">
 
-            <TableRow
-                android:background="?attr/selectableItemBackground"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{account}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{account}"
-                    android:textColor="?android:textColorSecondary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Painter_Account_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{tags}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{tags}"
-                    android:textColor="?android:textColorSecondary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/tag_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{part}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{part}"
-                    android:textColor="?android:textColorSecondary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/Which_part_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="2dp"
-                android:tag="{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="{type}"
-                    android:textColor="?android:textColorSecondary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/type_desc"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-        </TableLayout>
-
-        <TableLayout
-            android:id="@+id/format_sample_table"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/table_bg"
-            android:layout_marginTop="15dp"
-            app:layout_constraintEnd_toEndOf="@+id/format_desc_table"
-            app:layout_constraintStart_toStartOf="@+id/format_desc_table"
-            app:layout_constraintTop_toBottomOf="@+id/format_desc_table">
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:text="归档:id(userid_name)_title_[tags]_part"
+                android:textColor="?android:textColorSecondary" />
+        </TableRow>
+    </TableLayout>
 
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingTop="2dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="2dp"
-                android:showDividers="middle">
+    <TextView
+        android:id="@+id/textView8"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:text="@string/tag_separator"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/format_sample_table"
+        app:layout_constraintTop_toBottomOf="@+id/format_sample_table" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/sample_title"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="16sp" />
-            </TableRow>
-
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="2dp"
-                android:tag="{illustid}_p{part}{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="P站:id_p+part"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="2dp"
-                android:tag="{userid}_{illustid}_{part}{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="血书:userid_id_part"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-            
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="2dp"
-                android:tag="{illustid}_{title}_{part}{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="特殊:id_title_part"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-            
-        
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="2dp"
-                android:tag="{illustid}({userid})_{title}_{part}{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="增强:id(userid)_title_part"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-
-
-            <TableRow
-                android:background="?attr/selectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="2dp"
-                android:tag="{illustid}({userid}_{name})_{title}_[{tags}]_{part}{type}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="归档:id(userid_name)_title_[tags]_part"
-                    android:textColor="?android:textColorSecondary" />
-            </TableRow>
-        </TableLayout>
-
-
-        <TextView
-            android:id="@+id/textView8"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:text="@string/tag_separator"
-            android:textColor="?android:textColorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/format_sample_table"
-            app:layout_constraintTop_toBottomOf="@+id/format_sample_table" />
-
-        <EditText
-            android:id="@+id/tag_separator"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:inputType="text"
-            android:text=""
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/format_sample_table"
-            app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toBottomOf="@+id/format_sample_table"
-            tools:ignore="Autofill,HardcodedText,LabelFor" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <EditText
+        android:id="@+id/tag_separator"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:inputType="text"
+        android:text=""
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/format_sample_table"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/format_sample_table"
+        tools:ignore="Autofill,HardcodedText,LabelFor" />
+</androidx.constraintlayout.widget.ConstraintLayout>

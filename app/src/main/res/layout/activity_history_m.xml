@@ -1,49 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.HistoryMActivity">
 
-    <data>
+    <com.google.android.material.appbar.AppBarLayout
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    </data>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/MyToolbar"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="?android:attr/textColorPrimaryInverse"
+            app:title="@string/historyrecord" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_historym"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.HistoryMActivity">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:fitsSystemWindows="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/MyToolbar"
-                android:layout_height="?attr/actionBarSize"
-                app:titleTextColor="?android:attr/textColorPrimaryInverse"
-                app:title="@string/historyrecord" />
-        </com.google.android.material.appbar.AppBarLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_historym"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="18dp"
-            android:src="@drawable/ic_close_black_24dp" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="18dp"
+        android:src="@drawable/ic_close_black_24dp" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

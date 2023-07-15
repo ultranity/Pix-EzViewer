@@ -283,4 +283,6 @@
     <string name="hide_user_img">隱藏頭像</string>
     <string name="layout_config">佈局設置</string>
     <string name="span_num">列數(默認 豎屏2 橫屏4)</string>
+    <string name="background">背景</string>
+    <string name="avatar">頭像</string>
 </resources>

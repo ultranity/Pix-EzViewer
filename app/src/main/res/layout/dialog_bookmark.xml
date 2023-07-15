@@ -33,7 +33,8 @@
             android:layout_gravity="end|center"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_white_24dp"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            android:contentDescription="@string/add" />
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView

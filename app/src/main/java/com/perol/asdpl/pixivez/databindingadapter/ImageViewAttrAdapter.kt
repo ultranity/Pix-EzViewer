@@ -32,7 +32,6 @@ import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.databinding.BindingAdapter
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -55,7 +54,7 @@ import java.io.File
 fun resourceIdToUri(context: Context, resourceId: Int): String =
     "android.resource://${context.packageName}/$resourceId"
 
-@BindingAdapter("userUrl")
+//@BindingAdapter("userUrl")
 fun loadUserImage(imageView: ImageView, url: String?) {
     if ((url == null) or url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
         GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_foreground).circleCrop()
@@ -93,7 +92,7 @@ fun loadUserImage(imageView: ImageView, url: String?) {
     }
 }
 
-@BindingAdapter("url")
+//@BindingAdapter("url")
 fun loadBGImage(imageView: ImageView, url: String?) {
     if (url != null) {
         imageView.setOnClickListener {

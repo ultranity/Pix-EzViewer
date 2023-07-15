@@ -1,121 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable
-            name="user"
-            type="com.perol.asdpl.pixivez.responses.UserDetailResponse" />
-    </data>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.UserMActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"
-        tools:context=".activity.UserMActivity">
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:fitsSystemWindows="true"
-            android:id="@+id/app_bar"
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="220dp"
+            android:background="?attr/colorSurface"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false"
+            app:toolbarId="@+id/toolbar">
 
-
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
+            <ImageView
+                android:id="@+id/imageview_user_background"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:background="?attr/colorSurface"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:titleEnabled="false"
-                app:toolbarId="@+id/toolbar">
+                android:layout_height="140dp"
+                android:adjustViewBounds="true"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7"
+                android:contentDescription="@string/background" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="40dp"
+                app:layout_scrollFlags="scroll">
 
                 <ImageView
-                    android:id="@+id/imageview_userbackground"
-                    url="@{user.profile.background_image_url}"
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:adjustViewBounds="true"
-                    android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.7" />
+                    android:id="@+id/imageview_userimage"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:transitionName="userimage"
+                    app:cardCornerRadius="40dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/avatar" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="40dp"
-                    app:layout_scrollFlags="scroll">
-
-                    <ImageView
-                        android:id="@+id/imageview_userimage"
-                        userUrl="@{user.user.profile_image_urls.medium}"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:transitionName="userimage"
-                        app:cardCornerRadius="40dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/textview_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignStart="@id/imageview_userimage"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center"
-                        android:text="@{user.user.name}"
-                        app:layout_constraintBottom_toBottomOf="@+id/imageview_userimage"
-                        app:layout_constraintStart_toEndOf="@+id/imageview_userimage" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:theme="@style/MyToolbar"
-                    app:layout_collapseMode="pin" />
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tablayout"
+                <TextView
+                    android:id="@+id/textview_username"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:background="#00000000"
-                    app:layout_scrollFlags="exitUntilCollapsed"
-                    app:tabGravity="center"
-                    app:tabMode="scrollable" />
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/imageview_userimage"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageview_userimage"
+                    app:layout_constraintStart_toEndOf="@+id/imageview_userimage" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:theme="@style/MyToolbar"
+                app:layout_collapseMode="pin" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="#00000000"
+                app:layout_scrollFlags="exitUntilCollapsed"
+                app:tabGravity="center"
+                app:tabMode="scrollable" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="112dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/fab_margin"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_add_white_24dp"
-            style="?attr/floatingActionButtonStyle"
-            android:contentDescription="@string/follow" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="112dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_add_white_24dp"
+        style="?attr/floatingActionButtonStyle"
+        android:contentDescription="@string/follow" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -26,8 +26,8 @@
 package com.perol.asdpl.pixivez.manager
 
 import android.annotation.SuppressLint
-import android.widget.ProgressBar
-import androidx.databinding.DataBindingUtil
+import android.view.View
+import androidx.viewbinding.ViewBinding
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.aria.core.Aria
@@ -41,6 +41,9 @@ import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
 import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+@Suppress("UNCHECKED_CAST")
+fun <VB : ViewBinding> BaseViewHolder.getBinding(bind: (View) -> VB): VB =
+    itemView.getTag(Int.MIN_VALUE) as? VB ?: bind(itemView).also { itemView.setTag(Int.MIN_VALUE, it) }
 
 @SuppressLint("CheckResult")
 class DownloadTaskAdapter :
@@ -86,12 +89,12 @@ class DownloadTaskAdapter :
         }
     }
 
-    override fun onItemViewHolderCreated(
+    /*override fun onItemViewHolderCreated(
         viewHolder: BaseViewHolder,
         viewType: Int
     ) { // 绑定 view
-        DataBindingUtil.bind<ItemDownloadTaskBinding>(viewHolder.itemView)
-    }
+        val binding = ItemDownloadTaskBinding.bind(viewHolder.itemView)
+    }*/
 
     private fun Int.toIEntityString(): String {
         return when (this) {
@@ -119,12 +122,11 @@ class DownloadTaskAdapter :
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: DownloadEntity, payloads: List<Any>) {
-        val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)!!
+        val binding = holder.getBinding(ItemDownloadTaskBinding::bind)
         if (payloads.isNotEmpty()) {
             val thatItem = payloads[0] as DownloadEntity
-            val progress = holder.getView<ProgressBar>(R.id.progress)
-            progress.max = thatItem.fileSize.toInt()
-            progress.progress = thatItem.currentProgress.toInt()
+            binding.progress.max = thatItem.fileSize.toInt()
+            binding.progress.progress = thatItem.currentProgress.toInt()
             binding.progressFont.text =
                 context.getString(R.string.fractional, thatItem.currentProgress, thatItem.fileSize)
         }
@@ -132,16 +134,15 @@ class DownloadTaskAdapter :
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: DownloadEntity) {
-        val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)!!
-        val progress = holder.getView<ProgressBar>(R.id.progress)
-        progress.max = item.fileSize.toInt()
-        progress.progress = item.currentProgress.toInt()
+        val binding = holder.getBinding(ItemDownloadTaskBinding::bind)
+        binding.progress.max = item.fileSize.toInt()
+        binding.progress.progress = item.currentProgress.toInt()
         binding.progressFont.text =
             context.getString(R.string.fractional, item.currentProgress, item.fileSize)
         try {
             val illustD = Gson().fromJson(item.str, IllustD::class.java)
-            holder.setText(R.id.title, illustD.title)
-            holder.setText(R.id.status, item.state.toIEntityString())
+            binding.title.text = illustD.title
+            binding.status.text =  item.state.toIEntityString()
         } catch (e: Exception) {
             e.printStackTrace()
         }

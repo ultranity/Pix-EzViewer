@@ -134,7 +134,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        dataBinding = true
+        //dataBinding = true
         viewBinding = true
     }
     compileOptions {

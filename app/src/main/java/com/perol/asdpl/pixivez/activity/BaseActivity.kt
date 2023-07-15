@@ -34,15 +34,14 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentActivity
+import androidx.viewbinding.ViewBinding
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 // base activity with i18n +Theme support
-abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
+abstract class BaseActivity<Layout : ViewBinding?> : AppCompatActivity() {
 
     companion object {
         const val ASK_URI = 42
@@ -111,11 +110,6 @@ abstract class BaseActivity<Layout : ViewDataBinding?> : AppCompatActivity() {
                 bundle?.let { initBundle(it) }
             }
 
-            try {
-                binding = DataBindingUtil.setContentView(mActivity as BaseActivity<*>, mLayoutID)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
             initModel()
             initView()
             initData()

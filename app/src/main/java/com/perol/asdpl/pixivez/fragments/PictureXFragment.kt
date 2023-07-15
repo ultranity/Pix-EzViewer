@@ -47,6 +47,7 @@ import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PictureXAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
+import com.perol.asdpl.pixivez.databindingadapter.loadUserImage
 import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.dialog.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -164,7 +165,13 @@ class PictureXFragment : BaseFragment() {
             if (it != null) {
                 checkBlock(it)
                 //TODO: whether stop loading here
-                binding.illust = it
+                //binding.illust = it
+                binding.apply {
+                    loadUserImage(imageViewUserPicX, it.user.profile_image_urls.medium)
+                    textViewTitle.text = it.title
+                    textViewUserName.text = it.user.name
+                    textViewIllustCreateDate.text = it.create_date
+                }
 
                 position = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
                 pictureXAdapter =
@@ -323,9 +330,7 @@ class PictureXFragment : BaseFragment() {
     ): View {
         // Inflate the layout for this fragment
         if (!this::binding.isInitialized) {
-            binding = FragmentPictureXBinding.inflate(inflater, container, false).apply {
-                lifecycleOwner = this@PictureXFragment
-            }
+            binding = FragmentPictureXBinding.inflate(inflater, container, false)
         }
         position = illustobj?.meta_pages?.size ?: 1
         return binding.root

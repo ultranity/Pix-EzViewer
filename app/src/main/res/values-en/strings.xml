@@ -283,4 +283,6 @@
     <string name="hide_user_img">hide avatar</string>
     <string name="layout_config">Layout settings</string>
     <string name="span_num">Number of columns (default portrait 2 landscape 4)</string>
+    <string name="background">background</string>
+    <string name="avatar">user avatar</string>
 </resources>

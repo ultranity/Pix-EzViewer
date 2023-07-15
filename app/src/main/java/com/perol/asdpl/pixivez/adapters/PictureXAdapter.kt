@@ -72,6 +72,7 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.activity.ZoomActivity
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
+import com.perol.asdpl.pixivez.databindingadapter.loadUserImage
 import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
@@ -217,7 +218,19 @@ class PictureXAdapter(
             mBookmarkedUserListen: () -> Unit,
             mUserPicLongClick: () -> Unit
         ) {
-            binding.illust = illust
+            //binding.illust = illust
+            binding.apply {
+                loadUserImage(imageViewUserPicX, illust.user.profile_image_urls.medium)
+
+                textViewTitle.text = illust.title
+                textViewUserName.text = illust.user.name
+                textViewIllustCreateDate.text = illust.create_date
+
+                textviewIllustId.text = illust.id.toString()
+                pixelWxH.text = "${illust.width}X${illust.height}"
+                textViewTotalView.text = illust.total_view.toString()
+                bookmarkedUserNum.text = illust.total_bookmarks.toString()
+            }
             // captionTextView.autoLinkMask = Linkify.WEB_URLS
             val colorPrimary = ThemeUtil.getColorPrimary(mContext)
             val colorPrimaryDark = ThemeUtil.getColorPrimaryDark(mContext)
@@ -393,7 +406,7 @@ class PictureXAdapter(
                         EventBus.getDefault().post(AdapterRefreshEvent())
                     }
                 }
-                lifecycleOwner(binding.lifecycleOwner)
+                //TODO: lifecycleOwner(mContext)
             }
         }
     }

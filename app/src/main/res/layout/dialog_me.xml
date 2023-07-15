@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#110E13"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <data>
-
-    </data>
-
-    <FrameLayout
-        android:background="#110E13"
+    <ImageView
+        android:id="@+id/bg"
+        android:src="@drawable/sustain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:scaleType="centerCrop"
+        android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/bg"
-            android:src="@drawable/sustain"
-            android:layout_width="match_parent"
-            android:scaleType="centerCrop"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
-
-</layout>
+</FrameLayout>

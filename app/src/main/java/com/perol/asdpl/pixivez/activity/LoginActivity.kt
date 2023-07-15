@@ -46,7 +46,7 @@ import io.noties.markwon.Markwon
 class LoginActivity : RinkActivity() {
     // private var username: String? = null
     // private var password: String? = null
-    lateinit var userInfoSharedPreferences: UserInfoSharedPreferences
+    private lateinit var userInfoSharedPreferences: UserInfoSharedPreferences
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,7 +179,7 @@ class LoginActivity : RinkActivity() {
             showRegisterHelp(binding.root)
         }
 /*        println(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this))
-        if(BuildConfig.ISGOOGLEPLAY)
+        if(BuildConfig.FLAVOR == "play")
         if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)==ConnectionResult.SERVICE_MISSING){
             MaterialDialog(this).show {
                 title(text="Google Play service丢失！")

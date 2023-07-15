@@ -56,12 +56,14 @@
         app:isPreferenceVisible="false">
         <Preference
             android:title="@string/current_developer"
+            app:icon="@drawable/ultranity"
             app:key="Ultranity"
             app:selectable="true"
             app:enableCopying="true"
             app:summary="@string/click" />
         <Preference
             android:title="原作者"
+            app:icon="@drawable/xinobu"
             app:key="Notsfsssf"
             app:selectable="true"
             app:enableCopying="true"

@@ -70,7 +70,6 @@ class AboutXFragment : PreferenceFragmentCompat() {
             }
             "about_rate_license" -> {
                 LibsBuilder()
-                    .withFields(R.string::class.java.fields)
                     .withAboutIconShown(true)
                     .withAboutVersionShown(true)
                     .withAboutDescription(PxEZApp.instance.getString(R.string.support_string))

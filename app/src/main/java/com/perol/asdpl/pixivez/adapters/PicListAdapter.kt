@@ -111,9 +111,8 @@ abstract class PicListAdapter(
                     return@setOnItemLongClickListener true
                 // show detail of illust
                 (adapter.data as List<Illust>)[position].let { item ->
-                    val detailstring = InteractionUtil.toDetailString(item)
                     MaterialAlertDialogBuilder(context as Activity)
-                        .setMessage(detailstring)
+                        .setMessage(InteractionUtil.toDetailString(item))
                         .setTitle("Detail")
                         .setPositiveButton(R.string.save) { _, _ ->
                             Works.imageDownloadAll(item)

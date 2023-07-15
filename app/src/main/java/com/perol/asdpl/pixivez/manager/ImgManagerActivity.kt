@@ -76,20 +76,18 @@ class ImgManagerActivity : RinkActivity() {
         viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
         viewModel.path.observe(this) {
             binding.swiperefreshLayout.isRefreshing = true
-            Thread(
-                Runnable {
-                    viewModel.files = FileUtil.getGroupList(
-                        it
-                    )
-                    // .filter{it.isPic()}.toMutableList()
-                    viewModel.task = viewModel.files!!.map { RenameTask(it) }
-                    runOnUiThread {
-                        binding.imgCount.text = viewModel.files!!.size.toString()
-                        binding.swiperefreshLayout.isRefreshing = false
-                        imgManagerAdapter.setNewInstance(viewModel.files)
-                    }
+            Thread {
+                viewModel.files = FileUtil.getGroupList(
+                    it
+                )
+                // .filter{it.isPic()}.toMutableList()
+                viewModel.task = viewModel.files!!.map { RenameTask(it) }
+                runOnUiThread {
+                    binding.imgCount.text = viewModel.files!!.size.toString()
+                    binding.swiperefreshLayout.isRefreshing = false
+                    imgManagerAdapter.setNewInstance(viewModel.files)
                 }
-            ).start()
+            }.start()
         }
         binding.swiperefreshLayout.setOnRefreshListener {
             Thread {

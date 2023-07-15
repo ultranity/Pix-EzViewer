@@ -65,7 +65,7 @@ D/httpdns addressListX: {app-api.pixiv.net=[app-api.pixiv.net/103.228.130.27, a
 D/httpdns init end: ========================================
 D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /210.140.92.138, /210.140.92.140, /210.140.131.147, /210.140.174.37, www.pixiv.net.cdn.cloudflare.net./104.18.30.199]
      */
-    var inited = false
+    private var inited = false
     fun dlookup(): List<InetAddress> {
         val addressList = mutableMapOf<String, List<InetAddress>>()
         val addressListX = mutableMapOf<String, List<InetAddress>>()

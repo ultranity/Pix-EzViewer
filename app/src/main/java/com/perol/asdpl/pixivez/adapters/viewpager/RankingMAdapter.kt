@@ -30,7 +30,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.fragments.hellom.RankingMFragment
 import java.util.*
 
-class RankingMAdapter(var fragment: Fragment, var isR18on: Boolean) :
+class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
     FragmentStateAdapter(fragment) {
 
     private val modelist =arrayOf(

@@ -27,7 +27,7 @@ import com.perol.asdpl.pixivez.viewmodel.checkUpdate
 import kotlinx.coroutines.runBlocking
 
 fun Boolean.toInt() = if (this) 1 else 0
-open class PicListFragment() : Fragment() {
+open class PicListFragment : Fragment() {
     companion object {
         private const val ARG_PARAM1 = "mode"
         private const val ARG_PARAM2 = "tabPosition"
@@ -44,7 +44,7 @@ open class PicListFragment() : Fragment() {
     }
 
     var TAG = "PicListFragment"
-    var tabPosition = 0
+    private var tabPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -77,9 +77,9 @@ open class PicListFragment() : Fragment() {
         _headerBinding = null
     }
 
-    lateinit var picListAdapter: PicListAdapter
+    private lateinit var picListAdapter: PicListAdapter
     val viewModel: PicListViewModel by viewModels()
-    val filterModel: FilterViewModel by viewModels()
+    private val filterModel: FilterViewModel by viewModels()
     fun initViewModel() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {

@@ -188,12 +188,12 @@ class PictureXAdapter(
 
     class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    //class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class SurfaceGifViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer
 
-    class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    //class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
@@ -240,12 +240,7 @@ class PictureXAdapter(
                 } else null
                 UserMActivity.start(mContext, illust.user, options)
             }
-            if (illust.caption.isNotBlank()) {
-                binding.html = Html.fromHtml(illust.caption)
-            } 
-            else {
-                binding.html = Html.fromHtml("~")
-            }
+            binding.textviewCaption.text = Html.fromHtml(illust.caption.ifBlank { "~" })
             Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
             Log.d("url", captionTextView.urls.toString())
             captionTextView.movementMethod = LinkMovementMethod.getInstance()

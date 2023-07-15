@@ -50,7 +50,7 @@ class RenameTask(fileInfo: FileInfo) {
 
 class ImgManagerViewModel : BaseViewModel() {
     val pre = PxEZApp.instance.pre
-    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
+    private val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
     var path = MutableLiveData<String>()
     var saveformat = pre.getString("ImgManagerSaveFormat", PxEZApp.saveformat)!!
     var TagSeparator = pre.getString("ImgManagerTagSeparator", PxEZApp.TagSeparator)!!

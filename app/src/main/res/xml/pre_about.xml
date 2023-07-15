@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:key="about_screen"
-    app:initialExpandedChildrenCount="4">
+    app:key="about_screen">
 
     <PreferenceCategory
         app:key="feedback"
@@ -26,12 +25,12 @@
         app:key="rate"
         app:title="Page">
         <Preference
-        app:key="about_rate_github"
-        app:title="Github"
-        app:summary="https://github.com/ultranity/Pix-EzViewer"/>
+            app:key="about_rate_github"
+            app:summary="https://github.com/ultranity/Pix-EzViewer"
+            app:title="Github" />
         <Preference
             app:key="about_rate_license"
-            app:title="License"
-            app:summary="License"/>
+            app:summary="License"
+            app:title="License" />
     </PreferenceCategory>
 </PreferenceScreen>

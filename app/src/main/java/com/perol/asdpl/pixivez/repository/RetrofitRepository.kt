@@ -147,7 +147,7 @@ class RetrofitRepository {
 
     fun getIllust(illust_id: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(illust_id)).also { Log.d("getIllust", illust_id.toString()) }
 
-    suspend fun getIllustCor(long: Long): IllustDetailResponse? {
+    private suspend fun getIllustCor(long: Long): IllustDetailResponse? {
         var illustDetailResponse: IllustDetailResponse? = null
         try {
             illustDetailResponse = appApiPixivService.getIllustCor(long)

@@ -41,15 +41,14 @@ import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 class TagsBookMarkDialog : DialogFragment() {
     companion object;
 
-    lateinit var recyclerView: RecyclerView
-    lateinit var editText: EditText
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var editText: EditText
     private lateinit var pictureXViewModel: PictureXViewModel
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
+        return requireActivity().let {
             val builder = MaterialAlertDialogBuilder(it)
-            val inflater = requireActivity().layoutInflater
-            val view = inflater.inflate(R.layout.dialog_bookmark, null)
+            val view = layoutInflater.inflate(R.layout.dialog_bookmark, null)
             val tagsAdapter = TagsAdapter(R.layout.view_tags_item, null)
             recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView).apply {
                 layoutManager = LinearLayoutManager(activity)
@@ -101,6 +100,6 @@ class TagsBookMarkDialog : DialogFragment() {
                 }
             // Create the AlertDialog object and return it
             builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+        }
     }
 }

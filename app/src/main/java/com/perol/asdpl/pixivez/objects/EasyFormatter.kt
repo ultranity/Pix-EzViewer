@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.perol.asdpl.pixivez.objects
 
 import android.util.Log
 import org.json.JSONArray
@@ -34,7 +35,7 @@ import javax.xml.transform.stream.StreamSource
 class EasyFormatter private constructor(private val builder: Builder) {
 
     private val indent = "    "
-    private val list = mutableListOf<Any>() // 用于临时存放当前已被解析的类。防止出现循环引用导致栈溢出
+    private val list: MutableList<Any> = mutableListOf()   // 用于临时存放当前已被解析的类。防止出现循环引用导致栈溢出
 
     fun formatWithArgs(message: String, vararg args: Any): String {
         val array = arrayOfNulls<String>(args.size)

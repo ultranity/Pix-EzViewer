@@ -34,6 +34,8 @@ import android.view.Gravity;
 import android.view.InflateException;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -112,7 +114,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 当UncaughtException发生时会转入该函数来处理
      */
     @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
+    public void uncaughtException(@NonNull Thread thread, Throwable ex) {
         if (!handleException(ex) && mDefaultHandler != null) {
             //如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);

@@ -42,7 +42,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
-import com.perol.asdpl.pixivez.databinding.TrendTagFragmentBinding
+import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.TrendTagViewModel
@@ -57,13 +57,13 @@ class TrendTagFragment : Fragment() {
 
     private lateinit var viewModel: TrendTagViewModel
 
-    private lateinit var binding: TrendTagFragmentBinding
+    private lateinit var binding: FragmentSearchTrendBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = TrendTagFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentSearchTrendBinding.inflate(inflater, container, false)
         return binding.root
     }
 

@@ -1,7 +1,11 @@
 package com.perol.asdpl.pixivez.dialog
 
 import android.app.Dialog
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -26,7 +30,7 @@ import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import java.io.File
-import java.util.*
+import java.util.Calendar
 
 class SupportDialog : DialogFragment() {
 
@@ -250,7 +254,7 @@ class SupportDialog : DialogFragment() {
         }
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        var full: Boolean = true
+        var full = true
         arguments?.let {
             full = it.getBoolean(ARG_PARAM1)
         }

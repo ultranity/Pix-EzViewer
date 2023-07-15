@@ -55,12 +55,12 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
         check.setOnCheckedChangeListener { buttonView, isChecked ->
             item.checked = isChecked
         }
-        if (!item.isPic()) {
-            item.checked = false
-            check.visibility = View.GONE
+        if (item.isPic()) {
+            check.visibility = View.VISIBLE
         }
         else {
-            check.visibility = View.VISIBLE
+            item.checked = false
+            check.visibility = View.GONE
         }
     }
 }

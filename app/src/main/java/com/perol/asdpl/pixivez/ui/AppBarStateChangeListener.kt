@@ -18,14 +18,14 @@ abstract class AppBarStateChangeListener(
     override fun onOffsetChanged(appBarLayout: AppBarLayout, i: Int) {
         if (offset==0){ //original
             if (i == 0 && mCurrentState != State.EXPANDED) {
-                onStateChanged(appBarLayout, State.EXPANDED);
-                mCurrentState = State.EXPANDED;
+                onStateChanged(appBarLayout, State.EXPANDED)
+                mCurrentState = State.EXPANDED
             } else if (abs(i) >= appBarLayout.totalScrollRange && (mCurrentState != State.COLLAPSED)) {
-                onStateChanged(appBarLayout, State.COLLAPSED);
-                mCurrentState = State.COLLAPSED;
+                onStateChanged(appBarLayout, State.COLLAPSED)
+                mCurrentState = State.COLLAPSED
             } else if (listenIDLE and (mCurrentState != State.IDLE)) {
-                onStateChanged(appBarLayout, State.IDLE);
-                mCurrentState = State.IDLE;
+                onStateChanged(appBarLayout, State.IDLE)
+                mCurrentState = State.IDLE
             }
         }
         else {

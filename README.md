@@ -27,12 +27,12 @@
 
 # 下载
 
-|                                            来源                                             |                                      说明                                       |
-|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
-|           [GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)            |           点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时            |
-| [Google Play](https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez) | ~~**
-★推荐!** 点这个，从 Google Play 上下载<br />需要已配置好 Play 全家桶，更新方便~~<br />因bugly依赖已下架 |
-|        [F-droid](https://f-droid.org/packages/com.perol.asdpl.play.pixivez.libre/)        |                          F-droid 分发，无bugly日志，社区更新较慢                           |
+|                                            来源                                             |                            说明                            |
+|:-----------------------------------------------------------------------------------------:|:--------------------------------------------------------:|
+|           [GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)            | 点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时 |
+| [Google Play](https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez) |                           ~~**                           |
+|         ★推荐!** 点这个，从 Google Play 上下载<br />需要已配置好 Play 全家桶，更新方便~~<br />因bugly依赖已下架         |                                                          |
+|        [F-droid](https://f-droid.org/packages/com.perol.asdpl.play.pixivez.libre/)        |                F-droid 分发，无bugly日志，社区更新较慢                |
 
 Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁路阻断）直连 Pixiv 的功能
 

@@ -507,7 +507,7 @@ class OKWebViewActivity : RinkActivity() {
         }
     }
 
-    fun injectCSS(webview: WebView) {
+    private fun injectCSS(webview: WebView) {
         try {
             val css =
                 (

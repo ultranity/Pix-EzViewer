@@ -2,6 +2,7 @@ package com.perol.asdpl.pixivez.objects
 
 import android.text.Html
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.responses.AIType
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.User
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -9,8 +10,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 object InteractionUtil {
-    val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
-    val disposables = CompositeDisposable()
+    private val retrofitRepository: RetrofitRepository = RetrofitRepository.getInstance()
+    private val disposables = CompositeDisposable()
 
     fun Disposable.add() {
         disposables.add(this)
@@ -34,9 +35,9 @@ object InteractionUtil {
             "width:${it.width} height:${it.height}\n" +
             "tags:${it.tags}\n" +
             "total_bookmarks:${it.total_bookmarks} total_view:${it.total_view}\n" +
-            "tools:${it.tools}\n" +
+            "AI: ${AIType.values()[it.illust_ai_type]} book_style:${it.illust_book_style} tools:${it.tools}\n" +
             "type:${it.type} page_count:${it.page_count}\n" +
-            "visible:${it.visible} is_muted:${it.is_muted}\n" +
+            "visible:${it.visible} is_muted:${it.is_muted} CAC:${it.comment_access_control}\n" +
             "sanity_level:${it.sanity_level} restrict:${it.restrict} x_restrict:${it.x_restrict}"
     // "meta_pages:" + illust.meta_pages.toString() + "\n" +
     // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
@@ -71,7 +72,7 @@ object InteractionUtil {
         unfollow(item.user, callback)
     }
 
-    fun unfollow(user: User, callback: () -> Unit) {
+    private fun unfollow(user: User, callback: () -> Unit) {
         retrofitRepository.postUnfollowUser(user.id).subscribe({
             user.is_followed = false
             callback()

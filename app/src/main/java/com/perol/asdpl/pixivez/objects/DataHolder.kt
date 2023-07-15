@@ -108,6 +108,9 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
             return (HoldingData[id]?.data as? T)?.apply{ copyFrom(data) }
         }*/
 
+        /**
+         * update data if exists and return the holding data object
+         */
         fun update(id: String, data: User): User? {
             return (HoldingData[id]?.data as? User)?.apply{ copyFrom(data) }
         }

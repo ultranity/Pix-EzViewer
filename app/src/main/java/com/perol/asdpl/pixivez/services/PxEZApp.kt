@@ -43,13 +43,20 @@ import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
 import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.*
+import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
-import java.util.*
+import java.util.Locale
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences
@@ -95,14 +102,7 @@ class PxEZApp : Application() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
-        // https://developer.android.com/guide/app-bundle/sideload-check#missing_splits
-        /*if (BuildConfig.ISGOOGLEPLAY)
-            if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
-                // Skip app initialization.
-                return
-            }*/
         super.onCreate()
         instance = this
         // LeakCanary.install(this);

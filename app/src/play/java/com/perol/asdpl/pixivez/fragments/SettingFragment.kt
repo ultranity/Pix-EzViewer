@@ -272,7 +272,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                         customView(view = binding.root)
                     }
                     binding.bg.setOnClickListener {
-                        val url = if (BuildConfig.ISGOOGLEPLAY) {
+                        val url = if (BuildConfig.FLAVOR == "play") {
                             "https://youtu.be/Wu4fVGsEn8s"
                         }
                         else {
@@ -292,7 +292,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
             }
             "check" -> {
-                if (BuildConfig.ISGOOGLEPLAY) {
+                if (BuildConfig.FLAVOR == "play") {
                     try {
                         val uri =
                             Uri.parse("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
@@ -358,7 +358,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
             "version" -> {
-                if (BuildConfig.ISGOOGLEPLAY) {
+                if (BuildConfig.FLAVOR == "play") {
                     try {
                         val uri =
                             Uri.parse("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")

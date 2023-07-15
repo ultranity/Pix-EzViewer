@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference
  * Load image from assets folder
  * @author [Daniel Passos](mailto:daniel@passos.me)
  */
-class HtmlAssetsImageGetter(context: Context, val folder: String = "") : ImageGetter {
+class HtmlAssetsImageGetter(context: Context, private val folder: String = "") : ImageGetter {
     private val mContext: Context = context
 
     override fun getDrawable(source: String): Drawable? {
@@ -49,7 +49,7 @@ class HtmlAssetsImageGetter(context: Context, val folder: String = "") : ImageGe
  * Assets Image Getter using Glide for bitmap reuse
  * Load image from assets folder by Uri parsing
  */
-class GlideAssetsImageGetter(textView: TextView, val folder: String = "") : GlideImageGetter(textView) {
+class GlideAssetsImageGetter(textView: TextView, private val folder: String = "") : GlideImageGetter(textView) {
     override fun getDrawable(source: String): Drawable {
         val drawable = BitmapDrawablePlaceholder()
         container.get()?.apply {

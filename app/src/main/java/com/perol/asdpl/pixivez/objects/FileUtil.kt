@@ -121,7 +121,7 @@ object FileUtil {
      * @param path
      * @return
      */
-    fun getListData(
+    private fun getListData(
         path: String,
         picOnly: Boolean = true,
         withFolder: Boolean = true,
@@ -149,7 +149,7 @@ object FileUtil {
             list.add(parent)
         }
         val files: Array<File>? = pfile.listFiles() // 文件对象数组 // 该文件对象下所属的所有文件和文件夹列表
-        if (files != null && files.isNotEmpty()) { // 非空验证
+        if (!files.isNullOrEmpty()) { // 非空验证
             list.addAll(
                 files.mapNotNull {
                     val item = FileInfo(it)
@@ -297,11 +297,11 @@ object FileUtil {
         file.copyTo(File(path), true)
     }
 
-    lateinit var extraPath: List<String>
+    private lateinit var extraPath: List<String>
     var ListLog = RoaringBitmap()
 
     // lateinit var localLog:RoaringBitmap
-    fun getFileList() {
+    private fun getFileList() {
         ListLog = bitSetFileLog(PxEZApp.storepath + File.separator + "roaringbit.data")
             ?: bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "roaringbit.data")
             ?: RoaringBitmap()

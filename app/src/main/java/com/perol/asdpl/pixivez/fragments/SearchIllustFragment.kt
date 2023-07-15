@@ -299,7 +299,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private fun updateillust(it: List<Illust>?) {
         if (it != null) {
             searchIllustAdapter.setList(it)
-            if (it.size == 0) {
+            if (it.isEmpty()) {
                 param1!!.toLongOrNull()?.let {
                     val bundle = Bundle()
                     val arrayList = LongArray(1)

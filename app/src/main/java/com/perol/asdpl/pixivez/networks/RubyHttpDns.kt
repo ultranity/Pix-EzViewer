@@ -103,7 +103,7 @@ imgaz.pixiv.net=[imgaz.pixiv.net/210.140.131.144, imgaz.pixiv.net/210.140.131.14
 sketch.pixiv.net=[ ],
 www.pixiv.net=[www.pixiv.net/104.18.30.199, www.pixiv.net/104.18.31.199]}
      */
-    var inited = true
+private var inited = true
     private fun dlookup(): List<InetAddress> {
         val addressList = mutableMapOf<String, List<InetAddress>>()
         val addressListX = mutableMapOf<String, List<InetAddress>>()

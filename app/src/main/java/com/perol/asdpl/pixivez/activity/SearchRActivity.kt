@@ -125,7 +125,7 @@ class SearchRActivity : RinkActivity() {
         binding.searchviewSearchm.onActionViewExpanded()
         binding.searchviewSearchm.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null && query.isNotBlank()) {
+                if (!query.isNullOrBlank()) {
                     when (binding.tablayoutSearchm.selectedTabPosition) {
                         0 -> {
                             trendTagViewModel.addhistory(query)

@@ -50,7 +50,7 @@ class ThemeUtil {
         private val theme3Array = arrayOf(
             R.style.AppThemeBase3,
         )
-        val colorMap = HashMap<Int, Int>()
+        private val colorMap = HashMap<Int, Int>()
         const val halftrans = 0x089a9a9a
         const val transparent = 0x00000000
         fun resetColor(context: Context){

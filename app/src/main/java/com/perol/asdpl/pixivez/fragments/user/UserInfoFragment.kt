@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.fragments.user
 
-import EasyFormatter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
@@ -45,6 +44,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
+import com.perol.asdpl.pixivez.objects.EasyFormatter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.responses.UserDetailResponse

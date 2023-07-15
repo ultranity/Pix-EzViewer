@@ -48,7 +48,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pre_thanks)
-        findPreference<PreferenceCategory>("huonaicai")?.isVisible = !BuildConfig.ISGOOGLEPLAY
+        findPreference<PreferenceCategory>("huonaicai")?.isVisible = BuildConfig.FLAVOR != "play"
 
         findPreference<Preference>("xuemo")?.apply {
             loadDrawableByUrl(

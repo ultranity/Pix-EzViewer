@@ -26,13 +26,13 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.view.View
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.NiceImageView
@@ -40,12 +40,12 @@ import com.perol.asdpl.pixivez.ui.NiceImageView
 fun NiceImageView.setLike(status: Boolean) {
     if (status) {
         // setImageResource(R.drawable.heart_red)
-        GlideApp.with(this.context).load(R.drawable.heart_red).into(this)
+        Glide.with(this.context).load(R.drawable.heart_red).into(this)
         // alpha = 0.9F
     }
     else {
         // setImageResource(R.drawable.ic_action_heart)
-        GlideApp.with(this.context).load(R.drawable.ic_action_heart).into(this)
+        Glide.with(this.context).load(R.drawable.ic_action_heart).into(this)
         // alpha = 0.8F
     }
 }

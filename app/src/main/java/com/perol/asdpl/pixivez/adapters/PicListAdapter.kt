@@ -15,6 +15,7 @@ import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
@@ -31,7 +32,6 @@ import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import kotlin.math.max
@@ -218,13 +218,13 @@ abstract class PicListAdapter(
         }
         // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
         if (!illustFilter.R18on && item.x_restrict == 1) {
-            GlideApp.with(mainImage.context)
+            Glide.with(mainImage.context)
                 .load(R.drawable.h).transition(withCrossFade())
                 .placeholder(R.drawable.h)
                 .into(mainImage)
         }
         else {
-            GlideApp.with(mainImage.context).load(loadUrl).transition(withCrossFade())
+            Glide.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(ColorDrawable(ThemeUtil.halftrans))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))

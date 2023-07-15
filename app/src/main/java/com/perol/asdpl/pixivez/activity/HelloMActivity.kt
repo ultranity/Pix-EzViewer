@@ -46,6 +46,7 @@ import androidx.core.view.GravityCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
@@ -55,7 +56,6 @@ import com.perol.asdpl.pixivez.databinding.NavHeaderHelloMBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import kotlinx.coroutines.CoroutineScope
@@ -282,7 +282,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     private fun initNavDrawer(user: UserEntity) {
         val header = NavHeaderHelloMBinding.bind(binding.navView.getHeaderView(0))
-        GlideApp.with(header.imageView.context)
+        Glide.with(header.imageView.context)
             .load(user.userimage)
             .circleCrop().into(header.imageView)
         header.imageView.setOnClickListener {
@@ -350,7 +350,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             getString(R.string.ok)
         ) { _, _ ->
             CoroutineScope(Dispatchers.IO).launch {
-                GlideApp.get(applicationContext).clearDiskCache()
+                Glide.get(applicationContext).clearDiskCache()
                 deleteDir(applicationContext.cacheDir)
                 if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     deleteDir(applicationContext.externalCacheDir)

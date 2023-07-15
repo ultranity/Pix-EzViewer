@@ -55,8 +55,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.afollestad.materialdialogs.list.listItems
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -72,11 +72,10 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.activity.ZoomActivity
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
-import com.perol.asdpl.pixivez.databindingadapter.loadUserImage
+import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
@@ -491,9 +490,10 @@ class PictureXAdapter(
                     mainImage.maxHeight = ScreenUtil.screenHeightPx()
                     mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
                 }
-                GlideApp.with(mContext).load(imageUrls[position])
+                Glide.with(mContext).load(imageUrls[position])
                     .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
-                    .thumbnail(GlideApp.with(mContext)
+                    .thumbnail(
+                        Glide.with(mContext)
                     .load(if (position == 0) imageThumbnailUrls[0] else ColorDrawable(ThemeUtil.halftrans)))
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
@@ -643,7 +643,7 @@ class PictureXAdapter(
                         height = finalHeight.toInt()
                     }
                 }
-                GlideApp.with(mContext).load(imageUrls[position]).placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
+                Glide.with(mContext).load(imageUrls[position]).placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
                     .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,

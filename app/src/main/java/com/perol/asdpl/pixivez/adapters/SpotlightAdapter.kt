@@ -29,6 +29,7 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.util.Pair
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -36,7 +37,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.Spotlight
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
@@ -51,9 +51,9 @@ class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         holder.setText(R.id.textview_context, item.username)
             .setText(R.id.title, item.title)
-        GlideApp.with(mainImage.context).load(item.illust.image_urls.medium)
+        Glide.with(mainImage.context).load(item.illust.image_urls.medium)
             .error(R.drawable.ai).transition(withCrossFade()).into(mainImage)
-        GlideApp.with(userImage.context).load(item.illust.user.profile_image_urls.medium)
+        Glide.with(userImage.context).load(item.illust.user.profile_image_urls.medium)
             .placeholder(R.mipmap.ic_noimage_foreground)
             .transition(withCrossFade()).circleCrop()
             .into(userImage)

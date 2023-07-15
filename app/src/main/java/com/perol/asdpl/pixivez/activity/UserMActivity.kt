@@ -42,21 +42,21 @@ import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
-import com.perol.asdpl.pixivez.databindingadapter.loadUserImage
+import com.perol.asdpl.pixivez.ui.loadBGImage
+import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.DataStore
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.ProfileImageUrls
 import com.perol.asdpl.pixivez.responses.User
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import com.perol.asdpl.pixivez.ui.AppBarStateChangeListener
@@ -242,7 +242,7 @@ class UserMActivity : RinkActivity() {
                         CoroutineScope(Dispatchers.Main).launch {
                             var file: File
                             withContext(Dispatchers.IO) {
-                                val f = GlideApp.with(this@UserMActivity).asFile()
+                                val f = Glide.with(this@UserMActivity).asFile()
                                     .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
                                     .submit()
                                 file = f.get()

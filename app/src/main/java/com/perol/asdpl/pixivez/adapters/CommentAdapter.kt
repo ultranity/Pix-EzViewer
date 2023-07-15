@@ -28,6 +28,7 @@ import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -35,7 +36,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.EmojiUtil
 import com.perol.asdpl.pixivez.objects.GlideAssetsImageGetter
 import com.perol.asdpl.pixivez.responses.IllustCommentsResponse.CommentsBean
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class CommentAdapter(
     layoutResId: Int,
@@ -67,13 +67,13 @@ class CommentAdapter(
         if (!item.user.profile_image_urls.medium!!
             .contentEquals("https://source.pixiv.net/common/images/no_profile.png")
         ) {
-            GlideApp.with(context).load(item.user.profile_image_urls.medium)
+            Glide.with(context).load(item.user.profile_image_urls.medium)
                 .placeholder(R.mipmap.ic_noimage_foreground).circleCrop().into(
                     (holder.getView<View>(R.id.commentuserimage) as ImageView)
                 )
         }
         else {
-            GlideApp.with(context).load(R.mipmap.ic_noimage_round)
+            Glide.with(context).load(R.mipmap.ic_noimage_round)
                 .into((holder.getView<View>(R.id.commentuserimage) as ImageView))
         }
     }

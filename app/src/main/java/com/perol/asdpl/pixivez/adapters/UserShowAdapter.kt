@@ -35,6 +35,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -48,7 +49,6 @@ import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ScreenUtil.dp2px
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.UserPreviewsBean
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.NiceImageView
 
@@ -122,7 +122,7 @@ class UserShowAdapter(layoutResId: Int) :
             ContextCompat.startActivity(context, intent, options)
         }
         username.text = "${item.user.name} : ${item.user.account}"
-        GlideApp.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
+        Glide.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade()).into(userImage)
     }
 

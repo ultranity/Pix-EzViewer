@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
 import android.view.View
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -41,7 +42,6 @@ import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.NiceImageView
 
@@ -101,7 +101,7 @@ class PicListXUserAdapter(
             }
             imageViewUser.setTag(R.id.tag_first, illust.user.profile_image_urls.medium)
 
-            GlideApp.with(imageViewUser.context).load(illust.user.profile_image_urls.medium)
+            Glide.with(imageViewUser.context).load(illust.user.profile_image_urls.medium)
                 .circleCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(object : ImageViewTarget<Drawable>(imageViewUser) {
                     override fun setResource(resource: Drawable?) {

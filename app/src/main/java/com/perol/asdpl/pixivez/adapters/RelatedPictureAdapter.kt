@@ -26,22 +26,22 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class RelatedPictureAdapter(layoutResId: Int) : BaseQuickAdapter<String, BaseViewHolder>(layoutResId) {
 
     override fun convert(holder: BaseViewHolder, item: String) {
         val imageView = holder.getView<ImageView>(R.id.imageview_relatedpic)
         if (holder.layoutPosition % 2 != 0) {
-            GlideApp.with(imageView.context).load(item).placeholder(R.color.transparent)
+            Glide.with(imageView.context).load(item).placeholder(R.color.transparent)
                 .transition(withCrossFade()).centerInside().into(imageView)
         }
         else {
-            GlideApp.with(imageView.context).load(item).placeholder(R.color.gray)
+            Glide.with(imageView.context).load(item).placeholder(R.color.gray)
                 .transition(withCrossFade()).centerInside().into(imageView)
         }
     }

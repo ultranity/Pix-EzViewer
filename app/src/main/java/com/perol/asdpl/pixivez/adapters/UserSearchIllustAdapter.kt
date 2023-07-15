@@ -25,12 +25,12 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.view.View
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class UserSearchIllustAdapter(
     layoutResId: Int,
@@ -41,7 +41,7 @@ class UserSearchIllustAdapter(
         item: Illust
     ) {
         val mainimage = holder.getView<View>(R.id.imageview_usersearchillust) as ImageView
-        GlideApp.with(mainimage.context).load(item.image_urls.square_medium)
+        Glide.with(mainimage.context).load(item.image_urls.square_medium)
             .transition(DrawableTransitionOptions.withCrossFade()).into(mainimage)
     }
 }

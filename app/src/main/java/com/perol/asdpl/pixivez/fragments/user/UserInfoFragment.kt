@@ -43,7 +43,7 @@ import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
-import com.perol.asdpl.pixivez.databindingadapter.loadBGImage
+import com.perol.asdpl.pixivez.ui.loadBGImage
 import com.perol.asdpl.pixivez.objects.EasyFormatter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.objects.LazyFragment

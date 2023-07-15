@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.databindingadapter
+package com.perol.asdpl.pixivez.ui
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -33,6 +33,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -44,7 +45,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -57,12 +57,12 @@ fun resourceIdToUri(context: Context, resourceId: Int): String =
 //@BindingAdapter("userUrl")
 fun loadUserImage(imageView: ImageView, url: String?) {
     if ((url == null) or url.contentEquals("https://source.pixiv.net/common/images/no_profile.png")) {
-        GlideApp.with(imageView.context).load(R.mipmap.ic_noimage_foreground).circleCrop()
+        Glide.with(imageView.context).load(R.mipmap.ic_noimage_foreground).circleCrop()
             .transition(withCrossFade()).into(imageView)
         (imageView.context as FragmentActivity).supportStartPostponedEnterTransition()
     }
     else {
-        GlideApp.with(imageView.context)
+        Glide.with(imageView.context)
             .load(url)
             .placeholder(R.mipmap.ic_noimage_round)
             .circleCrop()
@@ -100,7 +100,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                 runBlocking {
                     var file: File
                     withContext(Dispatchers.IO) {
-                        val f = GlideApp.with(imageView).asFile()
+                        val f = Glide.with(imageView).asFile()
                             .load(url)
                             .submit()
                         file = f.get()
@@ -125,7 +125,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                 }
             }.create().show()
         }
-        GlideApp.with(imageView.context).load(url)
+        Glide.with(imageView.context).load(url)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(withCrossFade())
             .placeholder(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
@@ -137,7 +137,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
             })
     }
     else {
-        GlideApp.with(imageView.context)
+        Glide.with(imageView.context)
             .load(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
             .into(imageView)
     }

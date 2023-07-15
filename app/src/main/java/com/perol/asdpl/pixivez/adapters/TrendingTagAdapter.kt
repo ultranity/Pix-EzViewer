@@ -26,12 +26,12 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.TrendingtagResponse
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendTagsBean>?) :
     BaseQuickAdapter<TrendingtagResponse.TrendTagsBean, BaseViewHolder>(
@@ -41,7 +41,7 @@ class TrendingTagAdapter(layoutResId: Int, data: List<TrendingtagResponse.TrendT
     override fun convert(holder: BaseViewHolder, item: TrendingtagResponse.TrendTagsBean) {
         holder.setText(R.id.textview_tag, item.tag)
         val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
-        GlideApp.with(imageView.context)
+        Glide.with(imageView.context)
             .load(item.illust.image_urls.square_medium)
             .placeholder(ColorDrawable(ThemeUtil.halftrans))
             .into(imageView)

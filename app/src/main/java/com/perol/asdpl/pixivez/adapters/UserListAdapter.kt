@@ -30,6 +30,7 @@ import android.util.Pair
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -39,7 +40,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.responses.User
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class UserListAdapter(layoutResId: Int) :
@@ -64,7 +64,7 @@ class UserListAdapter(layoutResId: Int) :
         val username = holder.getView<View>(R.id.textview_usershowname) as TextView
         // recyclerView.layoutManager = linearLayoutManager
         username.text = item.name
-        GlideApp.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
+        Glide.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
             .into(userImage)
     }

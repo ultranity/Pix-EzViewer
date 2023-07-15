@@ -35,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -45,7 +46,6 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor
 import com.perol.asdpl.pixivez.networks.ProgressListener
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.io.File
@@ -143,11 +143,11 @@ class ZoomPagerAdapter(
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
 
-        GlideApp.with(context).asFile().load(origin!![position]).apply(RequestOptions().onlyRetrieveFromCache(true))
+        Glide.with(context).asFile().load(origin!![position]).apply(RequestOptions().onlyRetrieveFromCache(true))
             .into(object : CustomTarget<File>() {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                     // super.onLoadFailed(errorDrawable)
-                    GlideApp.with(context).asFile()
+                    Glide.with(context).asFile()
                         .load(preview!![position])
                         .apply(RequestOptions().onlyRetrieveFromCache(true))
                         .into(object : CustomTarget<File>() {
@@ -181,7 +181,7 @@ class ZoomPagerAdapter(
                 }
             }
         )
-        GlideApp.with(context).asFile().load(origin!![position])
+        Glide.with(context).asFile().load(origin!![position])
             .into(object : CustomTarget<File>() {
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }

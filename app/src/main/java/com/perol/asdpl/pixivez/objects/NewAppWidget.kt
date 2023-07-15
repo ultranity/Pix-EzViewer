@@ -31,13 +31,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.RemoteViews
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.AppWidgetTarget
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.responses.IllustNext
 import com.perol.asdpl.pixivez.services.AppApiPixivService
-import com.perol.asdpl.pixivez.services.GlideApp
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -102,7 +102,7 @@ class NewAppWidget : AppWidgetProvider() {
                         intent.putExtras(bundle)
                         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                         views.setOnClickPendingIntent(R.id.widget_image, pendingIntent)
-                        GlideApp.with(context.applicationContext).asBitmap().load(walkthroughResponse.illusts[randomnum].image_urls.medium)
+                        Glide.with(context.applicationContext).asBitmap().load(walkthroughResponse.illusts[randomnum].image_urls.medium)
                             .transform(
                                 RoundedCornersTransformation(
                                     24,

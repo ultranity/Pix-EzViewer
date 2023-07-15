@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.adapters
 import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -35,7 +36,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class PixiVisionAdapter(
     layoutResId: Int,
@@ -48,7 +48,7 @@ class PixiVisionAdapter(
         holder.setText(R.id.textView_pixivision_title, item.title)
         val imageView =
             holder.getView<ImageView>(R.id.imageView_pixivision)
-        GlideApp.with(context).load(item.thumbnail)
+        Glide.with(context).load(item.thumbnail)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(ColorDrawable(ThemeUtil.halftrans))
             .transition(DrawableTransitionOptions.withCrossFade()).into(imageView)
     }

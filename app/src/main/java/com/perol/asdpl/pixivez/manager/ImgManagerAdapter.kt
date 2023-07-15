@@ -29,18 +29,18 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.services.GlideApp
 
 class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewHolder>(layoutResId) {
 
     override fun convert(holder: BaseViewHolder, item: FileInfo) {
         val icon = holder.getView<ImageView>(R.id.item_img)
-        GlideApp.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
+        Glide.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
             .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(icon)
         // holder.getView<ConstraintLayout>(R.id.layout).background
         holder.getView<TextView>(R.id.item_name).text = item.name

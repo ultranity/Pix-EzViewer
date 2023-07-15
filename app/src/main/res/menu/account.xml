@@ -6,6 +6,6 @@
         android:title="@string/add" />
     <item
         android:id="@+id/nav_logout"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/ic_action_lajitong"
         android:title="@string/logout" />
 </menu>

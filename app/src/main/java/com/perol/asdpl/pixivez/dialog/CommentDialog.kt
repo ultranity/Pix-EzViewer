@@ -111,7 +111,7 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
         params.width = WindowManager.LayoutParams.MATCH_PARENT
         // params.height = screenHeightPx()/2
         window.attributes = params
-        window.setBackgroundDrawable(ColorDrawable(ThemeUtil.transparent))
+        window.setBackgroundDrawable(ColorDrawable(ThemeUtil.getAttrColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary)))
     }
 
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {

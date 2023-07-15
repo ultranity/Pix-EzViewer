@@ -79,6 +79,7 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.ui.AnimationView
 import com.perol.asdpl.pixivez.ui.NiceImageView
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
@@ -325,39 +326,11 @@ class PictureXAdapter(
                             context.startActivity(intent)
                         }
                         translateName.setOnLongClickListener {
-                            MaterialDialog(mContext).show {
-                                title(R.string.add_to_block_tag_list)
-                                negativeButton(android.R.string.cancel)
-                                positiveButton(android.R.string.ok) {
-                                    runBlocking {
-                                        BlockViewModel.insertBlockTag(
-                                            BlockTagEntity(
-                                                name = t.name,
-                                                translateName = t.translated_name?:""
-                                            ))
-                                        EventBus.getDefault().post(AdapterRefreshEvent())
-                                    }
-                                }
-                                lifecycleOwner(binding.lifecycleOwner)
-                            }
+                            showBlockTagDialog(mContext, t)
                             true
                         }
                         name.setOnLongClickListener {
-                            MaterialDialog(mContext).show {
-                                title(R.string.add_to_block_tag_list)
-                                negativeButton(android.R.string.cancel)
-                                positiveButton(android.R.string.ok) {
-                                    runBlocking {
-                                        BlockViewModel.insertBlockTag(
-                                            BlockTagEntity(
-                                                name = t.name,
-                                                translateName = t.translated_name?:""
-                                            ))
-                                        EventBus.getDefault().post(AdapterRefreshEvent())
-                                    }
-                                }
-                                lifecycleOwner(binding.lifecycleOwner)
-                            }
+                            showBlockTagDialog(mContext, t)
                             true
                         }
                         return tv
@@ -402,6 +375,25 @@ class PictureXAdapter(
                     }
                     .create().show()
                 true
+            }
+        }
+
+        private fun showBlockTagDialog(mContext: Context, t: Tag) {
+            MaterialDialog(mContext).show {
+                title(R.string.add_to_block_tag_list)
+                negativeButton(android.R.string.cancel)
+                positiveButton(android.R.string.ok) {
+                    runBlocking {
+                        BlockViewModel.insertBlockTag(
+                            BlockTagEntity(
+                                name = t.name,
+                                translateName = t.translated_name ?: ""
+                            )
+                        )
+                        EventBus.getDefault().post(AdapterRefreshEvent())
+                    }
+                }
+                lifecycleOwner(binding.lifecycleOwner)
             }
         }
     }

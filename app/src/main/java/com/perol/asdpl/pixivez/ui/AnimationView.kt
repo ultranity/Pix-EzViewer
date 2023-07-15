@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.objects
+package com.perol.asdpl.pixivez.ui
 
 import android.content.Context
 import android.graphics.*

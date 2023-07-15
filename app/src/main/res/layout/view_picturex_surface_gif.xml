@@ -6,7 +6,7 @@
     android:layout_height="300dp"
     android:orientation="vertical">
 
-    <com.perol.asdpl.pixivez.objects.AnimationView
+    <com.perol.asdpl.pixivez.ui.AnimationView
         android:id="@+id/imageview_gif"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

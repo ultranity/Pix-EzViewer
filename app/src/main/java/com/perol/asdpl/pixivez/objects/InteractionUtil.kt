@@ -29,7 +29,8 @@ object InteractionUtil {
     }
 
     fun toDetailString(it: Illust, caption: Boolean = true) =
-        "id:${it.id} " + (if (caption) "caption:${Html.fromHtml(it.caption)}" else "") +
+        "${it.title} \n" +
+            "id:${it.id} " + (if (caption) "caption:${Html.fromHtml(it.caption)}" else "") +
             "\nuser:${it.user.name} account:${it.user.account}\n" +
             "create_date:${it.create_date}\n" +
             "width:${it.width} height:${it.height}\n" +

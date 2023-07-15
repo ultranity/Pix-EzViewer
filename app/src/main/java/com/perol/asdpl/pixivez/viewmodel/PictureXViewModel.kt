@@ -138,7 +138,7 @@ class PictureXViewModel : BaseViewModel() {
         }, {
             Toasty.warning(
                 PxEZApp.instance,
-                "查找的id不存在: $toLong",
+                "PID 404: $toLong",
                 Toast.LENGTH_SHORT
             ).show()
             illustDetail.value = null

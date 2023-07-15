@@ -41,7 +41,6 @@ import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
-import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -160,7 +159,6 @@ class PxEZApp : Application() {
         if (pre.getBoolean("infoCache", true)) {
             MMKV.initialize(this)
         }
-        ToastUtils.init(this)
         AppCompatDelegate.setDefaultNightMode(
             pre.getString(
                 "dark_mode",

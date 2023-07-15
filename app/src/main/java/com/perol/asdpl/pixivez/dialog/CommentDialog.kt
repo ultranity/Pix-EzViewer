@@ -40,7 +40,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import com.hjq.toast.ToastUtils
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.CommentAdapter
@@ -76,7 +75,7 @@ class CommentDialog : BaseDialogFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({
-                ToastUtils.show("${it.total_comments} comments in total")
+                Toasty.longToast("${it.comments.size}/${it.total_comments} comments in total")
                 commentAdapter?.setNewInstance(it.comments)
                 nextUrl = it.next_url
             }, {

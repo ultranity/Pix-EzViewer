@@ -532,7 +532,7 @@ class PictureXAdapter(
                         val detailstring = InteractionUtil.toDetailString(data)
                         builder.setMessage(detailstring)
                         builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
-                            TToast.startDownload()
+                            Toasty.shortToast(R.string.join_download_queue)
                             Works.imgD(data, position)
                         }
                         builder.setNegativeButton(mContext.resources.getString(android.R.string.cancel)) { dialog, which ->
@@ -572,7 +572,7 @@ class PictureXAdapter(
                                     }
                                 // Set the action buttons
                                 builder.setPositiveButton(android.R.string.ok) { dialog, id ->
-                                    TToast.startDownload()
+                                    Toasty.shortToast(R.string.join_download_queue)
                                     mSelectedItems.map {
                                         Works.imgD(data, it)
                                     }

@@ -34,7 +34,6 @@ import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
@@ -203,7 +202,7 @@ object Works {
     }
     fun imageDownloadAll(illust: Illust) {
         if (PxEZApp.ShowDownloadToast) {
-            TToast.startDownload()
+            Toasty.shortToast(R.string.join_download_queue)
         }
         CoroutineScope(Dispatchers.IO).launch {
             if (illust.meta_pages.isEmpty()) {
@@ -242,8 +241,8 @@ object Works {
         }
     }
     fun mirrorLinkView(url: String) = mirror(url, mirrorLinkView)
-    fun mirrorLinkDownload(url: String) = mirror(url, mirrorLinkDownload)
-    fun mirror(url: String, mirror: Boolean = true): String {
+    private fun mirrorLinkDownload(url: String) = mirror(url, mirrorLinkDownload)
+    private fun mirror(url: String, mirror: Boolean = true): String {
         if (!mirror) {
             return url.replace(opximg, spximg)
         }

@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Spinner
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -18,6 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
+import com.perol.asdpl.pixivez.databinding.DialogDownloadConfigBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
@@ -81,7 +84,29 @@ class DownloadManagerActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
-                startActivity(Intent(this, ManagerSettingsActivity::class.java))
+                val configDialog = DialogDownloadConfigBinding.inflate(layoutInflater)
+                configDialog.spinnerMaxTaskNum.setSelection(PxEZApp.instance.pre.getString("max_task_num", "2")!!.toInt()-1)
+                configDialog.spinnerThreadNum.setSelection(PxEZApp.instance.pre.getString("thread_num", "2")!!.toInt()-1)
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(resources.getString(R.string.task_setting))
+                    .setView(configDialog.root)
+                    .setNegativeButton(resources.getString(android.R.string.cancel)){_,_ -> }
+                    .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                        Aria.get(this).downloadConfig.apply {
+                            maxTaskNum=(configDialog.spinnerMaxTaskNum.selectedItem as String).toInt()
+                            threadNum = (configDialog.spinnerThreadNum.selectedItem as String).toInt()
+                            PxEZApp.instance.pre.edit{
+                                putString("max_task_num", configDialog.spinnerMaxTaskNum.selectedItem as String)
+                                putString("thread_num", configDialog.spinnerThreadNum.selectedItem as String)
+                            }
+                        }
+                    }.create().apply {
+                        findViewById<Spinner>(R.id.spinner_max_task_num)
+                            ?.setSelection(0, false)
+                        findViewById<Spinner>(R.id.spinner_thread_num)
+                            ?.setSelection(0, false)
+                    }
+                    .show()
             }
             R.id.action_resume -> {
                 Thread {
@@ -112,12 +137,12 @@ class DownloadManagerActivity : RinkActivity() {
                 Aria.download(this).resumeAllTask()
             }
             R.id.action_cancel -> {
-                MaterialAlertDialogBuilder(this).apply {
-                    setMessage(R.string.all_cancel)
-                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.all_cancel)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                             Aria.download(this).removeAllTask(false)
-                        }
-                }.show()
+                    }
+                    .show()
             }
             R.id.action_finished_cancel -> {
                 Thread {

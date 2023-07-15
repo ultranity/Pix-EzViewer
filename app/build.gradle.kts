@@ -188,7 +188,7 @@ dependencies {
     implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibraries_version"]}")
     implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibraries_version"]}")
     implementation("com.arialyy.aria:core:3.8.12")
-    ksp("com.arialyy.aria:compiler:3.8.12")
+    kapt("com.arialyy.aria:compiler:3.8.12")
     implementation("io.noties.markwon:core:4.6.2")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("net.lingala.zip4j:zip4j:2.11.5")
@@ -261,8 +261,8 @@ dependencies {
         implementation("com.github.bumptech.glide:glide:$glide_version")
         implementation("com.github.bumptech.glide:annotations:$glide_version")
         implementation("com.github.bumptech.glide:okhttp3-integration:$glide_version")
-        kapt("com.github.bumptech.glide:compiler:$glide_version")
-        //ksp("com.github.bumptech.glide:ksp:$glide_version")
+        //kapt("com.github.bumptech.glide:compiler:$glide_version")
+        ksp("com.github.bumptech.glide:ksp:$glide_version")
     }
 
     implementation("jp.wasabeef:glide-transformations:4.3.0")

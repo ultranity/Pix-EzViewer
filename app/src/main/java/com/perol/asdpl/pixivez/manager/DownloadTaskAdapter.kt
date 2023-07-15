@@ -51,7 +51,7 @@ class DownloadTaskAdapter :
     init {
         this.setOnItemClickListener { adapter, view, position ->
             val item = data[position]
-            val illust = Gson().fromJson(item.str, IllustD::class.java)
+            val illust = PxEZApp.gsonInstance.fromJson(item.str, IllustD::class.java)
             PictureActivity.start(context, id = illust.id)
         }
         this.setOnItemLongClickListener { adapter, view, position ->
@@ -140,7 +140,7 @@ class DownloadTaskAdapter :
         binding.progressFont.text =
             context.getString(R.string.fractional, item.currentProgress, item.fileSize)
         try {
-            val illustD = Gson().fromJson(item.str, IllustD::class.java)
+            val illustD = PxEZApp.gsonInstance.fromJson(item.str, IllustD::class.java)
             binding.title.text = illustD.title
             binding.status.text =  item.state.toIEntityString()
         } catch (e: Exception) {

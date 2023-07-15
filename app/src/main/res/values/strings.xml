@@ -334,4 +334,8 @@
     <string name="crash_title">这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者</string>
     <string name="background">背景</string>
     <string name="avatar">头像</string>
+    <string name="update_now">下载更新？</string>
+    <string name="update_available">检测到更新</string>
+    <string name="no_update">已经是最新版</string>
+    <string name="update_failed">访问更新失败</string>
 </resources>

@@ -109,7 +109,7 @@ class ImgManagerViewModel : BaseViewModel() {
                 .doFinally {
                     // Log.d("imgMgr","all")
                     File(path.value + File.separatorChar + "rename.log")
-                        .writeText(Gson().toJson(task))
+                        .writeText(PxEZApp.gsonInstance.toJson(task))
                     taskmap.clear()
                     AndroidSchedulers.mainThread().scheduleDirect({
                         adapter.notifyDataSetChanged()

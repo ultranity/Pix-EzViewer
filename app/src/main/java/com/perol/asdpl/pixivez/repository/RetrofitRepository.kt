@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.responses.TrendingtagResponse
 import com.perol.asdpl.pixivez.responses.UgoiraMetadataResponse
 import com.perol.asdpl.pixivez.responses.UserDetailResponse
 import com.perol.asdpl.pixivez.services.AppApiPixivService
+import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -198,7 +199,7 @@ class RetrofitRepository {
 
     inline fun <reified T> getNext(url: String): Observable<T> = appApiPixivService.getUrl(url).flatMap {
             Log.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
-            Observable.just(Gson().fromJson(it.string(), T::class.java))
+            Observable.just(PxEZApp.gsonInstance.fromJson(it.string(), T::class.java))
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
         .retryWhen {
             Log.d("Retrofit", "Request ${T::class.java.canonicalName} failed, call reFreshFunction")

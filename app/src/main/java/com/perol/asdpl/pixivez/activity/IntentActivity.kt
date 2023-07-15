@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.responses.ErrorResponse
 import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
 import com.perol.asdpl.pixivez.services.OAuthSecureService
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -227,8 +228,7 @@ class IntentActivity : RinkActivity() {
                 if (e is HttpException) {
                     try {
                         val errorBody = e.response()?.errorBody()?.string()
-                        val gson = Gson()
-                        val errorResponse = gson.fromJson(
+                        val errorResponse = PxEZApp.gsonInstance.fromJson(
                             errorBody,
                             ErrorResponse::class.java
                         )

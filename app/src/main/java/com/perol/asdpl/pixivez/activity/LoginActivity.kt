@@ -93,22 +93,13 @@ class LoginActivity : RinkActivity() {
             e.printStackTrace()
         }
         binding.textviewHelp.setOnClickListener {
-            val builder = MaterialAlertDialogBuilder(this)
-            val view = layoutInflater.inflate(R.layout.new_dialog_user_help, null)
-            val webView = view.findViewById(R.id.web_user_help) as TextView
             // obtain an instance of Markwon
             val markwon = Markwon.create(this)
-
-            val node = markwon.parse(getString(R.string.login_help_md))
-
-            val markdown = markwon.render(node)
-
-            // use it on a TextView
-            markwon.setParsedMarkdown(webView, markdown)
-            builder.setPositiveButton(android.R.string.ok) { _, _ ->
+            MaterialAlertDialogBuilder(this)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
             }
-            builder.setView(view)
-            builder.create().show()
+            .setMessage(markwon.toMarkdown(getString(R.string.login_help_md)))
+            .create().show()
         }
         /*binding.editUsername.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

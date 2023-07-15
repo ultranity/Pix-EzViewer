@@ -283,6 +283,11 @@
     <string name="hide_user_img">隱藏頭像</string>
     <string name="layout_config">佈局設置</string>
     <string name="span_num">列數(默認 豎屏2 橫屏4)</string>
+    <string name="crash_title">这是崩溃报告，如果遇到更新後閃退的問題，請將日誌反饋給開發者</string>
     <string name="background">背景</string>
     <string name="avatar">頭像</string>
+    <string name="update_now">下载更新？</string>
+    <string name="update_available">检测到更新</string>
+    <string name="no_update">已经是最新版</string>
+    <string name="update_failed">访问更新失败</string>
 </resources>

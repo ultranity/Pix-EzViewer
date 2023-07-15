@@ -310,7 +310,8 @@ dependencies {
     //implementation("me.jessyan:progressmanager:1.5.0")
 
     //buglyImplementation("com.tencent.bugly:crashreport:4.0.4")
-    "buglyImplementation"("com.tencent.bugly:crashreport_upgrade:1.6.1")
+    //"buglyImplementation"("com.tencent.bugly:crashreport_upgrade:1.6.1")
+    "buglyImplementation"("com.github.supersu-man:apkupdater-library:v2.0.0")
 
     //debugImplementation("io.github.knight-zxw:blockcanary:0.0.4")
     //debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.4")

@@ -285,4 +285,9 @@
     <string name="span_num">列の数 (デフォルトの縦 2 横 4)</string>
     <string name="background">background</string>
     <string name="avatar">avatar</string>
+    <string name="crash_title">このレポートを開発者に報告してください</string>
+    <string name="update_now">アップデートをダウンロードしますか? </string>
+    <string name="update_available" >更新が検出されました</string>
+    <string name="no_update">は最新バージョンです</string>
+    <string name="update_failed" >更新プログラムにアクセスできませんでした</string>
 </resources>

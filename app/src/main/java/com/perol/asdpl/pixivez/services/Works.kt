@@ -323,7 +323,7 @@ object Works {
             .load(url) // 读取下载地址
             .setFilePath(targetPath) // 设置文件保存的完整路径
             .ignoreFilePathOccupy()
-            .setExtendField(Gson().toJson(illustD))
+            .setExtendField(PxEZApp.gsonInstance.toJson(illustD))
             .option(option)
             .create()
     }

@@ -59,12 +59,11 @@ import java.util.Locale
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences
-
     @Download.onTaskComplete
     fun taskComplete(task: DownloadTask?) {
         task?.let {
             val extendField = it.extendField
-            val illustD = Gson().fromJson(extendField, IllustD::class.java)
+            val illustD = gsonInstance.fromJson(extendField, IllustD::class.java)
             val title = illustD.title
             val sourceFile = File(it.filePath)
             if (sourceFile.isFile) {
@@ -138,7 +137,7 @@ class PxEZApp : Application() {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
                         delay(500)
-                        // val illustD = Gson().fromJson(it.str, IllustD::class.java)
+                        // val illustD = gsonInstance.fromJson(it.str, IllustD::class.java)
                         Aria.download(this).load(it.url)
                             .setFilePath(it.filePath) // 设置文件保存的完整路径
                             .ignoreFilePathOccupy()
@@ -151,7 +150,7 @@ class PxEZApp : Application() {
             }
         }
 
-        initBugly(this)
+        //initBugly(this)
         RxJavaPlugins.setErrorHandler {
             Log.e("onRxJavaErrorHandler", "${it.message}")
             it.printStackTrace()
@@ -241,6 +240,8 @@ class PxEZApp : Application() {
     }
 
     companion object {
+        val gsonInstance = Gson()
+
         @JvmStatic
         var storepath = ""
 

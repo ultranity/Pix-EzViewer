@@ -57,9 +57,9 @@ import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.services.AppUpdater
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.services.checkUpdate
 import java.io.File
 import java.io.FilenameFilter
 
@@ -311,18 +311,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                 startActivity(intent)
             }
             "check" -> {
-                if (BuildConfig.FLAVOR != "bugly") {
-                    try {
-                        val uri = Uri.parse("https://github.com/ultranity/Pix-EzViewer/releases/latest")
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                else {
-                    checkUpdate()
-                }
+                AppUpdater.checkUpgrade(requireActivity(), requireView())
             }
             "storepath1" -> {
 //                startActivityForResult(Intent(activity, PathProviderActivity::class.java), 887)
@@ -411,13 +400,20 @@ class SettingFragment : PreferenceFragmentCompat() {
                     }
                     val cr = File(activity?.filesDir, list[a])
                     report += cr.readText()
+                    report += "wwwwwwwwwwwwwwwwwwwwwwww"
                 }
                 report = report.replace("\\n", "\n")
                     .replace("\\t", "\t")
                     .replace("\\:", ":")
-                val dialogBuild = MaterialAlertDialogBuilder(requireActivity())
-                dialogBuild.setMessage(report).setTitle(getString(R.string.crash_title))
+                MaterialAlertDialogBuilder(requireActivity())
+                .setMessage(report).setTitle(getString(R.string.crash_title))
                     .setPositiveButton(android.R.string.ok) { _, _ ->
+                    }
+                    .setNeutralButton(R.string.clearhistory){ _, _ ->
+                        for (f in list){
+                            val cr = File(activity?.filesDir, f)
+                            cr.delete()
+                        }
                     }
                     .create().show()
             }

@@ -45,6 +45,7 @@ class DownloadManagerActivity : RinkActivity() {
         }
         aria = Aria.download(this)
         aria.register()
+        //TaskSchedulers.getInstance().register(this, TaskEnum.DOWNLOAD)
         downloadTaskAdapter = DownloadTaskAdapter()
         binding.progressList.apply {
             adapter = downloadTaskAdapter
@@ -100,13 +101,7 @@ class DownloadManagerActivity : RinkActivity() {
                                 putString("thread_num", configDialog.spinnerThreadNum.selectedItem as String)
                             }
                         }
-                    }.create().apply {
-                        findViewById<Spinner>(R.id.spinner_max_task_num)
-                            ?.setSelection(0, false)
-                        findViewById<Spinner>(R.id.spinner_thread_num)
-                            ?.setSelection(0, false)
-                    }
-                    .show()
+                    }.show()
             }
             R.id.action_resume -> {
                 Thread {

@@ -36,7 +36,7 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
+    //id("org.jetbrains.kotlin.kapt")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
     id("org.jmailen.kotlinter")
@@ -188,7 +188,7 @@ dependencies {
     implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibraries_version"]}")
     implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibraries_version"]}")
     implementation("com.arialyy.aria:core:3.8.12")
-    kapt("com.arialyy.aria:compiler:3.8.12")
+    //kapt("com.arialyy.aria:compiler:3.8.12")
     implementation("io.noties.markwon:core:4.6.2")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("net.lingala.zip4j:zip4j:2.11.5")
@@ -311,7 +311,7 @@ dependencies {
 
     //buglyImplementation("com.tencent.bugly:crashreport:4.0.4")
     //"buglyImplementation"("com.tencent.bugly:crashreport_upgrade:1.6.1")
-    "buglyImplementation"("com.github.supersu-man:apkupdater-library:v2.0.0")
+    //"buglyImplementation"("com.github.supersu-man:apkupdater-library:v2.0.0")
 
     //debugImplementation("io.github.knight-zxw:blockcanary:0.0.4")
     //debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.4")

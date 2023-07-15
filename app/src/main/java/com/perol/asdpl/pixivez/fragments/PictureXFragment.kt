@@ -166,7 +166,7 @@ class PictureXFragment : BaseFragment() {
                 //TODO: whether stop loading here
                 //binding.illust = it
                 binding.apply {
-                    loadUserImage(imageViewUserPicX, it.user.profile_image_urls.medium)
+                    loadUserImage(binding.imageviewUserPicX, it.user.profile_image_urls.medium)
                     textViewTitle.text = it.title
                     textViewUserName.text = it.user.name
                     textViewIllustCreateDate.text = it.create_date
@@ -201,19 +201,19 @@ class PictureXFragment : BaseFragment() {
 
                 binding.recyclerview.adapter = pictureXAdapter
                 if (it.user.is_followed) {
-                    binding.imageViewUserPicX.setBorderColor(Color.YELLOW)
+                    binding.imageviewUserPicX.setBorderColor(Color.YELLOW)
                 }
                 // else
-                //    binding.imageViewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                binding.imageViewUserPicX.setOnLongClickListener {
+                //    binding.imageviewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+                binding.imageviewUserPicX.setOnLongClickListener {
                     pictureXViewModel.likeUser()
                     true
                 }
-                binding.imageViewUserPicX.setOnClickListener { _ ->
+                binding.imageviewUserPicX.setOnClickListener { _ ->
                     val options = if (PxEZApp.animationEnable) {
                         ActivityOptions.makeSceneTransitionAnimation(
                             context as Activity,
-                            Pair(binding.imageViewUserPicX, "userimage")
+                            Pair(binding.imageviewUserPicX, "userimage")
                         ).toBundle()
                     } else null
                     UserMActivity.start(requireContext(), it.user, options)
@@ -243,7 +243,7 @@ class PictureXFragment : BaseFragment() {
             }
         }
         pictureXViewModel.followUser.observe(viewLifecycleOwner) {
-            binding.imageViewUserPicX.setBorderColor(
+            binding.imageviewUserPicX.setBorderColor(
                 if (it) {
                     Color.YELLOW
                 }
@@ -260,7 +260,7 @@ class PictureXFragment : BaseFragment() {
             pictureXAdapter?.setProgressComplete(it)
         }
         //TODO: is it necessary?
-        pictureXAdapter?.notifyDataSetChanged()
+        //pictureXAdapter?.notifyDataSetChanged()
     }
 
     var hasMoved = false

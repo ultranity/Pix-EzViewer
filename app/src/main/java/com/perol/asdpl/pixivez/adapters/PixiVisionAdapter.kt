@@ -30,8 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.module.LoadMoreModule
+
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -40,7 +39,7 @@ import com.perol.asdpl.pixivez.responses.SpotlightArticlesBean
 class PixiVisionAdapter(
     layoutResId: Int,
     data: MutableList<SpotlightArticlesBean>?
-) : BaseQuickAdapter<SpotlightArticlesBean, BaseViewHolder>(layoutResId, data), LoadMoreModule {
+) : LBaseQuickAdapter<SpotlightArticlesBean, BaseViewHolder>(layoutResId, data) {
     override fun convert(
         holder: BaseViewHolder,
         item: SpotlightArticlesBean
@@ -57,9 +56,5 @@ class PixiVisionAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         animationEnable = true
         setAnimationWithDefault(AnimationType.ScaleIn)
-    }
-
-    fun loadMoreFail() {
-        this.loadMoreModule.loadMoreFail()
     }
 }

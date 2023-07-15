@@ -98,7 +98,7 @@ class IllustratorFragment : BaseFragment() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
-        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+        userShowAdapter.setOnLoadMoreListener {
             viewModel.onLoadMore()
         }
         binding.swiperefreshIllustrator.setOnRefreshListener {
@@ -147,10 +147,10 @@ class IllustratorFragment : BaseFragment() {
 
     private fun nextUrl(it: String?) {
         if (it != null) {
-            userShowAdapter.loadMoreModule.loadMoreComplete()
+            userShowAdapter.loadMoreComplete()
         }
         else {
-            userShowAdapter.loadMoreModule.loadMoreEnd()
+            userShowAdapter.loadMoreEnd()
         }
     }
 

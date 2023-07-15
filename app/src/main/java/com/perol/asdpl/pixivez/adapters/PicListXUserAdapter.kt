@@ -35,7 +35,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
@@ -50,7 +49,7 @@ import com.perol.asdpl.pixivez.ui.NiceImageView
  */
 class PicListXUserAdapter(
     layoutResId: Int, data: List<Illust>?, filter: IllustFilter
-) : PicListXAdapter(layoutResId, data, filter), LoadMoreModule {
+) : PicListXAdapter(layoutResId, data, filter) {
 
     override fun viewPicsOptions(view: View, illust: Illust): Bundle {
         return viewOptions(this, view, illust)

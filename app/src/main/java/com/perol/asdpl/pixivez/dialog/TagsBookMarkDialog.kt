@@ -24,82 +24,63 @@
  */
 package com.perol.asdpl.pixivez.dialog
 
-import android.app.Dialog
-import android.os.Bundle
-import android.widget.EditText
-import android.widget.ImageButton
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsAdapter
+import com.perol.asdpl.pixivez.databinding.DialogBookmarkBinding
 import com.perol.asdpl.pixivez.responses.TagsBean
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 
-class TagsBookMarkDialog : DialogFragment() {
-    companion object;
+class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var editText: EditText
     private lateinit var pictureXViewModel: PictureXViewModel
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return requireActivity().let {
-            val builder = MaterialAlertDialogBuilder(it)
-            val view = layoutInflater.inflate(R.layout.dialog_bookmark, null)
-            val tagsAdapter = TagsAdapter(R.layout.view_tags_item, null)
-            recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView).apply {
-                layoutManager = LinearLayoutManager(activity)
-                adapter = tagsAdapter
-            }
-            editText = view.findViewById(R.id.edittext)
-            view.findViewById<ImageButton>(R.id.add).setOnClickListener {
-                if (editText.text.isNotBlank() && pictureXViewModel.tags.value != null) {
-                    tagsAdapter.addData(
-                        0,
-                        TagsBean(
-                            is_registered = true,
-                            name = editText.text.toString()
-                        )
+    override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
+        val tagsAdapter = TagsAdapter(R.layout.view_tags_item, null)
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = tagsAdapter
+        }
+        binding.add.setOnClickListener {
+            if (!(binding.editText.text.isNullOrBlank() || pictureXViewModel.tags.value == null)) {
+                tagsAdapter.addData(
+                    0,
+                    TagsBean(
+                        name = binding.editText.text.toString(),
+                        is_registered = true,
                     )
-                    editText.text.clear()
-                    recyclerView.smoothScrollToPosition(0)
-                }
-            }
-            pictureXViewModel =
-                ViewModelProvider(requireParentFragment())[PictureXViewModel::class.java]
-            pictureXViewModel.illustDetail.value?.let {
-                tagsAdapter.setNewInstance(
-                    it.tags.map {
-                        TagsBean(
-                            is_registered = false,
-                            name = it.toString()
-                        )
-                    }.toMutableList()
                 )
+                binding.editText.text!!.clear()
+                binding.recyclerView.smoothScrollToPosition(0)
             }
-            pictureXViewModel.tags.observe(this) {
-                tagsAdapter.setNewInstance(it.tags.toMutableList())
-            }
-            pictureXViewModel.fabOnLongClick()
-            builder
-                .setView(view)
-                .setNegativeButton(
-                    android.R.string.cancel
-                ) { dialog, id ->
-                }
-                .setPositiveButton(R.string.bookmark_public) { _, _ ->
-                    // if (pictureXViewModel.tags.value != null)
-                    pictureXViewModel.onDialogClick(false)
-                }
-                .setNeutralButton(R.string.bookmark_private) { _, _ ->
-                    // if (pictureXViewModel.tags.value != null)
-                    pictureXViewModel.onDialogClick(true)
-                }
-            // Create the AlertDialog object and return it
-            builder.create()
+        }
+        pictureXViewModel =
+            ViewModelProvider(requireParentFragment())[PictureXViewModel::class.java]
+        pictureXViewModel.illustDetail.value?.let {
+            tagsAdapter.setNewInstance(
+                it.tags.map {
+                    TagsBean(
+                        name = it.toString(),
+                        is_registered = false,
+                    )
+                }.toMutableList()
+            )
+        }
+        pictureXViewModel.tags.observe(this) {
+            tagsAdapter.setNewInstance(it.tags.toMutableList())
+        }
+        pictureXViewModel.fabOnLongClick()
+        // Create the AlertDialog object and return it
+        builder
+        .setNegativeButton(android.R.string.cancel) { dialog, id -> }
+        .setPositiveButton(R.string.bookmark_public) { _, _ ->
+            // if (pictureXViewModel.tags.value != null)
+            pictureXViewModel.onDialogClick(false)
+        }
+        .setNeutralButton(R.string.bookmark_private) { _, _ ->
+            // if (pictureXViewModel.tags.value != null)
+            pictureXViewModel.onDialogClick(true)
         }
     }
 }

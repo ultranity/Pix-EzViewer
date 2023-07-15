@@ -168,7 +168,7 @@ class HelloMMyFragment : BaseFragment() {
         binding.swiperefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(restrict)
         }
-        picListAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
         val headerView = layoutInflater.inflate(R.layout.header_mmy, null)

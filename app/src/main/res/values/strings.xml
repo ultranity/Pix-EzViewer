@@ -86,7 +86,7 @@
     <string name="pixel">分辨率</string>
     <string name="view">查看</string>
     <string name="bookmark">收藏</string>
-    <string name="viewcomment">查看评论</string>
+    <string name="view_comment">查看评论</string>
     <string name="aboutpic">相关图片</string>
     <string name="illustid">插画ID</string>
     <string name="searchhistory">搜索历史（长按删除）</string>

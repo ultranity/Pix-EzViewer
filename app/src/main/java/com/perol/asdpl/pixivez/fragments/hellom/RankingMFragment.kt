@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.PicListAdapter
 import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
+import com.perol.asdpl.pixivez.databinding.HeaderMdynamicsBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
@@ -139,14 +140,14 @@ class RankingMFragment : BaseFragment() {
             null,
             filter
         )
-        val headerView = layoutInflater.inflate(R.layout.header_mdynamics, null)
-        headerView.findViewById<SwitchMaterial>(R.id.swith_hidebookmarked).apply {
+        val headerBinding = HeaderMdynamicsBinding.inflate(layoutInflater)
+        headerBinding.swithHidebookmarked.apply {
             isChecked = sharemodel.hideBookmarked.value == 1
             setOnCheckedChangeListener { compoundButton, state ->
                 sharemodel.hideBookmarked.value = if (state) 1 else 0
             }
         }
-        headerView.findViewById<Spinner>(R.id.spinner_CoM).onItemSelectedListener =
+        headerBinding.spinnerCoM.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -160,7 +161,7 @@ class RankingMFragment : BaseFragment() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         picListAdapter.apply {
-            addHeaderView(headerView)
+            addHeaderView(headerBinding.root)
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             headerWithEmptyEnable = true
             footerWithEmptyEnable = true
@@ -178,7 +179,7 @@ class RankingMFragment : BaseFragment() {
         binding.swiperefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(mode!!, picDate)
         }
-        picListAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
         binding.recyclerview.apply {

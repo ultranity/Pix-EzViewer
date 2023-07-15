@@ -43,6 +43,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.dinuscxj.progressbar.CircleProgressBar
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.ViewPagerZoomBinding
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor
 import com.perol.asdpl.pixivez.networks.ProgressListener
 import com.perol.asdpl.pixivez.responses.Illust
@@ -94,11 +95,9 @@ class ZoomPagerAdapter(
             }
         }
         val layoutInflater = LayoutInflater.from(context)
-        val view = layoutInflater.inflate(R.layout.view_pager_zoom, container, false)
-        val photoView = view.findViewById<SubsamplingScaleImageView>(R.id.photoview_zoom)
-        photoView.isEnabled = true
-        val progressBar = view.findViewById<CircleProgressBar>(R.id.progressbar_origin)
-        // val buttonOrigin = view.findViewById<MaterialButton>(R.id.button_origin)
+        val binding = ViewPagerZoomBinding.inflate(layoutInflater, container, false) 
+        binding.photoviewZoom.isEnabled = true
+        // val buttonOrigin = binding.MaterialButton.button
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val dm = DisplayMetrics()
         wm.defaultDisplay.getMetrics(dm)
@@ -139,7 +138,7 @@ class ZoomPagerAdapter(
                     }
                 }
             )
-        photoView.setOnTouchListener { v, event ->
+        binding.photoviewZoom.setOnTouchListener { v, event ->
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
 
@@ -155,7 +154,7 @@ class ZoomPagerAdapter(
                             }
                             override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                                 // Log.d("origin","load preview")
-                                photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                                binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                                 resourceFile = resource
                             }
                         })
@@ -165,19 +164,19 @@ class ZoomPagerAdapter(
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                     // Log.d("origin","from cache")
                     // buttonOrigin.visibility =View.GONE
-                    photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                    binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
-                    progressBar.visibility = View.GONE
+                    binding.progressbarOrigin.visibility = View.GONE
                 }
             })
         // buttonOrigin.setOnClickListener {
         //    buttonOrigin.visibility =View.GONE
-        progressBar.visibility = View.VISIBLE
+        binding.progressbarOrigin.visibility = View.VISIBLE
         ProgressInterceptor.addListener(
             origin!![position],
             object : ProgressListener {
                 override fun onProgress(progress: Int) {
-                    progressBar.progress = progress
+                    binding.progressbarOrigin.progress = progress
                 }
             }
         )
@@ -186,16 +185,16 @@ class ZoomPagerAdapter(
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    photoView.setImage(ImageSource.uri(Uri.fromFile(resource)))
+                    binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
-                    progressBar.visibility = View.GONE
+                    binding.progressbarOrigin.visibility = View.GONE
                     // Log.d("origin","load from net")
                     ProgressInterceptor.removeListener(origin!![position])
                 }
             })
         // }
-        container.addView(view)
-        return view
+        container.addView(binding.root)
+        return binding.root
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

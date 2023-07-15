@@ -29,8 +29,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.module.LoadMoreModule
+
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.EmojiUtil
@@ -40,7 +39,7 @@ import com.perol.asdpl.pixivez.responses.IllustCommentsResponse.CommentsBean
 class CommentAdapter(
     layoutResId: Int,
     data: MutableList<CommentsBean>?
-) : BaseQuickAdapter<CommentsBean, BaseViewHolder>(layoutResId, data), LoadMoreModule {
+) : LBaseQuickAdapter<CommentsBean, BaseViewHolder>(layoutResId, data) {
     override fun convert(holder: BaseViewHolder, item: CommentsBean) {
         holder.setText(R.id.commentdate, item.date)
         if (item.parent_comment.user != null) {

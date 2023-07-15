@@ -27,45 +27,29 @@ package com.perol.asdpl.pixivez.dialog
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.ToggleButton
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
 import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
 import com.perol.asdpl.pixivez.viewmodel.generateDateString
 import java.util.*
 
-class SearchSectionDialog : DialogFragment() {
-    fun show(fragmentManager: FragmentManager) {
-        show(fragmentManager, "LongHoldDialogFragment")
-    }
+class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
 
     private val tms: Calendar = Calendar.getInstance()
     val thisMonth01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
     val halfYear01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"
 
     @SuppressLint("SetTextI18n")
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val word = arguments?.getString("word", "")
-        val builder = MaterialAlertDialogBuilder(requireActivity())
-        val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(
-            R.layout.dialog_searchsection,
-            null
-        )
         val viewModel =
             ViewModelProvider(requireParentFragment())[IllustfragmentViewModel::class.java]
         var searchTargeti = viewModel.searchTarget.value
-        val first = view.findViewById<TabLayout>(R.id.tablayout_search_target).apply {
+        binding.tablayoutSearchTarget.apply {
             clearOnTabSelectedListeners()
             searchTargeti?.let { getTabAt(it)?.select() }
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -81,8 +65,7 @@ class SearchSectionDialog : DialogFragment() {
             })
         }
         var sorti = viewModel.sort.value
-        val second = view.findViewById<TabLayout>(R.id.tablayout_sort)
-            .apply {
+        binding.tablayoutSort.apply {
                 clearOnTabSelectedListeners()
                 sorti?.let { getTabAt(it)?.select() }
                 addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -96,20 +79,15 @@ class SearchSectionDialog : DialogFragment() {
                 })
             }
 
-        val toggleButton = view.findViewById<ToggleButton>(R.id.toggle).apply {
+        binding.toggle.apply {
             setOnCheckedChangeListener { buttonView, isChecked ->
-                view.findViewById<LinearLayout>(R.id.pick_date_layout).visibility = if (isChecked) {
-                    View.VISIBLE
-                }
-                else {
-                    View.GONE
-                }
+                binding.pickDateLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
             }
             isChecked = viewModel.endDate.value != null && viewModel.startDate.value != null
         }
         var hideBookmarked = viewModel.hideBookmarked.value!!
-        val toggleShowTitle = view.findViewById<TextView>(R.id.toggleShowTitle)
-        val toggleShow = view.findViewById<ToggleButton>(R.id.toggleShow).apply {
+        val toggleShowTitle = binding.toggleShowTitle
+        binding.toggleShow.apply {
             isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
                 if (viewModel.pre.getBoolean("enableonlybookmarked", false)) {
@@ -128,7 +106,7 @@ class SearchSectionDialog : DialogFragment() {
                 }
             }
         }
-        val button = view.findViewById<Button>(R.id.pick_button).apply {
+        binding.pickButton.apply {
             var calendar = Calendar.getInstance()
             if (viewModel.startDate.value != null) {
                 calendar = viewModel.startDate.value!!
@@ -155,7 +133,7 @@ class SearchSectionDialog : DialogFragment() {
                 dateDialog.show()
             }
         }
-        view.findViewById<Button>(R.id.pick_end_button).apply {
+        binding.pickEndButton.apply {
             var calendar = Calendar.getInstance()
             if (viewModel.endDate.value != null) {
                 calendar = viewModel.endDate.value!!
@@ -184,10 +162,9 @@ class SearchSectionDialog : DialogFragment() {
             }
         }
 
-        builder.setView(view)
-        builder.setNegativeButton(android.R.string.cancel) { p0, p1 ->
-        }
-        builder.setPositiveButton(android.R.string.ok) { p0, p1 ->
+        builder
+        .setNegativeButton(android.R.string.cancel) { p0, p1 -> }
+        .setPositiveButton(android.R.string.ok) { p0, p1 ->
             viewModel.hideBookmarked.value = hideBookmarked
             viewModel.sort.value = sorti
             viewModel.searchTarget.value = searchTargeti
@@ -195,7 +172,5 @@ class SearchSectionDialog : DialogFragment() {
                 viewModel.firstSetData(word)
             }
         }
-
-        return builder.create()
     }
 }

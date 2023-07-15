@@ -285,7 +285,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             "me" -> {
                 try {
                     val binding = DialogMeBinding.inflate(layoutInflater)
-                    val dialog = MaterialDialog(requireContext(), BottomSheet()).show {
+                    MaterialDialog(requireContext(), BottomSheet()).show {
                         cornerRadius(16f)
                         customView(view = binding.root)
                     }

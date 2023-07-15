@@ -206,6 +206,13 @@ dependencies {
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
     implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
 
+    //val ViewBindingKTXVersion = "2.1.0"
+    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTXVersion")
+    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-nonreflection-ktx:$ViewBindingKTXVersion")
+    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:$ViewBindingKTXVersion")
+    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTXVersion")
+
+
     //implementation("androidx.annotation:annotation:1.5.0")
     //implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
 
@@ -313,9 +320,9 @@ dependencies {
     //"buglyImplementation"("com.tencent.bugly:crashreport_upgrade:1.6.1")
     //"buglyImplementation"("com.github.supersu-man:apkupdater-library:v2.0.0")
 
-    //debugImplementation("io.github.knight-zxw:blockcanary:0.0.4")
-    //debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.4")
-    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.9.1")
+    debugImplementation("io.github.knight-zxw:blockcanary:0.0.5")
+    debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.5")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     //debugImplementation("com.bytedance.tools.codelocator:codelocator-core:2.0.0")
     //debugImplementation("com.bytedance.tools.codelocator:codelocator-lancet-all:2.0.0")

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <com.perol.asdpl.pixivez.ui.NiceImageView
-            android:id="@+id/imageViewUser_picX"
+            android:id="@+id/imageview_user_picX"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_alignParentStart="true"
@@ -28,7 +28,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@id/imageViewUser_picX"
+            android:layout_toEndOf="@id/imageview_user_picX"
             android:text="@{illust.title}"
             android:transitionName="title"
             android:textIsSelectable="true"
@@ -41,7 +41,7 @@
             android:layout_below="@id/textView_title"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@id/imageViewUser_picX"
+            android:layout_toEndOf="@id/imageview_user_picX"
             android:text="@{illust.user.name}"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
@@ -54,7 +54,7 @@
             android:layout_below="@id/textView_user_name"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@id/imageViewUser_picX"
+            android:layout_toEndOf="@id/imageview_user_picX"
             android:text="@{illust.create_date}"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -174,7 +174,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.zhy.view.flowlayout.TagFlowLayout
-        android:id="@+id/tagflowlayout"
+        android:id="@+id/tagFlowlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp" />
@@ -205,12 +205,12 @@
         android:text="@string/translate"
         />
     <TextView
-        android:id="@+id/textview_viewcomment"
+        android:id="@+id/textview_view_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="@string/viewcomment" />
+        android:text="@string/view_comment" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -20,9 +20,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnLoadMoreListener
-import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
@@ -47,7 +44,7 @@ abstract class PicListAdapter(
     data: List<Illust>?,
     val illustFilter: IllustFilter
 ) :
-    BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()), LoadMoreModule {
+    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()) {
 
     var colorPrimary: Int = R.color.colorPrimary
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
@@ -63,22 +60,6 @@ abstract class PicListAdapter(
         if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
             layoutParams.isFullSpan = isFullSpan
         }
-    }
-
-    fun loadMoreEnd() {
-        this.loadMoreModule.loadMoreEnd()
-    }
-
-    fun loadMoreComplete() {
-        this.loadMoreModule.loadMoreComplete()
-    }
-
-    fun loadMoreFail() {
-        this.loadMoreModule.loadMoreFail()
-    }
-
-    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener) {
-        this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 
     private fun setAction(CollectMode: Int) {

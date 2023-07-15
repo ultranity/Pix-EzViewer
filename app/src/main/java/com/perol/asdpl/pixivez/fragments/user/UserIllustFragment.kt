@@ -77,7 +77,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     private fun initView() {
-        picListAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
         binding.refreshlayout.setOnRefreshListener {
@@ -129,7 +129,7 @@ class UserIllustFragment : BaseFragment() {
                 picListAdapter.loadMoreComplete()
             }
             else {
-                picListAdapter.loadMoreModule.loadMoreFail()
+                picListAdapter.loadMoreFail()
             }
         }
     }

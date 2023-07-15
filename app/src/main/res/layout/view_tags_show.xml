@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tablayout_tagsshow"
+        android:id="@+id/tablayout"
         android:layout_width="match_parent"
         app:tabIndicatorFullWidth="false"
         android:layout_height="wrap_content">
@@ -24,8 +24,7 @@
         android:layout_height="50dp">
 
         <TextView
-
-            android:id="@+id/textview_tagname"
+            android:id="@+id/textview_tag_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -34,12 +33,12 @@
             android:layout_marginTop="8dp"
             android:text="ALL"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textView_tagnum"
+            app:layout_constraintEnd_toStartOf="@+id/textview_tag_num"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView_tagnum"
+            android:id="@+id/textview_tag_num"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

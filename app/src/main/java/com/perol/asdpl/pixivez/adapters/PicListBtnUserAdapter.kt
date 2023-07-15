@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.adapters
 
 import android.os.Bundle
 import android.view.View
-import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.IllustFilter
@@ -42,7 +41,7 @@ class PicListBtnUserAdapter(
     data: List<Illust>?,
     filter: IllustFilter
 ) :
-    PicListBtnAdapter(layoutResId, data, filter), LoadMoreModule {
+    PicListBtnAdapter(layoutResId, data, filter) {
 
     override fun viewPicsOptions(view: View, illust: Illust): Bundle {
         return PicListXUserAdapter.viewOptions(this, view, illust)

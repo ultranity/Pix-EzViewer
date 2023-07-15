@@ -87,7 +87,6 @@ import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
-import com.zhy.view.flowlayout.TagFlowLayout
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -200,16 +199,6 @@ class PictureXAdapter(
         var binding: ViewPicturexDetailBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
-        private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
-        private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
-        private val viewCommentTextView = itemView.findViewById<TextView>(R.id.textview_viewcomment)
-        private val imageViewUser = itemView.findViewById<NiceImageView>(R.id.imageViewUser_picX)
-        private val imageButtonDownload =
-            itemView.findViewById<ImageButton>(R.id.imagebutton_download)
-        private val bookmarkedUserNum =
-            itemView.findViewById<TextView>(R.id.bookmarked_user_num)
-
         fun updateWithPage(
             mContext: Context,
             illust: Illust,
@@ -219,7 +208,7 @@ class PictureXAdapter(
         ) {
             //binding.illust = illust
             binding.apply {
-                loadUserImage(imageViewUserPicX, illust.user.profile_image_urls.medium)
+                loadUserImage(binding.imageviewUserPicX, illust.user.profile_image_urls.medium)
 
                 textViewTitle.text = illust.title
                 textViewUserName.text = illust.user.name
@@ -235,33 +224,34 @@ class PictureXAdapter(
             val colorPrimaryDark = ThemeUtil.getColorPrimaryDark(mContext)
             val badgeTextColor = ThemeUtil.getColorHighlight(mContext)
             if (illust.user.is_followed) {
-                imageViewUser.setBorderColor(badgeTextColor)
+                binding.imageviewUserPicX.setBorderColor(badgeTextColor)
             } 
             else {
-                imageViewUser.setBorderColor(colorPrimary)
+                binding.imageviewUserPicX.setBorderColor(colorPrimary)
             }
-            imageViewUser.setOnLongClickListener {
+            binding.imageviewUserPicX.setOnLongClickListener {
                 mUserPicLongClick.invoke()
                 true
             }
-            imageViewUser.setOnClickListener {
+            binding.imageviewUserPicX.setOnClickListener {
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         mContext as Activity,
-                        Pair(imageViewUser, "userimage")
+                        Pair(binding.imageviewUserPicX, "userimage")
                     ).toBundle()
                 } else null
                 UserMActivity.start(mContext, illust.user, options)
             }
             binding.textviewCaption.text = Html.fromHtml(illust.caption.ifBlank { "~" })
-            Linkify.addLinks(captionTextView, Linkify.WEB_URLS)
-            Log.d("url", captionTextView.urls.toString())
-            captionTextView.movementMethod = LinkMovementMethod.getInstance()
-            viewCommentTextView.text = "${viewCommentTextView.text}(${illust.total_comments})"
-            viewCommentTextView.setOnClickListener {
+            Linkify.addLinks(binding.textviewCaption, Linkify.WEB_URLS)
+            Log.d("url", binding.textviewCaption.urls.toString())
+            binding.textviewCaption.movementMethod = LinkMovementMethod.getInstance()
+            //TODO: get real comment count
+            // binding.textviewViewComment.text = "${binding.textviewViewComment.text}(${illust.total_comments})"
+            binding.textviewViewComment.setOnClickListener {
                 mViewCommentListen.invoke()
             }
-            bookmarkedUserNum.setOnClickListener {
+            binding.bookmarkedUserNum.setOnClickListener {
                 mBookmarkedUserListen.invoke()
             }
             // google translate app btn click listener
@@ -287,17 +277,17 @@ class PictureXAdapter(
                 }
             }
             if (!isGoogleTranslateEnabled) {
-                btnTranslate.visibility = View.GONE
+                binding.btnTranslate.visibility = View.GONE
             }
             else {
-                btnTranslate.setOnClickListener {
+                binding.btnTranslate.setOnClickListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         intent.action = Intent.ACTION_PROCESS_TEXT
-                        intent.putExtra(Intent.EXTRA_PROCESS_TEXT, captionTextView.text.toString())
+                        intent.putExtra(Intent.EXTRA_PROCESS_TEXT, binding.textviewCaption.text.toString())
                     }
                     else {
                         intent.action = Intent.ACTION_SEND
-                        intent.putExtra(Intent.EXTRA_TEXT, captionTextView.text.toString())
+                        intent.putExtra(Intent.EXTRA_TEXT, binding.textviewCaption.text.toString())
                     }
                     intent.component = ComponentName(
                         componentPackageName,
@@ -307,7 +297,7 @@ class PictureXAdapter(
                 }
             }
 
-            tagFlowLayout.apply {
+            binding.tagFlowlayout.apply {
                 adapter = object : TagAdapter<Tag>(illust.tags) {
                     @SuppressLint("SetTextI18n")
                     override fun getView(parent: FlowLayout, position: Int, t: Tag): View {
@@ -359,11 +349,11 @@ class PictureXAdapter(
                 mContext.startActivity(Intent.createChooser(textIntent, mContext.getString(R.string.share)))
             }
             if (FileUtil.isDownloaded(illust)) {
-                imageButtonDownload.drawable.setTint(badgeTextColor)
+                binding.imagebuttonDownload.drawable.setTint(badgeTextColor)
             }
             if (illust.type == "ugoira") {
                 // gif
-                imageButtonDownload.setOnClickListener {
+                binding.imagebuttonDownload.setOnClickListener {
                     MaterialAlertDialogBuilder(mContext as Activity)
                         .setTitle(R.string.download)
                         .setPositiveButton(R.string.savefirst) { _, _ ->
@@ -372,12 +362,12 @@ class PictureXAdapter(
                 }
             }
             else {
-                imageButtonDownload.setOnClickListener {
-                    imageButtonDownload.drawable.setTint(colorPrimaryDark)
+                binding.imagebuttonDownload.setOnClickListener {
+                    binding.imagebuttonDownload.drawable.setTint(colorPrimaryDark)
                     Works.imageDownloadAll(illust)
                 }
             }
-            imageButtonDownload.setOnLongClickListener {
+            binding.imagebuttonDownload.setOnLongClickListener {
                 // show detail of illust
                 val detailstring = InteractionUtil.toDetailString(illust, false)
                 MaterialAlertDialogBuilder(mContext as Activity)

@@ -75,7 +75,7 @@ class SearchUsersListFragment : LazyFragment() {
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
             addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
         }
-        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+        userShowAdapter.setOnLoadMoreListener {
                 if (userViewModel.nextUrl.value != null) {
                     userViewModel.getNextUsers(userViewModel.nextUrl.value!!)
                 }
@@ -121,15 +121,15 @@ class SearchUsersListFragment : LazyFragment() {
                 userShowAdapter.setNewInstance(it.user_previews)
             }
             else {
-                userShowAdapter.loadMoreModule.loadMoreFail()
+                userShowAdapter.loadMoreFail()
             }
         }
         userViewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.loadMoreModule.loadMoreComplete()
+                userShowAdapter.loadMoreComplete()
             }
             else {
-                userShowAdapter.loadMoreModule.loadMoreEnd()
+                userShowAdapter.loadMoreEnd()
             }
         }
     }

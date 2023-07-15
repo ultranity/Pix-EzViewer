@@ -87,10 +87,10 @@ class PixivsionActivity : RinkActivity() {
         viewmodel.nextPixivisonUrl.observe(this) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
-                    pixiVisionAdapter.loadMoreModule.loadMoreEnd()
+                    pixiVisionAdapter.loadMoreEnd()
                 }
                 else {
-                    pixiVisionAdapter.loadMoreModule.loadMoreComplete()
+                    pixiVisionAdapter.loadMoreComplete()
                 }
             }
         }

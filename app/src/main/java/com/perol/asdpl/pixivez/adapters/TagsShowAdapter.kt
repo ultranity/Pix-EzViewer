@@ -24,17 +24,15 @@
 
 package com.perol.asdpl.pixivez.adapters
 
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.module.LoadMoreModule
+
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.responses.BookMarkTagsResponse.BookmarkTagsBean
 
 class TagsShowAdapter(layoutResId: Int, data: List<BookmarkTagsBean>) :
-    BaseQuickAdapter<BookmarkTagsBean, BaseViewHolder>(layoutResId, data.toMutableList()), LoadMoreModule {
-
+    LBaseQuickAdapter<BookmarkTagsBean, BaseViewHolder>(layoutResId, data.toMutableList()) {
     override fun convert(holder: BaseViewHolder, item: BookmarkTagsBean) {
-        holder.setText(R.id.textview_tagname, item.name)
-            .setText(R.id.textView_tagnum, item.count.toString())
+        holder.setText(R.id.textview_tag_name, item.name)
+            .setText(R.id.textview_tag_num, item.count.toString())
     }
 }

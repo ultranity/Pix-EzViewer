@@ -65,7 +65,7 @@
     <string name="pixel">pixel</string>
     <string name="view">views</string>
     <string name="bookmark">marks</string>
-    <string name="viewcomment">show comment</string>
+    <string name="view_comment">show comment</string>
     <string name="aboutpic">relative</string>
     <string name="illustid">illust id</string>
     <string name="searchhistory">search history (long press to delete)</string>

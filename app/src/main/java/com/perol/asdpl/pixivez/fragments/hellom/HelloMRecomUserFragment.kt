@@ -62,7 +62,7 @@ class HelloMRecomUserFragment : BaseFragment() {
                 userShowAdapter.addData(it)
             }
             else {
-                userShowAdapter.loadMoreModule.loadMoreFail()
+                userShowAdapter.loadMoreFail()
             }
         }
         viewmodel.data.observe(viewLifecycleOwner) {
@@ -70,16 +70,16 @@ class HelloMRecomUserFragment : BaseFragment() {
                 userShowAdapter.setList(it)
             }
             else {
-                userShowAdapter.loadMoreModule.loadMoreFail()
+                userShowAdapter.loadMoreFail()
             }
             binding.swipe.isRefreshing = false
         }
         viewmodel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.loadMoreModule.loadMoreComplete()
+                userShowAdapter.loadMoreComplete()
             }
             else {
-                userShowAdapter.loadMoreModule.loadMoreEnd()
+                userShowAdapter.loadMoreEnd()
             }
         }
     }
@@ -95,7 +95,7 @@ class HelloMRecomUserFragment : BaseFragment() {
             // FlexboxLayoutManager(requireContext(), FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
-        userShowAdapter.loadMoreModule.setOnLoadMoreListener {
+        userShowAdapter.setOnLoadMoreListener {
             viewmodel.onLoadMore()
         }
         binding.swipe.setOnRefreshListener {

@@ -19,7 +19,7 @@
             app:endIconDrawable="@drawable/ic_add_white_24dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext"
+                android:id="@+id/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"

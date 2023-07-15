@@ -151,10 +151,10 @@ class HelloMRecommendFragment : BaseFragment() {
         pixivisionModel.nextPixivisonUrl.observe(viewLifecycleOwner) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
-                    pixiVisionAdapter.loadMoreModule.loadMoreEnd()
+                    pixiVisionAdapter.loadMoreEnd()
                 }
                 else {
-                    pixiVisionAdapter.loadMoreModule.loadMoreComplete()
+                    pixiVisionAdapter.loadMoreComplete()
                 }
             }
         }
@@ -193,7 +193,7 @@ class HelloMRecommendFragment : BaseFragment() {
             viewmodel.onRefreshListener()
             pixivisionModel.onRefreshListener()
         }
-        picListAdapter.loadMoreModule.setOnLoadMoreListener {
+        picListAdapter.setOnLoadMoreListener {
             viewmodel.onLoadMorePicRequested()
         }
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
@@ -213,7 +213,7 @@ class HelloMRecommendFragment : BaseFragment() {
         val autoLoop = PxEZApp.instance.pre
             .getBoolean("banner_auto_loop", true)
         if (!autoLoop) {
-            pixiVisionAdapter.loadMoreModule.setOnLoadMoreListener {
+            pixiVisionAdapter.setOnLoadMoreListener {
                 pixivisionModel.onLoadMoreBannerRequested()
             }
         }

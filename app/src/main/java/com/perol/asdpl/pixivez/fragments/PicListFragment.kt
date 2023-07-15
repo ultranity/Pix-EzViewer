@@ -94,7 +94,7 @@ open class PicListFragment : Fragment() {
             if (it != null) {
                 picListAdapter.addData(it)
             } else {
-                picListAdapter.loadMoreModule.loadMoreFail()
+                picListAdapter.loadMoreFail()
             }
         }
         viewModel.nextUrl.observe(viewLifecycleOwner) {

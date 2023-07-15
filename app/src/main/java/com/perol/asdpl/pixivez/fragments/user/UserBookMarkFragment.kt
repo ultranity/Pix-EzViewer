@@ -101,7 +101,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             adapter = picItemAdapter
             addItemDecoration(GridItemDecoration())
         }
-        picItemAdapter.loadMoreModule.setOnLoadMoreListener {
+        picItemAdapter.setOnLoadMoreListener {
             viewModel.onLoadMoreListener()
         }
 

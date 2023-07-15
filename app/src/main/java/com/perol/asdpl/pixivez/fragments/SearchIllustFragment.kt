@@ -172,7 +172,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 }
             }.show(childFragmentManager)
         }
-        searchIllustAdapter.loadMoreModule.setOnLoadMoreListener {
+        searchIllustAdapter.setOnLoadMoreListener {
             viewModel.onLoadMoreListen()
         }
         binding.swiperefreshLayout.setOnRefreshListener {

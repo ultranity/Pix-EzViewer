@@ -32,7 +32,7 @@
         android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="16sp"/>
-    <com.shehuan.niv.NiceImageView
+    <com.perol.asdpl.pixivez.ui.NiceImageView
         android:id="@+id/imageview_user"
         android:layout_width="34dp"
         android:layout_height="34dp"
@@ -46,7 +46,7 @@
         app:border_width="2dp"
         app:is_circle="true" />
 
-    <com.shehuan.niv.NiceImageView
+    <com.perol.asdpl.pixivez.ui.NiceImageView
         android:id="@+id/imageview_like"
         android:transitionName="iconlike"
         android:layout_width="40dp"

@@ -41,7 +41,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"/>
 
-        <com.shehuan.niv.NiceImageView
+        <com.perol.asdpl.pixivez.ui.NiceImageView
             android:id="@+id/imageview_like"
             android:transitionName="iconlike"
             android:src="@drawable/ic_action_heart"

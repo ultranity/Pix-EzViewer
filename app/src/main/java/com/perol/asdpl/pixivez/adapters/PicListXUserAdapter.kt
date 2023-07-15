@@ -43,7 +43,7 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.shehuan.niv.NiceImageView
+import com.perol.asdpl.pixivez.ui.NiceImageView
 
 /**
  *  simple Adapter for image item with user imageView and heart icon

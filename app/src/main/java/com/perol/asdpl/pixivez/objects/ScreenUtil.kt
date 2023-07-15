@@ -36,6 +36,14 @@ object ScreenUtil {
     }
 
     @JvmStatic
+    fun dp2px(dpValue: Int): Int {
+        return (
+                0.5f + dpValue * Resources.getSystem()
+                    .displayMetrics.density
+                ).toInt()
+    }
+
+    @JvmStatic
     fun px2dp(pxValue: Int): Float {
         return pxValue / Resources.getSystem().displayMetrics.density
     }

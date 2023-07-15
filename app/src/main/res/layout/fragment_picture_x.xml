@@ -45,7 +45,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <com.shehuan.niv.NiceImageView
+                <com.perol.asdpl.pixivez.ui.NiceImageView
                     android:id="@+id/imageViewUser_picX"
                     userUrl="@{illust.user.profile_image_urls.medium}"
                     android:layout_width="60dp"

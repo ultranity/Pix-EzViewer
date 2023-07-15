@@ -79,10 +79,10 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.ui.NiceImageView
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
-import com.shehuan.niv.NiceImageView
 import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter

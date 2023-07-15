@@ -32,7 +32,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.responses.Illust
-import com.shehuan.niv.NiceImageView
+import com.perol.asdpl.pixivez.ui.NiceImageView
 
 /**
  *  simple Adapter for image item with user imageView and save/like button

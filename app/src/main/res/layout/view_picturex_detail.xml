@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.shehuan.niv.NiceImageView
+            <com.perol.asdpl.pixivez.ui.NiceImageView
                 android:id="@+id/imageViewUser_picX"
                 userUrl="@{illust.user.profile_image_urls.medium}"
                 android:layout_width="64dp"

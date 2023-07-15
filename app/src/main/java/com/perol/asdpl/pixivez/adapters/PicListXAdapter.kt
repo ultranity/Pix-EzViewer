@@ -35,7 +35,7 @@ import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.shehuan.niv.NiceImageView
+import com.perol.asdpl.pixivez.ui.NiceImageView
 
 fun NiceImageView.setLike(status: Boolean) {
     if (status) {

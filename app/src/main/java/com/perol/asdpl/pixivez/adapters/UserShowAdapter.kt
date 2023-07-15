@@ -50,7 +50,7 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.shehuan.niv.NiceImageView
+import com.perol.asdpl.pixivez.ui.NiceImageView
 
 // TODO: fling optimize
 class UserShowAdapter(layoutResId: Int) :

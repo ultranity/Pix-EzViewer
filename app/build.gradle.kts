@@ -199,7 +199,7 @@ dependencies {
     //implementation("io.github.youth5201314:banner:2.2.2")
     implementation("com.github.beksomega:loopinglayout:0.5.0")
     implementation("com.dinuscxj:circleprogressbar:1.3.0")
-    implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project
+    //implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project
     implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
 

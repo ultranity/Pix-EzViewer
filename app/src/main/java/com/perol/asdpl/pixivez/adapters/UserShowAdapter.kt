@@ -113,8 +113,8 @@ class UserShowAdapter(layoutResId: Int) :
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
                     Pair(mainimage, "mainimage"),
-                    Pair(username, "username"),
-                    Pair(userImage, "userimage")
+                    //Pair(username, "username"),
+                    //Pair(userImage, "userimage")
                 ).toBundle()
             } else null
             ContextCompat.startActivity(context, intent, options)

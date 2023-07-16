@@ -43,7 +43,7 @@ class RubySSLSocketFactory : SSLSocketFactory() {
         if (autoClose) socket.close()
         val sslSocket = (getDefault().createSocket(address, port) as SSLSocket).apply { enabledProtocols = supportedProtocols }
         val sslSession = sslSocket.session
-        Log.i(
+        Log.d(
             "!",
             "$socket\nAddress: $address Host: ${address.hostAddress}, Protocol: ${sslSession.protocol}, PeerHost: ${sslSession.peerHost}, CipherSuite: ${sslSession.cipherSuite}."
         )

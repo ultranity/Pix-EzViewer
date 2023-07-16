@@ -40,7 +40,6 @@
         android:alpha="0.8"
         android:background="@drawable/round_ripple"
         tools:src="@mipmap/ic_noimage"
-        android:transitionName="userimage"
         android:translationX="-8dp"
         app:border_color="@color/transparent"
         app:border_width="2dp"
@@ -48,7 +47,6 @@
 
     <com.perol.asdpl.pixivez.ui.NiceImageView
         android:id="@+id/imageview_like"
-        android:transitionName="iconlike"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="2dp"

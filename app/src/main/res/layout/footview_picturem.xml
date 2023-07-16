@@ -77,7 +77,6 @@
                 android:text="@{illust.user.name}"
                 android:textColor="?attr/colorPrimaryDark"
                 android:textIsSelectable="true"
-                android:transitionName="picuser"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/frameLayout2"
                 app:layout_constraintTop_toTopOf="parent" />

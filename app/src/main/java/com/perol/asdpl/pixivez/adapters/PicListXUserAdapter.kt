@@ -139,7 +139,7 @@ class PicListXUserAdapter(
                 ActivityOptions.makeSceneTransitionAnimation(
                     picListAdapter.context as Activity,
                     Pair(mainimage, "mainimage"),
-                    Pair(userImage, "userimage")
+                    //Pair(userImage, "userimage")
                 ).toBundle()
             }
             return options

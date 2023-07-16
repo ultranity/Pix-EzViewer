@@ -57,7 +57,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="1dp"
-                android:transitionName="userimage"
                 app:border_color='?attr/colorPrimary'
                 app:border_width="2.6dp"
                 app:is_circle="true"
@@ -73,7 +72,6 @@
                 android:maxLines="2"
                 android:singleLine="false"
                 android:text="圣诞特辑"
-                android:transitionName="title"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageview_user" />

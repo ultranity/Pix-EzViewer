@@ -17,7 +17,6 @@
             android:layout_alignParentStart="true"
             android:layout_margin="8dp"
             app:border_color='?attr/colorPrimary'
-            android:transitionName="userimage"
             app:border_width="4dp"
             app:is_circle="true" />
 

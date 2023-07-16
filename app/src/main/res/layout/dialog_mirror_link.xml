@@ -53,7 +53,8 @@
         android:layout_toEndOf="@+id/text2"
         android:hint="{host}/{params}"
         android:inputType="text"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:importantForAutofill="no" />
 
     <TableLayout
         android:id="@+id/format_desc_table"

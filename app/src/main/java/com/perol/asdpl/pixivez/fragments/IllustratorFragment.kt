@@ -39,6 +39,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
+import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -86,10 +87,7 @@ class IllustratorFragment : BaseFragment() {
             }
             .onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val value = when (position) {
-                    1 -> "private"
-                    else -> "public"
-                }
+                val value = visRestrictTag(position == 1)
                 if (restrict != value) {
                     restrict = value
                     viewModel.onRefresh(userid, restrict, getFollowing)

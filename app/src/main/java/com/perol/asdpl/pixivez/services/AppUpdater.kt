@@ -46,20 +46,16 @@ data class GithubResponse(
         val browserDownloadURL: String,
     )
 
-    fun timeStamp(): Long {
-        return dateFormat.parse(createdAt)?.time ?: -1
-    }
-
     companion object {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT)
     }
 }
 
 object AppUpdater {
-    private val releaseURL = URL("https://github.com/ultranity/Pix-EzViewer/releases/latest")
+    //private val releaseURL = URL("https://github.com/ultranity/Pix-EzViewer/releases/latest")
     private val apiURL = URL("https://api.github.com/repos/ultranity/Pix-EzViewer/releases/latest")
     private lateinit var data: GithubResponse
-    fun isNewUpdateAvailable(): Boolean? = try {
+    private fun isNewUpdateAvailable(): Boolean? = try {
         val response = apiURL.readText()
         data = PxEZApp.gsonInstance.fromJson(response, GithubResponse::class.java)
         val currentVersionName = BuildConfig.VERSION_NAME
@@ -104,7 +100,7 @@ object AppUpdater {
         }
     }
 
-    fun requestDownload(activity: Activity) {
+    private fun requestDownload(activity: Activity) {
         val asset = data.assets!![0]
         val request = DownloadManager.Request(Uri.parse(asset.browserDownloadURL))
         val downloadManager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -120,7 +116,7 @@ object AppUpdater {
         downloadManager.enqueue(request)
     }
 
-    fun isNetworkAvailable(): Boolean {
+    private fun isNetworkAvailable(): Boolean {
         val connectivityManager =
             PxEZApp.instance.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo

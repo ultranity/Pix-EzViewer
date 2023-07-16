@@ -65,12 +65,4 @@ class OkHttpUrlHeaderLoader(concreteLoader: ModelLoader<GlideUrl, InputStream>, 
             .build()
     }
 
-    override fun buildLoadData(
-        model: String,
-        width: Int,
-        height: Int,
-        options: Options
-    ): ModelLoader.LoadData<InputStream>? {
-        return super.buildLoadData(model, width, height, options)
-    }
 }

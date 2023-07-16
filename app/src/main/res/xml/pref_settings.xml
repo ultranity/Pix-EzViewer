@@ -34,6 +34,7 @@
             />
         <Preference
             app:key="check"
+            app:icon="@drawable/sync"
             app:title="@string/checkupdate" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">

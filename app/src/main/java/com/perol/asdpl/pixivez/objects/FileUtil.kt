@@ -39,7 +39,7 @@ val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ROOT)
 class FileInfo(val file: File) {
     var icon = "0"
     var name: String = file.name
-    var size: String = ""
+    var size: String = "" //TODO: fix var
         get() = FileUtil.getSize(file.length().toFloat())
     var pixel: String = ""
     val time: String
@@ -135,9 +135,9 @@ object FileUtil {
             pfile.mkdirs()
             return list
         }
-        if (pfile.isFile) {
-            // TODO: pfile.readLines().forEach {  }
-        }
+        //if (pfile.isFile) {
+        // TODO: pfile.readLines().forEach {  }
+        //}
         if (showParent && pfile.parentFile != null) {
             val parent = FileInfo(pfile.parentFile!!)
             // 获取文件夹目录结构

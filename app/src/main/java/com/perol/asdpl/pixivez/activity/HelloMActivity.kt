@@ -51,7 +51,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.HelloMViewPagerAdapter
-import com.perol.asdpl.pixivez.databinding.AppBarHelloMBinding
+import com.perol.asdpl.pixivez.databinding.ActivityHelloMBinding
 import com.perol.asdpl.pixivez.databinding.NavHeaderHelloMBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
@@ -163,7 +163,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
-    private lateinit var binding: AppBarHelloMBinding
+    private lateinit var binding: ActivityHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val user: UserEntity?
@@ -175,7 +175,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             finish()
             return
         }
-        binding = AppBarHelloMBinding.inflate(layoutInflater)
+        binding = ActivityHelloMBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -183,8 +183,8 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             this,
             binding.drawerLayout,
             binding.toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
+            R.string.menu,
+            R.string.menu
         )
         toggle.setHomeAsUpIndicator(R.drawable.ic_action_logo)
         toggle.isDrawerIndicatorEnabled = true

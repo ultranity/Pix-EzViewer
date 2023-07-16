@@ -97,7 +97,6 @@
     <string name="fetchtags">タグを取得中....</string>
     <string name="publics">公開</string>
     <string name="privates">非公開</string>
-    <string name="messages_header">メッセージ</string>
     <string name="reply_to">応答</string>
     <string name="illust">イラスト</string>
     <string name="manga">漫画</string>

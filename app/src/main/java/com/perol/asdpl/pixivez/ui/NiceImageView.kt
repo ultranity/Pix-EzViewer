@@ -83,8 +83,7 @@ class NiceImageView @JvmOverloads constructor(
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.NiceImageView, 0, 0)
         for (i in 0 until ta.indexCount) {
-            val attr = ta.getIndex(i)
-            when (attr) {
+            when (val attr = ta.getIndex(i)) {
                 R.styleable.NiceImageView_is_cover_src -> {
                     isCoverSrc = ta.getBoolean(attr, isCoverSrc)
                 }

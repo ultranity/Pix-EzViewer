@@ -6,7 +6,8 @@
     android:layout_margin="8dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="8dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:targetApi="m">
 
     <TextView
         android:id="@+id/title"

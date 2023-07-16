@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.dialog
 
 import android.app.ActivityOptions
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.util.Pair
 import android.view.Gravity
 import android.view.WindowManager

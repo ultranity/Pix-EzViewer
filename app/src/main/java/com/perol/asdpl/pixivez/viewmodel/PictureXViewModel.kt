@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.BookmarkDetailBean
 import com.perol.asdpl.pixivez.responses.Illust
@@ -155,12 +156,7 @@ class PictureXViewModel : BaseViewModel() {
 
     fun fabClick() {
         val id = illustDetail.value!!.id
-        val x_restrict = if (PxEZApp.R18Private && illustDetail.value!!.x_restrict == 1) {
-            "private"
-        } 
-        else {
-            "public"
-        }
+        val x_restrict = visRestrictTag(illustDetail.value!!)
         if (illustDetail.value!!.is_bookmarked) {
             retrofit.postUnlikeIllust(id).subscribe({
                 likeIllust.value = false
@@ -195,21 +191,9 @@ class PictureXViewModel : BaseViewModel() {
     fun onDialogClick(private: Boolean) {
         val toLong = illustDetail.value!!.id
         if (!illustDetail.value!!.is_bookmarked or private) {
-            val string = if (!private) {
-                "public"
-            }
-            else {
-                "private"
-            }
-            val arrayList = ArrayList<String>()
-            tags.value?.let {
-                for (i in it.tags) {
-                    if (i.is_registered) {
-                        arrayList.add(i.name)
-                    }
-                }
-            }
-            retrofit.postLikeIllustWithTags(toLong, string, arrayList).subscribe({
+            //TODO: default tag to add?
+            val tagList = tags.value?.tags?.mapNotNull{ if (it.is_registered) it.name else null }
+            retrofit.postLikeIllustWithTags(toLong, visRestrictTag(private), tagList).subscribe({
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
             }, {}, {}).add()
@@ -236,10 +220,7 @@ class PictureXViewModel : BaseViewModel() {
                 {
                     followUser.value = false
                     illustDetail.value!!.user.is_followed = false
-                },
-                {},
-                {}
-            ).add()
+                }, {}, {}).add()
         }
     }
 }

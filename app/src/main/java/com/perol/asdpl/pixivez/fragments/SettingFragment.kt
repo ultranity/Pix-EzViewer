@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -280,6 +281,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @SuppressLint("CheckResult")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             "me" -> {
@@ -522,6 +524,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun showApplicationIconReplacementDialog() {
         val items = listOf(
             BasicGridItem(R.mipmap.ic_launcher, "MD"),

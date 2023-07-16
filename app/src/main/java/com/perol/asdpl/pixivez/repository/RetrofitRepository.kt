@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.repository
 
 import android.util.Log
-import com.google.gson.Gson
 import com.perol.asdpl.pixivez.networks.ReFreshFunction
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
@@ -142,23 +141,23 @@ class RetrofitRepository {
 
     fun postLikeIllustWithTags(
         illust_id: Long,
-        string: String = "public",
-        tagList: ArrayList<String>? = null
-    ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(illust_id, string, tagList))
+        visibility: String = "public",
+        tagList: List<String>? = null
+    ): Observable<ResponseBody> = Request(appApiPixivService.postLikeIllust(illust_id, visibility, tagList))
 
     fun getIllust(illust_id: Long): Observable<IllustDetailResponse> = Request(appApiPixivService.getIllust(illust_id)).also { Log.d("getIllust", illust_id.toString()) }
 
-    private suspend fun getIllustCor(long: Long): IllustDetailResponse? {
+    private suspend fun getIllustCor(illust_id: Long): IllustDetailResponse? {
         var illustDetailResponse: IllustDetailResponse? = null
         try {
-            illustDetailResponse = appApiPixivService.getIllustCor(long)
+            illustDetailResponse = appApiPixivService.getIllustCor(illust_id)
         } catch (e: Exception) {
             if (e is HttpException) {
-                getIllustCor(long)
+                getIllustCor(illust_id)
             }
         } finally {
             if (illustDetailResponse == null) {
-                getIllustCor(long)
+                getIllustCor(illust_id)
             }
         }
         return illustDetailResponse

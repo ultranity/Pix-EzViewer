@@ -31,7 +31,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RestClient
@@ -101,9 +100,9 @@ class IntentActivity : RinkActivity() {
                         }
                     }
                 }
-                else if (scheme.contains("pixez")) {
-                    // TODO: add pixez
-                }
+                // else if (scheme.contains("pixez")) {
+                // TODO: add pixez
+                // }
             }
             if (uri.host?.equals("pixiv.me") == true) {
                 val i = Intent(this, WebViewActivity::class.java)

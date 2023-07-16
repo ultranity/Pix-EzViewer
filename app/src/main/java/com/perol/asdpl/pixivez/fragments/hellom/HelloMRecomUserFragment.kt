@@ -114,6 +114,9 @@ class HelloMRecomUserFragment : BaseFragment() {
     }
 
     companion object {
+        private const val ARG_PARAM1 = "param1"
+        private const val ARG_PARAM2 = "param2"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -122,9 +125,6 @@ class HelloMRecomUserFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HelloRecomUserFragment.
          */
-        private const val ARG_PARAM1 = "param1"
-        private const val ARG_PARAM2 = "param2"
-
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HelloMRecomUserFragment().apply {

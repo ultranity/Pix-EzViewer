@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -60,9 +61,6 @@ abstract class BaseActivity<Layout : ViewBinding?> : AppCompatActivity() {
     protected abstract fun initLayout(): Int
     protected abstract fun initView()
     protected abstract fun initData()
-    fun hideStatusBar(): Boolean {
-        return false
-    }
 
     fun gray(gray: Boolean) {
         if (gray) {
@@ -78,6 +76,7 @@ abstract class BaseActivity<Layout : ViewBinding?> : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("InternalInsetResource")
     private fun getNavigationBarHeight(): Int {
         val resourceId: Int = this.resources.getIdentifier(
             "navigation_bar_height",

@@ -94,9 +94,7 @@ class PicListFilter(
                 }
             }
         }
-        if (blockUser!!.contains(item.user.id))
-            return true
-        return false
+        return blockUser!!.contains(item.user.id)
     }
 
     fun applyTo(filter: IllustFilter){

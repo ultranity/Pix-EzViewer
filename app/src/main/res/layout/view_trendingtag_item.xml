@@ -20,15 +20,14 @@
 
         <TextView
             android:id="@+id/textview_tag"
-            android:textDirection="anyRtl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
+            android:layout_gravity="center_horizontal"
             android:fontFamily="monospace"
+            android:textAlignment="center"
             android:textColor="?attr/colorPrimary"
-            android:textSize="20sp"
-            android:layout_gravity="bottom"
-       />
+            android:textDirection="anyRtl"
+            android:textSize="20sp" />
 </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>

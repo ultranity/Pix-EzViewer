@@ -18,8 +18,6 @@ package com.perol.asdpl.pixivez.objects
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType
@@ -33,7 +31,7 @@ object ViewBindingUtil {
         itemView.getTag(R.id.tag_view_binding) as? VB ?: bind(itemView).also { itemView.setTag(R.id.tag_view_binding, it) }
     @JvmStatic
     fun <VB : ViewBinding> inflateWithGeneric(genericOwner: Any, layoutInflater: LayoutInflater): VB =
-        withGenericBindingClass<VB>(genericOwner) { clazz ->
+        withGenericBindingClass(genericOwner) { clazz ->
             clazz.getMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as VB
         }
 
@@ -42,14 +40,15 @@ object ViewBindingUtil {
         inflateWithGeneric(genericOwner, LayoutInflater.from(parent.context), parent, false)
 
     @JvmStatic
+    @Suppress("UNCHECKED_CAST")
     fun <VB : ViewBinding> inflateWithGeneric(genericOwner: Any, layoutInflater: LayoutInflater, parent: ViewGroup?, attachToParent: Boolean): VB =
-        withGenericBindingClass<VB>(genericOwner) { clazz ->
+        withGenericBindingClass(genericOwner) { clazz ->
             clazz.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.java)
                 .invoke(null, layoutInflater, parent, attachToParent) as VB
         }
 
     @JvmStatic
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "UNCHECKED_CAST")
     fun <VB : ViewBinding> getBindingWithGeneric(genericOwner: Any, view: View): VB =
         view.getTag(R.id.tag_view_binding) as? VB ?: bindWithGeneric<VB>(genericOwner, view)
             .also { view.setTag(R.id.tag_view_binding, it) }
@@ -59,11 +58,13 @@ object ViewBindingUtil {
         "Use ViewBindingUtil.getBindingWithGeneric<VB>(genericOwner, view) instead.",
         ReplaceWith("ViewBindingUtil.getBindingWithGeneric<VB>(genericOwner, view)")
     )
+    @Suppress("UNCHECKED_CAST")
     fun <VB : ViewBinding> bindWithGeneric(genericOwner: Any, view: View): VB =
-        withGenericBindingClass<VB>(genericOwner) { clazz ->
+        withGenericBindingClass(genericOwner) { clazz ->
             clazz.getMethod("bind", View::class.java).invoke(null, view) as VB
         }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <VB : ViewBinding> withGenericBindingClass(genericOwner: Any, block: (Class<VB>) -> VB): VB {
         var genericSuperclass = genericOwner.javaClass.genericSuperclass
         var superclass = genericOwner.javaClass.superclass

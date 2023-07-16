@@ -22,8 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
-import java.util.Properties
+@file:Suppress("UnstableApiUsage")
+
 import java.io.FileInputStream
+import java.util.Properties
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
@@ -163,7 +165,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlin_version"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
 
     //implementation("androidx.core:core:1.3.1")
     implementation("androidx.core:core-ktx:1.10.1")
@@ -178,15 +180,15 @@ dependencies {
     //implementation("androidx.activity:activity:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    val navigation_version = "2.6.0"
-    implementation("androidx.navigation:navigation-fragment-ktx:$navigation_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$navigation_version")
+    val navigationVersion = "2.6.0"
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     //implementation("androidx.paging:paging-common-ktx:3.1.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("com.google.android.material:material:1.9.0")
 
-    implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibraries_version"]}")
-    implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibraries_version"]}")
+    implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibrariesVersion"]}")
+    implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibrariesVersion"]}")
     implementation("com.arialyy.aria:core:3.8.12")
     //kapt("com.arialyy.aria:compiler:3.8.12")
     implementation("io.noties.markwon:core:4.6.2")
@@ -216,79 +218,79 @@ dependencies {
     //implementation("androidx.annotation:annotation:1.5.0")
     //implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
 
-    val room_version = "2.5.2"
+    val roomVersion = "2.5.2"
     run {
-        implementation("androidx.room:room-runtime:$room_version")
+        implementation("androidx.room:room-runtime:$roomVersion")
         // For Kotlin use kapt/ksp instead of annotationProcessor
-        ksp("androidx.room:room-compiler:$room_version")
+        ksp("androidx.room:room-compiler:$roomVersion")
         // optional - Kotlin Extensions and Coroutines support for Room
-        implementation("androidx.room:room-ktx:$room_version")
+        implementation("androidx.room:room-ktx:$roomVersion")
         // optional - RxJava support for Room
-        implementation("androidx.room:room-rxjava2:$room_version")
+        implementation("androidx.room:room-rxjava2:$roomVersion")
         // Test helpers
-        testImplementation("androidx.room:room-testing:$room_version")
+        testImplementation("androidx.room:room-testing:$roomVersion")
     }
 
-    val lifecycle_version = "2.6.1"
+    val lifecycleVersion = "2.6.1"
     run {
         // ViewModel and LiveData
-        //implementation("androidx.lifecycle:lifecycle-extensions:$lifecycle_version")
+        //implementation("androidx.lifecycle:lifecycle-extensions:$lifecycleVersion")
         // use -ktx for Kotlin
         // ViewModel
-        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
         // ViewModel utilities for Compose
-        //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+        //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
         // LiveData
-        //implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+        //implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
         // Lifecycles only (without ViewModel or LiveData)
-        implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
         // Annotation processor
-        //ksp "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+        //ksp "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
         // alternately - if using Java8, use the following instead of lifecycle-compiler
-        implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+        implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
         // optional - ReactiveStreams support for LiveData
-        //implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+        //implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
     }
 
-    //val arch_version = "2.1.0"
+    //val archVersion = "2.1.0"
     // optional - Test helpers for LiveData
-    //testImplementation("androidx.arch.core:core-testing:$arch_version")
+    //testImplementation("androidx.arch.core:core-testing:$archVersion")
 
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    
-    // okhttp3系列组件版本最高到 4.4.1
-    val okhttp3_version = "4.4.1"
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp3_version")
-    implementation("com.squareup.okhttp3:okhttp:$okhttp3_version")
 
-    val glide_version = "4.15.1"
+    // okhttp3系列组件版本最高到 4.4.1
+    val okhttp3Version = "4.4.1"
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp3Version")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp3Version")
+
+    val glideVersion = "4.15.1"
     run {
-        implementation("com.github.bumptech.glide:glide:$glide_version")
-        implementation("com.github.bumptech.glide:annotations:$glide_version")
-        implementation("com.github.bumptech.glide:okhttp3-integration:$glide_version")
-        //kapt("com.github.bumptech.glide:compiler:$glide_version")
-        ksp("com.github.bumptech.glide:ksp:$glide_version")
+        implementation("com.github.bumptech.glide:glide:$glideVersion")
+        implementation("com.github.bumptech.glide:annotations:$glideVersion")
+        implementation("com.github.bumptech.glide:okhttp3-integration:$glideVersion")
+        //kapt("com.github.bumptech.glide:compiler:$glideVersion")
+        ksp("com.github.bumptech.glide:ksp:$glideVersion")
     }
 
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
-    val retrofit_version="2.9.0"
+    val retrofitVersion = "2.9.0"
     run {
-        implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-        implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
-        implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofit_version")
+        implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+        implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+        implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
     }
 
     // Material Dialogs: https://github.com/afollestad/material-dialogs
-    val material_dialogs_version="3.3.0"
+    val materialDialogsVersion = "3.3.0"
     run {
-        implementation("com.afollestad.material-dialogs:core:$material_dialogs_version")
-        implementation("com.afollestad.material-dialogs:files:$material_dialogs_version")
-        implementation("com.afollestad.material-dialogs:bottomsheets:$material_dialogs_version")
-        implementation("com.afollestad.material-dialogs:lifecycle:$material_dialogs_version")
-        implementation("com.afollestad.material-dialogs:input:$material_dialogs_version")
+        implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
+        implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
+        implementation("com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion")
+        implementation("com.afollestad.material-dialogs:lifecycle:$materialDialogsVersion")
+        implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
         implementation("com.afollestad:drag-select-recyclerview:2.4.0")
     }
 

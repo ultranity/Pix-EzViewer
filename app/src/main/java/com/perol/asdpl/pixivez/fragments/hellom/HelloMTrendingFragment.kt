@@ -65,7 +65,7 @@ class HelloMTrendingFragment : LazyFragment() {
         binding.viewpager.adapter = RankingMAdapter(this, isR18on)
         //binding.viewpager.isUserInputEnabled = false
 
-        /** do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
+        /* do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = titles[position]
         }.apply {

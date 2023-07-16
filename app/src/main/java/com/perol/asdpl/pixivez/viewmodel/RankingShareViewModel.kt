@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class RankingShareViewModel : ViewModel() {
-    val pool = RecyclerView.RecycledViewPool()
+    //val pool = RecyclerView.RecycledViewPool()
     var picDateShare = MutableLiveData<String?>()
     var year = MutableLiveData<Int>()
     var month = MutableLiveData<Int>()

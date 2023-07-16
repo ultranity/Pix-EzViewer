@@ -18,8 +18,8 @@ object InteractionUtil {
     }
 
     fun need_restrict(item: Illust) = (PxEZApp.R18Private && item.x_restrict == 1)
-    fun x_restrict(item: Illust): String = x_restrict(need_restrict(item))
-    fun x_restrict(restrict: Boolean): String {
+    fun visRestrictTag(item: Illust): String = visRestrictTag(need_restrict(item))
+    fun visRestrictTag(restrict: Boolean): String {
         return if (restrict) {
             "private"
         }
@@ -45,7 +45,7 @@ object InteractionUtil {
     // "image_urls:" + illust.image_urls.toString()
 
     fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit) {
-        retrofitRepository.postLikeIllustWithTags(item.id, x_restrict(item), tagList).subscribe({
+        retrofitRepository.postLikeIllustWithTags(item.id, visRestrictTag(item), tagList).subscribe({
             item.is_bookmarked = true
             callback()
         }, {}, {}).add()
@@ -63,7 +63,7 @@ object InteractionUtil {
     }
 
     fun follow(user: User, need_restrict: Boolean, callback: () -> Unit) {
-        retrofitRepository.postFollowUser(user.id, x_restrict(need_restrict)).subscribe({
+        retrofitRepository.postFollowUser(user.id, visRestrictTag(need_restrict)).subscribe({
             user.is_followed = true
             callback()
         }, {}, {}).add()

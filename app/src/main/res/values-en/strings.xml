@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_features">"Some features hidden in the menu or long press, and more by intuition attempt\n"</string>
     <string name="app_help">
         "0. This is a free app. If you paid for it, please immediately ask for a refund and make a negative comment! \n"
@@ -97,7 +97,6 @@
     <string name="fetchtags">fetch tags....</string>
     <string name="publics">Public</string>
     <string name="privates">Private</string>
-    <string name="messages_header">Messages</string>
     <string name="reply_to">Reply to</string>
     <string name="illust">Illust</string>
     <string name="manga">Manga</string>
@@ -194,8 +193,8 @@
     <string name="error_unknown">Unknown error, please check your connection</string>
     <string name="login_success">Login successful</string>
     <string name="share">Share</string>
-    <string name="saucenao_compress_success">Uploading...</string>
-    <string name="saucenao_upload_success">Uploaded, processing...</string>
+    <string name="saucenao_compress_success" tools:ignore="TypographyEllipsis">Uploading...</string>
+    <string name="saucenao_upload_success" tools:ignore="TypographyEllipsis">Uploaded, processing...</string>
     <string name="saucenao_upload_error">"Upload failed: "</string>
     <string name="uploading">Uploading</string>
     <string name="upload_success">Upload finished, please reload this page</string>
@@ -216,7 +215,7 @@
     <string name="pixivision_desc2">a creative media that delivers \n \"the best works of creative originality\"</string>
     <string name="change_to_first">change to first</string>
     <string name="notsf_subtext">Development, testing, release</string>
-    <string name="loading">Loading...</string>
+    <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="needstatusbar_subtext">For notched screens</string>
     <string name="ultranity_subtext">Current maintainer</string>
     <string name="notsf_subtext2">Original author</string>

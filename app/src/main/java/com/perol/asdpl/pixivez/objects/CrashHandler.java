@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.TreeSet;
 
+/** @noinspection BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     /**
@@ -114,7 +115,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 当UncaughtException发生时会转入该函数来处理
      */
     @Override
-    public void uncaughtException(@NonNull Thread thread, Throwable ex) {
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable ex) {
         if (!handleException(ex) && mDefaultHandler != null) {
             //如果用户没有处理则让系统默认的异常处理器来处理
             mDefaultHandler.uncaughtException(thread, ex);
@@ -188,6 +189,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 把错误报告发送给服务器,包含新产生的和以前没发送的.
      *
      * @param ctx Context
+     * @noinspection ResultOfMethodCallIgnored
      */
     private void sendCrashReportsToServer(Context ctx) {
         String[] crFiles = getCrashReportFiles(ctx);

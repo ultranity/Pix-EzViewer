@@ -40,6 +40,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
+import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
@@ -191,7 +192,7 @@ class SaucenaoActivity : RinkActivity() {
                                 },
                                 {
                                 }
-                            )
+                            ).add()
                     }
                 }
             }
@@ -216,7 +217,7 @@ class SaucenaoActivity : RinkActivity() {
                 ).show()
                 tryToParseHtml(it.string())
             }, { Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show() }, {
-            })
+            }).add()
     }
 
     private fun tryToParseHtml(string: String) {
@@ -225,10 +226,10 @@ class SaucenaoActivity : RinkActivity() {
             val doc = Jsoup.parse(string)
             val el = doc.select("a[href]")
             for (i in el.indices) {
-                val string = el[i].attr("href")
-                Log.d("w", string)
-                if (string.startsWith("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=")) {
-                    val id = string.replace(
+                val url = el[i].attr("href")
+                Log.d("w", url)
+                if (url.startsWith("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=")) {
+                    val id = url.replace(
                         "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
                         ""
                     ).toLong()

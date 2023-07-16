@@ -128,7 +128,7 @@ class UserMActivity : RinkActivity() {
     lateinit var pre: SharedPreferences
     private lateinit var binding: ActivityUserMBinding
     private lateinit var user: User
-    fun setUser(usr :User){
+    private fun setUser(usr :User){
         user = usr
         viewModel.isfollow.value = user.is_followed
         id = user.id

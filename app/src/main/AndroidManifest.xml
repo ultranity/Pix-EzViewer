@@ -97,7 +97,8 @@
         <activity android:name=".activity.ZoomActivity" />
         <activity android:name=".activity.UserFollowActivity" />
         <activity android:name=".activity.SaucenaoActivity"
-            android:label="@string/title_activity_saucenao">
+            android:label="@string/title_activity_saucenao"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 

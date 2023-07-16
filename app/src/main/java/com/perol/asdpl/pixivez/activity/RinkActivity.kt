@@ -25,7 +25,8 @@
 
 package com.perol.asdpl.pixivez.activity
 
-import android.R
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -42,7 +43,9 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 // base activity with i18n +Theme support
 abstract class RinkActivity : AppCompatActivity() {
     protected var className = javaClass.simpleName + " "
+    //private val Activity.simpleName get() = javaClass.simpleName
 
+    @SuppressLint("InternalInsetResource")
     private fun getNavigationBarHeight(): Int {
         val resourceId: Int = this.resources.getIdentifier(
             "navigation_bar_height",
@@ -62,7 +65,7 @@ abstract class RinkActivity : AppCompatActivity() {
         //    MaterialColors.getColor(findViewById(R.id.content), com.google.android.material.R.attr.colorSurface)
         //)
         if (contentTarget)
-            transform.addTarget(R.id.content)
+            transform.addTarget(android.R.id.content)
         transform.duration = duration
         transform.interpolator = FastOutSlowInInterpolator()
         transform.pathMotion = MaterialArcMotion()

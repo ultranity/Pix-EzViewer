@@ -1,6 +1,5 @@
 package com.perol.asdpl.pixivez.dialog
 
-import android.content.DialogInterface
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -8,6 +7,7 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsShowAdapter
 import com.perol.asdpl.pixivez.databinding.ViewTagsShowBinding
+import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,12 +29,7 @@ class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
         tagsShowAdapter.setOnItemClickListener { adapter, view, position ->
             callback!!.onClick(
                 tagsShowAdapter.data[position].name,
-                if (binding.tablayout.selectedTabPosition == 0) {
-                    "public"
-                }
-                else {
-                    "private"
-                }
+                visRestrictTag(binding.tablayout.selectedTabPosition != 0)
             )
             this.dismiss()
         }
@@ -43,12 +38,7 @@ class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
         binding.all.setOnClickListener {
             callback!!.onClick(
                 "",
-                if (binding.tablayout.selectedTabPosition == 0) {
-                    "public"
-                }
-                else {
-                    "private"
-                }
+                visRestrictTag(binding.tablayout.selectedTabPosition != 0)
             )
             this.dismiss()
         }
@@ -59,12 +49,7 @@ class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
 
             override fun onTabSelected(p0: TabLayout.Tab?) {
                 if (p0 != null) {
-                    val pub = if (p0.position == 0) {
-                        "public"
-                    }
-                    else {
-                        "private"
-                    }
+                    val pub = visRestrictTag(p0.position != 0)
                     RetrofitRepository.getInstance().getIllustBookmarkTags(viewModel.id, pub)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io()).subscribe({

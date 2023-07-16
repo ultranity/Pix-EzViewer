@@ -70,10 +70,6 @@ class HelloMThFragment : LazyFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     override fun loadData() {
         val userid = AppDataRepository.currentUser.userid
         binding.tablayout.setupWithViewPager(binding.viewpager)

@@ -40,8 +40,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.dinuscxj.progressbar.CircleProgressBar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ViewPagerZoomBinding
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor

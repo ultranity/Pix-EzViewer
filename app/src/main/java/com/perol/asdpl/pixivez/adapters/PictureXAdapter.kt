@@ -74,13 +74,13 @@ import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.objects.*
+import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.ui.AnimationView
-import com.perol.asdpl.pixivez.ui.NiceImageView
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
@@ -199,6 +199,7 @@ class PictureXAdapter(
         var binding: ViewPicturexDetailBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun updateWithPage(
             mContext: Context,
             illust: Illust,
@@ -718,7 +719,7 @@ class PictureXAdapter(
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }, {
-                                                })
+                                                }).add()
                                             }
                                             else {
                                                 runBlocking {
@@ -787,7 +788,7 @@ class PictureXAdapter(
                     }, {
                         Log.d("throw", "throw it")
                         play.visibility = View.VISIBLE
-                    }, {})
+                    }, {}).add()
                 }
             }
             is DetailViewHolder ->

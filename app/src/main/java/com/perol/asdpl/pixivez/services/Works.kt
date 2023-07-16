@@ -30,7 +30,6 @@ import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
-import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -321,7 +320,7 @@ object Works {
             .create()
     }
 
-    fun getQualityUrl(illust: Illust, part: Int): String {
+    private fun getQualityUrl(illust: Illust, part: Int): String {
         //TODO: is this necessary?
         //val part = part.coerceAtMost(illust.meta_pages.size - 1)
         val urls = illust.meta_pages[part].image_urls
@@ -337,7 +336,7 @@ object Works {
             }
         }
     }
-    fun getQualityUrl(illust: Illust): String {
+    private fun getQualityUrl(illust: Illust): String {
         val urls = illust.image_urls
         return when (pre.getString("quality_download", "0")?.toInt()) {
             0 -> {

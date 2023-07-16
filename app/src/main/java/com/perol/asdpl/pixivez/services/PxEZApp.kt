@@ -215,8 +215,6 @@ class PxEZApp : Application() {
         })
     }
 
-    private val Activity.simpleName get() = javaClass.simpleName
-
     object ActivityCollector {
         @JvmStatic
         private val activityList = mutableListOf<Activity>()

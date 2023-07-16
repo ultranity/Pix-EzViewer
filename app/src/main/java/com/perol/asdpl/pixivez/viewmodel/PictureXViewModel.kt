@@ -47,10 +47,11 @@ import java.io.File
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
     val relatedPics = MutableLiveData<List<Illust>?>()
+    val nextRelatedPics = MutableLiveData<String?>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()
     var tags = MutableLiveData<BookmarkDetailBean>()
-    val progress = MutableLiveData<ProgressInfo>()
+    val progress = MutableLiveData<Int>()
     val downloadGifSuccess = MutableLiveData<Boolean>()
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     fun downloadZip(medium: String) {
@@ -148,12 +149,8 @@ class PictureXViewModel : BaseViewModel() {
         }, {}).add()
     }
 
-    fun getRelated(long: Long) {
-        retrofit.getIllustRelated(long).subscribe({
-            relatedPics.value = it.illusts
-        }, {
-            relatedPics.value = null
-        }, {}).add()
+    fun getRelated(pid: Long) {
+        retrofit.getIllustRelated(pid).subscribeNext(relatedPics, nextRelatedPics)
     }
 
     fun fabClick() {

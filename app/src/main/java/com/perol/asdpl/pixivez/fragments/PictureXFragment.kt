@@ -230,9 +230,7 @@ class PictureXFragment : BaseFragment() {
             }
         }
         pictureXViewModel.relatedPics.observe(viewLifecycleOwner) {
-            if (it != null) {
-                pictureXAdapter?.setRelatedPics(it)
-            }
+            pictureXAdapter?.setRelatedPics(it, pictureXViewModel.nextRelatedPics.value)
         }
         pictureXViewModel.likeIllust.observe(viewLifecycleOwner) {
             if (it) {

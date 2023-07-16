@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
@@ -81,28 +82,29 @@ class PictureXViewModel : BaseViewModel() {
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"
         val file = File(zipPath)
-        progress.value = ProgressInfo(0, 0)
+        progress.value = 0
         retrofit.getGIFFile(medium).subscribe({ response ->
             val inputStream = response.byteStream()
             Observable.create<Int> { ob ->
                 val output = file.outputStream()
-                println("----------")
-                progress.value!!.all = response.contentLength()
+                Log.d("GIF", "----------")
+                val totalLen = response.contentLength()
                 var bytesCopied: Long = 0
                 val buffer = ByteArray(8 * 1024)
                 var bytes = inputStream.read(buffer)
+                Log.d("GIF", Thread.currentThread().toString())
                 while (bytes >= 0) {
                     output.write(buffer, 0, bytes)
                     bytesCopied += bytes
                     bytes = inputStream.read(buffer)
-                    progress.value!!.now = bytesCopied
+
                     Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe {
-                        progress.value = progress.value!!
+                        progress.value = (100 * bytesCopied / totalLen).toInt()
                     }.add()
                 }
                 inputStream.close()
                 output.close()
-                println("+++++++++")
+                Log.d("GIF","++++${progress.value}++++")
                 UnzipUtil.unZipFolder(
                     file,
                     PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
@@ -110,7 +112,7 @@ class PictureXViewModel : BaseViewModel() {
                 ob.onNext(1)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
                 downloadGifSuccess.value = true
-                println("wwwwwwwwwwwwwwwwwwwwww")
+                Log.d("GIF", "wwwwwwwwwwwwwwwwwwwwww")
             }, {
                 it.printStackTrace()
             }).add()
@@ -225,4 +227,4 @@ class PictureXViewModel : BaseViewModel() {
     }
 }
 
-data class ProgressInfo(var now: Long, var all: Long)
+//data class ProgressInfo(var now: Long, var all: Long)

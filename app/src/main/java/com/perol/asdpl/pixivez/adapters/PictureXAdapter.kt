@@ -63,8 +63,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
-import com.dinuscxj.progressbar.CircleProgressBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchRActivity
@@ -83,7 +83,6 @@ import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.ui.AnimationView
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
-import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
@@ -846,10 +845,22 @@ class PictureXAdapter(
 
     var size = 1
     var duration: Int = 50
-    private var gifProgressBar: CircleProgressBar? = null
+    private var gifProgressBar: CircularProgressIndicator? = null
     var imageViewGif: AnimationView? = null
-    private val relatedPictureAdapter = RelatedPictureAdapter(R.layout.view_relatedpic_item)
-    fun setRelatedPics(it: List<Illust>) {
+    private val relatedPictureAdapter = RelatedPictureAdapter(R.layout.view_relatedpic_item).also {
+        it.loadMoreModule.isAutoLoadMore = false
+    }
+    fun setRelatedPics(it: List<Illust>?, nextUrl: String?) {
+        if (it ==null){
+            relatedPictureAdapter.loadMoreFail()
+            return
+        }
+        if (nextUrl.isNullOrEmpty()){
+            relatedPictureAdapter.loadMoreEnd()
+        }
+        else {
+            relatedPictureAdapter.loadMoreComplete()
+        }
         if (it.isEmpty()) {
             return
         }
@@ -873,10 +884,9 @@ class PictureXAdapter(
         }
     }
 
-    fun setProgress(it: ProgressInfo) {
+    fun setProgress(progress: Int) {
         if (gifProgressBar != null) {
-            gifProgressBar!!.max = it.all.toInt()
-            gifProgressBar!!.progress = it.now.toInt()
+            gifProgressBar!!.setProgressCompat(progress, true)
         }
     }
 

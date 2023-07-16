@@ -20,7 +20,9 @@ class ProgressInterceptor : Interceptor {
         val response = chain.proceed(request)
         val url = request.url.toString()
         val body = response.body!!
-        return response.newBuilder().body(ProgressResponseBody(url, body)).build()
+        if (LISTENER_MAP.isNotEmpty())
+            return response.newBuilder().body(ProgressResponseBody(url, body)).build()
+        return  response
     }
 
     companion object {

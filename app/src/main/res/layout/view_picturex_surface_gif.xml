@@ -19,13 +19,16 @@
         android:adjustViewBounds="true"
         android:transitionName="mainimage" />
 
-    <com.dinuscxj.progressbar.CircleProgressBar
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressbar_gif"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        app:progress_stroke_width="3dp"
-        app:style="solid_line" />
+        app:trackThickness="4dp"
+        app:trackColor="@color/white"
+        app:indicatorSize="50dp"
+        app:trackCornerRadius = "2dp"/>
 
     <ImageView
         android:id="@+id/imageview_play"
@@ -36,4 +39,5 @@
         android:alpha="0.9"
         android:src="@drawable/ic_action_play"
         app:tint="@color/white" />
+
 </FrameLayout>

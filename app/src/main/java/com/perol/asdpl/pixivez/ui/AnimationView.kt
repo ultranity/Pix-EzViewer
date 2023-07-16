@@ -149,6 +149,7 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    break
                 }
             }
             else {

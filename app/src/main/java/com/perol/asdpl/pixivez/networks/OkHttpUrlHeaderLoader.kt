@@ -37,7 +37,7 @@ class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     private val modelCache = ModelCache<String, GlideUrl>(250)
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<String, InputStream> {
         // 添加拦截器到Glide
-        val builder = OkHttpClient.Builder().imageProxySocket()
+        val builder = OkHttpClient.Builder().imageProxySocket().addInterceptor(ProgressInterceptor())
         val okHttpClient = builder.build()
         return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
     }

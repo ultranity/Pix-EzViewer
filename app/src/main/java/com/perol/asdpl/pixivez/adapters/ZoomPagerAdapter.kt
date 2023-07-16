@@ -174,7 +174,7 @@ class ZoomPagerAdapter(
             origin!![position],
             object : ProgressListener {
                 override fun onProgress(progress: Int) {
-                    binding.progressbarOrigin.progress = progress
+                    binding.progressbarOrigin.setProgressCompat(progress, true)
                 }
             }
         )

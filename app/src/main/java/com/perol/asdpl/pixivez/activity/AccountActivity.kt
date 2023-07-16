@@ -25,8 +25,10 @@
 
 package com.perol.asdpl.pixivez.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,8 +36,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.AccountChoiceAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityAccountBinding
+import com.perol.asdpl.pixivez.networks.ReFreshFunction
+import com.perol.asdpl.pixivez.objects.ClipBoardUtil
+import com.perol.asdpl.pixivez.objects.InteractionUtil.add
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.sql.entity.UserEntity
+import io.reactivex.Observable
 import kotlinx.coroutines.runBlocking
 
 class AccountActivity : RinkActivity() {
@@ -83,6 +91,10 @@ class AccountActivity : RinkActivity() {
                     this.notifyItemChanged(position)
                     PxEZApp.ActivityCollector.recreate()
                 }
+                setOnItemLongClickListener { adapter, view, position ->
+                    showTokenDialog(context, users[position])
+                    true
+                }
             }
         }
     }
@@ -90,5 +102,34 @@ class AccountActivity : RinkActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.account, menu)
         return true
+    }
+
+    fun showTokenDialog(context: Context, user: UserEntity) {
+        val userToken = user.Refresh_token
+        MaterialAlertDialogBuilder(context)
+            .setTitle("Token")
+            .setMessage(R.string.token_warning)
+            .setNeutralButton(R.string.refresh_token) { _, _ ->
+                Observable.just(1).flatMap {ReFreshFunction.getInstance().reFreshToken()}
+                    .subscribe({
+                        Toasty.shortToast(R.string.refresh_token)
+                    }, {
+                        Toasty.shortToast(R.string.refresh_token_fail)
+                    }).add()
+            }
+            .setNegativeButton("SHOW") { _, _ ->
+                MaterialAlertDialogBuilder(context)
+                    .setTitle("Token|OAuth")
+                    .setMessage(userToken + "|${user.Device_token}" )
+                    .show()
+            }
+            .setPositiveButton(androidx.preference.R.string.copy) { _, _ ->
+                ClipBoardUtil.putTextIntoClipboard(
+                    context,
+                    userToken,
+                    false,
+                    "PxEz Token"
+                )
+            }.show()
     }
 }

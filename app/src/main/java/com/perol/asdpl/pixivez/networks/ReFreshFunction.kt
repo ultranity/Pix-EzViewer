@@ -150,17 +150,17 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                 Toast.LENGTH_SHORT
             ).show()
         }
-        return reFreshToken(user)
+        return reFreshToken(user.Refresh_token)
     }
 
-    private fun reFreshToken(it: UserEntity): ObservableSource<*> {
+    fun reFreshToken(refreshToken: String, newToken:Boolean=false): ObservableSource<*> {
         Log.d("init", "reFreshToken")
         // UserInfoSharedPreferences.getInstance().setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthTokenX(
             client_id,
             client_secret,
             "refresh_token",
-            it.Refresh_token,
+            refreshToken,
             true
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .doOnNext { pixivOAuthResponse ->
@@ -173,11 +173,16 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                     user.profile_image_urls.px_170x170,
                     "OAuth2", // pixivOAuthResponse.response.device_token,
                     pixivOAuthResponse.response.refresh_token,
-                    "Bearer " + pixivOAuthResponse.response.access_token,
-                    AppDataRepository.currentUser.Id
+                    "Bearer " + pixivOAuthResponse.response.access_token
                 )
                 runBlocking {
-                    AppDataRepository.updateUser(userEntity)
+                    if(newToken){
+                        AppDataRepository.insertUser(userEntity)
+                    }
+                    else {
+                        userEntity.Id = AppDataRepository.currentUser.Id
+                        AppDataRepository.updateUser(userEntity)
+                    }
                     Toasty.info(
                         PxEZApp.instance,
                         PxEZApp.instance.getString(R.string.refresh_token),

@@ -28,19 +28,26 @@ package com.perol.asdpl.pixivez.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
 import com.perol.asdpl.pixivez.dialog.FirstInfoDialog
 import com.perol.asdpl.pixivez.networks.Pkce
+import com.perol.asdpl.pixivez.networks.ReFreshFunction
+import com.perol.asdpl.pixivez.objects.InteractionUtil.add
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
 import io.noties.markwon.Markwon
+import io.reactivex.Observable
 
 class LoginActivity : RinkActivity() {
     // private var username: String? = null
@@ -80,17 +87,17 @@ class LoginActivity : RinkActivity() {
 
     private fun initBind() {
         userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
-        try {
+        if (!userInfoSharedPreferences.getBoolean("firstinfo")) {
+            FirstInfoDialog().show(this.supportFragmentManager, "infoDialog")
+        }
+        /*try {
             if (userInfoSharedPreferences.getString("password") != null) {
                 binding.editPassword.setText(userInfoSharedPreferences.getString("password"))
                 binding.editUsername.setText(userInfoSharedPreferences.getString("username"))
             }
-            if (!userInfoSharedPreferences.getBoolean("firstinfo")) {
-                FirstInfoDialog().show(this.supportFragmentManager, "infodialog")
-            }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        }*/
         binding.textviewHelp.setOnClickListener {
             // obtain an instance of Markwon
             val markwon = Markwon.create(this)
@@ -100,33 +107,7 @@ class LoginActivity : RinkActivity() {
             .setMessage(markwon.toMarkdown(getString(R.string.login_help_md)))
             .create().show()
         }
-        /*binding.editUsername.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // Ignore.
-            }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Ignore.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.accountTextInputLayout.isErrorEnabled = false
-            }
-        })
-        binding.editPassword.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // Ignore.
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Ignore.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.passwordTextInputLayout.isErrorEnabled = false
-            }
-        })
-*/
         binding.loginBtn.setOnLongClickListener {
 /*
             username = binding.editUsername.text.toString().trim()
@@ -164,6 +145,32 @@ class LoginActivity : RinkActivity() {
             // binding.loginBtn.isEnabled = false
             val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
             startActivity(intent)
+        }
+        binding.tokenLogin.setOnClickListener {
+
+            MaterialDialog(this).show {
+                title(R.string.token_login)
+                message(R.string.jumpto)
+                input(inputType = InputType.TYPE_CLASS_TEXT)
+                positiveButton(android.R.string.ok) {
+                    val token = getInputField().text.toString()
+                    Observable.just(1).flatMap { ReFreshFunction.getInstance().reFreshToken(token, true)}
+                        .subscribe({
+                            Toasty.shortToast(R.string.login_success)
+                            val intent = Intent(this@LoginActivity, HelloMActivity::class.java).apply {
+                                // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
+                                flags =
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                            }
+                            startActivity(intent)
+                        }, {
+                            Toasty.shortToast(R.string.refresh_token_fail)
+                        }).add()
+                }
+                neutralButton(R.string.login_help) {
+                    it.message(text = "~~~")
+                }
+                }
         }
         binding.register.setOnClickListener {
             showRegisterHelp(binding.root)

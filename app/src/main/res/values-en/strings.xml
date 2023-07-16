@@ -290,4 +290,6 @@
     <string name="update_available">New update available</string>
     <string name="no_update">No update found</string>
     <string name="update_failed">Access update failed</string>
+    <string name="token_login">Token Login</string>
+    <string name="token_warning">⚠Warning！It is VERY DANGEROUS to access OAuth Token, DO NOT SHARE with others</string>
 </resources>

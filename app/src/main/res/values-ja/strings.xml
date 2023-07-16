@@ -290,4 +290,6 @@
     <string name="update_available" >更新が検出されました</string>
     <string name="no_update">は最新バージョンです</string>
     <string name="update_failed" >更新プログラムにアクセスできませんでした</string>
+    <string name="token_login">Token登録</string>
+    <string name="token_warning">⚠OAuthトークンにアクセスすることは非常に危険です、他の人と共有しないでください</string>
 </resources>

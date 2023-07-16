@@ -314,4 +314,6 @@
     <string name="no_update">已经是最新版</string>
     <string name="update_failed">访问更新失败</string>
     <string name="menu" translatable="false">Menu</string>
+    <string name="token_login">Token登录</string>
+    <string name="token_warning">⚠警告！访问Token属于危险操作，不要泄露外传以免影响账户</string>
 </resources>

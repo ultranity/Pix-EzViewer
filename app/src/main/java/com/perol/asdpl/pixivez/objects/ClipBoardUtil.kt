@@ -17,14 +17,14 @@ object ClipBoardUtil {
         mApplication = application
     }
 
-    @JvmOverloads
-    fun putTextIntoClipboard(context: Context, text: String, showHint: Boolean = true) {
+    //@JvmOverloads
+    fun putTextIntoClipboard(context: Context, text: String, showHint: Boolean = true, label:String = "copy text") {
         val clipboardManager =
             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("copy text", text)
+        val clipData = ClipData.newPlainText(label, text)
         clipboardManager.setPrimaryClip(clipData)
         if (showHint) {
-            Toasty.info(context, text)
+            Toasty.info(context, text).show()
         }
     }
 

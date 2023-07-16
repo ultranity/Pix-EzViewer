@@ -117,6 +117,15 @@
         tools:visibility="visible" />
 
     <TextView
+        android:id="@+id/token_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/token_login"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="@id/loginBtn"
+        app:layout_constraintTop_toBottomOf="@id/textview_help" />
+    <TextView
         android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

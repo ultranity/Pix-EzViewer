@@ -290,4 +290,6 @@
     <string name="update_available">检测到更新</string>
     <string name="no_update">已经是最新版</string>
     <string name="update_failed">访问更新失败</string>
+    <string name="token_login">Token登錄</string>
+    <string name="token_warning">⚠ 警告！訪問OAuth令牌極度危險，請勿與他人共享</string>
 </resources>

@@ -25,8 +25,12 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.responses.IIllustNext
+import com.perol.asdpl.pixivez.responses.Illust
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +49,25 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    protected fun <T : IIllustNext> Observable<T>.subscribeNext(
+        target: MutableLiveData<List<Illust>?>,
+        nextUrl: MutableLiveData<String?>,
+        illustTransform: (List<Illust>) -> List<Illust> = { it },
+        onError: (Throwable) -> Unit = {},
+        onCompleted: () -> Unit = {}
+    ) {
+        this.subscribe({ //Next
+            target.value = illustTransform(it.illusts)
+            nextUrl.value = it.next_url
+        }, { //Error
+            target.value = null
+            it.printStackTrace()
+            onError(it)
+        }, { //Completed
+            onCompleted()
+        }).add()
     }
 
     fun Disposable.add() {

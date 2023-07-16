@@ -36,21 +36,13 @@ class HelloMMyViewModel : BaseViewModel() {
     val hideBookmarked = MutableLiveData<Boolean>()
 
     fun onLoadMore() {
-        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            addillusts.value = it.illusts
-        }, {
-            addillusts.value = null
-        }, {}).add()
+        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribeNext(addillusts, nextUrl)
     }
 
     fun onRefresh(restrict: String) {
         isRefreshing.value = true
-        retrofit.getFollowIllusts(restrict).subscribe({
-            nextUrl.value = it.next_url
-            illusts.value = it.illusts
-        }, {
-            illusts.value = null
-        }, { isRefreshing.value = false }).add()
+        retrofit.getFollowIllusts(restrict).subscribeNext(illusts, nextUrl) {
+            isRefreshing.value = false
+        }
     }
 }

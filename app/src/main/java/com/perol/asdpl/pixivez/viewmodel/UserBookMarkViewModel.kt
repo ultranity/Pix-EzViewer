@@ -37,31 +37,23 @@ class UserBookMarkViewModel : BaseViewModel() {
     val dataAdded = MutableLiveData<List<Illust>?>()
     val nextUrl = MutableLiveData<String?>()
     val tags = MutableLiveData<BookMarkTagsResponse>()
-    fun onLoadMoreListener() {
-        if (nextUrl.value != null) {
-            retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                dataAdded.value = it.illusts
-                nextUrl.value = it.next_url
-            }, {dataAdded.value = null}, {}).add()
-        }
-    }
 
     fun isSelfPage(): Boolean {
         return AppDataRepository.currentUser.userid == id
     }
 
+    fun onLoadMoreListener() {
+        if (nextUrl.value != null) {
+            retrofit.getNextUserIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
+        }
+    }
+
     fun onRefreshListener(id: Long, string: String, tag: String?) {
-        retrofit.getLikeIllust(id, string, tag).subscribe({
-            data.value = it.illusts
-            nextUrl.value = it.next_url
-        }, {data.value = null}, {}).add()
+        retrofit.getLikeIllust(id, string, tag).subscribeNext(data, nextUrl)
     }
 
     fun first(id: Long, string: String) {
-        retrofit.getLikeIllust(id, string, null).subscribe({
-            data.value = it.illusts
-            nextUrl.value = it.next_url
-        }, {data.value = null}, {}).add()
+        retrofit.getLikeIllust(id, string, null).subscribeNext(data, nextUrl)
         retrofit.getIllustBookmarkTags(id, string).subscribe({
             tags.value = it
         }, {}, {}).add()

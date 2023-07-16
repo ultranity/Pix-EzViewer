@@ -41,7 +41,6 @@ import com.perol.asdpl.pixivez.adapters.UserShowAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentIllustratorBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
-import com.perol.asdpl.pixivez.responses.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.AverageGridItemDecoration
 import com.perol.asdpl.pixivez.viewmodel.IllustratorViewModel
@@ -127,34 +126,27 @@ class IllustratorFragment : BaseFragment() {
     private fun initViewModel() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                userpreviews(it)
+                userShowAdapter.setNewInstance(it)
+            } else {
+                userShowAdapter.loadMoreFail()
             }
         }
         viewModel.nextUrl.observe(viewLifecycleOwner) {
-            nextUrl(it)
+            if (it != null) {
+                userShowAdapter.loadMoreComplete()
+            } else {
+                userShowAdapter.loadMoreEnd()
+            }
         }
         viewModel.adddata.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
+            } else {
+                userShowAdapter.loadMoreFail()
             }
         }
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swiperefreshIllustrator.isRefreshing = it
-        }
-    }
-
-    private fun nextUrl(it: String?) {
-        if (it != null) {
-            userShowAdapter.loadMoreComplete()
-        }
-        else {
-            userShowAdapter.loadMoreEnd()
-        }
-    }
-
-    private fun userpreviews(it: MutableList<UserPreviewsBean>?) {
-        if (it != null) {
-            userShowAdapter.setNewInstance(it)
         }
     }
 

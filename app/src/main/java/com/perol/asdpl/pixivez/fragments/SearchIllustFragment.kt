@@ -53,7 +53,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
+import com.perol.asdpl.pixivez.viewmodel.SearchIllustViewModel
 import kotlinx.coroutines.runBlocking
 
 // TODO: Rename parameter arguments, choose names that match
@@ -223,13 +223,13 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
     private var selectSort: Int = 0
     private var selectTarget: Int = 0
     private var selectDuration: Int = 0
-    private lateinit var viewModel: IllustfragmentViewModel
+    private lateinit var viewModel: SearchIllustViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
         }
-        viewModel = ViewModelProvider(this)[IllustfragmentViewModel::class.java]
+        viewModel = ViewModelProvider(this)[SearchIllustViewModel::class.java]
     }
 
     private lateinit var binding: FragmentSearchIllustBinding

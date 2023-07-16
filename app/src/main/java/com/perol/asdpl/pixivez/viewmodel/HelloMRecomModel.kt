@@ -25,37 +25,21 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.responses.RecommendResponse
-import io.reactivex.Observable
 
 class HelloMRecomModel : BaseViewModel() {
     val illusts = MutableLiveData<List<Illust>?>()
     val addillusts = MutableLiveData<List<Illust>?>()
-    var nextUrl = MutableLiveData<String>()
-    fun onRefreshRx(): Observable<RecommendResponse> = retrofit.getRecommend()
-    fun onLoadMoreRx(nextUrl: String) = retrofit.getNextIllustRecommended(nextUrl)
+    var nextUrl = MutableLiveData<String?>()
+    private inline fun onRefreshRx() = retrofit.getRecommend()
+    private inline fun onLoadMoreRx(nextUrl: String) = retrofit.getNextIllustRecommended(nextUrl)
 
-    fun onLoadMorePicRequested() {
-        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            addillusts.value = it.illusts
-        }, {
-            addillusts.value = null
-        }, {}).add()
+    fun onLoadMore() {
+        nextUrl.value?.let { onLoadMoreRx(it).subscribeNext(addillusts, nextUrl) }
     }
 
     fun onRefreshListener() {
-        Log.d("init", "gettingRecommend")
-        retrofit.getRecommend().subscribe({
-            Log.d("init", "getRecommend")
-            nextUrl.value = it.next_url
-            illusts.value = it.illusts
-        }, {
-            Log.d("init", "getRecommend fail $it")
-            illusts.value = null
-        }, {}).add()
+        onRefreshRx().subscribeNext(illusts, nextUrl)
     }
 }

@@ -119,9 +119,11 @@ class UserIllustFragment : BaseFragment() {
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                binding.refreshlayout.isRefreshing = false
                 picListAdapter.setList(it)
+            } else {
+                picListAdapter.loadMoreFail()
             }
+            binding.refreshlayout.isRefreshing = false
         }
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {

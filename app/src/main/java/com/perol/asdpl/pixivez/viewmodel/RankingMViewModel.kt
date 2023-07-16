@@ -34,20 +34,10 @@ class RankingMViewModel : BaseViewModel() {
     val nextUrl = MutableLiveData<String?>()
 
     fun onRefresh(mode: String, pickDate: String?) {
-        retrofit.getIllustRanking(mode, pickDate).subscribe({
-            nextUrl.value = it.next_url
-            illusts.value = it.illusts
-        }, {
-            illusts.value = null
-        }, {}).add()
+        retrofit.getIllustRanking(mode, pickDate).subscribeNext(illusts, nextUrl)
     }
 
     fun onLoadMore() {
-        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribe({
-            nextUrl.value = it.next_url
-            addillusts.value = it.illusts
-        }, {
-            addillusts.value = null
-        }, {}).add()
+        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribeNext(addillusts, nextUrl)
     }
 }

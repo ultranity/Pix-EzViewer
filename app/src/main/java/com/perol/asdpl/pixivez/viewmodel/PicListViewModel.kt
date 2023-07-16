@@ -68,25 +68,15 @@ class PicListViewModel : BaseViewModel() {
 
     fun onLoadFirst() {
         isRefreshing.value = true
-        onLoadFirstRx().subscribe({
-            data.value = it.illusts
-            nextUrl.value = it.next_url
-        }, {
-            data.value = null
-        }, {
+        onLoadFirstRx().subscribeNext(data, nextUrl) {
             isRefreshing.value = false
-        }).add()
+        }
     }
 
     fun onLoadMoreRx(nextUrl: String): Observable<IllustNext> = retrofit.getNext(nextUrl)
     fun onLoadMore() {
         if (nextUrl.value != null) {
-            retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                dataAdded.value = it.illusts
-                nextUrl.value = it.next_url
-            }, {
-               dataAdded.value = null
-            }, {}).add()
+            retrofit.getNextUserIllusts(nextUrl.value!!).subscribeNext(data, nextUrl)
         }
     }
 

@@ -39,7 +39,7 @@ fun Calendar?.generateDateString(): String? {
     return "${this.get(Calendar.YEAR)}-${this.get(Calendar.MONTH) + 1}-${this.get(Calendar.DATE)}"
 }
 
-class IllustfragmentViewModel : BaseViewModel() {
+class SearchIllustViewModel : BaseViewModel() {
     private var sortT = arrayOf("date_desc", "date_asc", "popular_desc")
     private var searchTargetT =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
@@ -47,7 +47,7 @@ class IllustfragmentViewModel : BaseViewModel() {
     var illusts = MutableLiveData<List<Illust>?>()
     var addIllusts = MutableLiveData<List<Illust>?>()
     private var retrofitRepository = RetrofitRepository.getInstance()
-    var nextUrl = MutableLiveData<String>()
+    var nextUrl = MutableLiveData<String?>()
     var bookmarkID = MutableLiveData<Long>()
     var isRefresh = MutableLiveData(false)
     var pre = PxEZApp.instance.pre
@@ -61,26 +61,24 @@ class IllustfragmentViewModel : BaseViewModel() {
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefresh.value = true
         retrofitRepository.getSearchIllustPreview(word, sort, search_target, null, duration)
-            .subscribe({
-                illusts.value = it.illusts
-                nextUrl.value = it.next_url
+            .subscribeNext(illusts, nextUrl) {
                 isRefresh.value = false
-            }, {
-                illusts.value = null
-                it.printStackTrace()
-            }, {}).add()
+            }
     }
 
     fun firstSetData(word: String) {
         isRefresh.value = true
-        if ((startDate.value != null || endDate.value != null) && (startDate.value != null && endDate.value != null) && startDate.value!!.timeInMillis >= endDate.value!!.timeInMillis) {
+        //TODO: WTF?
+        if ((startDate.value != null || endDate.value != null) &&
+            (startDate.value != null && endDate.value != null) &&
+            startDate.value!!.timeInMillis >= endDate.value!!.timeInMillis
+        ) {
             startDate.value = null
             endDate.value = null
         }
         if (isPreview) {
             setPreview(word, sortT[sort.value!!], searchTargetT[searchTarget.value!!], null)
-        } 
-        else {
+        } else {
             retrofitRepository.getSearchIllust(
                 word,
                 sortT[sort.value!!],
@@ -88,34 +86,21 @@ class IllustfragmentViewModel : BaseViewModel() {
                 startDate.value.generateDateString(),
                 endDate.value.generateDateString(),
                 null
-            )
-                .subscribe({
-                    illusts.value = if (sort.value == 2) {
-                        ArrayList(it.illusts.apply { sortByDescending { it.total_bookmarks } })
-                    }
-                    else {
-                        ArrayList(it.illusts)
-                    }
-                    nextUrl.value = it.next_url
-                    isRefresh.value = false
-                }, {
-                    it.printStackTrace()
-                }, {}).add()
+            ).subscribeNext(illusts, nextUrl, ::localSortByBookmarks) {
+                isRefresh.value = false
+            }
         }
     }
 
+    //TODO: UI标识
+    private fun localSortByBookmarks(it: List<Illust>): List<Illust> {
+        return if (sort.value == 2) it.sortedByDescending { it.total_bookmarks } else it
+    }
+
     fun onLoadMoreListen() {
-        if (nextUrl.value != null) {
-            retrofitRepository.getNextIllustRecommended(nextUrl.value!!).subscribe({
-                nextUrl.value = it.next_url
-                var illusts = it.illusts
-                if (sort.value == 2) {
-                    illusts = it.illusts.sortedByDescending{ it.total_bookmarks } // in-place sort
-                }
-                addIllusts.value = illusts
-            }, {
-                addIllusts.value = null
-            }, {}).add()
+        nextUrl.value?.let {
+            retrofitRepository.getNextIllustRecommended(it)
+                .subscribeNext(addIllusts, nextUrl, ::localSortByBookmarks)
         }
     }
 }

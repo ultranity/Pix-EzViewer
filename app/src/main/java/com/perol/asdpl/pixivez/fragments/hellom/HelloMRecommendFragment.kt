@@ -49,7 +49,12 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.OKWebViewActivity
 import com.perol.asdpl.pixivez.activity.PixivsionActivity
 import com.perol.asdpl.pixivez.activity.WebViewActivity
-import com.perol.asdpl.pixivez.adapters.*
+import com.perol.asdpl.pixivez.adapters.PicListAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
+import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.adapters.PicListXAdapter
+import com.perol.asdpl.pixivez.adapters.PicListXUserAdapter
+import com.perol.asdpl.pixivez.adapters.PixiVisionAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -194,7 +199,7 @@ class HelloMRecommendFragment : BaseFragment() {
             pixivisionModel.onRefreshListener()
         }
         picListAdapter.setOnLoadMoreListener {
-            viewmodel.onLoadMorePicRequested()
+            viewmodel.onLoadMore()
         }
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(

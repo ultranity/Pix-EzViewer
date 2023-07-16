@@ -28,29 +28,20 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.responses.Illust
 
 class UserMillustViewModel : BaseViewModel() {
-    val data = MutableLiveData<List<Illust>>()
-    val dataAdded = MutableLiveData<List<Illust>>()
+    val data = MutableLiveData<List<Illust>?>()
+    val dataAdded = MutableLiveData<List<Illust>?>()
     val nextUrl = MutableLiveData<String?>()
     fun onLoadMoreListener() {
         if (nextUrl.value != null) {
-            retrofit.getNextUserIllusts(nextUrl.value!!).subscribe({
-                dataAdded.value = it.illusts
-                nextUrl.value = it.next_url
-            }, {}, {}).add()
+            retrofit.getNextUserIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
         }
     }
 
     fun onRefreshListener(id: Long, type: String) {
-        retrofit.getUserIllusts(id, type).subscribe({
-            data.value = it.illusts
-            nextUrl.value = it.next_url
-        }, {}, {}).add()
+        retrofit.getUserIllusts(id, type).subscribeNext(data, nextUrl)
     }
 
     fun first(id: Long, type: String) {
-        retrofit.getUserIllusts(id, type).subscribe({
-            data.value = it.illusts
-            nextUrl.value = it.next_url
-        }, {}, {}).add()
+        retrofit.getUserIllusts(id, type).subscribeNext(data, nextUrl)
     }
 }

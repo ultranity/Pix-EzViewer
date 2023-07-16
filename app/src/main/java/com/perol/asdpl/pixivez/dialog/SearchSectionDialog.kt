@@ -33,7 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
-import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
+import com.perol.asdpl.pixivez.viewmodel.SearchIllustViewModel
 import com.perol.asdpl.pixivez.viewmodel.generateDateString
 import java.util.*
 
@@ -47,7 +47,7 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val word = arguments?.getString("word", "")
         val viewModel =
-            ViewModelProvider(requireParentFragment())[IllustfragmentViewModel::class.java]
+            ViewModelProvider(requireParentFragment())[SearchIllustViewModel::class.java]
         var searchTargeti = viewModel.searchTarget.value
         binding.tablayoutSearchTarget.apply {
             clearOnTabSelectedListeners()

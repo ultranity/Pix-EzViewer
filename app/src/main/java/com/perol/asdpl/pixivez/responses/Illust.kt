@@ -28,10 +28,15 @@ package com.perol.asdpl.pixivez.responses
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-data class IllustNext(
-    val illusts: List<Illust>,
+interface IIllustNext {
+    val illusts: List<Illust>
     val next_url: String?
-)
+}
+
+data class IllustNext(
+    override val illusts: List<Illust>,
+    override val next_url: String?
+) : IIllustNext
 
 /* "id": 102414087,
  * "title": "花に少女",

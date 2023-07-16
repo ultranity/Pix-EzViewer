@@ -169,17 +169,22 @@ abstract class PicListAdapter(
         setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
         val numLayout = holder.getView<TextView>(R.id.textview_num)
-        if (item.meta_pages.isEmpty())
-            numLayout.visibility = View.GONE
-        else {
+        if (item.type=="ugoira"){
+            numLayout.text = "GIF"
+            numLayout.visibility = View.VISIBLE
+        }
+        else if (item.meta_pages.isNotEmpty()) {
             val meta_pages_size = item.meta_pages.size.toString()
-            // "manga"
+
             numLayout.text = when (item.type) {
                 "illust" -> meta_pages_size
-                "ugoira" -> "GIF"
-                else -> "C$meta_pages_size"
+                //"ugoira" -> "GIF"
+                else -> "C$meta_pages_size" // "manga"
             }
             numLayout.visibility = View.VISIBLE
+        }
+        else {
+            numLayout.visibility = View.GONE
         }
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         mainImage.setTag(R.id.tag_first, item.image_urls.medium)

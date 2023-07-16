@@ -54,13 +54,13 @@ import retrofit2.HttpException
 // TODO: panel helper
 class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
 
-    private var id: Long by argument()
+    private var pid: Long by argument()
     private var parent_comment_id = 1
     private val retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl: String?  by argumentNullable()
 
     private fun getData(commentAdapter: CommentAdapter) {
-        retrofitRepository.getIllustComments(id, include_total_comments = true)
+        retrofitRepository.getIllustComments(pid, include_total_comments = true)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({
@@ -76,11 +76,11 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
 
     private fun commit(commentAdapter: CommentAdapter) {
         retrofitRepository.postIllustComment(
-            id,
+            pid,
             binding.edittextComment.text.toString(),
             if (parent_comment_id == 1) null else parent_comment_id
         ).subscribe({
-            retrofitRepository.getIllustComments(id).subscribe({
+            retrofitRepository.getIllustComments(pid).subscribe({
                 commentAdapter.setNewInstance(it.comments)
                 Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT).show()
                 binding.edittextComment.setText("")
@@ -180,10 +180,8 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
     }
 
     companion object {
-        fun newInstance(id: Long): CommentDialog {
-            val commentDialog = CommentDialog()
-            commentDialog.id = id
-            return commentDialog
+        fun newInstance(pid: Long): CommentDialog {
+            return CommentDialog().apply { this.pid = pid }
         }
     }
 }

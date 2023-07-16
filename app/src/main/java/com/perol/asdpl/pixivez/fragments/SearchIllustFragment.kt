@@ -175,7 +175,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
         searchIllustAdapter.setOnLoadMoreListener {
             viewModel.onLoadMoreListen()
         }
-        binding.swiperefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             runBlocking {
                 val user = AppDataRepository.currentUser
                 if (!user.ispro && selectSort == 2) {
@@ -271,7 +271,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
             changeToBlue(it)
         }
         viewModel.isRefresh.observe(viewLifecycleOwner) {
-            binding.swiperefreshLayout.isRefreshing = it
+            binding.swipeRefreshLayout.isRefreshing = it
         }
         viewModel.hideBookmarked.observe(viewLifecycleOwner) {
             if (it != null) {

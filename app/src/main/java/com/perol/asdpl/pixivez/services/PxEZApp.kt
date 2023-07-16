@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.services
 
-// import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences

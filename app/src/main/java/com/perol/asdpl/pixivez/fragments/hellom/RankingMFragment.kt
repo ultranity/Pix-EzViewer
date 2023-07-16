@@ -111,7 +111,7 @@ class RankingMFragment : BaseFragment() {
             }
         }
         viewmodel.illusts.observe(viewLifecycleOwner) {
-            binding.swiperefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
             if (it != null) {
                 picListAdapter.setList(it)
             }
@@ -174,7 +174,7 @@ class RankingMFragment : BaseFragment() {
         else {
             sharemodel.picDateShare.value
         }
-        binding.swiperefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(mode!!, picDate)
         }
         picListAdapter.setOnLoadMoreListener {

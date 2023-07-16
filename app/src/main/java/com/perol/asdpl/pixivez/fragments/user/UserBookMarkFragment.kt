@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.fragments.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
+import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.GridItemDecoration
@@ -51,11 +52,6 @@ import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -66,7 +62,7 @@ private const val ARG_PARAM2 = "param2"
 
 class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     override fun loadData() {
-        viewModel.first(param1!!, pub)
+        viewModel.first(uid, pub)
     }
 
     private lateinit var filter: IllustFilter
@@ -106,7 +102,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         }
 
         binding.refreshlayout.setOnRefreshListener {
-            viewModel.onRefreshListener(param1!!, pub, null)
+            viewModel.onRefreshListener(uid, pub, null)
         }
         if (viewModel.isSelfPage()) {
             val header = HeaderBookmarkBinding.inflate(layoutInflater)
@@ -119,7 +115,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     override fun onClick(string: String, public: String) {
         viewModel.onRefreshListener(
-            param1!!,
+            uid,
             public,
             string.ifBlank {
                 null
@@ -134,7 +130,7 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     }
 
     private fun initViewModel() {
-        viewModel.id = param1!!
+        viewModel.id = uid
         this.viewActivity = activity as UserMActivity
 
         viewModel.nextUrl.observe(viewLifecycleOwner) {
@@ -168,15 +164,8 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         // }
     }
 
-    private var param1: Long? = null
-    private var param2: String? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getLong(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var uid: Long by argument()
+    private var TAG: String by argument()
 
     private var pub = "public"
 
@@ -185,12 +174,9 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
 
     private fun showTagDialog() {
         if (viewModel.tags.value != null) {
-            val tagsShowDialog = TagsShowDialog()
-            tagsShowDialog.callback = this
-            val bundle = Bundle()
-            bundle.putLong("id", param1!!)
-            tagsShowDialog.arguments = bundle
-            tagsShowDialog.show(childFragmentManager)
+            TagsShowDialog.newInstance(uid).also { 
+                it.callback = this
+            }.show(childFragmentManager)
         }
     }
 
@@ -199,11 +185,11 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
         runBlocking {
             val id = AppDataRepository.currentUser.userid
             picItemAdapter.illustFilter.hideBookmarked =
-                if (param1 != id) {
+                if (uid != id) {
                     viewActivity.viewModel.hideBookmarked.value!!
                 } else { 0 }
             picItemAdapter.illustFilter.hideDownloaded =
-                if (param1 == id) {
+                if (uid == id) {
                     viewActivity.viewModel.hideDownloaded.value!!
                 } else { false }
             picItemAdapter.notifyDataSetChanged()
@@ -232,14 +218,11 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
          * @param tag Parameter 2.
          * @return A new instance of fragment UserBookMarkFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(userid: Long, tag: String) =
             UserBookMarkFragment().apply {
-                arguments = Bundle().apply {
-                    putLong(ARG_PARAM1, userid)
-                    putString(ARG_PARAM2, tag)
-                }
+                this.uid = userid
+                this.TAG = tag
             }
     }
 }

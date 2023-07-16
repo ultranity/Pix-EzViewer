@@ -52,9 +52,9 @@ class UserBookMarkViewModel : BaseViewModel() {
         retrofit.getLikeIllust(id, string, tag).subscribeNext(data, nextUrl)
     }
 
-    fun first(id: Long, string: String) {
-        retrofit.getLikeIllust(id, string, null).subscribeNext(data, nextUrl)
-        retrofit.getIllustBookmarkTags(id, string).subscribe({
+    fun first(id: Long, visibility: String) {
+        retrofit.getLikeIllust(id, visibility, null).subscribeNext(data, nextUrl)
+        retrofit.getIllustBookmarkTags(id, visibility).subscribe({
             tags.value = it
         }, {}, {}).add()
     }

@@ -85,7 +85,7 @@ class HelloMMyFragment : BaseFragment() {
     var restrict = "all"
     private fun initViewModel() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
-            binding.swiperefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
             if (it == null) {
                 picListAdapter.loadMoreFail()
             }
@@ -119,7 +119,7 @@ class HelloMMyFragment : BaseFragment() {
             }
         }
         viewmodel.isRefreshing.observe(viewLifecycleOwner) {
-            binding.swiperefreshLayout.isRefreshing = it
+            binding.swipeRefreshLayout.isRefreshing = it
         }
     }
 
@@ -165,7 +165,7 @@ class HelloMMyFragment : BaseFragment() {
             )
             adapter = picListAdapter
         }
-        binding.swiperefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewmodel.onRefresh(restrict)
         }
         picListAdapter.setOnLoadMoreListener {

@@ -99,7 +99,7 @@ class HelloMRecommendFragment : BaseFragment() {
 
     private fun initViewModel() {
         viewmodel.illusts.observe(viewLifecycleOwner) {
-            binding.swiperefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
             if (it != null) {
                 picListAdapter.setList(it)
                 // binding.recyclerview.smoothScrollToPosition(0)
@@ -194,7 +194,7 @@ class HelloMRecommendFragment : BaseFragment() {
             )
             adapter = picListAdapter
         }
-        binding.swiperefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewmodel.onRefreshListener()
             pixivisionModel.onRefreshListener()
         }
@@ -257,7 +257,7 @@ class HelloMRecommendFragment : BaseFragment() {
             }
         }
 
-        binding.swiperefreshLayout.isRefreshing = true
+        binding.swipeRefreshLayout.isRefreshing = true
         // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
         ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)?.getTabAt(0)
             ?.view?.setOnClickListener {

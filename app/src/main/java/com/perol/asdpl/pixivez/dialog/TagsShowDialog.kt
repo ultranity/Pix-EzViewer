@@ -8,6 +8,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.TagsShowAdapter
 import com.perol.asdpl.pixivez.databinding.ViewTagsShowBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
+import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +16,12 @@ import io.reactivex.schedulers.Schedulers
 
 // UserBookMarkFragment
 class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
-
+    companion object {
+        fun newInstance(uid: Long): TagsShowDialog = TagsShowDialog().apply{
+            this.uid = uid
+        }
+    }
+    private var uid:Long by argument()
     val viewModel: UserBookMarkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     var callback: Callback? = null
 

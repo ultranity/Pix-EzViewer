@@ -18,6 +18,8 @@ import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
+import com.perol.asdpl.pixivez.objects.argument
+import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.viewmodel.ADAPTER_VERSION
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.FilterViewModel
@@ -29,28 +31,19 @@ import kotlinx.coroutines.runBlocking
 fun Boolean.toInt() = if (this) 1 else 0
 open class PicListFragment : Fragment() {
     companion object {
-        private const val ARG_PARAM1 = "mode"
-        private const val ARG_PARAM2 = "tabPosition"
-
         @JvmStatic
         fun newInstance(mode: String, tabPosition: Int) =
             PicListFragment().apply {
-                TAG = mode
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, mode)
-                    putInt(ARG_PARAM2, tabPosition)
-                }
+                this.TAG = mode
+                this.tabPosition = tabPosition
             }
     }
 
-    var TAG = "PicListFragment"
-    private var tabPosition = 0
+    protected var TAG:String by argument("PicListFragment")
+    private var tabPosition:Int by argument(0)
+    private var extraArgs:Map<String, Any>? by argumentNullable()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            TAG = it.getString(ARG_PARAM1)!!
-            tabPosition = it.getInt(ARG_PARAM2)
-        }
         viewModel.setonLoadFirstRx(TAG)
     }
 
@@ -88,7 +81,7 @@ open class PicListFragment : Fragment() {
                 picListAdapter.loadMoreFail()
             }
             isLoaded = true
-            binding.swiperefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -108,7 +101,7 @@ open class PicListFragment : Fragment() {
             headerBinding.imagebuttonShowtags.text =
                 resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
             viewModel.onLoadFirst()
-            binding.swiperefreshLayout.isRefreshing = true
+            binding.swipeRefreshLayout.isRefreshing = true
         }
         filterModel.listFilter.blockTags = runBlocking{ BlockViewModel.getAllTags() }
         filterModel.applyConfig()
@@ -180,7 +173,7 @@ open class PicListFragment : Fragment() {
             filterModel.spanNum.value!!,
             StaggeredGridLayoutManager.VERTICAL
         )
-        binding.swiperefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onLoadFirst()
         }
         picListAdapter.setOnLoadMoreListener {

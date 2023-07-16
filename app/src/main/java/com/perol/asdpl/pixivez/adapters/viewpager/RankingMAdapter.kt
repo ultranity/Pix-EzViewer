@@ -28,7 +28,7 @@ package com.perol.asdpl.pixivez.adapters.viewpager
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.fragments.hellom.RankingMFragment
-import java.util.*
+import java.util.WeakHashMap
 
 class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
     FragmentStateAdapter(fragment) {

@@ -48,7 +48,7 @@ class UserMPagerAdapter(
             fragments[position] = when (position) {
                 0 -> UserIllustFragment.newInstance(userid, "illust")
                 1 -> UserIllustFragment.newInstance(userid, "manga")
-                2 -> UserBookMarkFragment.newInstance(userid, "1")
+                2 -> UserBookMarkFragment.newInstance(userid, "bookmark")
                 else -> UserInfoFragment.newInstance(userid)
             }
         }

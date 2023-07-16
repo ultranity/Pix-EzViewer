@@ -96,9 +96,9 @@ class ZoomPagerAdapter(
         val binding = ViewPagerZoomBinding.inflate(layoutInflater, container, false) 
         binding.photoviewZoom.isEnabled = true
         // val buttonOrigin = binding.MaterialButton.button
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val dm = DisplayMetrics()
-        wm.defaultDisplay.getMetrics(dm)
+        // val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        // val dm = DisplayMetrics()
+        // wm.defaultDisplay.getMetrics(dm)
         var resourceFile: File? = null
         val gestureDetector =
             GestureDetector(

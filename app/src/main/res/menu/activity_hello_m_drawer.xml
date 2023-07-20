@@ -22,7 +22,7 @@
             android:title="@string/download_progress" />
         <item
             android:icon="@drawable/ic_action_theme"
-            android:title="@string/themecoloful"
+            android:title="@string/theme"
             android:id="@+id/nav_theme"/>
         <item
             android:id="@+id/nav_settings"

@@ -45,117 +45,67 @@ import com.perol.asdpl.pixivez.dialog.SupportDialog
 import com.perol.asdpl.pixivez.dialog.ThanksDialog
 
 class ThanksFragment : PreferenceFragmentCompat() {
+    private class GithubUser(
+        val Preference:String,
+        val AvatarUrl:String,
+        val Placeholder: Int,
+        val GithubProfile:String,
+    )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pre_thanks)
         findPreference<PreferenceCategory>("huonaicai")?.isVisible = BuildConfig.FLAVOR != "play"
 
-        findPreference<Preference>("xuemo")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/LuckXuemo",
-                R.drawable.xuemo,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/LuckXuemo")
-                true
-            }
-        }
-
-        findPreference<Preference>("ultranity")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/ultranity",
-                R.drawable.xuemo,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/ultranity")
-                true
-            }
-        }
-        findPreference<Preference>("hunterx9")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/hunterx9",
-                R.drawable.hunterx9,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/hunterx9")
-                true
-            }
-        }
-        findPreference<Preference>("Skimige")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/Skimige",
-                R.drawable.skimige,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/Skimige")
-                true
-            }
-        }
-
-        findPreference<Preference>("TragicLife")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/TragicLifeHu",
-                R.drawable.skimige,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/TragicLifeHu")
-                true
-            }
-        }
-        findPreference<Preference>("Misoni")?.apply {
-            loadDrawableByUrl(
-                "https://avatars.githubusercontent.com/MISONLN41",
-                R.drawable.skimige,
-                onLoadCleared = { it?.let { icon = it } },
-                onResourceReady = { icon = it }
-            )
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                startActivityByUri("https://github.com/MISONLN41")
-                true
-            }
-        }
-//        listOf(
-//            mapOf(
-//                "Preference" to findPreference<Preference?>("xuemo"),
-//                "AvatarUrl" to "https://avatars.githubusercontent.com/LuckXuemo",
-//                "Placeholder" to R.drawable.xuemo,
-//                "GithubProfile" to "https://github.com/LuckXuemo"
-//            ),
-//            mapOf(
-//                "Preference" to findPreference<Preference?>("hunterx9"),
-//                "AvatarUrl" to "https://avatars.githubusercontent.com/hunterx9",
-//                "Placeholder" to R.drawable.hunterx9,
-//                "GithubProfile" to "https://github.com/hunterx9"
-//            ),
-//            mapOf(
-//                "Preference" to findPreference<Preference?>("Skimige"),
-//                "AvatarUrl" to "https://avatars.githubusercontent.com/Skimige",
-//                "Placeholder" to R.drawable.skimige,
-//                "GithubProfile" to "https://github.com/Skimige"
+//        findPreference<Preference>("xuemo")?.apply {
+//            loadDrawableByUrl(
+//                "https://avatars.githubusercontent.com/LuckXuemo",
+//                R.drawable.xuemo,
+//                onLoadCleared = { it?.let { icon = it } },
+//                onResourceReady = { icon = it }
 //            )
-//        ).forEach {
-//            (it["Preference"] as Preference?)?.apply {
-//                loadDrawableByUrl(
-//                    it["AvatarUrl"] as String,
-//                    it["Placeholder"] as Int,
-//                    onLoadCleared = { d -> d?.let { icon = d } },
-//                    onResourceReady = { d -> icon = d })
-//                onPreferenceClickListener = Preference.OnPreferenceClickListener { _ ->
-//                    startActivityByUri(it["GithubProfile"] as String)
-//                    true
-//                }
+//            onPreferenceClickListener = Preference.OnPreferenceClickListener {
+//                startActivityByUri("https://github.com/LuckXuemo")
+//                true
 //            }
 //        }
+        listOf(
+            GithubUser("xuemo",
+                    "https://avatars.githubusercontent.com/LuckXuemo",
+                    R.drawable.xuemo,
+                    "https://github.com/LuckXuemo"),
+            GithubUser("ultranity",
+                    "https://avatars.githubusercontent.com/ultranity",
+                    R.drawable.ultranity,
+                "https://github.com/ultranity"),
+            GithubUser("hunterx9",
+                    "https://avatars.githubusercontent.com/hunterx9",
+                    R.drawable.hunterx9,
+                    "https://github.com/hunterx9"),
+            GithubUser("Skimige",
+                    "https://avatars.githubusercontent.com/Skimige",
+                    R.drawable.skimige,
+                    "https://github.com/Skimige"),
+            GithubUser("TragicLife",
+                    "https://avatars.githubusercontent.com/TragicLifeHu",
+                    R.drawable.tragiclife,
+                    "https://github.com/TragicLifeHu"),
+            GithubUser("Misoni",
+                    "https://avatars.githubusercontent.com/MISONLN41",
+                    R.drawable.misoni,
+                    "https://github.com/MISONLN41"),
+        ).forEach {
+            (findPreference<Preference>(it.Preference))?.apply {
+                loadDrawableByUrl(
+                    it.AvatarUrl,
+                    it.Placeholder,
+                    onLoadCleared = { d -> d?.let { icon = d } },
+                    onResourceReady = { d -> icon = d })
+                setOnPreferenceClickListener { _ ->
+                    startActivityByUri(it.GithubProfile)
+                    true
+                }
+            }
+        }
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -165,27 +115,6 @@ class ThanksFragment : PreferenceFragmentCompat() {
             "thanks" -> {
                 val thanksDialog = ThanksDialog()
                 thanksDialog.show(childFragmentManager)
-
-//                MaterialDialog(requireContext()).show {
-//                    customView(R.layout.dialog_thanks, scrollable = true, horizontalPadding = false)
-//                    cornerRadius(2.0F)
-//                    lifecycleOwner(this@ThanksFragment)
-//                }.getCustomView().apply {
-//                    list.apply {
-//                        adapter = ThanksAdapter(R.layout.simple_list_item, ThanksDialog().array).apply {
-//                            setHeaderView(LayoutInflater.from(context).inflate(R.layout.dialog_thanks_header, null, false))
-//                        }
-//                        layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-//                    }
-//                }
-
-//                MaterialDialog(requireContext()).show {
-// //                    title(text = "")
-//                    message(R.string.summary)
-//                    listItems(items = ThanksDialog().array)
-//                    cornerRadius(2.0F)
-//                    lifecycleOwner(this@ThanksFragment)
-//                }
             }
             "support" -> SupportDialog().show(parentFragmentManager, "supportdialog")
             "Ultranity" -> SupportDialog().show(parentFragmentManager, "supportdialog")

@@ -49,6 +49,16 @@ class ThemeUtil {
         )
         private val theme3Array = arrayOf(
             R.style.AppThemeBase3,
+            R.style.AppThemeBase3_Primary,
+            R.style.AppThemeBase3_blue,
+            R.style.AppThemeBase3_pink,
+            R.style.AppThemeBase3_miku,
+            R.style.AppThemeBase3_purple,
+            R.style.AppThemeBase3_cyan,
+            R.style.AppThemeBase3_green,
+            R.style.AppThemeBase3_indigo,
+            R.style.AppThemeBase3_red,
+            R.style.AppThemeBase3_now,
         )
         private val colorMap = HashMap<Int, Int>()
         const val halftrans = 0x089a9a9a
@@ -90,20 +100,22 @@ class ThemeUtil {
         @JvmStatic
         fun themeInit(activity: AppCompatActivity) {
             activity.apply {
-                val theme3 = PxEZApp.instance.pre.getBoolean("material3", false)
-                val dynamicColor = PxEZApp.instance.pre.getBoolean("dynamicColor", false)
+                val theme3 = PxEZApp.instance.pre.getBoolean("material3", true)
+                val dynamicColor = PxEZApp.instance.pre.getBoolean("dynamicColor", true)
+                val intColor = PxEZApp.instance.pre.getInt("colorint", 0).run {
+                    if ((this >=0) and (this < themeArray.size)) { this } else 0
+                }
                 if (theme3) {
-                    setTheme(theme3Array[0])
                     if (dynamicColor and DynamicColors.isDynamicColorAvailable()){
+                        setTheme(theme3Array[0])
                         DynamicColors.applyToActivityIfAvailable(activity)
                     }
+                    else{
+                        setTheme(theme3Array[1+intColor])
+                    }
                     //DynamicColors.applyToActivitiesIfAvailable(PxEZApp.instance)
-
                 }
                 else {
-                    val intColor = PxEZApp.instance.pre.getInt("colorint", 0).run {
-                        if ((this >=0) and (this < themeArray.size)) { this } else 0
-                    }
                     setTheme(themeArray[intColor])
                 }
             }

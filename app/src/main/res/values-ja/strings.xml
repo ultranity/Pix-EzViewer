@@ -85,7 +85,7 @@
     <string name="goodpfriend">P</string>
     <string name="ta">about</string>
     <string name="taziliao">information</string>
-    <string name="themecoloful">テーマの設定</string>
+    <string name="theme">テーマの設定</string>
     <string name="setting">設定</string>
     <string name="savesuccess">保存しました</string>
     <string name="alreadysaved">すでに保存されています</string>
@@ -269,7 +269,7 @@
     <string name="use_bottom_layout_subtext">ひっくり返って〜</string>
     <string name="use_picX_layout_main">ホームページは最新のカード レイアウトを使用しています</string>
     <string name="use_picX_layout_subtext">写真を見るだけの簡潔な体験</string>
-    <string name="dynamicColorAPIAlert">カラーチェンジ機能 Android 12/S+ (API31+)</string>
+    <string name="dynamicColorAPIAlert">Material3 カラーチェンジ機能 Android 12/S+ (API31+)</string>
     <string name="hold_to_delete">长按删除</string>
     <string name="bookmarked">集めました</string>
     <string name="not_bookmarked">お気に入りに追加されていません</string>

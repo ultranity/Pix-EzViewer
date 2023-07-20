@@ -20,14 +20,14 @@
 
     <PreferenceCategory app:title="Material">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="material3"
-            app:summary="experimental"
+            app:summary="Material You~"
             android:title="Material3" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="dynamicColor"
-            app:summary="experimental"
+            app:summary="Material3 Only"
             android:title="Dynamic Color" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

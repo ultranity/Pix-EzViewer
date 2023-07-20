@@ -94,7 +94,7 @@
     <string name="goodpfriend">好P友</string>
     <string name="ta">ta的介绍</string>
     <string name="taziliao">ta的资料</string>
-    <string name="themecoloful">主题样式</string>
+    <string name="theme">主题样式</string>
     <string name="setting">设置</string>
     <string name="savesuccess">保存成功!</string>
     <string name="alreadysaved">图片已存在</string>
@@ -292,7 +292,7 @@
     <string name="use_picX_layout_main">首页使用新式卡片布局</string>
     <string name="use_picX_layout_subtext">简明体验，只为看图</string>
     <string name="fractional" translatable="false">%d/%d</string>
-    <string name="dynamicColorAPIAlert">动态颜色系统要求 Android 12/S+ (API 31+)</string>
+    <string name="dynamicColorAPIAlert">Material3 动态颜色系统要求 Android 12/S+ (API 31+)</string>
     <string name="hold_to_delete">长按删除</string>
     <string name="bookmarked">已收藏</string>
     <string name="not_bookmarked">未收藏</string>

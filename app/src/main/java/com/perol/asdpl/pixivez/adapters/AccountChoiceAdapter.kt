@@ -40,7 +40,7 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
     override fun convert(holder: BaseViewHolder, item: UserEntity) {
         val userImage = holder.getView<ImageView>(R.id.imageView4)
         Glide.with(context).load(item.userimage).circleCrop().into(userImage)
-        holder.setImageResource(R.id.imageview_delete, R.drawable.ic_action_lajitong)
+        holder.setImageResource(R.id.imageview_delete, R.drawable.ic_action_del)
             .setText(R.id.textView4, item.username)
             .setText(R.id.textview_email, item.useremail)
         val delete = holder.getView<ImageView>(R.id.imageview_delete)

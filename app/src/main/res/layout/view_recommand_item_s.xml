@@ -43,7 +43,7 @@
 
         <com.perol.asdpl.pixivez.ui.NiceImageView
             android:id="@+id/imageview_like"
-            android:src="@drawable/ic_action_heart"
+            android:src="@drawable/ic_heart"
             android:background="@drawable/round_ripple"
             android:layout_width="36dp"
             android:layout_height="36dp"

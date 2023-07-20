@@ -153,7 +153,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_action_share_black"
+            android:src="@drawable/ic_action_share"
             app:layout_constraintEnd_toStartOf="@+id/imagebutton_download"
             app:layout_constraintTop_toTopOf="@+id/textview_illust_id"
             app:tint="?android:attr/textColorPrimary"

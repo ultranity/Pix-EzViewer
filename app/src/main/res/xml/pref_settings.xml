@@ -5,7 +5,7 @@
     <PreferenceCategory app:title="APP Info">
         <Preference
             app:key="version"
-            app:icon="@mipmap/ic_launcherep_round"
+            app:icon="@drawable/icon"
             app:title="Version"
             />
         <Preference
@@ -34,7 +34,7 @@
             />
         <Preference
             app:key="check"
-            app:icon="@drawable/sync"
+            app:icon="@drawable/ic_sync"
             app:title="@string/checkupdate" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">

@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_date_range_white_24dp"
+                android:src="@drawable/ic_calendar"
                 app:tint="?android:attr/textColorPrimaryInverse" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>

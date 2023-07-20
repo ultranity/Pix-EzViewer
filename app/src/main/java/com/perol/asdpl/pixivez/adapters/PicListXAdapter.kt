@@ -40,12 +40,13 @@ import com.perol.asdpl.pixivez.ui.NiceImageView
 fun NiceImageView.setLike(status: Boolean) {
     if (status) {
         // setImageResource(R.drawable.heart_red)
-        Glide.with(this.context).load(R.drawable.heart_red).into(this)
+        Glide.with(this.context).load(R.drawable.ic_love).into(this)
         // alpha = 0.9F
     }
     else {
-        // setImageResource(R.drawable.ic_action_heart)
-        Glide.with(this.context).load(R.drawable.ic_action_heart).into(this)
+        //TODO: WTF? Glide加载的 ic_action_heart 会变成别的图标，似乎与 res id值=0x7f08009a有关
+        //setImageResource(R.drawable.ic_action_heart)
+        Glide.with(this.context).load(R.drawable.ic_heart).into(this)
         // alpha = 0.8F
     }
 }

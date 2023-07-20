@@ -6,7 +6,7 @@
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/nav_account"
-            android:icon="@drawable/ic_action_my_white"
+            android:icon="@drawable/ic_action_user"
             android:title="@string/account_management" />
         <item
             android:id="@+id/nav_gallery"
@@ -14,7 +14,7 @@
             android:title="@string/searchsource" />
         <item
             android:id="@+id/nav_history"
-            android:icon="@drawable/ic_action_shijian"
+            android:icon="@drawable/ic_action_history"
             android:title="@string/historyrecord" />
         <item
             android:id="@+id/nav_progress"
@@ -26,7 +26,7 @@
             android:id="@+id/nav_theme"/>
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_action_share_setting"
+            android:icon="@drawable/ic_settings_outline"
             android:title="@string/appsetting" />
     </group>
 
@@ -41,7 +41,7 @@
             android:icon="@drawable/ic_action_block" />
         <item
             android:id="@+id/nav_cache_clean"
-            android:icon="@drawable/ic_action_lajitong"
+            android:icon="@drawable/ic_action_del"
             android:title="@string/cleancatche" />
     </group>
 

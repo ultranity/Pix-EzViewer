@@ -8,7 +8,7 @@
         android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share"
         android:title="@string/share"
-        app:iconTint="?android:textColorPrimaryInverse"
+        app:iconTint="?android:colorControlNormal"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_hideBookmarked"

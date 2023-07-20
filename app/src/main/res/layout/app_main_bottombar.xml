@@ -44,17 +44,17 @@
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_home_white" />
+                        android:icon="@drawable/ic_action_home" />
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_ranking_white" />
+                        android:icon="@drawable/ic_action_rank" />
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_my_white" />
+                        android:icon="@drawable/ic_action_user" />
                 </com.google.android.material.tabs.TabLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>

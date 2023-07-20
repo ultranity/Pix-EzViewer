@@ -8,20 +8,22 @@
     tools:context=".activity.SearchResultActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
+        android:id="@+id/appBarLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            app:layout_scrollFlags="exitUntilCollapsed|snap"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="exitUntilCollapsed|snap">
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:theme="@style/MyToolbar"
-                android:layout_height="?attr/actionBarSize">
+                android:theme="@style/MyToolbar">
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tablayout_searchresult"
@@ -48,33 +50,35 @@
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:id="@+id/pickbar"
-            android:background="?attr/colorPrimary"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/searchtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/search_results"
                 android:textColor="?attr/colorSurface"
                 android:textIsSelectable="true"
-                android:text="@string/search_results"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <ImageButton
-                android:background="@android:color/transparent"
                 android:id="@+id/imagebutton_section"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_assignment_white_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

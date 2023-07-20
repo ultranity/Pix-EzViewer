@@ -204,9 +204,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         for (i in 0..2) {
             val tabItem = binding.tablayoutHellom.getTabAt(i)!!
             tabItem.icon = when (i) {
-                0    -> ContextCompat.getDrawable(this, R.drawable.ic_action_home_white)
-                1    -> ContextCompat.getDrawable(this, R.drawable.ic_action_ranking_white)
-                else -> ContextCompat.getDrawable(this, R.drawable.ic_action_my_white)
+                0    -> ContextCompat.getDrawable(this, R.drawable.ic_action_home)
+                1    -> ContextCompat.getDrawable(this, R.drawable.ic_action_rank)
+                else -> ContextCompat.getDrawable(this, R.drawable.ic_action_user)
             }
         }
     }

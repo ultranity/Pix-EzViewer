@@ -32,10 +32,14 @@ import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TrendTagViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    var searchhistroy = MutableLiveData<MutableList<String>>()
+    var searchhistroy = MutableLiveData<List<String>>()
 
     init {
         reloadSearchHistory()
@@ -59,11 +63,13 @@ class TrendTagViewModel : BaseViewModel() {
     }
 
     private fun reloadSearchHistory() {
-        appDatabase.searchhistoryDao().getSearchHistory().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                searchhistroy.value = it.asReversed().map { it.word }.toMutableList()
-            }, {}, {}).add()
+        CoroutineScope(Dispatchers.IO).launch {
+            val history = appDatabase.searchhistoryDao().getSearchHistory()
+                .asReversed().map { it.word }
+            withContext(Dispatchers.Main) {
+                searchhistroy.value = history
+            }
+        }
     }
 
     fun removeTag() {

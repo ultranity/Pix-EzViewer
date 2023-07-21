@@ -82,7 +82,7 @@ class HistoryMActivity : RinkActivity() {
         historyMViewModel = ViewModelProvider(this)[HistoryMViewModel::class.java]
 
         historyMViewModel.illustBeans.observe(this) {
-            historyAdapter.setNewInstance(it)
+            historyAdapter.setNewInstance(it.toMutableList())
         }
         historyMViewModel.first()
     }

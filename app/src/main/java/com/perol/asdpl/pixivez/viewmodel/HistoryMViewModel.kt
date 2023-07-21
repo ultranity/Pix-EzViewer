@@ -28,33 +28,33 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HistoryMViewModel : BaseViewModel() {
-    val illustBeans = MutableLiveData<ArrayList<IllustBeanEntity>>()
+    val illustBeans = MutableLiveData<List<IllustBeanEntity>>()
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
 
     fun first() {
-        appDatabase.illusthistoryDao().getIllustHistory().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                illustBeans.value = ArrayList(it.reversed())
-            }.add()
+        CoroutineScope(Dispatchers.IO).launch {
+            val history = appDatabase.illusthistoryDao().getIllustHistory().asReversed()
+            withContext(Dispatchers.Main) {
+                illustBeans.value = history
+            }
+        }
     }
 
     fun fabOnClick() {
-        Observable.just(1).observeOn(Schedulers.io())
-            .subscribe {
-                appDatabase.illusthistoryDao().deleteHistory()
-            }.add()
+        CoroutineScope(Dispatchers.IO).launch {
+            appDatabase.illusthistoryDao().deleteHistory()
+        }
     }
 
     fun deleteSelect(i: Int) {
-        Observable.just(1).observeOn(Schedulers.io())
-            .subscribe {
-                appDatabase.illusthistoryDao().deleteOne(illustBeans.value!![i])
-            }.add()
+        CoroutineScope(Dispatchers.IO).launch {
+            appDatabase.illusthistoryDao().deleteOne(illustBeans.value!![i])
+        }
     }
 }

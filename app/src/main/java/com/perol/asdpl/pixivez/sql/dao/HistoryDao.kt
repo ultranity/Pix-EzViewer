@@ -32,7 +32,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.perol.asdpl.pixivez.sql.entity.IllustBeanEntity
 import com.perol.asdpl.pixivez.sql.entity.SearchHistoryEntity
-import io.reactivex.Flowable
 
 /*@Dao
 abstract class DownIllustsDao {
@@ -56,7 +55,7 @@ abstract class  DownUserDao {
 abstract class SearchHistoryDao {
 
     @Query("SELECT * FROM history")
-    abstract fun getSearchHistory(): Flowable<List<SearchHistoryEntity>>
+    abstract suspend fun getSearchHistory(): List<SearchHistoryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(query: SearchHistoryEntity)
@@ -74,7 +73,7 @@ abstract class SearchHistoryDao {
 @Dao
 abstract class IllustHistoryDao {
     @Query("SELECT * FROM illusthistory")
-    abstract fun getIllustHistory(): Flowable<List<IllustBeanEntity>>
+    abstract suspend fun getIllustHistory(): List<IllustBeanEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(query: IllustBeanEntity)

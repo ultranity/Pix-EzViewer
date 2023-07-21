@@ -226,7 +226,7 @@ dependencies {
         // optional - Kotlin Extensions and Coroutines support for Room
         implementation("androidx.room:room-ktx:$roomVersion")
         // optional - RxJava support for Room
-        implementation("androidx.room:room-rxjava2:$roomVersion")
+        // implementation("androidx.room:room-rxjava2:$roomVersion")
         // Test helpers
         testImplementation("androidx.room:room-testing:$roomVersion")
     }

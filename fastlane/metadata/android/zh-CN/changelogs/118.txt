@@ -1,0 +1,21 @@
+## 1.8.8:
+- [x] 特性：移除 Bugly 依赖，手动使用github检测更新（主分支同样FOSS）
+- [x] 优化：修复一个严重影响冷启动速度的bug
+- [x] 特性：图片下载质量可调整 (Thanks to @GHolk)
+- [x] 特性：Token 导出 & Token 登录
+- [x] 特性：单色图标 for Android 13
+- [x] 特性：material you 主题支持
+- [x] 优化：界面组件优化
+- [x] 特性：用户界面顶栏收缩
+- [x] 特性：用户信息页chip点击跳转
+- [x] 修复：部分双击回顶失效
+- [x] 修复：ugoira/GIF 提示
+- [x] 修复：原图加载进度条, 换用material progressIndicator
+- [x] 修复：旋转后内容重叠、重复加载
+- [x] 优化：动画错位
+- [x] 优化：lazyload & 协程
+- [-] BUG：Toasty内存泄露
+- [x] 优化：迁移所有依赖到AndroidX, 移除KAPT 转用 KSP
+- [x] 优化：项目迁移到 AGP&Gradle 8.0
+- [x] 优化：弃用databinding
+- [x] 优化：代码清理和其他调整

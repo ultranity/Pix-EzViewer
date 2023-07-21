@@ -52,8 +52,8 @@ android {
         minSdk = 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 29
-        versionCode = 115
-        versionName = "1.8.5"
+        versionCode = 118
+        versionName = "1.8.8"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
@@ -105,7 +105,7 @@ android {
             // By default all ABIs are included, so use reset() and include to specify
             reset()
             // Specifies a list of ABIs that Gradle should create APKs for.
-            include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+            include("x86_64", "arm64-v8a")
 
             // Specifies that we do not want to also generate a universal APK that includes all ABIs.
             isUniversalApk = true
@@ -291,8 +291,8 @@ dependencies {
         implementation("com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion")
         implementation("com.afollestad.material-dialogs:lifecycle:$materialDialogsVersion")
         implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
-        implementation("com.afollestad:drag-select-recyclerview:2.4.0")
     }
+    implementation("com.afollestad:drag-select-recyclerview:2.4.0")
 
     implementation("org.greenrobot:eventbus:3.3.1")
 
@@ -324,7 +324,7 @@ dependencies {
 
     debugImplementation("io.github.knight-zxw:blockcanary:0.0.5")
     debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.5")
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
+    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     //debugImplementation("com.bytedance.tools.codelocator:codelocator-core:2.0.0")
     //debugImplementation("com.bytedance.tools.codelocator:codelocator-lancet-all:2.0.0")

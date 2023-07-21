@@ -1,0 +1,21 @@
+## 1.8.8:
+- [x] features: Remove tencent Bugly dependencies, detect updates manually using github (now main branch is fully FOSS )
+- [x] optim: boost cold start up speed~
+- [x] feature: Configurable image download quality (Thanks to @GHolk)
+- [x] feature: Token Export & Token Login(use it Carefully!)
+- [x] feature: Monochrome icon for Android 13
+- [x] feature: Material You theme support
+- [x] optim: UI component optimization
+- [x] feature: top bar shrinks in User pages
+- [x] feature: click chips to jump from the user information page
+- [x] fix: double-click back to top fails in some page
+- [x] fix: ugoira/GIF hint
+- [x] fix: Loading progress bar in the original/GIF image view, replace with material progressIndicator
+- [x] fix: Content overlaps, duplicates loading after rotation
+- [x] optim: Animation misalignment
+- [x] optim: more lazyload & kotlin coroutine
+- [-] BUG: Toasty memory leak
+- [x] optim: Migrate all dependencies to AndroidX, remove KAPT and switch to KSP
+- [x] optim: Project migration to AGP & Gradle 8.0
+- [x] optim: DataBinding is deprecated
+- [x] optim: Code cleanup and other tweaks

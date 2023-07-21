@@ -91,7 +91,7 @@
     <string name="alreadysaved">すでに保存されています</string>
     <string name="registerclose">アプリ内からの登録はできません。pixivの公式サイトからアカウントを作成してください。</string>
     <string name="proxy">Not in Mainland China</string>
-    <string name="encodinggif">GIFアニメをエンコードしています…</string>
+    <string name="encode_gif">GIFアニメをエンコードしています…</string>
     <string name="save_zip">save zip</string>
     <string name="savefirst">最初のマップをダウンロード</string>
     <string name="fetchtags">タグを取得中....</string>

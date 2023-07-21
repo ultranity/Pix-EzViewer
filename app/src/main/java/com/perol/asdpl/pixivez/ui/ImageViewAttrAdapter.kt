@@ -46,8 +46,9 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -97,31 +98,29 @@ fun loadBGImage(imageView: ImageView, url: String?) {
     if (url != null) {
         imageView.setOnClickListener {
             MaterialAlertDialogBuilder(imageView.context).setMessage(url).setPositiveButton(R.string.download) { _, _ ->
-                runBlocking {
-                    var file: File
-                    withContext(Dispatchers.IO) {
-                        val f = Glide.with(imageView).asFile()
-                            .load(url)
-                            .submit()
-                        file = f.get()
-                        val target = File(
-                            PxEZApp.storepath,
-                            "user_${url.substringAfterLast("/")}"
-                        )
-                        file.copyTo(target, overwrite = true)
-                        MediaScannerConnection.scanFile(
-                            PxEZApp.instance,
-                            arrayOf(target.path),
-                            arrayOf(
-                                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                    target.extension
-                                )
+                CoroutineScope(Dispatchers.IO).launch {
+                    val f = Glide.with(imageView).asFile()
+                        .load(url)
+                        .submit()
+                    val file = f.get()
+                    val target = File(
+                        PxEZApp.storepath,
+                        "user_${url.substringAfterLast("/")}"
+                    )
+                    file.copyTo(target, overwrite = true)
+                    MediaScannerConnection.scanFile(
+                        PxEZApp.instance,
+                        arrayOf(target.path),
+                        arrayOf(
+                            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                target.extension
                             )
-                        ) { _, _ ->
-                        }
-                    }
+                        )
+                    ) { _, _ -> }
 
-                    Toasty.info(imageView.context, "Saved", Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        Toasty.info(imageView.context, "Saved", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }.create().show()
         }

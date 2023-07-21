@@ -26,7 +26,11 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.app.Activity
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -49,8 +53,6 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.viewpager.UserMPagerAdapter
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.ui.loadBGImage
-import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.DataStore
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -62,6 +64,8 @@ import com.perol.asdpl.pixivez.sql.entity.UserEntity
 import com.perol.asdpl.pixivez.ui.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.ui.AutoTabLayoutMediator
 import com.perol.asdpl.pixivez.ui.TabSelectedStrategy
+import com.perol.asdpl.pixivez.ui.loadBGImage
+import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.viewmodel.UserMViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -239,36 +243,33 @@ class UserMActivity : RinkActivity() {
                         ).show()
                     }
                     1 -> {
-                        CoroutineScope(Dispatchers.Main).launch {
+                        CoroutineScope(Dispatchers.IO).launch {
                             var file: File
-                            withContext(Dispatchers.IO) {
-                                val f = Glide.with(this@UserMActivity).asFile()
-                                    .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
-                                    .submit()
-                                file = f.get()
-                                val target = File(
-                                    PxEZApp.storepath,
-                                    "user_${viewModel.userDetail.value!!.user.id}.png"
-                                )
-                                file.copyTo(target, overwrite = true)
-                                MediaScannerConnection.scanFile(
-                                    PxEZApp.instance,
-                                    arrayOf(target.path),
-                                    arrayOf(
-                                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                            target.extension
-                                        )
-                                    )
-                                ) { _, _ ->
-                                }
-                            }
-
-                            Toasty.info(
-                                this@UserMActivity,
-                                getString(R.string.saved),
-                                Toast.LENGTH_SHORT
+                            val f = Glide.with(this@UserMActivity).asFile()
+                                .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
+                                .submit()
+                            file = f.get()
+                            val target = File(
+                                PxEZApp.storepath,
+                                "user_${viewModel.userDetail.value!!.user.id}.png"
                             )
-                                .show()
+                            file.copyTo(target, overwrite = true)
+                            MediaScannerConnection.scanFile(
+                                PxEZApp.instance,
+                                arrayOf(target.path),
+                                arrayOf(
+                                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                        target.extension
+                                    )
+                                )
+                            ) { _, _ -> }
+
+                            withContext(Dispatchers.Main) {
+                                Toasty.info(
+                                    this@UserMActivity,
+                                    getString(R.string.saved)
+                                ).show()
+                            }
                         }
                     }
                     else -> {

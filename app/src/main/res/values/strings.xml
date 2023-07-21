@@ -100,7 +100,7 @@
     <string name="alreadysaved">图片已存在</string>
     <string name="registerclose">应用内注册入口已关闭，请自行前往Pixiv官网注册</string>
     <string name="proxy">不启用直连</string>
-    <string name="encodinggif">合成gif</string>
+    <string name="encode_gif">合成gif</string>
     <string name="save_zip">保存zip</string>
     <string name="savefirst">下载首图</string>
     <string name="fetchtags">请求标签....</string>

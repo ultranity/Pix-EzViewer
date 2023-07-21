@@ -23,7 +23,8 @@
             android:layout_height="68dp"
             android:layout_gravity="bottom"
             android:background="?android:attr/colorBackground"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            tools:visibility="visible">
 
             <ImageButton
                 android:id="@+id/imageButton"
@@ -102,46 +103,45 @@
 
         </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/block_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/colorSurface"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:clickable="true"
-                android:focusable="true"
-                tools:visibility="visible">
+        <LinearLayout
+            android:id="@+id/block_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurface"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="@string/block_face"
-                    android:textSize="24sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/block_face"
+                android:textSize="24sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/block_tag" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/block_tag" />
 
-                <TextView
-                    android:id="@+id/blocktag_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/blocktag_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/blocktag_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/blocktag_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/jump_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/setting" />
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/jump_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting" />
+        </LinearLayout>
     </FrameLayout>
 
 

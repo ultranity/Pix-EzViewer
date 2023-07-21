@@ -26,6 +26,7 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -41,6 +42,13 @@ import com.perol.asdpl.pixivez.viewmodel.TagsTextViewModel
 import com.perol.asdpl.pixivez.viewmodel.TrendTagViewModel
 
 class SearchRActivity : RinkActivity() {
+    companion object{
+        fun start(context: Context, searchword:String){
+            val intent = Intent(context, SearchRActivity::class.java)
+            intent.putExtra("searchword", searchword)
+            context.startActivity(intent)
+        }
+    }
     lateinit var searchRActivityFragment: SearchRActivityFragment
     lateinit var trendTagFragment: TrendTagFragment
     lateinit var tagsTextViewModel: TagsTextViewModel

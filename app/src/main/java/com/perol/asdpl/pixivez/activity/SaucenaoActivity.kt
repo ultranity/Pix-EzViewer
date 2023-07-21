@@ -46,9 +46,10 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -139,12 +140,10 @@ class SaucenaoActivity : RinkActivity() {
                         parcelFileDescriptor.close()
                         val file = File(cacheDir, Date().time.toString() + ".jpg")
                         val out = file.outputStream()
-                        runBlocking {
-                            withContext(Dispatchers.IO) {
-                                image.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                                out.flush()
-                                out.close()
-                            }
+                        CoroutineScope(Dispatchers.IO).launch {
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                            out.flush()
+                            out.close()
                         }
                         Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT).show()
                         val builder = MultipartBody.Builder()

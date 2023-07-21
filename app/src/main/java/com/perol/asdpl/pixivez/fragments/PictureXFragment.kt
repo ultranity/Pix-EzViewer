@@ -40,15 +40,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.BlockActivity
 import com.perol.asdpl.pixivez.activity.UserFollowActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.PictureXAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
-import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.dialog.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -58,6 +57,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.firstCommon
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.loadUserImage
 import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import kotlinx.coroutines.launch
@@ -245,13 +245,13 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.followUser.observe(viewLifecycleOwner) {
             binding.imageviewUserPicX.setBorderColor(
                 if (it) {
-                    Color.YELLOW
+                    ThemeUtil.getColorHighlight(requireContext())
                 }
                 else {
                     ThemeUtil.getColorPrimary(requireContext())
                 }
             )
-            pictureXAdapter?.setUserPicColor(it)
+            pictureXAdapter?.setUserDataIsFollowed(it)
         }
         pictureXViewModel.progress.observe(viewLifecycleOwner) {
             pictureXAdapter?.setProgress(it)

@@ -1,6 +1,11 @@
 package com.perol.asdpl.pixivez.sql.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.perol.asdpl.pixivez.sql.entity.UserEntity
 
 @Dao

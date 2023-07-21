@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.content.res.Resources
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem

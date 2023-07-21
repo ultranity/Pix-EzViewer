@@ -28,7 +28,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import android.os.LocaleList
-import java.util.*
+import java.util.Locale
 
 class MyContextWrapper(base: Context) : ContextWrapper(base) {
     companion object {

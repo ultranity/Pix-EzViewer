@@ -25,7 +25,11 @@
 package com.perol.asdpl.pixivez.ui
 
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator

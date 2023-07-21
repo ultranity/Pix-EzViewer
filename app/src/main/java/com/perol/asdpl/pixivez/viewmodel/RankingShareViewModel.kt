@@ -26,8 +26,7 @@ package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import java.util.Calendar
 
 class RankingShareViewModel : ViewModel() {
     //val pool = RecyclerView.RecycledViewPool()

@@ -32,7 +32,7 @@ import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
+import java.util.LinkedList
 
 abstract class BaseFragment : Fragment() {
     var isR18on = false

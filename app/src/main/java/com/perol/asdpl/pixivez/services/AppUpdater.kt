@@ -10,13 +10,12 @@ import android.os.Environment
 import android.view.View
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.annotations.SerializedName
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.Toasty
-import java.net.URL
-
-import com.google.gson.annotations.SerializedName
 import io.noties.markwon.Markwon
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.concurrent.thread

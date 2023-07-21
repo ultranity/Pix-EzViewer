@@ -7,7 +7,7 @@ import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.LinkedList
 
 object BlockViewModel{
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)

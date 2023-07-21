@@ -19,10 +19,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.ParameterizedType
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.ParameterizedType
 
 //adapted from: https://github.com/DylanCaiCoding/ViewBindingKTX/blob/master/viewbinding-base/src/main/java/com/dylanc/viewbinding/base/ViewBindingUtil.kt
 object ViewBindingUtil {

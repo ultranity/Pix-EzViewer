@@ -29,7 +29,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter

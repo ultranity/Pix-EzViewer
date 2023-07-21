@@ -27,7 +27,13 @@ package com.perol.asdpl.pixivez.networks
 
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.Options
-import com.bumptech.glide.load.model.*
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.Headers
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.load.model.ModelCache
+import com.bumptech.glide.load.model.ModelLoader
+import com.bumptech.glide.load.model.ModelLoaderFactory
+import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import com.perol.asdpl.pixivez.networks.RestClient.imageProxySocket
 import okhttp3.OkHttpClient

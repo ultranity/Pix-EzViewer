@@ -43,7 +43,7 @@ import com.perol.asdpl.pixivez.objects.LazyFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.NotCrossScrollableLinearLayoutManager
 import com.perol.asdpl.pixivez.viewmodel.RankingShareViewModel
-import java.util.*
+import java.util.Calendar
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

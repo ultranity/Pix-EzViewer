@@ -2,9 +2,6 @@ package com.perol.asdpl.pixivez.manager;
 
 import com.arialyy.aria.core.scheduler.AptNormalTaskListener;
 import com.arialyy.aria.core.task.DownloadTask;
-import java.lang.Exception;
-import java.lang.Object;
-import java.lang.Override;
 
 /**
  * 该文件为Aria自动生成的代理文件，请不要修改该文件的任何代码！

@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.fragments.AboutXFragment
 import com.perol.asdpl.pixivez.fragments.SettingFragment
 import com.perol.asdpl.pixivez.fragments.ThanksFragment
 import com.perol.asdpl.pixivez.repository.UserInfoSharedPreferences
-import java.util.*
+import java.util.Calendar
 
 class SettingActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -25,8 +25,9 @@
 package com.perol.asdpl.pixivez.networks
 
 import com.perol.asdpl.pixivez.services.CloudflareService
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
@@ -44,17 +45,17 @@ object ImageHttpDns : Dns {
             "210.140.92.140",
             "210.140.92.137",
         ).map { InetAddress.getByName(it) }
-        try {
-            runBlocking(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
                 val response = service.queryDns(name = hostname).blockingSingle()
                 response.answer.flatMap {
                     InetAddress.getAllByName(it.data).asList()
                 }.also {
                     addressList.addAll(it)
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         return addressList.ifEmpty {

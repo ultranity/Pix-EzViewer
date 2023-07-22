@@ -37,29 +37,32 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.ui.user.UserListActivity
 import com.perol.asdpl.pixivez.base.BaseFragment
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
-import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.firstCommon
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.pic.CommentDialog
 import com.perol.asdpl.pixivez.ui.pic.PictureXAdapter
+import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
+import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
+import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
+import com.perol.asdpl.pixivez.ui.user.UserListActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.loadUserImage
-import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
-import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -195,6 +198,24 @@ class PictureXFragment : BaseFragment() {
                     }
 
                 binding.recyclerview.adapter = pictureXAdapter
+                if (ScreenUtil.screenWidthDp() > 840) {
+                    binding.recyclerview.layoutManager =
+                        GridLayoutManager(
+                            requireContext(), 2,
+                            //RecyclerView.HORIZONTAL, false
+                        )
+                    .apply {
+                        spanSizeLookup = object : SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                if (pictureXAdapter!!.getItemViewType(position) ==
+                                    PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+                                )
+                                    return 2
+                                return 1
+                            }
+                        }
+                    }
+                }
                 if (it.user.is_followed) {
                     binding.imageviewUserPicX.setBorderColor(Color.YELLOW)
                 }

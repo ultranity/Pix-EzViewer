@@ -38,7 +38,6 @@ import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import com.perol.asdpl.pixivez.objects.ScreenUtil
-import com.perol.asdpl.pixivez.view.StartLinearSnapHelper
 import java.util.Calendar
 
 
@@ -71,7 +70,7 @@ class SettingsActivity : RinkActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         binding.viewpager.offscreenPageLimit = 3
-        if (ScreenUtil.screenWidthDp()>600) {
+        if (ScreenUtil.screenWidthDp()>840) {
             //double pannel from:https://blog.csdn.net/GuoXuan_CHN/article/details/124060216
             val recyclerView = binding.viewpager.getChildAt(0) as RecyclerView
             val padding: Int = ScreenUtil.screenWidthPx() / 2

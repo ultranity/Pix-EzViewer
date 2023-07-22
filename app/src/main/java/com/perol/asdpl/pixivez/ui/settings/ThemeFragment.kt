@@ -137,6 +137,10 @@ class ThemeFragment : PreferenceFragmentCompat() {
         }
 
 
+        findPreference<SwitchPreference>("bottomAppbar")!!.setOnPreferenceChangeListener { preference, newValue ->
+            snackbarApplyConfig()
+            true
+        }
         findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true

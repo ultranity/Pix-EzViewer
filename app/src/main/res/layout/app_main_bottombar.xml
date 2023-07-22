@@ -14,50 +14,50 @@
             android:id="@+id/content_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-            <com.google.android.material.bottomappbar.BottomAppBar
-                style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-                android:id="@+id/toolbar"
-                android:layout_gravity="bottom"
+        <com.google.android.material.bottomappbar.BottomAppBar
+            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+            android:id="@+id/bottom_toolbar"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/MyToolbar"
+            android:paddingTop="0dp"
+            app:contentInsetEndWithActions="0dp"
+            app:contentInsetStart="0.0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:menuAlignmentMode="auto"
+            app:hideOnScroll="true">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout"
+                style="@style/Widget.MaterialComponents.TabLayout.Colored"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/MyToolbar"
-                android:paddingTop="0dp"
-                app:contentInsetEndWithActions="0dp"
-                app:contentInsetStart="0.0dp"
-                app:contentInsetStartWithNavigation="0dp"
-                app:menuAlignmentMode="auto"
-                app:hideOnScroll="true">
+                android:layout_height="match_parent"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="scrollable"
+                app:tabPadding="0dp"
+                app:tabPaddingStart="20dp">
 
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tablayout_hellom"
-                    style="@style/Widget.MaterialComponents.TabLayout.Colored"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:tabGravity="center"
-                    app:tabIndicatorHeight="0dp"
-                    app:tabMode="scrollable"
-                    app:tabPadding="0dp"
-                    app:tabPaddingStart="20dp">
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_action_home" />
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_home" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_action_rank" />
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_rank" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_action_user" />
+            </com.google.android.material.tabs.TabLayout>
 
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_action_user" />
-                </com.google.android.material.tabs.TabLayout>
-
-            </com.google.android.material.bottomappbar.BottomAppBar>
+        </com.google.android.material.bottomappbar.BottomAppBar>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView

@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.ui
 
 import android.Manifest
-import android.app.Activity
 import android.app.ActivityOptions
 import android.content.ClipboardManager
 import android.content.Context
@@ -52,18 +51,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.databinding.ActivityHelloMBinding
+import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
-import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.ui.account.LoginActivity
+import com.perol.asdpl.pixivez.ui.home.ActivityHelloMBinding
 import com.perol.asdpl.pixivez.ui.home.HelloMainViewPager
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
 import com.perol.asdpl.pixivez.ui.search.SearchResultActivity
-import com.perol.asdpl.pixivez.ui.account.LoginActivity
 import com.perol.asdpl.pixivez.ui.settings.SaucenaoActivity
 import com.perol.asdpl.pixivez.ui.settings.SettingsActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
@@ -74,42 +73,6 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == 789) {
-                recreate()
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            3000 -> {
-                val length = grantResults.size
-                var reRequest = false
-                for (i in 0 until length) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        reRequest = true
-                    }
-                }
-                if (reRequest) {
-                    Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-
-            else -> {
-            }
-        }
-    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -189,12 +152,12 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             finish()
             return
         }
-        val view = layoutInflater.inflate(
-            //if (PxEZApp.instance.pre.getBoolean("bottomAppbar", true))
-            //    R.layout.app_main_bottombar else
-            R.layout.activity_hello_m, null
+        binding = ActivityHelloMBinding.inflate(
+            layoutInflater,
+            if (PxEZApp.instance.pre.getBoolean("bottomAppbar", true))
+                R.layout.app_main_bottombar else
+                R.layout.activity_hello_m,
         )
-        binding = ActivityHelloMBinding.bind(view)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -219,19 +182,19 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         checkAndRequestPermissions(permissionList)
 
         //initView()
-        binding.tablayoutHellom.setupWithViewPager(binding.contentView)
+        binding.tablayout.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMainViewPager(supportFragmentManager)
 
         binding.contentView.offscreenPageLimit =
             if (PxEZApp.instance.pre.getBoolean("refreshTab", false)) 0 else 3
 
         val position = PxEZApp.instance.pre.getString("firstpage", "0")?.toInt() ?: 0
-        binding.tablayoutHellom.selectTab(binding.tablayoutHellom.getTabAt(position)!!)
+        binding.tablayout.selectTab(binding.tablayout.getTabAt(position)!!)
 
         initNavDrawer(NavHeaderMainBinding.bind(binding.navView.getHeaderView(0)), user)
 
         for (i in 0..2) {
-            val tabItem = binding.tablayoutHellom.getTabAt(i)!!
+            val tabItem = binding.tablayout.getTabAt(i)!!
             tabItem.icon = when (i) {
                 0 -> ContextCompat.getDrawable(this, R.drawable.ic_action_home)
                 1 -> ContextCompat.getDrawable(this, R.drawable.ic_action_rank)
@@ -308,6 +271,32 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         ActivityCompat.requestPermissions(this, permissions, 3000)
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            3000 -> {
+                val length = grantResults.size
+                var reRequest = false
+                for (i in 0 until length) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        reRequest = true
+                    }
+                }
+                if (reRequest) {
+                    Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            else -> {
+            }
+        }
+    }
+
     private fun initNavDrawer(header: NavHeaderMainBinding, user: UserEntity) {
         Glide.with(header.imageView.context)
             .load(user.userimage)
@@ -365,20 +354,19 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     }
 
     private fun clean() {
-        val normalDialog = MaterialAlertDialogBuilder(this)
-        normalDialog.setMessage(getString(R.string.cache_clear_message))
-        normalDialog.setPositiveButton(
-            getString(R.string.ok)
-        ) { _, _ ->
-            CoroutineScope(Dispatchers.IO).launch {
-                Glide.get(applicationContext).clearDiskCache()
-                deleteDir(applicationContext.cacheDir)
-                if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-                    deleteDir(applicationContext.externalCacheDir)
+        MaterialAlertDialogBuilder(this)
+            .setMessage(getString(R.string.cache_clear_message))
+            .setPositiveButton(
+                getString(R.string.ok)
+            ) { _, _ ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    Glide.get(applicationContext).clearDiskCache()
+                    deleteDir(applicationContext.cacheDir)
+                    if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                        deleteDir(applicationContext.externalCacheDir)
+                    }
                 }
-            }
-        }
-        normalDialog.show()
+            }.show()
     }
 
     private fun deleteDir(dir: File?): Boolean {

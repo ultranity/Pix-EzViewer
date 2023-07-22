@@ -1,7 +1,9 @@
 ## 1.8.8:
-- [x] features: Remove tencent Bugly dependencies, detect updates manually using github (now main branch is fully FOSS )
+- [x] feature: Remove tencent Bugly dependencies, detect updates manually using github (now main branch is fully FOSS )
 - [x] optim: boost cold start up speed~
 - [x] feature: Configurable image download quality (Thanks to @GHolk)
+- [x] fix：blocked tag view
+- [x] feature：AI content trending list
 - [x] feature: Token Export & Token Login(use it Carefully!)
 - [x] feature: Monochrome icon for Android 13
 - [x] feature: Material You theme support

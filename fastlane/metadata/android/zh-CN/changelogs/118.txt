@@ -2,6 +2,8 @@
 - [x] 特性：移除 Bugly 依赖，手动使用github检测更新（主分支同样FOSS）
 - [x] 优化：修复一个严重影响冷启动速度的bug
 - [x] 特性：图片下载质量可调整 (Thanks to @GHolk)
+- [x] 修复：标签屏蔽失效
+- [x] 特性：AI作品榜单
 - [x] 特性：Token 导出 & Token 登录
 - [x] 特性：单色图标 for Android 13
 - [x] 特性：material you 主题支持

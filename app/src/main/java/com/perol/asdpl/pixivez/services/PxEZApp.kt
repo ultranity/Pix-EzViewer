@@ -46,7 +46,7 @@ import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope

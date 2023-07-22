@@ -37,12 +37,12 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.UserMActivity
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.ui.NiceImageView
+import com.perol.asdpl.pixivez.ui.user.UserMActivity
+import com.perol.asdpl.pixivez.view.NiceImageView
 
 /**
  *  simple Adapter for image item with user imageView and heart icon

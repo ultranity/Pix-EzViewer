@@ -1,10 +1,10 @@
 package com.perol.asdpl.pixivez.objects
 
 import android.text.Html
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.AIType
-import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.responses.User
+import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.data.model.AIType
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

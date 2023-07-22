@@ -35,15 +35,20 @@ import com.arialyy.aria.core.download.DownloadEntity
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
 import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 
 @Suppress("UNCHECKED_CAST")
 fun <VB : ViewBinding> BaseViewHolder.getBinding(bind: (View) -> VB): VB =
-    itemView.getTag(Int.MIN_VALUE) as? VB ?: bind(itemView).also { itemView.setTag(Int.MIN_VALUE, it) }
+    itemView.getTag(Int.MIN_VALUE) as? VB ?: bind(itemView).also {
+        itemView.setTag(
+            Int.MIN_VALUE,
+            it
+        )
+    }
 
 @SuppressLint("CheckResult")
 class DownloadTaskAdapter :
@@ -69,12 +74,15 @@ class DownloadTaskAdapter :
                                 .option(Works.option)
                                 .create()
                         }
+
                         1 -> {
                             Aria.download(context).load(data[position].id).stop()
                         }
+
                         2 -> {
                             Aria.download(context).load(data[position].id).resume()
                         }
+
                         3 -> {
                             Aria.download(context).load(data[position].id).cancel()
                         }
@@ -101,6 +109,7 @@ class DownloadTaskAdapter :
             0 -> {
                 "FAIL"
             }
+
             1 -> "COMPLETE"
             2 -> "STOP"
             3 -> "WAIT"
@@ -108,12 +117,15 @@ class DownloadTaskAdapter :
             5 -> {
                 "PRE"
             }
+
             6 -> {
                 "POST_PRE"
             }
+
             7 -> {
                 "CANCEL"
             }
+
             else -> {
                 "OTHER"
             }
@@ -142,7 +154,7 @@ class DownloadTaskAdapter :
         try {
             val illustD = PxEZApp.gsonInstance.fromJson(item.str, IllustD::class.java)
             binding.title.text = illustD.title
-            binding.status.text =  item.state.toIEntityString()
+            binding.status.text = item.state.toIEntityString()
         } catch (e: Exception) {
             e.printStackTrace()
         }

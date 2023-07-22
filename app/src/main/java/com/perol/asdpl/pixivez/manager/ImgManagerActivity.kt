@@ -36,12 +36,12 @@ import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
-import com.perol.asdpl.pixivez.activity.RinkActivity
+import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -133,13 +133,11 @@ class ImgManagerActivity : RinkActivity() {
             viewModel.rename_once = binding.swithOnce.isChecked
             if (viewModel.rename_once) {
                 viewModel.getInfo()
-            }
-            else {
+            } else {
                 if (getInfo) {
                     Glide.with(this).load(R.drawable.ic_action_search).into(binding.fabStart)
                     viewModel.renameAll()
-                }
-                else {
+                } else {
                     Glide.with(this).load(R.drawable.ic_action_play).into(binding.fabStart)
                     viewModel.getInfo()
                 }
@@ -210,8 +208,7 @@ class ImgManagerActivity : RinkActivity() {
             val file = viewModel.files!![position]
             if (file.type == FileUtil.T_DIR) {
                 viewModel.path.value = file.path
-            }
-            else {
+            } else {
                 val pid = viewModel.files!![position].pid
                 if (pid != null) {
                     val arrayList = viewModel.files!!.subList(

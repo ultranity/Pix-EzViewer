@@ -32,10 +32,10 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.ui.NiceImageView
+import com.perol.asdpl.pixivez.view.NiceImageView
 
 fun NiceImageView.setLike(status: Boolean) {
     if (status) {

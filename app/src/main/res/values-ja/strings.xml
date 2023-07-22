@@ -35,7 +35,7 @@
     <string name="origin">ロード画像</string>
     <string name="searchsource">元画像を検索</string>
     <string name="cleancatche">キャッシュを削除</string>
-    <string name="historyrecord">履歴</string>
+    <string name="view_history">閲覧履歴</string>
     <string name="appsetting">設定</string>
     <string name="logout">ログアウト</string>
     <string name="account">アカウント</string>
@@ -265,8 +265,8 @@
     <string name="open_in_external_browser">外部ブラウザで開く</string>
     <string name="needactionbar">詳細ページ表示ツールバー</string>
     <string name="needactionbar_subtext">戻るボタンと共有ボタンが上部に表示されます</string>
-    <string name="use_bottom_layout">下部のナビゲーション バーを使用する</string>
-    <string name="use_bottom_layout_subtext">ひっくり返って〜</string>
+    <string name="use_bottom_appbar">下部のナビゲーション バーを使用する</string>
+    <string name="use_bottom_appbar_subtext">ひっくり返って〜</string>
     <string name="use_picX_layout_main">ホームページは最新のカード レイアウトを使用しています</string>
     <string name="use_picX_layout_subtext">写真を見るだけの簡潔な体験</string>
     <string name="dynamicColorAPIAlert">Material3 カラーチェンジ機能 Android 12/S+ (API31+)</string>
@@ -292,4 +292,5 @@
     <string name="update_failed" >更新プログラムにアクセスできませんでした</string>
     <string name="token_login">Token登録</string>
     <string name="token_warning">⚠OAuthトークンにアクセスすることは非常に危険です、他の人と共有しないでください</string>
+    <string name="dynamic_color">Dynamic Color</string>
 </resources>

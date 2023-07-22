@@ -25,7 +25,7 @@ package com.perol.asdpl.pixivez.objects
 
 import android.os.Environment
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

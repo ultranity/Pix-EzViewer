@@ -25,7 +25,7 @@
 
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.responses.*
+import com.perol.asdpl.pixivez.data.model.*
 import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody

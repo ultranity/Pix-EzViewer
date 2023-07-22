@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.UserMActivity">
+    tools:context=".ui.user.UserMActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"

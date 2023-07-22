@@ -1,0 +1,47 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019 Perol_Notsfsssf
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE
+ */
+
+package com.perol.asdpl.pixivez.ui.home.trend
+
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import java.util.Calendar
+
+class RankingShareViewModel : ViewModel() {
+    //val pool = RecyclerView.RecycledViewPool()
+    var picDateShare = MutableLiveData<String?>()
+    var year = MutableLiveData<Int>()
+    var month = MutableLiveData<Int>()
+    var day = MutableLiveData<Int>()
+    var hideBookmarked = MutableLiveData<Int>()
+    var sortCoM = MutableLiveData<Int>()
+
+    init {
+        val calendar = Calendar.getInstance()
+        year.value = calendar.get(Calendar.YEAR)
+        month.value = calendar.get(Calendar.MONTH) + 1
+        day.value = calendar.get(Calendar.DAY_OF_MONTH)
+        hideBookmarked.value = 0
+    }
+}

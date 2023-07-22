@@ -35,7 +35,7 @@
     <string name="origin">Show original</string>
     <string name="searchsource">SauceNAO</string>
     <string name="cleancatche">Clear cache</string>
-    <string name="historyrecord">History</string>
+    <string name="view_history">History</string>
     <string name="appsetting">Settings</string>
     <string name="logout">Log out</string>
     <string name="account">Account</string>
@@ -265,8 +265,8 @@
     <string name="open_in_external_browser">Click here to open in browser (may fix error)</string>
     <string name="needactionbar">Show ActionBar</string>
     <string name="needactionbar_subtext">Back and share buttons</string>
-    <string name="use_bottom_layout">Use bottom layout</string>
-    <string name="use_bottom_layout_subtext">up side down~</string>
+    <string name="use_bottom_appbar">Use bottom AppBar layout</string>
+    <string name="use_bottom_appbar_subtext">up side down~</string>
     <string name="use_picX_layout_main">Use new Card UI in main page</string>
     <string name="use_picX_layout_subtext">modern view UX</string>
     <string name="dynamicColorAPIAlert">Material3 DynamicColors needs Android 12/S+ (API 31+)</string>
@@ -292,4 +292,5 @@
     <string name="update_failed">Access update failed</string>
     <string name="token_login">Token Login</string>
     <string name="token_warning">⚠Warning！It is VERY DANGEROUS to access OAuth Token, DO NOT SHARE with others</string>
+    <string name="dynamic_color">Dynamic Color</string>
 </resources>

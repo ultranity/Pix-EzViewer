@@ -29,9 +29,9 @@ import android.os.Bundle
 import android.view.View
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.IllustFilter
-import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.ui.NiceImageView
+import com.perol.asdpl.pixivez.view.NiceImageView
 
 /**
  *  simple Adapter for image item with user imageView and save/like button

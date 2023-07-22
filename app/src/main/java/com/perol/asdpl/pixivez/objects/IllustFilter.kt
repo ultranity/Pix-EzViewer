@@ -1,7 +1,7 @@
 package com.perol.asdpl.pixivez.objects
 
-import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.viewmodel.BlockViewModel
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 
 class IllustFilter(
     var R18on: Boolean = false,

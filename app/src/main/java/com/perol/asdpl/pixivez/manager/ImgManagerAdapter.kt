@@ -36,7 +36,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 
-class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewHolder>(layoutResId) {
+class ImgManagerAdapter(layoutResId: Int) :
+    BaseQuickAdapter<FileInfo, BaseViewHolder>(layoutResId) {
 
     override fun convert(holder: BaseViewHolder, item: FileInfo) {
         val icon = holder.getView<ImageView>(R.id.item_img)
@@ -57,8 +58,7 @@ class ImgManagerAdapter(layoutResId: Int) : BaseQuickAdapter<FileInfo, BaseViewH
         }
         if (item.isPic()) {
             check.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             item.checked = false
             check.visibility = View.GONE
         }

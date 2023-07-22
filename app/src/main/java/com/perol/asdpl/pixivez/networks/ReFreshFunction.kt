@@ -29,12 +29,12 @@ import android.util.Log
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.repository.AppDataRepository
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
+import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.sql.entity.UserEntity
+import com.perol.asdpl.pixivez.data.entity.UserEntity
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers

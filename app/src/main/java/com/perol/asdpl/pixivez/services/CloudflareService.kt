@@ -1,6 +1,6 @@
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.responses.DnsQueryResponse
+import com.perol.asdpl.pixivez.data.model.DnsQueryResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Header

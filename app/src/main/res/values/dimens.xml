@@ -13,4 +13,14 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="nav_rail_width">80dp</dimen>
+    <dimen name="fragment_horizontal_margin">16dp</dimen>
+    <dimen name="item_transform_image_length">48dp</dimen>
+    <dimen name="reflow_text_block_max_percent">1</dimen>
+    <dimen name="reflow_text_block_horizontal_gap">8dp</dimen>
+    <dimen name="reflow_text_title_size">22sp</dimen>
+    <dimen name="reflow_text_description_size">13sp</dimen>
+    <dimen name="item_width">200dp</dimen>
+    <dimen name="container_margin">8dp</dimen>
+    <dimen name="container_horizontal_margin">16dp</dimen>
 </resources>

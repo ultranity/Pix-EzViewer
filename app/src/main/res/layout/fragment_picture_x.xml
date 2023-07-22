@@ -5,7 +5,7 @@
     android:id="@+id/relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.PictureXFragment">
+    tools:context=".ui.pic.PictureXFragment">
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -37,7 +37,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <com.perol.asdpl.pixivez.ui.NiceImageView
+            <com.perol.asdpl.pixivez.view.NiceImageView
                 android:id="@+id/imageview_user_picX"
                 android:layout_width="60dp"
                 android:layout_height="60dp"

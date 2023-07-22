@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,8 +7,11 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <TextView
-        android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
@@ -29,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent" >
     </com.google.android.material.chip.ChipGroup>
     <TextView
-        android:id="@+id/textView_clearn"
+        android:id="@+id/text_view_clear_all"
         android:layout_width="wrap_content"
         android:visibility="gone"
         android:layout_height="wrap_content"
@@ -43,7 +46,8 @@
         android:layout_height="wrap_content"
         android:text="@string/hottags" />
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_searhm"
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

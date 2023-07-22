@@ -5,7 +5,7 @@
     android:id="@+id/setting_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.perol.asdpl.pixivez.activity.SettingActivity">
+    tools:context="com.perol.asdpl.pixivez.ui.settings.SettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"

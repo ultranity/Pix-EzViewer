@@ -23,7 +23,7 @@
  */
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.responses.PixivOAuthResponse
+import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
 import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.Field

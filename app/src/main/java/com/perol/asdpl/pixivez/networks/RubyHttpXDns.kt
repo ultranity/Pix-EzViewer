@@ -41,8 +41,8 @@ object RubyHttpXDns : Dns {
         "imgaz.pixiv.net",
         "sketch.pixiv.net",
         "www.pixiv.net",
-        "www.recaptcha.net",
-        "www.gstatic.cn"
+        //"www.recaptcha.net",
+        //"www.gstatic.cn"
     )
 
     private val defaultApiAddress = listOf(
@@ -54,8 +54,8 @@ object RubyHttpXDns : Dns {
         "210.140.131.145", // "imgaz.pixiv.net",
         "210.140.170.179", // "sketch.pixiv.net",
         "210.140.131.223", // "www.pixiv.net",
-        "203.208.41.34", // "www.recaptcha.net",
-        "203.208.40.66" // "www.gstatic.cn"
+        //"203.208.41.34", // "www.recaptcha.net",
+        //"203.208.40.66" // "www.gstatic.cn"
 
     )
 

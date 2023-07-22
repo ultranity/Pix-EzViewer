@@ -28,7 +28,7 @@ package com.perol.asdpl.pixivez.networks
 import android.util.Log
 import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.objects.LanguageUtil
-import com.perol.asdpl.pixivez.repository.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import okhttp3.Dns

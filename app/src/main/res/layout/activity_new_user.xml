@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.perol.asdpl.pixivez.activity.NewUserActivity">
+    tools:context="com.perol.asdpl.pixivez.ui.account.NewUserActivity">
 
     <WebView
         android:id="@+id/webView"

@@ -24,8 +24,8 @@
 
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.responses.PixivAccountsEditResponse
-import com.perol.asdpl.pixivez.responses.PixivAccountsResponse
+import com.perol.asdpl.pixivez.data.model.PixivAccountsEditResponse
+import com.perol.asdpl.pixivez.data.model.PixivAccountsResponse
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.Field

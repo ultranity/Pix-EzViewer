@@ -56,7 +56,6 @@
 
             </com.google.android.material.appbar.MaterialToolbar>
 
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
@@ -71,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header_hello_m"
-        app:menu="@menu/activity_hello_m_drawer" />
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/main_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

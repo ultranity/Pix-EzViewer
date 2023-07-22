@@ -66,57 +66,6 @@
             app:defaultValue="true"
             app:title="@string/show_download_toast"/>
     </PreferenceCategory>
-    <PreferenceCategory app:title="UI">
-        <!--SwitchPreference
-            android:summary="@string/use_bottom_layout_subtext"
-            app:defaultValue="false"
-            app:key="use_bottom_layout"
-            app:title="@string/use_bottom_layout" /-->
-        <SwitchPreference
-            android:summary="@string/needstatusbar_subtext"
-            app:key="needstatusbar"
-            app:title="@string/needstatusbar" />
-        <SwitchPreference
-            android:summary="@string/needactionbar_subtext"
-            app:defaultValue="false"
-            app:key="needactionbar"
-            app:title="@string/needactionbar" />
-        <SwitchPreference
-            app:key="refreshTab"
-            app:defaultValue="false"
-            app:title="@string/refreshTab"
-            app:summary="@string/refreshTab_summary"/>
-        <SwitchPreference
-            android:summary="@string/animation_summary"
-            app:defaultValue="false"
-            app:key="animation"
-            app:title="@string/animation" />
-        <SwitchPreference
-            android:summary="@string/banner_summary"
-            app:defaultValue="false"
-            app:key="banner_auto_loop"
-            app:title="@string/banner_auto_loop" />
-        <SwitchPreference
-            android:summary="@string/use_picX_layout_subtext"
-            app:defaultValue="true"
-            app:key="use_picX_layout_main"
-            app:title="@string/use_picX_layout_main" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:key="show_user_img_main"
-            app:summary="@string/show_user_img_main_summary"
-            app:title="@string/show_user_img_main" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:key="show_user_img_bookmarked"
-            app:summary="@string/show_user_img_bookmarked_summary"
-            app:title="@string/show_user_img_bookmarked" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:key="show_user_img_searchr"
-            app:summary="@string/show_user_img_searchr_summary"
-            app:title="@string/show_user_img_searchr" />
-    </PreferenceCategory>
     <PreferenceCategory app:title="Selection">
         <Preference
             app:key="storepath1"

@@ -41,7 +41,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"/>
 
-        <com.perol.asdpl.pixivez.ui.NiceImageView
+        <com.perol.asdpl.pixivez.view.NiceImageView
             android:id="@+id/imageview_like"
             android:src="@drawable/ic_heart"
             android:background="@drawable/round_ripple"

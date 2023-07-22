@@ -29,11 +29,11 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.objects.FileInfo
-import com.perol.asdpl.pixivez.repository.RetrofitRepository
-import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.viewmodel.BaseViewModel
+import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.tencent.mmkv.MMKV
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -82,8 +82,7 @@ class ImgManagerViewModel : BaseViewModel() {
                 taskmap[it.pid!!] = it
                 if (kv.containsKey(it.pid.toString())) {
                     Observable.just(kv.decodeParcelable(it.pid.toString(), Illust::class.java))
-                }
-                else {
+                } else {
                     retrofitRepository.getIllust(it.pid).flatMap {
                         kv.encode(it.illust.id.toString(), it.illust)
                         Observable.just(it.illust)
@@ -97,7 +96,8 @@ class ImgManagerViewModel : BaseViewModel() {
                     // Log.d("imgMgr","get"+this+"p"+it.part)
                     val it = taskmap[rt.id]!!
                     it.file.illust = rt
-                    it.file.target = Works.parseSaveFormat(rt, it.part, saveformat, TagSeparator, false)
+                    it.file.target =
+                        Works.parseSaveFormat(rt, it.part, saveformat, TagSeparator, false)
                     it.file.checked = (it.file.target != it.file.name)
                     // Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
                     if (rename_once) {
@@ -154,8 +154,7 @@ class ImgManagerViewModel : BaseViewModel() {
                 }?.forEach {
                     rename(it)
                 }
-            }
-            else {
+            } else {
                 task?.filter {
                     it.file.checked
                 }?.forEach {

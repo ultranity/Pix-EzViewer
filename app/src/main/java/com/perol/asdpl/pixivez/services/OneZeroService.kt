@@ -24,7 +24,7 @@
 
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.responses.OneZeroResponse
+import com.perol.asdpl.pixivez.data.model.OneZeroResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

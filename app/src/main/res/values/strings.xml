@@ -44,7 +44,7 @@
     <string name="origin">加载原图</string>
     <string name="searchsource">以图搜源</string>
     <string name="cleancatche">清除缓存</string>
-    <string name="historyrecord">历史记录</string>
+    <string name="view_history">历史记录</string>
     <string name="appsetting">应用设置</string>
     <string name="logout">登出</string>
     <string name="account">账号</string>
@@ -287,8 +287,8 @@
     <string name="open_in_external_browser">若出现错误点击此处选择浏览器登录</string>
     <string name="needactionbar">详情页显示工具栏</string>
     <string name="needactionbar_subtext">顶部显示返回、分享键</string>
-    <string name="use_bottom_layout">使用底部导航栏</string>
-    <string name="use_bottom_layout_subtext">颠倒上下~</string>
+    <string name="use_bottom_appbar">使用底部导航栏</string>
+    <string name="use_bottom_appbar_subtext">颠倒上下~</string>
     <string name="use_picX_layout_main">首页使用新式卡片布局</string>
     <string name="use_picX_layout_subtext">简明体验，只为看图</string>
     <string name="fractional" translatable="false">%d/%d</string>
@@ -316,4 +316,27 @@
     <string name="menu" translatable="false">Menu</string>
     <string name="token_login">Token登录</string>
     <string name="token_warning">⚠警告！访问Token属于危险操作，不要泄露外传以免影响账户</string>
+    <string name="title_activity_main">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_transform">Transform</string>
+    <string name="menu_reflow">Reflow</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="lorem_ipsum_title">Lorem Ipsum"</string>
+    <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
+        typesetting industry. Lorem Ipsum has been the industry\'s standard placeholder text ever
+        since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
+        type specimen book"
+    </string>
+    <string name="fab_content_description">Represents a view to invoke an action</string>
+    <string name="image_view_item_transform_content_description">Represents an image view in the
+        item
+    </string>
+    <string name="dynamic_color">动态色彩</string>
+    <string name="title_activity_item_detail_host">ItemDetailHostActivity</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 </resources>

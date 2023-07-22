@@ -28,8 +28,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
-import com.perol.asdpl.pixivez.responses.Illust
-import com.perol.asdpl.pixivez.responses.User
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.User
 import java.util.Stack
 import java.util.Timer
 import kotlin.collections.set
@@ -61,35 +61,35 @@ fun <T : Any> T.copyFrom(src:T) {
 
 class DataHolder{
     companion object {
-        private var illustsList: Stack<List<Illust>?> = Stack<List<Illust>?>()
+        private var illustListStack: Stack<List<Illust>?> = Stack<List<Illust>?>()
         var pictureAdapter: PagerAdapter? = null
 
-        fun peekIllustsList(): List<Illust>? {
-            return if (this.illustsList.empty()) {
+        fun peekIllustList(): List<Illust>? {
+            return if (this.illustListStack.empty()) {
                 null
             } else {
-                this.illustsList.peek()
+                this.illustListStack.peek()
             }
         }
 
-        fun checkIllustsList(pos: Int, id: Long): Boolean {
-            return if (this.illustsList.empty()) {
+        fun checkIllustList(pos: Int, id: Long): Boolean {
+            return if (this.illustListStack.empty()) {
                 false
             } else {
-                (this.illustsList.peek()?.get(pos)?.id ?: -1) == id
+                (this.illustListStack.peek()?.get(pos)?.id ?: -1) == id
             }
         }
 
-        fun getIllustsList(): List<Illust>? {
-            return if (this.illustsList.empty()) {
+        fun getIllustList(): List<Illust>? {
+            return if (this.illustListStack.empty()) {
                 null
             } else {
-                this.illustsList.pop()
+                this.illustListStack.pop()
             }
         }
 
-        fun setIllustsList(illustList: List<Illust>) {
-            this.illustsList.push(illustList)
+        fun setIllustList(illustList: List<Illust>) {
+            this.illustListStack.push(illustList)
         }
     }
 }

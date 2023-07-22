@@ -17,7 +17,7 @@ import com.arialyy.aria.core.download.DownloadReceiver
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.RinkActivity
+import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 import com.perol.asdpl.pixivez.databinding.DialogDownloadConfigBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -58,6 +58,7 @@ class DownloadManagerActivity : RinkActivity() {
             binding.downloadlistrefreshlayout.isRefreshing = false
         }
     }
+
     private fun refreshSingle(task: DownloadTask?) {
         task?.let {
             var index = -1
@@ -73,7 +74,8 @@ class DownloadManagerActivity : RinkActivity() {
                 downloadTaskAdapter.notifyItemChanged(index, it.entity)
             }
         }
-        viewModel.progress.value = "${aria.allNotCompleteTask?.size ?: 0}/${aria.taskList?.size ?: 0}"
+        viewModel.progress.value =
+            "${aria.allNotCompleteTask?.size ?: 0}/${aria.taskList?.size ?: 0}"
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -85,23 +87,42 @@ class DownloadManagerActivity : RinkActivity() {
         when (item.itemId) {
             R.id.action_settings -> {
                 val configDialog = DialogDownloadConfigBinding.inflate(layoutInflater)
-                configDialog.spinnerMaxTaskNum.setSelection(PxEZApp.instance.pre.getString("max_task_num", "2")!!.toInt()-1)
-                configDialog.spinnerThreadNum.setSelection(PxEZApp.instance.pre.getString("thread_num", "2")!!.toInt()-1)
+                configDialog.spinnerMaxTaskNum.setSelection(
+                    PxEZApp.instance.pre.getString(
+                        "max_task_num",
+                        "2"
+                    )!!.toInt() - 1
+                )
+                configDialog.spinnerThreadNum.setSelection(
+                    PxEZApp.instance.pre.getString(
+                        "thread_num",
+                        "2"
+                    )!!.toInt() - 1
+                )
                 MaterialAlertDialogBuilder(this)
                     .setTitle(resources.getString(R.string.task_setting))
                     .setView(configDialog.root)
-                    .setNegativeButton(resources.getString(android.R.string.cancel)){_,_ -> }
+                    .setNegativeButton(resources.getString(android.R.string.cancel)) { _, _ -> }
                     .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
                         Aria.get(this).downloadConfig.apply {
-                            maxTaskNum=(configDialog.spinnerMaxTaskNum.selectedItem as String).toInt()
-                            threadNum = (configDialog.spinnerThreadNum.selectedItem as String).toInt()
-                            PxEZApp.instance.pre.edit{
-                                putString("max_task_num", configDialog.spinnerMaxTaskNum.selectedItem as String)
-                                putString("thread_num", configDialog.spinnerThreadNum.selectedItem as String)
+                            maxTaskNum =
+                                (configDialog.spinnerMaxTaskNum.selectedItem as String).toInt()
+                            threadNum =
+                                (configDialog.spinnerThreadNum.selectedItem as String).toInt()
+                            PxEZApp.instance.pre.edit {
+                                putString(
+                                    "max_task_num",
+                                    configDialog.spinnerMaxTaskNum.selectedItem as String
+                                )
+                                putString(
+                                    "thread_num",
+                                    configDialog.spinnerThreadNum.selectedItem as String
+                                )
                             }
                         }
                     }.show()
             }
+
             R.id.action_resume -> {
                 Thread {
                     // wait for resumeAllTask
@@ -130,14 +151,16 @@ class DownloadManagerActivity : RinkActivity() {
                 }.start()
                 Aria.download(this).resumeAllTask()
             }
+
             R.id.action_cancel -> {
                 MaterialAlertDialogBuilder(this)
                     .setMessage(R.string.all_cancel)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
-                            Aria.download(this).removeAllTask(false)
+                        Aria.download(this).removeAllTask(false)
                     }
                     .show()
             }
+
             R.id.action_finished_cancel -> {
                 Thread {
                     Aria.download(this).allCompleteTask?.forEach {
@@ -145,6 +168,7 @@ class DownloadManagerActivity : RinkActivity() {
                     }
                 }.start()
             }
+
             R.id.action_stop -> {
                 Aria.download(this).stopAllTask()
             }
@@ -152,6 +176,7 @@ class DownloadManagerActivity : RinkActivity() {
             R.id.action_restart -> {
                 PxEZApp.ActivityCollector.recreate()
             }
+
             R.id.action_export -> {
                 MaterialDialog(this).show {
                     folderChooser(
@@ -168,21 +193,25 @@ class DownloadManagerActivity : RinkActivity() {
                     }
                 }
             }
+
             R.id.action_import -> {
                 MaterialDialog(this).show {
-                    fileChooser(filter = { it.isDirectory || it.extension == "log" }, context = context) { _, file ->
+                    fileChooser(
+                        filter = { it.isDirectory || it.extension == "log" },
+                        context = context
+                    ) { _, file ->
                         Thread {
                             file.readLines().forEach {
                                 val pid = (
-                                    Regex("(?<=(pid)?_?)(\\d{7,9})")
-                                        .find(it)?.value ?: ""
-                                    ).toLongOrNull()
+                                        Regex("(?<=(pid)?_?)(\\d{7,9})")
+                                            .find(it)?.value ?: ""
+                                        ).toLongOrNull()
                                 val dot = it.lastIndexOf(".")
                                 val part = (
-                                    Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
-                                        .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
-                                        ?: ""
-                                    ).toIntOrNull()
+                                        Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
+                                            .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
+                                            ?: ""
+                                        ).toIntOrNull()
                                 if (pid != null && part != null && !FileUtil.isDownloaded(pid)) {
                                     Works.imgD(pid, part)
                                     Thread.sleep(300)

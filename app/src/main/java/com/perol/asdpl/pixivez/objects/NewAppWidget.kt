@@ -34,13 +34,11 @@ import android.widget.RemoteViews
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.AppWidgetTarget
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.responses.IllustNext
+import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.services.AppApiPixivService
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.util.*
@@ -55,7 +53,11 @@ class NewAppWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
     }
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         // There may be multiple widgets active, so update all of them
 
         for (appWidgetId in appWidgetIds) {
@@ -85,40 +87,41 @@ class NewAppWidget : AppWidgetProvider() {
             val appApiPixivService =
                 RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
             appApiPixivService.walkthroughIllusts().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe(object : Observer<IllustNext> {
-                    override fun onSubscribe(d: Disposable) {
-                    }
-
-                    override fun onNext(walkthroughResponse: IllustNext) {
-                        // Construct the RemoteViews object
-                        val rand = Random()
-                        val randomnum = rand.nextInt(walkthroughResponse.illusts.size - 2)
-                        val views = RemoteViews(context.packageName, R.layout.new_app_widget)
-                        val bundle = Bundle()
-                        bundle.putLong("illustid", walkthroughResponse.illusts[randomnum].id)
-                        val illustIdList = LongArray(1) { walkthroughResponse.illusts[randomnum].id }
-                        bundle.putLongArray("illustidlist", illustIdList)
-                        val intent = Intent(context, PictureActivity::class.java)
-                        intent.putExtras(bundle)
-                        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                        views.setOnClickPendingIntent(R.id.widget_image, pendingIntent)
-                        Glide.with(context.applicationContext).asBitmap().load(walkthroughResponse.illusts[randomnum].image_urls.medium)
-                            .transform(
-                                RoundedCornersTransformation(
-                                    24,
-                                    0,
-                                    RoundedCornersTransformation.CornerType.ALL
-                                )
-                            ).into(object : AppWidgetTarget(context.applicationContext, R.id.widget_image, views, appWidgetId) {})
+                .subscribeOn(Schedulers.io()).subscribe {resp->
+                    // Construct the RemoteViews object
+                    val rand = Random()
+                    val randomnum = rand.nextInt(resp.illusts.size - 2)
+                    val views = RemoteViews(context.packageName, R.layout.new_app_widget)
+                    val bundle = Bundle()
+                    bundle.putLong("illustid", resp.illusts[randomnum].id)
+                    val illustIdList =
+                        LongArray(1) { resp.illusts[randomnum].id }
+                    bundle.putLongArray("illustidlist", illustIdList)
+                    val intent = Intent(context, PictureActivity::class.java)
+                    intent.putExtras(bundle)
+                    val pendingIntent = PendingIntent.getActivity(
+                        context,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    views.setOnClickPendingIntent(R.id.widget_image, pendingIntent)
+                    Glide.with(context.applicationContext).asBitmap()
+                        .load(resp.illusts[randomnum].image_urls.medium)
+                        .transform(
+                            RoundedCornersTransformation(
+                                24,
+                                0,
+                                RoundedCornersTransformation.CornerType.ALL
+                            )
+                        ).into(object : AppWidgetTarget(
+                            context.applicationContext,
+                            R.id.widget_image,
+                            views,
+                            appWidgetId
+                        ) {})
 //                            appWidgetManager.updateAppWidget(appWidgetId, views)
-                    }
-
-                    override fun onError(e: Throwable) {
-                    }
-
-                    override fun onComplete() {
-                    }
-                })
+                }.add()
         }
     }
 }

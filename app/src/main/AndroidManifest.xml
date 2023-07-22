@@ -18,48 +18,65 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeBase"
         tools:replace="android:theme">
+        <activity
+            android:name=".ui.HostActivity"
+            android:exported="false"
+            android:label="@string/title_activity_item_detail_host"
+            android:resizeableActivity="true"
+            tools:targetApi="24" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:resizeableActivity="true"
+            android:theme="@style/AppThemeBase.NoActionBar"
+            tools:targetApi="24" />
+
         <meta-data
             android:name="com.perol.asdpl.pixivez.services.CustomGlideModule"
             android:value="GlideModule" />
 
         <activity
-            android:name=".activity.HelloMActivity"
+            android:name=".ui.HelloMActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <activity-alias android:name=".md"
+        <activity-alias
+            android:name=".md"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launchermd"
             android:label="@string/app_name"
-            android:targetActivity=".activity.HelloMActivity">
+            android:targetActivity=".ui.HelloMActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        <activity-alias android:name=".triangle"
+        <activity-alias
+            android:name=".triangle"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcherep"
             android:label="@string/app_name"
-            android:targetActivity=".activity.HelloMActivity">
+            android:targetActivity=".ui.HelloMActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        <activity-alias android:name=".normal"
+        <activity-alias
+            android:name=".normal"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
-            android:targetActivity=".activity.HelloMActivity">
+            android:targetActivity=".ui.HelloMActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,38 +84,40 @@
             </intent-filter>
         </activity-alias>
 
-        <activity android:name=".activity.NewUserActivity" />
-        <activity android:name=".activity.LoginActivity"
-            android:exported="true"/>
-
-        <activity android:name=".activity.UserMActivity" />
-
-        <activity android:name=".manager.ImgManagerActivity" />
-        <activity android:name=".activity.BlockActivity" />
-        <activity android:name=".activity.NovelActivity" />
-        <activity android:name=".activity.WebViewActivity" />
-        <activity android:name=".activity.OKWebViewActivity" />
-        <activity android:name=".activity.SettingActivity"
-            android:label="@string/title_activity_setting" />
-        <activity android:name=".activity.AccountActivity" />
-        <activity android:name=".activity.ThemeActivity" />
-
-        <activity android:name=".activity.HistoryMActivity" />
+        <activity android:name=".ui.account.NewUserActivity" />
+        <activity
+            android:name=".ui.account.LoginActivity"
+            android:exported="true" />
+        <activity android:name=".ui.user.UserMActivity"
+            android:exported="true" />
+        <activity android:name=".ui.FragmentActivity" />
         <activity android:name=".manager.DownloadManagerActivity" />
-
-        <activity android:name=".activity.PixivsionActivity" />
-        <activity android:name=".activity.SpotlightActivity" />
-        <activity android:name=".activity.SearchRActivity"
+        <activity android:name=".manager.ImgManagerActivity"
+            android:exported="true" />
+        <activity android:name=".ui.WebViewActivity" />
+        <activity android:name=".ui.OKWebViewActivity" />
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_setting"
+            android:exported="true" />
+        <activity android:name=".ui.home.pixivision.PixivsionActivity"
+            android:exported="true" />
+        <activity android:name=".ui.home.pixivision.SpotlightActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ui.search.SearchActivity"
             android:label="@string/title_activity_search_r" />
-        <activity android:name=".activity.SearchResultActivity"/>
-        <activity android:name=".activity.PictureActivity"
+        <activity android:name=".ui.search.SearchResultActivity" />
+        <activity
+            android:name=".ui.pic.PictureActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".activity.ZoomActivity" />
-        <activity android:name=".activity.UserFollowActivity" />
-        <activity android:name=".activity.SaucenaoActivity"
-            android:label="@string/title_activity_saucenao"
-            android:exported="true">
+        <activity android:name=".ui.pic.ZoomActivity" />
+        <activity android:name=".ui.user.UserListActivity" />
+        <activity
+            android:name=".ui.settings.SaucenaoActivity"
+            android:exported="true"
+            android:label="@string/title_activity_saucenao">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -107,8 +126,8 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.IntentActivity"
+        <activity
+            android:name=".IntentActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -116,9 +135,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="www.pixiv.net"
-                    android:scheme="https" />
+                <data android:scheme="https" />
+                <data android:host="www.pixiv.net" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -126,9 +144,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="pixiv.net"
-                    android:scheme="https" />
+                <data android:scheme="https" />
+                <data android:host="pixiv.net" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -136,9 +153,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="www.pixiv.net"
-                    android:scheme="http" />
+                <data android:scheme="http" />
+                <data android:host="www.pixiv.net" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -146,9 +162,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="pixiv.net"
-                    android:scheme="http" />
+                <data android:scheme="http" />
+                <data android:host="pixiv.net" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -156,9 +171,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="pixiv.me"
-                    android:scheme="https" />
+                <data android:scheme="https" />
+                <data android:host="pixiv.me" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -166,9 +180,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="pixiv.me"
-                    android:scheme="http" />
+                <data android:scheme="http" />
+                <data android:host="pixiv.me" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -176,10 +189,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="pixiv" />
+                <data android:scheme="pixiv"/>
+                <data android:host="users"/>
+                <data android:host="illusts"/>
+                <data android:host="account"/>
             </intent-filter>
         </activity>
-
 
         <receiver
             android:name=".objects.NewAppWidget"

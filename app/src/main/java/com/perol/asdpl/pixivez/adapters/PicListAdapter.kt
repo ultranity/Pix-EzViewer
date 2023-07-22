@@ -23,12 +23,13 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
+import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import kotlin.math.max
@@ -113,7 +114,7 @@ abstract class PicListAdapter(
     }
 
     private fun viewPics(adapter:PicListAdapter, view: View, position: Int) {
-        DataHolder.setIllustsList(
+        DataHolder.setIllustList(
             adapter.data.subList(
                 max(position - 30, 0),
                 min(
@@ -127,7 +128,7 @@ abstract class PicListAdapter(
         PictureActivity.start(context,illust.id, position,30, options)
     }
 
-    open fun viewPicsOptions(view: View, illust:Illust): Bundle {
+    open fun viewPicsOptions(view: View, illust: Illust): Bundle {
         val mainimage = view.findViewById<View>(R.id.item_img)
         return ActivityOptions.makeSceneTransitionAnimation(
             context as Activity,

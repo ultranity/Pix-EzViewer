@@ -1,6 +1,6 @@
 package com.perol.asdpl.pixivez.objects
 
-import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.data.model.Illust
 
 class Spotlight(
     val title: String,

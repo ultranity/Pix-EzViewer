@@ -121,7 +121,7 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
             ColorDrawable(
                 ThemeUtil.getAttrColor(
                     requireContext(),
-                    com.google.android.material.R.attr.colorOnPrimary
+                    com.google.android.material.R.attr.colorSurfaceContainerHigh
                 )
             )
         )

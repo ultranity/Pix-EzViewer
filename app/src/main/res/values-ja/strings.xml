@@ -66,7 +66,7 @@
     <string name="view">閲覧数</string>
     <string name="bookmark">ブックマーク数</string>
     <string name="view_comment">コメントを表示</string>
-    <string name="aboutpic">関連画像</string>
+    <string name="related">関連推薦</string>
     <string name="illustid">イラストID</string>
     <string name="searchhistory">検索履歴（长按删除）</string>
     <string name="clearhistory">履歴を消去</string>

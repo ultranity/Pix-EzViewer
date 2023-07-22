@@ -51,10 +51,12 @@ class UserListActivity : RinkActivity() {
             intent.putExtra("illustid", illustid)
             context.startActivity(intent)
         }
-        fun start(context: Context, userid: Long, get_following: Boolean) {
+        fun start(context: Context, userid: Long, get_following: Boolean?=null) {
             val intent = Intent(context, UserListActivity::class.java)
             intent.putExtra("userid", userid)
-            intent.putExtra("get_following", get_following)
+            if (get_following != null) {
+                intent.putExtra("get_following", get_following)
+            }
             context.startActivity(intent)
         }
     }
@@ -96,10 +98,16 @@ class UserListActivity : RinkActivity() {
             }
             else {
                 userid = it.getLong("userid")
-                getFollowing = it.getBoolean("get_following", true)
-                supportActionBar?.setTitle(R.string.following)
-                //binding.title.text = getString(R.string.following)
-                initFollowData()
+                if (it.containsKey("get_following")) {
+                    getFollowing = it.getBoolean("get_following", true)
+                    supportActionBar?.setTitle(R.string.following)
+                    //binding.title.text = getString(R.string.following)
+                    initFollowData()
+                }
+                else {
+                    supportActionBar?.setTitle(R.string.related)
+                    initRelatedData()
+                }
             }
         }
     }
@@ -195,19 +203,47 @@ class UserListActivity : RinkActivity() {
     private fun onLoadMoreUser() {
         // retrofitRepository.getIllustBookmarkUsers(illust_id,
         //    Next_url!!.substringAfter("offset=").toInt())
-        if (nextUrl != null) {
-            retrofitRepository.getNextUser(nextUrl!!).subscribe({
-                illustData = it
-                nextUrl = it.next_url
-                userListAdapter.addData(it.users)
-                userListAdapter.loadMoreComplete()
-            }, {
-                userListAdapter.loadMoreFail()
-                it.printStackTrace()
-            }, {}).add()
-        }
-        else {
-            userListAdapter.loadMoreEnd()
-        }
+        retrofitRepository.getNextUser(nextUrl!!).subscribe({
+            illustData = it
+            nextUrl = it.next_url
+            userListAdapter.addData(it.users)
+            userListAdapter.loadMoreComplete()
+        }, {
+            userListAdapter.loadMoreFail()
+            it.printStackTrace()
+        }, {}).add()
+    }
+
+
+    private fun initRelatedData() {
+        userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
+        binding.recyclerview.adapter = userShowAdapter
+        retrofitRepository.getUserRelated(userid).subscribe({
+            userData = it
+            nextUrl = it.next_url
+            userShowAdapter.setNewInstance(it.user_previews)
+            userShowAdapter.setOnLoadMoreListener {
+                if (nextUrl == null) {
+                    userShowAdapter.loadMoreEnd()
+                } else {
+                    onLoadMoreUserRelated()
+                }
+            }
+        }, {
+            userShowAdapter.loadMoreFail()
+            it.printStackTrace()
+           }, {}).add()
+    }
+
+    private fun onLoadMoreUserRelated() {
+        retrofitRepository.getNextSearchUser(nextUrl!!).subscribe({
+            userData = it
+            nextUrl = it.next_url
+            userShowAdapter.addData(it.user_previews)
+            userShowAdapter.loadMoreComplete()
+        }, {
+            userShowAdapter.loadMoreFail()
+            it.printStackTrace()
+        }, {}).add()
     }
 }

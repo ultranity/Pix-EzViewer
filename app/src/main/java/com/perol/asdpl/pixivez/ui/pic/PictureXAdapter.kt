@@ -475,7 +475,7 @@ class PictureXAdapter(
                 )
 
             is RelatedHolder -> {
-//            aboutPictureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+//            relatedtureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
                 holder.updateWithPage(relatedPictureAdapter, mContext)
             }
         }

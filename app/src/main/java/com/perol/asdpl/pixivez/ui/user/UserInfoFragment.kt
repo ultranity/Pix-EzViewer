@@ -38,7 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.postDelayed
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
@@ -46,6 +46,7 @@ import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.objects.EasyFormatter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
+import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.view.loadBGImage
 
 /**
@@ -56,13 +57,8 @@ import com.perol.asdpl.pixivez.view.loadBGImage
 class UserInfoFragment : LazyFragment() { // Required empty public constructor
 
     // TODO: Rename and change types of parameters
-    lateinit var viewModel: UserMViewModel
+    private val viewModel: UserMViewModel by viewModels({requireActivity()})
     private lateinit var userDetail: UserDetailResponse
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[UserMViewModel::class.java]
-    }
 
     private fun getChip(
         word: String,
@@ -216,16 +212,14 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
                 }
             )
         }
+        binding.chipgroup.addView(
+            getChip(getString(R.string.related), "user_related") {
+                UserListActivity.start(requireContext(), userid, null)
+            }
+        )
     }
 
-    private var param1: Long? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getLong(ARG_PARAM1)
-        }
-    }
+    private var userid: Long by argument()
 
     private lateinit var binding: FragmentUserInfoBinding
     override fun onCreateView(
@@ -239,24 +233,10 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
     }
 
     companion object {
-        // TODO: Rename parameter arguments, choose names that match
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private const val ARG_PARAM1 = "uesrid"
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param userid Parameter 1.
-         * @return A new instance of fragment UserMessageFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         fun newInstance(userid: Long): Fragment {
-            val fragment = UserInfoFragment()
-            val args = Bundle()
-            args.putLong(ARG_PARAM1, userid)
-            fragment.arguments = args
-            return fragment
+            return UserInfoFragment().apply {
+                this.userid = userid
+            }
         }
     }
 }

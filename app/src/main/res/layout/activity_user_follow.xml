@@ -25,7 +25,8 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="8dp"
                 android:entries="@array/user"
-                android:layout_gravity="end"/>
+                android:layout_gravity="end"
+                android:visibility="gone" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView

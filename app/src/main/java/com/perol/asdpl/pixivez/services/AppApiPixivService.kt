@@ -42,7 +42,6 @@ interface AppApiPixivService {
     //    public abstract l<PixivResponse> postMuteSetting(@Header("Authorization") String paramString, @Field("add_user_ids[]") List<Long> paramList1, @Field("delete_user_ids[]") List<Long> paramList2, @Field("add_tags[]") List<String> paramList3, @Field("delete_tags[]") List<String> paramList4);
     @GET("/v2/illust/bookmark/detail")
     fun getLikeIllustDetail(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long
     ): Observable<BookMarkDetailResponse>
 
@@ -61,7 +60,6 @@ interface AppApiPixivService {
 
     @GET("/v1/user/recommended?filter=for_android")
     fun getUserRecommended(
-        // @Header("Authorization") paramString: String
         @Query("offset") offset: Int?=0
     ): Observable<SearchUserResponse>
 
@@ -72,20 +70,17 @@ interface AppApiPixivService {
     @Multipart
     @POST("/v1/user/profile/edit")
     fun postUserProfileEdit(
-        // @Header("Authorization") paramString: String,
         @Part paramRequestBody: MultipartBody.Part
     ): Observable<ResponseBody>
 
     @GET("/v1/ugoira/metadata")
     fun getUgoiraMetadata(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long
     ): Observable<UgoiraMetadataResponse>
 
     @GET("/v1/user/browsing-history/illusts")
     fun getIllustBrowsingHistory(
-        // @Header("Authorization") paramString: String
-    ): Observable<IllustNext>
+        ): Observable<IllustNext>
 
     @GET("/v1/user/bookmarks/illust")
     fun getLikeIllust(
@@ -98,7 +93,6 @@ interface AppApiPixivService {
     @FormUrlEncoded
     @POST("/v1/user/follow/delete")
     fun postUnfollowUser(
-        // @Header("Authorization") paramString: String,
         @Field("user_id") user_id: Long
     ): Observable<ResponseBody>
 
@@ -113,7 +107,6 @@ interface AppApiPixivService {
     @FormUrlEncoded
     @POST("/v1/illust/bookmark/delete")
     fun postUnlikeIllust(
-        // @Header("Authorization") paramString: String,
         @Field("illust_id") illust_id: Long
     ): Observable<ResponseBody>
 
@@ -134,8 +127,7 @@ interface AppApiPixivService {
 
     @GET("/v1/trending-tags/illust?filter=for_android")
     fun getIllustTrendTags(
-        // @Header("Authorization") paramString: String
-    ): Observable<TrendingtagResponse>
+        ): Observable<TrendingtagResponse>
 
     //    &start_date=2019-11-24&end_date=2019-12-01
     @GET("/v1/search/illust?filter=for_android&merge_plain_keyword_results=true")
@@ -185,7 +177,6 @@ interface AppApiPixivService {
 
     @GET("/v1/user/follower?filter=for_android")
     fun getUserFollower(
-        // @Header("Authorization") paramString: String,
         @Query("user_id") paramLong: Long
     ): Observable<SearchUserResponse>
 
@@ -203,26 +194,30 @@ interface AppApiPixivService {
 
     @GET("/v1/illust/detail?filter=for_android")
     fun getIllust(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long
     ): Observable<IllustDetailResponse>
 
     @GET("/v1/illust/detail?filter=for_android")
     suspend fun getIllustCor(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long
     ): IllustDetailResponse
 
     @GET("/v2/illust/related?filter=for_android")
     fun getIllustRecommended(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long
     ): Observable<RecommendResponse>
+
+
+    @GET("/v1/user/related?filter=for_android")
+    fun getUserRelated(
+        @Query("seed_user_id") seedUserId: Long,
+        @Query("filter") filter: String = "for_android",
+        @Query("offset") offset: Int = 0
+    ): Observable<SearchUserResponse>
 
     @FormUrlEncoded
     @POST("/v2/user/browsing-history/illust/add")
     fun postAddIllustBrowsingHistory(
-        // @Header("Authorization") paramString: String,
         @Field("illust_ids[]") illust_idList: List<Long>
     ): Observable<ResponseBody>
 
@@ -255,7 +250,6 @@ interface AppApiPixivService {
 
     @GET("/v1/illust/comments")
     fun getIllustComments(
-        // @Header("Authorization") paramString: String,
         @Query("illust_id") paramLong: Long,
         @Query("offset") offset: Int? = 0,
         @Query("include_total_comments") include_total_comments: Boolean? = false
@@ -272,7 +266,6 @@ interface AppApiPixivService {
 
     @GET("/v1/user/detail?filter=for_android")
     fun getUserDetail(
-        // @Header("Authorization") paramString: String,
         @Query("user_id") id: Long
     ): Observable<UserDetailResponse>
 

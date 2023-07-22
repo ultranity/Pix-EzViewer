@@ -66,7 +66,7 @@
     <string name="view">查看</string>
     <string name="bookmark">收藏</string>
     <string name="view_comment">查看評論</string>
-    <string name="aboutpic">相關圖像</string>
+    <string name="related">相關推薦</string>
     <string name="illustid">插畫ID</string>
     <string name="searchhistory">搜尋歷史（长按删除）</string>
     <string name="clearhistory">清空歷史</string>

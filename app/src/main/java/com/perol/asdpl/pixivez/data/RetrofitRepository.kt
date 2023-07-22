@@ -237,6 +237,8 @@ class RetrofitRepository {
 
     fun getUserRecommanded() = Request(appApiPixivService.getUserRecommended())
 
+    fun getUserRelated(userid: Long) = Request(appApiPixivService.getUserRelated(userid))
+
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
         return observable.map {
             // resetToken()

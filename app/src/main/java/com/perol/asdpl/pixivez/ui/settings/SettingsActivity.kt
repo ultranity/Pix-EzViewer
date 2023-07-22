@@ -29,14 +29,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
+import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
+import com.perol.asdpl.pixivez.objects.ScreenUtil
+import com.perol.asdpl.pixivez.view.StartLinearSnapHelper
 import java.util.Calendar
+
 
 class SettingsActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -66,6 +70,15 @@ class SettingsActivity : RinkActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        binding.viewpager.offscreenPageLimit = 3
+        if (ScreenUtil.screenWidthDp()>600) {
+            //double pannel from:https://blog.csdn.net/GuoXuan_CHN/article/details/124060216
+            val recyclerView = binding.viewpager.getChildAt(0) as RecyclerView
+            val padding: Int = ScreenUtil.screenWidthPx() / 2
+            recyclerView.setPadding(0, 0, padding, 0)
+            recyclerView.clipToPadding = false
+        }
+
         binding.viewpager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = 4
 

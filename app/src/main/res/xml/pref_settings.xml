@@ -38,11 +38,11 @@
             app:title="@string/checkupdate" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="disableproxy"
             app:title="@string/proxy"
             app:summary="@string/set_mirror"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:summaryOn="@string/h_is_ok"
             app:defaultValue="false"
             app:key="r18on"
@@ -55,13 +55,13 @@
             app:defaultValue= "0"
             app:title="@string/collectmode"
             app:useSimpleSummaryProvider="true"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="resume_unfinished_task"
             app:summaryOff="@string/resume_unfinished_task_off"
             app:summaryOn="@string/resume_unfinished_task_on"
             app:title="@string/unfinished_task" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="ShowDownloadToast"
             app:defaultValue="true"
             app:title="@string/show_download_toast"/>
@@ -70,20 +70,20 @@
         <Preference
             app:key="storepath1"
             app:title="@string/savepath" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="needcreatefold"
             app:defaultValue="false"
             app:title="@string/create_separate_folder"
            app:summary="@string/create_painter_folder"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="R18Folder"
             app:defaultValue="false"
             app:title="@string/create_R18_folder"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="R18Private"
             app:defaultValue="true"
             app:title="@string/R18_private"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:key="enableonlybookmarked"
             app:defaultValue="true"
             app:title="@string/enableonlybookmarked"/>
@@ -121,7 +121,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="DEV">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="crashreport"
             app:defaultValue="true"
             app:title="@string/crash_report" />

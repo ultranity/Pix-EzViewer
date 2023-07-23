@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
@@ -65,6 +65,8 @@ class ThemeFragment : PreferenceFragmentCompat() {
                 ThemeUtil.resetColor(requireActivity())
                 snackbarApplyConfig()
                 //PxEZApp.ActivityCollector.recreate()
+                findPreference<Preference>("dynamicColor")?.isEnabled = newValue as Boolean
+                findPreference<Preference>("theme")?.isEnabled = newValue
                 true
             }
         }
@@ -110,7 +112,7 @@ class ThemeFragment : PreferenceFragmentCompat() {
                         requireContext(),
                         BottomSheet(LayoutMode.WRAP_CONTENT)
                     ).show {
-                        lateinit var action: () -> Unit
+                        var action: () -> Unit = {}
 
                         title(R.string.title_change_theme)
                         val gridItems = gridItems(colorItems) { _, index, item ->
@@ -137,28 +139,28 @@ class ThemeFragment : PreferenceFragmentCompat() {
         }
 
 
-        findPreference<SwitchPreference>("bottomAppbar")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("bottomAppbar")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true
         }
-        findPreference<SwitchPreference>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("refreshTab")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true
         }
-        findPreference<SwitchPreference>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true
         }
-        findPreference<SwitchPreference>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true
         }
-        findPreference<SwitchPreference>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true
         }
 
-        findPreference<SwitchPreference>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.animationEnable = newValue as Boolean
             true
         }

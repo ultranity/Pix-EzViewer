@@ -137,7 +137,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
-        findPreference<SwitchPreference>("disableproxy")!!.apply {
+        findPreference<SwitchPreferenceCompat>("disableproxy")!!.apply {
             if (Works.mirrorLinkDownload || Works.mirrorLinkView) {
                 summary = getString(R.string.mirror) + ":" + Works.mirrorURL
             }
@@ -179,24 +179,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<SwitchPreference>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarRestart()
             true
         }
-        findPreference<SwitchPreference>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
             Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
                 .show()
             true
         }
-        findPreference<SwitchPreference>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.R18Folder = newValue as Boolean
             true
         }
-        findPreference<SwitchPreference>("R18Private")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("R18Private")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.R18Private = newValue as Boolean
             true
         }
-        findPreference<SwitchPreference>("ShowDownloadToast")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>("ShowDownloadToast")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.ShowDownloadToast = newValue as Boolean
             true
         }

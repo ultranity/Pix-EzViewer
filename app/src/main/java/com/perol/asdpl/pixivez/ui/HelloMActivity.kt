@@ -114,7 +114,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 FragmentActivity.start(this, "Block")
             }
         }
-        findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
+        findViewById<DrawerLayout>(R.id.drawer_layout).close()
         //binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -309,6 +309,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                 ).toBundle()
             } else null
             UserMActivity.start(this@HelloMActivity, AppDataRepository.currentUser, options)
+            binding.drawerLayout.close()
         }
 
         header.headtext.text = user.username

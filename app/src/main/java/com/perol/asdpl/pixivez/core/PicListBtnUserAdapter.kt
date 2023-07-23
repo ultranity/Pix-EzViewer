@@ -23,22 +23,44 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.ui.home.trend
+package com.perol.asdpl.pixivez.core
 
-import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.base.BaseViewModel
+import android.os.Bundle
+import android.view.View
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.objects.IllustFilter
+import com.perol.asdpl.pixivez.view.NiceImageView
 
-class RankingMViewModel : BaseViewModel() {
-    val illusts = MutableLiveData<List<Illust>?>()
-    val addillusts = MutableLiveData<List<Illust>?>()
-    val nextUrl = MutableLiveData<String?>()
+/**
+ *  simple Adapter for image item with user imageView and save/like button
+ */
+class PicListBtnUserAdapter(
+    layoutResId: Int,
+    data: List<Illust>?,
+    filter: IllustFilter
+) :
+    PicListBtnAdapter(layoutResId, data, filter) {
 
-    fun onRefresh(mode: String, pickDate: String?) {
-        retrofit.getIllustRanking(mode, pickDate).subscribeNext(illusts, nextUrl)
+    override fun viewPicsOptions(view: View, illust: Illust): Bundle {
+        return PicListXUserAdapter.viewOptions(this, view, illust)
     }
 
-    fun onLoadMore() {
-        retrofit.getNextIllustRecommended(nextUrl.value!!).subscribeNext(addillusts, nextUrl)
+    override fun setUIFollow(status: Boolean, position: Int) {
+        (getViewByAdapterPosition(
+            position, R.id.imageview_user
+        ) as NiceImageView?)?.let { PicListXUserAdapter.badgeUIFollow(this, status, it) }
+    }
+
+    override fun setUIFollow(status: Boolean, view: View) {
+        val user = view as NiceImageView
+        PicListXUserAdapter.badgeUIFollow(this, status, user)
+    }
+
+
+    override fun convert(holder: BaseViewHolder, item: Illust) {
+        super.convert(holder, item)
+        PicListXUserAdapter.convertUser(this, holder, item)
     }
 }

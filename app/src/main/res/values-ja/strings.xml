@@ -241,7 +241,7 @@
     <string name="sample_title">サンプル：クリック自動設定</string>
     <string name="hide_downloaded_detail">現在のデフォルトのダウンロードパスとサブフォルダを取得し、より多くを得るためにPythonスクリプトの使用をサポートしているギャラリーは利便<a hrefの="https://wwa.lanzoux.com/iQB4Rigc7yh"> PCパッケージ提供</a>、レコードをPID  </string>
     <string name="hide_downloaded_summary">隠すダウンロード機能は、追加の非ネイティブ記録することができます：</string>
-    <string name="selectAll">すべて選択</string>
+    <string name="all">すべて</string>
     <string name="sortPic">ソート/フィルタ</string>
     <string name="sort_by">照合</string>
     <string name="create_time">作成した</string>

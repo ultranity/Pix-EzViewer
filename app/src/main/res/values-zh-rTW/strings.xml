@@ -241,7 +241,7 @@
     <string name="sample_title">Sample:點擊自動設置</string>
     <string name="hide_downloaded_detail">默認檢索當前下載路徑及子文件夾，使用配套python腳本可獲取更多圖庫pid記錄,方便起見提供 </string>
     <string name="hide_downloaded_summary">隱藏已下載功能可以附加非本機記錄：</string>
-    <string name="selectAll">全選</string>
+    <string name="all">全部</string>
     <string name="sortPic">排序/篩選</string>
     <string name="sort_by">排序規則</string>
     <string name="create_time">創作時間</string>
@@ -293,4 +293,8 @@
     <string name="token_login">Token登錄</string>
     <string name="token_warning">⚠ 警告！訪問OAuth令牌極度危險，請勿與他人共享</string>
     <string name="dynamic_color">Dynamic Color</string>
+    <string name="ai_type">AI類别</string>
+    <string name="artificial">人工</string>
+    <string name="assisted">AI輔助</string>
+    <string name="ai_generated">AI生成</string>
 </resources>

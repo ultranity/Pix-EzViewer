@@ -262,7 +262,7 @@
     <string name="hide_downloaded_detail"><![CDATA[默认检索当前下载路径及子文件夹，使用配套python脚本可获取更多图库pid记录,方便起见提供<a href ="https://wwa.lanzoux.com/iQB4Rigc7yh">PC打包蓝奏云</a>，将生成数据置于当前下载路径]]></string>
     <string name="hide_downloaded_summary">隐藏已下载功能可以附加非本机记录：</string>
     <string name="plink" translatable="false">https://wwa.lanzoux.com/iQB4Rigc7yh</string>
-    <string name="selectAll">全选</string>
+    <string name="all">全部</string>
     <string name="sortPic">排序/筛选</string>
     <string name="sort_by">排序规则</string>
     <string name="create_time">创作时间</string>
@@ -339,4 +339,8 @@
     <string name="title_activity_item_detail_host">ItemDetailHostActivity</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="ai_type">AI类别</string>
+    <string name="artificial">人工</string>
+    <string name="assisted">AI辅助</string>
+    <string name="ai_generated">AI生成</string>
 </resources>

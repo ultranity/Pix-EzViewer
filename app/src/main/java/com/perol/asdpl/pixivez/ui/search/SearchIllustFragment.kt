@@ -41,9 +41,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.PicListAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.core.PicListAdapter
+import com.perol.asdpl.pixivez.core.PicListBtnAdapter
+import com.perol.asdpl.pixivez.core.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentSearchIllustBinding
 import com.perol.asdpl.pixivez.base.BaseFragment
 import com.perol.asdpl.pixivez.objects.IllustFilter
@@ -245,7 +245,7 @@ class SearchIllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener 
                 searchIllustAdapter.loadMoreFail()
             }
         }
-        viewModel.addIllusts.observe(viewLifecycleOwner) {
+        viewModel.illustsAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 searchIllustAdapter.addData(it)
             } else {

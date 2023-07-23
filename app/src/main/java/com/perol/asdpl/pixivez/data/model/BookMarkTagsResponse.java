@@ -46,10 +46,6 @@ public class BookMarkTagsResponse {
         return bookmark_tags;
     }
 
-    public void setBookmark_tags(List<BookmarkTagsBean> bookmark_tags) {
-        this.bookmark_tags = bookmark_tags;
-    }
-
     /**
      * name : *少女前线
      * count : 1

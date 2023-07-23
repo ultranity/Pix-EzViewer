@@ -46,14 +46,15 @@ class SearchIllustViewModel : BaseViewModel() {
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
     var isPreview = false
     var illusts = MutableLiveData<List<Illust>?>()
-    var addIllusts = MutableLiveData<List<Illust>?>()
+    var illustsAdded = MutableLiveData<List<Illust>?>()
     private var retrofitRepository = RetrofitRepository.getInstance()
     var nextUrl = MutableLiveData<String?>()
     var bookmarkID = MutableLiveData<Long>()
     var isRefresh = MutableLiveData(false)
     var pre = PxEZApp.instance.pre
+    val HIDE_BOOKMARK_ITEM_IN_SEARCH = "hide_bookmark_item_in_search2"
     var hideBookmarked = MutableLiveData(
-        pre.getInt(UserMActivity.HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
+        pre.getInt(HIDE_BOOKMARK_ITEM_IN_SEARCH, 0)
     )
     val sort = MutableLiveData(0)
     val searchTarget = MutableLiveData(0)
@@ -101,7 +102,7 @@ class SearchIllustViewModel : BaseViewModel() {
     fun onLoadMoreListen() {
         nextUrl.value?.let {
             retrofitRepository.getNextIllustRecommended(it)
-                .subscribeNext(addIllusts, nextUrl, ::localSortByBookmarks)
+                .subscribeNext(illustsAdded, nextUrl, ::localSortByBookmarks)
         }
     }
 }

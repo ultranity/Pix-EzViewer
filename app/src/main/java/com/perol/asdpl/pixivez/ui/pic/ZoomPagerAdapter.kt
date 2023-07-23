@@ -40,10 +40,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.ViewPagerZoomBinding
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor
-import com.perol.asdpl.pixivez.networks.ProgressListener
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import java.io.File
@@ -176,13 +175,8 @@ class ZoomPagerAdapter(
         //    buttonOrigin.visibility =View.GONE
         binding.progressbarOrigin.visibility = View.VISIBLE
         ProgressInterceptor.addListener(
-            origin!![position],
-            object : ProgressListener {
-                override fun onProgress(progress: Int) {
-                    binding.progressbarOrigin.setProgressCompat(progress, true)
-                }
-            }
-        )
+            origin!![position]
+        ) { progress -> binding.progressbarOrigin.setProgressCompat(progress, true) }
         Glide.with(context).asFile().load(origin!![position])
             .into(object : CustomTarget<File>() {
                 override fun onLoadCleared(placeholder: Drawable?) {

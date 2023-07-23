@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.adapters
+package com.perol.asdpl.pixivez.core
 
 import android.app.Activity
 import android.app.ActivityOptions

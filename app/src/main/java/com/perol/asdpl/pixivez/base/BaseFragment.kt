@@ -25,8 +25,15 @@
 package com.perol.asdpl.pixivez.base
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
+import com.perol.asdpl.pixivez.objects.ViewBindingUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.EventBus
@@ -70,5 +77,41 @@ abstract class BaseFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+}
+
+abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {
+    open val TAG: String = this::class.java.simpleName
+    private var _binding: VB? = null
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
+
+    val binding: VB
+        get() = requireNotNull(_binding) { "The property of binding has been destroyed." }
+
+    //abstract fun onCreateBinding(binding: VB)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        /* viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                handler.post { _binding = null }
+            }
+        }) */
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (_binding == null) {
+            _binding = ViewBindingUtil.inflateWithGeneric(this, layoutInflater, null, false)
+        }
+        //onCreateBinding(binding)
+        return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

@@ -39,8 +39,6 @@ import java.io.File
 class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetailResponse>()
     val isfollow = MutableLiveData<Boolean>()
-    val hideBookmarked = MutableLiveData(0)
-    val hideDownloaded = MutableLiveData(false)
     val currentTab = MutableLiveData(0)
 
     fun getData(userid: Long) {

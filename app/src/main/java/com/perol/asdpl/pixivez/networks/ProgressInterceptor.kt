@@ -9,7 +9,7 @@ import okio.*
 import java.io.IOException
 import java.util.*
 
-interface ProgressListener {
+fun interface ProgressListener {
     fun onProgress(progress: Int)
 }
 

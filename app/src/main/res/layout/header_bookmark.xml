@@ -8,11 +8,11 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/imagebutton_config"
+        android:id="@+id/img_btn_config"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         app:icon="@drawable/ic_settings"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,10 +20,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/imagebutton_showtags"
-        android:layout_width="wrap_content"
+        android:id="@+id/img_btn_spinner"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:layout_weight="1"
         android:text="TAG"
         app:icon="@drawable/ic_action_tag"
         app:layout_constraintBottom_toBottomOf="parent"

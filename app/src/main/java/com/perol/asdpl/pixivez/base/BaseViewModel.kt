@@ -30,6 +30,8 @@ import androidx.lifecycle.ViewModel
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.IIllustNext
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.SearchUserResponse
+import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

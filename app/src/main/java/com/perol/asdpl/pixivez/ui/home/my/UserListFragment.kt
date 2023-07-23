@@ -29,14 +29,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.FragmentUserListBinding
-import com.perol.asdpl.pixivez.base.BaseFragment
+import com.perol.asdpl.pixivez.base.BaseVBFragment
+import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
+import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.objects.argument
@@ -48,7 +48,7 @@ import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 /**
  * Fragment of userid following/followed users
  */
-class UserListFragment : BaseFragment() {
+class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
     override fun loadData() {
         viewModel.onRefresh(userid, restrict, getFollowing)
     }
@@ -60,14 +60,32 @@ class UserListFragment : BaseFragment() {
 
     private var userid: Long by argument()
     private var getFollowing: Boolean by argument()
-    private lateinit var binding: FragmentUserListBinding
+
+    private var _bindingHeader: ViewRestrictButtonBinding? = null
+    private val bindingHeader: ViewRestrictButtonBinding
+        get() = requireNotNull(_bindingHeader) { "The property of binding has been destroyed." }
     private lateinit var userShowAdapter: UserShowAdapter
     private val viewModel: UserListViewModel by viewModels()
     private var restrict: String = "public"
     private var exitTime = 0L
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (_bindingHeader == null) {
+            _bindingHeader = ViewRestrictButtonBinding.inflate(inflater)
+        }
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
+        userShowAdapter.addHeaderView(bindingHeader.root)
+
         initViewModel()
+
         binding.recyclerview.apply {
             adapter = userShowAdapter
             layoutManager =
@@ -76,23 +94,18 @@ class UserListFragment : BaseFragment() {
             // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
-        binding.spinnerRestrict.apply {
-            setSelection(0, false)
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val value = visRestrictTag(position == 1)
+        bindingHeader.apply {
+            buttonPublic.isChecked = true
+            buttonAll.visibility = View.GONE
+            toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
+                if (isChecked){
+                    val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
+                    val value = visRestrictTag(checkedIndex == 2)
                     if (restrict != value) {
                         restrict = value
                         viewModel.onRefresh(userid, restrict, getFollowing)
                     }
                 }
-
-                override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
         userShowAdapter.setOnLoadMoreListener {
@@ -149,17 +162,9 @@ class UserListFragment : BaseFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
-
-        binding = FragmentUserListBinding.inflate(inflater, container, false)
-
-        return binding.root
+    override fun onDestroy() {
+        _bindingHeader = null
+        super.onDestroy()
     }
 
     companion object {

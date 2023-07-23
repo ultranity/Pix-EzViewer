@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,24 +26,40 @@
 package com.perol.asdpl.pixivez.ui.user
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlin.properties.Delegates
 
-class UserIllustViewModel : BaseViewModel() {
-    val data = MutableLiveData<List<Illust>?>()
-    val dataAdded = MutableLiveData<List<Illust>?>()
+class BookMarkTagViewModel : BaseViewModel() {
+    var id by Delegates.notNull<Long>()
+    lateinit var pub:String
     val nextUrl = MutableLiveData<String?>()
-    fun onLoadMoreListener() {
-        if (nextUrl.value != null) {
-            retrofit.getNextUserIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
-        }
+    val tags = MutableLiveData<MutableList<BookMarkTagsResponse.BookmarkTagsBean>>()
+    val tagsAdded = MutableLiveData<List<BookMarkTagsResponse.BookmarkTagsBean>?>()
+
+    fun isSelfPage(): Boolean {
+        return AppDataRepository.currentUser.userid == id
     }
 
-    fun onRefreshListener(id: Long, type: String) {
-        retrofit.getUserIllusts(id, type).subscribeNext(data, nextUrl)
+    fun first(id: Long, pub: String) {
+        this.pub = pub
+        retrofit.getIllustBookmarkTags(id, pub).subscribe({
+            tags.value = it.bookmark_tags
+            nextUrl.value = it.next_url
+        }, {}, {}).add()
     }
 
-    fun first(id: Long, type: String) {
-        retrofit.getUserIllusts(id, type).subscribeNext(data, nextUrl)
+    fun onLoadMore() {
+        RetrofitRepository.getInstance().getNextTags(nextUrl.value!!)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                tagsAdded.value = it.bookmark_tags
+                nextUrl.value = it.next_url
+            }, { tagsAdded.value = null }, {}).add()
     }
 }

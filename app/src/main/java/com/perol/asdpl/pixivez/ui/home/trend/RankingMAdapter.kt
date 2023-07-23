@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.ui.home.trend
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.perol.asdpl.pixivez.core.PicListFragment
 import java.util.WeakHashMap
 
 class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
@@ -39,10 +40,12 @@ class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
 
     override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5
 
-    val fragments = WeakHashMap<Int, RankingMFragment>(3)
+    val fragments = WeakHashMap<Int, PicListFragment>(3)
     override fun createFragment(position: Int): Fragment {
         if (fragments[position] == null) {
-            fragments[position] = RankingMFragment.newInstance(modelist[position], position)
+            fragments[position] = PicListFragment.newInstance("Rank", position, mutableMapOf(
+                "mode" to modelist[position]
+            ))
         }
         return fragments[position]!!
     }

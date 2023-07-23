@@ -60,7 +60,7 @@ class NotCrossScrollableLinearLayoutManager(
  * A callback interface that must be implemented to set the text and styling of newly created
  * tabs.
  */
-interface TabSelectedStrategy {
+fun interface TabSelectedStrategy {
     fun invoke(tab: TabLayout.Tab)
 }
 
@@ -77,9 +77,18 @@ class AutoTabLayoutMediator(
     private var onPageChangeCallback: TabLayoutOnPageChangeCallback? = null
     private var onTabSelectedListener: OnTabSelectedListener? = null
     private var pagerAdapterObserver: RecyclerView.AdapterDataObserver? = null
-    var onTabSelectedStrategy: TabSelectedStrategy? = null
-    var onTabUnSelectedStrategy: TabSelectedStrategy? = null
-    var onTabReSelectedStrategy: TabSelectedStrategy? = null
+    private var onTabSelectedStrategy: TabSelectedStrategy? = null
+    private var onTabUnSelectedStrategy: TabSelectedStrategy? = null
+    private var onTabReSelectedStrategy: TabSelectedStrategy? = null
+    fun setOnTabSelectedStrategy(strategy: TabSelectedStrategy){
+        onTabSelectedStrategy = strategy
+    }
+    fun setOnTabUnSelectedStrategy(strategy: TabSelectedStrategy){
+        onTabUnSelectedStrategy = strategy
+    }
+    fun setOnTabReSelectedStrategy(strategy: TabSelectedStrategy){
+        onTabReSelectedStrategy = strategy
+    }
 
     /**
      * Link the TabLayout and the ViewPager2 together. Must be called after ViewPager2 has an adapter

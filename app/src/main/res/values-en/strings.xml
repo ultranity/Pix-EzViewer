@@ -241,7 +241,7 @@
     <string name="sample_title">Sample: click auto set</string>
     <string name="hide_downloaded_detail">Retrieve the current default download path and sub-folders, supporting the use of python scripts to get more Gallery pid record on PC, provided as a convenience <a href ="https://wwa.lanzoux.com/iQB4Rigc7yh"> PC packaged program here</a> </string>
     <string name="hide_downloaded_summary">Hide download function can record additional non-native:</string>
-    <string name="selectAll">Select all</string>
+    <string name="all">All</string>
     <string name="sortPic">Sort / filter</string>
     <string name="sort_by">Sort by</string>
     <string name="create_time">Created time</string>
@@ -293,4 +293,8 @@
     <string name="token_login">Token Login</string>
     <string name="token_warning">⚠Warning！It is VERY DANGEROUS to access OAuth Token, DO NOT SHARE with others</string>
     <string name="dynamic_color">Dynamic Color</string>
+    <string name="ai_type">AI type</string>
+    <string name="artificial">No AI</string>
+    <string name="assisted">Half AI</string>
+    <string name="ai_generated">Full AI</string>
 </resources>

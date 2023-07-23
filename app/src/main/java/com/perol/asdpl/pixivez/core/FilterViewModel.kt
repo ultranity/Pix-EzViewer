@@ -22,7 +22,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.adapters
+package com.perol.asdpl.pixivez.core
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,14 +34,14 @@ import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 
-enum class ADAPTER_VERSION {
+enum class ADAPTER_TYPE {
     PIC_LIKE,
     PIC_USER_LIKE,
     PIC_BTN,
     PIC_USER_BTN,
 }
 
-class PicListFilter(
+data class PicListFilter(
     var R18on: Boolean = false,
     var blockTags: List<String>? = null,
     var blockUser: List<Long>? = null,
@@ -63,6 +63,10 @@ class PicListFilter(
     var showFollowed: Boolean = true,
     var showNotFollowed: Boolean = true,
 
+    var showAINone: Boolean = true,
+    var showAIHalf: Boolean = true,
+    var showAIFull: Boolean = true,
+
     var startTime:Long = 0,
     var endTime:Long = Long.MAX_VALUE,
 
@@ -74,6 +78,7 @@ class PicListFilter(
         (!showBookmarked && item.is_bookmarked) || (!showNotBookmarked && !item.is_bookmarked) ||
         (!showFollowed && item.user.is_followed) || (!showNotFollowed && !item.user.is_followed) ||
         (!showDownloaded && FileUtil.isDownloaded(item)) || (!showNotDownloaded && !FileUtil.isDownloaded(item))||
+        (!showAINone && item.illust_ai_type==0) || (!showAIHalf && item.illust_ai_type==1) ||(!showAIFull && item.illust_ai_type==2) ||
         (!showIllust && (item.type == "illust")) || (!showManga && (item.type == "manga")) || (!showUgoira && (item.type == "ugoira"))
         //|| (minLike > item.total_bookmarks) || (minViewed > item.total_view) || (minLikeRate*item.total_view> item.total_bookmarks)
 
@@ -109,16 +114,16 @@ class FilterViewModel : ViewModel() {
     val spanNum = MutableLiveData(2)
     val filter = IllustFilter()
     val listFilter = PicListFilter()
-    var adapterVersion = MutableLiveData(ADAPTER_VERSION.PIC_USER_LIKE)
+    var adapterType = MutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
     init {
         listFilter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
     }
     fun applyConfig() = listFilter.applyTo(filter)
-    fun getAdapter() = when (adapterVersion.value) {
-        ADAPTER_VERSION.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
-        ADAPTER_VERSION.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, null, filter)
-        ADAPTER_VERSION.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, null, filter)
-        ADAPTER_VERSION.PIC_USER_LIKE -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
+    fun getAdapter() = when (adapterType.value) {
+        ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
+        ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, null, filter)
+        ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, null, filter)
+        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
         else -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
     }
 }

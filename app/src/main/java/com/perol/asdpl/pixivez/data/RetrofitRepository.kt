@@ -75,8 +75,8 @@ class RetrofitRepository {
 
     fun getLikeIllust(
         userid: Long,
-        pub: String,
-        tag: String?
+        pub: String="public",
+        tag: String?=null
     ): Observable<IllustNext> =
         Request(appApiPixivService.getLikeIllust(userid, pub, tag))
 

@@ -566,7 +566,7 @@ class PictureXAdapter(
                             }
                         }
                         .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setNeutralButton(R.string.selectAll) { _, _ ->
+                        .setNeutralButton(R.string.all) { _, _ ->
                             // see below
                         }.show()
                     dialog.getButton(BUTTON_NEUTRAL).setOnClickListener {

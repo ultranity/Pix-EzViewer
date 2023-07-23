@@ -48,11 +48,11 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
-import com.perol.asdpl.pixivez.adapters.PicListAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnAdapter
-import com.perol.asdpl.pixivez.adapters.PicListBtnUserAdapter
-import com.perol.asdpl.pixivez.adapters.PicListXAdapter
-import com.perol.asdpl.pixivez.adapters.PicListXUserAdapter
+import com.perol.asdpl.pixivez.core.PicListAdapter
+import com.perol.asdpl.pixivez.core.PicListBtnAdapter
+import com.perol.asdpl.pixivez.core.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.core.PicListXAdapter
+import com.perol.asdpl.pixivez.core.PicListXUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import com.perol.asdpl.pixivez.base.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -103,7 +103,7 @@ class HelloMRecomFragment : BaseFragment() {
                 picListAdapter.loadMoreFail()
             }
         }
-        viewmodel.addillusts.observe(viewLifecycleOwner) {
+        viewmodel.illustsAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addData(it)
             } else {

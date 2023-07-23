@@ -28,12 +28,13 @@
                 app:tabMode="scrollable" />
 
             <ImageView
-                android:id="@+id/imageview_date"
+                android:id="@+id/imageview_rank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_calendar"
+                android:elevation="5dp"
+                android:src="@drawable/ic_action_rank"
                 app:tint="?android:attr/textColorPrimaryInverse" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>

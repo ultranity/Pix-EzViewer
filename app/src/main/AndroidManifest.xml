@@ -91,6 +91,7 @@
         <activity android:name=".ui.user.UserMActivity"
             android:exported="true" />
         <activity android:name=".ui.FragmentActivity" />
+        <activity android:name=".ui.DragActivity" />
         <activity android:name=".manager.DownloadManagerActivity" />
         <activity android:name=".manager.ImgManagerActivity"
             android:exported="true" />

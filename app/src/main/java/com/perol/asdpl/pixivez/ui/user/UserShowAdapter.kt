@@ -70,13 +70,13 @@ class UserShowAdapter(layoutResId: Int) :
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
-        val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
+        val recyclerview = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (item.illusts.isNotEmpty()) {
             val userShowIllustAdapter: UserShowIllustAdapter
-            if (recyclerView.adapter == null) {
+            if (recyclerview.adapter == null) {
                 userShowIllustAdapter =
                     UserShowIllustAdapter(R.layout.view_user_illust_item, item.illusts)
-                recyclerView.apply {
+                recyclerview.apply {
                     adapter = userShowIllustAdapter
                     layoutManager = LinearLayoutManager(
                         holder.itemView.context,
@@ -88,7 +88,7 @@ class UserShowAdapter(layoutResId: Int) :
                     isNestedScrollingEnabled = false
                 }
             } else {
-                userShowIllustAdapter = recyclerView.adapter as UserShowIllustAdapter
+                userShowIllustAdapter = recyclerview.adapter as UserShowIllustAdapter
                 val itemCount = userShowIllustAdapter.data.size
                 userShowIllustAdapter.data = item.illusts
                 userShowIllustAdapter.notifyItemRangeChanged(0, itemCount)

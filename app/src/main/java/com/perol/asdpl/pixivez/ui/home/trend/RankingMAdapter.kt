@@ -35,7 +35,7 @@ class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
 
     private val modelist = arrayOf(
         "day", "day_male", "day_female", "day_ai", "week_original", "week_rookie", "week", "month",
-        "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
+        "day_manga", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
 
     override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5

@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.core.SelectDownloadFragment
 import com.perol.asdpl.pixivez.databinding.ActivityFragmentHostBinding
 import com.perol.asdpl.pixivez.ui.account.AccountFragment
 import com.perol.asdpl.pixivez.ui.settings.BlockTagFragment
@@ -31,6 +32,7 @@ class FragmentActivity : RinkActivity() {
             "Theme" to FragmentItem(::ThemeFragment, R.string.theme),
             "Users" to FragmentItem(::UserRelatedListFragment, null),
             "History" to FragmentItem(::HistoryFragment, R.string.view_history),
+            "Collect" to FragmentItem(::SelectDownloadFragment, R.string.download),
         )
 
         fun start(

@@ -46,11 +46,13 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
+import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
@@ -72,7 +74,7 @@ open class PicListFragment : Fragment() {
             }
     }
 
-    protected var TAG: String by argument("PicListFragment")
+    protected open var TAG: String by argument("PicListFragment")
     private var tabPosition: Int by argument(0)
     var extraArgs: MutableMap<String, Any?>? by argumentNullable()
 
@@ -119,9 +121,9 @@ open class PicListFragment : Fragment() {
         return illusts
     }
 
-    private lateinit var picListAdapter: PicListAdapter
+    protected open lateinit var picListAdapter: PicListAdapter
     open val viewModel: PicListViewModel by viewModels()
-    private val filterModel: FilterViewModel by viewModels()
+    protected val filterModel: FilterViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -208,10 +210,15 @@ open class PicListFragment : Fragment() {
                         configAdapter()
                         picListAdapter.setNewInstance(data)
                     } else {
-                        picListAdapter.notifyDataSetChanged()
+                        //TODO: check //picListAdapter.notifyDataSetChanged()
                     }
                 }
                 negativeButton { }
+                if (TAG!="Collect")
+                    neutralButton(R.string.download){
+                        DataHolder.tmpList = viewModel.data.value
+                        FragmentActivity.start(requireContext(), "Collect")
+                    }
             }
         }
         configByTAG()

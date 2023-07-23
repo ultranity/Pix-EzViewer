@@ -21,23 +21,24 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import kotlin.math.max
 import kotlin.math.min
 
 /**
  * basic Adapter for image item
-*/
+ */
 //TODO: reuse more code
 //TODO: fling optimize
 abstract class PicListAdapter(
@@ -53,7 +54,7 @@ abstract class PicListAdapter(
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
 
-    /*override fun onCreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    /*override fun onConreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return createBaseViewHolder(parent, layoutResId)
     }*/
     private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan: Boolean) {
@@ -63,11 +64,11 @@ abstract class PicListAdapter(
         }
     }
 
-    private fun setAction(CollectMode: Int) {
+    open fun setAction(CollectMode: Int) {
         if (CollectMode == 2) {
             setOnItemClickListener { adapter, view, position ->
-                if (position>adapter.data.size)
-                        return@setOnItemClickListener
+                if (position > adapter.data.size)
+                    return@setOnItemClickListener
                 (adapter.data as List<Illust>)[position].let { item ->
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
@@ -80,16 +81,15 @@ abstract class PicListAdapter(
                 }
             }
             setOnItemLongClickListener { adapter, view, position ->
-                viewPics(adapter as PicListAdapter,view, position)
+                viewPics(adapter as PicListAdapter, view, position)
                 true
             }
-        }
-        else {
+        } else {
             setOnItemClickListener { adapter, view, position ->
                 viewPics(adapter as PicListAdapter, view, position)
             }
             setOnItemLongClickListener { adapter, view, position ->
-                if (position>adapter.data.size)
+                if (position > adapter.data.size)
                     return@setOnItemLongClickListener true
                 // show detail of illust
                 (adapter.data as List<Illust>)[position].let { item ->
@@ -113,7 +113,7 @@ abstract class PicListAdapter(
         }
     }
 
-    private fun viewPics(adapter:PicListAdapter, view: View, position: Int) {
+    fun viewPics(adapter: PicListAdapter, view: View, position: Int) {
         DataHolder.setIllustList(
             adapter.data.subList(
                 max(position - 30, 0),
@@ -124,8 +124,8 @@ abstract class PicListAdapter(
             )
         )
         val illust = adapter.data[position]
-        val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust)  else null
-        PictureActivity.start(context,illust.id, position,30, options)
+        val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust) else null
+        PictureActivity.start(context, illust.id, position, 30, options)
     }
 
     open fun viewPicsOptions(view: View, illust: Illust): Bundle {
@@ -170,11 +170,10 @@ abstract class PicListAdapter(
         setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
         val numLayout = holder.getView<TextView>(R.id.textview_num)
-        if (item.type=="ugoira"){
+        if (item.type == "ugoira") {
             numLayout.text = "GIF"
             numLayout.visibility = View.VISIBLE
-        }
-        else if (item.meta_pages.isNotEmpty()) {
+        } else if (item.meta_pages.isNotEmpty()) {
             val meta_pages_size = item.meta_pages.size.toString()
 
             numLayout.text = when (item.type) {
@@ -183,8 +182,7 @@ abstract class PicListAdapter(
                 else -> "C$meta_pages_size" // "manga"
             }
             numLayout.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             numLayout.visibility = View.GONE
         }
         val mainImage = holder.getView<ImageView>(R.id.item_img)
@@ -193,14 +191,12 @@ abstract class PicListAdapter(
         // Load Images
         val needSmall = if (quality == 1) {
             (1.0 * item.height / item.width > 3) || (item.width / item.height > 4)
-        }
-        else {
+        } else {
             item.height > 1800
         }
         val loadUrl = if (needSmall) {
             item.image_urls.square_medium
-        }
-        else {
+        } else {
             item.image_urls.medium
         }
         // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
@@ -209,8 +205,7 @@ abstract class PicListAdapter(
                 .load(R.drawable.h).transition(withCrossFade())
                 .placeholder(R.drawable.h)
                 .into(mainImage)
-        }
-        else {
+        } else {
             Glide.with(mainImage.context).load(loadUrl).transition(withCrossFade())
                 .placeholder(ColorDrawable(ThemeUtil.halftrans))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -243,11 +238,12 @@ abstract class PicListAdapter(
     fun getViewByAdapterPosition(position: Int, @IdRes viewId: Int): View? {
         return getViewByPosition(position + headerLayoutCount, viewId)
     }
-    abstract fun setUILike(status: Boolean, position: Int)
-    abstract fun setUIFollow(status: Boolean, position: Int)
-    abstract fun setUIDownload(status: Int, position: Int)
 
-    abstract fun setUILike(status: Boolean, view: View)
-    abstract fun setUIFollow(status: Boolean, view: View)
-    abstract fun setUIDownload(status: Int, view: View)
+    open fun setUILike(status: Boolean, position: Int){}
+    open fun setUIFollow(status: Boolean, position: Int){}
+    open fun setUIDownload(status: Int, position: Int){}
+
+    open fun setUILike(status: Boolean, view: View){}
+    open fun setUIFollow(status: Boolean, view: View){}
+    open fun setUIDownload(status: Int, view: View){}
 }

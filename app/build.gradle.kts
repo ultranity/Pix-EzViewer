@@ -179,6 +179,7 @@ dependencies {
     implementation("androidx.webkit:webkit:1.7.0")
     //implementation("androidx.activity:activity:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     val navigationVersion = "2.6.0"

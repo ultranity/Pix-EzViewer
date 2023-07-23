@@ -37,7 +37,7 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
     private lateinit var pictureXViewModel: PictureXViewModel
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val tagsAdapter = TagsAdapter(R.layout.view_tags_item, null)
-        binding.recyclerView.apply {
+        binding.recyclerview.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = tagsAdapter
         }
@@ -51,7 +51,7 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
                     )
                 )
                 binding.editText.text!!.clear()
-                binding.recyclerView.smoothScrollToPosition(0)
+                binding.recyclerview.smoothScrollToPosition(0)
             }
         }
         pictureXViewModel =

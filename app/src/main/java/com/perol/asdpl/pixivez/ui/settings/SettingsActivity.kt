@@ -72,10 +72,10 @@ class SettingsActivity : RinkActivity() {
         binding.viewpager.offscreenPageLimit = 3
         if (ScreenUtil.screenWidthDp()>840) {
             //double pannel from:https://blog.csdn.net/GuoXuan_CHN/article/details/124060216
-            val recyclerView = binding.viewpager.getChildAt(0) as RecyclerView
+            val recyclerview = binding.viewpager.getChildAt(0) as RecyclerView
             val padding: Int = ScreenUtil.screenWidthPx() / 2
-            recyclerView.setPadding(0, 0, padding, 0)
-            recyclerView.clipToPadding = false
+            recyclerview.setPadding(0, 0, padding, 0)
+            recyclerview.clipToPadding = false
         }
 
         binding.viewpager.adapter = object : FragmentStateAdapter(this) {

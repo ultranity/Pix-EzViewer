@@ -79,7 +79,7 @@ class DataHolder{
                 (this.illustListStack.peek()?.get(pos)?.id ?: -1) == id
             }
         }
-
+        var tmpList: List<Illust>? = null
         fun getIllustList(): List<Illust>? {
             return if (this.illustListStack.empty()) {
                 null

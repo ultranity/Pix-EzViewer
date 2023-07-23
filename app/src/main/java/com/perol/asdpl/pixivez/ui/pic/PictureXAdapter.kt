@@ -384,13 +384,12 @@ class PictureXAdapter(
     }
 
     class RelatedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val recyclerview = itemView.findViewById<RecyclerView>(R.id.recyclerview_related)!!
         fun updateWithPage(s: RelatedPictureAdapter, mContext: Context) {
-            recyclerView.layoutManager =
+            recyclerview.layoutManager =
                 GridLayoutManager(mContext, 1 + 2 * mContext.resources.configuration.orientation)
-            recyclerView.adapter = s
+            recyclerview.adapter = s
         }
-
-        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recyclerview_related)!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

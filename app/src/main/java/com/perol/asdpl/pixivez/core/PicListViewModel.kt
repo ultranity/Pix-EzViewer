@@ -135,7 +135,9 @@ open class PicListViewModel : BaseViewModel() {
             }
 
             "Collect" -> {
-                { Observable.just(DataHolder.getIllustList()).map { IllustNext(it, null) } }
+                {
+                    Observable.just(DataHolder.tmpList!!).map { IllustNext(it, null) }
+                }
             }
 
             else -> {

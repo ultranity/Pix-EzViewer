@@ -115,11 +115,14 @@ class FilterViewModel : ViewModel() {
     val filter = IllustFilter()
     val listFilter = PicListFilter()
     var adapterType = MutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
+    var modeCollect = false
     init {
         listFilter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
     }
     fun applyConfig() = listFilter.applyTo(filter)
-    fun getAdapter() = when (adapterType.value) {
+    fun getAdapter() = if (modeCollect){
+        DownPicListAdapter(R.layout.view_ranking_item_s, null, filter)
+    } else when (adapterType.value) {
         ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
         ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, null, filter)
         ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, null, filter)

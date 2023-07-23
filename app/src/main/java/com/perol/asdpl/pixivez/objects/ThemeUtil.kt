@@ -97,6 +97,11 @@ class ThemeUtil {
             return colorMap[attrId]!!
         }
 
+        fun getAttrResID(context: Context, attrId: Int): Int {
+            val typedValue = TypedValue()
+            context.theme.resolveAttribute(attrId, typedValue, true)
+            return typedValue.resourceId
+        }
         @JvmStatic
         fun themeInit(activity: AppCompatActivity) {
             activity.apply {

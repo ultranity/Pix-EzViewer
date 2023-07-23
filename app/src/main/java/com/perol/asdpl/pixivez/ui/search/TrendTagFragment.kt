@@ -42,6 +42,7 @@ import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 
@@ -135,6 +136,12 @@ class TrendTagFragment : Fragment() {
     private fun getExpandChip(): Chip {
         val chip = Chip(requireContext())
         chip.setChipIconResource(R.drawable.ic_action_expand)
+        chip.setChipIconTintResource(
+            ThemeUtil.getAttrResID(
+                requireContext(),
+                android.R.attr.textColorPrimary
+            )
+        )
         chip.setOnClickListener {
             binding.chipgroup.removeViewAt(foldedChipIndex)
             viewModel.searchHistory.value!!.drop(foldedChipIndex).forEachIndexed { index, s ->
@@ -149,6 +156,12 @@ class TrendTagFragment : Fragment() {
     private fun getFoldChip(): Chip {
         val chip = Chip(requireContext())
         chip.setChipIconResource(R.drawable.ic_action_fold)
+        chip.setChipIconTintResource(
+            ThemeUtil.getAttrResID(
+                requireContext(),
+                android.R.attr.textColorPrimary
+            )
+        )
         chip.setOnClickListener {
             (foldedChipIndex.until(binding.chipgroup.size)).forEach { _ ->
                 binding.chipgroup.removeViewAt(foldedChipIndex)

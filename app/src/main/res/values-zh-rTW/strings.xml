@@ -243,7 +243,7 @@
     <string name="hide_downloaded_summary">隱藏已下載功能可以附加非本機記錄：</string>
     <string name="all">全部</string>
     <string name="sortPic">排序/篩選</string>
-    <string name="sort_by">排序規則</string>
+    <string name="sort_by">排序</string>
     <string name="create_time">創作時間</string>
     <string name="default_config">默認</string>
     <string name="other">其它</string>

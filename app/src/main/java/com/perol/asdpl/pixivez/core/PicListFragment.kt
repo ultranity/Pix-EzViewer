@@ -42,8 +42,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
-import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
+import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
@@ -73,7 +74,7 @@ open class PicListFragment : Fragment() {
 
     protected var TAG: String by argument("PicListFragment")
     private var tabPosition: Int by argument(0)
-    private var extraArgs: MutableMap<String, Any?>? by argumentNullable()
+    var extraArgs: MutableMap<String, Any?>? by argumentNullable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,18 +83,18 @@ open class PicListFragment : Fragment() {
 
     var isLoaded = false
 
-    private var _binding: FragmentIllustListBinding? = null
+    private var _binding: FragmentListFabBinding? = null
     private var _headerBinding: HeaderBookmarkBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     protected val binding get() = _binding!!
-    private val headerBinding get() = _headerBinding!!
+    protected val headerBinding get() = _headerBinding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentIllustListBinding.inflate(inflater, container, false)
+        _binding = FragmentListFabBinding.inflate(inflater, container, false)
         _headerBinding = HeaderBookmarkBinding.inflate(inflater)
         return binding.root
     }
@@ -114,19 +115,23 @@ open class PicListFragment : Fragment() {
             Log.d(TAG, "PicListFragment resume data reload")
         }
     }
+    open fun onDataLoaded(illusts: List<Illust>): List<Illust> {
+        return illusts
+    }
 
     private lateinit var picListAdapter: PicListAdapter
-    val viewModel: PicListViewModel by viewModels()
+    open val viewModel: PicListViewModel by viewModels()
     private val filterModel: FilterViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.filterModel = filterModel
         viewModel.isRefreshing.observe(viewLifecycleOwner){
             binding.swipeRefreshLayout.isRefreshing = it
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.setList(it)
+                picListAdapter.setList(onDataLoaded(it))
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -209,80 +214,7 @@ open class PicListFragment : Fragment() {
                 negativeButton { }
             }
         }
-        when (TAG) {
-            TAG_TYPE.UserBookmark.name -> {
-                headerBinding.imgBtnSpinner.setText(R.string.publics)
-                headerBinding.imgBtnSpinner.setOnClickListener {
-                    val id = extraArgs!!.get("userid") as Long
-                    viewModel.tags?.also {
-                        TagsShowDialog.newInstance(id, it).also {
-                            it.callback =
-                                TagsShowDialog.Callback { tag, public ->
-                                    extraArgs!!["tag"] = tag
-                                    extraArgs!!["pub"] = public
-                                    viewModel.onLoadFirst()
-                                }
-                        }.show(childFragmentManager)
-                    } ?: {
-                        //TODO: viewModel.getTags(id)
-                    }
-                }
-            }
-
-            TAG_TYPE.Rank.name -> {
-                val shareModel = ViewModelProvider(requireParentFragment())[CalendarViewModel::class.java]
-                shareModel.picDateShare.value?.also { extraArgs!!["pickDate"] = it }
-                shareModel.picDateShare.observe(viewLifecycleOwner) {
-                    viewModel.onLoadFirst()
-                }
-                binding.recyclerview.setRecycledViewPool(shareModel.pool)
-                headerBinding.imgBtnSpinner.text = "时间"
-                headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_calendar)
-                headerBinding.imgBtnSpinner.setOnClickListener {
-                    val dateNow = shareModel.getDateStr()
-                    shareModel.apply {
-                        DatePickerDialog(
-                            requireContext(),
-                            { p0, year, month, day ->
-                                ymd.setDate(year, month, day)
-                                if (ymd.toStr() == dateNow) {
-                                    picDateShare.checkUpdate(null)
-                                } else {
-                                    picDateShare.checkUpdate(ymd.toStr())
-                                }
-                                extraArgs!!["pickDate"] = picDateShare.value
-                            },
-                            ymd.year,
-                            ymd.month,
-                            ymd.day
-                        ).also { it.datePicker.maxDate = System.currentTimeMillis() }
-                            .show()
-                    }
-                }
-            }
-
-            else -> {
-                viewModel.restrict.observe(viewLifecycleOwner) {
-                    // fix: default value will be observed
-                    if (headerBinding.imgBtnSpinner.text != "TAG"){
-                        viewModel.onLoadFirst()
-                    }
-                    headerBinding.imgBtnSpinner.text =
-                        resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
-                }
-                headerBinding.imgBtnSpinner.setOnClickListener {
-                    MaterialDialog(requireContext()).show {
-                        val list = listItemsSingleChoice(
-                            R.array.restrict_type, disabledIndices = intArrayOf(),
-                            initialSelection = viewModel.restrict.value!!.ordinal
-                        ) { dialog, index, text ->
-                            viewModel.restrict.checkUpdate(RESTRICT_TYPE.values()[index])
-                            headerBinding.imgBtnSpinner.text = text
-                        }
-                    }
-                }
-            }
-        }
+        configByTAG()
         binding.recyclerview.layoutManager = StaggeredGridLayoutManager(
             filterModel.spanNum.value!!,
             StaggeredGridLayoutManager.VERTICAL
@@ -294,6 +226,82 @@ open class PicListFragment : Fragment() {
         }
         picListAdapter.setOnLoadMoreListener {
             viewModel.onLoadMore()
+        }
+    }
+
+    open fun configByTAG() = when (TAG) {
+        TAG_TYPE.UserBookmark.name -> {
+            headerBinding.imgBtnSpinner.setText(R.string.publics)
+            headerBinding.imgBtnSpinner.setOnClickListener {
+                val id = extraArgs!!.get("userid") as Long
+                viewModel.tags?.also {
+                    TagsShowDialog.newInstance(id, it).also {
+                        it.callback =
+                            TagsShowDialog.Callback { tag, public ->
+                                extraArgs!!["tag"] = tag
+                                extraArgs!!["pub"] = public
+                                viewModel.onLoadFirst()
+                            }
+                    }.show(childFragmentManager)
+                } ?: {
+                    //TODO: viewModel.getTags(id)
+                }
+            }
+        }
+
+        TAG_TYPE.Rank.name -> {
+            val shareModel =
+                ViewModelProvider(requireParentFragment())[CalendarViewModel::class.java]
+            shareModel.picDateShare.value?.also { extraArgs!!["pickDate"] = it }
+            shareModel.picDateShare.observe(viewLifecycleOwner) {
+                viewModel.onLoadFirst()
+            }
+            binding.recyclerview.setRecycledViewPool(shareModel.pool)
+            headerBinding.imgBtnSpinner.text = "时间"
+            headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_calendar)
+            headerBinding.imgBtnSpinner.setOnClickListener {
+                val dateNow = shareModel.getDateStr()
+                shareModel.apply {
+                    DatePickerDialog(
+                        requireContext(),
+                        { p0, year, month, day ->
+                            ymd.setDate(year, month, day)
+                            if (ymd.toStr() == dateNow) {
+                                picDateShare.checkUpdate(null)
+                            } else {
+                                picDateShare.checkUpdate(ymd.toStr())
+                            }
+                            extraArgs!!["pickDate"] = picDateShare.value
+                        },
+                        ymd.year,
+                        ymd.month,
+                        ymd.day
+                    ).also { it.datePicker.maxDate = System.currentTimeMillis() }
+                        .show()
+                }
+            }
+        }
+
+        else -> {
+            viewModel.restrict.observe(viewLifecycleOwner) {
+                // fix: default value will be observed
+                if (headerBinding.imgBtnSpinner.text != "TAG") {
+                    viewModel.onLoadFirst()
+                }
+                headerBinding.imgBtnSpinner.text =
+                    resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
+            }
+            headerBinding.imgBtnSpinner.setOnClickListener {
+                MaterialDialog(requireContext()).show {
+                    val list = listItemsSingleChoice(
+                        R.array.restrict_type, disabledIndices = intArrayOf(),
+                        initialSelection = viewModel.restrict.value!!.ordinal
+                    ) { dialog, index, text ->
+                        viewModel.restrict.checkUpdate(RESTRICT_TYPE.values()[index])
+                        headerBinding.imgBtnSpinner.text = text
+                    }
+                }
+            }
         }
     }
 

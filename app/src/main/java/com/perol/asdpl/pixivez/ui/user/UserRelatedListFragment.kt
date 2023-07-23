@@ -26,38 +26,41 @@
 package com.perol.asdpl.pixivez.ui.user
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.databinding.ActivityUserFollowBinding
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
+import com.perol.asdpl.pixivez.databinding.FragmentListBinding
+import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
+import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class UserListActivity : RinkActivity() {
+class UserRelatedListFragment : Fragment() {
     companion object {
         fun start(context: Context, illustid: Long) {
-            val intent = Intent(context, UserListActivity::class.java)
-            intent.putExtra("illustid", illustid)
-            context.startActivity(intent)
+            FragmentActivity.start(context, "Users","", Bundle().apply {
+                putLong("illustid", illustid)
+            })
         }
+
         fun start(context: Context, userid: Long, get_following: Boolean?=null) {
-            val intent = Intent(context, UserListActivity::class.java)
-            intent.putExtra("userid", userid)
-            if (get_following != null) {
-                intent.putExtra("get_following", get_following)
-            }
-            context.startActivity(intent)
+            FragmentActivity.start(context, "Users", "", Bundle().apply {
+                putLong("userid", userid)
+                if (get_following != null) {
+                    putBoolean("get_following", get_following)
+                }
+            })
         }
     }
 
@@ -73,26 +76,33 @@ class UserListActivity : RinkActivity() {
     private var userData: SearchUserResponse? = null
     private var getFollowing: Boolean = false
     private var restrict = "public"
-    private lateinit var binding: ActivityUserFollowBinding
+    private lateinit var binding: FragmentListBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityUserFollowBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+    private var _bindingHeader: ViewRestrictButtonBinding? = null
+    private val bindingHeader: ViewRestrictButtonBinding
+        get() = requireNotNull(_bindingHeader) { "The property of binding has been destroyed." }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentListBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.recyclerview.apply {
             layoutManager =
-                GridLayoutManager(this@UserListActivity, getMaxColumn(UserShowAdapter.itemWidth))
+                GridLayoutManager(requireContext(), getMaxColumn(UserShowAdapter.itemWidth))
             // FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
             addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
         }
-        intent.extras?.let {
+        arguments?.let {
             if (it.containsKey("illustid")) {
                 illustId = it.getLong("illustid")
-                supportActionBar?.setTitle(R.string.bookmark)
+                requireActivity().actionBar?.setTitle(R.string.bookmark)
                 //binding.title.text = getString(R.string.bookmark)
                 initIllustData()
             }
@@ -100,23 +110,16 @@ class UserListActivity : RinkActivity() {
                 userid = it.getLong("userid")
                 if (it.containsKey("get_following")) {
                     getFollowing = it.getBoolean("get_following", true)
-                    supportActionBar?.setTitle(R.string.following)
+                    requireActivity().actionBar?.setTitle(R.string.following)
                     //binding.title.text = getString(R.string.following)
                     initFollowData()
                 }
                 else {
-                    supportActionBar?.setTitle(R.string.related)
+                    requireActivity().actionBar?.setTitle(R.string.related)
                     initRelatedData()
                 }
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initFollowData() {
@@ -131,22 +134,21 @@ class UserListActivity : RinkActivity() {
         }
 
         if (userid == AppDataRepository.currentUser.userid && getFollowing) {
-            binding.spinner.visibility = View.VISIBLE
-            binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    when (position) {
-                        0 -> {
-                            restrict = "public"
-                            refreshFollowData()
-                        }
-                        1 -> {
-                            restrict = "private"
+            _bindingHeader = ViewRestrictButtonBinding.inflate(layoutInflater)
+            userShowAdapter.addHeaderView(bindingHeader.root)
+            bindingHeader.apply {
+                buttonPublic.isChecked = true
+                buttonAll.visibility = View.GONE
+                toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
+                    if (isChecked){
+                        val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
+                        val value = InteractionUtil.visRestrictTag(checkedIndex == 2)
+                        if (restrict != value) {
+                            restrict = value
                             refreshFollowData()
                         }
                     }
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {}
             }
         }
         refreshFollowData()
@@ -176,11 +178,6 @@ class UserListActivity : RinkActivity() {
     private var disposables = CompositeDisposable()
     fun Disposable.add() {
         disposables.add(this)
-    }
-
-    override fun finish() {
-        disposables.clear()
-        super.finish()
     }
 
     private fun initIllustData() {

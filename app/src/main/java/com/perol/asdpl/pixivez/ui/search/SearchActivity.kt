@@ -43,10 +43,10 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 
 class SearchActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, searchword: String?) {
+        fun start(context: Context, keyword: String?) {
             val intent = Intent(context, SearchActivity::class.java)
-            searchword?.let {
-                intent.putExtra("searchword", it)
+            keyword?.let {
+                intent.putExtra("keyword", it)
             }
             context.startActivity(intent)
         }
@@ -174,7 +174,7 @@ class SearchActivity : RinkActivity() {
             }
         })
 
-        intent.extras?.getString("searchword")?.let {
+        intent.extras?.getString("keyword")?.let {
             binding.searchviewText.setQuery(it, true)
         }
     }
@@ -191,7 +191,7 @@ class SearchActivity : RinkActivity() {
 
     private fun searchFor(query: String) {
         val bundle = Bundle()
-        bundle.putString("searchword", query)
+        bundle.putString("keyword", query)
         val intent = Intent(this, SearchResultActivity::class.java)
         intent.putExtras(bundle)
         startActivityForResult(intent, 775)

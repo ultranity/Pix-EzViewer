@@ -48,7 +48,7 @@ class SearchActivityFragment : Fragment() {
             val tag = tags[position]
             tagsTextViewModel.addhistory(tag)
             val bundle = Bundle()
-            bundle.putString("searchword", tag.name)
+            bundle.putString("keyword", tag.name)
             val intent = Intent(requireActivity(), SearchResultActivity::class.java)
             intent.putExtras(bundle)
             startActivityForResult(intent, 775)

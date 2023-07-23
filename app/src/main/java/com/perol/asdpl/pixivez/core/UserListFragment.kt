@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.ui.home.my
+package com.perol.asdpl.pixivez.core
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -35,11 +35,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBFragment
-import com.perol.asdpl.pixivez.databinding.FragmentIllustListBinding
+import com.perol.asdpl.pixivez.databinding.FragmentListBinding
 import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.objects.argument
+import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.ui.user.UserShowAdapter
@@ -48,9 +49,9 @@ import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 /**
  * Fragment of userid following/followed users
  */
-class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
+class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     override fun loadData() {
-        viewModel.onRefresh(userid, restrict, getFollowing)
+        viewModel.onLoadFirst()
     }
 
     override fun onResume() {
@@ -58,22 +59,33 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
         super.onResume()
     }
 
-    private var userid: Long by argument()
-    private var getFollowing: Boolean by argument()
+    override var TAG: String by argument("UserListFragment")
+
+    // -----------------
+    private var keyword: String? by argumentNullable()
+
+    // -----------------
+    private var userid: Long? by argumentNullable()
+    // -----------------
 
     private var _bindingHeader: ViewRestrictButtonBinding? = null
     private val bindingHeader: ViewRestrictButtonBinding
         get() = requireNotNull(_bindingHeader) { "The property of binding has been destroyed." }
     private lateinit var userShowAdapter: UserShowAdapter
     private val viewModel: UserListViewModel by viewModels()
-    private var restrict: String = "public"
     private var exitTime = 0L
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setonLoadFirstRx(TAG)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (_bindingHeader == null) {
+        if (viewModel.needHeader && _bindingHeader == null) {
             _bindingHeader = ViewRestrictButtonBinding.inflate(inflater)
         }
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -81,8 +93,12 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (keyword != null) {
+            viewModel.keyword = keyword!!
+        } else if (userid != null) {
+            viewModel.userid = userid!!
+        }
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
-        userShowAdapter.addHeaderView(bindingHeader.root)
 
         initViewModel()
 
@@ -94,16 +110,17 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
             // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
         }
-        bindingHeader.apply {
+        if (viewModel.needHeader) userShowAdapter.addHeaderView(bindingHeader.root)
+        _bindingHeader?.apply {
             buttonPublic.isChecked = true
             buttonAll.visibility = View.GONE
             toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
-                if (isChecked){
+                if (isChecked) {
                     val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
                     val value = visRestrictTag(checkedIndex == 2)
-                    if (restrict != value) {
-                        restrict = value
-                        viewModel.onRefresh(userid, restrict, getFollowing)
+                    if (viewModel.restrict != value) {
+                        viewModel.restrict = value
+                        viewModel.onLoadFirst()
                     }
                 }
             }
@@ -112,7 +129,7 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
             viewModel.onLoadMore()
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onRefresh(userid, restrict, getFollowing)
+            viewModel.onLoadFirst()
         }
         userShowAdapter.setOnItemClickListener { _, _, position ->
             UserMActivity.start(requireContext(), userShowAdapter.data[position].user)
@@ -138,7 +155,7 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
     private fun initViewModel() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.setNewInstance(it)
+                userShowAdapter.setList(it)
             } else {
                 userShowAdapter.loadMoreFail()
             }
@@ -150,7 +167,7 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
                 userShowAdapter.loadMoreEnd()
             }
         }
-        viewModel.adddata.observe(viewLifecycleOwner) {
+        viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 userShowAdapter.addData(it)
             } else {
@@ -172,7 +189,20 @@ class UserListFragment : BaseVBFragment<FragmentIllustListBinding>() {
         fun newInstance(userid: Long, getFollowing: Boolean) =
             UserListFragment().apply {
                 this.userid = userid
-                this.getFollowing = getFollowing
+                this.TAG = if (getFollowing) "Following" else "Follower"
+            }
+
+        @JvmStatic
+        fun newInstance(keyword: String) =
+            UserListFragment().apply {
+                this.TAG = "Search"
+                this.keyword = keyword
+            }
+
+        @JvmStatic
+        fun newInstance() =
+            UserListFragment().apply {
+                this.TAG = "Recommend"
             }
     }
 }

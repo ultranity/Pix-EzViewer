@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.core.PicListFragment
+import com.perol.asdpl.pixivez.core.UserListFragment
 
 class HelloMThViewPager(
     var fragment: Fragment,

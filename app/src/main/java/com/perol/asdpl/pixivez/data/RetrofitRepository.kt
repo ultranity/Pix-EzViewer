@@ -235,7 +235,7 @@ class RetrofitRepository {
     fun getUserDetail(userid: Long): Observable<UserDetailResponse> =
         Request(appApiPixivService.getUserDetail(userid))
 
-    fun getUserRecommanded() = Request(appApiPixivService.getUserRecommended())
+    fun getUserRecommended() = Request(appApiPixivService.getUserRecommended())
 
     fun getUserRelated(userid: Long) = Request(appApiPixivService.getUserRelated(userid))
 
@@ -278,7 +278,7 @@ class RetrofitRepository {
     fun getNextTags(url: String): Observable<BookMarkTagsResponse> =
         getNext(url)
 
-    fun getNextUserIllusts(url: String): Observable<IllustNext> =
+    fun getNextIllusts(url: String): Observable<IllustNext> =
         getNext(url)
 
     fun getNextIllustRecommended(url: String): Observable<RecommendResponse> = getNext(url)

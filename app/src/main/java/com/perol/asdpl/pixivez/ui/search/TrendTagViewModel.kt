@@ -52,10 +52,10 @@ class TrendTagViewModel : BaseViewModel() {
         trendTags.value = it?.trend_tags
     }.add()
 
-    fun addhistory(searchword: String) {
+    fun addhistory(keyword: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(searchword))
-            searchHistory.value?.add(0, searchword)
+            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(keyword))
+            searchHistory.value?.add(0, keyword)
         }
     }
 

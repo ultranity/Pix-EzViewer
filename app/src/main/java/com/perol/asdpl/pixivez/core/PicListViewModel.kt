@@ -31,6 +31,8 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.DataHolder
 import io.reactivex.Observable
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 enum class RESTRICT_TYPE {
     all,
@@ -57,16 +59,46 @@ fun <T> MutableLiveData<T>.checkUpdate(value: T): Boolean {
     } else false
 }
 
-class PicListViewModel : BaseViewModel() {
+fun <T> extraArg(defaultValue: T? = null) = ExtraArgumentProperty(defaultValue)
+class ExtraArgumentProperty<T>(private val defaultValue: T? = null) :
+    ReadWriteProperty<PicListFragment, T> {
+
+    override fun getValue(thisRef: PicListFragment, property: KProperty<*>): T {
+        return thisRef.extraArgs?.getValue(property.name) as? T
+            ?: defaultValue
+            ?: throw IllegalStateException("Property ${property.name} could not be read")
+    }
+
+    override fun setValue(thisRef: PicListFragment, property: KProperty<*>, value: T) {
+            thisRef.extraArgs?.set(property.name, value)
+    }
+}
+
+fun <T> arg(defaultValue: T? = null) = ArgumentProperty(defaultValue)
+class ArgumentProperty<T>(private val defaultValue: T? = null) :
+    ReadWriteProperty<PicListViewModel, T> {
+
+    override fun getValue(thisRef: PicListViewModel, property: KProperty<*>): T {
+        return thisRef.args.getValue(property.name) as? T
+            ?: defaultValue
+            ?: throw IllegalStateException("Property ${property.name} could not be read")
+    }
+
+    override fun setValue(thisRef: PicListViewModel, property: KProperty<*>, value: T) {
+        thisRef.args.set(property.name, value)
+    }
+}
+open class PicListViewModel : BaseViewModel() {
+    lateinit var filterModel: FilterViewModel
     val data = MutableLiveData<List<Illust>?>()
     val dataAdded = MutableLiveData<List<Illust>?>()
     val nextUrl = MutableLiveData<String?>()
     val isRefreshing = MutableLiveData(false)
     val restrict = MutableLiveData(RESTRICT_TYPE.all)
-    lateinit var args: Map<String, Any?>
-    private lateinit var onLoadFirstRx: () -> Observable<IllustNext>
+    lateinit var args: MutableMap<String, Any?>
+    protected lateinit var onLoadFirstRx: () -> Observable<IllustNext>
 
-    fun setonLoadFirstRx(mode: String, extraArgs: Map<String, Any?>? = null) {
+    open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         if (extraArgs != null) {
             this.args = extraArgs
         }
@@ -74,11 +106,9 @@ class PicListViewModel : BaseViewModel() {
             "Recommend" -> {
                 { retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) } }
             }
-
             "Rank" -> {
                 { retrofit.getIllustRanking(args["mode"] as String, args["pickDate"] as String?) }
             }
-
             "MyFollow" -> {
                 { retrofit.getFollowIllusts(restrict.value!!.name) }
             }
@@ -86,11 +116,9 @@ class PicListViewModel : BaseViewModel() {
             "UserIllust" -> {
                 { retrofit.getUserIllusts(args["userid"] as Long, "illust") }
             }
-
             "UserManga" -> {
                 { retrofit.getUserIllusts(args["userid"] as Long, "manga") }
             }
-
             "UserBookmark" -> {
                 {
                     val id = args["userid"] as Long
@@ -116,8 +144,7 @@ class PicListViewModel : BaseViewModel() {
         }
     }
 
-
-    fun onLoadFirst() {
+    open fun onLoadFirst() {
         isRefreshing.value = true
         onLoadFirstRx().subscribeNext(data, nextUrl) {
             isRefreshing.value = false
@@ -125,9 +152,9 @@ class PicListViewModel : BaseViewModel() {
     }
 
     //fun onLoadMoreRx(nextUrl: String): Observable<IllustNext> = retrofit.getNext(nextUrl)
-    fun onLoadMore() {
+    open fun onLoadMore() {
         if (nextUrl.value != null) {
-            retrofit.getNextUserIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
+            retrofit.getNextIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
         }
     }
 

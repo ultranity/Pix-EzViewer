@@ -27,12 +27,9 @@ package com.perol.asdpl.pixivez.ui.user
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Intent
-import android.os.Bundle
 import android.util.Pair
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -41,10 +38,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
+import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ScreenUtil.dp2px
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.view.NiceImageView
@@ -75,12 +72,12 @@ class UserShowAdapter(layoutResId: Int) :
     override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
         val recyclerView = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (item.illusts.isNotEmpty()) {
-            val userSearchillustAdapter: UserShowIllustAdapter
+            val userShowIllustAdapter: UserShowIllustAdapter
             if (recyclerView.adapter == null) {
-                userSearchillustAdapter =
+                userShowIllustAdapter =
                     UserShowIllustAdapter(R.layout.view_user_illust_item, item.illusts)
                 recyclerView.apply {
-                    adapter = userSearchillustAdapter
+                    adapter = userShowIllustAdapter
                     layoutManager = LinearLayoutManager(
                         holder.itemView.context,
                         LinearLayoutManager.HORIZONTAL,
@@ -91,19 +88,14 @@ class UserShowAdapter(layoutResId: Int) :
                     isNestedScrollingEnabled = false
                 }
             } else {
-                userSearchillustAdapter = recyclerView.adapter as UserShowIllustAdapter
-                val itemCount = userSearchillustAdapter.data.size
-                userSearchillustAdapter.data = item.illusts
-                userSearchillustAdapter.notifyItemRangeChanged(0, itemCount)
+                userShowIllustAdapter = recyclerView.adapter as UserShowIllustAdapter
+                val itemCount = userShowIllustAdapter.data.size
+                userShowIllustAdapter.data = item.illusts
+                userShowIllustAdapter.notifyItemRangeChanged(0, itemCount)
             }
 
-            userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
-                val intent = Intent(context, PictureActivity::class.java)
-                val bundle = Bundle()
-                bundle.putInt("position", position)
-                bundle.putLong("illustid", userSearchillustAdapter.data[position].id)
-                DataHolder.setIllustList(userSearchillustAdapter.data)
-                intent.putExtras(bundle)
+            userShowIllustAdapter.setOnItemClickListener { adapter, view, position ->
+                DataHolder.setIllustList(userShowIllustAdapter.data)
                 val options = if (PxEZApp.animationEnable) {
                     val mainimage = view.findViewById<ImageView>(R.id.imageview)
                     ActivityOptions.makeSceneTransitionAnimation(
@@ -113,7 +105,12 @@ class UserShowAdapter(layoutResId: Int) :
                         //Pair(userImage, "userimage")
                     ).toBundle()
                 } else null
-                ContextCompat.startActivity(context, intent, options)
+                PictureActivity.start(
+                    context,
+                    userShowIllustAdapter.data[position].id,
+                    position,
+                    options = options
+                )
             }
         }
         val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)

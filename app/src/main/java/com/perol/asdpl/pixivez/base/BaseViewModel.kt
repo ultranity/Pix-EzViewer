@@ -72,6 +72,24 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         }).add()
     }
 
+    protected fun Observable<SearchUserResponse>.subscribeNext(
+        target: MutableLiveData<List<UserPreviewsBean>?>,
+        nextUrl: MutableLiveData<String?>,
+        onError: (Throwable) -> Unit = {},
+        onCompleted: () -> Unit = {}
+    ) {
+        this.subscribe({ //Next
+            target.value = it.user_previews
+            nextUrl.value = it.next_url
+        }, { //Error
+            target.value = null
+            it.printStackTrace()
+            onError(it)
+        }, { //Completed
+            onCompleted()
+        }).add()
+    }
+
     fun Disposable.add() {
         disposables.add(this)
     }

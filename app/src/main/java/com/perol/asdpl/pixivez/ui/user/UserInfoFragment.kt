@@ -129,11 +129,11 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         binding.textViewUserId.text = userDetail.user.id.toString()
         binding.textViewFans.text = userDetail.profile.total_mypixiv_users.toString()
         binding.textViewFans.setOnClickListener {
-            UserListActivity.start(requireContext(), userDetail.user.id, false)
+            UserRelatedListFragment.start(requireContext(), userDetail.user.id, false)
         }
         binding.textViewFollowing.text = userDetail.profile.total_follow_users.toString()
         binding.textViewFollowing.setOnClickListener {
-            UserListActivity.start(requireContext(), userDetail.user.id, true)
+            UserRelatedListFragment.start(requireContext(), userDetail.user.id, true)
         }
 
         if (!userDetail.profile.twitter_account.isNullOrBlank()) {
@@ -214,7 +214,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         }
         binding.chipgroup.addView(
             getChip(getString(R.string.related), "user_related") {
-                UserListActivity.start(requireContext(), userid, null)
+                UserRelatedListFragment.start(requireContext(), userid, null)
             }
         )
     }

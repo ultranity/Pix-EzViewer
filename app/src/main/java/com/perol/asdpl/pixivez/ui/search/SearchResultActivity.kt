@@ -32,24 +32,29 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
+import com.perol.asdpl.pixivez.core.UserListFragment
 
 class SearchResultActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, searchword: String, type: Int = 0) {
+        fun start(context: Context, keyword: String, type: Int = 0) {
             val intent = Intent(context, SearchResultActivity::class.java)
-            intent.putExtra("searchword", searchword)
+            intent.putExtra("keyword", keyword)
             intent.putExtra("type", type)
             context.startActivity(intent)
         }
     }
 
-    private var searchword: String = ""
+    private var keyword: String = ""
     var type: Int = 0
 
     lateinit var binding: ActivitySearchResultBinding
@@ -63,7 +68,7 @@ class SearchResultActivity : RinkActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (intent.extras != null) {
-            searchword = intent.extras!!.getString("searchword")!!
+            keyword = intent.extras!!.getString("keyword")!!
             type = intent.extras!!.getInt("type")
         }
         initView()
@@ -88,12 +93,33 @@ class SearchResultActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private var exitTime = 0L
     private fun initView() {
         binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
-        arrayList.add(SearchIllustFragment.newInstance(searchword))
-        arrayList.add(SearchUsersListFragment.newInstance(searchword))
+        arrayList.add(SearchResultFragment.newInstance(keyword))
+        arrayList.add(UserListFragment.newInstance(keyword))
         binding.contentSearchResult.viewpageSearchresult.adapter =
             SearchResultAdapter(this, supportFragmentManager, arrayList)
+        binding.tablayoutSearchresult.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    (arrayList[0] as SearchResultFragment).view
+                        ?.findViewById<RecyclerView>(R.id.recyclerview)
+                        ?.scrollToPosition(0)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) { }
+
+            override fun onTabSelected(tab: TabLayout.Tab) { }
+        })
         binding.tablayoutSearchresult.getTabAt(type)?.select()
         binding.contentSearchResult.viewpageSearchresult.addOnPageChangeListener(object :
             ViewPager.OnPageChangeListener {
@@ -118,6 +144,7 @@ class SearchResultActivity : RinkActivity() {
 
             override fun onPageScrollStateChanged(state: Int) {}
         })
+        binding.searchtext.text = keyword
         binding.searchtext.setOnClickListener {
             setResult(
                 Activity.RESULT_OK,
@@ -126,6 +153,13 @@ class SearchResultActivity : RinkActivity() {
                 }
             )
             finish()
+        }
+        binding.imagebuttonSection.setOnClickListener {
+            SearchSectionDialog().apply {
+                arguments = Bundle().apply {
+                    putString("word", keyword)
+                }
+            }.show(supportFragmentManager)
         }
     }
 }

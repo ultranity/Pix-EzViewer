@@ -34,6 +34,7 @@ import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
 import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
+import com.perol.asdpl.pixivez.services.PxEZApp
 import java.util.*
 
 class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
@@ -46,7 +47,7 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val word = arguments?.getString("word", "")
         val viewModel =
-            ViewModelProvider(requireParentFragment())[SearchIllustViewModel::class.java]
+            ViewModelProvider(requireActivity())[SearchResultViewModel::class.java]
         var searchTargeti = viewModel.searchTarget.value
         binding.tablayoutSearchTarget.apply {
             clearOnTabSelectedListeners()
@@ -84,12 +85,12 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
             }
             isChecked = viewModel.endDate.value != null && viewModel.startDate.value != null
         }
-        var hideBookmarked = viewModel.hideBookmarked.value!!
+        var hideBookmarked = viewModel.filterModel.filter.hideBookmarked
         val toggleShowTitle = binding.toggleShowTitle
         binding.toggleShow.apply {
             isChecked = hideBookmarked % 2 != 0
             setOnCheckedChangeListener { buttonView, isChecked ->
-                if (viewModel.pre.getBoolean("enableonlybookmarked", false)) {
+                if (PxEZApp.instance.pre.getBoolean("enableonlybookmarked", false)) {
                     when (hideBookmarked) {
                         3 -> {
                             toggleShowTitle.text = getString(R.string.hide_bookmarked)
@@ -164,7 +165,7 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
         builder
             .setNegativeButton(android.R.string.cancel) { p0, p1 -> }
             .setPositiveButton(android.R.string.ok) { p0, p1 ->
-                viewModel.hideBookmarked.value = hideBookmarked
+                viewModel.filterModel.filter.hideBookmarked = hideBookmarked
                 viewModel.sort.value = sorti
                 viewModel.searchTarget.value = searchTargeti
                 if (word != null) {

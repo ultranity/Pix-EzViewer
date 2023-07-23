@@ -29,13 +29,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.core.UserListFragment
 
 class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManager) :
     FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int) = when (position) {
         0 -> HelloMRecomFragment.newInstance("", "")
-        else -> HelloRecomUserFragment.newInstance("", "")
+        else -> UserListFragment.newInstance()
     }
 
     override fun getCount() = 2

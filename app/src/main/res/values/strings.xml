@@ -264,7 +264,7 @@
     <string name="plink" translatable="false">https://wwa.lanzoux.com/iQB4Rigc7yh</string>
     <string name="all">全部</string>
     <string name="sortPic">排序/筛选</string>
-    <string name="sort_by">排序规则</string>
+    <string name="sort_by">排序</string>
     <string name="create_time">创作时间</string>
     <string name="default_config">默认</string>
     <string name="other">其它</string>

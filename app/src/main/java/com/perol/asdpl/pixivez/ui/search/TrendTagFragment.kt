@@ -75,9 +75,9 @@ class TrendTagFragment : Fragment() {
             TrendingTagAdapter(R.layout.view_trendingtag_item, null)
         binding.recyclerview.adapter = trendingtagAdapter
         trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
-            val searchword = trendingtagAdapter.data[position].tag
-            upToPage(searchword)
-            viewModel.addhistory(searchword)
+            val keyword = trendingtagAdapter.data[position].tag
+            upToPage(keyword)
+            viewModel.addhistory(keyword)
         }
         trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
             DataHolder.setIllustList(trendingtagAdapter.data.map { it.illust })
@@ -161,7 +161,7 @@ class TrendTagFragment : Fragment() {
     private fun upToPage(query: String) {
         val bundle = Bundle()
         val nameQuery = query.split('|')[0]
-        bundle.putString("searchword", nameQuery)
+        bundle.putString("keyword", nameQuery)
         val intent = Intent(requireActivity(), SearchResultActivity::class.java)
         intent.putExtras(bundle)
         startActivityForResult(intent, 775)

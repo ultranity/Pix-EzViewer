@@ -60,7 +60,7 @@ import com.perol.asdpl.pixivez.ui.pic.PictureXAdapter
 import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
 import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
-import com.perol.asdpl.pixivez.ui.user.UserListActivity
+import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.launch
@@ -190,7 +190,7 @@ class PictureXFragment : BaseFragment() {
                             commentDialog.show(childFragmentManager)
                         }
                         it.setBookmarkedUserListen {
-                            UserListActivity.start(requireContext(), illustid)
+                            UserRelatedListFragment.start(requireContext(), illustid)
                         }
                         it.setUserPicLongClick {
                             pictureXViewModel.likeUser()

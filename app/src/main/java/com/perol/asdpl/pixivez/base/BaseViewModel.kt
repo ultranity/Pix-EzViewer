@@ -54,9 +54,9 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
     }
 
     protected fun <T : IIllustNext> Observable<T>.subscribeNext(
-        target: MutableLiveData<List<Illust>?>,
+        target: MutableLiveData<MutableList<Illust>?>,
         nextUrl: MutableLiveData<String?>,
-        illustTransform: (List<Illust>) -> List<Illust> = { it },
+        illustTransform: (MutableList<Illust>) -> MutableList<Illust> = { it },
         onError: (Throwable) -> Unit = {},
         onCompleted: () -> Unit = {}
     ) {

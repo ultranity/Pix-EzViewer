@@ -21,7 +21,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
@@ -33,6 +32,7 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import java.util.BitSet
 import kotlin.math.max
 import kotlin.math.min
 
@@ -43,16 +43,40 @@ import kotlin.math.min
 //TODO: fling optimize
 abstract class PicListAdapter(
     layoutResId: Int,
-    data: List<Illust>?,
+    data: MutableList<Illust>?,
     val illustFilter: IllustFilter
 ) :
-    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data?.toMutableList()) {
+    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
 
     var colorPrimary: Int = R.color.colorPrimary
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
+    var hidedFlag = BitSet(data?.size ?: 128) //TODO:consider RoaringBitmap
+    var selectedFlag = BitSet(data?.size ?: 128)
+    val filtered = BitSet(data?.size ?: 128)
+    fun BitSet.forEach(block: (it: Int) -> Unit) {
+        var i = 0
+        while (i >= 0) {
+            block(i)
+            i = nextSetBit(i)
+        }
+    }
+
+    val BitSet.first
+        get() = nextSetBit(0)
+    val BitSet.last
+        get() = previousSetBit(size())
+
+    fun notifyAllChanged() {
+        notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
+    }
+
+    fun notifyFilterChanged() {
+        //filtered.forEach { notifyItemChanged(it) }
+        notifyItemRangeChanged(headerLayoutCount, filtered.last)
+    }
 
     /*override fun onConreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return createBaseViewHolder(parent, layoutResId)
@@ -69,7 +93,7 @@ abstract class PicListAdapter(
             setOnItemClickListener { adapter, view, position ->
                 if (position > adapter.data.size)
                     return@setOnItemClickListener
-                (adapter.data as List<Illust>)[position].let { item ->
+                (adapter.data as MutableList<Illust>)[position].let { item ->
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
                     if (!item.is_bookmarked) {
@@ -92,7 +116,7 @@ abstract class PicListAdapter(
                 if (position > adapter.data.size)
                     return@setOnItemLongClickListener true
                 // show detail of illust
-                (adapter.data as List<Illust>)[position].let { item ->
+                (adapter.data as MutableList<Illust>)[position].let { item ->
                     MaterialAlertDialogBuilder(context as Activity)
                         .setMessage(InteractionUtil.toDetailString(item))
                         .setTitle("Detail")
@@ -151,16 +175,20 @@ abstract class PicListAdapter(
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
-        //val pos = holder.bindingAdapterPosition - headerLayoutCount
-        if (illustFilter.needHide(item) || illustFilter.needBlock(item)) { //(mFilterList[pos]){//
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams.apply {
-                height = 0
-                width = 0
+        val pos = holder.bindingAdapterPosition - headerLayoutCount
+        if (filtered[pos]) {
+            if (hidedFlag[pos]) {
+                hideItemView(holder)
+                return
             }
-            return
+        } else {
+            filtered.set(pos)
+            if (illustFilter.needHide(item) || illustFilter.needBlock(item)) { //(mFilterList[pos]){//
+                hideItemView(holder)
+                hidedFlag.set(pos)
+                return
+            }
         }
-
         holder.itemView.visibility = View.VISIBLE
         holder.itemView.layoutParams.apply {
             height = LinearLayout.LayoutParams.WRAP_CONTENT
@@ -206,10 +234,10 @@ abstract class PicListAdapter(
                 .placeholder(R.drawable.h)
                 .into(mainImage)
         } else {
-            Glide.with(mainImage.context).load(loadUrl).transition(withCrossFade())
+            Glide.with(context).load(loadUrl).transition(withCrossFade())
                 .placeholder(ColorDrawable(ThemeUtil.halftrans))
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .error(ContextCompat.getDrawable(mainImage.context, R.drawable.ai))
+                .error(ContextCompat.getDrawable(context, R.drawable.ai))
                 .into(object : ImageViewTarget<Drawable>(mainImage) {
                     override fun setResource(resource: Drawable?) {
                         mainImage.setImageDrawable(resource)
@@ -224,6 +252,14 @@ abstract class PicListAdapter(
                         }
                     }
                 })
+        }
+    }
+
+    private fun hideItemView(holder: BaseViewHolder) {
+        holder.itemView.visibility = View.GONE
+        holder.itemView.layoutParams.apply {
+            height = 0
+            width = 0
         }
     }
 

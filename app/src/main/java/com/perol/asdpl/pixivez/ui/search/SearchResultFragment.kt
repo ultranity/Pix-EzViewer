@@ -21,7 +21,7 @@ import java.util.Calendar
 class SearchResultFragment: PicListFragment() {
 
     private val keyword:String by extraArg()
-    override fun onDataLoaded(illusts: List<Illust>): List<Illust> {
+    override fun onDataLoaded(illusts: MutableList<Illust>): MutableList<Illust>? {
         // jump to illust pid if search result empty and looks like a pid
         if (illusts.isEmpty()) {
             keyword.toLongOrNull()?.let {
@@ -157,9 +157,11 @@ class SearchResultViewModel:PicListViewModel() {
     }
 
     //TODO: UI标识
-    private fun localSortByBookmarks(it: List<Illust>): List<Illust> {
-        return if (sort.value == 2) it.sortedByDescending { it.total_bookmarks } else it
+    private fun localSortByBookmarks(illusts: MutableList<Illust>): MutableList<Illust> {
+        if (sort.value == 2) illusts.sortByDescending { it.total_bookmarks }
+        return illusts
     }
+
     override fun onLoadMore() {
         nextUrl.value?.let {
             retrofit.getNextIllusts(it) //getNextIllustRecommended

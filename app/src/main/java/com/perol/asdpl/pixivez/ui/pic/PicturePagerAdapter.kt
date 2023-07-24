@@ -27,13 +27,13 @@ package com.perol.asdpl.pixivez.ui.pic
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.perol.asdpl.pixivez.fragments.PictureXFragment
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.fragments.PictureXFragment
 
 class PicturePagerAdapter(
     fm: FragmentManager,
     private val idList: LongArray?,
-    private val illustList: List<Illust>? = null
+    private val illustList: MutableList<Illust>? = null
 ) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int) = PictureXFragment.newInstance(
         idList?.get(position),

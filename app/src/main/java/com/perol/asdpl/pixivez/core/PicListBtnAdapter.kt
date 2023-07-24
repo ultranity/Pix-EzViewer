@@ -29,10 +29,10 @@ import android.view.View
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 
@@ -41,10 +41,10 @@ import com.perol.asdpl.pixivez.services.Works
  */
 open class PicListBtnAdapter(
     layoutResId: Int,
-    data: List<Illust>?,
+    data: MutableList<Illust>?,
     filter: IllustFilter
 ) :
-    PicListAdapter(layoutResId, data?.toMutableList(), filter) {
+    PicListAdapter(layoutResId, data, filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

@@ -48,7 +48,7 @@ import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
-    val relatedPics = MutableLiveData<List<Illust>?>()
+    val relatedPics = MutableLiveData<MutableList<Illust>?>()
     val nextRelatedPics = MutableLiveData<String?>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()

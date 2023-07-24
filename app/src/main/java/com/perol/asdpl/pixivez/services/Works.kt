@@ -31,11 +31,11 @@ import android.webkit.MimeTypeMap
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.common.HttpOption
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.RetrofitRepository
-import com.perol.asdpl.pixivez.data.model.Illust
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -185,13 +185,15 @@ object Works {
             e.printStackTrace()
         }
     }
-    fun downloadAll(data: List<Illust>, hideDownloaded: Boolean = true) {
+
+    fun downloadAll(data: List<Illust>, retryDownloaded: Boolean = true) {
         for (item in data) {
-            if (hideDownloaded && FileUtil.isDownloaded(item)) {
+            if (retryDownloaded || !FileUtil.isDownloaded(item)) {
                 imageDownloadAll(item)
             }
         }
     }
+
     fun imageDownloadAll(illust: Illust) {
         if (PxEZApp.ShowDownloadToast) {
             Toasty.shortToast(R.string.join_download_queue)

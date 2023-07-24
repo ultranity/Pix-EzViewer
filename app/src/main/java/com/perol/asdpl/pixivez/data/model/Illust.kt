@@ -29,12 +29,12 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 interface IIllustNext {
-    val illusts: List<Illust>
+    val illusts: MutableList<Illust>
     val next_url: String?
 }
 
 data class IllustNext(
-    override val illusts: List<Illust>,
+    override val illusts: MutableList<Illust>,
     override val next_url: String?
 ) : IIllustNext
 

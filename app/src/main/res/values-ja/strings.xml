@@ -287,10 +287,15 @@
     <string name="avatar">avatar</string>
     <string name="crash_title">このレポートを開発者に報告してください</string>
     <string name="update_now">アップデートをダウンロードしますか? </string>
-    <string name="update_available" >更新が検出されました</string>
+    <string name="update_available">更新が検出されました</string>
     <string name="no_update">は最新バージョンです</string>
-    <string name="update_failed" >更新プログラムにアクセスできませんでした</string>
+    <string name="update_failed">更新プログラムにアクセスできませんでした</string>
     <string name="token_login">Token登録</string>
     <string name="token_warning">⚠OAuthトークンにアクセスすることは非常に危険です、他の人と共有しないでください</string>
     <string name="dynamic_color">Dynamic Color</string>
+    <string name="ai_type">AI type</string>
+    <string name="artificial">No AI</string>
+    <string name="assisted">Half AI</string>
+    <string name="ai_generated">Full AI</string>
+    <string name="select_reverse">反選</string>
 </resources>

@@ -15,7 +15,7 @@ class BookMarkDetailResponse(
 class BookmarkDetailBean(
     var is_bookmarked: Boolean,
     var restrict: String,
-    var tags: List<TagsBean>
+    var tags: MutableList<TagsBean>
 )
 
 /**

@@ -35,9 +35,9 @@ import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.ActivityPictureBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlin.math.max
 
@@ -84,7 +84,7 @@ class PictureActivity : RinkActivity() {
 
     private var illustId: Long = 0
     private var illustIdList: LongArray? = null
-    private var illustList: List<Illust>? = null
+    private var illustList: MutableList<Illust>? = null
     private var nowPosition: Int = 0
 
     private lateinit var binding: ActivityPictureBinding

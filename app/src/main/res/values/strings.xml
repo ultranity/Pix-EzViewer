@@ -316,31 +316,10 @@
     <string name="menu" translatable="false">Menu</string>
     <string name="token_login">Token登录</string>
     <string name="token_warning">⚠警告！访问Token属于危险操作，不要泄露外传以免影响账户</string>
-    <string name="title_activity_main">Home</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_transform">Transform</string>
-    <string name="menu_reflow">Reflow</string>
-    <string name="menu_slideshow">Slideshow</string>
-
-    <string name="lorem_ipsum_title">Lorem Ipsum"</string>
-    <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
-        typesetting industry. Lorem Ipsum has been the industry\'s standard placeholder text ever
-        since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
-        type specimen book"
-    </string>
-    <string name="fab_content_description">Represents a view to invoke an action</string>
-    <string name="image_view_item_transform_content_description">Represents an image view in the
-        item
-    </string>
     <string name="dynamic_color">动态色彩</string>
-    <string name="title_activity_item_detail_host">ItemDetailHostActivity</string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
     <string name="ai_type">AI类别</string>
     <string name="artificial">人工</string>
     <string name="assisted">AI辅助</string>
     <string name="ai_generated">AI生成</string>
+    <string name="select_reverse">反选</string>
 </resources>

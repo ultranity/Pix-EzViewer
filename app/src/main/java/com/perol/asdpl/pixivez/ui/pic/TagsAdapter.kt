@@ -32,11 +32,11 @@ import com.perol.asdpl.pixivez.data.model.TagsBean
 
 class TagsAdapter(
     layoutResId: Int,
-    data: List<TagsBean>?
+    data: MutableList<TagsBean>?
 ) :
     BaseQuickAdapter<TagsBean, BaseViewHolder>(
         layoutResId,
-        data?.toMutableList()
+        data
     ) {
     override fun convert(
         holder: BaseViewHolder,

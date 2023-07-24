@@ -179,9 +179,7 @@ dependencies {
     implementation("androidx.webkit:webkit:1.7.0")
     //implementation("androidx.activity:activity:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
-    implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    //implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     val navigationVersion = "2.6.0"
     implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
@@ -209,6 +207,7 @@ dependencies {
 
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
     implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
+    //implementation("com.github.liangjingkanji:BRV:1.4.3")
 
     //val ViewBindingKTXVersion = "2.1.0"
     //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTXVersion")
@@ -243,7 +242,7 @@ dependencies {
         // ViewModel utilities for Compose
         //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
         // LiveData
-        //implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+        implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
         // Lifecycles only (without ViewModel or LiveData)
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
         // Annotation processor

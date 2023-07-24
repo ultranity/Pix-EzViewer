@@ -39,8 +39,8 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 
-class SpotlightAdapter(layoutResId: Int, data: List<Spotlight>?) :
-    BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data?.toMutableList()) {
+class SpotlightAdapter(layoutResId: Int, data: MutableList<Spotlight>?) :
+    BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data) {
 
     override fun convert(holder: BaseViewHolder, item: Spotlight) {
         if (item.illust.meta_pages.isNotEmpty()) {

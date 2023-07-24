@@ -30,8 +30,8 @@ import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.Illust
 
 class HelloMRecomModel : BaseViewModel() {
-    val illusts = MutableLiveData<List<Illust>?>()
-    val illustsAdded = MutableLiveData<List<Illust>?>()
+    val illusts = MutableLiveData<MutableList<Illust>?>()
+    val illustsAdded = MutableLiveData<MutableList<Illust>?>()
     var nextUrl = MutableLiveData<String?>()
     private inline fun onRefreshRx() = retrofit.getRecommend()
     private inline fun onLoadMoreRx(nextUrl: String) = retrofit.getNextIllustRecommended(nextUrl)

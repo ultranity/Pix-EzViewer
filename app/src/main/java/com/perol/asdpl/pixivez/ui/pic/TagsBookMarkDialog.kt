@@ -63,11 +63,11 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
                         name = it.toString(),
                         is_registered = false,
                     )
-                }.toMutableList()
+                } as MutableList<TagsBean> //TODO: check if need toMutableList()
             )
         }
         pictureXViewModel.tags.observe(this) {
-            tagsAdapter.setNewInstance(it.tags.toMutableList())
+            tagsAdapter.setNewInstance(it.tags)
         }
         pictureXViewModel.fabOnLongClick()
         // Create the AlertDialog object and return it

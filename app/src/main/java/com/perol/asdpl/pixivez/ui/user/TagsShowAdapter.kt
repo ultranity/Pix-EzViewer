@@ -30,8 +30,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse.BookmarkTagsBean
 
-class TagsShowAdapter(layoutResId: Int, data: List<BookmarkTagsBean>) :
-    LBaseQuickAdapter<BookmarkTagsBean, BaseViewHolder>(layoutResId, data.toMutableList()) {
+class TagsShowAdapter(layoutResId: Int, data: MutableList<BookmarkTagsBean>) :
+    LBaseQuickAdapter<BookmarkTagsBean, BaseViewHolder>(layoutResId, data) {
     override fun convert(holder: BaseViewHolder, item: BookmarkTagsBean) {
         holder.setText(R.id.textview_tag_name, item.name)
             .setText(R.id.textview_tag_num, item.count.toString())

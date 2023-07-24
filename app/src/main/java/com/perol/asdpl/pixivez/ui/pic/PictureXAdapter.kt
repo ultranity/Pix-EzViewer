@@ -65,20 +65,20 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.objects.*
 import com.perol.asdpl.pixivez.objects.InteractionUtil.add
-import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
+import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
-import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
@@ -864,7 +864,7 @@ class PictureXAdapter(
         it.loadMoreModule.isAutoLoadMore = false
     }
 
-    fun setRelatedPics(it: List<Illust>?, nextUrl: String?) {
+    fun setRelatedPics(it: MutableList<Illust>?, nextUrl: String?) {
         if (it == null) {
             relatedPictureAdapter.loadMoreFail()
             return

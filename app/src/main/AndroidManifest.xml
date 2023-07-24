@@ -19,15 +19,8 @@
         android:theme="@style/AppThemeBase"
         tools:replace="android:theme">
         <activity
-            android:name=".ui.HostActivity"
-            android:exported="false"
-            android:label="@string/title_activity_item_detail_host"
-            android:resizeableActivity="true"
-            tools:targetApi="24" />
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main"
+            android:name=".ui.FragmentActivity"
+            android:exported="true"
             android:resizeableActivity="true"
             android:theme="@style/AppThemeBase.NoActionBar"
             tools:targetApi="24" />
@@ -90,8 +83,6 @@
             android:exported="true" />
         <activity android:name=".ui.user.UserMActivity"
             android:exported="true" />
-        <activity android:name=".ui.FragmentActivity" />
-        <activity android:name=".ui.DragActivity" />
         <activity android:name=".manager.DownloadManagerActivity" />
         <activity android:name=".manager.ImgManagerActivity"
             android:exported="true" />

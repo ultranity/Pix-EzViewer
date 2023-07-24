@@ -38,7 +38,7 @@ import com.perol.asdpl.pixivez.view.NiceImageView
  */
 class PicListBtnUserAdapter(
     layoutResId: Int,
-    data: List<Illust>?,
+    data: MutableList<Illust>?,
     filter: IllustFilter
 ) :
     PicListBtnAdapter(layoutResId, data, filter) {

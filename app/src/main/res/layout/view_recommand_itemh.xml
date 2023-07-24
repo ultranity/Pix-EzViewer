@@ -10,20 +10,15 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="10dp"
     app:cardPreventCornerOverlap="true">
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/item_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/item_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@color/grayx"
-            android:maxHeight="720dp"
-            android:transitionName="mainimage"
-            />
-    </LinearLayout>
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@color/grayx"
+        android:maxHeight="720dp"
+        android:transitionName="mainimage" />
 </com.google.android.material.card.MaterialCardView>
 

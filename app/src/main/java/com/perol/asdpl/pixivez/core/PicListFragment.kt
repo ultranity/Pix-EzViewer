@@ -117,7 +117,8 @@ open class PicListFragment : Fragment() {
             Log.d(TAG, "PicListFragment resume data reload")
         }
     }
-    open fun onDataLoaded(illusts: List<Illust>): List<Illust> {
+
+    open fun onDataLoaded(illusts: MutableList<Illust>): MutableList<Illust>? {
         return illusts
     }
 
@@ -133,7 +134,7 @@ open class PicListFragment : Fragment() {
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.setList(onDataLoaded(it))
+                picListAdapter.setNewInstance(onDataLoaded(it))
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -201,6 +202,8 @@ open class PicListFragment : Fragment() {
                         showAIFull = dialog.buttonAIFull.isChecked
                     }
                     filterModel.applyConfig()
+                    picListAdapter.notifyFilterChanged()
+                    picListAdapter.filtered.clear()
                     val span = dialog.sliderSpan.value.toInt()
                     layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
                     val adapterVersion = ADAPTER_TYPE.values()[
@@ -312,7 +315,7 @@ open class PicListFragment : Fragment() {
         }
     }
 
-    private fun configAdapter(renew: Boolean = true) {
+    open fun configAdapter(renew: Boolean = true) {
         if (renew) {
             picListAdapter.removeAllHeaderView()
         } else {

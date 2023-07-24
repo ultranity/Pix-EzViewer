@@ -35,7 +35,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RecommendResponse(
     val contest_exists: Boolean = false,
-    val ranking_illusts: List<Illust>,
-    override val illusts: List<Illust>,
+    val ranking_illusts: MutableList<Illust>,
+    override val illusts: MutableList<Illust>,
     override val next_url: String?
 ) : Parcelable, IIllustNext

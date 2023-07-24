@@ -8,6 +8,7 @@
     android:layout_marginStart="4dp"
     android:layout_marginTop="4dp"
     android:layout_marginEnd="2dp"
+    android:checkable="true"
     app:cardElevation="5dp">
 
     <ImageView

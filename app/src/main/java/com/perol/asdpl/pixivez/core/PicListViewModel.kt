@@ -90,8 +90,8 @@ class ArgumentProperty<T>(private val defaultValue: T? = null) :
 }
 open class PicListViewModel : BaseViewModel() {
     lateinit var filterModel: FilterViewModel
-    val data = MutableLiveData<List<Illust>?>()
-    val dataAdded = MutableLiveData<List<Illust>?>()
+    val data = MutableLiveData<MutableList<Illust>?>()
+    val dataAdded = MutableLiveData<MutableList<Illust>?>()
     val nextUrl = MutableLiveData<String?>()
     val isRefreshing = MutableLiveData(false)
     val restrict = MutableLiveData(RESTRICT_TYPE.all)
@@ -136,7 +136,7 @@ open class PicListViewModel : BaseViewModel() {
 
             "Collect" -> {
                 {
-                    Observable.just(DataHolder.tmpList!!).map { IllustNext(it, null) }
+                    Observable.just(1).map { IllustNext(DataHolder.tmpList ?: arrayListOf(), null) }
                 }
             }
 

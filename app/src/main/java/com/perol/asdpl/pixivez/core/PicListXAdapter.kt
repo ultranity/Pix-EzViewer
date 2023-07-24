@@ -25,28 +25,28 @@
 
 package com.perol.asdpl.pixivez.core
 
+import android.content.Context
 import android.view.View
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.view.NiceImageView
 
-fun NiceImageView.setLike(status: Boolean) {
+fun NiceImageView.setLike(context: Context, status: Boolean) {
     if (status) {
         // setImageResource(R.drawable.heart_red)
-        Glide.with(this.context).load(R.drawable.ic_love).into(this)
+        Glide.with(context).load(R.drawable.ic_love).into(this)
         // alpha = 0.9F
-    }
-    else {
+    } else {
         //TODO: WTF? Glide加载的 ic_action_heart 会变成别的图标，似乎与 res id值=0x7f08009a有关
         //setImageResource(R.drawable.ic_action_heart)
-        Glide.with(this.context).load(R.drawable.ic_heart).into(this)
+        Glide.with(context).load(R.drawable.ic_heart).into(this)
         // alpha = 0.8F
     }
 }
@@ -57,10 +57,10 @@ fun NiceImageView.setLike(status: Boolean) {
 // TODO: rename
 open class PicListXAdapter(
     layoutResId: Int,
-    data: List<Illust>?,
+    data: MutableList<Illust>?,
     filter: IllustFilter
 ) :
-    PicListAdapter(layoutResId, data?.toMutableList(), filter) {
+    PicListAdapter(layoutResId, data, filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
@@ -109,15 +109,15 @@ open class PicListXAdapter(
 
     override fun setUILike(status: Boolean, position: Int) {
         (
-            getViewByAdapterPosition(
-                position,
-                R.id.imageview_like
-            ) as NiceImageView?
-        )?.setLike(status)
+                getViewByAdapterPosition(
+                    position,
+                    R.id.imageview_like
+                ) as NiceImageView?
+                )?.setLike(context, status)
     }
 
     override fun setUILike(status: Boolean, view: View) {
-        (view as NiceImageView).setLike(status)
+        (view as NiceImageView).setLike(context, status)
     }
 
     override fun setUIFollow(status: Boolean, position: Int) {

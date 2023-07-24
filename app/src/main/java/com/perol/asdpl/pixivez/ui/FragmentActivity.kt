@@ -60,12 +60,20 @@ class FragmentActivity : RinkActivity() {
         (intent.extras!!.getString("title")?.toIntOrNull() ?: target.title)?.let {
             binding.toolbar.title = getString(it)
         }
-        val targetFragment = target.factory()
-        targetFragment.arguments = intent.extras!!.getBundle("args")
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportFragmentManager.beginTransaction().replace(R.id.nav_host, targetFragment).commit()
+
+        if (savedInstanceState != null) {
+            val oldFragment = supportFragmentManager.findFragmentByTag(targetTag)
+            if (oldFragment != null)
+                supportFragmentManager.fragments
+            return
+        }
+        val targetFragment = target.factory()
+        targetFragment.arguments = intent.extras!!.getBundle("args")
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host, targetFragment, targetTag).commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

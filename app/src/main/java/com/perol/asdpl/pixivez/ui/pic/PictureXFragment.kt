@@ -45,6 +45,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
+import com.perol.asdpl.pixivez.base.firstCommon
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -52,7 +53,6 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.objects.firstCommon
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.pic.CommentDialog
@@ -60,8 +60,8 @@ import com.perol.asdpl.pixivez.ui.pic.PictureXAdapter
 import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
 import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
-import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
+import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe

@@ -51,7 +51,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
@@ -69,7 +69,6 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -143,11 +142,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
     private lateinit var binding: ActivityHelloMBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val user: UserEntity?
-        runBlocking {
-            user = AppDataRepository.getUser()
-        }
-        if (user == null) {
+        if (AppDataRepo.userInited().not()) {
             startActivity(Intent(this@HelloMActivity, LoginActivity::class.java))
             finish()
             return
@@ -191,7 +186,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         val position = PxEZApp.instance.pre.getString("firstpage", "0")?.toInt() ?: 0
         binding.tablayout.selectTab(binding.tablayout.getTabAt(position)!!)
 
-        initNavDrawer(NavHeaderMainBinding.bind(binding.navView.getHeaderView(0)), user)
+        initNavDrawer(
+            NavHeaderMainBinding.bind(binding.navView.getHeaderView(0)),
+            AppDataRepo.currentUser
+        )
 
         for (i in 0..2) {
             val tabItem = binding.tablayout.getTabAt(i)!!
@@ -308,7 +306,7 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     Pair(header.imageView, "userimage")
                 ).toBundle()
             } else null
-            UserMActivity.start(this@HelloMActivity, AppDataRepository.currentUser, options)
+            UserMActivity.start(this@HelloMActivity, AppDataRepo.currentUser, options)
             binding.drawerLayout.close()
         }
 

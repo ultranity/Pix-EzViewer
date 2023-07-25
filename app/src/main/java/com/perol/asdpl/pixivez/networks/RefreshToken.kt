@@ -28,13 +28,13 @@ package com.perol.asdpl.pixivez.networks
 import android.util.Log
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.data.entity.UserEntity
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import kotlin.math.pow
 
-class ReFreshFunction private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
+class RefreshToken private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
     private var client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
     private var client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
@@ -143,7 +143,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
         refreshing = true
         val user: UserEntity
         runBlocking {
-            user = AppDataRepository.getUser()!!
+            user = AppDataRepo.getUser()!!
             Toasty.info(
                 PxEZApp.instance,
                 "reFreshToken",
@@ -155,7 +155,7 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
 
     fun reFreshToken(refreshToken: String, newToken:Boolean=false): ObservableSource<*> {
         Log.d("init", "reFreshToken")
-        // UserInfoSharedPreferences.getInstance().setString("Device_token", it.Device_token)
+        // AppDataRepo.pre.setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthTokenX(
             client_id,
             client_secret,
@@ -177,11 +177,11 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                 )
                 runBlocking {
                     if(newToken){
-                        AppDataRepository.insertUser(userEntity)
+                        AppDataRepo.insertUser(userEntity)
                     }
                     else {
-                        userEntity.Id = AppDataRepository.currentUser.Id
-                        AppDataRepository.updateUser(userEntity)
+                        userEntity.Id = AppDataRepo.currentUser.Id
+                        AppDataRepo.updateUser(userEntity)
                     }
                     Toasty.info(
                         PxEZApp.instance,
@@ -190,8 +190,8 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
                     ).show()
                     Log.d("init", "reFreshToken end")
 
-                    AppDataRepository.pre.setInt("user_x_restrict", user.x_restrict)
-                    AppDataRepository.pre.setLong("lastRefresh", System.currentTimeMillis())
+                    AppDataRepo.pre.setInt("user_x_restrict", user.x_restrict)
+                    AppDataRepo.pre.setLong("lastRefresh", System.currentTimeMillis())
                 }
             }.doOnError {
                 it.printStackTrace()
@@ -211,11 +211,11 @@ class ReFreshFunction private constructor() : Function<Observable<Throwable>, Ob
         var refreshing = false
 
         @Volatile
-        private var instance: ReFreshFunction? = null
+        private var instance: RefreshToken? = null
 
-        fun getInstance(): ReFreshFunction =
+        fun getInstance(): RefreshToken =
             instance ?: synchronized(this) {
-                instance ?: ReFreshFunction().also { instance = it }
+                instance ?: RefreshToken().also { instance = it }
             }
     }
 }

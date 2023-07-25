@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
-import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -88,12 +88,11 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
             full = it.getBoolean(ARG_PARAM1)
         }
         val calendar = Calendar.getInstance()
-        val userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
-        userInfoSharedPreferences.setInt(
+        AppDataRepo.pre.setInt(
             "lastsupport",
             calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
         )
-        val totaldownloadcount = userInfoSharedPreferences.getInt(
+        val totaldownloadcount = AppDataRepo.pre.getInt(
             "totaldownloadcount",
             File(PxEZApp.storepath).list()?.size ?: 0
         )
@@ -125,13 +124,13 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
                 if (full) {
                     setNegativeButton(R.string.wechat) { _, _ ->
                         gotoWeChat()
-                        userInfoSharedPreferences.setInt(
+                        AppDataRepo.pre.setInt(
                             "lastsupport",
                             calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                         )
-                        userInfoSharedPreferences.setInt(
+                        AppDataRepo.pre.setInt(
                             "supports",
-                            userInfoSharedPreferences.getInt("supports") + 1
+                            AppDataRepo.pre.getInt("supports") + 1
                         )
                     }
                     setPositiveButton(R.string.ali) { _, _ ->
@@ -149,13 +148,13 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
                         )
                         clipboard.setPrimaryClip(clip)
                         gotoAliPay()
-                        userInfoSharedPreferences.setInt(
+                        AppDataRepo.pre.setInt(
                             "lastsupport",
                             calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
                         )
-                        userInfoSharedPreferences.setInt(
+                        AppDataRepo.pre.setInt(
                             "supports",
-                            userInfoSharedPreferences.getInt("supports") + 1
+                            AppDataRepo.pre.getInt("supports") + 1
                         )
                     }
                 } else {

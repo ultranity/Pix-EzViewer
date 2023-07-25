@@ -27,8 +27,8 @@ package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.objects.LanguageUtil
-import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import okhttp3.Dns
@@ -147,7 +147,7 @@ object RestClient {
                     val original = chain.request()
                     var Authorization = ""
                     try {
-                        Authorization = AppDataRepository.currentUser.Authorization
+                        Authorization = AppDataRepo.currentUser.Authorization
                     } catch (e: Exception) {
                         e.printStackTrace()
                         Log.d("OkHttpClient", "get Authorization failed")

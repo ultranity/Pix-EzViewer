@@ -6,7 +6,7 @@ import android.text.Html
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
+import com.perol.asdpl.pixivez.data.AppDataRepo
 
 class FirstInfoDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -14,7 +14,7 @@ class FirstInfoDialog : DialogFragment() {
             .setMessage(R.string.app_help)
             .setTitle(R.string.read_it)
             .setPositiveButton(R.string.I_know) { _, _ ->
-                UserInfoSharedPreferences.getInstance().setBoolean("firstinfo", true)
+                AppDataRepo.pre.setBoolean("firstinfo", true)
             }
             .setNeutralButton(R.string.other) { _, _ ->
                 MaterialAlertDialogBuilder(requireActivity())

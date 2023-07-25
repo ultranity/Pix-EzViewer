@@ -33,7 +33,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
@@ -132,14 +132,14 @@ class UserRelatedListFragment : Fragment() {
             }
         }
 
-        if (userid == AppDataRepository.currentUser.userid && getFollowing) {
+        if (userid == AppDataRepo.currentUser.userid && getFollowing) {
             _bindingHeader = ViewRestrictButtonBinding.inflate(layoutInflater)
             userShowAdapter.addHeaderView(bindingHeader.root)
             bindingHeader.apply {
                 buttonPublic.isChecked = true
                 buttonAll.visibility = View.GONE
                 toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
-                    if (isChecked){
+                    if (isChecked) {
                         val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
                         val value = InteractionUtil.visRestrictTag(checkedIndex == 2)
                         if (restrict != value) {

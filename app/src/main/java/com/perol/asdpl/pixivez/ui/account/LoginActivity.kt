@@ -39,15 +39,15 @@ import com.afollestad.materialdialogs.input.input
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
 import com.perol.asdpl.pixivez.networks.Pkce
-import com.perol.asdpl.pixivez.networks.ReFreshFunction
+import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
 import com.perol.asdpl.pixivez.ui.HelloMActivity
+import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.settings.FirstInfoDialog
 import com.perol.asdpl.pixivez.ui.settings.SettingsActivity
 import io.noties.markwon.Markwon
@@ -56,7 +56,6 @@ import io.reactivex.Observable
 class LoginActivity : RinkActivity() {
     // private var username: String? = null
     // private var password: String? = null
-    private lateinit var userInfoSharedPreferences: UserInfoSharedPreferences
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,14 +90,13 @@ class LoginActivity : RinkActivity() {
     }
 
     private fun initBind() {
-        userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
-        if (!userInfoSharedPreferences.getBoolean("firstinfo")) {
+        if (!AppDataRepo.pre.getBoolean("firstinfo")) {
             FirstInfoDialog().show(this.supportFragmentManager, "infoDialog")
         }
         /*try {
-            if (userInfoSharedPreferences.getString("password") != null) {
-                binding.editPassword.setText(userInfoSharedPreferences.getString("password"))
-                binding.editUsername.setText(userInfoSharedPreferences.getString("username"))
+            if (AppDataRepo.pre.getString("password") != null) {
+                binding.editPassword.setText(AppDataRepo.pre.getString("password"))
+                binding.editUsername.setText(AppDataRepo.pre.getString("username"))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -128,8 +126,8 @@ class LoginActivity : RinkActivity() {
                 return@setOnClickListener
             }
             binding.loginBtn.isEnabled = false*/
-            // userInfoSharedPreferences.setString("username", username)
-            // userInfoSharedPreferences.setString("password", password)
+            // AppDataRepo.pre.setString("username", username)
+            // AppDataRepo.pre.setString("password", password)
             val url: String = "https://app-api.pixiv.net/web/v1/login?code_challenge=" +
                     Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
             // WeissUtil.start()
@@ -160,7 +158,7 @@ class LoginActivity : RinkActivity() {
                 positiveButton(android.R.string.ok) {
                     val token = getInputField().text.toString()
                     Observable.just(1)
-                        .flatMap { ReFreshFunction.getInstance().reFreshToken(token, true) }
+                        .flatMap { RefreshToken.getInstance().reFreshToken(token, true) }
                         .subscribe({
                             Toasty.shortToast(R.string.login_success)
                             val intent =

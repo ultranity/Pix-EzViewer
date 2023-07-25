@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.data.model.SpotlightResponse
 import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataResponse
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
-import com.perol.asdpl.pixivez.networks.ReFreshFunction
+import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -57,15 +57,15 @@ class RetrofitRepository {
         RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
     private var gifApiPixivService: AppApiPixivService =
         RestClient.gifAppApi.create(AppApiPixivService::class.java)
-    var reFreshFunction: ReFreshFunction = ReFreshFunction.getInstance()
+    var refreshToken: RefreshToken = RefreshToken.getInstance()
 
     init {
-        if (System.currentTimeMillis() - AppDataRepository.pre.getLong("lastRefresh", 0)
+        if (System.currentTimeMillis() - AppDataRepo.pre.getLong("lastRefresh", 0)
             > 59 * 60 * 1000
         ) {
             val init = Observable.just(1).flatMap {
                 Log.d("init", "Observable init")
-                reFreshFunction.reFreshToken()
+                refreshToken.reFreshToken()
             }.subscribe({
                 Log.d("Retrofit", "Observable inited")
             }, {}, {})
@@ -250,13 +250,13 @@ class RetrofitRepository {
                     "Retrofit",
                     "Request ${T::class.java.canonicalName} failed, call reFreshFunction"
                 )
-                reFreshFunction.apply(it)
+                refreshToken.apply(it)
             }
     }
 
     fun <T> create(observable: Observable<T>): Observable<T> {
         return observable.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen(reFreshFunction)
+            .retryWhen(refreshToken)
     }
 
     inline fun <reified T> getNext(url: String): Observable<T> =
@@ -269,7 +269,7 @@ class RetrofitRepository {
                     "Retrofit",
                     "Request ${T::class.java.canonicalName} failed, call reFreshFunction"
                 )
-                reFreshFunction.apply(it)
+                refreshToken.apply(it)
             }
 
     fun getNextUser(url: String): Observable<ListUserResponse> = getNext(url)

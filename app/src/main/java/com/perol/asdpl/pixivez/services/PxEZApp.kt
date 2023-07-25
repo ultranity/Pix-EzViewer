@@ -41,7 +41,7 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -105,7 +105,7 @@ class PxEZApp : Application() {
         // LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
         CoroutineScope(Dispatchers.IO).launch {
-            AppDataRepository.getUser()
+            AppDataRepo.getUser()
         }
         Aria.init(this)
         Aria.download(this).register()

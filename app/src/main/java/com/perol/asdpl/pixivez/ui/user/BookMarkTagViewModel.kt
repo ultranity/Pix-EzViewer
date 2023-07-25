@@ -27,7 +27,7 @@ package com.perol.asdpl.pixivez.ui.user
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,7 +42,7 @@ class BookMarkTagViewModel : BaseViewModel() {
     val tagsAdded = MutableLiveData<List<BookMarkTagsResponse.BookmarkTagsBean>?>()
 
     fun isSelfPage(): Boolean {
-        return AppDataRepository.currentUser.userid == id
+        return AppDataRepo.currentUser.userid == id
     }
 
     fun first(id: Long, pub: String) {

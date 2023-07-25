@@ -32,18 +32,17 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.ui.WebViewActivity
-import com.perol.asdpl.pixivez.networks.Pkce
-import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.AppDataRepository
-import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
-import com.perol.asdpl.pixivez.services.OAuthSecureService
-import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ErrorResponse
 import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
+import com.perol.asdpl.pixivez.networks.Pkce
+import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.services.OAuthSecureService
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.HelloMActivity
+import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -67,7 +66,6 @@ class IntentActivity : RinkActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
         val uri = intent.data
         if (uri != null) {
             val scheme = uri.scheme
@@ -79,7 +77,7 @@ class IntentActivity : RinkActivity() {
                     if (!host.isNullOrBlank()) {
                         if (host.contains("account") && segment.contains("login")) {
                             val code = uri.getQueryParameter("code").toString()
-                            userInfoSharedPreferences.setString("last_login_code", code)
+                            AppDataRepo.pre.setString("last_login_code", code)
                             tryLogin(code)
                             finish()
                             return
@@ -189,7 +187,7 @@ class IntentActivity : RinkActivity() {
         map["code_verifier"] = Pkce.getPkce().verify
         // map["username"] = username!!
         // map["password"] = password!!
-        // map["device_token"] = UserInfoSharedPreferences.getInstance().getString("Device_token") ?: "pixiv"
+        // map["device_token"] = AppDataRepo.pre.getString("Device_token") ?: "pixiv"
         map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
         // map["get_secure_url"] = true
         map["include_policy"] = true
@@ -207,7 +205,7 @@ class IntentActivity : RinkActivity() {
             .doOnNext { pixivOAuthResponse: PixivOAuthResponse ->
                 val user = pixivOAuthResponse.response.user
                 runBlocking {
-                    AppDataRepository.insertUser(
+                    AppDataRepo.insertUser(
                         UserEntity(
                             user.id,
                             user.name,
@@ -220,11 +218,11 @@ class IntentActivity : RinkActivity() {
                         )
                     )
                     // TODO: user_x_restrict
-                    AppDataRepository.pre.setInt("user_x_restrict", user.x_restrict)
-                    // userInfoSharedPreferences.setBoolean("isnone", false)
-                    // userInfoSharedPreferences.setString("username", username)
-                    // userInfoSharedPreferences.setString("password", password)
-                    // userInfoSharedPreferences.setString("Device_token", pixivOAuthResponse.response.device_token)
+                    AppDataRepo.pre.setInt("user_x_restrict", user.x_restrict)
+                    // AppDataRepo.pre.setBoolean("isnone", false)
+                    // AppDataRepo.pre.setString("username", username)
+                    // AppDataRepo.pre.setString("password", password)
+                    // AppDataRepo.pre.setString("Device_token", pixivOAuthResponse.response.device_token)
                 }
             }
             .doOnError { e ->

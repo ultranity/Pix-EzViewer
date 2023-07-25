@@ -35,7 +35,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.data.UserInfoSharedPreferences
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import com.perol.asdpl.pixivez.objects.ScreenUtil
 import java.util.Calendar
@@ -108,7 +108,7 @@ class SettingsActivity : RinkActivity() {
                     calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
                         Calendar.HOUR_OF_DAY
                     ) -
-                            UserInfoSharedPreferences.getInstance()
+                            AppDataRepo.pre
                                 .getInt(
                                     "lastsupport",
                                     calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
@@ -117,10 +117,10 @@ class SettingsActivity : RinkActivity() {
         ) {
             SupportDialog().show(this.supportFragmentManager, "supportdialog")
         } else {
-            UserInfoSharedPreferences.getInstance()
+            AppDataRepo.pre
                 .setInt(
                     "lastsupport",
-                    UserInfoSharedPreferences.getInstance().getInt("lastsupport") - 24
+                    AppDataRepo.pre.getInt("lastsupport") - 24
                 )
             super.onBackPressed()
         }

@@ -30,7 +30,7 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.data.AppDataRepository
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import kotlinx.coroutines.runBlocking
 
@@ -46,11 +46,11 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
         val delete = holder.getView<ImageView>(R.id.imageview_delete)
         delete.setOnClickListener {
             runBlocking {
-                AppDataRepository.deleteUser(item)
+                AppDataRepo.deleteUser(item)
                 this@AccountChoiceAdapter.remove(item)
             }
         }
-        if (holder.layoutPosition == AppDataRepository.pre.getInt(
+        if (holder.layoutPosition == AppDataRepo.pre.getInt(
                 "usernum",
                 0
             )

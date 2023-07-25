@@ -29,10 +29,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
 import com.perol.asdpl.pixivez.objects.argument
-import com.perol.asdpl.pixivez.data.AppDataRepository
 
 /**
  * Fragment of thread from User followed
@@ -51,7 +51,7 @@ class HelloMThFragment : LazyFragment() {
     }
 
     override fun loadData() {
-        val userid = AppDataRepository.currentUser.userid
+        val userid = AppDataRepo.currentUser.userid
         binding.tablayout.setupWithViewPager(binding.viewpager)
         binding.viewpager.adapter =
             HelloMThViewPager(this, childFragmentManager, userid)

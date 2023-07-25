@@ -31,11 +31,19 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object AppDataRepository {
+object AppDataRepo {
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val pre: UserInfoSharedPreferences =
-        UserInfoSharedPreferences.getInstance()!! // PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)!!
-    lateinit var currentUser: UserEntity
+    val pre: UserInfoSharedPreferences = UserInfoSharedPreferences.getInstance()!!
+    private var _currentUser: UserEntity? = null
+    val currentUser: UserEntity
+        get() = _currentUser!!
+
+    fun setCurrentUser(user: UserEntity) {
+        _currentUser = user
+    }
+
+    fun userInited() = _currentUser != null
+
     suspend fun getUser(): UserEntity? {
         val result = withContext(Dispatchers.IO) {
             appDatabase.userDao().getUsers()
@@ -43,7 +51,7 @@ object AppDataRepository {
         if (result.isEmpty()) {
             return null
         }
-        currentUser = if (result.size == 1) {
+        _currentUser = if (result.size == 1) {
             result[0]
         } else {
             val num = pre.getInt("usernum", 0)
@@ -72,14 +80,14 @@ object AppDataRepository {
     suspend fun updateUser(query: UserEntity) {
         withContext(Dispatchers.IO) {
             appDatabase.userDao().updateUser(query)
-            currentUser = query
+            _currentUser = query
         }
     }
 
     suspend fun insertUser(query: UserEntity) {
         withContext(Dispatchers.IO) {
             appDatabase.userDao().insert(query)
-            currentUser = query
+            _currentUser = query
         }
     }
 

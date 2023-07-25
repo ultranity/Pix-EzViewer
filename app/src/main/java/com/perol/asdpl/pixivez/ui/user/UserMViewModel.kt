@@ -26,9 +26,9 @@
 package com.perol.asdpl.pixivez.ui.user
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.data.AppDataRepository
-import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import io.reactivex.Observable
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -79,7 +79,7 @@ class UserMViewModel : BaseViewModel() {
     }
 
     fun isSelfPage(id: Long): Boolean {
-        return AppDataRepository.currentUser.userid == id
+        return AppDataRepo.currentUser.userid == id
     }
 
     fun tryToChangeProfile(path: String): Observable<ResponseBody> {

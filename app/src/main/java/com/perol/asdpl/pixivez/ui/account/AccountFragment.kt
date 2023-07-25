@@ -35,14 +35,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.FragmentAccountBinding
-import com.perol.asdpl.pixivez.networks.ReFreshFunction
+import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.data.entity.UserEntity
 import io.reactivex.Observable
 import kotlinx.coroutines.runBlocking
 
@@ -68,7 +68,7 @@ class AccountFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.logoutallaccount)
                 .setPositiveButton(android.R.string.ok) { i, j ->
                     runBlocking {
-                        AppDataRepository.deleteAllUser()
+                        AppDataRepo.deleteAllUser()
                     }
                     startActivity(
                         Intent(requireContext(), LoginActivity::class.java)
@@ -80,14 +80,14 @@ class AccountFragment : Fragment() {
         }
         binding.recyclerviewAccount.layoutManager = LinearLayoutManager(requireContext())
         runBlocking {
-            val users = AppDataRepository.getAllUser()
+            val users = AppDataRepo.getAllUser()
             binding.recyclerviewAccount.adapter = AccountChoiceAdapter(
                 R.layout.view_account_item, users
             ).apply {
                 setOnItemClickListener { adapter, view, position ->
-                    this.notifyItemChanged(AppDataRepository.pre.getInt("usernum"))
-                    AppDataRepository.pre.setInt("usernum", position)
-                    AppDataRepository.currentUser = users[position]
+                    this.notifyItemChanged(AppDataRepo.pre.getInt("usernum"))
+                    AppDataRepo.pre.setInt("usernum", position)
+                    AppDataRepo.setCurrentUser(users[position])
                     this.notifyItemChanged(position)
                     PxEZApp.ActivityCollector.recreate()
                 }
@@ -105,7 +105,7 @@ class AccountFragment : Fragment() {
             .setTitle("Token")
             .setMessage(R.string.token_warning)
             .setNeutralButton(R.string.refresh_token) { _, _ ->
-                Observable.just(1).flatMap { ReFreshFunction.getInstance().reFreshToken() }
+                Observable.just(1).flatMap { RefreshToken.getInstance().reFreshToken() }
                     .subscribe({
                         Toasty.shortToast(R.string.refresh_token)
                     }, {

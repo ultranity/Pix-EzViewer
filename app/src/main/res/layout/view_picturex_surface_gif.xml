@@ -35,7 +35,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="2dp"
+        android:layout_marginStart="2dp"
         android:alpha="0.9"
         android:src="@drawable/ic_action_play"
         app:tint="@color/white" />

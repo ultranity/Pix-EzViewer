@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_margin="8dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
     android:paddingTop="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/imageview_trendingtag"
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imageview_trendingtag"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="fitStart"
             android:layout_gravity="top"

@@ -262,9 +262,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
             android:paddingTop="2dp"
-            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
             android:paddingBottom="2dp"
             android:showDividers="middle">
 

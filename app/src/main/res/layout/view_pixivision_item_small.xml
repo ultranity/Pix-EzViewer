@@ -7,9 +7,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:clipToPadding="true"
-    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
     android:paddingTop="8dp"
-    android:paddingRight="8dp"
+    android:paddingEnd="8dp"
     app:cardElevation="2dp">
 
     <LinearLayout

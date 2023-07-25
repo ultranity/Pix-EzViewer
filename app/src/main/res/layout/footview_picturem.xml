@@ -228,16 +228,16 @@
                 android:id="@+id/chipgroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:paddingLeft="8dp"
+                android:paddingStart="8dp"
                 android:paddingTop="8dp"
-                android:paddingRight="8dp">
+                android:paddingEnd="8dp">
 
                 <TextView
                     android:id="@+id/textView_detail"

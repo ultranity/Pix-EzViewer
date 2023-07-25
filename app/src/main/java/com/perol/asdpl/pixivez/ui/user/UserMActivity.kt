@@ -47,6 +47,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ProfileImageUrls
 import com.perol.asdpl.pixivez.data.model.User
@@ -73,11 +74,12 @@ class UserMActivity : RinkActivity() {
             context.startActivity(intent, options)
         }
 
+        fun UserEntity.toUser() = User(userid, username, "", ProfileImageUrls(userimage), "", false)
         fun start(context: Context, user: UserEntity, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
             intent.putExtra(
                 "user",
-                User(user.userid, user.username, "", ProfileImageUrls(user.userimage), "", false)
+                user.toUser()
             )
             context.startActivity(intent, options)
         }
@@ -131,8 +133,11 @@ class UserMActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent.extras == null)
-            return
+        if (intent.extras == null) {
+            if (AppDataRepo.userInited())
+                setUser(AppDataRepo.currentUser.toUser())
+            else return
+        }
         binding = ActivityUserMBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)

@@ -56,7 +56,7 @@ class ThemeFragment : PreferenceFragmentCompat() {
                 snackbarApplyConfig()
                 //PxEZApp.ActivityCollector.recreate()
                 findPreference<Preference>("dynamicColor")?.isEnabled = newValue as Boolean
-                findPreference<Preference>("theme")?.isEnabled = newValue
+                colorThemeConfig()
                 true
             }
         }
@@ -69,35 +69,17 @@ class ThemeFragment : PreferenceFragmentCompat() {
                 isEnabled = false
             } else {
                 setOnPreferenceChangeListener { preference, newValue ->
+                    colorThemeConfig()
                     ThemeUtil.resetColor(requireActivity())
                     PxEZApp.ActivityCollector.recreate()
                     true
                 }
             }
         }
+
         findPreference<Preference>("theme")?.apply {
-            //icon = ColorDrawable(ThemeUtil.getColorPrimary(requireContext()))
-            if (PxEZApp.instance.pre.getBoolean("dynamicColor", false)) {
-                isEnabled = false
-                summary = "Dynamic"
-            } else {
-                val colorItems = listOf(
-                    BackgroundGridItem(R.color.colorPrimary, "Primary"),
-                    BackgroundGridItem(R.color.md_blue_300, "Blue"),
-                    BackgroundGridItem(R.color.pink, "Pink"),
-                    BackgroundGridItem(R.color.miku, "Miku"),
-                    BackgroundGridItem(R.color.md_purple_500, "Purple"),
-                    BackgroundGridItem(R.color.md_cyan_300, "Cyan"),
-                    BackgroundGridItem(R.color.md_green_300, "Green"),
-                    BackgroundGridItem(R.color.md_indigo_300, "Indigo"),
-                    BackgroundGridItem(R.color.md_red_500, "Red"),
-                    BackgroundGridItem(R.color.now, "Pale green")
-                )
-                summary =
-                    colorItems[
-                        PxEZApp.instance.pre.getInt("colorint", 0)
-                    ].title
-                setOnPreferenceClickListener {
+            setOnPreferenceClickListener {
+                if (isEnabled)
                     MaterialDialog(
                         requireContext(),
                         BottomSheet(LayoutMode.WRAP_CONTENT)
@@ -123,11 +105,10 @@ class ThemeFragment : PreferenceFragmentCompat() {
                         positiveButton(R.string.action_apply)
                         lifecycleOwner(this@ThemeFragment)
                     }
-                    true
-                }
+                true
             }
         }
-
+        colorThemeConfig()
 
         findPreference<SwitchPreferenceCompat>("bottomAppbar")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
@@ -153,6 +134,34 @@ class ThemeFragment : PreferenceFragmentCompat() {
         findPreference<SwitchPreferenceCompat>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.animationEnable = newValue as Boolean
             true
+        }
+    }
+
+    private val colorItems = listOf(
+        BackgroundGridItem(R.color.colorPrimary, "Primary"),
+        BackgroundGridItem(R.color.md_blue_300, "Blue"),
+        BackgroundGridItem(R.color.pink, "Pink"),
+        BackgroundGridItem(R.color.miku, "Miku"),
+        BackgroundGridItem(R.color.md_purple_500, "Purple"),
+        BackgroundGridItem(R.color.md_cyan_300, "Cyan"),
+        BackgroundGridItem(R.color.md_green_300, "Green"),
+        BackgroundGridItem(R.color.md_indigo_300, "Indigo"),
+        BackgroundGridItem(R.color.md_red_500, "Red"),
+        BackgroundGridItem(R.color.now, "Pale green")
+    )
+
+    private fun colorThemeConfig() = findPreference<Preference>("theme")?.apply {
+        //icon = ColorDrawable(ThemeUtil.getColorPrimary(requireContext()))
+        if (PxEZApp.instance.pre.getBoolean("material3", true)
+            && PxEZApp.instance.pre.getBoolean("dynamicColor", true)
+        ) {
+            isEnabled = false
+            summary = "Dynamic"
+        } else {
+            summary =
+                colorItems[
+                    PxEZApp.instance.pre.getInt("colorint", 0)
+                ].title
         }
     }
 

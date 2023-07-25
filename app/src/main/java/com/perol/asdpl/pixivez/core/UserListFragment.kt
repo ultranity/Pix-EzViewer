@@ -38,9 +38,9 @@ import com.perol.asdpl.pixivez.base.BaseVBFragment
 import com.perol.asdpl.pixivez.databinding.FragmentListBinding
 import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
-import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
+import com.perol.asdpl.pixivez.objects.getMaxColumn
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.ui.user.UserShowAdapter

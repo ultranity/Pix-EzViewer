@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.databinding.FragmentListBinding
 import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
+import com.perol.asdpl.pixivez.objects.getMaxColumn
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 import io.reactivex.disposables.CompositeDisposable

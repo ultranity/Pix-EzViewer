@@ -50,9 +50,9 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.pic.CommentDialog
@@ -198,17 +198,17 @@ class PictureXFragment : BaseFragment() {
                     }
 
                 binding.recyclerview.adapter = pictureXAdapter
-                if (ScreenUtil.screenWidthDp() > 840) {
+                if (screenWidthDp() > 840) {
                     binding.recyclerview.layoutManager =
                         GridLayoutManager(
                             requireContext(), 2,
                             //RecyclerView.HORIZONTAL, false
                         )
-                    .apply {
-                        spanSizeLookup = object : SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                if (pictureXAdapter!!.getItemViewType(position) ==
-                                    PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+                            .apply {
+                                spanSizeLookup = object : SpanSizeLookup() {
+                                    override fun getSpanSize(position: Int): Int {
+                                        if (pictureXAdapter!!.getItemViewType(position) ==
+                                            PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
                                 )
                                     return 2
                                 return 1

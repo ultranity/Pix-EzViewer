@@ -30,7 +30,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.ScreenUtil
+import com.perol.asdpl.pixivez.objects.dp2px
 
 //src: https://github.com/shehuan/NiceImageView/blob/master/niceimageview/src/main/java/com/shehuan/niv/NiceImageView.java
 
@@ -338,7 +338,7 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setBorderWidth(borderWidth: Int) {
-        this.borderWidth = ScreenUtil.dp2px(borderWidth)
+        this.borderWidth = dp2px(borderWidth)
         calculateRadiiAndRectF(false)
     }
 
@@ -348,7 +348,7 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setInnerBorderWidth(innerBorderWidth: Int) {
-        this.innerBorderWidth = ScreenUtil.dp2px(innerBorderWidth)
+        this.innerBorderWidth = dp2px(innerBorderWidth)
         clearInnerBorderWidth()
         invalidate()
     }
@@ -359,27 +359,27 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setCornerRadius(cornerRadius: Int) {
-        this.cornerRadius = ScreenUtil.dp2px(cornerRadius)
+        this.cornerRadius = dp2px(cornerRadius)
         calculateRadiiAndRectF(false)
     }
 
     fun setCornerTopLeftRadius(cornerTopLeftRadius: Int) {
-        this.cornerTopLeftRadius = ScreenUtil.dp2px(cornerTopLeftRadius)
+        this.cornerTopLeftRadius = dp2px(cornerTopLeftRadius)
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerTopRightRadius(cornerTopRightRadius: Int) {
-        this.cornerTopRightRadius = ScreenUtil.dp2px(cornerTopRightRadius)
+        this.cornerTopRightRadius = dp2px(cornerTopRightRadius)
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerBottomLeftRadius(cornerBottomLeftRadius: Int) {
-        this.cornerBottomLeftRadius = ScreenUtil.dp2px(cornerBottomLeftRadius)
+        this.cornerBottomLeftRadius = dp2px(cornerBottomLeftRadius)
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerBottomRightRadius(cornerBottomRightRadius: Int) {
-        this.cornerBottomRightRadius = ScreenUtil.dp2px(cornerBottomRightRadius)
+        this.cornerBottomRightRadius = dp2px(cornerBottomRightRadius)
         calculateRadiiAndRectF(true)
     }
 

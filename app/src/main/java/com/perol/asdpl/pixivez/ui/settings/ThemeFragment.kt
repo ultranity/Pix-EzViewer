@@ -1,8 +1,6 @@
 package com.perol.asdpl.pixivez.ui.settings
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -24,6 +22,7 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class ThemeFragment : PreferenceFragmentCompat() {
@@ -42,15 +41,6 @@ class ThemeFragment : PreferenceFragmentCompat() {
                 }
             }
         }
-
-        private val Int.dp: Int get() = toFloat().dp.toInt()
-
-        private val Float.dp: Float
-            get() = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                this,
-                Resources.getSystem().displayMetrics
-            )
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

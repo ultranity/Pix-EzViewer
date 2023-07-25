@@ -40,6 +40,9 @@ import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.net.ConnectException
@@ -141,9 +144,8 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
             return Observable.timer(2000, TimeUnit.MILLISECONDS)
         }
         refreshing = true
-        val user: UserEntity
-        runBlocking {
-            user = AppDataRepo.getUser()!!
+        val user = AppDataRepo.currentUser
+        CoroutineScope(Dispatchers.Main).launch {
             Toasty.info(
                 PxEZApp.instance,
                 "reFreshToken",

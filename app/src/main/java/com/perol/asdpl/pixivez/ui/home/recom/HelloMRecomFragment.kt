@@ -46,24 +46,24 @@ import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
-import com.perol.asdpl.pixivez.ui.WebViewActivity
+import com.perol.asdpl.pixivez.base.BaseFragment
+import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import com.perol.asdpl.pixivez.core.PicListAdapter
 import com.perol.asdpl.pixivez.core.PicListBtnAdapter
 import com.perol.asdpl.pixivez.core.PicListBtnUserAdapter
 import com.perol.asdpl.pixivez.core.PicListXAdapter
 import com.perol.asdpl.pixivez.core.PicListXUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
-import com.perol.asdpl.pixivez.base.BaseFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.IllustFilter
-import com.perol.asdpl.pixivez.objects.ScreenUtil
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.OKWebViewActivity
+import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
+import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivsionActivity
 import com.perol.asdpl.pixivez.view.LinearItemDecoration
-import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
-import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import kotlinx.coroutines.runBlocking
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -223,12 +223,12 @@ class HelloMRecomFragment : BaseFragment() {
         spotlightView.adapter = pixiVisionAdapter
         if (autoLoop) {
             // spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
-            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
+            spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
             // spotlightView.addItemDecoration(LinePagerIndicatorDecoration(headerNum = 0))
             // LoopingSnapHelper().attachToRecyclerView(spotlightView)
         } else {
-            spotlightView.addItemDecoration(LinearItemDecoration(ScreenUtil.dp2px(4.0f)))
+            spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
             PagerSnapHelper().attachToRecyclerView(spotlightView)
             // LinearSnapHelper().attachToRecyclerView(spotlightView)
             // CardScaleHelper(true).run{

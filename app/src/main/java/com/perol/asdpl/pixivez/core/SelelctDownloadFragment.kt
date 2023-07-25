@@ -21,8 +21,8 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
-import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.view.NiceImageView
 import java.util.BitSet
@@ -204,7 +204,7 @@ class SelectDownloadFragment : PicListFragment() {
                 true
             }
             setMargins(binding.fab) {
-                it.marginEnd = 2 * it.marginEnd + ScreenUtil.dp2px(60)
+                it.marginEnd = 2 * it.marginEnd + 60.dp
             }
         }
 

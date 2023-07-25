@@ -40,8 +40,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.ScreenUtil.dp2px
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.view.NiceImageView
@@ -51,7 +51,7 @@ class UserShowAdapter(layoutResId: Int) :
     LBaseQuickAdapter<UserPreviewsBean, BaseViewHolder>(layoutResId) {
     companion object {
         const val itemWidth: Int = 400
-        val itemWidthPx: Int = dp2px(400f)
+        val itemWidthPx: Int = 400.dp
     }
 
     private var mSharedPool = RecyclerView.RecycledViewPool()

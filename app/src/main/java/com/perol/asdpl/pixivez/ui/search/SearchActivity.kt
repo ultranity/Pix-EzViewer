@@ -53,17 +53,17 @@ class SearchActivity : RinkActivity() {
         }
     }
 
-    lateinit var searchActivityFragment: SearchActivityFragment
+    lateinit var searchSuggestionFragment: SearchSuggestionFragment
     lateinit var trendTagFragment: TrendTagFragment
     lateinit var tagsTextViewModel: TagsTextViewModel
     lateinit var trendTagViewModel: TrendTagViewModel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (searchActivityFragment.isHidden) {
+                if (searchSuggestionFragment.isHidden) {
                     this.finish()
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchActivityFragment)
+                    supportFragmentManager.beginTransaction().hide(searchSuggestionFragment)
                         .show(trendTagFragment).commit()
                 }
                 return true
@@ -94,26 +94,26 @@ class SearchActivity : RinkActivity() {
         tagsTextViewModel = ViewModelProvider(this)[TagsTextViewModel::class.java]
         trendTagViewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         if (savedInstanceState == null) {
-            searchActivityFragment = SearchActivityFragment()
+            searchSuggestionFragment = SearchSuggestionFragment()
             trendTagFragment = TrendTagFragment()
             supportFragmentManager.commit {
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack so the user can navigate back
-                add(R.id.fragment, searchActivityFragment)
+                add(R.id.fragment, searchSuggestionFragment)
                 add(R.id.fragment, trendTagFragment)
-                hide(searchActivityFragment)
+                hide(searchSuggestionFragment)
             }
         } else {
-            searchActivityFragment = supportFragmentManager.getFragment(
+            searchSuggestionFragment = supportFragmentManager.getFragment(
                 savedInstanceState,
                 "searchActivityFragment"
-            ) as SearchActivityFragment
+            ) as SearchSuggestionFragment
             trendTagFragment = supportFragmentManager.getFragment(
                 savedInstanceState,
                 "trendTagFragment"
             ) as TrendTagFragment
             supportFragmentManager.commit {
-                hide(searchActivityFragment)
+                hide(searchSuggestionFragment)
             }
         }
         binding.tablayoutSearch.clearOnTabSelectedListeners()
@@ -157,7 +157,7 @@ class SearchActivity : RinkActivity() {
                         }
                     }
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchActivityFragment)
+                    supportFragmentManager.beginTransaction().hide(searchSuggestionFragment)
                         .show(trendTagFragment).commit()
                 }
 
@@ -172,7 +172,7 @@ class SearchActivity : RinkActivity() {
                     tagsTextViewModel.onQueryTextChange(newText)
                 }
                 supportFragmentManager.beginTransaction().hide(trendTagFragment)
-                    .show(searchActivityFragment).commit()
+                    .show(searchSuggestionFragment).commit()
                 return true
             }
         })
@@ -186,7 +186,7 @@ class SearchActivity : RinkActivity() {
         supportFragmentManager.putFragment(
             outState,
             "searchActivityFragment",
-            searchActivityFragment
+            searchSuggestionFragment
         )
         supportFragmentManager.putFragment(outState, "trendTagFragment", trendTagFragment)
         super.onSaveInstanceState(outState)

@@ -26,25 +26,25 @@ package com.perol.asdpl.pixivez.ui.search
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.perol.asdpl.pixivez.data.model.Tag
-import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
-import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.model.Tag
+import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TagsTextViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val tags = MutableLiveData<List<Tag>>()
+    val autoCompleteTags = MutableLiveData<List<Tag>>()
     fun onQueryTextChange(newText: String) {
         retrofit.getSearchAutoCompleteKeywords(newText).subscribe({
-            tags.value = it.tags
+            autoCompleteTags.value = it.tags
         }, {}).add()
     }
 
-    fun addhistory(tag: Tag) = viewModelScope.launch {
+    fun addHistory(tag: Tag) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             appDatabase.searchhistoryDao().insert(SearchHistoryEntity(tag.vis()))
         }

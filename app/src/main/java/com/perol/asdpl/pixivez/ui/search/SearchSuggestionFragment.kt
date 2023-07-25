@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
 import com.perol.asdpl.pixivez.data.model.Tag
+import com.perol.asdpl.pixivez.databinding.FragmentSearchRBinding
 
 /**
  * A placeholder fragment containing a simple view.
  */
-class SearchActivityFragment : Fragment() {
+class SearchSuggestionFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchRBinding
     override fun onCreateView(
@@ -46,7 +46,7 @@ class SearchActivityFragment : Fragment() {
         binding.recyclerview.adapter = tagsTextAdapter
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
             val tag = tags[position]
-            tagsTextViewModel.addhistory(tag)
+            tagsTextViewModel.addHistory(tag)
             val bundle = Bundle()
             bundle.putString("keyword", tag.name)
             val intent = Intent(requireActivity(), SearchResultActivity::class.java)
@@ -54,7 +54,7 @@ class SearchActivityFragment : Fragment() {
             startActivityForResult(intent, 775)
         }
         tagsTextViewModel = ViewModelProvider(requireActivity())[TagsTextViewModel::class.java]
-        tagsTextViewModel.tags.observe(viewLifecycleOwner) {
+        tagsTextViewModel.autoCompleteTags.observe(viewLifecycleOwner) {
             tagsTextAdapter.setList(it)
             tags.clear()
             tags.addAll(it)

@@ -39,7 +39,6 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.os.Build
-import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
@@ -583,16 +582,7 @@ class PictureXAdapter(
             true
         }
         mainImage.setOnClickListener {
-            val intent = Intent(mContext, ZoomActivity::class.java)
-            val bundle = Bundle()
-            bundle.putInt("num", position)
-            bundle.putParcelable(
-                "illust",
-                pictureXViewModel.illustDetail.value
-            )
-            intent.putExtras(bundle)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            mContext.startActivity(intent)
+            ZoomFragment.start(mContext, position, pictureXViewModel.illustDetail.value!!)
         }
         if (position == 0 && PxEZApp.animationEnable) {
             mainImage.transitionName = "mainimage"

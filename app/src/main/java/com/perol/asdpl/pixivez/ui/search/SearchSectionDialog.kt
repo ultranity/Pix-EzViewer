@@ -45,7 +45,7 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
 
     @SuppressLint("SetTextI18n")
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
-        val word = arguments?.getString("word", "")
+        val word = requireArguments().getString("word", "")
         val viewModel =
             ViewModelProvider(requireActivity())[SearchResultViewModel::class.java]
         var searchTargeti = viewModel.searchTarget.value

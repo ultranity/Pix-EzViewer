@@ -33,7 +33,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
@@ -41,6 +40,7 @@ import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.databinding.FragmentListBinding
 import com.perol.asdpl.pixivez.databinding.ViewRestrictButtonBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.ScreenUtil.getMaxColumn
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 import io.reactivex.disposables.CompositeDisposable
@@ -99,14 +99,13 @@ class UserRelatedListFragment : Fragment() {
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
             addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
         }
-        arguments?.let {
+        requireArguments().let {
             if (it.containsKey("illustid")) {
                 illustId = it.getLong("illustid")
                 requireActivity().actionBar?.setTitle(R.string.bookmark)
                 //binding.title.text = getString(R.string.bookmark)
                 initIllustData()
-            }
-            else {
+            } else {
                 userid = it.getLong("userid")
                 if (it.containsKey("get_following")) {
                     getFollowing = it.getBoolean("get_following", true)

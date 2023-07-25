@@ -30,10 +30,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
@@ -65,7 +63,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 
 class UserMActivity : RinkActivity() {
@@ -270,7 +267,7 @@ class UserMActivity : RinkActivity() {
                 }
             }.show()
         }
-        binding.appBar.addOnOffsetChangedListener(object : AppBarStateChangeListener(140) {
+        binding.appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener(140) {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 when (state) {
                     State.COLLAPSED -> {

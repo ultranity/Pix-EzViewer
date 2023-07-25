@@ -89,6 +89,7 @@ class ZoomPagerAdapter(
         val layoutInflater = LayoutInflater.from(context)
         val binding = ViewPagerZoomBinding.inflate(layoutInflater, container, false)
         binding.photoviewZoom.isEnabled = true
+        binding.photoviewZoom.setMinimumDpi(10)
         // val buttonOrigin = binding.MaterialButton.button
         // val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         // val dm = DisplayMetrics()

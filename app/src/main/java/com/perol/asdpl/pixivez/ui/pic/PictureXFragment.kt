@@ -324,7 +324,7 @@ class PictureXFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+        requireArguments().let {
             illustid = it.getLong(ARG_ILLUSTID)
             illustobj = it.getParcelable(ARG_ILLUSTOBJ)
         }
@@ -368,7 +368,6 @@ class PictureXFragment : BaseFragment() {
                     } else {
                         putLong(ARG_ILLUSTID, id!!)
                     }
-                    //putParcelable("illust", illust)
                 }
             }
     }

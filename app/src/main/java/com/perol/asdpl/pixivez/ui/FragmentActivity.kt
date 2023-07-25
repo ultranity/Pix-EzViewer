@@ -5,12 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.core.SelectDownloadFragment
 import com.perol.asdpl.pixivez.databinding.ActivityFragmentHostBinding
 import com.perol.asdpl.pixivez.ui.account.AccountFragment
+import com.perol.asdpl.pixivez.ui.pic.ZoomFragment
 import com.perol.asdpl.pixivez.ui.settings.BlockTagFragment
 import com.perol.asdpl.pixivez.ui.settings.HistoryFragment
 import com.perol.asdpl.pixivez.ui.settings.ThemeFragment
@@ -33,6 +35,7 @@ class FragmentActivity : RinkActivity() {
             "Users" to FragmentItem(::UserRelatedListFragment, null),
             "History" to FragmentItem(::HistoryFragment, R.string.view_history),
             "Collect" to FragmentItem(::SelectDownloadFragment, R.string.download),
+            "Zoom" to FragmentItem(::ZoomFragment, null),
         )
 
         fun start(
@@ -81,5 +84,9 @@ class FragmentActivity : RinkActivity() {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun hideAppBar() {
+        binding.appBarLayout.visibility = View.GONE
     }
 }

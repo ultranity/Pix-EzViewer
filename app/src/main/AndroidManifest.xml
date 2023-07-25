@@ -103,7 +103,6 @@
             android:name=".ui.pic.PictureActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".ui.pic.ZoomActivity" />
         <activity
             android:name=".ui.settings.SaucenaoActivity"
             android:exported="true"

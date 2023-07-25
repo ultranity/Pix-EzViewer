@@ -1,5 +1,16 @@
 package com.perol.asdpl.pixivez.objects
 
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.roaringbitmap.RoaringBitmap
+import java.util.BitSet
 import java.util.IdentityHashMap
 import java.util.SortedSet
 
@@ -92,5 +103,60 @@ fun <T:Any?> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
     }
 
     // No common elements were found.
+    return null
+}
+
+fun FloatingActionButton.setMargins(
+    ref: FloatingActionButton,
+    extra: (CoordinatorLayout.LayoutParams) -> Unit = {}
+) {
+    layoutParams = (layoutParams as CoordinatorLayout.LayoutParams).apply {
+        val refLayout = ref.layoutParams as CoordinatorLayout.LayoutParams
+        anchorId = refLayout.anchorId
+        anchorGravity = refLayout.anchorGravity
+        setMargins(ref.marginLeft, ref.marginTop, ref.marginRight, ref.marginBottom)
+        extra(this)
+    }
+}
+
+fun View.rotate() {
+    rotation = 0F
+    ViewCompat.animate(this)
+        .rotation(360F)
+        .withLayer()
+        .setDuration(1000)
+        .setInterpolator(AccelerateDecelerateInterpolator())
+        .start()
+}
+
+fun BitSet.forEach(block: (it: Int) -> Unit) {
+    var i = nextSetBit(0)
+    while (i >= 0) {
+        block(i)
+        i = nextSetBit(i)
+    }
+}
+
+val BitSet.first
+    get() = nextSetBit(0)
+val BitSet.last
+    get() = previousSetBit(size())
+val BitSet.size: Int
+    get() = cardinality()
+val RoaringBitmap.size: Int
+    get() = cardinality
+
+fun RoaringBitmap.set(x: Int, status: Boolean) {
+    if (status)
+        add(x)
+    else
+        remove(x)
+}
+
+fun List<Boolean>.all(): Boolean? {
+    if (this.isEmpty())
+        return true
+    if (all { it == first() })
+        return first()
     return null
 }

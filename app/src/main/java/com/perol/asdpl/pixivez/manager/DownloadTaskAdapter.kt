@@ -26,8 +26,6 @@
 package com.perol.asdpl.pixivez.manager
 
 import android.annotation.SuppressLint
-import android.view.View
-import androidx.viewbinding.ViewBinding
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.aria.core.Aria
@@ -36,19 +34,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
+import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
 import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
-
-@Suppress("UNCHECKED_CAST")
-fun <VB : ViewBinding> BaseViewHolder.getBinding(bind: (View) -> VB): VB =
-    itemView.getTag(Int.MIN_VALUE) as? VB ?: bind(itemView).also {
-        itemView.setTag(
-            Int.MIN_VALUE,
-            it
-        )
-    }
 
 @SuppressLint("CheckResult")
 class DownloadTaskAdapter :

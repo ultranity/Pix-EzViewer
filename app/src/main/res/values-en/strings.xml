@@ -297,4 +297,7 @@
     <string name="artificial">No AI</string>
     <string name="assisted">Half AI</string>
     <string name="ai_generated">Full AI</string>
+    <string name="select_reverse">Reverse Selection</string>
+    <string name="flip">Flip</string>
+    <string name="dislike">Undo Bookmark</string>
 </resources>

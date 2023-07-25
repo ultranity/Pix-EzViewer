@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.core
 
 import android.content.Context
 import android.view.View
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -38,7 +39,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.view.NiceImageView
 
-fun NiceImageView.setLike(context: Context, status: Boolean) {
+fun ImageView.setLike(context: Context, status: Boolean) {
     if (status) {
         // setImageResource(R.drawable.heart_red)
         Glide.with(context).load(R.drawable.ic_love).into(this)
@@ -50,6 +51,11 @@ fun NiceImageView.setLike(context: Context, status: Boolean) {
         // alpha = 0.8F
     }
 }
+
+class Payload(
+    val type: String,
+    val value: Any? = null
+)
 
 /**
  *  simple Adapter for image item with heart icon

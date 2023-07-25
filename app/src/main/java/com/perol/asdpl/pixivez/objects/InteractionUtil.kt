@@ -44,43 +44,44 @@ object InteractionUtil {
     // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
     // "image_urls:" + illust.image_urls.toString()
 
-    fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit) {
-        retrofitRepository.postLikeIllustWithTags(item.id, visRestrictTag(item), tagList).subscribe({
-            item.is_bookmarked = true
-            callback()
-        }, {}, {}).add()
+    fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit = { }) {
+        retrofitRepository.postLikeIllustWithTags(item.id, visRestrictTag(item), tagList)
+            .subscribe({
+                item.is_bookmarked = true
+                callback()
+            }, {}, {}).add()
     }
 
-    fun unlike(item: Illust, callback: () -> Unit) {
+    fun unlike(item: Illust, callback: () -> Unit = { }) {
         retrofitRepository.postUnlikeIllust(item.id).subscribe({
             item.is_bookmarked = false
             callback()
         }, {}, {}).add()
     }
 
-    fun follow(item: Illust, callback: () -> Unit) {
+    fun follow(item: Illust, callback: () -> Unit = { }) {
         follow(item.user, need_restrict(item), callback)
     }
 
-    fun follow(user: User, need_restrict: Boolean, callback: () -> Unit) {
+    fun follow(user: User, need_restrict: Boolean, callback: () -> Unit = { }) {
         retrofitRepository.postFollowUser(user.id, visRestrictTag(need_restrict)).subscribe({
             user.is_followed = true
             callback()
         }, {}, {}).add()
     }
 
-    fun unfollow(item: Illust, callback: () -> Unit) {
+    fun unfollow(item: Illust, callback: () -> Unit = { }) {
         unfollow(item.user, callback)
     }
 
-    private fun unfollow(user: User, callback: () -> Unit) {
+    private fun unfollow(user: User, callback: () -> Unit = { }) {
         retrofitRepository.postUnfollowUser(user.id).subscribe({
             user.is_followed = false
             callback()
         }, {}, {}).add()
     }
 
-    fun onDestory() {
+    fun onDestroy() {
         disposables.clear()
     }
 }

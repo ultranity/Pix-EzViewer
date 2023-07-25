@@ -29,6 +29,7 @@ import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.last
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
@@ -56,27 +57,20 @@ abstract class PicListAdapter(
     var hidedFlag = BitSet(data?.size ?: 128) //TODO:consider RoaringBitmap
     var selectedFlag = BitSet(data?.size ?: 128)
     val filtered = BitSet(data?.size ?: 128)
-    fun BitSet.forEach(block: (it: Int) -> Unit) {
-        var i = 0
-        while (i >= 0) {
-            block(i)
-            i = nextSetBit(i)
-        }
-    }
-
-    val BitSet.first
-        get() = nextSetBit(0)
-    val BitSet.last
-        get() = previousSetBit(size())
 
     fun notifyAllChanged() {
         notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
     }
 
     fun notifyFilterChanged() {
-        //filtered.forEach { notifyItemChanged(it) }
+        //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
         notifyItemRangeChanged(headerLayoutCount, filtered.last)
     }
+
+    /**
+     * 包括header位置的position
+     */
+    fun getItemRealPosition(item: Illust) = getItemPosition(item) + headerLayoutCount
 
     /*override fun onConreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return createBaseViewHolder(parent, layoutResId)

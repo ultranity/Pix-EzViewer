@@ -7,16 +7,24 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.afollestad.dragselectrecyclerview.DragSelectReceiver
 import com.afollestad.dragselectrecyclerview.DragSelectTouchListener
 import com.afollestad.dragselectrecyclerview.Mode
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.IllustFilter
+import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.ScreenUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.all
+import com.perol.asdpl.pixivez.objects.rotate
+import com.perol.asdpl.pixivez.objects.setMargins
+import com.perol.asdpl.pixivez.objects.size
 import com.perol.asdpl.pixivez.services.Works
-import org.roaringbitmap.RoaringBitmap
+import com.perol.asdpl.pixivez.view.NiceImageView
 import java.util.BitSet
 
 
@@ -35,26 +43,23 @@ class DownPicListAdapter(
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
         holder.itemView.findViewById<MaterialCardView>(R.id.cardview)
-            .isChecked = selectedFlag.get(getItemPosition(item))
+            .isChecked = selectedFlag.get(getItemRealPosition(item))
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust, payloads: List<Any>) {
         super.convert(holder, item, payloads)
-        holder.itemView.findViewById<MaterialCardView>(R.id.cardview).isChecked =
-            (payloads[0] as Boolean)
+        val payload = payloads[0] as Payload
+        when (payload.type) {
+            "bookmarked" -> {
+                setUILike(item.is_bookmarked, holder.getView<NiceImageView>(R.id.imageview_like))
+            }
+
+            "checked" -> {
+                holder.itemView.findViewById<MaterialCardView>(R.id.cardview).isChecked =
+                    (payload.value as Boolean)
+            }
+        }
     }
-}
-
-private val BitSet.size: Int
-    get() = cardinality()
-val RoaringBitmap.size: Int
-    get() = cardinality
-
-fun RoaringBitmap.set(x: Int, status: Boolean) {
-    if (status)
-        add(x)
-    else
-        remove(x)
 }
 
 class SelectDownloadFragment : PicListFragment() {
@@ -87,7 +92,7 @@ class SelectDownloadFragment : PicListFragment() {
         selectedFlag.flip(index)
         picListAdapter.notifyItemChanged(
             index + picListAdapter.headerLayoutCount,
-            selectedFlag[index]
+            Payload("checked", selectedFlag[index])
         )
         headerBinding.imgBtnSpinner.text = selectedHintStr()
     }
@@ -98,7 +103,10 @@ class SelectDownloadFragment : PicListFragment() {
         override fun getItemCount(): Int = allData?.size ?: 0
         override fun setSelected(index: Int, selected: Boolean) {
             selectedFlag.set(index, selected)
-            picListAdapter.notifyItemChanged(index + picListAdapter.headerLayoutCount, selected)
+            picListAdapter.notifyItemChanged(
+                index + picListAdapter.headerLayoutCount,
+                Payload("checked", selected)
+            )
             headerBinding.imgBtnSpinner.text = selectedHintStr()
         }
     }
@@ -155,10 +163,51 @@ class SelectDownloadFragment : PicListFragment() {
                     getString(R.string.download) +
                             selectedHintStr()
                 )
+                rotate()
                 downloadAllSelected()
                 true
             }
         }
+        FloatingActionButton(requireContext()).apply {
+            binding.coordinatorlayout.addView(this)
+            Glide.with(context).load(R.drawable.ic_love_mono).into(this)
+            //setImageResource(R.drawable.ic_love_mono)
+            setOnClickListener {
+                val status = selectedNotHide().map { it.is_bookmarked }.all()
+                if (status == null) {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.bookmark)
+                        .setMessage(selectedHintStr(true))
+                        .setPositiveButton(R.string.all) { _, _ ->
+                            bookmarkAllSelected(true)
+                        }.setNegativeButton(R.string.flip) { _, _ ->
+                            bookmarkAllSelected(null)
+                        }.setNeutralButton(R.string.dislike) { _, _ ->
+                            bookmarkAllSelected(false)
+                        }.show()
+                } else {
+                    //action to inverse bookmark status
+                    val target = status.not()
+                    setLike(context, target)
+                    //setImageResource(if (status) R.drawable.ic_heart else R.drawable.ic_love)
+                    Toasty.longToast(
+                        getString(if (target) R.string.bookmarked else R.string.dislike) +
+                                selectedHintStr()
+                    )
+                    bookmarkAllSelected(target)
+                    rotate()
+                }
+            }
+            setOnLongClickListener {
+                bookmarkAllSelected(true)
+                rotate()
+                true
+            }
+            setMargins(binding.fab) {
+                it.marginEnd = 2 * it.marginEnd + ScreenUtil.dp2px(60)
+            }
+        }
+
         headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_action_rank)
         headerBinding.imgBtnSpinner.text = selectedHintStr()
         headerBinding.imgBtnSpinner.setOnClickListener {
@@ -182,13 +231,33 @@ class SelectDownloadFragment : PicListFragment() {
         }
     }
 
-    private fun downloadAllSelected() {
-        allData?.let {
-            Works.downloadAll(it.filterIndexed { index, _ ->
-                selectedFlag[index] and !hidedFlag[index]
-            })
+    private fun bookmarkAllSelected(target: Boolean?) {
+        selectedNotHide().forEach {
+            (target ?: it.is_bookmarked.not()).let { st ->
+                if (st) InteractionUtil.like(it) {
+                    picListAdapter.notifyItemChanged(
+                        picListAdapter.getItemRealPosition(it),
+                        Payload("bookmarked")
+                    )
+                }
+                else InteractionUtil.unlike(it) {
+                    picListAdapter.notifyItemChanged(
+                        picListAdapter.getItemRealPosition(it),
+                        Payload("bookmarked")
+                    )
+                }
+            }
         }
     }
+
+    private fun downloadAllSelected() {
+        Works.downloadAll(selectedNotHide())
+    }
+
+    private fun selectedNotHide(): List<Illust> =
+        allData?.filterIndexed { index, _ ->
+            selectedFlag[index] and !hidedFlag[index]
+        } ?: listOf()
 
     private fun selectedHintStr(debug: Boolean = false): String {
         val skiped = selectedButHided.size

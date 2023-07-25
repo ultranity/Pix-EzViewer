@@ -41,12 +41,12 @@ import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
 import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.data.AppDataRepository
 import com.tencent.mmkv.MMKV
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
@@ -201,7 +201,7 @@ class PxEZApp : Application() {
 
             override fun onActivityPostDestroyed(activity: Activity) {
                 super.onActivityPostDestroyed(activity)
-                InteractionUtil.onDestory()
+                InteractionUtil.onDestroy()
             }
 
             override fun onActivityDestroyed(activity: Activity) {

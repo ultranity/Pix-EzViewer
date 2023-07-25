@@ -322,4 +322,6 @@
     <string name="assisted">AI辅助</string>
     <string name="ai_generated">AI生成</string>
     <string name="select_reverse">反选</string>
+    <string name="flip">反转状态</string>
+    <string name="dislike">取消收藏</string>
 </resources>

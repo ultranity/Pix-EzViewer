@@ -2,17 +2,19 @@
 <com.google.android.material.button.MaterialButtonToggleGroup xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toggle_restrict"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
     app:singleSelection="true"
     app:selectionRequired="true">
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_all"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="@string/all" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_public"
         style="?attr/materialButtonOutlinedStyle"

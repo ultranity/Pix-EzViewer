@@ -25,9 +25,9 @@
 package com.perol.asdpl.pixivez.core
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
+import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import io.reactivex.Observable
 import kotlin.properties.Delegates
 
@@ -47,8 +47,8 @@ class UserListViewModel : BaseViewModel() {
         }
         onLoadFirstRx = when (mode) {
             "Following" -> {
+                needHeader = true
                 {
-                    needHeader = true
                     retrofit.getUserFollowing(userid, restrict)
                 }
             }

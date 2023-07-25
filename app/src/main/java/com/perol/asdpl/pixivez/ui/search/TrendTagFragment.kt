@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.getMaxColumn
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 
@@ -64,13 +65,13 @@ class TrendTagFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textViewClearAll.setOnClickListener {
+        binding.clearAll.setOnClickListener {
             viewModel.clearHistory()
         }
         //binding.recyclerview.isNestedScrollingEnabled = false
         binding.recyclerview.layoutManager =
             StaggeredGridLayoutManager(
-                requireContext().resources.configuration.orientation * 3,
+                getMaxColumn(50 + requireContext().resources.configuration.orientation * 100),
                 StaggeredGridLayoutManager.VERTICAL
             )
         val trendingtagAdapter =
@@ -115,9 +116,9 @@ class TrendTagFragment : Fragment() {
             if (it.size > foldedChipIndex) binding.chipgroup.addView(getExpandChip())
 
             if (it.isNotEmpty()) {
-                binding.textViewClearAll.visibility = View.VISIBLE
+                binding.clearAll.visibility = View.VISIBLE
             } else {
-                binding.textViewClearAll.visibility = View.GONE
+                binding.clearAll.visibility = View.GONE
             }
         }
         viewModel.getIllustTrendTags()
@@ -146,6 +147,7 @@ class TrendTagFragment : Fragment() {
                 android.R.attr.textColorPrimary
             )
         )
+        chip.iconEndPadding = 0F
         chip.setOnClickListener {
             binding.chipgroup.removeViewAt(foldedChipIndex)
             viewModel.searchHistory.value!!.drop(foldedChipIndex).forEachIndexed { index, s ->

@@ -290,7 +290,7 @@ class PictureXFragment : BaseFragment() {
                 Toast.LENGTH_SHORT
             ).show()
             val tagsBookMarkDialog = TagsBookMarkDialog()
-            tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog::class.java.name)
+            tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog.TAG)
             true
         }
         binding.imageButton.setOnClickListener {

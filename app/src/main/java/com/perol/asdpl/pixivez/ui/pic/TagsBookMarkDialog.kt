@@ -82,4 +82,8 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
                 pictureXViewModel.onDialogClick(true)
             }
     }
+
+    companion object {
+        val TAG: String = "BookmarkTags"
+    }
 }

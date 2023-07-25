@@ -5,10 +5,6 @@
         <item>公開</item>
         <item>非公開</item>
     </string-array>
-    <string-array name="user">
-        <item>公開</item>
-        <item>非公開</item>
-    </string-array>
     <string-array name="sort">
         <item>デフォルト</item>
         <item>デフォルト(古い順)</item>

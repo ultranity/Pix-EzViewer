@@ -5,10 +5,6 @@
         <item>公開的</item>
         <item>非公開</item>
     </string-array>
-    <string-array name="user">
-        <item>公開的</item>
-        <item>非公開</item>
-    </string-array>
     <string-array name="sort">
         <item>預設</item>
         <item>預設asc</item>

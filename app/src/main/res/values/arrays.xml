@@ -10,10 +10,6 @@
         <item>公开的</item>
         <item>非公开</item>
     </string-array>
-    <string-array name="user">
-        <item>公开的</item>
-        <item>非公开</item>
-    </string-array>
     <string-array name="sort">
         <item>默认</item>
         <item>默认asc</item>

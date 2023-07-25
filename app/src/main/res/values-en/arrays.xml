@@ -5,10 +5,6 @@
         <item>Public</item>
         <item>Private</item>
     </string-array>
-    <string-array name="user">
-        <item>Public</item>
-        <item>Private</item>
-    </string-array>
     <string-array name="sort">
         <item>default</item>
         <item>default asc</item>

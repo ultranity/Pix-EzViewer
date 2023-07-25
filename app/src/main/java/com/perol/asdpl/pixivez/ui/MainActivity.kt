@@ -37,29 +37,40 @@ import android.text.InputType
 import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.databinding.AppMainBinding
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
 import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
+import com.perol.asdpl.pixivez.objects.LARGE_SCREEN_WIDTH_SIZE
+import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
+import com.perol.asdpl.pixivez.objects.dp
+import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.account.LoginActivity
-import com.perol.asdpl.pixivez.ui.home.ActivityHelloMBinding
 import com.perol.asdpl.pixivez.ui.home.HelloMainViewPager
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
@@ -72,7 +83,98 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    /** ref: AdaptiveUtil in Material catalog
+     * Updates the visibility of the main navigation view components according to screen size.
+     *
+     *
+     * The small screen layout should have a bottom navigation and optionally a fab. The medium
+     * layout should have a navigation rail with a fab, and the large layout should have a navigation
+     * drawer with an extended fab.
+     */
+    private fun updateNavigationViewLayout() {
+        //binding.contentView.fitsSystemWindows = true
+        val fab: FloatingActionButton? = null
+        val navFab: ExtendedFloatingActionButton? = null
+        val screenWidthDp = screenWidthDp()
+        if (screenWidthDp < MEDIUM_SCREEN_WIDTH_SIZE) {
+            // Small screen
+            binding.navToolbar.visibility = View.VISIBLE
+            binding.navRail.visibility = View.GONE
+            binding.navDrawer.visibility = View.GONE
+            val useBottomBar = PxEZApp.instance.pre.getBoolean("bottomAppbar", true)
+            if (useBottomBar) {
+                binding.appBarLayout.visibility = View.GONE
+                binding.navToolbar.removeAllViews()
+                binding.bottomToolbar.addView(binding.tablayout)
+                binding.bottomToolbar.visibility = View.VISIBLE
+                binding.navContainer.fitsSystemWindows = true
+
+                /* // mannual fitsystemwindows
+                 val decorView = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    window.decorView.rootWindowInsets.systemWindowInsetTop
+                } else { 20.dp }
+                binding.contentView.setPadding(0, 30.dp, 0, 0)*/
+
+                setSupportActionBar(binding.bottomToolbar)
+            } else {
+                binding.appBarLayout.visibility = View.VISIBLE
+                binding.appBarLayout.fitsSystemWindows = true
+                setSupportActionBar(binding.navToolbar)
+                //binding.navContainer.fitsSystemWindows = false
+            }
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            ActionBarDrawerToggle(
+                this, binding.drawerLayout,
+                if (useBottomBar) binding.bottomToolbar else binding.navToolbar,
+                R.string.menu, R.string.menu
+            ).apply {
+                setHomeAsUpIndicator(R.drawable.ic_action_logo)
+                isDrawerIndicatorEnabled = true
+                setToolbarNavigationClickListener {
+                    binding.drawerLayout.openDrawer(GravityCompat.START)
+                }
+                binding.drawerLayout.addDrawerListener(this)
+                syncState()
+            }
+        } else { //if (screenWidth < LARGE_SCREEN_WIDTH_SIZE) {
+            // Medium screen
+            //fab?.visibility = View.GONE
+            //navFab?.shrink()
+            binding.navToolbar.visibility = View.GONE
+            binding.navRail.visibility = View.VISIBLE
+            binding.navDrawer.visibility = View.GONE
+            //binding.navRail.setOnItemReselectedListener {
+            //}
+            binding.navRail.setOnItemSelectedListener {
+                onOptionsItemSelected(it)
+            }
+            // Set navigation menu button to show modal navigation drawer.
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            binding.navRail.headerView!!.findViewById<ImageView>(R.id.nav_button)
+                .setOnClickListener { binding.drawerLayout.openDrawer(binding.navView) }
+
+            binding.navContainer.fitsSystemWindows = true
+            val navRailWidth = 64.dp
+            /* //custom padding to navRail when not constrained
+            binding.contentView.layoutParams.width = screenWidthPx() - navRailWidth
+            binding.contentView.setPadding(navRailWidth, 0, 0, 0)
+            binding.contentView.setPadding(0, 28.dp, 0, 0)
+            binding.contentView.translationX = navRailWidth.toFloat()*/
+            if (screenWidthDp < LARGE_SCREEN_WIDTH_SIZE) {
+                binding.navRail.layoutParams.width = navRailWidth
+            }
+        }/* else {
+            // Large screen
+            fab?.visibility = View.GONE
+            navFab?.extend()
+            binding.navToolBar.visibility = View.GONE
+            binding.navRail.visibility = View.GONE
+            binding.navDrawer?.visibility = View.VISIBLE
+        }*/
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -144,43 +246,24 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
-    private lateinit var binding: ActivityHelloMBinding
+    private lateinit var binding: AppMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AppDataRepo.userInited().not()) {
-            startActivity(Intent(this@HelloMActivity, LoginActivity::class.java))
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
             return
         }
-        binding = ActivityHelloMBinding.inflate(
-            layoutInflater,
-            if (PxEZApp.instance.pre.getBoolean("bottomAppbar", true))
-                R.layout.app_main_bottombar else
-                R.layout.activity_hello_m,
-        )
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        val toggle = ActionBarDrawerToggle(
-            this,
-            binding.drawerLayout,
-            binding.toolbar,
-            R.string.menu,
-            R.string.menu
-        )
-        toggle.setHomeAsUpIndicator(R.drawable.ic_action_logo)
-        toggle.isDrawerIndicatorEnabled = true
-        toggle.setToolbarNavigationClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }
-        binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        binding.navView.setNavigationItemSelectedListener(this)
         val permissionList = ArrayList<String>()
         permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
 
+        binding = AppMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        updateNavigationViewLayout()
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.navView.setNavigationItemSelectedListener(this)
         //initView()
         binding.tablayout.setupWithViewPager(binding.contentView)
         binding.contentView.adapter = HelloMainViewPager(supportFragmentManager)
@@ -190,12 +273,21 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
         val position = PxEZApp.instance.pre.getString("firstpage", "0")?.toInt() ?: 0
         binding.tablayout.selectTab(binding.tablayout.getTabAt(position)!!)
+        if (binding.navRail.isVisible) binding.tablayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
 
-        initNavDrawer(
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                binding.navRail.selectedItemId = binding.navRail.menu.getItem(tab.position).itemId
+            }
+        })
+        initNavDrawerHeader(
             NavHeaderMainBinding.bind(binding.navView.getHeaderView(0)),
             AppDataRepo.currentUser
         )
-
+        // reset icon after setupWithViewPager 清空所有tab
         for (i in 0..2) {
             val tabItem = binding.tablayout.getTabAt(i)!!
             tabItem.icon = when (i) {
@@ -239,9 +331,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                             item = getInputField().text.toString()
                             pre.edit().putString("lastclip2", item).apply()
                             if ((item).toLongOrNull() != null) {
-                                PictureActivity.start(this@HelloMActivity, item.toLong())
+                                PictureActivity.start(this@MainActivity, item.toLong())
                             } else {
-                                SearchResultActivity.start(this@HelloMActivity, item, 1)
+                                SearchResultActivity.start(this@MainActivity, item, 1)
                             }
                         }
                         neutralButton(R.string.not_this_one) {
@@ -300,18 +392,18 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
     }
 
-    private fun initNavDrawer(header: NavHeaderMainBinding, user: UserEntity) {
+    private fun initNavDrawerHeader(header: NavHeaderMainBinding, user: UserEntity) {
         Glide.with(header.imageView.context)
             .load(user.userimage)
             .circleCrop().into(header.imageView)
         header.imageView.setOnClickListener {
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
-                    this@HelloMActivity,
+                    this@MainActivity,
                     Pair(header.imageView, "userimage")
                 ).toBundle()
             } else null
-            UserMActivity.start(this@HelloMActivity, AppDataRepo.currentUser, options)
+            UserMActivity.start(this@MainActivity, AppDataRepo.currentUser, options)
             binding.drawerLayout.close()
         }
 
@@ -319,8 +411,8 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         header.textView.text = user.useremail
     }
 
-    private inline fun initView() {
-        /*if (PxEZApp.instance.pre.getBoolean("refreshTab", true))
+    /* private inline fun initView() {
+        ifPxEZApp.instance.pre.getBoolean("refreshTab", true))
             getFragmentContent(position).let {
                 supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
             }
@@ -337,8 +429,8 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         }
         else {
             curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
-        }*/
-    }
+        }
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
@@ -347,7 +439,27 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.nav_main -> {
+                binding.tablayout.selectTab(binding.tablayout.getTabAt(0)!!)
+                true
+            }
+
+            R.id.nav_trend -> {
+                binding.tablayout.selectTab(binding.tablayout.getTabAt(1)!!)
+                true
+            }
+
+            R.id.nav_follow -> {
+                binding.tablayout.selectTab(binding.tablayout.getTabAt(2)!!)
+                true
+            }
+
             R.id.action_search -> {
+                if (binding.navRail.isVisible) //action_search selection in navRail should be reset
+                    binding.navRail.postDelayed(500) { //after onOptionsItemSelected
+                        binding.navRail.selectedItemId =
+                            binding.navRail.menu.getItem(binding.tablayout.selectedTabPosition).itemId
+                    }
                 val intent = Intent(this, SearchActivity::class.java)
                 startActivity(intent)
                 true

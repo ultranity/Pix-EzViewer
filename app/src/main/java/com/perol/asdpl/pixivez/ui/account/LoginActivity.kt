@@ -46,7 +46,7 @@ import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.ui.HelloMActivity
+import com.perol.asdpl.pixivez.ui.MainActivity
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.settings.FirstInfoDialog
 import com.perol.asdpl.pixivez.ui.settings.SettingsActivity
@@ -162,7 +162,7 @@ class LoginActivity : RinkActivity() {
                         .subscribe({
                             Toasty.shortToast(R.string.login_success)
                             val intent =
-                                Intent(this@LoginActivity, HelloMActivity::class.java).apply {
+                                Intent(this@LoginActivity, MainActivity::class.java).apply {
                                     // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
                                     flags =
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"

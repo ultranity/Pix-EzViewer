@@ -30,7 +30,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.objects.dp2px
+import com.perol.asdpl.pixivez.objects.dp
 
 //src: https://github.com/shehuan/NiceImageView/blob/master/niceimageview/src/main/java/com/shehuan/niv/NiceImageView.java
 
@@ -338,7 +338,7 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setBorderWidth(borderWidth: Int) {
-        this.borderWidth = dp2px(borderWidth)
+        this.borderWidth = borderWidth.dp
         calculateRadiiAndRectF(false)
     }
 
@@ -348,7 +348,7 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setInnerBorderWidth(innerBorderWidth: Int) {
-        this.innerBorderWidth = dp2px(innerBorderWidth)
+        this.innerBorderWidth = innerBorderWidth.dp
         clearInnerBorderWidth()
         invalidate()
     }
@@ -359,27 +359,27 @@ class NiceImageView @JvmOverloads constructor(
     }
 
     fun setCornerRadius(cornerRadius: Int) {
-        this.cornerRadius = dp2px(cornerRadius)
+        this.cornerRadius = cornerRadius.dp
         calculateRadiiAndRectF(false)
     }
 
     fun setCornerTopLeftRadius(cornerTopLeftRadius: Int) {
-        this.cornerTopLeftRadius = dp2px(cornerTopLeftRadius)
+        this.cornerTopLeftRadius = cornerTopLeftRadius.dp
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerTopRightRadius(cornerTopRightRadius: Int) {
-        this.cornerTopRightRadius = dp2px(cornerTopRightRadius)
+        this.cornerTopRightRadius = cornerTopRightRadius.dp
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerBottomLeftRadius(cornerBottomLeftRadius: Int) {
-        this.cornerBottomLeftRadius = dp2px(cornerBottomLeftRadius)
+        this.cornerBottomLeftRadius = cornerBottomLeftRadius.dp
         calculateRadiiAndRectF(true)
     }
 
     fun setCornerBottomRightRadius(cornerBottomRightRadius: Int) {
-        this.cornerBottomRightRadius = dp2px(cornerBottomRightRadius)
+        this.cornerBottomRightRadius = cornerBottomRightRadius.dp
         calculateRadiiAndRectF(true)
     }
 

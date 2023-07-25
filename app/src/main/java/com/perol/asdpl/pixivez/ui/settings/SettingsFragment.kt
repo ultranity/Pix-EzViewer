@@ -60,7 +60,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppUpdater
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.ui.HelloMActivity
+import com.perol.asdpl.pixivez.ui.MainActivity
 import java.io.File
 import java.io.FilenameFilter
 
@@ -210,7 +210,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun snackbarForceRestart() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
-                val intent = Intent(context, HelloMActivity::class.java)
+                val intent = Intent(context, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 requireContext().startActivity(intent)
             }.show()

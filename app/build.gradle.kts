@@ -305,7 +305,8 @@ dependencies {
     //implementation("net.gotev:cookie-store:1.5.0")
     //implementation("net.gotev:cookie-store-okhttp:1.5.0")
 
-    implementation("com.daimajia.swipelayout:library:1.2.0@aar")
+    //TODO: check implementation("com.daimajia.swipelayout:library:1.2.0@aar")
+    // implementation("com.github.Dhaval2404:ColorPicker:2.3")
 
     //implementation("com.robertlevonyan.view:CustomFloatingActionButton:3.1.5")
     //implementation("com.github.clans:fab:1.6.4")

@@ -139,7 +139,7 @@ class TrendTagFragment : Fragment() {
 
     private fun getExpandChip(): Chip {
         val chip = Chip(requireContext())
-        chip.setChipIconResource(R.drawable.ic_action_expand)
+        chip.setChipIconResource(R.drawable.ic_menu_more)
         chip.setChipIconTintResource(
             ThemeUtil.getAttrResID(
                 requireContext(),

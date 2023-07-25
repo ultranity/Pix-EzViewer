@@ -14,7 +14,7 @@
             android:title="@string/walk_through" />
         <item
             android:id="@+id/nav_search_pic"
-            android:icon="@drawable/ic_action_logo"
+            android:icon="@drawable/ic_gallery"
             android:title="@string/searchsource" />
         <item
             android:id="@+id/nav_history"

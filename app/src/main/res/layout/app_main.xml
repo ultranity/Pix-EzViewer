@@ -10,13 +10,14 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:fitsSystemWindows="true"
+            android:fitsSystemWindows="false"
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:elevation="0dp">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/nav_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
@@ -26,7 +27,9 @@
                 app:contentInsetStart="0.0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_scrollFlags="scroll|snap|enterAlways">
-
+                <!--include
+                    android:id="@+id/tablayout"
+                    layout="@layout/app_main_tabs"/-->
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tablayout"
                     style="@style/Widget.MaterialComponents.TabLayout.Colored"
@@ -53,16 +56,66 @@
                         android:layout_height="wrap_content"
                         android:icon="@drawable/ic_action_user" />
                 </com.google.android.material.tabs.TabLayout>
-
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.viewpager.widget.ViewPager
+        <!-- Container of the nav rail or nav drawer. -->
+        <LinearLayout
+            android:id="@+id/nav_container"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:id="@+id/content_view"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <!-- Navigation drawer to be used for large screens. -->
+            <com.google.android.material.navigation.NavigationView
+                android:id="@+id/nav_drawer"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:headerLayout="@layout/nav_header_rail"
+                app:menu="@menu/nav_drawer" />
+
+            <!-- Navigation rail to be used for medium screens. -->
+            <com.google.android.material.navigationrail.NavigationRailView
+                android:id="@+id/nav_rail"
+                android:visibility="gone"
+                android:fitsSystemWindows="false"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:labelVisibilityMode="unlabeled"
+                app:headerLayout="@layout/nav_header_rail"
+                app:menu="@menu/nav_drawer"
+                app:menuGravity="center" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/content_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+            android:id="@+id/bottom_toolbar"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/MyToolbar"
+            android:paddingTop="0dp"
+            app:contentInsetEndWithActions="0dp"
+            app:contentInsetStart="0.0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:menuAlignmentMode="auto"
+            app:hideOnScroll="true">
+
+            <ViewStub
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:id="@+id/bottom_tabs" />
+        </com.google.android.material.bottomappbar.BottomAppBar>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView

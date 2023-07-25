@@ -47,33 +47,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:iconifiedByDefault="false" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_search"
+                style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorHeight="3dp"
+                app:tabMode="auto">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/word" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/illustid" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/painterid" />
+            </com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tablayout_searchm"
-            style="@style/Widget.MaterialComponents.TabLayout.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:tabIndicatorFullWidth="true"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="auto">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/word" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/illustid" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/painterid" />
-        </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView

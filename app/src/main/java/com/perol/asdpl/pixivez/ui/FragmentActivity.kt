@@ -71,10 +71,10 @@ class FragmentActivity : RinkActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (savedInstanceState != null) {
+            //TODO: check if need getFragment
             val oldFragment = supportFragmentManager.findFragmentByTag(targetTag)
             if (oldFragment != null)
-                supportFragmentManager.fragments
-            return
+                return
         }
         val targetFragment: Fragment = target.factory?.let {
             it().apply {

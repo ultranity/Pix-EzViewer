@@ -133,7 +133,7 @@
     <string name="savegifsuccesserr">保存动图失败</string>
     <string name="crash_report">报告</string>
     <string name="feed_back">反馈</string>
-    <string name="title_activity_search_r" translatable="false">SearchRActivity</string>
+    <string name="title_activity_search_r" translatable="false">SearchActivity</string>
     <string name="title_activity_setting" translatable="false">SettingActivity</string>
     <string name="needstatusbar">异形屏：详情状态栏不沉浸</string>
     <string name="refreshTab">tab自动刷新</string>

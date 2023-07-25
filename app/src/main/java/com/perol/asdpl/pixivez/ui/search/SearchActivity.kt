@@ -33,6 +33,7 @@ import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.core.text.isDigitsOnly
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -52,17 +53,17 @@ class SearchActivity : RinkActivity() {
         }
     }
 
-    lateinit var searchRActivityFragment: SearchActivityFragment
+    lateinit var searchActivityFragment: SearchActivityFragment
     lateinit var trendTagFragment: TrendTagFragment
     lateinit var tagsTextViewModel: TagsTextViewModel
     lateinit var trendTagViewModel: TrendTagViewModel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (searchRActivityFragment.isHidden) {
+                if (searchActivityFragment.isHidden) {
                     this.finish()
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchRActivityFragment)
+                    supportFragmentManager.beginTransaction().hide(searchActivityFragment)
                         .show(trendTagFragment).commit()
                 }
                 return true
@@ -93,28 +94,30 @@ class SearchActivity : RinkActivity() {
         tagsTextViewModel = ViewModelProvider(this)[TagsTextViewModel::class.java]
         trendTagViewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         if (savedInstanceState == null) {
-            searchRActivityFragment = SearchActivityFragment()
+            searchActivityFragment = SearchActivityFragment()
             trendTagFragment = TrendTagFragment()
-            val transaction = supportFragmentManager.beginTransaction().apply {
+            supportFragmentManager.commit {
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack so the user can navigate back
-                add(R.id.fragment, searchRActivityFragment)
+                add(R.id.fragment, searchActivityFragment)
                 add(R.id.fragment, trendTagFragment)
-                hide(searchRActivityFragment)
+                hide(searchActivityFragment)
             }
-            transaction.commit()
         } else {
-            searchRActivityFragment = supportFragmentManager.getFragment(
+            searchActivityFragment = supportFragmentManager.getFragment(
                 savedInstanceState,
-                "searchRActivityFragment"
+                "searchActivityFragment"
             ) as SearchActivityFragment
             trendTagFragment = supportFragmentManager.getFragment(
                 savedInstanceState,
                 "trendTagFragment"
             ) as TrendTagFragment
+            supportFragmentManager.commit {
+                hide(searchActivityFragment)
+            }
         }
-        binding.tablayoutSearchm.clearOnTabSelectedListeners()
-        binding.tablayoutSearchm.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tablayoutSearch.clearOnTabSelectedListeners()
+        binding.tablayoutSearch.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -129,11 +132,11 @@ class SearchActivity : RinkActivity() {
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-        binding.searchviewText.onActionViewExpanded()
+        // binding.searchviewText.onActionViewExpanded()
         binding.searchviewText.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrBlank()) {
-                    when (binding.tablayoutSearchm.selectedTabPosition) {
+                    when (binding.tablayoutSearch.selectedTabPosition) {
                         0 -> {
                             trendTagViewModel.addhistory(query)
                             searchFor(query)
@@ -154,7 +157,7 @@ class SearchActivity : RinkActivity() {
                         }
                     }
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchRActivityFragment)
+                    supportFragmentManager.beginTransaction().hide(searchActivityFragment)
                         .show(trendTagFragment).commit()
                 }
 
@@ -162,14 +165,14 @@ class SearchActivity : RinkActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (binding.tablayoutSearchm.selectedTabPosition != 0) {
+                if (binding.tablayoutSearch.selectedTabPosition != 0) {
                     return true
                 }
                 if (!newText.isNullOrBlank()) {
                     tagsTextViewModel.onQueryTextChange(newText)
                 }
                 supportFragmentManager.beginTransaction().hide(trendTagFragment)
-                    .show(searchRActivityFragment).commit()
+                    .show(searchActivityFragment).commit()
                 return true
             }
         })
@@ -182,8 +185,8 @@ class SearchActivity : RinkActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         supportFragmentManager.putFragment(
             outState,
-            "searchRActivityFragment",
-            searchRActivityFragment
+            "searchActivityFragment",
+            searchActivityFragment
         )
         supportFragmentManager.putFragment(outState, "trendTagFragment", trendTagFragment)
         super.onSaveInstanceState(outState)

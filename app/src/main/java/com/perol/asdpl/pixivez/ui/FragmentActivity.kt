@@ -9,7 +9,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.SelectDownloadFragment
+import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.databinding.ActivityFragmentHostBinding
 import com.perol.asdpl.pixivez.ui.account.AccountFragment
 import com.perol.asdpl.pixivez.ui.pic.ZoomFragment
@@ -23,7 +25,7 @@ import kotlin.reflect.KFunction0
 class FragmentActivity : RinkActivity() {
     @Parcelize
     class FragmentItem(
-        val factory: KFunction0<Fragment>,
+        val factory: KFunction0<Fragment>?,
         val title: Int?,
     ) : Parcelable
 
@@ -36,6 +38,7 @@ class FragmentActivity : RinkActivity() {
             "History" to FragmentItem(::HistoryFragment, R.string.view_history),
             "Collect" to FragmentItem(::SelectDownloadFragment, R.string.download),
             "Zoom" to FragmentItem(::ZoomFragment, null),
+            TAG_TYPE.WalkThrough.name to FragmentItem(null, R.string.walk_through)
         )
 
         fun start(
@@ -58,7 +61,7 @@ class FragmentActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFragmentHostBinding.inflate(layoutInflater)
-        val targetTag = intent.extras!!.getString("target")
+        val targetTag = intent.extras!!.getString("target")!!
         val target = fragments[targetTag]!!
         (intent.extras!!.getString("title")?.toIntOrNull() ?: target.title)?.let {
             binding.toolbar.title = getString(it)
@@ -73,8 +76,11 @@ class FragmentActivity : RinkActivity() {
                 supportFragmentManager.fragments
             return
         }
-        val targetFragment = target.factory()
-        targetFragment.arguments = intent.extras!!.getBundle("args")
+        val targetFragment: Fragment = target.factory?.let {
+            it().apply {
+                arguments = intent.extras!!.getBundle("args")
+            }
+        } ?: PicListFragment.newInstance(targetTag)
         supportFragmentManager.beginTransaction()
             .replace(R.id.nav_host, targetFragment, targetTag).commit()
     }

@@ -10,6 +10,10 @@
             android:title="@string/account_management" />
         <item
             android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_star"
+            android:title="@string/walk_through" />
+        <item
+            android:id="@+id/nav_search_pic"
             android:icon="@drawable/ic_action_logo"
             android:title="@string/searchsource" />
         <item

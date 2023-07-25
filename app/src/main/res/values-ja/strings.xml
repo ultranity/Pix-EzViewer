@@ -298,4 +298,7 @@
     <string name="assisted">Half AI</string>
     <string name="ai_generated">Full AI</string>
     <string name="select_reverse">反選</string>
+    <string name="flip">狀態反轉</string>
+    <string name="dislike">取消收藏</string>
+    <string name="walk_through">速覽漫步</string>
 </resources>

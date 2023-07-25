@@ -51,6 +51,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
@@ -77,6 +78,10 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_gallery -> {
+                FragmentActivity.start(this, TAG_TYPE.WalkThrough.name)
+            }
+
+            R.id.nav_search_pic -> {
                 startActivity(Intent(this, SaucenaoActivity::class.java))
             }
 

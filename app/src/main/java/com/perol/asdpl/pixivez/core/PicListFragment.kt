@@ -64,7 +64,7 @@ open class PicListFragment : Fragment() {
         @JvmStatic
         fun newInstance(
             mode: String,
-            tabPosition: Int,
+            tabPosition: Int = 0,
             extraArgs: MutableMap<String, Any?>? = null
         ) =
             PicListFragment().apply {

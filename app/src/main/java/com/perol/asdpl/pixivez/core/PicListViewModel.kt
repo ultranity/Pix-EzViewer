@@ -40,6 +40,7 @@ enum class RESTRICT_TYPE {
     private,
 }
 enum class TAG_TYPE {
+    WalkThrough,
     Recommend,
     Rank,
     MyFollow,
@@ -102,46 +103,50 @@ open class PicListViewModel : BaseViewModel() {
         if (extraArgs != null) {
             this.args = extraArgs
         }
-        onLoadFirstRx = when (mode) {
-            "Recommend" -> {
+        onLoadFirstRx = when (TAG_TYPE.valueOf(mode)) {
+            TAG_TYPE.WalkThrough -> {
+                { retrofit.getWalkThrough() }
+            }
+
+            TAG_TYPE.Recommend -> {
                 { retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) } }
             }
-            "Rank" -> {
+
+            TAG_TYPE.Rank -> {
                 { retrofit.getIllustRanking(args["mode"] as String, args["pickDate"] as String?) }
             }
-            "MyFollow" -> {
+
+            TAG_TYPE.MyFollow -> {
                 { retrofit.getFollowIllusts(restrict.value!!.name) }
             }
 
-            "UserIllust" -> {
+            TAG_TYPE.UserIllust -> {
                 { retrofit.getUserIllusts(args["userid"] as Long, "illust") }
             }
-            "UserManga" -> {
+
+            TAG_TYPE.UserManga -> {
                 { retrofit.getUserIllusts(args["userid"] as Long, "manga") }
             }
-            "UserBookmark" -> {
+
+            TAG_TYPE.UserBookmark -> {
                 {
                     val id = args["userid"] as Long
-                    val pub = args["pub"] as String??:"public"
+                    val pub = args["pub"] as String? ?: "public"
                     if (tags == null) {
                         getTags(id)
                     }
                     retrofit.getLikeIllust(
-                        id,pub,
+                        id, pub,
                         args["tag"] as String?
                     )
 
                 }
             }
 
-            "Collect" -> {
+            TAG_TYPE.Collect -> {
                 {
                     Observable.just(1).map { IllustNext(DataHolder.tmpList ?: arrayListOf(), null) }
                 }
-            }
-
-            else -> {
-                { retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) } }
             }
         }
     }

@@ -107,6 +107,8 @@ class RetrofitRepository {
     fun getPixivison(category: String): Observable<SpotlightResponse> =
         Request(appApiPixivService.getPixivisionArticles(category))
 
+    fun getWalkThrough(): Observable<IllustNext> = Request(appApiPixivService.walkthroughIllusts())
+
     fun getRecommend(): Observable<RecommendResponse> = Request(appApiPixivService.getRecommend())
 
     fun getSearchIllustPreview(

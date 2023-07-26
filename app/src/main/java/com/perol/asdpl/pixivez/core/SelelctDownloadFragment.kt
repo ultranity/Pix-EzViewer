@@ -2,6 +2,7 @@ package com.perol.asdpl.pixivez.core
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.afollestad.dragselectrecyclerview.DragSelectReceiver
@@ -235,6 +236,15 @@ class SelectDownloadFragment : PicListFragment() {
                 .setOnDismissListener {
                     setBtnHintText()
                 }.show()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+            if (selectedFlag.isEmpty) {
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+            selectedFlag.clear()
+            picListAdapter.notifyFilterChanged()
         }
     }
 

@@ -130,7 +130,7 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.illustDetail.observe(viewLifecycleOwner) { it ->
             binding.progressView.visibility = View.GONE
             if (it != null) {
-                //position = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
+                page_size = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
                 // stop loading here if blocked
                 checkBlock(it)
                 loadIllust(it)
@@ -267,7 +267,7 @@ class PictureXFragment : BaseFragment() {
             true
         }
         binding.imageButton.setOnClickListener {
-            binding.recyclerview.scrollToPosition(position)
+            binding.recyclerview.scrollToPosition(page_size)
             binding.constraintLayoutFold.visibility = View.INVISIBLE
         }
         binding.recyclerview.layoutManager = LinearLayoutManager(requireActivity())
@@ -285,9 +285,9 @@ class PictureXFragment : BaseFragment() {
                             findLastCompletelyVisibleItemPosition().toString()+" "+
                             findFirstVisibleItemPosition().toString() +" "+
                             findLastVisibleItemPosition().toString()+" "+position)*/
-                    if (findFirstVisibleItemPosition() <= position && findLastVisibleItemPosition() >= position - 1) {
+                    if (findFirstVisibleItemPosition() <= page_size && findLastVisibleItemPosition() >= page_size - 1) {
                         binding.constraintLayoutFold.visibility = View.INVISIBLE
-                    } else if (findFirstVisibleItemPosition() > position || findLastVisibleItemPosition() < position) {
+                    } else if (findFirstVisibleItemPosition() > page_size || findLastVisibleItemPosition() < page_size) {
                         binding.constraintLayoutFold.visibility = View.VISIBLE
                     }
                 }
@@ -332,11 +332,11 @@ class PictureXFragment : BaseFragment() {
         if (!this::binding.isInitialized) {
             binding = FragmentPictureXBinding.inflate(inflater, container, false)
         }
-        position = illustobj?.meta_pages?.size ?: 1
+        page_size = illustobj?.meta_pages?.size ?: 1
         return binding.root
     }
 
-    var position = 0
+    var page_size = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

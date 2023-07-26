@@ -33,7 +33,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
@@ -64,7 +63,7 @@ class Payload(
 open class PicListXAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    filter: IllustFilter
+    filter: PicListFilter
 ) :
     PicListAdapter(layoutResId, data, filter) {
 

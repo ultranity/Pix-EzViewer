@@ -76,6 +76,7 @@ import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
+import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
 import com.waynejo.androidndkgif.GifEncoder
@@ -97,15 +98,19 @@ import java.io.File
 // TODO: save zip ugoira by default
 class PictureXAdapter(
     private val pictureXViewModel: PictureXViewModel,
-    private val data: Illust,
     private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private lateinit var data: Illust
+    fun setInstance(illusts: Illust) {
+        data = illusts
+        initConfig()
+    }
+
     private val imageUrls = ArrayList<String>()
     private val imageThumbnailUrls = ArrayList<String>()
     val pre = PxEZApp.instance.pre
     lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
-    private lateinit var mBookmarkedUserListen: () -> Unit
     private lateinit var mUserPicLongClick: () -> Unit
     fun setUserPicLongClick(listener: () -> Unit) {
         this.mUserPicLongClick = listener
@@ -119,11 +124,8 @@ class PictureXAdapter(
         this.mViewCommentListen = listener
     }
 
-    fun setBookmarkedUserListen(listener: () -> Unit) {
-        this.mBookmarkedUserListen = listener
-    }
 
-    init {
+    fun initConfig() {
         val quality =
             pre.getString("quality", "0")?.toInt() ?: 0
         when (quality) {
@@ -198,7 +200,6 @@ class PictureXAdapter(
             mContext: Context,
             illust: Illust,
             mViewCommentListen: () -> Unit,
-            mBookmarkedUserListen: () -> Unit,
             mUserPicLongClick: () -> Unit
         ) {
             //binding.illust = illust
@@ -246,7 +247,7 @@ class PictureXAdapter(
                 mViewCommentListen.invoke()
             }
             binding.bookmarkedUserNum.setOnClickListener {
-                mBookmarkedUserListen.invoke()
+                UserRelatedListFragment.start(mContext, illust.id)
             }
             // google translate app btn click listener
             val intent = Intent()
@@ -468,7 +469,6 @@ class PictureXAdapter(
                     mContext,
                     data,
                     mViewCommentListen,
-                    mBookmarkedUserListen,
                     mUserPicLongClick
                 )
 
@@ -674,9 +674,9 @@ class PictureXAdapter(
 
     private var isEncoding = false
 
-    private val path: String =
+    private val path: String by lazy {
         PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".gif"
-
+    }
     private fun showGIFDialog(path2: String) {
         MaterialDialog(mContext).show {
             title(R.string.choice)

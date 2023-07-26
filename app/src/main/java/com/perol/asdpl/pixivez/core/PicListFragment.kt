@@ -148,7 +148,8 @@ open class PicListFragment : Fragment() {
                 picListAdapter.loadMoreEnd()
             }
         }
-        filterModel.listFilter.blockTags = runBlocking { BlockViewModel.getAllTags() }
+        filterModel.filter.blockTags =
+            (runBlocking { BlockViewModel.getAllTags() }) //TODO: check replace
         filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
         filterModel.applyConfig()
         configAdapter(false)

@@ -326,4 +326,5 @@
     <string name="flip">反转状态</string>
     <string name="dislike">取消收藏</string>
     <string name="walk_through">速览漫步</string>
+    <string name="show_block">显示过滤内容占位</string>
 </resources>

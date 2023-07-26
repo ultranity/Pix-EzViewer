@@ -9,6 +9,7 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.perol.asdpl.pixivez.data.model.Tag
 import org.roaringbitmap.RoaringBitmap
 import java.util.BitSet
 import java.util.IdentityHashMap
@@ -99,6 +100,25 @@ fun <T:Any?> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
         if (contains.contains(e)) {
             // Found a common element. Collections are not disjoint.
             return e
+        }
+    }
+
+    // No common elements were found.
+    return null
+}
+
+fun firstCommonTags(c1: Collection<String>, tags: List<Tag>): Tag? {
+    val c1size = c1.size
+    val c2size = tags.size
+    if (c1size == 0 || c2size == 0) {
+        // At least one collection is empty. Nothing will match.
+        return null
+    }
+    for (t in tags) {
+        val e = t.name
+        if (c1.contains(e)) {
+            // Found a common element. Collections are not disjoint.
+            return t
         }
     }
 

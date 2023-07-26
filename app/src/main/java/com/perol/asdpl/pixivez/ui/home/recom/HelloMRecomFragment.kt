@@ -51,11 +51,11 @@ import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import com.perol.asdpl.pixivez.core.PicListAdapter
 import com.perol.asdpl.pixivez.core.PicListBtnAdapter
 import com.perol.asdpl.pixivez.core.PicListBtnUserAdapter
+import com.perol.asdpl.pixivez.core.PicListFilter
 import com.perol.asdpl.pixivez.core.PicListXAdapter
 import com.perol.asdpl.pixivez.core.PicListXUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
@@ -266,13 +266,13 @@ class HelloMRecomFragment : BaseFragment() {
 
     private lateinit var bannerView: View
     private lateinit var binding: FragmentRecommendBinding
-    private lateinit var filter: IllustFilter
+    private lateinit var filter: PicListFilter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        filter = IllustFilter(isR18on)
+        filter = PicListFilter(isR18on)
         picListAdapter =
             if (PxEZApp.instance.pre
                     .getBoolean("use_picX_layout_main", true)

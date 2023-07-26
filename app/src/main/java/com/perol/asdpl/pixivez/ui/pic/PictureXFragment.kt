@@ -45,7 +45,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
-import com.perol.asdpl.pixivez.base.firstCommon
+import com.perol.asdpl.pixivez.base.firstCommonTags
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -61,7 +61,6 @@ import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
 import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
@@ -93,7 +92,6 @@ class PictureXFragment : BaseFragment() {
     override fun onDestroy() {
         pictureXAdapter?.setListener { }
         pictureXAdapter?.setViewCommentListen { }
-        pictureXAdapter?.setBookmarkedUserListen { }
         pictureXAdapter?.setUserPicLongClick { }
         super.onDestroy()
     }
@@ -126,33 +124,17 @@ class PictureXFragment : BaseFragment() {
     private fun checkBlock(illust: Illust): Boolean {
         blockTags = BlockViewModel.getBlockTagString()
         //tags.forEach { if (blockTags.contains(it.name)) needBlock = true }
-        firstCommon(blockTags.toHashSet(), illust.tags.map { it.name })?.let {
+        firstCommonTags(blockTags.toHashSet(), illust.tags)?.let {
             //needBlock = true
-            binding.blocktagTextview.text = it
+            binding.blocktagTextview.text = it.vis()
             binding.blocktagInfo.text = illust.title
             binding.blockView.visibility = View.VISIBLE
             binding.blockView.bringToFront()
-            binding.jumpButton.setOnClickListener {
-                FragmentActivity.start(requireContext(), "Block")
-            }
-            binding.jumpButton.setOnLongClickListener {
-                MaterialAlertDialogBuilder(context as Activity)
-                    .setMessage(InteractionUtil.toDetailString(illust))
-                    .setTitle("Detail")
-                    .setPositiveButton(R.string.setting) { _, _ ->
-                        FragmentActivity.start(requireContext(), "Block")
-                    }
-                    .setNeutralButton("Just Show IT") { _, _ ->
-                        binding.blockView.visibility = View.GONE
-                    }
-                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                    .create().show()
-                true
-            }
             return true
         }
         //var needBlock = false
         binding.blockView.visibility = View.GONE
+        binding.recyclerview.visibility = View.VISIBLE
         return false
     }
 
@@ -160,81 +142,10 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.illustDetail.observe(viewLifecycleOwner) { it ->
             binding.progressView.visibility = View.GONE
             if (it != null) {
+                //position = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
+                // stop loading here if blocked
                 checkBlock(it)
-                //TODO: whether stop loading here
-                //binding.illust = it
-                binding.apply {
-                    loadUserImage(binding.imageviewUserPicX, it.user.profile_image_urls.medium)
-                    textViewTitle.text = it.title
-                    textViewUserName.text = it.user.name
-                    textViewIllustCreateDate.text = it.create_date
-                }
-
-                position = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
-                pictureXAdapter =
-                    PictureXAdapter(pictureXViewModel, it, requireContext()).also {
-                        it.setListener {
-                            //                        activity?.supportStartPostponedEnterTransition()
-                            if (!hasMoved) {
-                                binding.recyclerview.scrollToPosition(0)
-                                (binding.recyclerview.layoutManager as LinearLayoutManager?)?.scrollToPositionWithOffset(
-                                    0,
-                                    0
-                                )
-                            }
-                            pictureXViewModel.getRelated(illustid)
-                        }
-                        it.setViewCommentListen {
-                            val commentDialog =
-                                CommentDialog.newInstance(illustid)
-                            commentDialog.show(childFragmentManager)
-                        }
-                        it.setBookmarkedUserListen {
-                            UserRelatedListFragment.start(requireContext(), illustid)
-                        }
-                        it.setUserPicLongClick {
-                            pictureXViewModel.likeUser()
-                        }
-                    }
-
-                binding.recyclerview.adapter = pictureXAdapter
-                if (screenWidthDp() > 840) {
-                    binding.recyclerview.layoutManager =
-                        GridLayoutManager(
-                            requireContext(), 2,
-                            //RecyclerView.HORIZONTAL, false
-                        )
-                            .apply {
-                                spanSizeLookup = object : SpanSizeLookup() {
-                                    override fun getSpanSize(position: Int): Int {
-                                        if (pictureXAdapter!!.getItemViewType(position) ==
-                                            PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
-                                )
-                                    return 2
-                                return 1
-                            }
-                        }
-                    }
-                }
-                if (it.user.is_followed) {
-                    binding.imageviewUserPicX.setBorderColor(Color.YELLOW)
-                }
-                // else
-                //    binding.imageviewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
-                binding.imageviewUserPicX.setOnLongClickListener {
-                    pictureXViewModel.likeUser()
-                    true
-                }
-                binding.imageviewUserPicX.setOnClickListener { _ ->
-                    val options = if (PxEZApp.animationEnable) {
-                        ActivityOptions.makeSceneTransitionAnimation(
-                            context as Activity,
-                            Pair(binding.imageviewUserPicX, "userimage")
-                        ).toBundle()
-                    } else null
-                    UserMActivity.start(requireContext(), it.user, options)
-                }
-                binding.fab.show()
+                loadIllust(it)
             } else {
                 if (parentFragmentManager.backStackEntryCount <= 1) {
                     activity?.finish()
@@ -273,6 +184,76 @@ class PictureXFragment : BaseFragment() {
         }
         //TODO: is it necessary?
         //pictureXAdapter?.notifyDataSetChanged()
+    }
+
+    private var illustLoaded = false
+    private fun loadIllust(it: Illust) {
+        if (illustLoaded) return
+        illustLoaded = true
+        binding.apply {
+            loadUserImage(binding.imageviewUserPicX, it.user.profile_image_urls.medium)
+            textViewTitle.text = it.title
+            textViewUserName.text = it.user.name
+            textViewIllustCreateDate.text = it.create_date
+        }
+        pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext())
+            .also {
+                it.setListener {
+                    //                        activity?.supportStartPostponedEnterTransition()
+                    if (!hasMoved) {
+                        binding.recyclerview.scrollToPosition(0)
+                        (binding.recyclerview.layoutManager as LinearLayoutManager?)
+                            ?.scrollToPositionWithOffset(0, 0)
+                    }
+                    pictureXViewModel.getRelated(illustid)
+                }
+                it.setViewCommentListen {
+                    CommentDialog.newInstance(illustid)
+                        .show(childFragmentManager)
+                }
+                it.setUserPicLongClick {
+                    pictureXViewModel.likeUser()
+                }
+            }
+
+        binding.recyclerview.adapter = pictureXAdapter
+        pictureXAdapter!!.setInstance(it)
+        if (screenWidthDp() > 840) { //TODO: double pannel in wide screen
+            binding.recyclerview.layoutManager =
+                GridLayoutManager(
+                    requireContext(), 2,
+                    //RecyclerView.HORIZONTAL, false
+                ).apply {
+                    spanSizeLookup = object : SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            if (pictureXAdapter!!.getItemViewType(position) ==
+                                PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+                            )
+                                return 2
+                            return 1
+                        }
+                    }
+                }
+        }
+        if (it.user.is_followed) {
+            binding.imageviewUserPicX.setBorderColor(Color.YELLOW)
+        }
+        // else
+        //    binding.imageviewUserPicX.setBorderColor(ContextCompat.getColor(requireContext(), colorPrimary))
+        binding.imageviewUserPicX.setOnLongClickListener {
+            pictureXViewModel.likeUser()
+            true
+        }
+        binding.imageviewUserPicX.setOnClickListener { _ ->
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
+                    context as Activity,
+                    Pair(binding.imageviewUserPicX, "userimage")
+                ).toBundle()
+            } else null
+            UserMActivity.start(requireContext(), it.user, options)
+        }
+        binding.fab.show()
     }
 
     var hasMoved = false
@@ -320,6 +301,24 @@ class PictureXFragment : BaseFragment() {
                 }
             }
         })
+
+        binding.jumpButton.setOnClickListener {
+            FragmentActivity.start(requireContext(), "Block")
+        }
+        binding.jumpButton.setOnLongClickListener {
+            MaterialAlertDialogBuilder(context as Activity)
+                .setMessage(InteractionUtil.toDetailString(pictureXViewModel.illustDetail.value!!))
+                .setTitle("Detail")
+                .setPositiveButton(R.string.setting) { _, _ ->
+                    FragmentActivity.start(requireContext(), "Block")
+                }
+                .setNeutralButton("Just Show IT") { _, _ ->
+                    binding.blockView.visibility = View.GONE
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .show()
+            true
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

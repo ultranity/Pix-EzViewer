@@ -38,7 +38,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
@@ -48,7 +47,7 @@ import com.perol.asdpl.pixivez.view.NiceImageView
  *  simple Adapter for image item with user imageView and heart icon
  */
 class PicListXUserAdapter(
-    layoutResId: Int, data: MutableList<Illust>?, filter: IllustFilter
+    layoutResId: Int, data: MutableList<Illust>?, filter: PicListFilter
 ) : PicListXAdapter(layoutResId, data, filter) {
 
     override fun viewPicsOptions(view: View, illust: Illust): Bundle {

@@ -191,13 +191,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <ToggleButton
-                android:id="@+id/toggleShow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:checked="false"
-                android:text="@string/hide_bookmarked" />
         </TableRow>
 
     </TableLayout>

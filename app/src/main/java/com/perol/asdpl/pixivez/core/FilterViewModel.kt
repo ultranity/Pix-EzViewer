@@ -28,18 +28,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
+import android.widget.Checkable
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -61,6 +60,8 @@ data class PicListFilter(
     var minLike: Int = 0,
     var minViewed: Int = 0,
     var minLikeRate: Float = 0f,
+
+    var showBlocked: Boolean = false,
 
     var showBookmarked: Boolean = true,
     var showNotBookmarked: Boolean = true,
@@ -109,32 +110,25 @@ data class PicListFilter(
                 }
             }
         }
-        return blockUser!!.contains(item.user.id)
+        return blockUser?.contains(item.user.id) == true
     }
 
-    fun applyTo(filter: IllustFilter){
-        filter.let{
-            it.R18on = R18on
-            it.hideBookmarked = !showBookmarked + (!showNotBookmarked)*2
-            it.hideDownloaded = !showDownloaded
-            it.sortCoM = if (!showManga) 1 else (if (showIllust) 0 else 2)
-            it.blockTags = blockTags
-        }
+    fun applyConfig() {
+        //TODO: check
     }
-
 }
 class FilterViewModel : ViewModel() {
     var TAG = "FilterViewModel"
     val spanNum = MutableLiveData(2)
-    val filter = IllustFilter()
-    val listFilter = PicListFilter()
+    val filter = PicListFilter()
     var adapterType = MutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
     var modeCollect = false
     init {
-        listFilter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
+        filter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
     }
-    fun applyConfig() = listFilter.applyTo(filter)
-    fun getAdapter() = if (modeCollect){
+
+    fun applyConfig() = filter.applyConfig()
+    fun getAdapter() = if (modeCollect) {
         DownPicListAdapter(R.layout.view_ranking_item_s, null, filter)
     } else when (adapterType.value) {
         ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
@@ -150,12 +144,6 @@ class FilterViewModel : ViewModel() {
     }
 }
 
-private val propsMap = hashSetOf<Pair<MaterialButton, KMutableProperty0<Boolean>>>()
-private fun pairBtnFilter(button: MaterialButton, props: KMutableProperty0<Boolean>) {
-    propsMap.add(button to props)
-    button.isChecked = props.get()
-}
-
 fun showFilterDialog(
     context: Context,
     filterModel: FilterViewModel,
@@ -164,15 +152,22 @@ fun showFilterDialog(
     layoutManager: StaggeredGridLayoutManager,
     configAdapter: () -> Unit
 ): MaterialDialog {
+    val propsMap = hashSetOf<Pair<Checkable, KMutableProperty0<Boolean>>>()
+    fun pairBtnFilter(view: Checkable, props: KMutableProperty0<Boolean>) {
+        propsMap.add(view to props)
+        view.isChecked = props.get()
+    }
+
     val dialog = DialogPicListFilterBinding.inflate(layoutInflater)
     dialog.apply {
         if (!PxEZApp.instance.pre.getBoolean("init_download_filter", false))
             toggleDownload.setOnClickListener {
                 showFilterDownloadDialog(context)
             }
-        sliderSpan.value =
-            layoutManager.spanCount.toFloat() //filterModel.spanNum.value!!.toFloat()
-        val filter = filterModel.listFilter
+        sliderSpan.value = layoutManager.spanCount.toFloat()
+        //filterModel.spanNum.value!!.toFloat()
+        val filter = filterModel.filter
+        pairBtnFilter(showBlocked, filter::showBlocked)
 
         pairBtnFilter(showBookmarked, filter::showBookmarked)
         pairBtnFilter(showNotBookmarked, filter::showNotBookmarked)
@@ -210,7 +205,7 @@ fun showFilterDialog(
             }
             filterModel.applyConfig()
             picListAdapter.notifyFilterChanged()
-            picListAdapter.filtered.clear()
+            picListAdapter.resetFilterFlag()
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
             val adapterVersion = ADAPTER_TYPE.values()[

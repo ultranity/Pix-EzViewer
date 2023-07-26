@@ -19,7 +19,6 @@ import com.perol.asdpl.pixivez.base.setMargins
 import com.perol.asdpl.pixivez.base.size
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.dp
@@ -31,7 +30,7 @@ import java.util.BitSet
 class DownPicListAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    val filter: IllustFilter
+    filter: PicListFilter
 ) :
     PicListXAdapter(layoutResId, data, filter) {
 

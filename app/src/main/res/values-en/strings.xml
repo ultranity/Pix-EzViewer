@@ -301,4 +301,5 @@
     <string name="flip">Flip</string>
     <string name="dislike">Undo Bookmark</string>
     <string name="walk_through">Random</string>
+    <string name="show_block">show filtered view</string>
 </resources>

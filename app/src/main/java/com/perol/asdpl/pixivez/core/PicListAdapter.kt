@@ -27,7 +27,6 @@ import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.base.last
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -45,7 +44,7 @@ import kotlin.math.min
 abstract class PicListAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    val illustFilter: IllustFilter
+    val filter: PicListFilter
 ) :
     LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
 
@@ -55,8 +54,14 @@ abstract class PicListAdapter(
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
     var hidedFlag = BitSet(data?.size ?: 128) //TODO:consider RoaringBitmap
+    var blockedFlag = BitSet(data?.size ?: 128)
     var selectedFlag = BitSet(data?.size ?: 128)
     val filtered = BitSet(data?.size ?: 128)
+    fun resetFilterFlag() {
+        filtered.clear()
+        hidedFlag.clear()
+        blockedFlag.clear()
+    }
 
     fun notifyAllChanged() {
         notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
@@ -177,19 +182,23 @@ abstract class PicListAdapter(
             }
         } else {
             filtered.set(pos)
-            if (illustFilter.needHide(item) || illustFilter.needBlock(item)) { //(mFilterList[pos]){//
+            var needHide = filter.needHide(item)
+            if (!needHide) {
+                if (filter.showBlocked)
+                    blockedFlag[pos] = filter.needBlock(item)
+                else
+                    needHide = filter.needBlock(item)
+            }
+            if (needHide) { //(mFilterList[pos]){//
                 hideItemView(holder)
                 hidedFlag.set(pos)
                 return
             }
         }
-        holder.itemView.visibility = View.VISIBLE
-        holder.itemView.layoutParams.apply {
-            height = LinearLayout.LayoutParams.WRAP_CONTENT
-            width = LinearLayout.LayoutParams.MATCH_PARENT
-        }
+        showItemView(holder.itemView)
         // if (!context.resources.configuration.orientation==ORIENTATION_LANDSCAPE)
-        setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
+        if (!blockedFlag[pos])
+            setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
 
         val numLayout = holder.getView<TextView>(R.id.textview_num)
         if (item.type == "ugoira") {
@@ -208,9 +217,24 @@ abstract class PicListAdapter(
             numLayout.visibility = View.GONE
         }
         val mainImage = holder.getView<ImageView>(R.id.item_img)
-        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
+        if (blockedFlag[pos]) {
+            Glide.with(context)
+                .load(R.drawable.ic_action_block).transition(withCrossFade())
+                .placeholder(R.drawable.ai)
+                .into(mainImage)
+            return
+        }
+        // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+        if (!filter.R18on && item.x_restrict == 1) {
+            Glide.with(context)
+                .load(R.drawable.h).transition(withCrossFade())
+                .placeholder(R.drawable.h)
+                .into(mainImage)
+            return
+        }
 
         // Load Images
+        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
         val needSmall = if (quality == 1) {
             (1.0 * item.height / item.width > 3) || (item.width / item.height > 4)
         } else {
@@ -221,31 +245,31 @@ abstract class PicListAdapter(
         } else {
             item.image_urls.medium
         }
-        // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-        if (!illustFilter.R18on && item.x_restrict == 1) {
-            Glide.with(mainImage.context)
-                .load(R.drawable.h).transition(withCrossFade())
-                .placeholder(R.drawable.h)
-                .into(mainImage)
-        } else {
-            Glide.with(context).load(loadUrl).transition(withCrossFade())
-                .placeholder(ColorDrawable(ThemeUtil.halftrans))
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .error(ContextCompat.getDrawable(context, R.drawable.ai))
-                .into(object : ImageViewTarget<Drawable>(mainImage) {
-                    override fun setResource(resource: Drawable?) {
-                        mainImage.setImageDrawable(resource)
-                    }
+        Glide.with(context).load(loadUrl).transition(withCrossFade())
+            .placeholder(ColorDrawable(ThemeUtil.halftrans))
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .error(ContextCompat.getDrawable(context, R.drawable.ai))
+            .into(object : ImageViewTarget<Drawable>(mainImage) {
+                override fun setResource(resource: Drawable?) {
+                    mainImage.setImageDrawable(resource)
+                }
 
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        transition: Transition<in Drawable>?
-                    ) {
-                        if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
-                            super.onResourceReady(resource, transition)
-                        }
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
+                        super.onResourceReady(resource, transition)
                     }
-                })
+                }
+            })
+    }
+
+    private fun showItemView(itemView: View) {
+        itemView.visibility = View.VISIBLE
+        itemView.layoutParams.apply {
+            height = LinearLayout.LayoutParams.WRAP_CONTENT
+            width = LinearLayout.LayoutParams.MATCH_PARENT
         }
     }
 

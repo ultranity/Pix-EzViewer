@@ -82,6 +82,10 @@ public class UserInfoSharedPreferences {
         sp.edit().putInt(key, value).apply();
     }
 
+    public void setIntpp(String key) {
+        sp.edit().putInt(key, sp.getInt(key, 0)).apply();
+    }
+
     public int getInt(String key) {
         return sp.getInt(key, 0);
     }

@@ -40,6 +40,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -227,25 +228,6 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
 
     private var exitTime = 0L
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            return
-        }
-
-        if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(
-                applicationContext,
-                getString(R.string.again_to_exit),
-                Toast.LENGTH_SHORT
-            ).show()
-            exitTime = System.currentTimeMillis()
-        } else {
-            finish()
-        }
-    }
-
     private lateinit var binding: AppMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -258,7 +240,23 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
         permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkAndRequestPermissions(permissionList)
+        onBackPressedDispatcher.addCallback {
+            if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                return@addCallback
+            }
 
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.again_to_exit),
+                    Toast.LENGTH_SHORT
+                ).show()
+                exitTime = System.currentTimeMillis()
+            } else {
+                finish()
+            }
+        }
         binding = AppMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         updateNavigationViewLayout()
@@ -300,52 +298,51 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onResume() {
         super.onResume()
-        this.window.decorView.post(
-            Runnable {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                if (!clipboard.hasPrimaryClip()) {
+        //if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S)
+        this.window.decorView.post(Runnable {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            if (!clipboard.hasPrimaryClip()) {
+                return@Runnable
+            }
+            val clipData = clipboard.primaryClip
+            if (null != clipData && clipData.itemCount > 0) {
+                // for (item in 0 until clipData.itemCount){
+                //    val content = item.text.toString()
+                // }
+                // clipboard.addPrimaryClipChangedListener {
+                val text = clipData.getItemAt(0)?.text ?: return@Runnable
+                var item = Regex("""\d{7,9}""")
+                    .find(text)
+                    ?.value ?: Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
+                    .find(text)?.groupValues?.last()?.trim()
+                ?: return@Runnable
+
+                val pre = PxEZApp.instance.pre
+                if (item == pre.getString("lastclip2", "")) {
                     return@Runnable
                 }
-                val clipData = clipboard.primaryClip
-                if (null != clipData && clipData.itemCount > 0) {
-                    // for (item in 0 until clipData.itemCount){
-                    //    val content = item.text.toString()
-                    // }
-                    // clipboard.addPrimaryClipChangedListener {
-                    val text = clipData.getItemAt(0)?.text ?: return@Runnable
-                    var item = Regex("""\d{7,9}""")
-                        .find(text)
-                        ?.value ?: Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
-                        .find(text)?.groupValues?.last()?.trim()
-                    ?: return@Runnable
-
-                    val pre = PxEZApp.instance.pre
-                    if (item == pre.getString("lastclip2", "")) {
-                        return@Runnable
-                    }
-                    MaterialDialog(this).show {
-                        title(R.string.clipboard_detected)
-                        message(R.string.jumpto)
-                        input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
-                        positiveButton(android.R.string.ok) {
-                            item = getInputField().text.toString()
-                            pre.edit().putString("lastclip2", item).apply()
-                            if ((item).toLongOrNull() != null) {
-                                PictureActivity.start(this@MainActivity, item.toLong())
-                            } else {
-                                SearchResultActivity.start(this@MainActivity, item, 1)
-                            }
+                MaterialDialog(this).show {
+                    title(R.string.clipboard_detected)
+                    message(R.string.jumpto)
+                    input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
+                    positiveButton(android.R.string.ok) {
+                        item = getInputField().text.toString()
+                        pre.edit().putString("lastclip2", item).apply()
+                        if ((item).toLongOrNull() != null) {
+                            PictureActivity.start(this@MainActivity, item.toLong())
+                        } else {
+                            SearchResultActivity.start(this@MainActivity, item, 1)
                         }
-                        neutralButton(R.string.not_this_one) {
-                            pre.edit().putString("lastclip2", item).apply()
-                        }
-                        negativeButton(android.R.string.cancel)
                     }
-
-                    // }
+                    neutralButton(R.string.not_this_one) {
+                        pre.edit().putString("lastclip2", item).apply()
+                    }
+                    negativeButton(android.R.string.cancel)
                 }
+
+                // }
             }
-        )
+        })
     }
 
     private fun checkAndRequestPermissions(permissionList: ArrayList<String>) {

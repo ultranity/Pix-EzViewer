@@ -28,18 +28,16 @@ package com.perol.asdpl.pixivez.ui.settings
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.ActivitySettingBinding
 import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.objects.screenWidthPx
-import java.util.Calendar
 
 
 class SettingsActivity : RinkActivity() {
@@ -66,6 +64,10 @@ class SettingsActivity : RinkActivity() {
     private lateinit var binding: ActivitySettingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback {
+            if (SupportDialog.checkTime(supportFragmentManager))
+                finish()
+        }
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -100,30 +102,5 @@ class SettingsActivity : RinkActivity() {
             }
         }.attach()
         binding.viewpager.currentItem = intent.getIntExtra("page", 0)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        val calendar = Calendar.getInstance()
-        if (BuildConfig.FLAVOR == "bugly" && (
-                    calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(
-                        Calendar.HOUR_OF_DAY
-                    ) -
-                            AppDataRepo.pre
-                                .getInt(
-                                    "lastsupport",
-                                    calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
-                                )
-                    ) >= 30 * 24
-        ) {
-            SupportDialog().show(this.supportFragmentManager, "supportdialog")
-        } else {
-            AppDataRepo.pre
-                .setInt(
-                    "lastsupport",
-                    AppDataRepo.pre.getInt("lastsupport") - 24
-                )
-            super.onBackPressed()
-        }
     }
 }

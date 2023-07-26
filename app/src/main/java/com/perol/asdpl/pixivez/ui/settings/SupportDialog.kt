@@ -17,9 +17,11 @@ import android.util.Base64
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
 import com.perol.asdpl.pixivez.data.AppDataRepo
@@ -28,7 +30,7 @@ import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import java.io.File
-import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
 
@@ -87,10 +89,9 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
         arguments?.let {
             full = it.getBoolean(ARG_PARAM1)
         }
-        val calendar = Calendar.getInstance()
-        AppDataRepo.pre.setInt(
-            "lastsupport",
-            calendar.get(Calendar.DAY_OF_YEAR) * 24 + calendar.get(Calendar.HOUR_OF_DAY)
+        AppDataRepo.pre.setLong(
+            "last_time_ms",
+            System.currentTimeMillis()
         )
         val totaldownloadcount = AppDataRepo.pre.getInt(
             "totaldownloadcount",
@@ -120,18 +121,18 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
 
         builder
             .setTitle(getString(R.string.support_popup_title))
+            .setOnDismissListener {
+                AppDataRepo.pre.setLong(
+                    "last_time_ms",
+                    System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30)
+                )
+            }
             .apply {
                 if (full) {
                     setNegativeButton(R.string.wechat) { _, _ ->
                         gotoWeChat()
-                        AppDataRepo.pre.setInt(
-                            "lastsupport",
-                            calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
-                        )
-                        AppDataRepo.pre.setInt(
-                            "supports",
-                            AppDataRepo.pre.getInt("supports") + 1
-                        )
+                        AppDataRepo.pre.setLong("last_time_ms", System.currentTimeMillis())
+                        AppDataRepo.pre.setIntpp("supports")
                     }
                     setPositiveButton(R.string.ali) { _, _ ->
                         val clipboard =
@@ -148,14 +149,8 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
                         )
                         clipboard.setPrimaryClip(clip)
                         gotoAliPay()
-                        AppDataRepo.pre.setInt(
-                            "lastsupport",
-                            calendar.get(Calendar.DAY_OF_YEAR) * 24 + 240 + calendar.get(Calendar.HOUR_OF_DAY)
-                        )
-                        AppDataRepo.pre.setInt(
-                            "supports",
-                            AppDataRepo.pre.getInt("supports") + 1
-                        )
+                        AppDataRepo.pre.setLong("last_time_ms", System.currentTimeMillis())
+                        AppDataRepo.pre.setIntpp("supports")
                     }
                 } else {
                     setPositiveButton(R.string.supporttitle) { _, _ ->
@@ -171,14 +166,33 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
 
     companion object {
 
+        private val TAG: String = javaClass.simpleName
         private const val ARG_PARAM1 = "full"
 
         @JvmStatic
-        fun newInstance(param1: Boolean) =
-            SupportDialog().apply {
-                arguments = Bundle().apply {
-                    putBoolean(ARG_PARAM1, param1)
-                }
+        fun newInstance(param1: Boolean) = SupportDialog().apply {
+            arguments = Bundle().apply {
+                putBoolean(ARG_PARAM1, param1)
             }
+        }
+
+        fun checkTime(supportFragmentManager: FragmentManager): Boolean {
+            val time: Long = System.currentTimeMillis()
+            if (BuildConfig.FLAVOR == "bugly" &&
+                TimeUnit.MILLISECONDS.toDays(
+                    (time - AppDataRepo.pre.getLong("last_time_ms", time))
+                ) >= 90
+            ) {
+                SupportDialog().show(supportFragmentManager, TAG)
+                return false
+            } else {
+                AppDataRepo.pre
+                    .setLong(
+                        "last_time_ms",
+                        AppDataRepo.pre.getLong("last_time_ms") - 1
+                    )
+                return true
+            }
+        }
     }
 }

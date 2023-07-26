@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
@@ -17,6 +18,7 @@ import com.perol.asdpl.pixivez.ui.account.AccountFragment
 import com.perol.asdpl.pixivez.ui.pic.ZoomFragment
 import com.perol.asdpl.pixivez.ui.settings.BlockTagFragment
 import com.perol.asdpl.pixivez.ui.settings.HistoryFragment
+import com.perol.asdpl.pixivez.ui.settings.SupportDialog
 import com.perol.asdpl.pixivez.ui.settings.ThemeFragment
 import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
 import kotlinx.parcelize.Parcelize
@@ -69,6 +71,10 @@ class FragmentActivity : RinkActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        onBackPressedDispatcher.addCallback {
+            if (SupportDialog.checkTime(supportFragmentManager))
+                finish()
+        }
 
         if (savedInstanceState != null) {
             //TODO: check if need getFragment

@@ -32,6 +32,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.commit
@@ -61,16 +62,22 @@ class SearchActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (searchSuggestionViewModel.autoCompleteTags.value?.isEmpty() != false) {
-                    this.finish()
-                } else {
-                    searchSuggestionViewModel.autoCompleteTags.value = listOf()
-                    binding.suggestions.visibility = View.GONE
-                }
+                onBackPressedCallback.handleOnBackPressed()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (searchSuggestionViewModel.autoCompleteTags.value?.isEmpty() != false) {
+                this@SearchActivity.finish()
+            } else {
+                searchSuggestionViewModel.autoCompleteTags.value = listOf()
+                binding.suggestions.visibility = View.GONE
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -87,6 +94,7 @@ class SearchActivity : RinkActivity() {
     private lateinit var binding: ActivitySearchBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -153,9 +161,6 @@ class SearchActivity : RinkActivity() {
                             UserMActivity.start(this@SearchActivity, query.toLong())
                         }
                     }
-                } else {
-                    supportFragmentManager.beginTransaction().hide(searchSuggestionFragment)
-                        .show(trendTagFragment).commit()
                 }
 
                 return true
@@ -165,7 +170,9 @@ class SearchActivity : RinkActivity() {
                 if (binding.tablayoutSearch.selectedTabPosition != 0) {
                     return true
                 }
-                if (!newText.isNullOrBlank()) {
+                if (newText.isNullOrBlank()) {
+
+                } else {
                     searchSuggestionViewModel.onQueryTextChange(newText)
                 }
                 return true

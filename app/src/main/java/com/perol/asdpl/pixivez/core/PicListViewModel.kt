@@ -102,6 +102,7 @@ class ArgumentProperty<T>(private val defaultValue: T? = null) :
     }
 }
 open class PicListViewModel : BaseViewModel() {
+    private var TAG: String = javaClass.simpleName
     lateinit var filterModel: FilterViewModel
     val data = MutableLiveData<MutableList<Illust>?>()
     val dataAdded = MutableLiveData<MutableList<Illust>?>()
@@ -112,6 +113,7 @@ open class PicListViewModel : BaseViewModel() {
     protected lateinit var onLoadFirstRx: () -> Observable<IllustNext>
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
+        TAG = mode
         if (extraArgs != null) {
             this.args = extraArgs
         }
@@ -156,7 +158,12 @@ open class PicListViewModel : BaseViewModel() {
 
             TAG_TYPE.Collect -> {
                 {
-                    Observable.just(1).map { IllustNext(DataHolder.tmpList ?: arrayListOf(), null) }
+                    Observable.just(1).map {
+                        IllustNext(
+                            DataHolder.dataListRef ?: arrayListOf(),
+                            DataHolder.nextUrlRef
+                        )
+                    }
                 }
             }
 

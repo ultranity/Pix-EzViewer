@@ -24,7 +24,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
-import com.perol.asdpl.pixivez.base.last
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -33,8 +32,11 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import java.util.BitSet
+import java.util.Collections
+import java.util.WeakHashMap
 import kotlin.math.max
 import kotlin.math.min
+
 
 /**
  * basic Adapter for image item
@@ -57,19 +59,24 @@ abstract class PicListAdapter(
     var blockedFlag = BitSet(data?.size ?: 128)
     var selectedFlag = BitSet(data?.size ?: 128)
     val filtered = BitSet(data?.size ?: 128)
+    private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
+    val mBoundViewHolders: Set<BaseViewHolder> = Collections.newSetFromMap(_mBoundViewHolders)
     fun resetFilterFlag() {
         filtered.clear()
         hidedFlag.clear()
         blockedFlag.clear()
     }
 
-    fun notifyAllChanged() {
-        notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
-    }
+    //fun notifyAllChanged() {
+    //    notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
+    //}
 
     fun notifyFilterChanged() {
         //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
-        notifyItemRangeChanged(headerLayoutCount, filtered.last)
+        //notifyItemRangeChanged(headerLayoutCount, filtered.last)
+        mBoundViewHolders.forEach {
+            notifyItemChanged(it.bindingAdapterPosition + headerLayoutCount)
+        }
     }
 
     /**
@@ -171,6 +178,31 @@ abstract class PicListAdapter(
         badgeTextColor = ThemeUtil.getColorHighlight(context)
         setAction(PxEZApp.CollectMode)
         quality = PxEZApp.instance.pre.getString("quality", "0")?.toInt() ?: 0
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        _mBoundViewHolders[holder] = false
+        //println("onBindViewHolder $holder ${holder.bindingAdapterPosition}")
+    }
+
+    override fun onViewAttachedToWindow(holder: BaseViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        //println("onViewAttachedToWindow $holder ${holder.bindingAdapterPosition}")
+        _mBoundViewHolders[holder] = true
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        //println("onViewDetachedFromWindow $holder ${holder.bindingAdapterPosition}")
+        _mBoundViewHolders[holder] = false
+    }
+
+    override fun onViewRecycled(holder: BaseViewHolder) {
+        super.onViewRecycled(holder)
+        super.onViewDetachedFromWindow(holder)
+        _mBoundViewHolders.remove(holder)
+        //println("onViewRecycled $holder ${holder.bindingAdapterPosition}")
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {

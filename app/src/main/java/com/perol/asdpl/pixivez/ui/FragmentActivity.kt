@@ -36,7 +36,7 @@ class FragmentActivity : RinkActivity() {
             "Theme" to FragmentItem(::ThemeFragment, R.string.theme),
             "Users" to FragmentItem(::UserRelatedListFragment, null),
             "History" to FragmentItem(::HistoryFragment, R.string.view_history),
-            "Collect" to FragmentItem(::SelectDownloadFragment, R.string.download),
+            TAG_TYPE.Collect.name to FragmentItem(::SelectDownloadFragment, R.string.download),
             "Zoom" to FragmentItem(::ZoomFragment, null),
             TAG_TYPE.WalkThrough.name to FragmentItem(null, R.string.walk_through)
         )

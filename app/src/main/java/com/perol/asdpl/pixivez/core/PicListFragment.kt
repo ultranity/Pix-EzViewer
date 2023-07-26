@@ -25,40 +25,31 @@
 package com.perol.asdpl.pixivez.core
 
 import android.app.DatePickerDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
-import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
-import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
 import kotlinx.coroutines.runBlocking
 
-fun Boolean.toInt() = if (this) 1 else 0
 open class PicListFragment : Fragment() {
     companion object {
         @JvmStatic
@@ -66,12 +57,11 @@ open class PicListFragment : Fragment() {
             mode: String,
             tabPosition: Int = 0,
             extraArgs: MutableMap<String, Any?>? = null
-        ) =
-            PicListFragment().apply {
-                this.TAG = mode
-                this.tabPosition = tabPosition
-                this.extraArgs = extraArgs
-            }
+        ) = PicListFragment().apply {
+            this.TAG = mode
+            this.tabPosition = tabPosition
+            this.extraArgs = extraArgs
+        }
     }
 
     protected open var TAG: String by argument("PicListFragment")
@@ -129,7 +119,7 @@ open class PicListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.filterModel = filterModel
-        viewModel.isRefreshing.observe(viewLifecycleOwner){
+        viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
         }
         viewModel.data.observe(viewLifecycleOwner) {
@@ -160,67 +150,19 @@ open class PicListFragment : Fragment() {
         filterModel.applyConfig()
         configAdapter(false)
         headerBinding.imgBtnConfig.setOnClickListener {
-            val dialog = DialogPicListFilterBinding.inflate(layoutInflater)
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager
-            dialog.apply {
-                if (!PxEZApp.instance.pre.getBoolean("init_download_filter", false))
-                    toggleDownload.setOnClickListener {
-                        showFilterDownloadDialog()
-                    }
-                sliderSpan.value =
-                    layoutManager.spanCount.toFloat() //filterModel.spanNum.value!!.toFloat()
-                buttonBookmarked.isChecked = filterModel.listFilter.showBookmarked
-                buttonNotBookmarked.isChecked = filterModel.listFilter.showNotBookmarked
-                buttonDownloaded.isChecked = filterModel.listFilter.showDownloaded
-                buttonNotDownloaded.isChecked = filterModel.listFilter.showNotDownloaded
-                buttonFollowed.isChecked = filterModel.listFilter.showFollowed
-                buttonNotFollowed.isChecked = filterModel.listFilter.showNotFollowed
-                buttonAINone.isChecked = filterModel.listFilter.showAINone
-                buttonAIHalf.isChecked = filterModel.listFilter.showAIHalf
-                buttonAIFull.isChecked = filterModel.listFilter.showAIFull
-                listOf(
-                    buttonHideUserImg,
-                    buttonShowUserImg
-                )[filterModel.adapterType.value!!.ordinal % 2].isChecked = true
-                listOf(
-                    buttonHideSave,
-                    buttonShowSave
-                )[filterModel.adapterType.value!!.ordinal / 2].isChecked = true
-            }
-            MaterialDialog(requireContext()).show {
-                customView(view = dialog.root, scrollable = true)
-                positiveButton {
-                    filterModel.listFilter.apply {
-                        showBookmarked = dialog.buttonBookmarked.isChecked
-                        showNotBookmarked = dialog.buttonNotBookmarked.isChecked
-                        showDownloaded = dialog.buttonDownloaded.isChecked
-                        showNotDownloaded = dialog.buttonNotDownloaded.isChecked
-                        showFollowed = dialog.buttonFollowed.isChecked
-                        showNotFollowed = dialog.buttonNotFollowed.isChecked
-                        showAINone = dialog.buttonAINone.isChecked
-                        showAIHalf = dialog.buttonAIHalf.isChecked
-                        showAIFull = dialog.buttonAIFull.isChecked
-                    }
-                    filterModel.applyConfig()
-                    picListAdapter.notifyFilterChanged()
-                    picListAdapter.filtered.clear()
-                    val span = dialog.sliderSpan.value.toInt()
-                    layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
-                    val adapterVersion = ADAPTER_TYPE.values()[
-                        dialog.buttonShowSave.isChecked * 2 + dialog.buttonShowUserImg.isChecked]
-                    if (filterModel.adapterType.checkUpdate(adapterVersion)) {
-                        val data = picListAdapter.data
-                        configAdapter()
-                        picListAdapter.setNewInstance(data)
-                    } else {
-                        //TODO: check //picListAdapter.notifyDataSetChanged()
-                    }
-                }
-                negativeButton { }
-                if (TAG!="Collect")
-                    neutralButton(R.string.download){
+            showFilterDialog(
+                requireContext(),
+                filterModel,
+                picListAdapter,
+                layoutInflater,
+                layoutManager,
+                ::configAdapter
+            ).apply {
+                if (TAG != TAG_TYPE.Collect.name)
+                    neutralButton(R.string.download) {
                         DataHolder.tmpList = viewModel.data.value
-                        FragmentActivity.start(requireContext(), "Collect")
+                        FragmentActivity.start(requireContext(), TAG_TYPE.Collect.name)
                     }
             }
         }
@@ -332,21 +274,4 @@ open class PicListFragment : Fragment() {
         }
         binding.recyclerview.adapter = picListAdapter
     }
-
-    fun showFilterDownloadDialog() =
-        MaterialDialog(requireContext()).show {
-            PxEZApp.instance.pre.edit {
-                putBoolean("init_download_filter", true)
-            }
-            title(R.string.hide_downloaded)
-            message(R.string.hide_downloaded_detail) {
-                html()
-            }
-            positiveButton(R.string.I_know) { }
-            neutralButton(R.string.download) {
-                val uri = Uri.parse(getString(R.string.plink))
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                startActivity(intent)
-            }
-        }
 }

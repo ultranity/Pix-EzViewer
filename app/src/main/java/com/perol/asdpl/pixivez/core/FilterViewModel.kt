@@ -24,14 +24,23 @@
 
 package com.perol.asdpl.pixivez.core
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.view.LayoutInflater
+import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 enum class ADAPTER_TYPE {
@@ -126,7 +135,96 @@ class FilterViewModel : ViewModel() {
         ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
         ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, null, filter)
         ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, null, filter)
-        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
+        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(
+            R.layout.view_ranking_item_s,
+            null,
+            filter
+        )
+
         else -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
+    }
+}
+
+
+fun showFilterDialog(
+    context: Context,
+    filterModel: FilterViewModel,
+    picListAdapter: PicListAdapter,
+    layoutInflater: LayoutInflater,
+    layoutManager: StaggeredGridLayoutManager,
+    configAdapter: () -> Unit
+): MaterialDialog {
+    val dialog = DialogPicListFilterBinding.inflate(layoutInflater)
+    dialog.apply {
+        if (!PxEZApp.instance.pre.getBoolean("init_download_filter", false))
+            toggleDownload.setOnClickListener {
+                showFilterDownloadDialog(context)
+            }
+        sliderSpan.value =
+            layoutManager.spanCount.toFloat() //filterModel.spanNum.value!!.toFloat()
+        buttonBookmarked.isChecked = filterModel.listFilter.showBookmarked
+        buttonNotBookmarked.isChecked = filterModel.listFilter.showNotBookmarked
+        buttonDownloaded.isChecked = filterModel.listFilter.showDownloaded
+        buttonNotDownloaded.isChecked = filterModel.listFilter.showNotDownloaded
+        buttonFollowed.isChecked = filterModel.listFilter.showFollowed
+        buttonNotFollowed.isChecked = filterModel.listFilter.showNotFollowed
+        buttonAINone.isChecked = filterModel.listFilter.showAINone
+        buttonAIHalf.isChecked = filterModel.listFilter.showAIHalf
+        buttonAIFull.isChecked = filterModel.listFilter.showAIFull
+        listOf(
+            buttonHideUserImg,
+            buttonShowUserImg
+        )[filterModel.adapterType.value!!.ordinal % 2].isChecked = true
+        listOf(
+            buttonHideSave,
+            buttonShowSave
+        )[filterModel.adapterType.value!!.ordinal / 2].isChecked = true
+    }
+    return MaterialDialog(context).show {
+        customView(view = dialog.root, scrollable = true)
+        positiveButton {
+            filterModel.listFilter.apply {
+                showBookmarked = dialog.buttonBookmarked.isChecked
+                showNotBookmarked = dialog.buttonNotBookmarked.isChecked
+                showDownloaded = dialog.buttonDownloaded.isChecked
+                showNotDownloaded = dialog.buttonNotDownloaded.isChecked
+                showFollowed = dialog.buttonFollowed.isChecked
+                showNotFollowed = dialog.buttonNotFollowed.isChecked
+                showAINone = dialog.buttonAINone.isChecked
+                showAIHalf = dialog.buttonAIHalf.isChecked
+                showAIFull = dialog.buttonAIFull.isChecked
+            }
+            filterModel.applyConfig()
+            picListAdapter.notifyFilterChanged()
+            picListAdapter.filtered.clear()
+            val span = dialog.sliderSpan.value.toInt()
+            layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
+            val adapterVersion = ADAPTER_TYPE.values()[
+                dialog.buttonShowSave.isChecked * 2 + dialog.buttonShowUserImg.isChecked]
+            if (filterModel.adapterType.checkUpdate(adapterVersion)) {
+                val data = picListAdapter.data
+                configAdapter()
+                picListAdapter.setNewInstance(data)
+            } else {
+                //TODO: check //picListAdapter.notifyDataSetChanged()
+            }
+        }
+        negativeButton { }
+    }
+}
+
+fun showFilterDownloadDialog(context: Context) = MaterialDialog(context).show {
+    PxEZApp.instance.pre.edit {
+        putBoolean("init_download_filter", true)
+    }
+    title(R.string.hide_downloaded)
+    message(R.string.hide_downloaded_detail) {
+        html()
+    }
+    positiveButton(R.string.I_know) { }
+    neutralButton(R.string.download) {
+        val uri = Uri.parse(context.getString(R.string.plink))
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        context.startActivity(intent)
     }
 }

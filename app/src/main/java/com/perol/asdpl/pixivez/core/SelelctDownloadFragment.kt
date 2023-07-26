@@ -82,7 +82,7 @@ class SelectDownloadFragment : PicListFragment() {
         binding.swipeRefreshLayout.isEnabled = false
     }
 
-    override var TAG = "Collect"
+    override var TAG = TAG_TYPE.Collect.name
     lateinit var hidedFlag: BitSet // = RoaringBitmap()
     lateinit var selectedFlag: BitSet // = RoaringBitmap()
     val selectedButHided: BitSet

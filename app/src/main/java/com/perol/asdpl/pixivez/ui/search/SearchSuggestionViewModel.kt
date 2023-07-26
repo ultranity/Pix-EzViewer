@@ -35,7 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class TagsTextViewModel : BaseViewModel() {
+class SearchSuggestionViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     val autoCompleteTags = MutableLiveData<List<Tag>>()
     fun onQueryTextChange(newText: String) {

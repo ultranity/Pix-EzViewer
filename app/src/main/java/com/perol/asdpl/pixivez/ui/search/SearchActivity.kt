@@ -30,6 +30,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.core.text.isDigitsOnly
@@ -55,16 +56,16 @@ class SearchActivity : RinkActivity() {
 
     lateinit var searchSuggestionFragment: SearchSuggestionFragment
     lateinit var trendTagFragment: TrendTagFragment
-    lateinit var tagsTextViewModel: TagsTextViewModel
+    lateinit var searchSuggestionViewModel: SearchSuggestionViewModel
     lateinit var trendTagViewModel: TrendTagViewModel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (searchSuggestionFragment.isHidden) {
+                if (searchSuggestionViewModel.autoCompleteTags.value?.isEmpty() != false) {
                     this.finish()
                 } else {
-                    supportFragmentManager.beginTransaction().hide(searchSuggestionFragment)
-                        .show(trendTagFragment).commit()
+                    searchSuggestionViewModel.autoCompleteTags.value = listOf()
+                    binding.suggestions.visibility = View.GONE
                 }
                 return true
             }
@@ -91,7 +92,7 @@ class SearchActivity : RinkActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        tagsTextViewModel = ViewModelProvider(this)[TagsTextViewModel::class.java]
+        searchSuggestionViewModel = ViewModelProvider(this)[SearchSuggestionViewModel::class.java]
         trendTagViewModel = ViewModelProvider(this)[TrendTagViewModel::class.java]
         if (savedInstanceState == null) {
             searchSuggestionFragment = SearchSuggestionFragment()
@@ -99,9 +100,8 @@ class SearchActivity : RinkActivity() {
             supportFragmentManager.commit {
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack so the user can navigate back
-                add(R.id.fragment, searchSuggestionFragment)
+                add(R.id.suggestions, searchSuggestionFragment)
                 add(R.id.fragment, trendTagFragment)
-                hide(searchSuggestionFragment)
             }
         } else {
             searchSuggestionFragment = supportFragmentManager.getFragment(
@@ -112,9 +112,6 @@ class SearchActivity : RinkActivity() {
                 savedInstanceState,
                 "trendTagFragment"
             ) as TrendTagFragment
-            supportFragmentManager.commit {
-                hide(searchSuggestionFragment)
-            }
         }
         binding.tablayoutSearch.clearOnTabSelectedListeners()
         binding.tablayoutSearch.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -169,10 +166,8 @@ class SearchActivity : RinkActivity() {
                     return true
                 }
                 if (!newText.isNullOrBlank()) {
-                    tagsTextViewModel.onQueryTextChange(newText)
+                    searchSuggestionViewModel.onQueryTextChange(newText)
                 }
-                supportFragmentManager.beginTransaction().hide(trendTagFragment)
-                    .show(searchSuggestionFragment).commit()
                 return true
             }
         })

@@ -36,7 +36,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,11 +47,12 @@ import com.perol.asdpl.pixivez.base.BaseFragment
 import com.perol.asdpl.pixivez.base.firstCommonTags
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.screenWidthDp
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.pic.CommentDialog
@@ -62,9 +62,6 @@ import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.loadUserImage
-import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import kotlin.properties.Delegates
 
 
@@ -108,15 +105,6 @@ class PictureXFragment : BaseFragment() {
     }
 
     private var pictureXAdapter: PictureXAdapter? = null
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(event: AdapterRefreshEvent) {
-        lifecycleScope.launch {
-            pictureXViewModel.illustDetail.value?.let {
-                checkBlock(it)
-            }
-        }
-    }
 
     /**
      * Block view and return true if need block.
@@ -182,8 +170,12 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.downloadGifSuccess.observe(viewLifecycleOwner) {
             pictureXAdapter?.setProgressComplete(it)
         }
-        //TODO: is it necessary?
-        //pictureXAdapter?.notifyDataSetChanged()
+
+        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
+            pictureXViewModel.illustDetail.value?.let {
+                checkBlock(it)
+            }
+        }
     }
 
     private var illustLoaded = false

@@ -91,7 +91,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 
 // TODO: support double panel in Tablet
@@ -375,7 +374,6 @@ class PictureXAdapter(
                                 translateName = t.translated_name ?: ""
                             )
                         )
-                        EventBus.getDefault().post(AdapterRefreshEvent())
                     }
                 }
                 //TODO: lifecycleOwner(mContext)

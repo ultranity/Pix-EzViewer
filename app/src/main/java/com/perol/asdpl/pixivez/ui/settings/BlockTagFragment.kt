@@ -10,11 +10,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.runBlocking
-import org.greenrobot.eventbus.EventBus
 
 class BlockTagFragment : Fragment() {
     private val viewModel = BlockViewModel
@@ -29,7 +27,6 @@ class BlockTagFragment : Fragment() {
                 viewModel.deleteSingleTag(blockTagEntity)
                 getTagList()
             }
-            EventBus.getDefault().post(AdapterRefreshEvent())
             true
         }
         return chip
@@ -78,8 +75,6 @@ class BlockTagFragment : Fragment() {
                         )
                         getTagList()
                     }
-
-                    EventBus.getDefault().post(AdapterRefreshEvent())
                 }
                 positiveButton()
                 negativeButton()

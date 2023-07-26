@@ -32,13 +32,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.util.LinkedList
 
 abstract class BaseFragment : Fragment() {
@@ -58,16 +54,10 @@ abstract class BaseFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: AdapterRefreshEvent) {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventBus.getDefault().register(this)
         isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
         try {
             runBlocking {

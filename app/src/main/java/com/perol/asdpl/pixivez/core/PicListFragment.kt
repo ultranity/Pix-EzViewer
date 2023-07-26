@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -44,10 +45,13 @@ import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 open class PicListFragment : Fragment() {
@@ -148,12 +152,23 @@ open class PicListFragment : Fragment() {
                 picListAdapter.loadMoreEnd()
             }
         }
+
         filterModel.filter.blockTags =
-            (runBlocking { BlockViewModel.getAllTags() }) //TODO: check replace
+            (runBlocking { BlockViewModel.getAllTags() })
+        lifecycleScope.launch {
+            //check change
+            FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
+                filterModel.filter.blockTags = it.blockTags
+                //refresh current
+                picListAdapter.resetFilterFlag()
+                picListAdapter.notifyFilterChanged()
+            }
+        }
         filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
         filterModel.applyConfig()
         configAdapter(false)
         headerBinding.imgBtnConfig.setOnClickListener {
+            //TODO: support other layoutManager
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager
             showFilterDialog(
                 requireContext(),

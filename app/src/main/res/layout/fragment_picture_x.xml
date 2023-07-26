@@ -12,30 +12,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:visibility="gone"
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout_fold"
+            android:id="@+id/constraint_layout"
             android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:layout_gravity="bottom"
-            android:background="?android:attr/colorBackground"
-            android:visibility="invisible"
-            tools:visibility="visible">
+            android:layout_height="match_parent">
 
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="8dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:visibility="gone"
+                android:id="@+id/recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_fold"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:visibility="invisible"
+                tools:visibility="visible"
                 android:background="?android:attr/colorBackground"
-                android:src="@drawable/ic_action_fold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?android:attr/colorBackground"
+                    android:src="@drawable/ic_action_fold"
+                    app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <com.perol.asdpl.pixivez.view.NiceImageView
@@ -88,9 +94,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageview_user_picX"
                 app:layout_constraintTop_toBottomOf="@+id/textView_user_name" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -99,10 +106,9 @@
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
+                android:layout_gravity="center" />
 
-        </RelativeLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/block_view"

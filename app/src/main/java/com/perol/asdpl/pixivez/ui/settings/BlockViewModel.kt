@@ -1,9 +1,11 @@
 package com.perol.asdpl.pixivez.ui.settings
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
+import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -40,12 +42,18 @@ object BlockViewModel{
     suspend fun deleteSingleTag(blockTagEntity: BlockTagEntity) = withContext(Dispatchers.IO) {
         appDatabase.blockTagDao().deleteTag(blockTagEntity)
         allTags!!.value!!.remove(blockTagEntity)
-        allTagString!!.remove(blockTagEntity.name)
+        //EventBus.getDefault().post(AdapterRefreshEvent())
+        allTagString!!.remove(blockTagEntity.name).apply {
+            FlowEventBus.post(Event.BlockTagsChanged(allTagString!!))
+        }
     }
 
     suspend fun insertBlockTag(blockTagEntity: BlockTagEntity) = withContext(Dispatchers.IO) {
         appDatabase.blockTagDao().insert(blockTagEntity)
         allTags!!.value!!.addFirst(blockTagEntity)//.name)
-        allTagString!!.addFirst(blockTagEntity.name)
+        //EventBus.getDefault().post(AdapterRefreshEvent())
+        allTagString!!.addFirst(blockTagEntity.name).apply {
+            FlowEventBus.post(Event.BlockTagsChanged(allTagString!!))
+        }
     }
 }

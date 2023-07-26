@@ -295,7 +295,7 @@ dependencies {
     }
     implementation("com.afollestad:drag-select-recyclerview:2.4.0")
 
-    implementation("org.greenrobot:eventbus:3.3.1")
+    //implementation("org.greenrobot:eventbus:3.3.1") replace with kotlin flow
 
     //implementation("com.esotericsoftware.kryo:kryo:2.24.0")
     implementation("com.tencent:mmkv-static:1.3.0")

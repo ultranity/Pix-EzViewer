@@ -204,8 +204,8 @@ fun showFilterDialog(
                 it.second.set(it.first.isChecked)
             }
             filterModel.applyConfig()
-            picListAdapter.notifyFilterChanged()
             picListAdapter.resetFilterFlag()
+            picListAdapter.notifyFilterChanged()
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
             val adapterVersion = ADAPTER_TYPE.values()[

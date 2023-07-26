@@ -55,8 +55,9 @@ import com.perol.asdpl.pixivez.core.PicListFilter
 import com.perol.asdpl.pixivez.core.PicListXAdapter
 import com.perol.asdpl.pixivez.core.PicListXUserAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentRecommendBinding
-import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.dp
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
@@ -64,9 +65,6 @@ import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivsionActivity
 import com.perol.asdpl.pixivez.view.LinearItemDecoration
-import kotlinx.coroutines.runBlocking
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 /**
  * A simple [Fragment] subclass.
@@ -83,13 +81,6 @@ class HelloMRecomFragment : BaseFragment() {
     override fun onResume() {
         isLoaded = picListAdapter.data.isNotEmpty()
         super.onResume()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(event: AdapterRefreshEvent) {
-        runBlocking {
-            picListAdapter.notifyDataSetChanged()
-        }
     }
 
     private fun initViewModel() {
@@ -152,6 +143,11 @@ class HelloMRecomFragment : BaseFragment() {
                     pixiVisionAdapter.loadMoreComplete()
                 }
             }
+        }
+
+        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
+            filter.blockTags = it.blockTags
+            picListAdapter.notifyFilterChanged()
         }
     }
 

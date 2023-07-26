@@ -279,7 +279,7 @@
     <string name="not_followed">ユーザーがフォローしていません</string>
     <string name="show_user_img">アバターを表示</string>
     <string name="no_button_layout">簡素化されたレイアウト</string>
-    <string name="button_layout">キー配列</string>
+    <string name="show_button_layout">キー配列</string>
     <string name="hide_user_img">アバターを隠す</string>
     <string name="layout_config">レイアウト設定</string>
     <string name="span_num">列の数 (デフォルトの縦 2 横 4)</string>

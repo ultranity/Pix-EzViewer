@@ -62,6 +62,10 @@ class DownPicListAdapter(
     }
 }
 
+class SelectDownloadViewModel : PicListViewModel() {
+
+}
+
 class SelectDownloadFragment : PicListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,31 +87,32 @@ class SelectDownloadFragment : PicListFragment() {
     }
 
     override var TAG = TAG_TYPE.Collect.name
+
+    //override val viewModel:SelectDownloadViewModel by viewModels()
     lateinit var hidedFlag: BitSet // = RoaringBitmap()
     lateinit var selectedFlag: BitSet // = RoaringBitmap()
     val selectedButHided: BitSet
         get() = (selectedFlag.clone() as BitSet).apply { and(hidedFlag) }
-    val allData by lazy { DataHolder.tmpList }
     fun toggleSelected(index: Int) {
         selectedFlag.flip(index)
         picListAdapter.notifyItemChanged(
             index + picListAdapter.headerLayoutCount,
             Payload("checked", selectedFlag[index])
         )
-        headerBinding.imgBtnSpinner.text = selectedHintStr()
+        setBtnHintText()
     }
 
     private val receiver: DragSelectReceiver = object : DragSelectReceiver {
         override fun isSelected(index: Int): Boolean = selectedFlag[index]
         override fun isIndexSelectable(index: Int) = true
-        override fun getItemCount(): Int = allData?.size ?: 0
+        override fun getItemCount(): Int = viewModel.data.value?.size ?: 0
         override fun setSelected(index: Int, selected: Boolean) {
             selectedFlag.set(index, selected)
             picListAdapter.notifyItemChanged(
                 index + picListAdapter.headerLayoutCount,
                 Payload("checked", selected)
             )
-            headerBinding.imgBtnSpinner.text = selectedHintStr()
+            setBtnHintText()
         }
     }
 
@@ -142,6 +147,9 @@ class SelectDownloadFragment : PicListFragment() {
             itemAnimator.changeDuration = 0
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
+        onDataAddedListener = {
+            setBtnHintText()
+        }
     }
 
     override fun configByTAG() {
@@ -158,7 +166,7 @@ class SelectDownloadFragment : PicListFragment() {
                     }.show()
             }
             setOnLongClickListener {
-                //print("${selectedIndices.size}/${allData!!.size}")
+                //print("${selectedIndices.size}/${viewModel.data.value!!.size}")
                 Toasty.longToast(
                     getString(R.string.download) +
                             selectedHintStr()
@@ -209,12 +217,12 @@ class SelectDownloadFragment : PicListFragment() {
         }
 
         headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_action_rank)
-        headerBinding.imgBtnSpinner.text = selectedHintStr()
+        setBtnHintText()
         headerBinding.imgBtnSpinner.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.action_select)
                 .setPositiveButton(R.string.all) { _, _ ->
-                    selectedFlag.set(0, allData!!.size)
+                    selectedFlag.set(0, viewModel.data.value!!.size)
                     picListAdapter.notifyFilterChanged()
                 }
                 .setNegativeButton(R.string.all_cancel) { _, _ ->
@@ -222,13 +230,17 @@ class SelectDownloadFragment : PicListFragment() {
                     picListAdapter.notifyFilterChanged()
                 }
                 .setNeutralButton(R.string.select_reverse) { _, _ ->
-                    selectedFlag.flip(0, allData!!.size)
+                    selectedFlag.flip(0, viewModel.data.value!!.size)
                     picListAdapter.notifyFilterChanged()
                 }
                 .setOnDismissListener {
-                    headerBinding.imgBtnSpinner.text = selectedHintStr()
+                    setBtnHintText()
                 }.show()
         }
+    }
+
+    private fun setBtnHintText() {
+        headerBinding.imgBtnSpinner.text = selectedHintStr()
     }
 
     private fun bookmarkAllSelected(target: Boolean?) {
@@ -255,13 +267,13 @@ class SelectDownloadFragment : PicListFragment() {
     }
 
     private fun selectedNotHide(): List<Illust> =
-        allData?.filterIndexed { index, _ ->
+        viewModel.data.value?.filterIndexed { index, _ ->
             selectedFlag[index] and !hidedFlag[index]
         } ?: listOf()
 
     private fun selectedHintStr(debug: Boolean = false): String {
         val skiped = selectedButHided.size
-        return "${selectedFlag.size - skiped}/${allData!!.size}" +
+        return "${selectedFlag.size - skiped}/${(viewModel.data.value ?: DataHolder.dataListRef!!).size}" +
                 if (debug) "(${skiped} skipped)" else ""
     }
 

@@ -21,14 +21,14 @@ import java.util.Calendar
 class SearchResultFragment: PicListFragment() {
 
     private val keyword:String by extraArg()
-    override fun onDataLoaded(illusts: MutableList<Illust>): MutableList<Illust>? {
+    override fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
         // jump to illust pid if search result empty and looks like a pid
         if (illusts.isEmpty()) {
             keyword.toLongOrNull()?.let {
                 PictureActivity.start(requireContext(), it)
             }
         }
-        return super.onDataLoaded(illusts)
+        return super.onDataLoadedListener(illusts)
     }
     override val viewModel:SearchResultViewModel by viewModels({requireActivity()})
     override fun configByTAG() {

@@ -279,7 +279,7 @@
     <string name="not_followed">未關注用戶</string>
     <string name="show_user_img">顯示頭像</string>
     <string name="no_button_layout">簡化佈局</string>
-    <string name="button_layout">按鍵佈局</string>
+    <string name="show_button_layout">按鍵佈局</string>
     <string name="hide_user_img">隱藏頭像</string>
     <string name="layout_config">佈局設置</string>
     <string name="span_num">列數(默認 豎屏2 橫屏4)</string>

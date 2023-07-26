@@ -279,7 +279,7 @@
     <string name="not_followed">User not following</string>
     <string name="show_user_img">show avatar</string>
     <string name="no_button_layout">Simplified layout</string>
-    <string name="button_layout">key layout</string>
+    <string name="show_button_layout">key layout</string>
     <string name="hide_user_img">hide avatar</string>
     <string name="layout_config">Layout settings</string>
     <string name="span_num">Number of columns (default portrait 2 landscape 4)</string>

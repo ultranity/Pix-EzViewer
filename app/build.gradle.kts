@@ -217,7 +217,7 @@ dependencies {
 
 
     //implementation("androidx.annotation:annotation:1.5.0")
-    //implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
+    //implementation("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
 
     val roomVersion = "2.5.2"
     run {

@@ -108,9 +108,11 @@ open class PicListFragment : Fragment() {
         }
     }
 
-    open fun onDataLoaded(illusts: MutableList<Illust>): MutableList<Illust>? {
+    open fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
         return illusts
     }
+
+    protected var onDataAddedListener: (() -> Unit)? = null
 
     protected open lateinit var picListAdapter: PicListAdapter
     open val viewModel: PicListViewModel by viewModels()
@@ -124,7 +126,7 @@ open class PicListFragment : Fragment() {
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.setNewInstance(onDataLoaded(it))
+                picListAdapter.setNewInstance(onDataLoadedListener(it))
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -134,6 +136,7 @@ open class PicListFragment : Fragment() {
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addData(it)
+                onDataAddedListener?.invoke()
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -161,7 +164,8 @@ open class PicListFragment : Fragment() {
             ).apply {
                 if (TAG != TAG_TYPE.Collect.name)
                     neutralButton(R.string.download) {
-                        DataHolder.tmpList = viewModel.data.value
+                        DataHolder.dataListRef = viewModel.data.value
+                        DataHolder.nextUrlRef = viewModel.nextUrl.value
                         FragmentActivity.start(requireContext(), TAG_TYPE.Collect.name)
                     }
             }

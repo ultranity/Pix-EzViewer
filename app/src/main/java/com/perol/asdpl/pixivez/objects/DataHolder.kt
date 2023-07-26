@@ -80,7 +80,12 @@ class DataHolder{
             }
         }
 
-        var tmpList: MutableList<Illust>? = null
+        // --------DownloadFragment tmp ref---------
+        var nextUrlRef: String? = null
+        var dataListRef: MutableList<Illust>? = null
+
+        //var dataAddedRef: MutableList<Illust>? = null
+        // -----------------
         fun getIllustList(): MutableList<Illust>? {
             return if (this.illustListStack.empty()) {
                 null

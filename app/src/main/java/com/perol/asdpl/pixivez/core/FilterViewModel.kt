@@ -34,6 +34,7 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
+import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
@@ -42,6 +43,7 @@ import com.perol.asdpl.pixivez.objects.IllustFilter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
 import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlin.reflect.KMutableProperty0
 
 enum class ADAPTER_TYPE {
     PIC_LIKE,
@@ -76,8 +78,11 @@ data class PicListFilter(
     var showAIHalf: Boolean = true,
     var showAIFull: Boolean = true,
 
-    var startTime:Long = 0,
-    var endTime:Long = Long.MAX_VALUE,
+    var showPrivate: Boolean = true,
+    var showPublic: Boolean = true,
+
+    var startTime: Long = 0,
+    var endTime: Long = Long.MAX_VALUE,
 
     var sortTime: Boolean = false,
     var sortLike: Boolean = false,
@@ -145,6 +150,11 @@ class FilterViewModel : ViewModel() {
     }
 }
 
+private val propsMap = hashSetOf<Pair<MaterialButton, KMutableProperty0<Boolean>>>()
+private fun pairBtnFilter(button: MaterialButton, props: KMutableProperty0<Boolean>) {
+    propsMap.add(button to props)
+    button.isChecked = props.get()
+}
 
 fun showFilterDialog(
     context: Context,
@@ -162,37 +172,41 @@ fun showFilterDialog(
             }
         sliderSpan.value =
             layoutManager.spanCount.toFloat() //filterModel.spanNum.value!!.toFloat()
-        buttonBookmarked.isChecked = filterModel.listFilter.showBookmarked
-        buttonNotBookmarked.isChecked = filterModel.listFilter.showNotBookmarked
-        buttonDownloaded.isChecked = filterModel.listFilter.showDownloaded
-        buttonNotDownloaded.isChecked = filterModel.listFilter.showNotDownloaded
-        buttonFollowed.isChecked = filterModel.listFilter.showFollowed
-        buttonNotFollowed.isChecked = filterModel.listFilter.showNotFollowed
-        buttonAINone.isChecked = filterModel.listFilter.showAINone
-        buttonAIHalf.isChecked = filterModel.listFilter.showAIHalf
-        buttonAIFull.isChecked = filterModel.listFilter.showAIFull
+        val filter = filterModel.listFilter
+
+        pairBtnFilter(showBookmarked, filter::showBookmarked)
+        pairBtnFilter(showNotBookmarked, filter::showNotBookmarked)
+
+        pairBtnFilter(showDownloaded, filter::showDownloaded)
+        pairBtnFilter(showNotDownloaded, filter::showNotDownloaded)
+
+        pairBtnFilter(showFollowed, filter::showFollowed)
+        pairBtnFilter(showNotFollowed, filter::showNotFollowed)
+
+        pairBtnFilter(showIllust, filter::showIllust)
+        pairBtnFilter(showManga, filter::showManga)
+        pairBtnFilter(showUgoira, filter::showUgoira)
+
+        pairBtnFilter(showAINone, filter::showAINone)
+        pairBtnFilter(showAIHalf, filter::showAIHalf)
+        pairBtnFilter(showAIFull, filter::showAIFull)
+
+        pairBtnFilter(showPrivate, filter::showPrivate)
+        pairBtnFilter(showPublic, filter::showPublic)
         listOf(
-            buttonHideUserImg,
-            buttonShowUserImg
+            showHideUserImg,
+            showShowUserImg
         )[filterModel.adapterType.value!!.ordinal % 2].isChecked = true
         listOf(
-            buttonHideSave,
-            buttonShowSave
+            showHideSave,
+            showShowSave
         )[filterModel.adapterType.value!!.ordinal / 2].isChecked = true
     }
     return MaterialDialog(context).show {
         customView(view = dialog.root, scrollable = true)
         positiveButton {
-            filterModel.listFilter.apply {
-                showBookmarked = dialog.buttonBookmarked.isChecked
-                showNotBookmarked = dialog.buttonNotBookmarked.isChecked
-                showDownloaded = dialog.buttonDownloaded.isChecked
-                showNotDownloaded = dialog.buttonNotDownloaded.isChecked
-                showFollowed = dialog.buttonFollowed.isChecked
-                showNotFollowed = dialog.buttonNotFollowed.isChecked
-                showAINone = dialog.buttonAINone.isChecked
-                showAIHalf = dialog.buttonAIHalf.isChecked
-                showAIFull = dialog.buttonAIFull.isChecked
+            propsMap.forEach {
+                it.second.set(it.first.isChecked)
             }
             filterModel.applyConfig()
             picListAdapter.notifyFilterChanged()
@@ -200,7 +214,7 @@ fun showFilterDialog(
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
             val adapterVersion = ADAPTER_TYPE.values()[
-                dialog.buttonShowSave.isChecked * 2 + dialog.buttonShowUserImg.isChecked]
+                dialog.showShowSave.isChecked * 2 + dialog.showShowUserImg.isChecked]
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
                 val data = picListAdapter.data
                 configAdapter()

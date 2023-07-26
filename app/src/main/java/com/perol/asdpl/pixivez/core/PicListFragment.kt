@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -104,11 +105,11 @@ open class PicListFragment : Fragment() {
     override fun onResume() {
         isLoaded = viewModel.data.value != null
         super.onResume()
-        Log.d(TAG, "PicListFragment resume")
+        Log.d("PicListFragment", "$TAG $tabPosition resume $isLoaded")
         if (!isLoaded) {
             isLoaded = true
             viewModel.onLoadFirst()
-            Log.d(TAG, "PicListFragment resume data reload")
+            Log.d("PicListFragment", "$TAG $tabPosition resume data reload")
         }
     }
 
@@ -119,11 +120,26 @@ open class PicListFragment : Fragment() {
     protected var onDataAddedListener: (() -> Unit)? = null
 
     protected open lateinit var picListAdapter: PicListAdapter
-    open val viewModel: PicListViewModel by viewModels()
-    protected val filterModel: FilterViewModel by viewModels()
+    protected open fun ownerProducer(): ViewModelStoreOwner {
+        return when (TAG) {
+            TAG_TYPE.Rank.name -> {
+                requireActivity()
+            }
+
+            else -> {
+                this
+            }
+        }
+    }
+
+    protected open val viewModel: PicListViewModel by viewModels()
+    protected val filterModel: FilterViewModel by viewModels(::ownerProducer)
+    //protected open lateinit var viewModel: PicListViewModel //by viewModels()
+    //protected open lateinit var filterModel: FilterViewModel //by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        configAdapter(false)
         viewModel.filterModel = filterModel
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
@@ -166,7 +182,6 @@ open class PicListFragment : Fragment() {
         }
         filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
         filterModel.applyConfig()
-        configAdapter(false)
         headerBinding.imgBtnConfig.setOnClickListener {
             //TODO: support other layoutManager
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager
@@ -282,6 +297,7 @@ open class PicListFragment : Fragment() {
             picListAdapter.removeAllHeaderView()
         } else {
             if (::picListAdapter.isInitialized) {
+                binding.recyclerview.adapter = picListAdapter
                 return
             }
         }

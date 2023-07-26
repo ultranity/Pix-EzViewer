@@ -43,9 +43,11 @@ class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
     val fragments = WeakHashMap<Int, PicListFragment>(3)
     override fun createFragment(position: Int): Fragment {
         if (fragments[position] == null) {
-            fragments[position] = PicListFragment.newInstance("Rank", position, mutableMapOf(
-                "mode" to modelist[position]
-            ))
+            fragments[position] = PicListFragment.newInstance(
+                "Rank", position, mutableMapOf(
+                    "mode" to modelist[position]
+                )
+            )
         }
         return fragments[position]!!
     }

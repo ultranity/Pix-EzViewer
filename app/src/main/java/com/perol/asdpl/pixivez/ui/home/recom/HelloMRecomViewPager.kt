@@ -35,7 +35,7 @@ class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManag
     FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int) = when (position) {
-        0 -> HelloMRecomFragment.newInstance("", "")
+        0 -> RecomFragment()
         else -> UserListFragment.newInstance()
     }
 

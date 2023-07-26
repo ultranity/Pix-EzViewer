@@ -1,0 +1,221 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 ultranity
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE
+ */
+
+package com.perol.asdpl.pixivez.ui.home.recom
+
+import android.content.Intent
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.factory.sharedViewModel
+import com.perol.asdpl.pixivez.core.PicListFilter
+import com.perol.asdpl.pixivez.core.PicListFragment
+import com.perol.asdpl.pixivez.core.PicListViewModel
+import com.perol.asdpl.pixivez.core.TAG_TYPE
+import com.perol.asdpl.pixivez.data.model.IllustNext
+import com.perol.asdpl.pixivez.databinding.HeaderPixivisionBinding
+import com.perol.asdpl.pixivez.objects.dp
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
+import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.OKWebViewActivity
+import com.perol.asdpl.pixivez.ui.WebViewActivity
+import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
+import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
+import com.perol.asdpl.pixivez.ui.home.pixivision.PixivsionActivity
+import com.perol.asdpl.pixivez.view.LinearItemDecoration
+
+class RecomViewModel : PicListViewModel() {
+    lateinit var bannerLoader: () -> Unit
+    override fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>?) {
+        onLoadFirstRx = {
+            bannerLoader()
+            retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) }
+        }
+    }
+}
+
+class RecomFragment : PicListFragment() {
+    override var TAG: String = TAG_TYPE.Recommend.name
+    fun loadData() {
+        viewModel.onLoadFirst()
+        pixivisionModel.onRefreshListener()
+    }
+
+    private fun initViewModel() {
+        pixivisionModel.banners.observe(viewLifecycleOwner) {
+            pixiVisionAdapter.setNewInstance(it)
+            val spotlightView = bannerBinding.pixivisionList
+            val autoLoop = PxEZApp.instance.pre
+                .getBoolean("banner_auto_loop", true)
+            if (autoLoop) {
+                spotlightView.layoutManager =
+                    LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+            }
+            spotlightView.layoutAnimation = LayoutAnimationController(
+                AnimationUtils.loadAnimation(
+                    context,
+                    R.anim.right_in
+                )
+            ).also {
+                it.order = LayoutAnimationController.ORDER_NORMAL
+                it.delay = 1f
+                it.interpolator = AccelerateInterpolator(0.5f)
+            }
+        }
+        pixivisionModel.addbanners.observe(viewLifecycleOwner) {
+            if (it != null) {
+                pixiVisionAdapter.addData(it)
+            } else {
+                pixiVisionAdapter.loadMoreFail()
+            }
+        }
+        pixivisionModel.nextPixivisonUrl.observe(viewLifecycleOwner) {
+            if (::pixiVisionAdapter.isInitialized) {
+                if (it == null) {
+                    pixiVisionAdapter.loadMoreEnd()
+                } else {
+                    pixiVisionAdapter.loadMoreComplete()
+                }
+            }
+        }
+
+        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
+            filter.blockTags = it.blockTags
+            picListAdapter.notifyFilterChanged()
+        }
+    }
+
+    private val pixivisionModel: PixivisionModel by sharedViewModel("pixivision")
+    override val viewModel: RecomViewModel by viewModels({ requireActivity() })
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.bannerLoader = pixivisionModel::onRefreshListener
+    }
+
+    private var _bannerBinding: HeaderPixivisionBinding? = null
+    private val bannerBinding: HeaderPixivisionBinding
+        get() = requireNotNull(_bannerBinding) { "The property of binding has been destroyed." }
+
+    private lateinit var pixiVisionAdapter: PixiVisionAdapter
+    private lateinit var filter: PicListFilter
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _bannerBinding = HeaderPixivisionBinding.inflate(layoutInflater)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViewModel()
+        pixiVisionAdapter = PixiVisionAdapter(
+            R.layout.view_pixivision_item_small,
+            null
+        )
+        picListAdapter.apply {
+            setAnimationWithDefault(BaseQuickAdapter.AnimationType.SlideInBottom)
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            headerWithEmptyEnable = true
+            footerWithEmptyEnable = true
+            addHeaderView(bannerBinding.root, 0)
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.onLoadFirst()
+            pixivisionModel.onRefreshListener()
+        }
+        pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
+            val intent = Intent(
+                context,
+                if (PxEZApp.instance.pre.getBoolean("disableproxy", false)) {
+                    WebViewActivity::class.java
+                } else {
+                    OKWebViewActivity::class.java
+                }
+            )
+            intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
+            startActivity(intent)
+            view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
+        }
+        val autoLoop = PxEZApp.instance.pre
+            .getBoolean("banner_auto_loop", true)
+        if (!autoLoop) {
+            pixiVisionAdapter.setOnLoadMoreListener {
+                pixivisionModel.onLoadMoreBannerRequested()
+            }
+        }
+        // pixivision logo
+        val logo =
+            LayoutInflater.from(requireContext()).inflate(R.layout.header_pixivision_logo, null)
+        logo.setOnClickListener {
+            startActivity(Intent(context, PixivsionActivity::class.java))
+        }
+        pixiVisionAdapter.setHeaderView(logo, orientation = RecyclerView.HORIZONTAL)
+
+        val spotlightView = bannerBinding.pixivisionList
+        spotlightView.adapter = pixiVisionAdapter
+        /* reset layoutManager after data loaded to prevent flicker loop
+        if (autoLoop) {
+            // spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+            spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
+            PagerSnapHelper().attachToRecyclerView(spotlightView)
+            // spotlightView.addItemDecoration(LinePagerIndicatorDecoration(headerNum = 0))
+            // LoopingSnapHelper().attachToRecyclerView(spotlightView)
+        } else {
+            spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
+            PagerSnapHelper().attachToRecyclerView(spotlightView)
+            LinearSnapHelper().attachToRecyclerView(spotlightView)
+             CardScaleper(true).run{
+                mCurrentItemOffset=393
+                attachToRecyclerView(spotlightView)
+             }*/
+        spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
+        PagerSnapHelper().attachToRecyclerView(spotlightView)
+        spotlightView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        spotlightView.layoutAnimationListener = object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                // spotlightView.smoothScrollToPosition(2)
+                spotlightView.layoutAnimation = null // show animation only at first time
+            }
+        }
+    }
+}

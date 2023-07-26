@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:paddingStart="8dp"
-    android:paddingEnd="8dp"
     android:paddingTop="8dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:paddingEnd="8dp">
 
-        <FrameLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageview_trendingtag"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/imageview_trendingtag"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitStart"
+            android:layout_height="match_parent"
             android:layout_gravity="top"
-            />
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart" />
 
         <TextView
             android:id="@+id/textview_tag"
@@ -30,6 +29,6 @@
             android:textColor="?attr/colorPrimary"
             android:textDirection="anyRtl"
             android:textSize="20sp" />
-</FrameLayout>
+    </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>

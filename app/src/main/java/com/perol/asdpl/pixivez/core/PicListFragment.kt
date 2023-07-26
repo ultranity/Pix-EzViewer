@@ -32,7 +32,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -125,7 +124,6 @@ open class PicListFragment : Fragment() {
             TAG_TYPE.Rank.name -> {
                 requireActivity()
             }
-
             else -> {
                 this
             }
@@ -237,8 +235,7 @@ open class PicListFragment : Fragment() {
         }
 
         TAG_TYPE.Rank.name -> {
-            val shareModel =
-                ViewModelProvider(requireParentFragment())[CalendarViewModel::class.java]
+            val shareModel: CalendarViewModel by viewModels(::ownerProducer)
             shareModel.picDateShare.value?.also { extraArgs!!["pickDate"] = it }
             shareModel.picDateShare.observe(viewLifecycleOwner) {
                 viewModel.onLoadFirst()

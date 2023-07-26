@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.perol.asdpl.pixivez.ui.home.my.HelloMThFragment
-import com.perol.asdpl.pixivez.ui.home.recom.HelloRecomFragment
+import com.perol.asdpl.pixivez.ui.home.recom.HelloMRecomFragment
 import com.perol.asdpl.pixivez.ui.home.trend.HelloTrendingFragment
 
 class HelloMainViewPager(fragmentManager: FragmentManager) :
@@ -40,7 +40,7 @@ class HelloMainViewPager(fragmentManager: FragmentManager) :
     override fun getItem(position: Int): Fragment {
         if (fragments[position] == null) {
             fragments[position] = when (position) {
-                0 -> HelloRecomFragment.newInstance("r")
+                0 -> HelloMRecomFragment.newInstance("r")
                 1 -> HelloTrendingFragment.newInstance("t")
                 else -> HelloMThFragment.newInstance("d")
             }

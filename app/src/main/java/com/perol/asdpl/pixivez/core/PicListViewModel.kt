@@ -48,6 +48,18 @@ enum class TAG_TYPE {
     UserManga,
     UserBookmark,
     Collect,
+    Else;
+
+    companion object {
+        @JvmStatic
+        fun check(value: String): TAG_TYPE {
+            return try {
+                TAG_TYPE.valueOf(value)
+            } catch (e: Exception) {
+                Else
+            }
+        }
+    }
 }
 
 /**
@@ -103,7 +115,7 @@ open class PicListViewModel : BaseViewModel() {
         if (extraArgs != null) {
             this.args = extraArgs
         }
-        onLoadFirstRx = when (TAG_TYPE.valueOf(mode)) {
+        when (TAG_TYPE.check(mode)) {
             TAG_TYPE.WalkThrough -> {
                 { retrofit.getWalkThrough() }
             }
@@ -139,7 +151,6 @@ open class PicListViewModel : BaseViewModel() {
                         id, pub,
                         args["tag"] as String?
                     )
-
                 }
             }
 
@@ -148,6 +159,10 @@ open class PicListViewModel : BaseViewModel() {
                     Observable.just(1).map { IllustNext(DataHolder.tmpList ?: arrayListOf(), null) }
                 }
             }
+
+            TAG_TYPE.Else -> null
+        }?.let {
+            onLoadFirstRx = it
         }
     }
 

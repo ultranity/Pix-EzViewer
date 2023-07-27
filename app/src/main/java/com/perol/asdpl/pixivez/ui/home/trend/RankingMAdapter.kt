@@ -40,7 +40,8 @@ class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
 
     override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5
 
-    val fragments = WeakHashMap<Int, PicListFragment>(3)
+    //TODO: LRU cache
+    private val fragments = WeakHashMap<Int, PicListFragment>(3)
     override fun createFragment(position: Int): Fragment {
         if (fragments[position] == null) {
             fragments[position] = PicListFragment.newInstance(

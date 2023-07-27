@@ -30,15 +30,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.core.UserListFragment
 
 class SearchResultAdapter(
     var context: Context,
     fm: FragmentManager,
-    private var arrayList: ArrayList<Fragment>
+    private var keyword: String
 ) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    override fun getCount(): Int = arrayList.size
+    override fun getCount(): Int = 2
 
-    override fun getItem(position: Int): Fragment = arrayList[position]
+    override fun getItem(position: Int): Fragment = when (position) {
+        0 -> SearchResultFragment.newInstance(keyword)
+        else -> UserListFragment.newInstance(keyword)
+    }
 
     override fun getPageTitle(position: Int): CharSequence = when (position) {
         0 -> {

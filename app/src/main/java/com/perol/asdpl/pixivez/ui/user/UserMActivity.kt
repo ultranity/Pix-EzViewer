@@ -41,7 +41,6 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -55,6 +54,7 @@ import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
 import com.perol.asdpl.pixivez.objects.DataStore
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.view.AutoTabLayoutMediator
@@ -119,7 +119,6 @@ class UserMActivity : RinkActivity() {
         }
     }
 
-    private var exitTime = 0L
     private val viewModel: UserMViewModel by viewModels()
     private lateinit var binding: ActivityUserMBinding
     private lateinit var user: User
@@ -161,26 +160,16 @@ class UserMActivity : RinkActivity() {
         } else if (intent.extras!!.containsKey("data")) {
             id = intent.getLongExtra("data", 0)
         }
-        viewModel.getData(id)
+        //避免重复加载
+        if (!viewModel.userDetail.isInitialized)
+            viewModel.getData(id)
         binding.viewpager.adapter = UserMPagerAdapter(this, id)
+        //binding.viewpager.offscreenPageLimit = -1
+        val upToTopListener = UpToTopListener(this, supportFragmentManager)
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = getString(UserMPagerAdapter.getPageTitle(position))
         }.attach()
-        .setOnTabReSelectedStrategy {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show()
-                exitTime = System.currentTimeMillis()
-            } else {
-                (binding.viewpager.adapter as UserMPagerAdapter)
-                    .fragments[binding.viewpager.currentItem]?.view
-                    ?.findViewById<RecyclerView>(R.id.recyclerview)
-                    ?.scrollToPosition(0)
-            }
-        }
+            .setOnTabReSelectedStrategy { upToTopListener.onTabReselected(it) }
         viewModel.currentTab.observe(this) {
             binding.viewpager.currentItem = it
         }

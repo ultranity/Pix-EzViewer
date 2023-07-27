@@ -29,19 +29,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.Tab
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
+import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
 
 class HelloTrendingFragment : LazyFragment() {
     private val titles by lazy { resources.getStringArray(R.array.modellist) }
-    var exitTime: Long = 0
+
     override fun loadData() {
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
         binding.viewpager.adapter = RankingMAdapter(this, isR18on)
@@ -49,47 +47,12 @@ class HelloTrendingFragment : LazyFragment() {
         /* do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = titles[position]
-        }.setOnTabReSelectedStrategy {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show()
-                exitTime = System.currentTimeMillis()
-            }
-            else {
-                (binding.viewpager.adapter as RankingMAdapter)
-                    .fragments[tab.position]?.view
-                    ?.findViewById<RecyclerView>(R.id.recyclerview)
-                    ?.scrollToPosition(0)
-            }
-        }.attach()
+        }.setOnTabReSelectedStrategy { }.attach()
         */
         //binding.viewpager.isUserInputEnabled = false
         //binding.tablayout.setupWithViewPager(binding.viewpager)
-        binding.tablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: Tab) {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    exitTime = System.currentTimeMillis()
-                } else {
-                    (binding.viewpager.adapter as RankingMAdapter)
-                        .fragments[tab.position]?.view
-                        ?.findViewById<RecyclerView>(R.id.recyclerview)
-                        ?.scrollToPosition(0)
-                }
-            }
-
-            override fun onTabUnselected(tab: Tab) {}
-
-            override fun onTabSelected(tab: Tab) {
-                binding.viewpager.setCurrentItem(tab.position, false)
-            }
+        binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
+            binding.viewpager.setCurrentItem(it.position, false)
         })
 
         binding.imageviewRank.setOnClickListener {
@@ -111,6 +74,7 @@ class HelloTrendingFragment : LazyFragment() {
             tab.text = i
             binding.tablayout.addTab(tab, false)
         }
+        //TODO: 旋转后tab选择错误
         binding.tablayout.selectTab(binding.tablayout.getTabAt(0))
 
         // use custom layout manager to prevent nested scrolling

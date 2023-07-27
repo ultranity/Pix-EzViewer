@@ -32,6 +32,7 @@ import android.view.ViewGroup
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
+import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.argument
 
 /**
@@ -55,6 +56,9 @@ class HelloMThFragment : LazyFragment() {
         binding.tablayout.setupWithViewPager(binding.viewpager)
         binding.viewpager.adapter =
             HelloMThViewPager(this, childFragmentManager, userid)
+        binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
+            binding.viewpager.setCurrentItem(it.position, false)
+        })
     }
 
     companion object {

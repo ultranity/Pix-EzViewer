@@ -32,17 +32,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
-import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.ui.FragmentActivity
-import com.perol.asdpl.pixivez.core.UserListFragment
 
 class SearchResultActivity : RinkActivity() {
     companion object {
@@ -93,57 +88,17 @@ class SearchResultActivity : RinkActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private var exitTime = 0L
     private fun initView() {
-        binding.tablayoutSearchresult.setupWithViewPager(binding.contentSearchResult.viewpageSearchresult)
-        arrayList.add(SearchResultFragment.newInstance(keyword))
-        arrayList.add(UserListFragment.newInstance(keyword))
-        binding.contentSearchResult.viewpageSearchresult.adapter =
-            SearchResultAdapter(this, supportFragmentManager, arrayList)
-        binding.tablayoutSearchresult.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    exitTime = System.currentTimeMillis()
-                } else {
-                    (arrayList[0] as SearchResultFragment).view
-                        ?.findViewById<RecyclerView>(R.id.recyclerview)
-                        ?.scrollToPosition(0)
-                }
+        binding.tablayout.setupWithViewPager(binding.contentSearchResult.viewpager)
+        binding.contentSearchResult.viewpager.adapter =
+            SearchResultAdapter(this, supportFragmentManager, keyword)
+        binding.tablayout.addOnTabSelectedListener(
+            UpToTopListener(this, supportFragmentManager) {
+                binding.imagebuttonSection.visibility =
+                    if (it.position == 0) View.VISIBLE else View.GONE
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) { }
-
-            override fun onTabSelected(tab: TabLayout.Tab) { }
-        })
-        binding.tablayoutSearchresult.getTabAt(type)?.select()
-        binding.contentSearchResult.viewpageSearchresult.addOnPageChangeListener(object :
-            ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                when (position) {
-                    0 -> {
-                        binding.pickbar.visibility = View.VISIBLE
-                    }
-
-                    else -> {
-                        binding.pickbar.visibility = View.GONE
-                    }
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-        })
+        )
+        binding.tablayout.getTabAt(type)?.select()
         binding.searchtext.text = keyword
         binding.searchtext.setOnClickListener {
             setResult(

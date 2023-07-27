@@ -29,10 +29,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBFragment
 import com.perol.asdpl.pixivez.databinding.FragmentListBinding
@@ -41,7 +39,6 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.objects.getMaxColumn
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.ui.user.UserShowAdapter
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
@@ -134,22 +131,6 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
         userShowAdapter.setOnItemClickListener { _, _, position ->
             UserMActivity.start(requireContext(), userShowAdapter.data[position].user)
         }
-
-        // parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)? 重复ID问题导致只有单个有用
-        ((parentFragment?.view as ViewGroup?)?.getChildAt(0) as TabLayout?)
-            ?.getTabAt(1)
-            ?.view?.setOnClickListener {
-                if ((System.currentTimeMillis() - exitTime) > 3000) {
-                    Toast.makeText(
-                        PxEZApp.instance,
-                        getString(R.string.back_to_the_top),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    exitTime = System.currentTimeMillis()
-                } else {
-                    binding.recyclerview.scrollToPosition(0)
-                }
-            }
     }
 
     private fun initViewModel() {

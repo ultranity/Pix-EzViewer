@@ -89,15 +89,6 @@ android {
         }
     }
     splits {
-        // Configures multiple APKs based on screen density.
-        density {
-            // Configures multiple APKs based on screen density.
-            isEnable  = false
-            // Specifies a list of screen densities Gradle should not create multiple APKs for.
-            exclude("mdpi", "hdpi", "ldpi", "xhdpi", "xxxhdpi")
-            // Specifies a list of compatible screen size settings for the manifest.
-            //compatibleScreens "small","normal", "large", "xlarge"
-        }
         // Configures multiple APKs based on ABI.
         abi {
             // Enables building multiple APKs per ABI.
@@ -165,164 +156,143 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
+    implementation(libs.kotlin.stdlib)
 
-    //implementation("androidx.core:core:1.3.1")
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    //implementation(libs.androidx.core)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.appcompat)
     //implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.vectordrawable:vectordrawable:1.1.0")
+    implementation(libs.androidx.vectordrawable)
     //implementation("androidx.activity:activity:1.2.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.recyclerview)
     //implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.webkit:webkit:1.7.0")
-    //implementation("androidx.activity:activity:1.2.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
-    //implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
-    val navigationVersion = "2.6.0"
-    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.webkit)
+    //val navigation = "2.6.0"
+    //implementation("androidx.navigation:navigation-fragment-ktx:$navigation")
+    //implementation("androidx.navigation:navigation-ui-ktx:$navigation")
     //implementation("androidx.paging:paging-common-ktx:3.1.1")
-    implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation(libs.flexbox)
+    implementation(libs.material)
 
-    val work_version = "2.8.0"
-    run {
-        // (Java only)
-        //implementation("androidx.work:work-runtime:$work_version")
-        // Kotlin + coroutines
-        implementation("androidx.work:work-runtime-ktx:$work_version")
-        // optional - RxJava2 support
-        //implementation("androidx.work:work-rxjava2:$work_version")
-        // optional - GCMNetworkManager support
-        //implementation("androidx.work:work-gcm:$work_version")
-        // optional - Test helpers
-        androidTestImplementation("androidx.work:work-testing:$work_version")
-        // optional - Multiprocess support
-        //implementation("androidx.work:work-multiprocess:$work_version")
-    }
+    /*/ (Java only)
+    //implementation(libs.androidx.work.runtime)
+    // Kotlin + coroutines
+    implementation(libs.androidx.work.runtime.ktx)
+    // optional - RxJava2 support
+    implementation(libs.androidx.work.rxjava2)
+    // optional - GCMNetworkManager support
+    //implementation("androidx.work:work-gcm:$work_")
+    // optional - Test helpers
+    androidTestImplementation(libs.androidx.work.testing)
+    // optional - Multiprocess support
+    implementation(libs.androidx.work.multiprocess)*/
 
     //implementation("androidx.annotation:annotation:1.5.0")
-    //implementation("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
+    //implementation("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlin"]}")
 
-    val roomVersion = "2.5.2"
-    run {
-        implementation("androidx.room:room-runtime:$roomVersion")
-        // For Kotlin use kapt/ksp instead of annotationProcessor
-        ksp("androidx.room:room-compiler:$roomVersion")
-        // optional - Kotlin Extensions and Coroutines support for Room
-        implementation("androidx.room:room-ktx:$roomVersion")
-        // optional - RxJava support for Room
-        // implementation("androidx.room:room-rxjava2:$roomVersion")
-        // Test helpers
-        testImplementation("androidx.room:room-testing:$roomVersion")
-    }
+    implementation(libs.room.runtime)
+    // For Kotlin use kapt/ksp instead of annotationProcessor
+    ksp(libs.room.compiler)
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation(libs.room.ktx)
+    // optional - RxJava support for Room
+    // implementation("androidx.room:room-rxjava2:$room")
+    // Test helpers
+    testImplementation(libs.room.testing)
 
-    val lifecycleVersion = "2.6.1"
-    run {
-        // ViewModel and LiveData
-        //implementation("androidx.lifecycle:lifecycle-extensions:$lifecycleVersion")
-        // use -ktx for Kotlin
-        // ViewModel
-        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
-        // ViewModel utilities for Compose
-        //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
-        // LiveData
-        implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
-        // Lifecycles only (without ViewModel or LiveData)
-        implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
-        // Annotation processor
-        //ksp "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
-        // alternately - if using Java8, use the following instead of lifecycle-compiler
-        implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
-        // optional - ReactiveStreams support for LiveData
-        //implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
-    }
+    // ViewModel and LiveData
+    //implementation("androidx.lifecycle:lifecycle-extensions:$lifecycle")
+    // use -ktx for Kotlin
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // ViewModel utilities for Compose
+    //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle")
+    // LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Annotation processor
+    //ksp "androidx.lifecycle:lifecycle-compiler:$lifecycle"
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    implementation(libs.androidx.lifecycle.common.java8)
+    // optional - ReactiveStreams support for LiveData
+    //implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle")
 
-    //val archVersion = "2.1.0"
+    //val arch = "2.1.0"
     // optional - Test helpers for LiveData
-    //testImplementation("androidx.arch.core:core-testing:$archVersion")
+    //testImplementation("androidx.arch.core:core-testing:$arch")
 
-    implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibrariesVersion"]}")
-    implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibrariesVersion"]}")
-    implementation("com.arialyy.aria:core:3.8.12")
+    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aria.core)
     //kapt("com.arialyy.aria:compiler:3.8.12")
-    implementation("io.noties.markwon:core:4.6.2")
-    implementation("org.jsoup:jsoup:1.16.1")
-    implementation("net.lingala.zip4j:zip4j:2.11.5")
-    implementation("com.waynejo:androidndkgif:0.3.3")
+    implementation(libs.markwon.core)
+    implementation(libs.jsoup)
+    implementation(libs.zip4j)
+    implementation(libs.androidndkgif)
 
-    implementation("com.hyman:flowlayout-lib:1.1.2")
+    implementation(libs.flowlayout.lib)
     //implementation("com.youth.banner:banner:1.4.10")
     //implementation("io.github.youth5201314:banner:2.2.2")
-    implementation("com.github.beksomega:loopinglayout:0.5.0")
+    implementation(libs.loopinglayout)
 
     //implementation("com.dinuscxj:circleprogressbar:1.3.0") //use CircularProgressIndicator
     //implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project
-    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
-    implementation("com.github.Dhaval2404:ColorPicker:2.3")
+    implementation(libs.subsampling.scale.image.view.androidx)
+    implementation(libs.colorPicker)
     //implementation("com.github.ybq:Android-SpinKit:1.4.0")
 
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
-    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
+    implementation(libs.brvah)
     //implementation("com.github.liangjingkanji:BRV:1.4.3")
 
-    /*val ViewBindingKTXVersion = "2.1.0"
+    /*val ViewBindingKTX = "2.1.0"
     run{
-    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTXVersion")
-    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-nonreflection-ktx:$ViewBindingKTXVersion")
-    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:$ViewBindingKTXVersion")
-    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTXVersion")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTX")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-nonreflection-ktx:$ViewBindingKTX")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:$ViewBindingKTX")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTX")
     }*/
 
-    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
-    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation(libs.rxkotlin)
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
 
     // okhttp3系列组件版本最高到 4.4.1
-    val okhttp3Version = "4.4.1"
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp3Version")
-    implementation("com.squareup.okhttp3:okhttp:$okhttp3Version")
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
 
-    val glideVersion = "4.15.1"
-    run {
-        implementation("com.github.bumptech.glide:glide:$glideVersion")
-        implementation("com.github.bumptech.glide:annotations:$glideVersion")
-        implementation("com.github.bumptech.glide:okhttp3-integration:$glideVersion")
-        //kapt("com.github.bumptech.glide:compiler:$glideVersion")
-        ksp("com.github.bumptech.glide:ksp:$glideVersion")
-    }
+    implementation(libs.glide)
+    implementation(libs.glide.annotations)
+    implementation(libs.glide.okhttp3.integration)
+    //kapt("com.github.bumptech.glide:compiler:$glide")
+    ksp(libs.glide.ksp)
 
-    implementation("jp.wasabeef:glide-transformations:4.3.0")
+    implementation(libs.glide.transformations)
 
-    val retrofitVersion = "2.9.0"
-    run {
-        implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-        implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
-        implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
-    }
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.adapter.rxjava2)
+
 
     // Material Dialogs: https://github.com/afollestad/material-dialogs
-    val materialDialogsVersion = "3.3.0"
-    run {
-        implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
-        implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
-        implementation("com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion")
-        implementation("com.afollestad.material-dialogs:lifecycle:$materialDialogsVersion")
-        implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
-    }
-    implementation("com.afollestad:drag-select-recyclerview:2.4.0")
+    implementation(libs.material.dialogs.core)
+    implementation(libs.material.dialogs.files)
+    implementation(libs.material.dialogs.bottomsheets)
+    implementation(libs.material.dialogs.lifecycle)
+    implementation(libs.material.dialogs.input)
+    implementation(libs.drag.select.recyclerview)
 
     //implementation("org.greenrobot:eventbus:3.3.1") replace with kotlin flow
 
     //implementation("com.esotericsoftware.kryo:kryo:2.24.0")
-    implementation("com.tencent:mmkv-static:1.3.0")
-    implementation("org.roaringbitmap:RoaringBitmap:0.9.45")
+    implementation(libs.mmkv.static)
+    implementation(libs.roaringBitmap)
 
     //implementation("com.just.agentweb:agentweb:4.1.4")
     //implementation("net.gotev:cookie-store:1.5.0")
@@ -346,8 +316,8 @@ dependencies {
     //"buglyImplementation"("com.tencent.bugly:crashreport_upgrade:1.6.1")
     //"buglyImplementation"("com.github.supersu-man:apkupdater-library:v2.0.0")
 
-    debugImplementation("io.github.knight-zxw:blockcanary:0.0.5")
-    debugImplementation("io.github.knight-zxw:blockcanary-ui:0.0.5")
+    debugImplementation(libs.blockcanary)
+    debugImplementation(libs.blockcanary.ui)
     //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     //debugImplementation("com.bytedance.tools.codelocator:codelocator-core:2.0.0")

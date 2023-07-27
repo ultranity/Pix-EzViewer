@@ -31,7 +31,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.fragment.app.viewModels
@@ -71,31 +70,20 @@ class RecomViewModel : PicListViewModel() {
 
 class RecomFragment : PicListFragment() {
     override var TAG: String = TAG_TYPE.Recommend.name
-    fun loadData() {
-        viewModel.onLoadFirst()
-        pixivisionModel.onRefreshListener()
-    }
 
     private fun initViewModel() {
         pixivisionModel.banners.observe(viewLifecycleOwner) {
+            //TODO: check if loaded
+            picListAdapter.removeHeaderView(headerView)
+            picListAdapter.addHeaderView(bannerBinding.root, 0)
+            // pixivision logo
+            headerView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.header_pixivision_logo, null)
+            headerView.setOnClickListener {
+                startActivity(Intent(context, PixivsionActivity::class.java))
+            }
+            pixiVisionAdapter.setHeaderView(headerView, orientation = RecyclerView.HORIZONTAL)
             pixiVisionAdapter.setNewInstance(it)
-            val spotlightView = bannerBinding.pixivisionList
-            val autoLoop = PxEZApp.instance.pre
-                .getBoolean("banner_auto_loop", true)
-            if (autoLoop) {
-                spotlightView.layoutManager =
-                    LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
-            }
-            spotlightView.layoutAnimation = LayoutAnimationController(
-                AnimationUtils.loadAnimation(
-                    context,
-                    R.anim.right_in
-                )
-            ).also {
-                it.order = LayoutAnimationController.ORDER_NORMAL
-                it.delay = 1f
-                it.interpolator = AccelerateInterpolator(0.5f)
-            }
         }
         pixivisionModel.addbanners.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -127,6 +115,7 @@ class RecomFragment : PicListFragment() {
         viewModel.bannerLoader = pixivisionModel::onRefreshListener
     }
 
+    private lateinit var headerView: View
     private var _bannerBinding: HeaderPixivisionBinding? = null
     private val bannerBinding: HeaderPixivisionBinding
         get() = requireNotNull(_bannerBinding) { "The property of binding has been destroyed." }
@@ -145,6 +134,12 @@ class RecomFragment : PicListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
+        // pixivision logo
+        headerView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.header_banner_empty, null)
+        headerView.setOnClickListener {
+            startActivity(Intent(context, PixivsionActivity::class.java))
+        }
         pixiVisionAdapter = PixiVisionAdapter(
             R.layout.view_pixivision_item_small,
             null
@@ -154,12 +149,14 @@ class RecomFragment : PicListFragment() {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             headerWithEmptyEnable = true
             footerWithEmptyEnable = true
-            addHeaderView(bannerBinding.root, 0)
+            addHeaderView(headerView, 0)
         }
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onLoadFirst()
-            pixivisionModel.onRefreshListener()
-        }
+        val spotlightView = bannerBinding.pixivisionList
+        spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
+        PagerSnapHelper().attachToRecyclerView(spotlightView)
+        spotlightView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        spotlightView.adapter = pixiVisionAdapter
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(
                 context,
@@ -175,21 +172,14 @@ class RecomFragment : PicListFragment() {
         }
         val autoLoop = PxEZApp.instance.pre
             .getBoolean("banner_auto_loop", true)
-        if (!autoLoop) {
+        if (autoLoop) {
+            spotlightView.layoutManager =
+                LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+        } else {
             pixiVisionAdapter.setOnLoadMoreListener {
                 pixivisionModel.onLoadMoreBannerRequested()
             }
         }
-        // pixivision logo
-        val logo =
-            LayoutInflater.from(requireContext()).inflate(R.layout.header_pixivision_logo, null)
-        logo.setOnClickListener {
-            startActivity(Intent(context, PixivsionActivity::class.java))
-        }
-        pixiVisionAdapter.setHeaderView(logo, orientation = RecyclerView.HORIZONTAL)
-
-        val spotlightView = bannerBinding.pixivisionList
-        spotlightView.adapter = pixiVisionAdapter
         /* reset layoutManager after data loaded to prevent flicker loop
         if (autoLoop) {
             // spotlightView.layoutManager = LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
@@ -205,17 +195,15 @@ class RecomFragment : PicListFragment() {
                 mCurrentItemOffset=393
                 attachToRecyclerView(spotlightView)
              }*/
-        spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
-        PagerSnapHelper().attachToRecyclerView(spotlightView)
-        spotlightView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        spotlightView.layoutAnimationListener = object : Animation.AnimationListener {
-            override fun onAnimationStart(p0: Animation?) {}
-            override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                // spotlightView.smoothScrollToPosition(2)
-                spotlightView.layoutAnimation = null // show animation only at first time
-            }
+        spotlightView.layoutAnimation = LayoutAnimationController(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.right_in
+            )
+        ).also {
+            it.order = LayoutAnimationController.ORDER_NORMAL
+            it.delay = 1f
+            it.interpolator = AccelerateInterpolator(0.5f)
         }
     }
 }

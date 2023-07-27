@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.core
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.IllustNext
@@ -107,8 +108,8 @@ open class PicListViewModel : BaseViewModel() {
     val data = MutableLiveData<MutableList<Illust>?>()
     val dataAdded = MutableLiveData<MutableList<Illust>?>()
     val nextUrl = MutableLiveData<String?>()
-    val isRefreshing = MutableLiveData(false)
-    val restrict = MutableLiveData(RESTRICT_TYPE.all)
+    val isRefreshing = DMutableLiveData(false)
+    val restrict = DMutableLiveData(RESTRICT_TYPE.all)
     lateinit var args: MutableMap<String, Any?>
     protected lateinit var onLoadFirstRx: () -> Observable<IllustNext>
 

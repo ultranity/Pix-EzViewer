@@ -118,8 +118,8 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
                 if (isChecked) {
                     val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
                     val value = visRestrictTag(checkedIndex == 2)
-                    if (viewModel.restrict != value) {
-                        viewModel.restrict = value
+                    if (viewModel.restrict.value != value) {
+                        viewModel.restrict.value = value
                         viewModel.onLoadFirst()
                     }
                 }

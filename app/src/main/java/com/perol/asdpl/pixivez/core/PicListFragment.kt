@@ -41,7 +41,7 @@ import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
-import com.perol.asdpl.pixivez.databinding.HeaderBookmarkBinding
+import com.perol.asdpl.pixivez.databinding.HeaderFilterBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
@@ -80,7 +80,7 @@ open class PicListFragment : Fragment() {
     var isLoaded = false
 
     private var _binding: FragmentListFabBinding? = null
-    private var _headerBinding: HeaderBookmarkBinding? = null
+    private var _headerBinding: HeaderFilterBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     protected val binding get() = _binding!!
@@ -91,7 +91,7 @@ open class PicListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentListFabBinding.inflate(inflater, container, false)
-        _headerBinding = HeaderBookmarkBinding.inflate(inflater)
+        _headerBinding = HeaderFilterBinding.inflate(inflater)
         return binding.root
     }
 
@@ -268,10 +268,8 @@ open class PicListFragment : Fragment() {
 
         else -> {
             viewModel.restrict.observe(viewLifecycleOwner) {
-                // fix: default value will be observed
-                if (headerBinding.imgBtnSpinner.text != "TAG") {
+                if (viewModel.restrict.currentVersion > 0)
                     viewModel.onLoadFirst()
-                }
                 headerBinding.imgBtnSpinner.text =
                     resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
             }

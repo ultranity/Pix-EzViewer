@@ -7,6 +7,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.PicListViewModel
 import com.perol.asdpl.pixivez.core.arg
@@ -32,7 +33,7 @@ class SearchResultFragment: PicListFragment() {
     }
     override val viewModel:SearchResultViewModel by viewModels({requireActivity()})
     override fun configByTAG() {
-        viewModel.sort.observe(viewLifecycleOwner){
+        viewModel.sort.observeAfterSet(viewLifecycleOwner) {
             viewModel.onLoadFirst()
         }
         viewModel.query = keyword
@@ -106,12 +107,12 @@ class SearchResultViewModel:PicListViewModel() {
     )
 
     var isPreview = false
-    val sort = MutableLiveData(0)
-    val searchTarget = MutableLiveData(0)
-    val selectDuration: Int = 0
+    val sort = DMutableLiveData(0)
+    var searchTarget = 0
+    private val selectDuration: Int = 0
     val startDate = MutableLiveData<Calendar?>()
     val endDate = MutableLiveData<Calendar?>()
-    
+
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefreshing.value = true
         retrofit.getSearchIllustPreview(word, sort, search_target, null, duration)
@@ -136,13 +137,14 @@ class SearchResultViewModel:PicListViewModel() {
             setPreview(
                 word,
                 sortT[sort.value!!],
-                searchTargetT[searchTarget.value!!],
-                durationT[selectDuration])
+                searchTargetT[searchTarget],
+                durationT[selectDuration]
+            )
         } else {
             retrofit.getSearchIllust(
                 word,
                 sortT[sort.value!!],
-                searchTargetT[searchTarget.value!!],
+                searchTargetT[searchTarget],
                 startDate.value.generateDateString(),
                 endDate.value.generateDateString(),
                 null

@@ -46,10 +46,10 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
         val word = requireArguments().getString("word", "")
         val viewModel =
             ViewModelProvider(requireActivity())[SearchResultViewModel::class.java]
-        var searchTargeti = viewModel.searchTarget.value
+        var searchTargeti = viewModel.searchTarget
         binding.tablayoutSearchTarget.apply {
             clearOnTabSelectedListeners()
-            searchTargeti?.let { getTabAt(it)?.select() }
+            searchTargeti.let { getTabAt(it)?.select() }
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(tab: TabLayout.Tab?) {
                 }
@@ -143,7 +143,7 @@ class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
             .setNegativeButton(android.R.string.cancel) { p0, p1 -> }
             .setPositiveButton(android.R.string.ok) { p0, p1 ->
                 viewModel.sort.value = sorti
-                viewModel.searchTarget.value = searchTargeti
+                viewModel.searchTarget = searchTargeti
                 if (word != null) {
                     viewModel.firstSetData(word)
                 }

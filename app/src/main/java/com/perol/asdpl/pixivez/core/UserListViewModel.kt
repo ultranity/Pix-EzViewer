@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.core
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import io.reactivex.Observable
@@ -37,8 +38,8 @@ class UserListViewModel : BaseViewModel() {
     val data = MutableLiveData<List<UserPreviewsBean>?>()
     val dataAdded = MutableLiveData<List<UserPreviewsBean>?>()
     val nextUrl = MutableLiveData<String?>()
-    val isRefreshing = MutableLiveData(false)
-    var restrict = "public"
+    val isRefreshing = DMutableLiveData(false)
+    var restrict = DMutableLiveData("public")
     protected lateinit var onLoadFirstRx: () -> Observable<SearchUserResponse>
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
@@ -49,7 +50,7 @@ class UserListViewModel : BaseViewModel() {
             "Following" -> {
                 needHeader = true
                 {
-                    retrofit.getUserFollowing(userid, restrict)
+                    retrofit.getUserFollowing(userid, restrict.value!!)
                 }
             }
             "Follower" -> {

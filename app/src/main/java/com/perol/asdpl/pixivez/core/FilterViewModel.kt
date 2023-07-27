@@ -30,12 +30,12 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.widget.Checkable
 import androidx.core.content.edit
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -119,9 +119,9 @@ data class PicListFilter(
 }
 class FilterViewModel : ViewModel() {
     var TAG = "FilterViewModel"
-    val spanNum = MutableLiveData(2)
+    val spanNum = DMutableLiveData(2)
     val filter = PicListFilter()
-    var adapterType = MutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
+    var adapterType = DMutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
     var modeCollect = false
     init {
         filter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)

@@ -44,17 +44,22 @@ class HelloTrendingFragment : LazyFragment() {
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
         binding.viewpager.adapter = RankingMAdapter(this, isR18on)
 
-        /* do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
+        //fix: 旋转后tab选择错误: viewpager.adapter设置后恢复正确的currentItem
+        binding.tablayout.selectTab(binding.tablayout.getTabAt(binding.viewpager.currentItem))
+
+        /* //do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
+        // after overriding layout manager: tab无法显示选择效果
+        val upToTopListener = UpToTopListener(this)
+        //do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = titles[position]
-        }.setOnTabReSelectedStrategy { }.attach()
+        }.setOnTabReSelectedStrategy{ upToTopListener.onTabReselected(it) }.attach()
         */
         //binding.viewpager.isUserInputEnabled = false
         //binding.tablayout.setupWithViewPager(binding.viewpager)
         binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
             binding.viewpager.setCurrentItem(it.position, false)
         })
-
         binding.imageviewRank.setOnClickListener {
             //TODO: sort/config list
         }
@@ -74,8 +79,6 @@ class HelloTrendingFragment : LazyFragment() {
             tab.text = i
             binding.tablayout.addTab(tab, false)
         }
-        //TODO: 旋转后tab选择错误
-        binding.tablayout.selectTab(binding.tablayout.getTabAt(0))
 
         // use custom layout manager to prevent nested scrolling
         (binding.viewpager.getChildAt(0) as RecyclerView).apply {

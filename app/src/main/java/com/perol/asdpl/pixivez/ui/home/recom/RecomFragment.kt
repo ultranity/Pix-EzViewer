@@ -160,7 +160,7 @@ class RecomFragment : PicListFragment() {
         pixiVisionAdapter.setHeaderView(headerLogo, orientation = RecyclerView.HORIZONTAL)
         //}
         spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
-        spotlightView.setHasFixedSize(true)
+        // spotlightView.setHasFixedSize(true)
         PagerSnapHelper().attachToRecyclerView(spotlightView)
         spotlightView.adapter = pixiVisionAdapter
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->

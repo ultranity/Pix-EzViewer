@@ -80,14 +80,19 @@ class AutoTabLayoutMediator(
     private var onTabSelectedStrategy: TabSelectedStrategy? = null
     private var onTabUnSelectedStrategy: TabSelectedStrategy? = null
     private var onTabReSelectedStrategy: TabSelectedStrategy? = null
-    fun setOnTabSelectedStrategy(strategy: TabSelectedStrategy){
+    fun setOnTabSelectedStrategy(strategy: TabSelectedStrategy): AutoTabLayoutMediator {
         onTabSelectedStrategy = strategy
+        return this
     }
-    fun setOnTabUnSelectedStrategy(strategy: TabSelectedStrategy){
+
+    fun setOnTabUnSelectedStrategy(strategy: TabSelectedStrategy): AutoTabLayoutMediator {
         onTabUnSelectedStrategy = strategy
+        return this
     }
-    fun setOnTabReSelectedStrategy(strategy: TabSelectedStrategy){
+
+    fun setOnTabReSelectedStrategy(strategy: TabSelectedStrategy): AutoTabLayoutMediator {
         onTabReSelectedStrategy = strategy
+        return this
     }
 
     /**

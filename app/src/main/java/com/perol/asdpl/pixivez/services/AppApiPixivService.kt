@@ -32,7 +32,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-interface AppApiPixivService {
+interface AppApiPixivService { //TODO: check filter=for_android
 
     @GET("v1/walkthrough/illusts")
     fun walkthroughIllusts(): Observable<IllustNext>
@@ -197,11 +197,6 @@ interface AppApiPixivService {
         @Query("illust_id") paramLong: Long
     ): Observable<IllustDetailResponse>
 
-    @GET("/v1/illust/detail?filter=for_android")
-    suspend fun getIllustCor(
-        @Query("illust_id") paramLong: Long
-    ): IllustDetailResponse
-
     @GET("/v2/illust/related?filter=for_android")
     fun getIllustRecommended(
         @Query("illust_id") paramLong: Long
@@ -227,13 +222,6 @@ interface AppApiPixivService {
         @Query("mode") mode: String,
         @Query("date") date: String?
     ): Observable<IllustNext>
-
-    @GET("/v1/illust/ranking?filter=for_android")
-    fun getIllustRanking1(
-        // @Header("Authorization") paramString1: String,
-        @Query("mode") mode: String,
-        @Query("date") date: String
-    ): Observable<ResponseBody>
 
     @GET("/v2/illust/follow")
     fun getFollowIllusts(

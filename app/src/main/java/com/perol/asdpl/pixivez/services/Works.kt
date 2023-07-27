@@ -34,6 +34,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
+import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -213,10 +214,8 @@ object Works {
     val option by lazy {
         HttpOption()
             .apply {
-                addHeader(
-                    "User-Agent",
-                    "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                ).addHeader("referer", "https://app-api.pixiv.net/")
+                addHeader("User-Agent", RestClient.UA)
+                addHeader("referer", "https://app-api.pixiv.net/")
             }
     }
     var mirrorLinkView = pre.getBoolean("mirrorLinkView", false)

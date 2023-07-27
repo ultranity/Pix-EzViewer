@@ -49,7 +49,15 @@ object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
     private val httpDns by lazy { RubyHttpDns }
     private val imageDns by lazy { ImageHttpDns }
-    val local = LanguageUtil.langToLocale(PxEZApp.language)
+    private val local = LanguageUtil.langToLocale(PxEZApp.language)
+    private const val App_OS = "Android"
+    private val App_OS_Version = android.os.Build.VERSION.RELEASE
+    private const val App_Version = "7.13.3"
+    val UA =
+        "Pixiv${App_OS}App/#{App_Version} (${App_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
+    private val ISO8601DATETIMEFORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
+    private const val HashSalt =
+        "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
     private val disableProxy by lazy { PxEZApp.instance.pre.getBoolean("disableproxy", false) }
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
@@ -77,10 +85,7 @@ object RestClient {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original = chain.request()
                     val requestBuilder = original.newBuilder()
-                        .header(
-                            "User-Agent",
-                            "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                        )
+                        .addHeader("User-Agent", RestClient.UA)
                         .header("referer", "https://app-api.pixiv.net/")
                     val request = requestBuilder.build()
                     return chain.proceed(request)
@@ -99,13 +104,12 @@ object RestClient {
 
     // val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
     // val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
-    val retrofitOauthSecure = buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
+    val retrofitOauthSecure =
+        buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
     val retrofitOauthSecureDirect = buildRetrofit(
         "https://oauth.secure.pixiv.net",
         okHttpClient("oauth.secure.pixiv.net", true)
     )
-    private const val HashSalt =
-        "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
     private fun encode(text: String): String {
         try {
@@ -141,8 +145,6 @@ object RestClient {
         builder.apply {
             addInterceptor(
                 Interceptor { chain ->
-                    val ISO8601DATETIMEFORMAT =
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
                     val isoDate = ISO8601DATETIMEFORMAT.format(Date())
                     val original = chain.request()
                     var Authorization = ""
@@ -152,18 +154,17 @@ object RestClient {
                         e.printStackTrace()
                         Log.d("OkHttpClient", "get Authorization failed")
                     }
-                    Log.d("OkHttpClient", "Request $Authorization and original ${original.header("Authorization")}")
+                    Log.d(
+                        "OkHttpClient",
+                        "Request $Authorization and original ${original.header("Authorization")}"
+                    )
                     val requestBuilder = original.newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader(
-                            "User-Agent",
-                            "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                        )
+                        .header("User-Agent", UA)
+                        .addHeader("App-OS", App_OS)
+                        .addHeader("App-OS-Version", App_OS_Version)
+                        .addHeader("App-Version", App_Version)
                         .addHeader("Accept-Language", "${local.language}_${local.country}")
                         .header("Authorization", Authorization)
-                        .addHeader("App-OS", "Android")
-                        .addHeader("App-OS-Version", android.os.Build.VERSION.RELEASE)
-                        .header("App-Version", "5.0.234")
                         .addHeader("X-Client-Time", isoDate)
                         .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
                         .addHeader("Host", host)
@@ -196,6 +197,7 @@ object RestClient {
         }
         proxySocket(imageDns)
     }
+
     private fun OkHttpClient.Builder.proxySocket(dns: Dns = apiDns): OkHttpClient.Builder {
         if (!disableProxy) {
             this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())

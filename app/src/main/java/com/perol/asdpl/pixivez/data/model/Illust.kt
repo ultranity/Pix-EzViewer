@@ -303,8 +303,8 @@ data class Illust(
     var is_bookmarked: Boolean,
     var visible: Boolean,
     val is_muted: Boolean,
-    val total_comments: Int,
-    val illust_ai_type: Int, //TODO:
+    val total_comments: Int, //not included in recommends
+    val illust_ai_type: Int,
     val illust_book_style: Int, //TODO:
     val comment_access_control: Int, //TODO:
 ) : Parcelable

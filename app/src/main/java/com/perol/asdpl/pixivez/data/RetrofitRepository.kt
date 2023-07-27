@@ -49,7 +49,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
-import retrofit2.HttpException
 
 class RetrofitRepository {
 
@@ -199,22 +198,6 @@ class RetrofitRepository {
                 illust_id.toString()
             )
         }
-
-    private suspend fun getIllustCor(illust_id: Long): IllustDetailResponse? {
-        var illustDetailResponse: IllustDetailResponse? = null
-        try {
-            illustDetailResponse = appApiPixivService.getIllustCor(illust_id)
-        } catch (e: Exception) {
-            if (e is HttpException) {
-                getIllustCor(illust_id)
-            }
-        } finally {
-            if (illustDetailResponse == null) {
-                getIllustCor(illust_id)
-            }
-        }
-        return illustDetailResponse
-    }
 
     fun postUnlikeIllust(long: Long): Observable<ResponseBody> =
         Request(appApiPixivService.postUnlikeIllust(long))

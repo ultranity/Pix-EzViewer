@@ -53,8 +53,6 @@ import java.util.concurrent.TimeoutException
 import kotlin.math.pow
 
 class RefreshToken private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
-    private var client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-    private var client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     private val TOKEN_ERROR = "Error occurred at the OAuth process"
     private val TOKEN_ERROR_2 = "Invalid refresh token"
     private var oAuthSecureService: OAuthSecureService? = null
@@ -159,8 +157,8 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
         Log.d("init", "reFreshToken")
         // AppDataRepo.pre.setString("Device_token", it.Device_token)
         return oAuthSecureService!!.postRefreshAuthTokenX(
-            client_id,
-            client_secret,
+            Companion.client_id,
+            Companion.client_secret,
             "refresh_token",
             refreshToken,
             true
@@ -219,5 +217,8 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
             instance ?: synchronized(this) {
                 instance ?: RefreshToken().also { instance = it }
             }
+
+        const val client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
+        const val client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     }
 }

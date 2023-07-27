@@ -41,6 +41,7 @@ import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
+import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -93,11 +94,7 @@ class SaucenaoActivity : RinkActivity() {
             override fun intercept(chain: Interceptor.Chain): Response {
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
-                    .removeHeader("User-Agent")
-                    .addHeader(
-                        "User-Agent",
-                        "PixivAndroidApp/5.0.234 (Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL})"
-                    )
+                    .header("User-Agent", RestClient.UA)
                     .addHeader("referer", "https://app-api.pixiv.net/")
                 val request = requestBuilder.build()
                 return chain.proceed(request)

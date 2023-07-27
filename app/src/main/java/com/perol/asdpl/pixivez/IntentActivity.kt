@@ -37,6 +37,7 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ErrorResponse
 import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
 import com.perol.asdpl.pixivez.networks.Pkce
+import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
@@ -180,8 +181,8 @@ class IntentActivity : RinkActivity() {
 
     private fun tryLogin(code: String) {
         val map = HashMap<String, Any>()
-        map["client_id"] = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-        map["client_secret"] = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+        map["client_id"] = RefreshToken.client_id
+        map["client_secret"] = RefreshToken.client_secret
         map["grant_type"] = "authorization_code"
         map["code"] = code
         map["code_verifier"] = Pkce.getPkce().verify

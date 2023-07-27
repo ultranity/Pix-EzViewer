@@ -39,6 +39,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityNewUserBinding
 import com.perol.asdpl.pixivez.networks.Pkce
+import com.perol.asdpl.pixivez.networks.RestClient
 
 class NewUserActivity : RinkActivity() {
 
@@ -83,8 +84,7 @@ class NewUserActivity : RinkActivity() {
         binding.webView.webChromeClient = webChromeClient
         binding.webView.webViewClient = webViewClient
         val webSettings = binding.webView.settings
-        webSettings.userAgentString =
-            "PixivAndroidApp/5.0.234 (Android ${Build.VERSION.RELEASE}; ${Build.MODEL})"
+        webSettings.userAgentString = RestClient.UA
         webSettings.javaScriptEnabled = true
         webSettings.domStorageEnabled = true
         webSettings.setSupportZoom(true)

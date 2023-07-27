@@ -150,7 +150,7 @@
     <string name="bookmark_public">公開收藏</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
-    <string name="choice_date">Choice Date</string>
+    <string name="choose_date">Choose Date</string>
     <string name="hide_bookmarked">隐藏已收藏圖像</string>
     <string name="summary">在剛接觸JAVA的時候邊學官方文檔邊做,摸索著完成了這個客戶端,因為個人能力的問題,出過不少丟人的BUG,優化問題,在完善這個應用的過程中，我獲得了很多</string>
     <string name="title_change_theme">更換主題</string>
@@ -302,4 +302,5 @@
     <string name="dislike">取消收藏</string>
     <string name="walk_through">速覽漫步</string>
     <string name="show_block">顯示占位過濾結果</string>
+    <string name="recommend">推薦</string>
 </resources>

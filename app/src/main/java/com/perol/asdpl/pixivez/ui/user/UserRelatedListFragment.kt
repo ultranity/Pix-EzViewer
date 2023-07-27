@@ -103,14 +103,14 @@ class UserRelatedListFragment : Fragment() {
             if (it.containsKey("illustid")) {
                 illustId = it.getLong("illustid")
                 requireActivity().actionBar?.setTitle(R.string.bookmark)
-                //binding.title.text = getString(R.string.bookmark)
+                //binding.title.setText(R.string.bookmark)
                 initIllustData()
             } else {
                 userid = it.getLong("userid")
                 if (it.containsKey("get_following")) {
                     getFollowing = it.getBoolean("get_following", true)
                     requireActivity().actionBar?.setTitle(R.string.following)
-                    //binding.title.text = getString(R.string.following)
+                    //binding.title.setText(R.string.following)
                     initFollowData()
                 }
                 else {

@@ -241,7 +241,7 @@ open class PicListFragment : Fragment() {
                 viewModel.onLoadFirst()
             }
             binding.recyclerview.setRecycledViewPool(shareModel.pool)
-            headerBinding.imgBtnSpinner.text = "时间"
+            headerBinding.imgBtnSpinner.setText(R.string.choose_date)
             headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_calendar)
             headerBinding.imgBtnSpinner.setOnClickListener {
                 val dateNow = shareModel.getDateStr()

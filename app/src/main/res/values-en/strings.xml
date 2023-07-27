@@ -150,7 +150,7 @@
     <string name="bookmark_public">public</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
-    <string name="choice_date">Choice Date</string>
+    <string name="choose_date">Choose Date</string>
     <string name="hide_bookmarked">Hide bookmarked pic</string>
     <string name="summary">When I first came into contact with Java, I learned from the official docs while developing, and groped to complete this client. Because of my skills there were many embarrassing bugs and optimization problems. In the process of improving this application, I got a lot developer experience and relatively profound lessons have also been helped and supported by many people.</string>
     <string name="title_change_theme">Change accent</string>
@@ -302,4 +302,5 @@
     <string name="dislike">Undo Bookmark</string>
     <string name="walk_through">Random</string>
     <string name="show_block">show filtered view</string>
+    <string name="recommend">Recommend</string>
 </resources>

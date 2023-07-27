@@ -150,7 +150,7 @@
     <string name="bookmark_public">公開</string>
     <string name="start_date">開始日</string>
     <string name="end_date">終了日</string>
-    <string name="choice_date">日付を選択</string>
+    <string name="choose_date">日付を選択</string>
     <string name="hide_bookmarked">コレクションの写真を隠します</string>
     <string name="summary">公式文書を行うときJAVAで新しい、学ぶために個人の能力、恥のバグの多くは、アプリケーションプロセスの改善に最適化問題の問題として、クライアントを完了手探り、私はの多くを得ます</string>
     <string name="title_change_theme">テーマの変更</string>
@@ -302,4 +302,5 @@
     <string name="dislike">取消收藏</string>
     <string name="walk_through">速覽漫步</string>
     <string name="show_block">show filtered view</string>
+    <string name="recommend">推薦</string>
 </resources>

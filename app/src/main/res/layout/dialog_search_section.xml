@@ -153,7 +153,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="8dp"
-                android:text="@string/choice_date"
+                android:text="@string/choose_date"
                 android:textSize="16sp" />
 
             <Space
@@ -184,7 +184,7 @@
                 android:layout_margin="8dp"
                 android:checked="false"
                 android:contentDescription="@string/choice"
-                android:text="@string/choice_date" />
+                android:text="@string/choose_date" />
 
             <Space
                 android:layout_width="wrap_content"

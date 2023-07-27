@@ -27,8 +27,15 @@
     <style name="AppThemeBase3" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- enable window content transitions -->
         <item name="android:windowActivityTransitions">true</item>
-        <item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Catalog</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+        <item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Catalog
+        </item>
     </style>
+
     <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -39,6 +46,11 @@
         <item name="autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <!-- enable window content transitions -->
         <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="android:windowAnimationStyle">@style/windowAnimationStyle</item>
     </style>
 
@@ -58,106 +70,186 @@
     <style name="Preference.SwitchPreferenceCompat.Catalog" parent="Preference.SwitchPreferenceCompat.Material">
         <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
     </style>
-    <style name="AppThemeBase.Primary">
+
+    <style name="primary">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <style name="AppThemeBase.blue">
+
+    <style name="blue">
         <item name="colorPrimary">@color/md_blue_300</item>
         <item name="colorPrimaryDark">@color/md_blue_400</item>
         <item name="colorAccent">@color/md_blue_400</item>
     </style>
-    <style name="AppThemeBase.pink">
+
+    <style name="pink">
         <item name="colorPrimary">@color/pink</item>
         <item name="colorPrimaryDark">@color/pinkDark</item>
         <item name="colorAccent">@color/pink</item>
     </style>
-    <style name="AppThemeBase.miku">
+
+    <style name="miku">
         <item name="colorPrimary">@color/miku</item>
         <item name="colorPrimaryDark">@color/mikuDark</item>
         <item name="colorAccent">@color/mikuDark</item>
     </style>
-    <style name="AppThemeBase.purple">
+
+    <style name="purple">
         <item name="colorPrimary">@color/md_purple_300</item>
         <item name="colorPrimaryDark">@color/md_purple_500</item>
         <item name="colorAccent">@color/md_purple_500</item>
     </style>
-    <style name="AppThemeBase.cyan">
+
+    <style name="cyan">
         <item name="colorPrimary">@color/md_cyan_300</item>
         <item name="colorPrimaryDark">@color/md_cyan_500</item>
         <item name="colorAccent">@color/md_cyan_500</item>
     </style>
-    <style name="AppThemeBase.green">
+
+    <style name="green">
         <item name="colorPrimary">@color/md_green_300</item>
         <item name="colorPrimaryDark">@color/md_green_500</item>
         <item name="colorAccent">@color/md_green_500</item>
     </style>
-    <style name="AppThemeBase.indigo">
+
+    <style name="indigo">
         <item name="colorPrimary">@color/md_indigo_300</item>
         <item name="colorPrimaryDark">@color/md_indigo_500</item>
         <item name="colorAccent">@color/md_indigo_500</item>
     </style>
-    <style name="AppThemeBase.red">
-        <item name="colorPrimary">@color/md_red_500</item>
-        <item name="colorPrimaryDark">@color/md_red_600</item>
-        <item name="colorAccent">@color/md_red_600</item>
-    </style>
-    <style name="AppThemeBase.now">
+
+    <style name="now">
         <item name="colorPrimary">@color/now</item>
         <item name="colorPrimaryDark">@color/nowDark</item>
         <item name="colorAccent">@color/nowDark</item>
     </style>
 
-    <style name="AppThemeBase3.Primary">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="AppThemeBase3.blue">
-        <item name="colorPrimary">@color/md_blue_300</item>
-        <item name="colorPrimaryDark">@color/md_blue_400</item>
-        <item name="colorAccent">@color/md_blue_400</item>
-    </style>
-    <style name="AppThemeBase3.pink">
-        <item name="colorPrimary">@color/pink</item>
-        <item name="colorPrimaryDark">@color/pinkDark</item>
-        <item name="colorAccent">@color/pink</item>
-    </style>
-    <style name="AppThemeBase3.miku">
-        <item name="colorPrimary">@color/miku</item>
-        <item name="colorPrimaryDark">@color/mikuDark</item>
-        <item name="colorAccent">@color/mikuDark</item>
-    </style>
-    <style name="AppThemeBase3.purple">
-        <item name="colorPrimary">@color/md_purple_300</item>
-        <item name="colorPrimaryDark">@color/md_purple_500</item>
-        <item name="colorAccent">@color/md_purple_500</item>
-    </style>
-    <style name="AppThemeBase3.cyan">
-        <item name="colorPrimary">@color/md_cyan_300</item>
-        <item name="colorPrimaryDark">@color/md_cyan_500</item>
-        <item name="colorAccent">@color/md_cyan_500</item>
-    </style>
-    <style name="AppThemeBase3.green">
-        <item name="colorPrimary">@color/md_green_300</item>
-        <item name="colorPrimaryDark">@color/md_green_500</item>
-        <item name="colorAccent">@color/md_green_500</item>
-    </style>
-    <style name="AppThemeBase3.indigo">
-        <item name="colorPrimary">@color/md_indigo_300</item>
-        <item name="colorPrimaryDark">@color/md_indigo_500</item>
-        <item name="colorAccent">@color/md_indigo_500</item>
-    </style>
-    <style name="AppThemeBase3.red">
+    <style name="red">
         <item name="colorPrimary">@color/md_red_500</item>
         <item name="colorPrimaryDark">@color/md_red_600</item>
         <item name="colorAccent">@color/md_red_600</item>
     </style>
-    <style name="AppThemeBase3.now">
-        <item name="colorPrimary">@color/now</item>
-        <item name="colorPrimaryDark">@color/nowDark</item>
-        <item name="colorAccent">@color/nowDark</item>
+
+    <style name="primary1">
+        <item name="android:colorPrimary">@color/md_pink_500</item>
+        <item name="colorPrimary">@color/md_pink_500</item>
+        <item name="colorPrimaryDark">@color/md_pink_700</item>
+        <item name="colorAccent">@color/md_pink_500</item>
+    </style>
+
+    <style name="primary2">
+        <item name="colorPrimary">@color/md_purple_500</item>
+        <item name="colorPrimaryDark">@color/md_purple_700</item>
+        <item name="colorAccent">@color/md_purple_500</item>
+    </style>
+
+    <style name="primary3">
+        <item name="colorPrimary">@color/md_deep_purple_500</item>
+        <item name="colorPrimaryDark">@color/md_deep_purple_700</item>
+        <item name="colorAccent">@color/md_deep_purple_500</item>
+    </style>
+
+    <style name="primary4">
+        <item name="colorPrimary">@color/md_indigo_500</item>
+        <item name="colorPrimaryDark">@color/md_indigo_700</item>
+        <item name="colorAccent">@color/md_indigo_500</item>
+    </style>
+
+    <style name="primary5">
+        <item name="colorPrimary">@color/md_blue_500</item>
+        <item name="colorPrimaryDark">@color/md_blue_700</item>
+        <item name="colorAccent">@color/md_blue_500</item>
+    </style>
+
+    <style name="primary6">
+        <item name="colorPrimary">@color/md_light_blue_500</item>
+        <item name="colorPrimaryDark">@color/md_light_blue_700</item>
+        <item name="colorAccent">@color/md_light_blue_500</item>
+    </style>
+
+    <style name="primary7">
+        <item name="colorPrimary">@color/md_cyan_500</item>
+        <item name="colorPrimaryDark">@color/md_cyan_700</item>
+        <item name="colorAccent">@color/md_cyan_500</item>
+    </style>
+
+    <style name="primary8">
+        <item name="colorPrimary">@color/md_teal_500</item>
+        <item name="colorPrimaryDark">@color/md_teal_700</item>
+        <item name="colorAccent">@color/md_teal_500</item>
+    </style>
+
+    <style name="primary9">
+        <item name="colorPrimary">@color/md_green_500</item>
+        <item name="colorPrimaryDark">@color/md_green_700</item>
+        <item name="colorAccent">@color/md_green_500</item>
+    </style>
+
+    <style name="primary10">
+        <item name="colorPrimary">@color/md_light_green_500</item>
+        <item name="colorPrimaryDark">@color/md_light_green_700</item>
+        <item name="colorAccent">@color/md_light_green_500</item>
+    </style>
+
+    <style name="primary11">
+        <item name="colorPrimary">@color/md_lime_500</item>
+        <item name="colorPrimaryDark">@color/md_lime_700</item>
+        <item name="colorAccent">@color/md_lime_500</item>
+    </style>
+
+    <style name="primary12">
+        <item name="colorPrimary">@color/md_yellow_500</item>
+        <item name="colorPrimaryDark">@color/md_yellow_700</item>
+        <item name="colorAccent">@color/md_yellow_500</item>
+    </style>
+
+    <style name="primary13">
+        <item name="colorPrimary">@color/md_amber_500</item>
+        <item name="colorPrimaryDark">@color/md_amber_700</item>
+        <item name="colorAccent">@color/md_amber_500</item>
+    </style>
+
+    <style name="primary14">
+        <item name="colorPrimary">@color/md_orange_500</item>
+        <item name="colorPrimaryDark">@color/md_orange_700</item>
+        <item name="colorAccent">@color/md_orange_500</item>
+    </style>
+
+    <style name="primary15">
+        <item name="colorPrimary">@color/md_deep_orange_500</item>
+        <item name="colorPrimaryDark">@color/md_deep_orange_700</item>
+        <item name="colorAccent">@color/md_deep_orange_500</item>
+    </style>
+
+    <style name="primary16">
+        <item name="colorPrimary">@color/md_brown_500</item>
+        <item name="colorPrimaryDark">@color/md_brown_700</item>
+        <item name="colorAccent">@color/md_brown_500</item>
+    </style>
+
+    <style name="primary17">
+        <item name="colorPrimary">@color/md_grey_500</item>
+        <item name="colorPrimaryDark">@color/md_grey_700</item>
+        <item name="colorAccent">@color/md_grey_500</item>
+    </style>
+
+    <style name="primary18">
+        <item name="colorPrimary">@color/md_blue_grey_500</item>
+        <item name="colorPrimaryDark">@color/md_blue_grey_700</item>
+        <item name="colorAccent">@color/md_blue_grey_500</item>
+    </style>
+
+    <style name="primary19">
+        <item name="colorPrimary">@color/md_white_1000</item>
+        <item name="colorPrimaryDark">@color/md_white_1000</item>
+        <item name="colorAccent">@color/md_white_1000</item>
+    </style>
+
+    <style name="primary20">
+        <item name="colorPrimary">@color/md_black_1000</item>
+        <item name="colorPrimaryDark">@color/md_black_1000</item>
+        <item name="colorAccent">@color/md_black_1000</item>
     </style>
 
 </resources>

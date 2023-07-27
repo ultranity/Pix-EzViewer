@@ -26,6 +26,10 @@
             android:key="dynamicColor"
             app:summary="Material3 Only"
             android:title="@string/dynamic_color" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="harmonizeColor"
+            android:title="@string/harmonize_olor" />
     </PreferenceCategory>
     <PreferenceCategory app:title="UI">
         <SwitchPreferenceCompat

@@ -277,25 +277,16 @@ class UserMActivity : RinkActivity() {
                 when (state) {
                     State.COLLAPSED -> {
                         binding.tablayout.setTabTextColors(
-                            ThemeUtil.getAttrColor(
-                                this@UserMActivity,
-                                android.R.attr.textColorPrimary
-                            ),
-                            ThemeUtil.getAttrColor(
-                                this@UserMActivity,
-                                android.R.attr.textColorPrimaryInverse
-                            )
+                            ThemeUtil.getTextColorPrimary(this@UserMActivity),
+                            ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
                         )
                         binding.tablayout.translationX = -15f
                     }
 
                     State.EXPANDED -> {
                         binding.tablayout.setTabTextColors(
-                            ThemeUtil.getAttrColor(
-                                this@UserMActivity,
-                                android.R.attr.textColorPrimary
-                            ),
-                            ThemeUtil.getAttrColor(this@UserMActivity, android.R.attr.colorPrimary)
+                            ThemeUtil.getTextColorPrimary(this@UserMActivity),
+                            ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
                         )
                         binding.tablayout.translationX = 0f
                     }

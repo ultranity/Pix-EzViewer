@@ -327,4 +327,6 @@
     <string name="dislike">取消收藏</string>
     <string name="walk_through">速览漫步</string>
     <string name="show_block">显示过滤内容占位</string>
+    <string name="harmonize_olor">颜色和谐化</string>
+    <string name="harmonizeColorAPIAlert">色彩和谐化要求 Android 11/R+ (API 30+)</string>
 </resources>

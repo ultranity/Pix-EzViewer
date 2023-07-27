@@ -8,4 +8,12 @@
     <style name="AppThemeBase.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppThemeBase.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--style name="ThemeOverlay.Material3.HarmonizedColors" parent="">
+        <item name="colorOnPrimary">@color/design_default_color_on_primary</item>
+        <item name="colorError">@color/material_harmonized_color_error</item>
+        <item name="colorOnError">@color/material_harmonized_color_on_error</item>
+        <item name="colorErrorContainer">@color/material_harmonized_color_error_container</item>
+        <item name="colorOnErrorContainer">@color/material_harmonized_color_on_error_container</item>
+    </style-->
 </resources>

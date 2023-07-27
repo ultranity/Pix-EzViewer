@@ -169,13 +169,17 @@ dependencies {
 
     //implementation("androidx.core:core:1.3.1")
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.vectordrawable:vectordrawable:1.1.0")
-    implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    //implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.vectordrawable:vectordrawable:1.1.0")
+    //implementation("androidx.activity:activity:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    //implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
+    implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.webkit:webkit:1.7.0")
     //implementation("androidx.activity:activity:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
@@ -187,34 +191,21 @@ dependencies {
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("com.google.android.material:material:1.9.0")
 
-    implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibrariesVersion"]}")
-    implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibrariesVersion"]}")
-    implementation("com.arialyy.aria:core:3.8.12")
-    //kapt("com.arialyy.aria:compiler:3.8.12")
-    implementation("io.noties.markwon:core:4.6.2")
-    implementation("org.jsoup:jsoup:1.16.1")
-    implementation("net.lingala.zip4j:zip4j:2.11.5")
-    implementation("com.waynejo:androidndkgif:0.3.3")
-
-    implementation("com.hyman:flowlayout-lib:1.1.2")
-    //implementation("com.youth.banner:banner:1.4.10")
-    //implementation("io.github.youth5201314:banner:2.2.2")
-    implementation("com.github.beksomega:loopinglayout:0.5.0")
-    //implementation("com.dinuscxj:circleprogressbar:1.3.0") //use CircularProgressIndicator
-    //implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project
-    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
-    implementation("com.github.ybq:Android-SpinKit:1.4.0")
-
-    //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
-    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
-    //implementation("com.github.liangjingkanji:BRV:1.4.3")
-
-    //val ViewBindingKTXVersion = "2.1.0"
-    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTXVersion")
-    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-nonreflection-ktx:$ViewBindingKTXVersion")
-    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:$ViewBindingKTXVersion")
-    //implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTXVersion")
-
+    val work_version = "2.8.0"
+    run {
+        // (Java only)
+        //implementation("androidx.work:work-runtime:$work_version")
+        // Kotlin + coroutines
+        implementation("androidx.work:work-runtime-ktx:$work_version")
+        // optional - RxJava2 support
+        //implementation("androidx.work:work-rxjava2:$work_version")
+        // optional - GCMNetworkManager support
+        //implementation("androidx.work:work-gcm:$work_version")
+        // optional - Test helpers
+        androidTestImplementation("androidx.work:work-testing:$work_version")
+        // optional - Multiprocess support
+        //implementation("androidx.work:work-multiprocess:$work_version")
+    }
 
     //implementation("androidx.annotation:annotation:1.5.0")
     //implementation("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
@@ -256,6 +247,38 @@ dependencies {
     //val archVersion = "2.1.0"
     // optional - Test helpers for LiveData
     //testImplementation("androidx.arch.core:core-testing:$archVersion")
+
+    implementation("com.mikepenz:aboutlibraries-core:${rootProject.extra["aboutlibrariesVersion"]}")
+    implementation("com.mikepenz:aboutlibraries:${rootProject.extra["aboutlibrariesVersion"]}")
+    implementation("com.arialyy.aria:core:3.8.12")
+    //kapt("com.arialyy.aria:compiler:3.8.12")
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("net.lingala.zip4j:zip4j:2.11.5")
+    implementation("com.waynejo:androidndkgif:0.3.3")
+
+    implementation("com.hyman:flowlayout-lib:1.1.2")
+    //implementation("com.youth.banner:banner:1.4.10")
+    //implementation("io.github.youth5201314:banner:2.2.2")
+    implementation("com.github.beksomega:loopinglayout:0.5.0")
+
+    //implementation("com.dinuscxj:circleprogressbar:1.3.0") //use CircularProgressIndicator
+    //implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
+    implementation("com.github.Dhaval2404:ColorPicker:2.3")
+    //implementation("com.github.ybq:Android-SpinKit:1.4.0")
+
+    //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
+    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
+    //implementation("com.github.liangjingkanji:BRV:1.4.3")
+
+    /*val ViewBindingKTXVersion = "2.1.0"
+    run{
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:$ViewBindingKTXVersion")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-nonreflection-ktx:$ViewBindingKTXVersion")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:$ViewBindingKTXVersion")
+    implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTXVersion")
+    }*/
 
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
@@ -306,7 +329,6 @@ dependencies {
     //implementation("net.gotev:cookie-store-okhttp:1.5.0")
 
     //TODO: check implementation("com.daimajia.swipelayout:library:1.2.0@aar")
-    // implementation("com.github.Dhaval2404:ColorPicker:2.3")
 
     //implementation("com.robertlevonyan.view:CustomFloatingActionButton:3.1.5")
     //implementation("com.github.clans:fab:1.6.4")

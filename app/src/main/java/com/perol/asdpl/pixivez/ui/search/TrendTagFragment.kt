@@ -141,12 +141,7 @@ class TrendTagFragment : Fragment() {
     private fun getExpandChip(): Chip {
         val chip = Chip(requireContext())
         chip.setChipIconResource(R.drawable.ic_menu_more)
-        chip.setChipIconTintResource(
-            ThemeUtil.getAttrResID(
-                requireContext(),
-                android.R.attr.textColorPrimary
-            )
-        )
+        chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
         chip.iconEndPadding = 0F
         chip.setOnClickListener {
             binding.chipgroup.removeViewAt(foldedChipIndex)
@@ -162,12 +157,7 @@ class TrendTagFragment : Fragment() {
     private fun getFoldChip(): Chip {
         val chip = Chip(requireContext())
         chip.setChipIconResource(R.drawable.ic_action_fold)
-        chip.setChipIconTintResource(
-            ThemeUtil.getAttrResID(
-                requireContext(),
-                android.R.attr.textColorPrimary
-            )
-        )
+        chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
         chip.setOnClickListener {
             (foldedChipIndex.until(binding.chipgroup.size)).forEach { _ ->
                 binding.chipgroup.removeViewAt(foldedChipIndex)

@@ -228,7 +228,7 @@ open class PicListFragment : Fragment() {
                                 viewModel.onLoadFirst()
                             }
                     }.show(childFragmentManager)
-                } ?: {
+                } ?: run {
                     //TODO: viewModel.getTags(id)
                 }
             }

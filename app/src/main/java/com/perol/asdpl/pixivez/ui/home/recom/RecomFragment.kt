@@ -29,10 +29,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -46,8 +46,8 @@ import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.PicListViewModel
 import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.data.model.IllustNext
-import com.perol.asdpl.pixivez.databinding.HeaderPixivisionBinding
 import com.perol.asdpl.pixivez.objects.dp
+import com.perol.asdpl.pixivez.objects.screenWidthPx
 import com.perol.asdpl.pixivez.services.Event
 import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -60,10 +60,18 @@ import com.perol.asdpl.pixivez.view.LinearItemDecoration
 
 class RecomViewModel : PicListViewModel() {
     lateinit var bannerLoader: () -> Unit
+    var loadNew = false
+    val onLoadFirstDataRx = {
+        if (loadNew)
+            retrofit.getNew()
+        else
+            retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) }
+    }
+
     override fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>?) {
         onLoadFirstRx = {
             bannerLoader()
-            retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) }
+            onLoadFirstDataRx()
         }
     }
 }
@@ -74,15 +82,9 @@ class RecomFragment : PicListFragment() {
     private fun initViewModel() {
         pixivisionModel.banners.observe(viewLifecycleOwner) {
             //TODO: check if loaded
-            picListAdapter.removeHeaderView(headerView)
-            picListAdapter.addHeaderView(bannerBinding.root, 0)
-            // pixivision logo
-            headerView =
-                LayoutInflater.from(requireContext()).inflate(R.layout.header_pixivision_logo, null)
-            headerView.setOnClickListener {
-                startActivity(Intent(context, PixivsionActivity::class.java))
-            }
-            pixiVisionAdapter.setHeaderView(headerView, orientation = RecyclerView.HORIZONTAL)
+            spotlightView.setPadding(0)
+            spotlightView.layoutManager =
+                LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
             pixiVisionAdapter.setNewInstance(it)
         }
         pixivisionModel.addbanners.observe(viewLifecycleOwner) {
@@ -115,29 +117,32 @@ class RecomFragment : PicListFragment() {
         viewModel.bannerLoader = pixivisionModel::onRefreshListener
     }
 
-    private lateinit var headerView: View
-    private var _bannerBinding: HeaderPixivisionBinding? = null
-    private val bannerBinding: HeaderPixivisionBinding
-        get() = requireNotNull(_bannerBinding) { "The property of binding has been destroyed." }
-
+    private lateinit var headerLogo: View
+    private lateinit var spotlightView: RecyclerView
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var filter: PicListFilter
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _bannerBinding = HeaderPixivisionBinding.inflate(layoutInflater)
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun configByTAG() {
+        headerBinding.imgBtnSpinner.setText(R.string.newwork)
+        headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_menu_gallery)
+        headerBinding.imgBtnSpinner.setOnClickListener {
+            viewModel.apply {
+                loadNew = loadNew.not()
+                setonLoadFirstRx(TAG)
+                onLoadFirst(onLoadFirstDataRx)
+                headerBinding.imgBtnSpinner.setText(if (loadNew) R.string.recommend else R.string.newwork)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        // pixivision logo
-        headerView =
+        // pixivision
+        spotlightView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.header_pixivision, null).rootView as RecyclerView
+        headerLogo =
             LayoutInflater.from(requireContext()).inflate(R.layout.header_banner_empty, null)
-        headerView.setOnClickListener {
+        headerLogo.setOnClickListener {
             startActivity(Intent(context, PixivsionActivity::class.java))
         }
         pixiVisionAdapter = PixiVisionAdapter(
@@ -149,13 +154,14 @@ class RecomFragment : PicListFragment() {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             headerWithEmptyEnable = true
             footerWithEmptyEnable = true
-            addHeaderView(headerView, 0)
+            addHeaderView(spotlightView, 0)
+            //addHeaderView(headerLogo, 0)
         }
-        val spotlightView = bannerBinding.pixivisionList
+        pixiVisionAdapter.setHeaderView(headerLogo, orientation = RecyclerView.HORIZONTAL)
+        //}
         spotlightView.addItemDecoration(LinearItemDecoration(4.dp))
+        spotlightView.setHasFixedSize(true)
         PagerSnapHelper().attachToRecyclerView(spotlightView)
-        spotlightView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         spotlightView.adapter = pixiVisionAdapter
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(
@@ -172,13 +178,21 @@ class RecomFragment : PicListFragment() {
         }
         val autoLoop = PxEZApp.instance.pre
             .getBoolean("banner_auto_loop", true)
-        if (autoLoop) {
-            spotlightView.layoutManager =
-                LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
-        } else {
+        spotlightView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        if (!autoLoop) {
             pixiVisionAdapter.setOnLoadMoreListener {
                 pixivisionModel.onLoadMoreBannerRequested()
             }
+        }
+        //if (pixivisionModel.banners.value.isNullOrEmpty()){
+        //    spotlightView.visibility = View.GONE
+        //} else {
+        //    headerLogo.visibility = View.GONE
+        if (pixivisionModel.banners.value.isNullOrEmpty()) {
+            headerLogo.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            val padding: Int = (screenWidthPx() - headerLogo.measuredWidth) / 2 - 10.dp
+            spotlightView.setPadding(padding, 0, padding, 0)
         }
         /* reset layoutManager after data loaded to prevent flicker loop
         if (autoLoop) {
@@ -196,14 +210,11 @@ class RecomFragment : PicListFragment() {
                 attachToRecyclerView(spotlightView)
              }*/
         spotlightView.layoutAnimation = LayoutAnimationController(
-            AnimationUtils.loadAnimation(
-                context,
-                R.anim.right_in
-            )
-        ).also {
-            it.order = LayoutAnimationController.ORDER_NORMAL
-            it.delay = 1f
-            it.interpolator = AccelerateInterpolator(0.5f)
+            AnimationUtils.loadAnimation(context, R.anim.right_in)
+        ).apply {
+            order = LayoutAnimationController.ORDER_NORMAL
+            delay = 1f
+            interpolator = AccelerateInterpolator(0.5f)
         }
     }
 }

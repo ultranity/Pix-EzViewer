@@ -175,6 +175,10 @@ open class PicListViewModel : BaseViewModel() {
     }
 
     open fun onLoadFirst() {
+        onLoadFirst(onLoadFirstRx)
+    }
+
+    open fun onLoadFirst(onLoadFirstRx: () -> Observable<IllustNext> = this.onLoadFirstRx) {
         isRefreshing.value = true
         onLoadFirstRx().subscribeNext(data, nextUrl) {
             isRefreshing.value = false

@@ -189,8 +189,12 @@ interface AppApiPixivService { //TODO: check filter=for_android
 
     @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true")
     fun getRecommend(
-        // @Header("Authorization") Authorization: String
     ): Observable<RecommendResponse>
+
+    @GET("/v1/illust/new")
+    fun getNew(
+        @Query("content_type") contentType: String? = null //illust manga
+    ): Observable<IllustNext>
 
     @GET("/v1/illust/detail?filter=for_android")
     fun getIllust(

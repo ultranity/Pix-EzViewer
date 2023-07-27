@@ -110,6 +110,8 @@ class RetrofitRepository {
 
     fun getRecommend(): Observable<RecommendResponse> = Request(appApiPixivService.getRecommend())
 
+    fun getNew(): Observable<IllustNext> = Request(appApiPixivService.getNew())
+
     fun getSearchIllustPreview(
         word: String,
         sort: String,

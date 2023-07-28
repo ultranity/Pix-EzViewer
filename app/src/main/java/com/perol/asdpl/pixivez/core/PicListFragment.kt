@@ -146,6 +146,7 @@ open class PicListFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.setNewInstance(onDataLoadedListener(it))
+                binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -205,7 +206,6 @@ open class PicListFragment : Fragment() {
             filterModel.spanNum.value!!,
             StaggeredGridLayoutManager.VERTICAL
         )
-        binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
         //TODO: check 
         // binding.recyclerview.addItemDecoration(GridItemDecoration())
         binding.swipeRefreshLayout.setOnRefreshListener {

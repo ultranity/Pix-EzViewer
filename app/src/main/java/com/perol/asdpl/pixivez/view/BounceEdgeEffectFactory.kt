@@ -15,7 +15,8 @@ class BounceEdgeEffectFactory(
     /** The magnitude of translation distance while the list is over-scrolled. */
     val overscrollMagnitude: Float = 0.1f,
     /** The magnitude of translation distance when the list reaches the edge on fling. */
-    val flingMagnitude: Float = 0.5f
+    val flingMagnitude: Float = 0.5f,
+    val topOnly: Boolean = true
 ) : RecyclerView.EdgeEffectFactory() {
 
     override fun createEdgeEffect(recyclerView: RecyclerView, direction: Int): EdgeEffect {
@@ -37,7 +38,6 @@ class BounceEdgeEffectFactory(
 
             private fun handlePull(deltaDistance: Float) {
                 // This is called on every touch event while the list is scrolled with a finger.
-
                 // Translate the recyclerView with the distance
                 val sign = if (direction == DIRECTION_BOTTOM) -1 else 1
                 val translationYDelta =
@@ -51,6 +51,7 @@ class BounceEdgeEffectFactory(
                 super.onRelease()
                 // The finger is lifted. Start the animation to bring translation back to the resting state.
                 if (recyclerView.translationY != 0f) {
+                    if (topOnly && recyclerView.translationY > 0) return
                     translationAnim = createAnim()?.also { it.start() }
                 }
             }

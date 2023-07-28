@@ -59,7 +59,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -493,6 +492,7 @@ class PictureXAdapter(
                 if (position == 0) thumbnail(
                     Glide.with(mContext).load(imageThumbnailUrls[0])
                         .override(data.width, data.height)
+                        .centerCrop()
                         .listener(object : RequestListener<Drawable> {
 
                             override fun onLoadFailed(
@@ -521,11 +521,7 @@ class PictureXAdapter(
                 ) else this
             }
             .transition(withCrossFade())
-            .into(object : ImageViewTarget<Drawable>(mainImage) {
-                override fun setResource(resource: Drawable?) {
-                    mainImage.setImageDrawable(resource)
-                }
-            }) // .into(mainImage)
+            .into(mainImage)
         // show detail of illust
         mainImage.setOnLongClickListener {
             val dialog = MaterialAlertDialogBuilder(mContext)

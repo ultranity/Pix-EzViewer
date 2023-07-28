@@ -51,6 +51,7 @@ import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
+import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -204,6 +205,7 @@ open class PicListFragment : Fragment() {
             filterModel.spanNum.value!!,
             StaggeredGridLayoutManager.VERTICAL
         )
+        binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
         //TODO: check 
         // binding.recyclerview.addItemDecoration(GridItemDecoration())
         binding.swipeRefreshLayout.setOnRefreshListener {

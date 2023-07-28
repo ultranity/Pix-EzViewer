@@ -316,8 +316,8 @@ abstract class PicListAdapter(
     //TODO: ?????
     override fun addData(newData: Collection<Illust>) {
         super.addData(newData)
-        DataHolder.pictureAdapter?.notifyDataSetChanged().also {
-            DataHolder.pictureAdapter = null
+        DataHolder.picPagerAdapter?.notifyDataSetChanged().also {
+            DataHolder.picPagerAdapter = null
         }
     }
 

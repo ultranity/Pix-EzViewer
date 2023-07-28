@@ -62,7 +62,7 @@ fun <T : Any> T.copyFrom(src:T) {
 class DataHolder{
     companion object {
         private var illustListStack: Stack<MutableList<Illust>?> = Stack<MutableList<Illust>?>()
-        var pictureAdapter: PagerAdapter? = null
+        var picPagerAdapter: PagerAdapter? = null
 
         fun peekIllustList(): MutableList<Illust>? {
             return if (this.illustListStack.empty()) {

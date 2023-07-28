@@ -865,9 +865,9 @@ class PictureXAdapter(
         if (it.isEmpty()) {
             return
         }
-        val list = it.map { it.image_urls.square_medium }
+        val list = it.map { it.image_urls.square_medium } as MutableList<String>
 
-        relatedPictureAdapter.setList(list)
+        relatedPictureAdapter.setNewInstance(list)
         relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             DataHolder.setIllustList(it)
             PictureActivity.start(mContext, it[position].id, position, position)

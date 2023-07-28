@@ -3,7 +3,6 @@ package com.perol.asdpl.pixivez.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.addCallback
@@ -21,15 +20,14 @@ import com.perol.asdpl.pixivez.ui.settings.HistoryFragment
 import com.perol.asdpl.pixivez.ui.settings.SupportDialog
 import com.perol.asdpl.pixivez.ui.settings.ThemeFragment
 import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
-import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KFunction0
 
 class FragmentActivity : RinkActivity() {
-    @Parcelize
+
     class FragmentItem(
         val factory: KFunction0<Fragment>?,
         val title: Int?,
-    ) : Parcelable
+    )
 
     companion object {
         private val fragments = mapOf(

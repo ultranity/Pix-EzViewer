@@ -135,7 +135,7 @@ class PictureActivity : RinkActivity() {
 
                 binding.viewpagePicture.adapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList, illustList)
-                DataHolder.pictureAdapter = binding.viewpagePicture.adapter
+                DataHolder.picPagerAdapter = binding.viewpagePicture.adapter
             }
 
             else -> {
@@ -179,7 +179,7 @@ class PictureActivity : RinkActivity() {
     }
 
     override fun onDestroy() {
-        DataHolder.pictureAdapter = null
+        DataHolder.picPagerAdapter = null
         super.onDestroy()
     }
 

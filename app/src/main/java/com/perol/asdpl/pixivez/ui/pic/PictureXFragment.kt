@@ -61,6 +61,7 @@ import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
 import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
+import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlin.properties.Delegates
 
@@ -209,8 +210,9 @@ class PictureXFragment : BaseFragment() {
             }
 
         binding.recyclerview.adapter = pictureXAdapter
+        binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.5F)
         pictureXAdapter!!.setInstance(it)
-        if (screenWidthDp() > 840) { //TODO: double pannel in wide screen
+        if (screenWidthDp() > 840) { //double pannel in wide screen
             binding.recyclerview.layoutManager =
                 GridLayoutManager(
                     requireContext(), 2,
@@ -226,6 +228,7 @@ class PictureXFragment : BaseFragment() {
                         }
                     }
                 }
+            //TODO: padding when only single image
         }
         if (it.user.is_followed) {
             binding.imageviewUserPicX.setBorderColor(Color.YELLOW)

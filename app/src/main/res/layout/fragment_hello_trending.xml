@@ -27,15 +27,19 @@
                 app:tabIndicatorFullWidth="false"
                 app:tabMode="scrollable" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/imageview_rank"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_height="match_parent"
+                android:padding="8dp"
                 android:layout_gravity="center_vertical"
                 android:elevation="5dp"
-                android:src="@drawable/ic_action_rank"
-                app:tint="?android:attr/textColorPrimaryInverse" />
+                android:text="@string/sort_by"
+                android:textColor="?android:attr/textColorPrimaryInverse"
+                app:drawableLeftCompat="@drawable/ic_action_rank"
+                app:drawableTint="?android:attr/textColorPrimaryInverse"
+                android:drawablePadding="5dp"
+                android:background="?attr/selectableItemBackground" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.viewpager2.widget.ViewPager2

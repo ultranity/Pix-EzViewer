@@ -1,5 +1,6 @@
 [versions]
 agp = "8.1.0"
+brv = "1.4.3"
 kotlin = "1.9.0"
 aboutlibraries = "10.8.2"
 androidndkgif = "0.3.3"
@@ -70,6 +71,7 @@ androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "
 aria-core = { module = "com.arialyy.aria:core", version.ref = "aria" }
 blockcanary = { module = "io.github.knight-zxw:blockcanary", version.ref = "blockcanary" }
 blockcanary-ui = { module = "io.github.knight-zxw:blockcanary-ui", version.ref = "blockcanary" }
+brv = { module = "com.github.liangjingkanji:BRV", version.ref = "brv" }
 brvah = { module = "io.github.cymchad:BaseRecyclerViewAdapterHelper", version.ref = "brvah" }
 colorPicker = { module = "com.github.Dhaval2404:ColorPicker", version.ref = "colorPicker" }
 drag-select-recyclerview = { module = "com.afollestad:drag-select-recyclerview", version.ref = "dragSelectRecyclerview" }

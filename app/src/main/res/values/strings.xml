@@ -330,4 +330,5 @@
     <string name="harmonize_olor">颜色和谐化</string>
     <string name="harmonizeColorAPIAlert">色彩和谐化要求 Android 11/R+ (API 30+)</string>
     <string name="recommend">推荐</string>
+    <string name="changeing_icon_tip">正在尝试更换，等待启动器刷新</string>
 </resources>

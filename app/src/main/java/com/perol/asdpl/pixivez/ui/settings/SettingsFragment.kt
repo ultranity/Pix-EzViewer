@@ -52,9 +52,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
+import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppUpdater
@@ -113,7 +113,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun onClick(position: Int) {
-        Toast.makeText(PxEZApp.instance, "正在尝试更换，等待启动器刷新", Toast.LENGTH_SHORT).show()
+        Toast.makeText(PxEZApp.instance, getString(R.string.changeing_icon_tip), Toast.LENGTH_SHORT)
+            .show()
         when (position) {
             0 -> {
                 enableComponent(defaultComponent)
@@ -450,7 +451,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun showSaveFormatDialog() {
         // Setup custom view content
-        val binding = CustomformatviewBinding.inflate(layoutInflater)
+        val binding = DialogSaveFormatBinding.inflate(layoutInflater)
         val descTable = binding.formatDescTable
         val sampleTable = binding.formatSampleTable
         val customizedFormatInput = binding.customizedformat

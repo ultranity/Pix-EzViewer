@@ -48,6 +48,6 @@ class TagsAdapter(
                 data[holder.layoutPosition].is_registered = isChecked
             }
         }
-        holder.setText(R.id.textview_tag1, item.name)
+        holder.setText(R.id.textview, item.name)
     }
 }

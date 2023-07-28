@@ -55,11 +55,11 @@
 
                 <ImageView
                     android:id="@+id/help"
-                    android:layout_margin="4dp"
-                    android:layout_width="50dp"
+                    android:padding="4dp"
+                    android:layout_width="45dp"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_action_question"
-                    android:background="@drawable/round_ripple"
+                    android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/app_help"
                     app:tint="?attr/colorControlNormal" />
             </LinearLayout>

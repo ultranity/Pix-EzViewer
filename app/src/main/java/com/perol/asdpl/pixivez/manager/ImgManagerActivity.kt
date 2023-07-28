@@ -38,7 +38,7 @@ import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
-import com.perol.asdpl.pixivez.databinding.CustomformatviewBinding
+import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
@@ -166,7 +166,7 @@ class ImgManagerActivity : RinkActivity() {
         }
         binding.fabSettings.setOnClickListener {
             // Setup custom view content
-            val binding = CustomformatviewBinding.inflate(layoutInflater)
+            val binding = DialogSaveFormatBinding.inflate(layoutInflater)
             val descTable = binding.formatDescTable
             val sampleTable = binding.formatSampleTable
             val customizedFormatInput = binding.customizedformat

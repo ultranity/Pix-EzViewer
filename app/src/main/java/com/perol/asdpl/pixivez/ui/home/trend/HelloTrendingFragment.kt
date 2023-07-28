@@ -25,6 +25,8 @@
 
 package com.perol.asdpl.pixivez.ui.home.trend
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +36,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.objects.UpToTopListener
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
 
@@ -68,6 +71,34 @@ class HelloTrendingFragment : LazyFragment() {
         }
     }
 
+                    /**
+                     * 当拖拽动作完成且松开手指时触发
+                     */
+                    override fun onDrag(
+                        source: BindingAdapter.BindingViewHolder,
+                        target: BindingAdapter.BindingViewHolder
+                    ) {
+                        // 这是拖拽交换后回调, 这里可以同步服务器
+                    }
+                })
+            }.models = titleModels
+            MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.sort_by)
+                .setView(listView.root)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    configTabs()
+                }.show()
+        }
+        binding.imageviewRank.animate()
+            .translationXBy(binding.imageviewRank.measuredWidth.toFloat() - 24.dp)
+            .setDuration(2000)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.imageviewRank.text = ""
+                    binding.imageviewRank.translationX = 0f
+                }
+            }).start()
+    }
     private lateinit var TAG: String
     private lateinit var binding: FragmentHelloTrendingBinding
     override fun onCreateView(
@@ -76,13 +107,7 @@ class HelloTrendingFragment : LazyFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHelloTrendingBinding.inflate(inflater, container, false)
-        binding.tablayout.removeAllTabs()
-        for (i in titles) {
-            val tab = binding.tablayout.newTab()
-            tab.text = i
-            binding.tablayout.addTab(tab, false)
-        }
-
+        configTabs()
         // use custom layout manager to prevent nested scrolling
         (binding.viewpager.getChildAt(0) as RecyclerView).apply {
             //var m = binding.viewpager.javaClass.getDeclaredField("mAccessibilityProvider")
@@ -102,6 +127,21 @@ class HelloTrendingFragment : LazyFragment() {
             m.set(s, mLayoutManager)
         }
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun configTabs() {
+        binding.tablayout.removeAllTabs()
+        for (i in titleModels) {
+            val tab = binding.tablayout.newTab()
+            tab.text = i.title
+            tab.tag = i.index
+            if (!i.isChecked) tab.view.visibility = View.GONE
+            binding.tablayout.addTab(tab, false)
+        }
     }
 
     companion object {

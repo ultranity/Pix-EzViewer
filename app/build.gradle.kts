@@ -249,7 +249,7 @@ dependencies {
 
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
     implementation(libs.brvah)
-    //implementation("com.github.liangjingkanji:BRV:1.4.3")
+    implementation(libs.brv)
 
     /*val ViewBindingKTX = "2.1.0"
     run{

@@ -31,10 +31,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.BindingAdapter
+import com.drake.brv.annotaion.ItemOrientation
+import com.drake.brv.item.ItemDrag
+import com.drake.brv.listener.DefaultItemTouchCallback
+import com.drake.brv.utils.linear
+import com.drake.brv.utils.setup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
+import com.perol.asdpl.pixivez.databinding.ViewTagsItemBinding
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -42,6 +52,17 @@ import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
 
 class HelloTrendingFragment : LazyFragment() {
     private val titles by lazy { resources.getStringArray(R.array.modellist) }
+
+    class DragModel(
+        val index: Int,
+        val title: String,
+        var isChecked: Boolean = true,
+    ) : ItemDrag {
+        override var itemOrientationDrag: Int = 0
+            get() = ItemOrientation.ALL // 只会返回该值
+    }
+
+    private val titleModels by lazy { titles.mapIndexed { index, it -> DragModel(index, it) } }
 
     override fun loadData() {
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
@@ -64,12 +85,27 @@ class HelloTrendingFragment : LazyFragment() {
         binding.tablayout.addOnTabSelectedListener(UpToTopListener(
             requireContext(),
             { adapter.fragments[it] }) {
-            binding.viewpager.setCurrentItem(it.position, false)
+            binding.viewpager.setCurrentItem(it.tag as Int, false)
         })
         binding.imageviewRank.setOnClickListener {
-            //TODO: sort/config list
-        }
-    }
+            val listView = DialogThanksBinding.inflate(layoutInflater)
+            listView.list.linear().setup {
+
+                addType<DragModel>(R.layout.view_tags_item)
+                onBind {
+                    val model = getModel<DragModel>()
+                    getBinding<ViewTagsItemBinding>().apply {
+                        textview.text = model.title
+                        checkBox.isChecked = model.isChecked
+                    }
+                }
+                onClick(R.id.item, R.id.checkBox) {
+                    val model = getModel<DragModel>()
+                    model.isChecked = !model.isChecked
+                    setChecked(modelPosition, model.isChecked) // 在点击事件中触发选择事件, 即点击列表条目就选中
+                    getBinding<ViewTagsItemBinding>().checkBox.isChecked = model.isChecked
+                }
+                itemTouchHelper = ItemTouchHelper(object : DefaultItemTouchCallback() {
 
                     /**
                      * 当拖拽动作完成且松开手指时触发
@@ -90,7 +126,7 @@ class HelloTrendingFragment : LazyFragment() {
                 }.show()
         }
         binding.imageviewRank.animate()
-            .translationXBy(binding.imageviewRank.measuredWidth.toFloat() - 24.dp)
+            .translationXBy(40.dp.toFloat())
             .setDuration(2000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {

@@ -11,7 +11,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 
 class UpToTopListener(
     val context: Context,
-    val fragmentManager: FragmentManager,
+    val fragmentGetter: (position: Int) -> Fragment?,
     val tabReselected: (tab: TabLayout.Tab) -> Unit = {},
     val tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
     val tabSelected: (tab: TabLayout.Tab) -> Unit = {},
@@ -21,11 +21,22 @@ class UpToTopListener(
         tabReselected: (tab: TabLayout.Tab) -> Unit = {},
         tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
         tabSelected: (tab: TabLayout.Tab) -> Unit = {},
-    ) :
-            this(
-                contextFragment.requireContext(), contextFragment.childFragmentManager,
-                tabReselected, tabUnSelected, tabSelected,
-            ) {
+    ) : this(
+        contextFragment.requireContext(), contextFragment.childFragmentManager,
+        tabReselected, tabUnSelected, tabSelected,
+    ) {
+    }
+
+    constructor(
+        context: Context,
+        fragmentManager: FragmentManager,
+        tabReselected: (tab: TabLayout.Tab) -> Unit = {},
+        tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
+        tabSelected: (tab: TabLayout.Tab) -> Unit = {},
+    ) : this(
+        context, { fragmentManager.fragments[it] },
+        tabReselected, tabUnSelected, tabSelected,
+    ) {
     }
 
     private var exitTime: Long = 0
@@ -38,7 +49,7 @@ class UpToTopListener(
             ).show()
             exitTime = System.currentTimeMillis()
         } else {
-            fragmentManager.fragments[tab.position]?.view
+            fragmentGetter(tab.position)?.view
                 ?.findViewById<RecyclerView>(R.id.recyclerview)
                 ?.scrollToPosition(0)
         }

@@ -42,7 +42,8 @@ class HelloTrendingFragment : LazyFragment() {
 
     override fun loadData() {
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
-        binding.viewpager.adapter = RankingMAdapter(this, isR18on)
+        val adapter = RankingMAdapter(this, isR18on)
+        binding.viewpager.adapter = adapter
 
         //fix: 旋转后tab选择错误: viewpager.adapter设置后恢复正确的currentItem
         binding.tablayout.selectTab(binding.tablayout.getTabAt(binding.viewpager.currentItem))
@@ -57,7 +58,9 @@ class HelloTrendingFragment : LazyFragment() {
         */
         //binding.viewpager.isUserInputEnabled = false
         //binding.tablayout.setupWithViewPager(binding.viewpager)
-        binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
+        binding.tablayout.addOnTabSelectedListener(UpToTopListener(
+            requireContext(),
+            { adapter.fragments[it] }) {
             binding.viewpager.setCurrentItem(it.position, false)
         })
         binding.imageviewRank.setOnClickListener {

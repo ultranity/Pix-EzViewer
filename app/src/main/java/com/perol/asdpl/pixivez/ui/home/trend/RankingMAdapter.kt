@@ -30,7 +30,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.core.PicListFragment
 import java.util.WeakHashMap
 
-class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
+class RankingMAdapter(fragment: Fragment, private var isR18on: Boolean) :
     FragmentStateAdapter(fragment) {
 
     private val modelist = arrayOf(
@@ -41,7 +41,7 @@ class RankingMAdapter(var fragment: Fragment, private var isR18on: Boolean) :
     override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5
 
     //TODO: LRU cache
-    private val fragments = WeakHashMap<Int, PicListFragment>(3)
+    val fragments = WeakHashMap<Int, PicListFragment>(3)
     override fun createFragment(position: Int): Fragment {
         if (fragments[position] == null) {
             fragments[position] = PicListFragment.newInstance(

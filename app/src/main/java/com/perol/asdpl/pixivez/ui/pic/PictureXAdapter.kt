@@ -492,37 +492,35 @@ class PictureXAdapter(
             .run {
                 if (position == 0) thumbnail(
                     Glide.with(mContext).load(imageThumbnailUrls[0])
+                        .override(data.width, data.height)
+                        .listener(object : RequestListener<Drawable> {
+
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any,
+                                target: Target<Drawable>,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                mListen.invoke()
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                model: Any,
+                                target: Target<Drawable>,
+                                dataSource: DataSource,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                mListen.invoke()
+                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                return false
+                            }
+                        })
                 ) else this
             }
-            .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
-
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    mListen.invoke()
-                    if (position == 0) {
-                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                    }
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable,
-                    model: Any,
-                    target: Target<Drawable>,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    if (position == 0) {
-                        mListen.invoke()
-                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                    }
-                    return false
-                }
-            })
+            .transition(withCrossFade())
             .into(object : ImageViewTarget<Drawable>(mainImage) {
                 override fun setResource(resource: Drawable?) {
                     mainImage.setImageDrawable(resource)
@@ -870,7 +868,14 @@ class PictureXAdapter(
         relatedPictureAdapter.setNewInstance(list)
         relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
             DataHolder.setIllustList(it)
-            PictureActivity.start(mContext, it[position].id, position, position)
+            PictureActivity.start(
+                mContext, it[position].id, position, position,
+                ActivityOptions.makeSceneTransitionAnimation(
+                    mContext as Activity,
+                    Pair(view, "shared_element_container")
+                    //Pair(mainimage, "mainimage")
+                ).toBundle()
+            )
         }
     }
 

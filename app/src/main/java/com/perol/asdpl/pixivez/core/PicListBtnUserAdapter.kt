@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.core
 
-import android.os.Bundle
 import android.view.View
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -42,9 +41,9 @@ class PicListBtnUserAdapter(
 ) :
     PicListBtnAdapter(layoutResId, data, filter) {
 
-    override fun viewPicsOptions(view: View, illust: Illust): Bundle {
-        return PicListXUserAdapter.viewOptions(this, view, illust)
-    }
+    //override fun viewPicsOptions(view: View, illust: Illust): Bundle {
+    //    return PicListXUserAdapter.viewOptions(this, view, illust)
+    //}
 
     override fun setUIFollow(status: Boolean, position: Int) {
         (getViewByAdapterPosition(

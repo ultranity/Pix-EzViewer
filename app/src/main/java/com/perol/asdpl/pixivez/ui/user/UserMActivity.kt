@@ -74,6 +74,11 @@ class UserMActivity : RinkActivity() {
             context.startActivity(intent, options)
         }
 
+        fun start(context: Context, options: Bundle? = null) {
+            val intent = Intent(context, UserMActivity::class.java)
+            context.startActivity(intent, options)
+        }
+
         fun UserEntity.toUser() = User(userid, username, "", ProfileImageUrls(userimage), "", false)
         fun start(context: Context, user: UserEntity, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
@@ -132,11 +137,6 @@ class UserMActivity : RinkActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent.extras == null) {
-            if (AppDataRepo.userInited())
-                setUser(AppDataRepo.currentUser.toUser())
-            else return
-        }
         binding = ActivityUserMBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -149,7 +149,11 @@ class UserMActivity : RinkActivity() {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
         }
-        if (intent.extras!!.containsKey("userid")) {
+        if (intent.extras == null) {
+            if (AppDataRepo.userInited())
+                setUser(AppDataRepo.currentUser.toUser())
+            else return
+        } else if (intent.extras!!.containsKey("userid")) {
             id = intent.extras!!.getLong("userid")
             DataStore.retrieve<User?>("user$id")?.let {
                 setUser(it)

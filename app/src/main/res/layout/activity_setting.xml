@@ -2,7 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/setting_root"
+    android:id="@+id/root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.perol.asdpl.pixivez.ui.settings.SettingsActivity">
@@ -20,31 +20,49 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/setting">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tablayout"
-                style="@style/Widget.MaterialComponents.TabLayout.Colored"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabIndicatorFullWidth="true"
-                app:tabIndicatorHeight="0dp"
-                app:tabMode="fixed"
-                app:tabGravity="fill">
+                android:background="?attr/colorPrimary"
+                android:orientation="horizontal">
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/setting" />
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tablayout"
+                    style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    app:tabIndicatorFullWidth="true"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabMode="fixed"
+                    app:tabGravity="fill">
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/supporttitle" />
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/setting" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/supporttitle" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/abouts" />
+                </com.google.android.material.tabs.TabLayout>
+
+                <ImageView
+                    android:id="@+id/help"
+                    android:layout_margin="4dp"
+                    android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:text="@string/abouts" />
-            </com.google.android.material.tabs.TabLayout>
+                    android:src="@drawable/ic_action_question"
+                    android:background="@drawable/round_ripple"
+                    android:contentDescription="@string/app_help"
+                    app:tint="?attr/colorControlNormal" />
+            </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

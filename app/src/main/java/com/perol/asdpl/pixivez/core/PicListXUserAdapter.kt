@@ -50,9 +50,9 @@ class PicListXUserAdapter(
     layoutResId: Int, data: MutableList<Illust>?, filter: PicListFilter
 ) : PicListXAdapter(layoutResId, data, filter) {
 
-    override fun viewPicsOptions(view: View, illust: Illust): Bundle {
-        return viewOptions(this, view, illust)
-    }
+    //override fun viewPicsOptions(view: View, illust: Illust): Bundle {
+    //    return viewOptions(this, view, illust)
+    //}
 
     override fun setUIFollow(status: Boolean, position: Int) {
         (getViewByAdapterPosition(
@@ -77,7 +77,9 @@ class PicListXUserAdapter(
             imageViewUser.setOnClickListener {
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
-                        picListAdapter.context as Activity, Pair(imageViewUser, "userimage")
+                        picListAdapter.context as Activity,
+                        Pair(imageViewUser, "shared_element_container")
+                        //Pair(imageViewUser, "userimage")
                     ).toBundle()
                 } else null
                 UserMActivity.start(picListAdapter.context, illust.user, options)

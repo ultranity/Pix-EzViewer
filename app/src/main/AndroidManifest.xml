@@ -91,13 +91,16 @@
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_setting"
             android:exported="true" />
-        <activity android:name=".ui.home.pixivision.PixivsionActivity"
+        <activity
+            android:name=".ui.home.pixivision.PixivsionActivity"
             android:exported="true" />
-        <activity android:name=".ui.home.pixivision.SpotlightActivity"
+        <activity
+            android:name=".ui.home.pixivision.SpotlightActivity"
             android:exported="true" />
         <activity
             android:name=".ui.search.SearchActivity"
-            android:label="@string/title_activity_search_r" />
+            android:label="@string/title_activity_search_r"
+            android:exported="true" />
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity
             android:name=".ui.pic.PictureActivity"

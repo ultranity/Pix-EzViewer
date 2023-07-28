@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.ui.settings
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
@@ -47,18 +46,8 @@ class SettingsActivity : RinkActivity() {
                 this.finish()
                 return true
             }
-
-            R.id.menu_question -> {
-                FirstInfoDialog().show(supportFragmentManager, "Info")
-                return true
-            }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_settings, menu)
-        return true
     }
 
     private lateinit var binding: ActivitySettingBinding
@@ -80,7 +69,9 @@ class SettingsActivity : RinkActivity() {
             recyclerview.setPadding(0, 0, padding, 0)
             recyclerview.clipToPadding = false
         }
-
+        binding.help.setOnClickListener {
+            FirstInfoDialog().show(supportFragmentManager, "Info")
+        }
         binding.viewpager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = 4
 

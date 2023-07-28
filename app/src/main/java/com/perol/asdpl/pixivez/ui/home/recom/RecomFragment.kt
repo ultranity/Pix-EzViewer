@@ -24,9 +24,12 @@
 
 package com.perol.asdpl.pixivez.ui.home.recom
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -57,6 +60,7 @@ import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivsionActivity
 import com.perol.asdpl.pixivez.view.LinearItemDecoration
+
 
 class RecomViewModel : PicListViewModel() {
     lateinit var bannerLoader: () -> Unit
@@ -143,7 +147,13 @@ class RecomFragment : PicListFragment() {
         headerLogo =
             LayoutInflater.from(requireContext()).inflate(R.layout.header_banner_empty, null)
         headerLogo.setOnClickListener {
-            startActivity(Intent(context, PixivsionActivity::class.java))
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
+                    context as Activity,
+                    Pair(headerLogo, "shared_element_container")
+                ).toBundle()
+            } else null
+            startActivity(Intent(context, PixivsionActivity::class.java), options)
         }
         pixiVisionAdapter = PixiVisionAdapter(
             R.layout.view_pixivision_item_small,

@@ -400,7 +400,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     Pair(header.imageView, "userimage")
                 ).toBundle()
             } else null
-            UserMActivity.start(this@MainActivity, AppDataRepo.currentUser, options)
+            UserMActivity.start(this@MainActivity, options)
             binding.drawerLayout.close()
         }
 

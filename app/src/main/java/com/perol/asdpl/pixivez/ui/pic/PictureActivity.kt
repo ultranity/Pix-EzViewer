@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlin.math.max
 
+
 class PictureActivity : RinkActivity() {
     companion object {
         fun start(context: Context, id: Long, arrayList: LongArray? = LongArray(1) { id }) {

@@ -159,10 +159,11 @@ abstract class PicListAdapter(
     }
 
     open fun viewPicsOptions(view: View, illust: Illust): Bundle {
-        val mainimage = view.findViewById<View>(R.id.item_img)
+        //val mainimage = view.findViewById<View>(R.id.item_img)
         return ActivityOptions.makeSceneTransitionAnimation(
             context as Activity,
-            Pair(mainimage, "mainimage")
+            Pair(view, "shared_element_container")
+            //Pair(mainimage, "mainimage")
         ).toBundle()
     }
 
@@ -325,11 +326,11 @@ abstract class PicListAdapter(
         return getViewByPosition(position + headerLayoutCount, viewId)
     }
 
-    open fun setUILike(status: Boolean, position: Int){}
-    open fun setUIFollow(status: Boolean, position: Int){}
-    open fun setUIDownload(status: Int, position: Int){}
+    open fun setUILike(status: Boolean, position: Int) {}
+    open fun setUIFollow(status: Boolean, position: Int) {}
+    open fun setUIDownload(status: Int, position: Int) {}
 
-    open fun setUILike(status: Boolean, view: View){}
-    open fun setUIFollow(status: Boolean, view: View){}
-    open fun setUIDownload(status: Int, view: View){}
+    open fun setUILike(status: Boolean, view: View) {}
+    open fun setUIFollow(status: Boolean, view: View) {}
+    open fun setUIDownload(status: Int, view: View) {}
 }

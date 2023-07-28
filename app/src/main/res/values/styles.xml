@@ -34,6 +34,7 @@
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Catalog
         </item>
+        <item name="android:windowAnimationStyle">@style/windowAnimationStyle</item>
     </style>
 
     <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">

@@ -189,25 +189,24 @@ class PictureXFragment : BaseFragment() {
             textViewUserName.text = it.user.name
             textViewIllustCreateDate.text = it.create_date
         }
-        pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext())
-            .also {
-                it.setListener {
-                    //                        activity?.supportStartPostponedEnterTransition()
-                    if (!hasMoved) {
-                        binding.recyclerview.scrollToPosition(0)
-                        (binding.recyclerview.layoutManager as LinearLayoutManager?)
-                            ?.scrollToPositionWithOffset(0, 0)
-                    }
-                    pictureXViewModel.getRelated(illustid)
+        pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext()).apply {
+            setListener {
+                // activity?.supportStartPostponedEnterTransition()
+                if (!hasMoved) {
+                    binding.recyclerview.scrollToPosition(0)
+                    (binding.recyclerview.layoutManager as LinearLayoutManager?)
+                        ?.scrollToPositionWithOffset(0, 0)
                 }
-                it.setViewCommentListen {
-                    CommentDialog.newInstance(illustid)
-                        .show(childFragmentManager)
-                }
-                it.setUserPicLongClick {
-                    pictureXViewModel.likeUser()
-                }
+                pictureXViewModel.getRelated(illustid)
             }
+            setViewCommentListen {
+                CommentDialog.newInstance(illustid)
+                    .show(childFragmentManager)
+            }
+            setUserPicLongClick {
+                pictureXViewModel.likeUser()
+            }
+        }
 
         binding.recyclerview.adapter = pictureXAdapter
         binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.5F)
@@ -243,7 +242,7 @@ class PictureXFragment : BaseFragment() {
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair(binding.imageviewUserPicX, "userimage")
+                    Pair(binding.imageviewUserPicX, "shared_element_container")//"userimage")
                 ).toBundle()
             } else null
             UserMActivity.start(requireContext(), it.user, options)

@@ -216,9 +216,9 @@ class SelectDownloadFragment : PicListFragment() {
             }
         }
 
-        headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_action_rank)
+        headerBinding.imgBtnR.setIconResource(R.drawable.ic_action_rank)
         setBtnHintText()
-        headerBinding.imgBtnSpinner.setOnClickListener {
+        headerBinding.imgBtnR.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.action_select)
                 .setPositiveButton(R.string.all) { _, _ ->
@@ -249,7 +249,7 @@ class SelectDownloadFragment : PicListFragment() {
     }
 
     private fun setBtnHintText() {
-        headerBinding.imgBtnSpinner.text = selectedHintStr()
+        headerBinding.imgBtnR.text = selectedHintStr()
     }
 
     private fun bookmarkAllSelected(target: Boolean?) {

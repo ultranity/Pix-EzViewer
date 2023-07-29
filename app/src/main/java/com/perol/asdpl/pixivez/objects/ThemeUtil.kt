@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.objects
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.util.TypedValue
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.graphics.ColorUtils
 import androidx.preference.Preference
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
@@ -134,6 +136,12 @@ object ThemeUtil {
             colorMap[attrId] = ContextCompat.getColor(context, typedValue.resourceId)
         }
         return colorMap[attrId]!!
+    }
+
+    fun getAttrColor(context: Context, attr: Int, alpha: Float): Int {
+        val color = getAttrColor(context, attr)
+        val originalAlpha = Color.alpha(color)
+        return ColorUtils.setAlphaComponent(color, Math.round(originalAlpha * alpha))
     }
 
     fun getAttrResID(context: Context, attrId: Int): Int {

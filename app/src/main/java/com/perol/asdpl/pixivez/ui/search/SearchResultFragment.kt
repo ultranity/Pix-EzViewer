@@ -37,15 +37,15 @@ class SearchResultFragment: PicListFragment() {
             viewModel.onLoadFirst()
         }
         viewModel.query = keyword
-        headerBinding.imgBtnSpinner.setText(R.string.sort_by)
-        headerBinding.imgBtnSpinner.setOnClickListener {
+        headerBinding.imgBtnR.setText(R.string.sort_by)
+        headerBinding.imgBtnR.setOnClickListener {
             MaterialDialog(requireContext()).show {
                 val list = listItemsSingleChoice(
                     R.array.sort, disabledIndices = intArrayOf(),
                     initialSelection = viewModel.sort.value!!
                 ) { dialog, index, text ->
                     viewModel.sort.checkUpdate(index)
-                    headerBinding.imgBtnSpinner.text = text
+                    headerBinding.imgBtnR.text = text
                 }
             }
         }

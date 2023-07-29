@@ -35,6 +35,7 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -126,16 +127,22 @@ class RecomFragment : PicListFragment() {
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var filter: PicListFilter
     override fun configByTAG() {
-        headerBinding.imgBtnSpinner.apply {
+        headerBinding.imgBtnR.apply {
             setText(R.string.newwork)
             setIconResource(R.drawable.ic_menu_gallery)
+            setTextColor(
+                AppCompatResources.getColorStateList(
+                    requireContext(),
+                    com.google.android.material.R.color.mtrl_tabs_icon_color_selector_colored
+                )
+            )
         }
-        headerBinding.imgBtnSpinner.setOnClickListener {
+        headerBinding.imgBtnR.setOnClickListener {
             viewModel.apply {
                 loadNew = loadNew.not()
                 setonLoadFirstRx(TAG)
                 onLoadFirst(onLoadFirstDataRx)
-                headerBinding.imgBtnSpinner.setText(if (loadNew) R.string.recommend else R.string.newwork)
+                headerBinding.imgBtnR.setText(if (loadNew) R.string.recommend else R.string.newwork)
             }
         }
     }

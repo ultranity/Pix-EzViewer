@@ -127,6 +127,7 @@ class HelloTrendingFragment : LazyFragment() {
         }
         binding.imageviewRank.animate()
             .translationXBy(40.dp.toFloat())
+            //.translationZBy(40.dp.toFloat())
             .setDuration(2000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {

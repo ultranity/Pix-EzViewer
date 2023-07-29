@@ -30,6 +30,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelStoreOwner
@@ -123,7 +124,7 @@ open class PicListFragment : Fragment() {
     protected open fun ownerProducer(): ViewModelStoreOwner {
         return when (TAG) {
             TAG_TYPE.Rank.name -> {
-                requireActivity()
+                requireParentFragment()//requireActivity()
             }
             else -> {
                 this
@@ -219,8 +220,8 @@ open class PicListFragment : Fragment() {
 
     open fun configByTAG() = when (TAG) {
         TAG_TYPE.UserBookmark.name -> {
-            headerBinding.imgBtnSpinner.setText(R.string.publics)
-            headerBinding.imgBtnSpinner.setOnClickListener {
+            headerBinding.imgBtnR.setText(R.string.publics)
+            headerBinding.imgBtnR.setOnClickListener {
                 val id = extraArgs!!.get("userid") as Long
                 viewModel.tags?.also {
                     TagsShowDialog.newInstance(id, it).also {
@@ -244,11 +245,17 @@ open class PicListFragment : Fragment() {
                 viewModel.onLoadFirst()
             }
             binding.recyclerview.setRecycledViewPool(shareModel.pool)
-            headerBinding.imgBtnSpinner.apply {
+            headerBinding.imgBtnR.apply {
                 setText(R.string.choose_date)
                 setIconResource(R.drawable.ic_calendar)
+                setTextColor(
+                    AppCompatResources.getColorStateList(
+                        requireContext(),
+                        com.google.android.material.R.color.mtrl_tabs_icon_color_selector_colored
+                    )
+                )
             }
-            headerBinding.imgBtnSpinner.setOnClickListener {
+            headerBinding.imgBtnR.setOnClickListener {
                 val dateNow = shareModel.getDateStr()
                 shareModel.apply {
                     DatePickerDialog(
@@ -275,17 +282,17 @@ open class PicListFragment : Fragment() {
             viewModel.restrict.observe(viewLifecycleOwner) {
                 if (viewModel.restrict.currentVersion > 0)
                     viewModel.onLoadFirst()
-                headerBinding.imgBtnSpinner.text =
+                headerBinding.imgBtnR.text =
                     resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
             }
-            headerBinding.imgBtnSpinner.setOnClickListener {
+            headerBinding.imgBtnR.setOnClickListener {
                 MaterialDialog(requireContext()).show {
                     val list = listItemsSingleChoice(
                         R.array.restrict_type, disabledIndices = intArrayOf(),
                         initialSelection = viewModel.restrict.value!!.ordinal
                     ) { dialog, index, text ->
                         viewModel.restrict.checkUpdate(RESTRICT_TYPE.values()[index])
-                        headerBinding.imgBtnSpinner.text = text
+                        headerBinding.imgBtnR.text = text
                     }
                 }
             }

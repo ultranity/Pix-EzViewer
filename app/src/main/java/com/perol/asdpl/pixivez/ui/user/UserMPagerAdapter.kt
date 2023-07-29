@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.core.PicListFragment
+import com.perol.asdpl.pixivez.core.TAG_TYPE
 import java.util.WeakHashMap
 
 class UserMPagerAdapter(
@@ -45,16 +46,16 @@ class UserMPagerAdapter(
         if (fragments[position] == null) {
             fragments[position] = when (position) {
                 0 -> PicListFragment.newInstance(
-                    "UserIllust",
+                    TAG_TYPE.UserIllust.name,
                     0,
                     mutableMapOf("userid" to userid)
                 )
                 1 -> PicListFragment.newInstance(
-                    "UserManga", 1,
+                    TAG_TYPE.UserManga.name, 1,
                     mutableMapOf("userid" to userid)
                 )
                 2 -> PicListFragment.newInstance(
-                    "UserBookmark", 2,
+                    TAG_TYPE.UserBookmark.name, 2,
                     mutableMapOf("userid" to userid)
                 )
                 else -> UserInfoFragment.newInstance(userid)

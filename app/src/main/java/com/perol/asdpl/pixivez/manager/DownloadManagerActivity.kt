@@ -132,7 +132,7 @@ class DownloadManagerActivity : RinkActivity() {
                         if (it.state == 0) {
                             Aria.download(this).load(it.id).cancel(true)
                             Thread.sleep(500)
-                            // val illustD = PxEZApp.gsonInstance.fromJson(it.str, IllustD::class.java)
+                            // val illustD = gson.decodeFromString<IllustD>(item.str)
                             Aria.download(this).load(it.url)
                                 .setFilePath(it.filePath) // 设置文件保存的完整路径
                                 .ignoreFilePathOccupy()

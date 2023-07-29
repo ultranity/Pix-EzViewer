@@ -21,11 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.data.model
 
-package com.perol.asdpl.pixivez.data.model;
-
-import java.io.Serializable;
-import java.util.List;
+import kotlinx.serialization.Serializable
 
 
 /**
@@ -35,258 +33,63 @@ import java.util.List;
  *
  * @noinspection UnnecessaryUnicodeEscape
  */
-public class IllustCommentsResponse implements Serializable {
-    private int total_comments;
-    private String next_url;
-    private List<CommentsBean> comments;
-
-    public int getTotal_comments() {
-        return total_comments;
-    }
-
-    public void setTotal_comments(int total_comments) {
-        this.total_comments = total_comments;
-    }
-
-    public String getNext_url() {
-        return next_url;
-    }
-
-    public void setNext_url(String next_url) {
-        this.next_url = next_url;
-    }
-
-    public List<CommentsBean> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentsBean> comments) {
-        this.comments = comments;
-    }
+@Serializable
+class IllustCommentsResponse(
+    val total_comments: Int = 0,
+    val next_url: String?,
+    val comments: MutableList<CommentsBean>,
+    val comment_access_control: Int = 0
+) {
 
     /**
      * id : 74774246
      * comment : ty   -w-
      * date : 2018-01-13T17:21:57+09:00
      * user : {"id":20980424,"name":"方丈要吃肉(修行ing）","account":"1015453836","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg"}}
-     * parent_comment : {"id":74770901,"comment":"You painting WA2000 is so cute !","date":"2018-01-13T14:30:17+09:00","user":{"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}}
+     * parent_comment :{"id":74770901,"comment":"You painting WA2000 is so cute !","date":"2018-01-13T14:30:17+09:00","user":{"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}}
+     * parent_comment :{}
      */
-    public static class CommentsBean {
+    @Serializable
+    class CommentsBean(
+        val id: Int = 0,
+        val comment: String,
+        val date: String,
+        val user: UserBean,
+        val parent_comment: ParentCommentBean
+    )
 
-        private int id;
-        private String comment;
-        private String date;
-        private UserBean user;
-        private ParentCommentBean parent_comment;
+    /**
+     * id : 20980424
+     * name : 方丈要吃肉(修行ing）
+     * account : 1015453836
+     * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg"}
+     */
+    @Serializable
+    class UserBean(
+        val id: Long = 0,
+        val name: String?,
+        val account: String?,
+        val profile_image_urls: CommentProfileImageUrls
+    )
 
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getComment() {
-            return comment;
-        }
-
-        public void setComment(String comment) {
-            this.comment = comment;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-        public void setDate(String date) {
-            this.date = date;
-        }
-
-        public UserBean getUser() {
-            return user;
-        }
-
-        public void setUser(UserBean user) {
-            this.user = user;
-        }
-
-        public ParentCommentBean getParent_comment() {
-            return parent_comment;
-        }
-
-        public void setParent_comment(ParentCommentBean parent_comment) {
-            this.parent_comment = parent_comment;
-        }
-
-        public static class UserBean {
-            /**
-             * id : 20980424
-             * name : 方丈要吃肉(修行ing）
-             * account : 1015453836
-             * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg"}
-             */
-
-            private Long id;
-            private String name;
-            private String account;
-            private ProfileImageUrlsBean profile_image_urls;
-
-            public Long getId() {
-                return id;
-            }
-
-            public void setId(Long id) {
-                this.id = id;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public String getAccount() {
-                return account;
-            }
-
-            public void setAccount(String account) {
-                this.account = account;
-            }
-
-            public ProfileImageUrlsBean getProfile_image_urls() {
-                return profile_image_urls;
-            }
-
-            public void setProfile_image_urls(ProfileImageUrlsBean profile_image_urls) {
-                this.profile_image_urls = profile_image_urls;
-            }
-
-            public static class ProfileImageUrlsBean {
-                /**
-                 * medium : https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg
-                 */
-
-                private String medium;
-
-                public String getMedium() {
-                    return medium;
-                }
-
-                public void setMedium(String medium) {
-                    this.medium = medium;
-                }
-            }
-        }
-
-        public static class ParentCommentBean {
-            /**
-             * id : 74770901
-             * comment : You painting WA2000 is so cute !
-             * date : 2018-01-13T14:30:17+09:00
-             * user : {"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}
-             */
-
-            private int id;
-            private String comment;
-            private String date;
-            private UserBeanX user;
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public String getComment() {
-                return comment;
-            }
-
-            public void setComment(String comment) {
-                this.comment = comment;
-            }
-
-            public String getDate() {
-                return date;
-            }
-
-            public void setDate(String date) {
-                this.date = date;
-            }
-
-            public UserBeanX getUser() {
-                return user;
-            }
-
-            public void setUser(UserBeanX user) {
-                this.user = user;
-            }
-
-            public static class UserBeanX {
-                /**
-                 * id : 4866052
-                 * name : 塩からす
-                 * account : sa1ty9
-                 * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}
-                 */
-
-                private int id;
-                private String name;
-                private String account;
-                private ProfileImageUrlsBeanX profile_image_urls;
-
-                public int getId() {
-                    return id;
-                }
-
-                public void setId(int id) {
-                    this.id = id;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public String getAccount() {
-                    return account;
-                }
-
-                public void setAccount(String account) {
-                    this.account = account;
-                }
-
-                public ProfileImageUrlsBeanX getProfile_image_urls() {
-                    return profile_image_urls;
-                }
-
-                public void setProfile_image_urls(ProfileImageUrlsBeanX profile_image_urls) {
-                    this.profile_image_urls = profile_image_urls;
-                }
-
-                public static class ProfileImageUrlsBeanX {
-                    /**
-                     * medium : https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg
-                     */
-
-                    private String medium;
-
-                    public String getMedium() {
-                        return medium;
-                    }
-
-                    public void setMedium(String medium) {
-                        this.medium = medium;
-                    }
-                }
-            }
-        }
-    }
+    /**
+     * id : 74770901
+     * comment : You painting WA2000 is so cute !
+     * date : 2018-01-13T14:30:17+09:00
+     * user : {"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}
+     */
+    @Serializable
+    class ParentCommentBean(
+        val id: Int = 0,
+        val comment: String?,
+        val date: String?,
+        val user: UserBean?,
+        //val parent_comment: ParentCommentBean
+    )
 }
+
+/**
+ * medium : https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg
+ */
+@Serializable
+class CommentProfileImageUrls(val medium: String?)

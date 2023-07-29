@@ -42,6 +42,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
+import com.chrynan.parcelable.core.putExtra
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
@@ -82,10 +83,7 @@ class UserMActivity : RinkActivity() {
         fun UserEntity.toUser() = User(userid, username, "", ProfileImageUrls(userimage), "", false)
         fun start(context: Context, user: UserEntity, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java)
-            intent.putExtra(
-                "user",
-                user.toUser()
-            )
+            intent.putExtra("user", user.toUser())
             context.startActivity(intent, options)
         }
 

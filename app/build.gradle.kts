@@ -40,7 +40,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     //id("org.jetbrains.kotlin.kapt")
     id("com.google.devtools.ksp")
-    id("kotlin-parcelize")
+    //id("kotlin-parcelize")
+    kotlin("plugin.serialization")
     id("org.jmailen.kotlinter")
     id("com.mikepenz.aboutlibraries.plugin")
 }
@@ -157,6 +158,8 @@ android {
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
     implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.parcelable)
 
     //implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)
@@ -266,6 +269,7 @@ dependencies {
     // okhttp3系列组件版本最高到 4.4.1
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp.dnsoverhttps)
 
     implementation(libs.glide)
     implementation(libs.glide.annotations)
@@ -276,7 +280,8 @@ dependencies {
     implementation(libs.glide.transformations)
 
     implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
+    //implementation(libs.retrofit.converter.gson)
+    //implementation(libs.retrofit.kotlinx.serialization.converter) included for code  debug
     implementation(libs.retrofit.adapter.rxjava2)
 
 

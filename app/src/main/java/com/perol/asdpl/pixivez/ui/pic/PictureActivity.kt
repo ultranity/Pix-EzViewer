@@ -33,6 +33,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.viewpager.widget.ViewPager
+import com.chrynan.parcelable.core.putParcelable
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.model.Illust

@@ -34,6 +34,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
 import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -46,7 +47,7 @@ class DownloadTaskAdapter :
     init {
         this.setOnItemClickListener { adapter, view, position ->
             val item = data[position]
-            val illust = PxEZApp.gsonInstance.fromJson(item.str, IllustD::class.java)
+            val illust = gson.decodeFromString<IllustD>(item.str)
             PictureActivity.start(context, id = illust.id)
         }
         this.setOnItemLongClickListener { adapter, view, position ->
@@ -142,7 +143,7 @@ class DownloadTaskAdapter :
         binding.progressFont.text =
             context.getString(R.string.fractional, item.currentProgress, item.fileSize)
         try {
-            val illustD = PxEZApp.gsonInstance.fromJson(item.str, IllustD::class.java)
+            val illustD = gson.decodeFromString<IllustD>(item.str)
             binding.title.text = illustD.title
             binding.status.text = item.state.toIEntityString()
         } catch (e: Exception) {

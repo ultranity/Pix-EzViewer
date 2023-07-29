@@ -84,7 +84,6 @@ import com.zhy.view.flowlayout.TagAdapter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -184,8 +183,8 @@ class PictureXAdapter(
 
     //class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class SurfaceGifViewHolder(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer
+    class SurfaceGifViewHolder(containerView: View) :
+        RecyclerView.ViewHolder(containerView)
 
     //class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

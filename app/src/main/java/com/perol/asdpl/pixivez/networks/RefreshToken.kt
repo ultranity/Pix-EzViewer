@@ -164,16 +164,16 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
             true
         ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .doOnNext { pixivOAuthResponse ->
-                val user = pixivOAuthResponse.response.user
+                val user = pixivOAuthResponse.user
                 val userEntity = UserEntity(
                     user.id,
                     user.name,
                     user.mail_address,
                     user.is_premium,
                     user.profile_image_urls.px_170x170,
-                    "OAuth2", // pixivOAuthResponse.response.device_token,
-                    pixivOAuthResponse.response.refresh_token,
-                    "Bearer " + pixivOAuthResponse.response.access_token
+                    "OAuth2", // pixivOAuthResponse.device_token,
+                    pixivOAuthResponse.refresh_token,
+                    "Bearer " + pixivOAuthResponse.access_token
                 )
                 runBlocking {
                     if(newToken){
@@ -194,7 +194,9 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
                     AppDataRepo.pre.setLong("lastRefresh", System.currentTimeMillis())
                 }
             }.doOnError {
+
                 it.printStackTrace()
+                Log.d("RefreshToken", it.message.toString())
                 Toasty.info(
                     PxEZApp.instance,
                     PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + it.message,

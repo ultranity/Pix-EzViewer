@@ -25,16 +25,13 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
-import com.perol.asdpl.pixivez.services.CloudflareService
 import okhttp3.Dns
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
 object RubyHttpDns : Dns {
     private val addressCache = mutableMapOf<String, InetAddress>()
     private val addressCacheX = mutableMapOf<String, List<InetAddress>>()
-    private val service =
-        ServiceFactory.create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
+    private val service = ServiceFactory.cloudflareService
     private val apiAddress = listOf(
         "app-api.pixiv.net",
         "oauth.secure.pixiv.net",

@@ -202,9 +202,9 @@ interface AppApiPixivService { //TODO: check filter=for_android
     ): Observable<IllustDetailResponse>
 
     @GET("/v2/illust/related?filter=for_android")
-    fun getIllustRecommended(
+    fun getIllustRelated(
         @Query("illust_id") paramLong: Long
-    ): Observable<RecommendResponse>
+    ): Observable<IllustNext>
 
 
     @GET("/v1/user/related?filter=for_android")
@@ -266,7 +266,7 @@ interface AppApiPixivService { //TODO: check filter=for_android
         // @Header("Authorization") paramString1: String,
         @Query("user_id") paramLong: Long,
         @Query("type") type: String
-    ): Observable<IllustNext>
+    ): Observable<UserIllustNext>
 
     @GET
     fun getUrl(

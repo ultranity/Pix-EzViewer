@@ -41,9 +41,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
-import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.objects.EasyFormatter
 import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.objects.argument
@@ -145,7 +145,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
                 ).also { it.setTextColor(ContextCompat.getColor(requireContext(), R.color.splash)) }
             )
         }
-        if (userDetail.profile_publicity.isPawoo) {
+        if (userDetail.profile_publicity.pawoo) {
             binding.chipgroup.addView(
                 getChip(
                     "pawoo",

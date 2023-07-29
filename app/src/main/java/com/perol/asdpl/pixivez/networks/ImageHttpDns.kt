@@ -24,19 +24,16 @@
 
 package com.perol.asdpl.pixivez.networks
 
-import com.perol.asdpl.pixivez.services.CloudflareService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Dns
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.InetAddress
 
 object ImageHttpDns : Dns {
 
     private val addressList = mutableListOf<InetAddress>()
-    private val service =
-        ServiceFactory.create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
+    private val service = ServiceFactory.cloudflareService
 
     override fun lookup(hostname: String): List<InetAddress> {
         if (addressList.isNotEmpty()) return addressList

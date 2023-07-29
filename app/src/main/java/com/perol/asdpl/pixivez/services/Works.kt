@@ -35,6 +35,7 @@ import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,6 +43,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import java.io.File
 
 fun String.toLegal(): String {
@@ -51,7 +54,8 @@ fun String.toLegal(): String {
         .replace("\"", "\'\'").replace("<", "＜").replace(">", "＞")
 }
 
-data class IllustD(
+@Serializable
+class IllustD(
     var id: Long = 0,
     var part: Int = 0,
     var preview: String? = null,
@@ -316,7 +320,7 @@ object Works {
             .load(url) // 读取下载地址
             .setFilePath(targetPath) // 设置文件保存的完整路径
             .ignoreFilePathOccupy()
-            .setExtendField(PxEZApp.gsonInstance.toJson(illustD))
+            .setExtendField(gson.encodeToString(illustD))
             .option(option)
             .create()
     }

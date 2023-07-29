@@ -3,19 +3,34 @@ package com.perol.asdpl.pixivez.networks
 import android.util.Log
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.services.CloudflareService
+import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 object ServiceFactory {
+    val contentType = "application/json".toMediaType()
+
+    val gson = Json {
+        encodeDefaults = true
+        explicitNulls = false
+        isLenient = true
+        coerceInputValues = true
+        allowSpecialFloatingPointValues = true
+        allowStructuredMapKeys = true
+        prettyPrint = false
+        useArrayPolymorphism = false
+        //ignoreUnknownKeys = true
+        //namingStrategy = JsonNamingStrategy.SnakeCase
+    }
 
     /**
      * API declarations([T]) must be interfaces.
@@ -24,7 +39,7 @@ object ServiceFactory {
         httpUrl: HttpUrl = "https://0.0.0.0/".toHttpUrl(),
         httpClient: OkHttpClient = HttpClient.DEFAULT,
         callAdapterFactory: CallAdapter.Factory? = RxJava2CallAdapterFactory.create(),
-        converterFactory: Converter.Factory? = GsonConverterFactory.create()
+        converterFactory: Converter.Factory? = gson.asConverterFactory(contentType)
     ): T {
         require(T::class.java.isInterface && T::class.java.interfaces.isEmpty()) {
             "API declarations must be interfaces and API interfaces must not extend other interfaces."
@@ -65,5 +80,6 @@ object ServiceFactory {
         }
     }
 
-    val cloudflareService = create<CloudflareService>(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
+    val cloudflareService: CloudflareService =
+        create(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
 }

@@ -28,16 +28,18 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.perol.asdpl.pixivez.objects.FileInfo
+import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.tencent.mmkv.MMKV
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.serialization.encodeToString
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -81,7 +83,7 @@ class ImgManagerViewModel : BaseViewModel() {
             Observable.just(it).subscribeOn(Schedulers.io()).flatMap { it ->
                 taskmap[it.pid!!] = it
                 if (kv.containsKey(it.pid.toString())) {
-                    Observable.just(kv.decodeParcelable(it.pid.toString(), Illust::class.java))
+                    Observable.just(kv.decodeSerializable<Illust>(it.pid.toString()))
                 } else {
                     retrofitRepository.getIllust(it.pid).flatMap {
                         kv.encode(it.illust.id.toString(), it.illust)
@@ -108,7 +110,7 @@ class ImgManagerViewModel : BaseViewModel() {
                 .doFinally {
                     // Log.d("imgMgr","all")
                     File(path.value + File.separatorChar + "rename.log")
-                        .writeText(PxEZApp.gsonInstance.toJson(task))
+                        .writeText(gson.encodeToString(task))
                     taskmap.clear()
                     AndroidSchedulers.mainThread().scheduleDirect({
                         adapter.notifyDataSetChanged()
@@ -164,3 +166,9 @@ class ImgManagerViewModel : BaseViewModel() {
         }.start()
     }
 }
+
+private inline fun <reified T : Any> MMKV.encode(key: String, target: T?) =
+    encode(key, gson.encodeToString(target))
+
+private inline fun <reified T : Any> MMKV.decodeSerializable(key: String): T? =
+    decodeString(key)?.let { gson.decodeFromString<T>(it) }

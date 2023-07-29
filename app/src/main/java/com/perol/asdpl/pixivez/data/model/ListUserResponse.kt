@@ -23,7 +23,10 @@
  */
 package com.perol.asdpl.pixivez.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class ListUserResponse(
+    val users: MutableList<User>,
     val next_url: String?,
-    val users: MutableList<User>
 )

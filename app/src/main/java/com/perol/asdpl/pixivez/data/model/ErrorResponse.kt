@@ -24,18 +24,22 @@
 
 package com.perol.asdpl.pixivez.data.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class ErrorResponse(
+@Serializable
+class ErrorResponse(
     val errors: Errors,
     val has_error: Boolean
 )
 
-data class Errors(
-    @SerializedName("system")
+@Serializable
+class Errors(
+    @SerialName("system")
     val system: SystemX
 )
 
+@Serializable
 data class SystemX(
     val code: Int,
     val message: String

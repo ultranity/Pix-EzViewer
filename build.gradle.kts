@@ -10,6 +10,7 @@ plugins {
     id("org.jmailen.kotlinter") version "3.15.0" apply false
     id("com.google.devtools.ksp") version libs.versions.kotlin.get() + "-1.0.11" apply false
     id("com.mikepenz.aboutlibraries.plugin") version libs.versions.aboutlibraries apply false
+    kotlin("plugin.serialization") version libs.versions.kotlin apply false
 }
 
 allprojects {
@@ -19,5 +20,6 @@ allprojects {
         //jcenter()
         mavenCentral()
         maven("https://jitpack.io")
+        maven("https://repo.repsy.io/mvn/chrynan/public")
     }
 }

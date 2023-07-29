@@ -39,9 +39,9 @@ import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.MainActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
@@ -204,7 +204,7 @@ class IntentActivity : RinkActivity() {
                 ).show()
             }
             .doOnNext { pixivOAuthResponse: PixivOAuthResponse ->
-                val user = pixivOAuthResponse.response.user
+                val user = pixivOAuthResponse.user
                 runBlocking {
                     AppDataRepo.insertUser(
                         UserEntity(
@@ -213,9 +213,9 @@ class IntentActivity : RinkActivity() {
                             user.mail_address,
                             user.is_premium,
                             user.profile_image_urls.px_170x170,
-                            code, // pixivOAuthResponse.response.device_token,
-                            pixivOAuthResponse.response.refresh_token,
-                            "Bearer " + pixivOAuthResponse.response.access_token
+                            code, // pixivOAuthResponse.device_token,
+                            pixivOAuthResponse.refresh_token,
+                            "Bearer " + pixivOAuthResponse.access_token
                         )
                     )
                     // TODO: user_x_restrict
@@ -223,17 +223,14 @@ class IntentActivity : RinkActivity() {
                     // AppDataRepo.pre.setBoolean("isnone", false)
                     // AppDataRepo.pre.setString("username", username)
                     // AppDataRepo.pre.setString("password", password)
-                    // AppDataRepo.pre.setString("Device_token", pixivOAuthResponse.response.device_token)
+                    // AppDataRepo.pre.setString("Device_token", pixivOAuthResponse.device_token)
                 }
             }
             .doOnError { e ->
                 if (e is HttpException) {
                     try {
-                        val errorBody = e.response()?.errorBody()?.string()
-                        val errorResponse = PxEZApp.gsonInstance.fromJson(
-                            errorBody,
-                            ErrorResponse::class.java
-                        )
+                        val errorBody = e.response()?.errorBody()?.string()!!
+                        val errorResponse = gson.decodeFromString<ErrorResponse>(errorBody)
                         var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
                         Log.e(className, errMsg)
                         errMsg =
@@ -242,8 +239,7 @@ class IntentActivity : RinkActivity() {
                                 )
                             ) {
                                 getString(R.string.error_invalid_account_password)
-                            }
-                            else {
+                            } else {
                                 getString(R.string.error_unknown) + "\n" + errMsg
                             }
 

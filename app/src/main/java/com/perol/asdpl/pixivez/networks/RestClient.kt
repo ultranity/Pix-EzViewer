@@ -26,18 +26,20 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
-import com.google.gson.GsonBuilder
 import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.networks.ServiceFactory.contentType
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -95,7 +97,6 @@ object RestClient {
             return builder.build()
         }
 
-    private val gson = GsonBuilder().create()
     val retrofitAppApi: Retrofit
         get() {
             return buildRetrofit("https://app-api.pixiv.net", okHttpClient("app-api.pixiv.net"))
@@ -212,7 +213,9 @@ object RestClient {
 
     private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
         return Retrofit.Builder().apply(block)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(gson.asConverterFactory(contentType) {
+                JsonObject(jsonObject.filterKeys { it != "response" && it != "search_span_limit" })
+            })
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }

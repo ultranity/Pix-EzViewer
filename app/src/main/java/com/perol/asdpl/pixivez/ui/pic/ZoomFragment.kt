@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.viewpager.widget.ViewPager
+import com.chrynan.parcelable.core.getParcelable
+import com.chrynan.parcelable.core.putParcelable
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBFragment
 import com.perol.asdpl.pixivez.data.model.Illust

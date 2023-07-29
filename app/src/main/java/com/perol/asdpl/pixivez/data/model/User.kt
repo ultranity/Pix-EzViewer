@@ -23,8 +23,7 @@
  */
 package com.perol.asdpl.pixivez.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * id : 19887389
@@ -34,14 +33,16 @@ import kotlinx.parcelize.Parcelize
  * comment:"Aliterと申します。\r\nいつもお気に入り、ブクマ、フォロー等々ありがとうございます！\r\n皆さんと一绪に交流していきたいと思います。\r\n\r\nThis is Aliter.\r\nThank you all for your comments, favorites and bookmarks.\r\nI also hope to comunicate with everyone.\r\n\r\n这里是Aliter；\r\n感谢各位的点赞、收藏与关注；\r\n同时也希望能和大家多多交流。\r\n\r\n這裡是Aliter；\r\n感謝各位的點贊、收藏與關注；\r\n同時也希望能和大家多多交流。\r\n\r\nTwitter: @aliter_c\r\n微博链接（weibo link）：http://weibo.com/aliter08\r\n半次元链接（bcy link）：https://bcy.net/u/1561764\r\n\r\n欢迎勾搭\r\n\r\n暂不接受约稿",
  * is_followed : false
  */
+@Serializable
 data class User(
     var id: Long,
     var name: String,
     var account: String,
     var profile_image_urls: ProfileImageUrls,
     var comment: String = "",
-    var is_followed: Boolean
-) : java.io.Serializable {
+    var is_followed: Boolean,
+    var is_access_blocking_user: Boolean = false,
+) {
     fun copyFrom(src: User) {
         id = src.id
         name = src.name
@@ -55,7 +56,7 @@ data class User(
 /**
  * {"medium":"https://i.pximg.net/user-profile/img/2017/12/04/10/46/10/13525660_fc11c3a777f794271125c1f7ab043168_170.png"}
  */
-@Parcelize
+@Serializable
 data class ProfileImageUrls(
     val medium: String
-) : Parcelable, java.io.Serializable
+)

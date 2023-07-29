@@ -26,11 +26,11 @@
 package com.perol.asdpl.pixivez.ui.search
 
 import androidx.lifecycle.MutableLiveData
-import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
-import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
-import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.model.TrendTagsBean
+import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -42,7 +42,7 @@ import kotlinx.coroutines.withContext
 class TrendTagViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     val searchHistory = MutableLiveData<MutableList<String>>()
-    val trendTags = MutableLiveData<MutableList<TrendingtagResponse.TrendTagsBean>?>()
+    val trendTags = MutableLiveData<MutableList<TrendTagsBean>?>()
 
     init {
         reloadSearchHistory()

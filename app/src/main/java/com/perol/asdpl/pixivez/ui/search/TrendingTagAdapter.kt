@@ -30,7 +30,7 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.data.model.TrendingtagResponse.TrendTagsBean
+import com.perol.asdpl.pixivez.data.model.TrendTagsBean
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 
 class TrendingTagAdapter(layoutResId: Int, data: MutableList<TrendTagsBean>?) :

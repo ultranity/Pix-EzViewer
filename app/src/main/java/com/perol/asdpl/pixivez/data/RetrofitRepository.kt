@@ -40,10 +40,11 @@ import com.perol.asdpl.pixivez.data.model.SpotlightResponse
 import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataResponse
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
+import com.perol.asdpl.pixivez.data.model.UserIllustNext
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.services.AppApiPixivService
-import com.perol.asdpl.pixivez.services.PxEZApp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -88,11 +89,11 @@ class RetrofitRepository {
     fun getUserIllusts(
         id: Long,
         type: String
-    ): Observable<IllustNext> =
+    ): Observable<UserIllustNext> =
         Request(appApiPixivService.getUserIllusts(id, type))
 
-    fun getIllustRelated(id: Long): Observable<RecommendResponse> =
-        Request(appApiPixivService.getIllustRecommended(id))
+    fun getIllustRelated(id: Long): Observable<IllustNext> =
+        Request(appApiPixivService.getIllustRelated(id))
 
     fun getIllustRanking(
         mode: String,
@@ -249,7 +250,7 @@ class RetrofitRepository {
     inline fun <reified T> getNext(url: String): Observable<T> =
         appApiPixivService.getUrl(url).flatMap {
             Log.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
-            Observable.just(PxEZApp.gsonInstance.fromJson(it.string(), T::class.java))
+            Observable.just(gson.decodeFromString<T>(it.string()))
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen {
                 Log.d(

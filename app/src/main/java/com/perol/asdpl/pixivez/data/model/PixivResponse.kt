@@ -24,8 +24,7 @@
 
 package com.perol.asdpl.pixivez.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 data class PixivResponse(
     val tags: List<Tag>
@@ -34,11 +33,11 @@ data class PixivResponse(
 /**
  * name : 97式
  */
-@Parcelize
+@Serializable
 data class Tag(
     val name: String,
-    val translated_name: String? = null
-) : Parcelable {
+    val translated_name: String?
+) {
     override fun toString(): String {
         return if (translated_name.isNullOrBlank()) name else "$name($translated_name)"
     }

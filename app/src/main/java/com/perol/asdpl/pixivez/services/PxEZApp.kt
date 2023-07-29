@@ -39,9 +39,9 @@ import androidx.preference.PreferenceManager
 import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
-import com.google.gson.Gson
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -61,8 +61,7 @@ class PxEZApp : Application() {
     @Download.onTaskComplete
     fun taskComplete(task: DownloadTask?) {
         task?.let {
-            val extendField = it.extendField
-            val illustD = gsonInstance.fromJson(extendField, IllustD::class.java)
+            val illustD = gson.decodeFromString<IllustD>(it.extendField)
             val title = illustD.title
             val sourceFile = File(it.filePath)
             if (sourceFile.isFile) {
@@ -136,7 +135,7 @@ class PxEZApp : Application() {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
                         delay(500)
-                        // val illustD = gsonInstance.fromJson(it.str, IllustD::class.java)
+                        // val illustD = gson.decodeFromString<IllustD>(it.str)
                         Aria.download(this).load(it.url)
                             .setFilePath(it.filePath) // 设置文件保存的完整路径
                             .ignoreFilePathOccupy()
@@ -237,8 +236,6 @@ class PxEZApp : Application() {
     }
 
     companion object {
-        val gsonInstance = Gson()
-
         @JvmStatic
         var storepath = ""
 

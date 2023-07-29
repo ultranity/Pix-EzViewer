@@ -25,18 +25,26 @@
 
 package com.perol.asdpl.pixivez.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-interface IIllustNext {
-    val illusts: MutableList<Illust>
-    val next_url: String?
-}
-
+@Serializable
 data class IllustNext(
     override val illusts: MutableList<Illust>,
     override val next_url: String?
 ) : IIllustNext
+
+@Serializable
+data class UserIllustNext(
+    val user: User,
+    override val illusts: MutableList<Illust>,
+    override val next_url: String?,
+) : IIllustNext
+
+/**
+ * illust : {"id":67261030,"title":"吃狗粮的日子到了","type":"illust","image_urls":{"square_medium":"https://i.pximg.net/c/360x360_70/img-master/img/2018/02/14/01/02/59/67261030_p0_square1200.jpg","medium":"https://i.pximg.net/c/540x540_70/img-master/img/2018/02/14/01/02/59/67261030_p0_master1200.jpg","large":"https://i.pximg.net/c/600x1200_90/img-master/img/2018/02/14/01/02/59/67261030_p0_master1200.jpg"},"caption":"你们快乐，我继续肝崩崩崩","restrict":0,"user":{"id":24087148,"name":"脸黑の零氪渣","account":"zeng_yu","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2017/08/04/20/04/06/12978904_75e510554696aaa9f228cf94736b57e9_170.gif"},"is_followed":true},"tags":[{"name":"崩坏3"},{"name":"崩坏3rd"},{"name":"德莉莎"},{"name":"情人节"},{"name":"崩壊3rd"}],"tools":["SAI"],"create_date":"2018-02-14T01:02:59+09:00","page_count":1,"width":1200,"height":1600,"sanity_level":2,"series":null,"meta_single_page":{"original_image_url":"https://i.pximg.net/img-original/img/2018/02/14/01/02/59/67261030_p0.jpg"},"meta_pages":[],"total_view":884,"total_bookmarks":91,"is_bookmarked":false,"visible":true,"is_muted":false,"total_comments":3}
+ */
+@Serializable
+class IllustDetailResponse(val illust: Illust)
 
 /* "id": 102414087,
  * "title": "花に少女",
@@ -278,7 +286,7 @@ data class IllustNext(
     "illust_ai_type": 1,
     "illust_book_style": 0
  */
-@Parcelize
+@Serializable
 data class Illust(
     val id: Long,
     val title: String,
@@ -295,7 +303,7 @@ data class Illust(
     val height: Int,
     val sanity_level: Int, //TODO: sanity_level > 5 is nsfw
     val x_restrict: Int,
-    var series: Series?,
+    val series: Series?,
     val meta_single_page: MetaSinglePage,
     val meta_pages: List<MetaPage>,
     val total_view: Int,
@@ -303,11 +311,11 @@ data class Illust(
     var is_bookmarked: Boolean,
     var visible: Boolean,
     val is_muted: Boolean,
-    val total_comments: Int, //not included in recommends
+    val total_comments: Int = 0, //not included in recommends
     val illust_ai_type: Int,
     val illust_book_style: Int, //TODO:
-    val comment_access_control: Int, //TODO:
-) : Parcelable
+    val comment_access_control: Int = 0, //TODO:
+)
 
 //ref: https://github.com/ArkoClub/async-pixiv/blob/0fcce0c5a096b5473424310ce5d9b6db35c7fd23/src/async_pixiv/model/other.py#L40
 enum class AIType {
@@ -316,38 +324,38 @@ enum class AIType {
     FULL,  //2使用AI生成
 }
 
-@Parcelize
+@Serializable
 data class MetaPage(
     val image_urls: ImageUrlsX
-) : Parcelable
+)
 
 /**
  * square_medium : https://i.pximg.net/c/360x360_70/img-master/img/2017/12/03/05/15/02/66137839_p0_square1200.jpg
  * medium : https://i.pximg.net/c/540x540_70/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
  * large : https://i.pximg.net/c/600x1200_90/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
  */
-@Parcelize
+@Serializable
 data class ImageUrlsX(
     val large: String,
     val medium: String,
     val original: String,
     val square_medium: String
-) : Parcelable
+)
 
-@Parcelize
+@Serializable
 data class ImageUrls(
     val large: String,
     val medium: String,
     val square_medium: String
-) : Parcelable
+)
 
 /**
  * original_image_url : https://i.pximg.net/img-original/img/2017/12/03/05/15/02/66137839_p0.png
  */
-@Parcelize
+@Serializable
 data class MetaSinglePage(
     val original_image_url: String?
-) : Parcelable
+)
 
 /**
  * {
@@ -355,8 +363,8 @@ data class MetaSinglePage(
 "title": "1日ごとにデレが増えてくツンツンツンツンツンデレちゃん"
 }
  */
-@Parcelize
+@Serializable
 data class Series(
-    var id: Int,
-    var title: String
-) : Parcelable
+    val id: Int,
+    val title: String
+)

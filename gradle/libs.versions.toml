@@ -21,6 +21,7 @@ glideTransformations = "4.3.0"
 jsoup = "1.16.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
+kotlinxSerializationJson = "1.5.1"
 lifecycleRuntimeKtx = "2.6.1"
 loopinglayout = "0.5.0"
 markwon = "4.6.2"
@@ -28,9 +29,11 @@ material = "1.9.0"
 materialDialogs = "3.3.0"
 mmkvStatic = "1.3.0"
 okhttp3 = "4.4.1" #okhttp3系列组件版本最高到 4.4.1
+parcelableCore = "0.7.1"
 preferenceKtx = "1.2.0"
-recyclerview = "1.3.0"
+recyclerview = "1.3.1"
 retrofit = "2.9.0"
+retrofit2KotlinxSerializationConverter = "1.0.0"
 roaringBitmap = "0.9.45"
 room = "2.5.2"
 rxandroid = "2.1.1"
@@ -45,66 +48,70 @@ workRuntimeKtx = "2.8.1"
 zip4j = "2.11.5"
 
 [libraries]
-aboutlibraries = { module = "com.mikepenz:aboutlibraries", version.ref = "aboutlibraries" }
-aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
-androidndkgif = { module = "com.waynejo:androidndkgif", version.ref = "androidndkgif" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
-androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
-androidx-core = { module = "androidx.core:core", version.ref = "androidxCore" }
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
-androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
-androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
-androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
-androidx-vectordrawable = { module = "androidx.vectordrawable:vectordrawable", version.ref = "vectordrawable" }
-androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
-androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
-androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntimeKtx" }
-androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
-androidx-work-multiprocess = { module = "androidx.work:work-multiprocess", version.ref = "workRuntimeKtx" }
-androidx-work-rxjava2 = { module = "androidx.work:work-rxjava2", version.ref = "workRuntimeKtx" }
-androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "workRuntimeKtx" }
-aria-core = { module = "com.arialyy.aria:core", version.ref = "aria" }
-blockcanary = { module = "io.github.knight-zxw:blockcanary", version.ref = "blockcanary" }
-blockcanary-ui = { module = "io.github.knight-zxw:blockcanary-ui", version.ref = "blockcanary" }
-brv = { module = "com.github.liangjingkanji:BRV", version.ref = "brv" }
-brvah = { module = "io.github.cymchad:BaseRecyclerViewAdapterHelper", version.ref = "brvah" }
-colorPicker = { module = "com.github.Dhaval2404:ColorPicker", version.ref = "colorPicker" }
-drag-select-recyclerview = { module = "com.afollestad:drag-select-recyclerview", version.ref = "dragSelectRecyclerview" }
-flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
-flowlayout-lib = { module = "com.hyman:flowlayout-lib", version.ref = "flowlayoutLib" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-annotations = { module = "com.github.bumptech.glide:annotations", version.ref = "glide" }
-glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
-glide-okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "glide" }
-glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-loopinglayout = { module = "com.github.beksomega:loopinglayout", version.ref = "loopinglayout" }
-markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
-material = { module = "com.google.android.material:material", version.ref = "material" }
-material-dialogs-bottomsheets = { group = "material-dialogs", module = "com.afollestad.material-dialogs:bottomsheets", version.ref = "materialDialogs" }
-material-dialogs-core = { group = "material-dialogs", module = "com.afollestad.material-dialogs:core", version.ref = "materialDialogs" }
-material-dialogs-files = { group = "material-dialogs", module = "com.afollestad.material-dialogs:files", version.ref = "materialDialogs" }
-material-dialogs-input = { group = "material-dialogs", module = "com.afollestad.material-dialogs:input", version.ref = "materialDialogs" }
-material-dialogs-lifecycle = { group = "material-dialogs", module = "com.afollestad.material-dialogs:lifecycle", version.ref = "materialDialogs" }
-mmkv-static = { module = "com.tencent:mmkv-static", version.ref = "mmkvStatic" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
-okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-adapter-rxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofit" }
-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-roaringBitmap = { module = "org.roaringbitmap:RoaringBitmap", version.ref = "roaringBitmap" }
-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
-rxkotlin = { module = "io.reactivex.rxjava2:rxkotlin", version.ref = "rxkotlin" }
-subsampling-scale-image-view-androidx = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingScaleImageViewAndroidx" }
-zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
+aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "aboutlibraries" }
+aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries" }
+androidndkgif = { group = "com.waynejo", name = "androidndkgif", version.ref = "androidndkgif" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-core = { group = "androidx.core", name = "core", version.ref = "androidxCore" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-vectordrawable = { group = "androidx.vectordrawable", name = "vectordrawable", version.ref = "vectordrawable" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "workRuntimeKtx" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-work-multiprocess = { group = "androidx.work", name = "work-multiprocess", version.ref = "workRuntimeKtx" }
+androidx-work-rxjava2 = { group = "androidx.work", name = "work-rxjava2", version.ref = "workRuntimeKtx" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "workRuntimeKtx" }
+aria-core = { group = "com.arialyy.aria", name = "core", version.ref = "aria" }
+blockcanary = { group = "io.github.knight-zxw", name = "blockcanary", version.ref = "blockcanary" }
+blockcanary-ui = { group = "io.github.knight-zxw", name = "blockcanary-ui", version.ref = "blockcanary" }
+brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
+brvah = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper", version.ref = "brvah" }
+colorPicker = { group = "com.github.Dhaval2404", name = "ColorPicker", version.ref = "colorPicker" }
+drag-select-recyclerview = { group = "com.afollestad", name = "drag-select-recyclerview", version.ref = "dragSelectRecyclerview" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+flowlayout-lib = { group = "com.hyman", name = "flowlayout-lib", version.ref = "flowlayoutLib" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-annotations = { group = "com.github.bumptech.glide", name = "annotations", version.ref = "glide" }
+glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
+glide-okhttp3-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
+glide-transformations = { group = "jp.wasabeef", name = "glide-transformations", version.ref = "glideTransformations" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+loopinglayout = { group = "com.github.beksomega", name = "loopinglayout", version.ref = "loopinglayout" }
+markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+material-dialogs-bottomsheets = { group = "com.afollestad.material-dialogs", name = "bottomsheets", version.ref = "materialDialogs" }
+material-dialogs-core = { group = "com.afollestad.material-dialogs", name = "core", version.ref = "materialDialogs" }
+material-dialogs-files = { group = "com.afollestad.material-dialogs", name = "files", version.ref = "materialDialogs" }
+material-dialogs-input = { group = "com.afollestad.material-dialogs", name = "input", version.ref = "materialDialogs" }
+material-dialogs-lifecycle = { group = "com.afollestad.material-dialogs", name = "lifecycle", version.ref = "materialDialogs" }
+mmkv-static = { group = "com.tencent", name = "mmkv-static", version.ref = "mmkvStatic" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
+okhttp-dnsoverhttps = { module = "com.squareup.okhttp3:okhttp-dnsoverhttps", version.ref = "okhttp3" }
+kotlinx-serialization-parcelable = { module = "com.chrynan.parcelable:parcelable-core", version.ref = "parcelableCore" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
+roaringBitmap = { group = "org.roaringbitmap", name = "RoaringBitmap", version.ref = "roaringBitmap" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+rxandroid = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxandroid" }
+rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjava" }
+rxkotlin = { group = "io.reactivex.rxjava2", name = "rxkotlin", version.ref = "rxkotlin" }
+subsampling-scale-image-view-androidx = { group = "com.davemorrissey.labs", name = "subsampling-scale-image-view-androidx", version.ref = "subsamplingScaleImageViewAndroidx" }
+zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }

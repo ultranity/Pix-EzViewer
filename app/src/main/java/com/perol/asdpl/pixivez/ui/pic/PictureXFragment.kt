@@ -41,6 +41,8 @@ import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.chrynan.parcelable.core.getParcelable
+import com.chrynan.parcelable.core.putParcelable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
@@ -319,7 +321,7 @@ class PictureXFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         requireArguments().let {
             illustid = it.getLong(ARG_ILLUSTID)
-            illustobj = it.getParcelable(ARG_ILLUSTOBJ)
+            illustobj = it.getParcelable<Illust>(ARG_ILLUSTOBJ)
         }
         pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
     }

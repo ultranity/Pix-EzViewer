@@ -28,6 +28,7 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
+import com.perol.asdpl.pixivez.data.model.IIllustNext
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.DataHolder
@@ -111,7 +112,7 @@ open class PicListViewModel : BaseViewModel() {
     val isRefreshing = DMutableLiveData(false)
     val restrict = DMutableLiveData(RESTRICT_TYPE.all)
     lateinit var args: MutableMap<String, Any?>
-    protected lateinit var onLoadFirstRx: () -> Observable<IllustNext>
+    protected lateinit var onLoadFirstRx: () -> Observable<out IIllustNext>
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         TAG = mode
@@ -178,7 +179,7 @@ open class PicListViewModel : BaseViewModel() {
         onLoadFirst(onLoadFirstRx)
     }
 
-    open fun onLoadFirst(onLoadFirstRx: () -> Observable<IllustNext> = this.onLoadFirstRx) {
+    open fun onLoadFirst(onLoadFirstRx: () -> Observable<out IIllustNext> = this.onLoadFirstRx) {
         isRefreshing.value = true
         onLoadFirstRx().subscribeNext(data, nextUrl) {
             isRefreshing.value = false

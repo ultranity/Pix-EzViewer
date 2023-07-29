@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
+import com.chrynan.parcelable.core.putExtra
+import com.chrynan.parcelable.core.putParcelable
 import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -105,8 +107,9 @@ operator fun <T> Bundle.set(key: String, value: T?) {
         is LongArray? -> putLongArray(key, value)
         is FloatArray? -> putFloatArray(key, value)
         is DoubleArray? -> putDoubleArray(key, value)
-        is Serializable? -> putSerializable(key, value) // also ArrayList
-        is Parcelable? -> putParcelable(key, value)
+        is kotlinx.serialization.Serializable -> putParcelable(key, value)
+        is Serializable -> putSerializable(key, value) // also ArrayList
+        is Parcelable -> putParcelable(key, value)
         is ArrayList<*>? -> throw IllegalStateException("ArrayList<*> $key is not supported")
         is Array<*>? -> throw IllegalStateException("Array<*> $key is not supported")
         else -> throw IllegalStateException("Type $key is not supported")
@@ -139,6 +142,7 @@ operator fun <T> Intent.set(key: String, value: T) {
         is LongArray? -> putExtra(key, value)
         is FloatArray? -> putExtra(key, value)
         is DoubleArray? -> putExtra(key, value)
+        is kotlinx.serialization.Serializable? -> putExtra(key, value)
         is Serializable? -> putExtra(key, value)
         is Parcelable? -> putExtra(key, value)
         is ArrayList<*>? -> throw IllegalStateException("ArrayList<*> $key is not supported")

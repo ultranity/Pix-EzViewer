@@ -10,11 +10,12 @@ import android.os.Environment
 import android.view.View
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.annotations.SerializedName
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.Toasty
 import io.noties.markwon.Markwon
+import kotlinx.serialization.SerialName
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -22,15 +23,15 @@ import kotlin.concurrent.thread
 
 //ref: https://github.com/saikou-app/saikou/blob/9e157563b7c8850640999369ad578cb6e1d5af24/app/src/main/java/ani/saikou/others/AppUpdater.kt#L36
 data class GithubResponse(
-    @SerializedName("html_url")
+    @SerialName("html_url")
     val htmlUrl: String,
-    @SerializedName("tag_name")
+    @SerialName("tag_name")
     val tagName: String,
     val name: String,
     val prerelease: Boolean,
-    @SerializedName("created_at")
+    @SerialName("created_at")
     val createdAt: String,
-    @SerializedName("published_at")
+    @SerialName("published_at")
     val publishedAt: String,
     val body: String = "~",
     val assets: List<Asset>? = null
@@ -39,9 +40,9 @@ data class GithubResponse(
         val name: String,
         val label: String,
         val size: Int,
-        @SerializedName("download_count")
+        @SerialName("download_count")
         val downloadCount: Int,
-        @SerializedName("browser_download_url")
+        @SerialName("browser_download_url")
         val browserDownloadURL: String,
     )
 
@@ -56,7 +57,7 @@ object AppUpdater {
     private lateinit var data: GithubResponse
     private fun isNewUpdateAvailable(): Boolean? = try {
         val response = apiURL.readText()
-        data = PxEZApp.gsonInstance.fromJson(response, GithubResponse::class.java)
+        data = gson.decodeFromString<GithubResponse>(response)
         val currentVersionName = BuildConfig.VERSION_NAME
         data.tagName != currentVersionName
     } catch (e: Exception) {

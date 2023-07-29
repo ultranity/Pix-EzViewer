@@ -29,13 +29,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
+import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse.CommentsBean
 import com.perol.asdpl.pixivez.objects.EmojiUtil
 import com.perol.asdpl.pixivez.objects.GlideAssetsImageGetter
-import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse.CommentsBean
 
 class CommentAdapter(
     layoutResId: Int,
@@ -46,7 +45,7 @@ class CommentAdapter(
         if (item.parent_comment.user != null) {
             holder.setText(
                 R.id.commentusername,
-                item.user.name + " to " + item.parent_comment.user.name
+                item.user.name + " to " + item.parent_comment.user!!.name
             )
         } else {
             holder.setText(

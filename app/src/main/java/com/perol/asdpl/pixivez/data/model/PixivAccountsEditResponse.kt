@@ -21,72 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.data.model
 
-package com.perol.asdpl.pixivez.data.model;
-
-
-public class PixivAccountsEditResponse {
-
+/**
+ * error : false
+ * message :
+ * body : {"is_succeed":true,"validation_errors":{}}
+ */
+class PixivAccountsEditResponse(
+    val isError: Boolean = false,
+    val message: String?,
+    val body: BodyBean?,
+) {
     /**
-     * error : false
-     * message :
-     * body : {"is_succeed":true,"validation_errors":{}}
+     * is_succeed : true
+     * validation_errors : {}
      */
-
-    private boolean error;
-    private String message;
-    private BodyBean body;
-
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public BodyBean getBody() {
-        return body;
-    }
-
-    public void setBody(BodyBean body) {
-        this.body = body;
-    }
-
-    public static class BodyBean {
-        /**
-         * is_succeed : true
-         * validation_errors : {}
-         */
-
-        private boolean is_succeed;
-        private ValidationErrorsBean validation_errors;
-
-        public boolean isIs_succeed() {
-            return is_succeed;
-        }
-
-        public void setIs_succeed(boolean is_succeed) {
-            this.is_succeed = is_succeed;
-        }
-
-        public ValidationErrorsBean getValidation_errors() {
-            return validation_errors;
-        }
-
-        public void setValidation_errors(ValidationErrorsBean validation_errors) {
-            this.validation_errors = validation_errors;
-        }
-
-        public static class ValidationErrorsBean {
-        }
+    class BodyBean(
+        val is_succeed: Boolean = false,
+        val validation_errors: ValidationErrorsBean
+    ) {
+        class ValidationErrorsBean
     }
 }

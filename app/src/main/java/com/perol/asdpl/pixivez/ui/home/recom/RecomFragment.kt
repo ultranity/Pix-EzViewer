@@ -126,8 +126,10 @@ class RecomFragment : PicListFragment() {
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
     private lateinit var filter: PicListFilter
     override fun configByTAG() {
-        headerBinding.imgBtnSpinner.setText(R.string.newwork)
-        headerBinding.imgBtnSpinner.setIconResource(R.drawable.ic_menu_gallery)
+        headerBinding.imgBtnSpinner.apply {
+            setText(R.string.newwork)
+            setIconResource(R.drawable.ic_menu_gallery)
+        }
         headerBinding.imgBtnSpinner.setOnClickListener {
             viewModel.apply {
                 loadNew = loadNew.not()

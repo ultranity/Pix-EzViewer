@@ -242,7 +242,7 @@ dependencies {
     implementation(libs.flowlayout.lib)
     //implementation("com.youth.banner:banner:1.4.10")
     //implementation("io.github.youth5201314:banner:2.2.2")
-    implementation(libs.loopinglayout)
+    //implementation(libs.loopinglayout) replace with RepeatLayoutManager
 
     //implementation("com.dinuscxj:circleprogressbar:1.3.0") //use CircularProgressIndicator
     //implementation("com.github.SheHuan:NiceImageView:1.0.5") // included in project

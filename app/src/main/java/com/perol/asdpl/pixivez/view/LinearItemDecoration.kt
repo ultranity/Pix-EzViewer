@@ -33,9 +33,9 @@ import android.graphics.Rect
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 
 class LinearItemDecoration(private val space: Int) : ItemDecoration() {
     override fun getItemOffsets(
@@ -122,8 +122,10 @@ class LinePagerIndicatorDecoration(
         drawInactiveIndicators(c, indicatorStartX, indicatorPosY, itemCount)
 
         // find active page (which should be highlighted)
-        val layoutManager: LoopingLayoutManager = parent.layoutManager as LoopingLayoutManager
-        val activePosition: Int = layoutManager.findFirstVisibleItemPosition()
+        val layoutManager: LinearLayoutManager = parent.layoutManager as LinearLayoutManager
+        val activePosition: Int =
+            layoutManager.findFirstCompletelyVisibleItemPosition()//(0 until layoutManager.itemCount)
+        //.first { layoutManager.findViewByPosition(it)?.isVisible == true }
         if (activePosition == RecyclerView.NO_POSITION) {
             return
         }

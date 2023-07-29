@@ -41,7 +41,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.factory.sharedViewModel
@@ -61,6 +60,7 @@ import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivsionActivity
 import com.perol.asdpl.pixivez.view.LinearItemDecoration
+import com.perol.asdpl.pixivez.view.RepeatLayoutManager
 
 
 class RecomViewModel : PicListViewModel() {
@@ -89,7 +89,7 @@ class RecomFragment : PicListFragment() {
             //TODO: check if loaded
             spotlightView.setPadding(0)
             spotlightView.layoutManager =
-                LoopingLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+                RepeatLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
             pixiVisionAdapter.setNewInstance(it)
         }
         pixivisionModel.addbanners.observe(viewLifecycleOwner) {

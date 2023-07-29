@@ -14,10 +14,10 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.all
-import com.perol.asdpl.pixivez.base.rotate
-import com.perol.asdpl.pixivez.base.setMargins
-import com.perol.asdpl.pixivez.base.size
+import com.perol.asdpl.pixivez.base.KotlinUtil.all
+import com.perol.asdpl.pixivez.base.UtilFunc.rotate
+import com.perol.asdpl.pixivez.base.UtilFunc.setMargins
+import com.perol.asdpl.pixivez.base.UtilFunc.size
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.InteractionUtil

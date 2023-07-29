@@ -36,11 +36,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.base.KotlinUtil.plus
+import com.perol.asdpl.pixivez.base.KotlinUtil.times
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.KotlinUtil.plus
-import com.perol.asdpl.pixivez.objects.KotlinUtil.times
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlin.reflect.KMutableProperty0
 

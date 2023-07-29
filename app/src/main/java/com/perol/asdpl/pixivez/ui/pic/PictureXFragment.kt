@@ -46,7 +46,7 @@ import com.chrynan.parcelable.core.putParcelable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
-import com.perol.asdpl.pixivez.base.firstCommonTags
+import com.perol.asdpl.pixivez.base.UtilFunc.firstCommonTags
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil

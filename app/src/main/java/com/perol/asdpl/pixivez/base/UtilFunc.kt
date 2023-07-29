@@ -8,12 +8,22 @@ import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.data.model.Tag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.roaringbitmap.RoaringBitmap
 import java.util.BitSet
 import java.util.IdentityHashMap
 import java.util.SortedSet
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.cancellation.CancellationException
 
 
 /**
@@ -57,126 +67,195 @@ import java.util.SortedSet
  * ([optional](Collection.html#optional-restrictions))
  * @since 1.5
  */
-fun <T:Any?> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
-    // The collection to be used for contains(). Preference is given to
-    // the collection who's contains() has lower O() complexity.
-    var contains = c2
-    // The collection to be iterated. If the collections' contains() impl
-    // are of different O() complexity, the collection with slower
-    // contains() will be used for iteration. For collections who's
-    // contains() are of the same complexity then best performance is
-    // achieved by iterating the smaller collection.
-    var iterate = c1
+object UtilFunc {
+    fun <T : Any?> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
+        // The collection to be used for contains(). Preference is given to
+        // the collection who's contains() has lower O() complexity.
+        var contains = c2
+        // The collection to be iterated. If the collections' contains() impl
+        // are of different O() complexity, the collection with slower
+        // contains() will be used for iteration. For collections who's
+        // contains() are of the same complexity then best performance is
+        // achieved by iterating the smaller collection.
+        var iterate = c1
 
-    // Performance optimization cases. The heuristics:
-    //   1. Generally iterate over c1.
-    //   2. If c1 is a Set then iterate over c2.
-    //   3. If either collection is empty then result is always true.
-    //   4. Iterate over the smaller Collection.
-    if (c1 is Set<*>) {
-        // Use c1 for contains as a Set's contains() is expected to perform
-        // better than O(N/2)
-        iterate = c2
-        contains = c1
-    } else if (c2 !is Set<*>) {
-        // Both are mere Collections. Iterate over smaller collection.
-        // Example: If c1 contains 3 elements and c2 contains 50 elements and
-        // assuming contains() requires ceiling(N/2) comparisons then
-        // checking for all c1 elements in c2 would require 75 comparisons
-        // (3 * ceiling(50/2)) vs. checking all c2 elements in c1 requiring
-        // 100 comparisons (50 * ceiling(3/2)).
+        // Performance optimization cases. The heuristics:
+        //   1. Generally iterate over c1.
+        //   2. If c1 is a Set then iterate over c2.
+        //   3. If either collection is empty then result is always true.
+        //   4. Iterate over the smaller Collection.
+        if (c1 is Set<*>) {
+            // Use c1 for contains as a Set's contains() is expected to perform
+            // better than O(N/2)
+            iterate = c2
+            contains = c1
+        } else if (c2 !is Set<*>) {
+            // Both are mere Collections. Iterate over smaller collection.
+            // Example: If c1 contains 3 elements and c2 contains 50 elements and
+            // assuming contains() requires ceiling(N/2) comparisons then
+            // checking for all c1 elements in c2 would require 75 comparisons
+            // (3 * ceiling(50/2)) vs. checking all c2 elements in c1 requiring
+            // 100 comparisons (50 * ceiling(3/2)).
+            val c1size = c1.size
+            val c2size = c2.size
+            if (c1size == 0 || c2size == 0) {
+                // At least one collection is empty. Nothing will match.
+                return null
+            }
+            if (c1size > c2size) {
+                iterate = c2
+                contains = c1
+            }
+        }
+        for (e in iterate) {
+            if (contains.contains(e)) {
+                // Found a common element. Collections are not disjoint.
+                return e
+            }
+        }
+
+        // No common elements were found.
+        return null
+    }
+
+    fun firstCommonTags(c1: Collection<String>, tags: List<Tag>): Tag? {
         val c1size = c1.size
-        val c2size = c2.size
+        val c2size = tags.size
         if (c1size == 0 || c2size == 0) {
             // At least one collection is empty. Nothing will match.
             return null
         }
-        if (c1size > c2size) {
-            iterate = c2
-            contains = c1
+        for (t in tags) {
+            val e = t.name
+            if (c1.contains(e)) {
+                // Found a common element. Collections are not disjoint.
+                return t
+            }
         }
-    }
-    for (e in iterate) {
-        if (contains.contains(e)) {
-            // Found a common element. Collections are not disjoint.
-            return e
-        }
-    }
 
-    // No common elements were found.
-    return null
-}
-
-fun firstCommonTags(c1: Collection<String>, tags: List<Tag>): Tag? {
-    val c1size = c1.size
-    val c2size = tags.size
-    if (c1size == 0 || c2size == 0) {
-        // At least one collection is empty. Nothing will match.
+        // No common elements were found.
         return null
     }
-    for (t in tags) {
-        val e = t.name
-        if (c1.contains(e)) {
-            // Found a common element. Collections are not disjoint.
-            return t
+
+    fun FloatingActionButton.setMargins(
+        ref: FloatingActionButton,
+        extra: (CoordinatorLayout.LayoutParams) -> Unit = {}
+    ) {
+        layoutParams = (layoutParams as CoordinatorLayout.LayoutParams).apply {
+            val refLayout = ref.layoutParams as CoordinatorLayout.LayoutParams
+            anchorId = refLayout.anchorId
+            anchorGravity = refLayout.anchorGravity
+            setMargins(ref.marginLeft, ref.marginTop, ref.marginRight, ref.marginBottom)
+            extra(this)
         }
     }
 
-    // No common elements were found.
-    return null
-}
+    fun View.rotate() {
+        rotation = 0F
+        ViewCompat.animate(this)
+            .rotation(360F)
+            .withLayer()
+            .setDuration(1000)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+    }
 
-fun FloatingActionButton.setMargins(
-    ref: FloatingActionButton,
-    extra: (CoordinatorLayout.LayoutParams) -> Unit = {}
-) {
-    layoutParams = (layoutParams as CoordinatorLayout.LayoutParams).apply {
-        val refLayout = ref.layoutParams as CoordinatorLayout.LayoutParams
-        anchorId = refLayout.anchorId
-        anchorGravity = refLayout.anchorGravity
-        setMargins(ref.marginLeft, ref.marginTop, ref.marginRight, ref.marginBottom)
-        extra(this)
+    fun BitSet.forEach(block: (it: Int) -> Unit) {
+        var i = nextSetBit(0)
+        while (i >= 0) {
+            block(i)
+            i = nextSetBit(i)
+        }
+    }
+
+    val BitSet.first
+        get() = nextSetBit(0)
+    val BitSet.last
+        get() = previousSetBit(size())
+    val BitSet.size: Int
+        get() = cardinality()
+    val RoaringBitmap.size: Int
+        get() = cardinality
+
+    fun RoaringBitmap.set(x: Int, status: Boolean) {
+        if (status)
+            add(x)
+        else
+            remove(x)
     }
 }
 
-fun View.rotate() {
-    rotation = 0F
-    ViewCompat.animate(this)
-        .rotation(360F)
-        .withLayer()
-        .setDuration(1000)
-        .setInterpolator(AccelerateDecelerateInterpolator())
-        .start()
-}
+object KotlinUtil {
+    fun Boolean.Int(): Int = if (this) 1 else 0
+    operator fun Boolean.times(i: Int): Int = if (this) i else 0
+    operator fun Boolean.plus(i: Int): Int = if (this) i + 1 else i
+    operator fun Int.times(b: Boolean): Int = if (b) this else 0
+    operator fun Int.plus(b: Boolean): Int = if (b) this + 1 else this
 
-fun BitSet.forEach(block: (it: Int) -> Unit) {
-    var i = nextSetBit(0)
-    while (i >= 0) {
-        block(i)
-        i = nextSetBit(i)
+    inline suspend fun <T : Any> lauchCatching(
+        block: () -> T,
+        crossinline onSuccess: (T) -> Unit,
+        crossinline onError: (e: Exception) -> Unit,
+        contextOnSuccess: CoroutineContext = Dispatchers.Main,
+        contextOnError: CoroutineContext = Dispatchers.Main,
+    ) {
+        try {
+            val it = block()
+            withContext(contextOnSuccess) {
+                onSuccess(it)
+            }
+        } catch (e: Exception) {
+            withContext(contextOnError) {
+                onError(e)
+            }
+        }
     }
-}
 
-val BitSet.first
-    get() = nextSetBit(0)
-val BitSet.last
-    get() = previousSetBit(size())
-val BitSet.size: Int
-    get() = cardinality()
-val RoaringBitmap.size: Int
-    get() = cardinality
+    fun <T : Any> CoroutineScope.lauchCatching(
+        block: () -> T,
+        onSuccess: (T) -> Unit,
+        onError: (e: Exception) -> Unit,
+        context: CoroutineContext = Dispatchers.IO,
+        contextOnSuccess: CoroutineContext = Dispatchers.Default,
+        contextOnError: CoroutineContext = Dispatchers.Main,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+    ) {
+        launch(context, start) {
+            lauchCatching(block, onSuccess, onError, contextOnSuccess, contextOnError)
+        }
+    }
 
-fun RoaringBitmap.set(x: Int, status: Boolean) {
-    if (status)
-        add(x)
-    else
-        remove(x)
-}
+    public inline suspend fun <R> runSuspendCatching(block: () -> R): Result<R> {
+        return try {
+            Result.success(block())
+        } catch (c: CancellationException) {
+            throw c
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+    }
 
-fun List<Boolean>.all(): Boolean? {
-    if (this.isEmpty())
-        return true
-    if (all { it == first() })
-        return first()
-    return null
+    fun List<Boolean>.all(): Boolean? {
+        if (this.isEmpty())
+            return true
+        if (all { it == first() })
+            return first()
+        return null
+    }
+
+    // reference:https://gist.github.com/bartekpacia/eb1c92886acf3972c3f030cde2579ebb
+    fun <T> LiveData<T>.observeOnce(
+        owner: LifecycleOwner,
+        reactToChange: (T) -> Unit
+    ): Observer<T> {
+        val wrappedObserver = object : Observer<T> {
+            override fun onChanged(data: T) {
+                reactToChange(data)
+                removeObserver(this)
+            }
+        }
+
+        observe(owner, wrappedObserver)
+        return wrappedObserver
+    }
 }

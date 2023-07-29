@@ -41,11 +41,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.objects.EasyFormatter
-import com.perol.asdpl.pixivez.objects.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.view.loadBGImage
 

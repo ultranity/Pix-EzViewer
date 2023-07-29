@@ -31,6 +31,8 @@ import java.net.InetAddress
 object RubyHttpXDns : Dns {
     private val addressCache = mutableMapOf<String, InetAddress>()
     private val addressCacheX = mutableMapOf<String, List<InetAddress>>()
+    private val ip_regex =
+        "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex()
     private val service = ServiceFactory.cloudflareService
     private val apiAddress = listOf(
         "app-api.pixiv.net",
@@ -102,7 +104,7 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
             }
         }
         // return if full ip
-        if (hostname.matches("((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex())) {
+        if (hostname.matches(ip_regex)) {
             return listOf(InetAddress.getByName(hostname))
         }
         /*try {

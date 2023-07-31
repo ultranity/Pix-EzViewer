@@ -23,14 +23,13 @@
     android:clipToPadding="false"
     android:clipChildren="false">
 
+    <!--style="?attr/borderlessButtonStyle"-->
     <ImageButton
         android:id="@+id/nav_button"
-        style="?attr/borderlessButtonStyle"
         android:layout_width="@dimen/mtrl_min_touch_target_size"
         android:layout_height="@dimen/mtrl_min_touch_target_size"
         android:layout_gravity="start"
         android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
         android:layout_marginBottom="16dp"
         android:background="?attr/actionBarItemBackground"
         android:src="@drawable/ic_drawer_menu"

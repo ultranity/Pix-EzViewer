@@ -38,8 +38,6 @@ import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -273,11 +271,11 @@ object Works {
             .replace("{type}", type)
     }
     fun imgD(pid: Long, part: Int?) {
-        RetrofitRepository.getInstance().getIllust(pid)
-            .subscribeOn(Schedulers.io()).map {
-                imgD(it.illust, part)
-            }
-            .observeOn(AndroidSchedulers.mainThread()).subscribe()
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitRepository.getInstance().api.getIllust(pid).let {
+                    imgD(it.illust, part)
+                }
+        }
     }
     fun imgD(illust: Illust, part: Int?) {
         var url = (

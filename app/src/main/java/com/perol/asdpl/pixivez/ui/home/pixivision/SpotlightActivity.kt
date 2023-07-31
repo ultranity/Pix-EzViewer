@@ -28,21 +28,18 @@ package com.perol.asdpl.pixivez.ui.home.pixivision
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Spotlight
-import com.perol.asdpl.pixivez.data.RetrofitRepository
-import com.perol.asdpl.pixivez.data.model.IllustDetailResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Jsoup
@@ -52,7 +49,7 @@ import java.util.regex.Pattern
 // parsed pixvision - for now use webview PixivisionActivity instead
 class SpotlightActivity : RinkActivity() {
     private val reurls = HashSet<Int>()
-    private val retrofitRepository = RetrofitRepository.getInstance()
+    private val retrofit = RetrofitRepository.getInstance()
     private var spotlightAdapter: SpotlightAdapter? = null
     private val list = ArrayList<Spotlight>()
     private var url = ""
@@ -69,7 +66,7 @@ class SpotlightActivity : RinkActivity() {
     private fun getData() {
         val intent = intent
         url = intent.getStringExtra("url").toString()
-        binding.textViewTest.setOnClickListener {
+        binding.textViewDesc.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
             val contentUrl = Uri.parse(url)
@@ -77,7 +74,7 @@ class SpotlightActivity : RinkActivity() {
             startActivity(intent)
         }
         val local = LanguageUtil.langToLocale(PxEZApp.language)
-        Observable.create { emitter ->
+        lifecycleScope.launchCatching({
             val builder = OkHttpClient.Builder()
             val okHttpClient = builder.build()
             val request = Request.Builder()
@@ -86,95 +83,47 @@ class SpotlightActivity : RinkActivity() {
                 .build()
             val response = okHttpClient.newCall(request).execute()
             val result = response.body!!.string()
-            emitter.onNext(result)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : Observer<String> {
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onNext(s: String) {
-                    val urls = getImgStra(s)
-
-                    val doc = Jsoup.parse(s)
-
-                    val elements1 = doc.select("div[class=am__description _medium-editor-text]")
-                    val articletitle = ""
-                    val stringBuilder = StringBuilder(articletitle)
-
-                    for (element in elements1) {
-                        stringBuilder.append(element.text())
-                    }
-                    binding.textViewTest.text = stringBuilder
-                    for (string in urls) {
-                        if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
-                            reurls.add(
-                                Integer.valueOf(
-                                    string.replace(
-                                        "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
-                                        ""
-                                    )
-                                )
+            result
+        }, {
+            val urls = getImgStra(it)
+            val doc = Jsoup.parse(it)
+            val elements1 = doc.select("div[class=am__description _medium-editor-text]")
+            val articletitle = ""
+            val stringBuilder = StringBuilder(articletitle)
+            for (element in elements1) {
+                stringBuilder.append(element.text())
+            }
+            binding.textViewDesc.text = stringBuilder
+            for (string in urls) {
+                if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
+                    reurls.add(
+                        Integer.valueOf(
+                            string.replace(
+                                "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
+                                ""
                             )
-                        }
-                    }
-                    getspolight()
+                        )
+                    )
                 }
-
-                override fun onError(e: Throwable) {
-                }
-
-                override fun onComplete() {
-                }
-            })
+            }
+            getSpolights()
+        }, { })
     }
 
-    private fun getspolight() {
-        Observable.create { emitter ->
-            num = 0
-            for (id in reurls) {
-                num += 1
-                retrofitRepository.getIllust(id.toLong())
-                    .subscribe(object : Observer<IllustDetailResponse> {
-                        override fun onSubscribe(d: Disposable) {
-                        }
-
-                        override fun onNext(illustDetailResponse: IllustDetailResponse) {
-                            emitter.onNext(illustDetailResponse)
-                        }
-
-                        override fun onError(e: Throwable) {
-                        }
-
-                        override fun onComplete() {
-                        }
-                    })
+    private fun getSpolights() = lifecycleScope.launch{
+        for (id in reurls) {
+            retrofit.api.getIllust(id.toLong()).let {
+                val name = it.illust.user.name
+                val title = it.illust.title
+                list.add(Spotlight(title, name, it.illust))
             }
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : Observer<IllustDetailResponse> {
-                override fun onSubscribe(d: Disposable) {
-                }
+        }
+        spotlightAdapter = SpotlightAdapter(R.layout.view_spotlight_item, list)
+        binding.recyclerviewSpotlight.layoutManager =
+            LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
 
-                override fun onNext(illustDetailResponse: IllustDetailResponse) {
-                    val name = illustDetailResponse.illust.user.name
-                    val title = illustDetailResponse.illust.title
-                    list.add(Spotlight(title, name, illustDetailResponse.illust))
-                    if (num == reurls.size) {
-                        onComplete()
-                    }
-                }
-
-                override fun onError(e: Throwable) {
-                }
-
-                override fun onComplete() {
-                    spotlightAdapter = SpotlightAdapter(R.layout.view_spotlight_item, list)
-                    binding.recyclerviewSpotlight.layoutManager =
-                        LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
-
-                    binding.recyclerviewSpotlight.adapter = spotlightAdapter
-                    binding.recyclerviewSpotlight.isNestedScrollingEnabled = false
-                }
-            })
+        binding.recyclerviewSpotlight.adapter = spotlightAdapter
+        binding.recyclerviewSpotlight.isNestedScrollingEnabled = false
     }
 
     companion object {

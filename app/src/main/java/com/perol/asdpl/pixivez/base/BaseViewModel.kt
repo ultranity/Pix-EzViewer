@@ -27,25 +27,18 @@ package com.perol.asdpl.pixivez.base
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.data.RetrofitRepository
-import com.perol.asdpl.pixivez.data.model.IIllustNext
-import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.data.model.SearchUserResponse
-import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import com.perol.asdpl.pixivez.data.model.INext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 open class BaseViewModel : ViewModel(), LifecycleObserver {
     val retrofit = RetrofitRepository.getInstance()
-    val disposables = CompositeDisposable()
     fun launchUI(block: suspend CoroutineScope.() -> Unit) {
         try {
-            MainScope().launch(Dispatchers.Main) {
+            viewModelScope.launch(Dispatchers.Main) {
                 block()
             }
         } catch (e: Exception) {
@@ -53,30 +46,55 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         }
     }
 
-    protected fun <T : IIllustNext> Observable<T>.subscribeNext(
+    /*protected fun <T : IIllustNext> Observable<T>.subscribeNext(
         target: MutableLiveData<MutableList<Illust>?>,
         nextUrl: MutableLiveData<String?>,
         illustTransform: (MutableList<Illust>) -> MutableList<Illust> = { it },
-        onError: (Throwable) -> Unit = {},
-        onCompleted: () -> Unit = {}
+        onError: ((Throwable) -> Unit)? = null,
+        onCompleted: (() -> Unit)? = null
     ) {
-        this.subscribe({ //Next
+        this.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io()).subscribe({ //Next
             target.value = illustTransform(it.illusts)
             nextUrl.value = it.next_url
         }, { //Error
             target.value = null
             it.printStackTrace()
-            onError(it)
+            onError?.invoke(it)
         }, { //Completed
-            onCompleted()
+            onCompleted?.invoke()
         }).add()
+    }*/
+
+    protected fun <T : INext<MutableList<R>>, R:Any> subscribeNext(
+        getter:suspend ()->T,
+        target: MutableLiveData<MutableList<R>?>,
+        nextUrl: MutableLiveData<String?>?,
+        transform: (MutableList<R>) -> MutableList<R> = { it },
+        onError: ((Throwable) -> Unit)? = null,
+        onCompleted: (() -> Unit)? = null
+    ) {
+        viewModelScope.launch(Dispatchers.Main) {
+            try { //Next
+                val it = getter()
+                target.value = transform(it.data())
+                nextUrl?.value = it.next_url
+            } catch (e: Exception) { //Error
+                target.value = null
+                e.printStackTrace()
+                onError?.invoke(e)
+            } finally {
+                //Completed
+                onCompleted?.invoke()
+            }
+        }
     }
 
-    protected fun Observable<SearchUserResponse>.subscribeNext(
-        target: MutableLiveData<List<UserPreviewsBean>?>,
+    /*protected fun Observable<SearchUserResponse>.subscribeNext(
+        target: MutableLiveData<MutableList<UserPreviewsBean>?>,
         nextUrl: MutableLiveData<String?>,
-        onError: (Throwable) -> Unit = {},
-        onCompleted: () -> Unit = {}
+        onError: ((Throwable) -> Unit)? = null,
+        onCompleted: (() -> Unit)? = null
     ) {
         this.subscribe({ //Next
             target.value = it.user_previews
@@ -84,18 +102,9 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         }, { //Error
             target.value = null
             it.printStackTrace()
-            onError(it)
+            onError?.invoke(it)
         }, { //Completed
-            onCompleted()
+            onCompleted?.invoke()
         }).add()
-    }
-
-    fun Disposable.add() {
-        disposables.add(this)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
+    }*/
 }

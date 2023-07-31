@@ -30,12 +30,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ErrorResponse
-import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
@@ -46,9 +43,9 @@ import com.perol.asdpl.pixivez.ui.MainActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -59,12 +56,14 @@ class IntentActivity : RinkActivity() {
             intent.data = Uri.parse(string)
             context.startActivity(intent)
         }
+
         fun start(context: Context, uri: Uri) {
             val intent = Intent(context, IntentActivity::class.java)
             intent.data = uri
             context.startActivity(intent)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val uri = intent.data
@@ -82,23 +81,21 @@ class IntentActivity : RinkActivity() {
                             tryLogin(code)
                             finish()
                             return
-                        }
-                        else if (host.contains("users")) {
+                        } else if (host.contains("users")) {
                             try {
                                 UserMActivity.start(this, segment[0].toLong())
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, getString(R.string.wrong_id))
+                                Toasty.error(this, R.string.wrong_id)
                             }
-                        }
-                        else if (host.contains("illusts")) {
+                        } else if (host.contains("illusts")) {
                             try {
                                 PictureActivity.start(this, segment[0].toLong())
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, getString(R.string.wrong_id))
+                                Toasty.error(this, R.string.wrong_id)
                             }
                         }
                     }
@@ -119,7 +116,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, getString(R.string.wrong_id))
+                    Toasty.error(this, R.string.wrong_id)
                 }
                 return
             }
@@ -132,7 +129,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, getString(R.string.wrong_id))
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
                 if (segment[segment.size - 2] == "i") {
@@ -142,7 +139,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, getString(R.string.wrong_id))
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
             }
@@ -152,7 +149,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, getString(R.string.wrong_id))
+                    Toasty.error(this, R.string.wrong_id)
                 }
             }
             uri.getQueryParameter("id")?.let {
@@ -161,7 +158,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, getString(R.string.wrong_id))
+                    Toasty.error(this, R.string.wrong_id)
                 }
             }
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
@@ -172,7 +169,7 @@ class IntentActivity : RinkActivity() {
                         UserMActivity.start(this, it)
                         finish()
                     } catch (e: Exception) {
-                        Toasty.error(this, getString(R.string.wrong_id))
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
             }
@@ -194,39 +191,22 @@ class IntentActivity : RinkActivity() {
         map["include_policy"] = true
         val oAuthSecureService =
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
-        oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.try_to_login),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            .doOnNext { pixivOAuthResponse: PixivOAuthResponse ->
-                val user = pixivOAuthResponse.user
-                runBlocking {
-                    AppDataRepo.insertUser(
-                        UserEntity(
-                            user.id,
-                            user.name,
-                            user.mail_address,
-                            user.is_premium,
-                            user.profile_image_urls.px_170x170,
-                            code, // pixivOAuthResponse.device_token,
-                            pixivOAuthResponse.refresh_token,
-                            "Bearer " + pixivOAuthResponse.access_token
-                        )
-                    )
-                    // TODO: user_x_restrict
-                    AppDataRepo.pre.setInt("user_x_restrict", user.x_restrict)
-                    // AppDataRepo.pre.setBoolean("isnone", false)
-                    // AppDataRepo.pre.setString("username", username)
-                    // AppDataRepo.pre.setString("password", password)
-                    // AppDataRepo.pre.setString("Device_token", pixivOAuthResponse.device_token)
+        CoroutineScope(Dispatchers.Default).launch {
+            Toasty.warning(applicationContext, getString(R.string.try_to_login),).show()
+            try {
+                oAuthSecureService.postAuthToken(map).let {
+                    val user = it.user.toUserEntity(it.refresh_token, it.access_token)
+                    AppDataRepo.insertUser(user)
                 }
-            }
-            .doOnError { e ->
+                Toasty.success(applicationContext, getString(R.string.login_success)).show()
+                val intent = Intent(this@IntentActivity, MainActivity::class.java)
+                    .setAction("login.success").apply {
+                        // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
+                        flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                    }
+                startActivity(intent)
+            } catch (e: Exception) {
                 if (e is HttpException) {
                     try {
                         val errorBody = e.response()?.errorBody()?.string()!!
@@ -243,33 +223,14 @@ class IntentActivity : RinkActivity() {
                                 getString(R.string.error_unknown) + "\n" + errMsg
                             }
 
-                        Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
+                        Toasty.error(applicationContext, errMsg).show()
                     } catch (e1: IOException) {
-                        Toast.makeText(
-                            applicationContext,
-                            "${e.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toasty.error(applicationContext, e.message.toString()).show()
                     }
-                }
-                else {
-                    Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
-                        .show()
+                } else {
+                    Toasty.error(applicationContext, "${e.message}").show()
                 }
             }
-            .doOnComplete {
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.login_success),
-                    Toast.LENGTH_LONG
-                ).show()
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
-                    flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
-                }
-                startActivity(intent)
-            }
-            .subscribe()
+        }
     }
 }

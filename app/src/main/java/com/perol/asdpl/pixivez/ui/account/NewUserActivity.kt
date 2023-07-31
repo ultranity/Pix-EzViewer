@@ -33,13 +33,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.webkit.*
-import android.widget.Toast
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityNewUserBinding
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.objects.Toasty
 
 class NewUserActivity : RinkActivity() {
 
@@ -52,8 +52,7 @@ class NewUserActivity : RinkActivity() {
             if (url.startsWith("pixiv://account/login")) {
                 val code = Uri.parse(url).getQueryParameter("code").toString()
                 if (code.isBlank()) {
-                    Toast.makeText(applicationContext, R.string.error_unknown, Toast.LENGTH_LONG)
-                        .show()
+                    Toasty.error(applicationContext, R.string.error_unknown).show()
                     finish()
                     return
                 }

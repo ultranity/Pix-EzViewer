@@ -24,38 +24,21 @@
 
 package com.perol.asdpl.pixivez.ui.home.pixivision
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.SpotlightArticlesBean
-import com.perol.asdpl.pixivez.data.model.SpotlightResponse
-import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
 
 class PixivisionModel : BaseViewModel() {
-    val banners = MutableLiveData<ArrayList<SpotlightArticlesBean>>()
-    val addbanners = MutableLiveData<ArrayList<SpotlightArticlesBean>?>()
-    var nextPixivisonUrl = MutableLiveData<String?>()
-    fun getBanner(): Observable<SpotlightResponse> = retrofit.getPixivison("all")
-    fun onLoadMoreBannerRequested(nextUrl: String) = retrofit.getNextPixivisionArticles(nextUrl)
+    val data = MutableLiveData<MutableList<SpotlightArticlesBean>?>()
+    val dataAdded = MutableLiveData<MutableList<SpotlightArticlesBean>?>()
+    var nextUrl = MutableLiveData<String?>()
 
-    fun onLoadMoreBannerRequested() {
-        retrofit.getNextPixivisionArticles(nextPixivisonUrl.value!!).subscribe({
-            nextPixivisonUrl.value = it.next_url
-            addbanners.value = it.spotlight_articles
-        }, {
-            addbanners.value = null
-        }, {}).add()
-    }
+    fun onLoadMoreBannerRequested() = subscribeNext({ retrofit.getNextPixivisionArticles(nextUrl.value!!) }, dataAdded, nextUrl)
 
     fun onRefreshListener() {
-        retrofit.getPixivison("all").subscribe({
-            if (!PxEZApp.instance.pre.getBoolean("banner_auto_loop", true)) {
-                nextPixivisonUrl.value = it.next_url
-            }
-            banners.value = it.spotlight_articles
-        }, {
-            Log.d("init", "getBanner fail $it")
-        }, {}).add()
+        /*if (!PxEZApp.instance.pre.getBoolean("banner_auto_loop", true)) {
+            nextUrl.value = it.next_url
+        }*/
+        subscribeNext({ retrofit.api.getPixivisionArticles() }, data, nextUrl)
     }
 }

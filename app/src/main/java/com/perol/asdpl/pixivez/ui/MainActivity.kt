@@ -39,7 +39,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
@@ -68,6 +67,7 @@ import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.objects.LARGE_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -247,11 +247,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.again_to_exit),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toasty.warning(applicationContext, R.string.again_to_exit).show()
                 exitTime = System.currentTimeMillis()
             } else {
                 finish()
@@ -379,8 +375,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     }
                 }
                 if (reRequest) {
-                    Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT)
-                        .show()
+                    Toasty.error(this, R.string.permission_denied).show()
                 }
             }
 

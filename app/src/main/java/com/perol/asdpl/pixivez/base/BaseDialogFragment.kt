@@ -12,20 +12,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-
-open class BaseDialogFragment : DialogFragment() {
-    private val disposables = CompositeDisposable()
-    fun Disposable.add() {
-        disposables.add(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.clear()
-    }
-}
 
 abstract class BaseVBDialogFragment<VB : ViewBinding> : DialogFragment() {
     open val TAG: String = this::class.java.simpleName
@@ -59,14 +45,7 @@ abstract class BaseVBDialogFragment<VB : ViewBinding> : DialogFragment() {
         return builder.create()
     }
 
-    private val disposables = CompositeDisposable()
-
-    fun Disposable.add() {
-        disposables.add(this)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        disposables.clear()
     }
 }

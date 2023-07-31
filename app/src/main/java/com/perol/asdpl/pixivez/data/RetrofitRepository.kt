@@ -25,211 +25,33 @@
 
 package com.perol.asdpl.pixivez.data
 
-import android.util.Log
-import com.perol.asdpl.pixivez.data.model.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse
-import com.perol.asdpl.pixivez.data.model.IllustDetailResponse
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
-import com.perol.asdpl.pixivez.data.model.PixivResponse
-import com.perol.asdpl.pixivez.data.model.RecommendResponse
-import com.perol.asdpl.pixivez.data.model.SearchIllustResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.SpotlightResponse
-import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
-import com.perol.asdpl.pixivez.data.model.UgoiraMetadataResponse
-import com.perol.asdpl.pixivez.data.model.UserDetailResponse
-import com.perol.asdpl.pixivez.data.model.UserIllustNext
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
-import com.perol.asdpl.pixivez.services.AppApiPixivService
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import okhttp3.MultipartBody
-import okhttp3.ResponseBody
+import com.perol.asdpl.pixivez.services.PixivApiService
+import com.perol.asdpl.pixivez.services.PixivFileService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitRepository {
 
-    var appApiPixivService: AppApiPixivService =
-        RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
-    private var gifApiPixivService: AppApiPixivService =
-        RestClient.gifAppApi.create(AppApiPixivService::class.java)
+    var api: PixivApiService =
+        RestClient.retrofitAppApi.create(PixivApiService::class.java)
+    var gif: PixivFileService =
+        RestClient.gifAppApi.create(PixivFileService::class.java)
+    suspend fun apii() = api.also { withContext(Dispatchers.IO){ } }
     var refreshToken: RefreshToken = RefreshToken.getInstance()
 
-    init {
-        if (System.currentTimeMillis() - AppDataRepo.pre.getLong("lastRefresh", 0)
-            > 59 * 60 * 1000
-        ) {
-            val init = Observable.just(1).flatMap {
-                Log.d("init", "Observable init")
-                refreshToken.reFreshToken()
-            }.subscribe({
-                Log.d("Retrofit", "Observable inited")
-            }, {}, {})
-        }
-        Log.d("Retrofit", "RetrofitRepository inited")
-    }
-
-    fun getLikeIllust(
-        userid: Long,
-        pub: String="public",
-        tag: String?=null
-    ): Observable<IllustNext> =
-        Request(appApiPixivService.getLikeIllust(userid, pub, tag))
-
-    fun getIllustBookmarkTags(
-        userid: Long,
-        pub: String
-    ): Observable<BookMarkTagsResponse> =
-        Request(appApiPixivService.getIllustBookmarkTags(userid, pub))
-
-    fun getUserIllusts(
-        id: Long,
-        type: String
-    ): Observable<UserIllustNext> =
-        Request(appApiPixivService.getUserIllusts(id, type))
-
-    fun getIllustRelated(id: Long): Observable<IllustNext> =
-        Request(appApiPixivService.getIllustRelated(id))
-
-    fun getIllustRanking(
-        mode: String,
-        date: String?
-    ): Observable<IllustNext> =
-        Request(appApiPixivService.getIllustRanking(mode, date))
-
-    fun getSearchAutoCompleteKeywords(newText: String): Observable<PixivResponse> =
-        Request(appApiPixivService.getSearchAutoCompleteKeywords(newText))
-
-    fun getPixivison(category: String): Observable<SpotlightResponse> =
-        Request(appApiPixivService.getPixivisionArticles(category))
-
-    fun getWalkThrough(): Observable<IllustNext> = Request(appApiPixivService.walkthroughIllusts())
-
-    fun getRecommend(): Observable<RecommendResponse> = Request(appApiPixivService.getRecommend())
-
-    fun getNew(): Observable<IllustNext> = Request(appApiPixivService.getNew())
-
-    fun getSearchIllustPreview(
-        word: String,
-        sort: String,
-        search_target: String?,
-        bookmark_num: Int?,
-        duration: String?
-    ): Observable<SearchIllustResponse> {
-        return Request(
-            appApiPixivService.getSearchIllustPreview(
-                word,
-                sort,
-                search_target,
-                bookmark_num,
-                duration
-            )
-        )
-    }
-
-    fun getSearchIllust(
-        word: String,
-        sort: String,
-        search_target: String?,
-        start_date: String?,
-        end_date: String?,
-        bookmark_num: Int?
-    ): Observable<SearchIllustResponse> = Request(
-        appApiPixivService.getSearchIllust(
-            word,
-            sort,
-            search_target,
-            start_date,
-            end_date,
-            bookmark_num
-        )
-    )
-
-    fun postUserProfileEdit(part: MultipartBody.Part): Observable<ResponseBody> =
-        Request(appApiPixivService.postUserProfileEdit(part))
-
-    fun getUserFollower(user_id: Long): Observable<SearchUserResponse> =
-        Request(appApiPixivService.getUserFollower(user_id))
-
-    fun getUserFollowing(user_id: Long, restrict: String): Observable<SearchUserResponse> =
-        Request(appApiPixivService.getUserFollowing(user_id, restrict))
-
-    fun getFollowIllusts(restrict: String): Observable<IllustNext> =
-        Request(appApiPixivService.getFollowIllusts(restrict))
-
-    fun getIllustBookmarkUsers(illust_id: Long, offset: Int = 0): Observable<ListUserResponse> =
-        Request(appApiPixivService.getIllustBookmarkUsers(illust_id, offset))
-
-    fun getSearchUser(string: String): Observable<SearchUserResponse> =
-        Request(appApiPixivService.getSearchUser(string))
-
-    fun getIllustComments(
-        illust_id: Long,
-        offset: Int = 0,
-        include_total_comments: Boolean = false
-    ): Observable<IllustCommentsResponse> =
-        Request(appApiPixivService.getIllustComments(illust_id, offset, include_total_comments))
-
-    fun postIllustComment(
-        illust_id: Long,
-        comment: String,
-        parent_comment_id: Int?
-    ): Observable<ResponseBody> =
-        Request(appApiPixivService.postIllustComment(illust_id, comment, parent_comment_id))
-
-    fun getIllustTrendTags(): Observable<TrendingtagResponse> =
-        Request(appApiPixivService.getIllustTrendTags())
-
-    fun postLikeIllust(illust_id: Long): Observable<ResponseBody> =
-        Request(appApiPixivService.postLikeIllust(illust_id, "public", null))
-
-    fun postLikeIllustWithTags(
-        illust_id: Long,
-        visibility: String = "public",
-        tagList: List<String>? = null
-    ): Observable<ResponseBody> =
-        Request(appApiPixivService.postLikeIllust(illust_id, visibility, tagList))
-
-    fun getIllust(illust_id: Long): Observable<IllustDetailResponse> =
-        Request(appApiPixivService.getIllust(illust_id)).also {
-            Log.d(
-                "getIllust",
-                illust_id.toString()
-            )
-        }
-
-    fun postUnlikeIllust(long: Long): Observable<ResponseBody> =
-        Request(appApiPixivService.postUnlikeIllust(long))
-
-    fun postFollowUser(long: Long, restrict: String): Observable<ResponseBody> =
-        Request(appApiPixivService.postFollowUser(long, restrict))
-
-    fun postUnfollowUser(long: Long): Observable<ResponseBody> =
-        Request(appApiPixivService.postUnfollowUser(long))
-
-    fun getUgoiraMetadata(long: Long): Observable<UgoiraMetadataResponse> =
-        Request(appApiPixivService.getUgoiraMetadata(long))
-
-    fun getGIFFile(string: String): Observable<ResponseBody> =
-        Request(gifApiPixivService.getGIFFile(string))
-
-    fun getBookmarkDetail(long: Long): Observable<BookMarkDetailResponse> =
-        Request(appApiPixivService.getLikeIllustDetail(long))
-
-    fun getUserDetail(userid: Long): Observable<UserDetailResponse> =
-        Request(appApiPixivService.getUserDetail(userid))
-
-    fun getUserRecommended() = Request(appApiPixivService.getUserRecommended())
-
-    fun getUserRelated(userid: Long) = Request(appApiPixivService.getUserRelated(userid))
+   /* fun getIllust(illust_id: Long): Observable<IllustDetailResponse> =
+        Request(api.getIllust(illust_id)).also { Log.d("getIllust", illust_id.toString()) }
 
     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
         return observable.map {
-            // resetToken()
             Log.d("Retrofit", "Request ${T::class.java.canonicalName}")
             it
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
@@ -245,10 +67,11 @@ class RetrofitRepository {
     fun <T> create(observable: Observable<T>): Observable<T> {
         return observable.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
             .retryWhen(refreshToken)
-    }
+    }*/
 
-    inline fun <reified T> getNext(url: String): Observable<T> =
-        appApiPixivService.getUrl(url).flatMap {
+
+    /*inline fun <reified T> getNext(url: String): Observable<T> =
+        api.getUrl(url).flatMap {
             Log.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
             Observable.just(gson.decodeFromString<T>(it.string()))
         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
@@ -258,23 +81,14 @@ class RetrofitRepository {
                     "Request ${T::class.java.canonicalName} failed, call reFreshFunction"
                 )
                 refreshToken.apply(it)
-            }
-
-    fun getNextUser(url: String): Observable<ListUserResponse> = getNext(url)
-    fun getNextSearchUser(url: String): Observable<SearchUserResponse> = getNext(url)
-
-    fun getNextTags(url: String): Observable<BookMarkTagsResponse> =
-        getNext(url)
-
-    fun getNextIllusts(url: String): Observable<IllustNext> =
-        getNext(url)
-
-    fun getNextIllustRecommended(url: String): Observable<RecommendResponse> = getNext(url)
-
-    fun getNextIllustComments(url: String): Observable<IllustCommentsResponse> =
-        getNext(url)
-
-    fun getNextPixivisionArticles(url: String): Observable<SpotlightResponse> = getNext(url)
+            }*/
+    private suspend inline fun <reified T> getNext(url: String,): T = api.get(url)
+    suspend fun getNextUser(url: String): ListUserResponse = getNext(url)
+    suspend fun getNextSearchUser(url: String): SearchUserResponse = getNext(url)
+    suspend fun getNextTags(url: String): BookMarkTagsResponse = getNext(url)
+    suspend fun getIllustNext(url: String): IllustNext = getNext(url)
+    suspend fun getNextIllustComments(url: String): IllustCommentsResponse = getNext(url)
+    suspend fun getNextPixivisionArticles(url: String): SpotlightResponse = getNext(url)
 
     companion object {
         private var instance: RetrofitRepository? = null

@@ -12,7 +12,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
@@ -38,7 +37,7 @@ object ServiceFactory {
     inline fun <reified T : Any> create(
         httpUrl: HttpUrl = "https://0.0.0.0/".toHttpUrl(),
         httpClient: OkHttpClient = HttpClient.DEFAULT,
-        callAdapterFactory: CallAdapter.Factory? = RxJava2CallAdapterFactory.create(),
+        callAdapterFactory: CallAdapter.Factory? = null,
         converterFactory: Converter.Factory? = gson.asConverterFactory(contentType)
     ): T {
         require(T::class.java.isInterface && T::class.java.interfaces.isEmpty()) {

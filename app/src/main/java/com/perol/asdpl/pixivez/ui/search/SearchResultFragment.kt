@@ -19,9 +19,9 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import java.util.Calendar
 
-class SearchResultFragment: PicListFragment() {
+class SearchResultFragment : PicListFragment() {
 
-    private val keyword:String by extraArg()
+    private val keyword: String by extraArg()
     override fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
         // jump to illust pid if search result empty and looks like a pid
         if (illusts.isEmpty()) {
@@ -31,7 +31,8 @@ class SearchResultFragment: PicListFragment() {
         }
         return super.onDataLoadedListener(illusts)
     }
-    override val viewModel:SearchResultViewModel by viewModels({requireActivity()})
+
+    override val viewModel: SearchResultViewModel by viewModels({ requireActivity() })
     override fun configByTAG() {
         viewModel.sort.observeAfterSet(viewLifecycleOwner) {
             viewModel.onLoadFirst()
@@ -88,9 +89,10 @@ class SearchResultFragment: PicListFragment() {
 }
 
 fun Calendar?.generateDateString(): String? = this?.run {
-        "${get(Calendar.YEAR)}-${get(Calendar.MONTH) + 1}-${get(Calendar.DATE)}"
-    }
-class SearchResultViewModel:PicListViewModel() {
+    "${get(Calendar.YEAR)}-${get(Calendar.MONTH) + 1}-${get(Calendar.DATE)}"
+}
+
+class SearchResultViewModel : PicListViewModel() {
     var keyword: String by arg()
     lateinit var query: String
     val starnumT = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
@@ -115,10 +117,11 @@ class SearchResultViewModel:PicListViewModel() {
 
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefreshing.value = true
-        retrofit.getSearchIllustPreview(word, sort, search_target, null, duration)
-            .subscribeNext(data, nextUrl) {
-                isRefreshing.value = false
-            }
+        subscribeNext({
+            retrofit.api.getSearchIllustPreview(word, sort, search_target, null, duration)
+        }, data, nextUrl) {
+            isRefreshing.value = false
+        }
     }
 
     fun firstSetData(word: String) {
@@ -141,14 +144,16 @@ class SearchResultViewModel:PicListViewModel() {
                 durationT[selectDuration]
             )
         } else {
-            retrofit.getSearchIllust(
-                word,
-                sortT[sort.value!!],
-                searchTargetT[searchTarget],
-                startDate.value.generateDateString(),
-                endDate.value.generateDateString(),
-                null
-            ).subscribeNext(data, nextUrl, ::localSortByBookmarks) {
+            subscribeNext({
+                retrofit.api.getSearchIllust(
+                    word,
+                    sortT[sort.value!!],
+                    searchTargetT[searchTarget],
+                    startDate.value.generateDateString(),
+                    endDate.value.generateDateString(),
+                    null
+                )
+            }, data, nextUrl, ::localSortByBookmarks) {
                 isRefreshing.value = false
             }
         }
@@ -166,8 +171,12 @@ class SearchResultViewModel:PicListViewModel() {
 
     override fun onLoadMore() {
         nextUrl.value?.let {
-            retrofit.getNextIllusts(it) //getNextIllustRecommended
-                .subscribeNext(dataAdded, nextUrl, ::localSortByBookmarks)
+            subscribeNext(
+                { retrofit.getIllustNext(it) },
+                dataAdded,
+                nextUrl,
+                ::localSortByBookmarks
+            )
         }
     }
 }

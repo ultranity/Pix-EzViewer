@@ -9,22 +9,22 @@ import androidx.room.Update
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 
 @Dao
-abstract class UserDao {
+interface UserDao {
     @Query("SELECT * FROM user WHERE userid=:userid")
-    abstract fun findUsers(userid: Long): List<UserEntity>
+    suspend fun findUsers(userid: Long): List<UserEntity>
 
     @Query("SELECT * FROM user")
-    abstract fun getUsers(): List<UserEntity>
+    suspend fun getUsers(): List<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: UserEntity)
+    suspend fun insert(query: UserEntity)
 
     @Delete
-    abstract fun deleteUser(query: UserEntity)
+    suspend fun deleteUser(query: UserEntity)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun updateUser(query: UserEntity)
+    suspend fun updateUser(query: UserEntity)
 
     @Query("DELETE FROM user")
-    abstract fun deleteUsers()
+    suspend fun deleteUsers()
 }

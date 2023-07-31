@@ -31,22 +31,22 @@ import android.util.Pair
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.databinding.DialogCommentBinding
 import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
+import com.perol.asdpl.pixivez.data.RetrofitRepository
+import com.perol.asdpl.pixivez.databinding.DialogCommentBinding
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
-import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 
 // TODO: Refactor as Bottom Sheet
@@ -56,34 +56,34 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
 
     private var pid: Long by argument()
     private var parent_comment_id = 1
-    private val retrofitRepository = RetrofitRepository.getInstance()
+    private val retrofit = RetrofitRepository.getInstance()
     var nextUrl: String? by argumentNullable()
 
     private fun getData(commentAdapter: CommentAdapter) {
-        retrofitRepository.getIllustComments(pid, include_total_comments = true)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                Toasty.longToast("${it.comments.size}/${it.total_comments} comments in total")
-                commentAdapter.setNewInstance(it.comments)
-                nextUrl = it.next_url
-            }, {
-                it.printStackTrace()
-            }, {
-                binding.button.isEnabled = true
-            }).add()
+        lifecycleScope.launchCatching({
+            retrofit.api.getIllustComments(pid,0,true)
+        }, {
+            Toasty.longToast("${it.comments.size}/${it.total_comments} comments in total")
+            commentAdapter.setNewInstance(it.comments)
+            nextUrl = it.next_url
+            binding.button.isEnabled = true
+        }, {
+            it.printStackTrace()
+            binding.button.isEnabled = true
+        })
     }
 
     private fun commit(commentAdapter: CommentAdapter) {
-        retrofitRepository.postIllustComment(
-            pid,
-            binding.edittextComment.text.toString(),
-            if (parent_comment_id == 1) null else parent_comment_id
-        ).subscribe({
-            retrofitRepository.getIllustComments(pid).subscribe({
+        lifecycleScope.launchCatching({
+            retrofit.api.postIllustComment(
+                pid,
+                binding.edittextComment.text.toString(),
+                if (parent_comment_id == 1) null else parent_comment_id
+            )
+        }, {
+            lifecycleScope.launchCatching({ retrofit.api.getIllustComments(pid) }, {
                 commentAdapter.setNewInstance(it.comments)
-                Toast.makeText(context, getString(R.string.comment_successful), Toast.LENGTH_SHORT)
-                    .show()
+                Toasty.success(requireContext(), R.string.comment_successful).show()
                 binding.edittextComment.setText("")
                 parent_comment_id = 1
                 binding.edittextComment.hint = ""
@@ -103,10 +103,10 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
                         e.printStackTrace()
                     }
                 }
-            }, {}).add()
-        }, {}, {
+            })
+        }, {
             binding.button.isEnabled = true
-        }).add()
+        })
     }
 
     override fun onStart() {
@@ -171,16 +171,15 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
         }
         commentAdapter.setOnLoadMoreListener {
             if (!nextUrl.isNullOrBlank()) {
-                retrofitRepository.getNextIllustComments(
-                    nextUrl!!
-                ).subscribe({
+                lifecycleScope.launchCatching({
+                    retrofit.getNextIllustComments(nextUrl!!)
+                }, {
                     commentAdapter.addData(it.comments)
                     nextUrl = it.next_url
                     commentAdapter.loadMoreComplete()
                 }, {
                     commentAdapter.loadMoreFail()
-                    it.printStackTrace()
-                }, {}).add()
+                })
             } else {
                 commentAdapter.loadMoreEnd()
             }

@@ -100,8 +100,6 @@ fun applySeedColorToActivityIfAvailable(
     isDark: Boolean? = null,
     contrastLevel: Double = 0.0
 ) {
-    // Set default theme overlay as 0, as it's not used in content-based dynamic colors.
-    var themeOverlayResourceId = 0
     // Only retrieves the theme overlay if we're applying just dynamic colors.
     // Applies content-based dynamic colors if content-based source is provided.
     val hctSource = Hct.fromInt(contentBasedSeedColor)

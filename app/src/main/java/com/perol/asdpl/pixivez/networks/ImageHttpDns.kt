@@ -44,7 +44,7 @@ object ImageHttpDns : Dns {
         ).map { InetAddress.getByName(it) }
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = service.queryDns(name = hostname).blockingSingle()
+                val response = service.queryDns(name = hostname)
                 response.answer.flatMap {
                     InetAddress.getAllByName(it.data).asList()
                 }.also {

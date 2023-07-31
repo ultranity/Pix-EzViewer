@@ -50,6 +50,7 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -63,13 +64,13 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.objects.*
-import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
@@ -81,11 +82,9 @@ import com.perol.asdpl.pixivez.view.loadUserImage
 import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -587,7 +586,7 @@ class PictureXAdapter(
     ) {
         val binding = ViewPicturexSurfaceGifBinding.bind(holder.itemView)
         gifProgressBar = binding.progressbarGif
-        val play = binding.imageviewPlay
+        gifPlay = binding.imageviewPlay
 
         imageViewGif = binding.imageviewGif
         val s = (data.height.toFloat() / data.width.toFloat())
@@ -646,20 +645,20 @@ class PictureXAdapter(
             }
             true
         }
-        play.setOnClickListener {
-            play.visibility = View.GONE
-            Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
-            pictureXViewModel.loadGif(data.id).flatMap {
+        gifPlay?.setOnClickListener {
+            gifPlay?.visibility = View.GONE
+            Toasty.info(PxEZApp.instance, "Downloading...").show()
+            pictureXViewModel.viewModelScope.launchCatching({
+                pictureXViewModel.loadGif(data.id)
+            }, {
                 duration = it.ugoira_metadata.frames[0].delay
                 pictureXViewModel.downloadZip(
                     it.ugoira_metadata.zip_urls.medium
                 )
-                return@flatMap Observable.just(it)
-            }.subscribe({
             }, {
-                Log.d("throw", "throw it")
-                play.visibility = View.VISIBLE
-            }, {}).add()
+                Log.d("gif ", "loading failed")
+                gifPlay?.visibility = View.VISIBLE
+            })
         }
     }
 
@@ -668,6 +667,7 @@ class PictureXAdapter(
     private val path: String by lazy {
         PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".gif"
     }
+
     private fun showGIFDialog(path2: String) {
         MaterialDialog(mContext).show {
             title(R.string.choice)
@@ -682,13 +682,10 @@ class PictureXAdapter(
                         if (!isEncoding) {
                             isEncoding = true
                             val file1 = File(path2)
-                            if (!file1.parentFile.exists()) {
-                                file1.parentFile.mkdirs()
-                            }
-                            val ob = encodingGif()
+                            file1.parentFile?.mkdirs()// try make dir
                             // TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
-                            if (ob != null) {
-                                ob.subscribe({
+                            MainScope().launchCatching(
+                                { encodingGif() }, {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         File(path).copyTo(file1, true)
                                         MediaScannerConnection.scanFile(
@@ -704,50 +701,19 @@ class PictureXAdapter(
                                         isEncoding = false
                                         File(path).delete()
                                         withContext(Dispatchers.Main) {
-                                            Toast.makeText(
+                                            Toasty.success(
                                                 PxEZApp.instance,
                                                 R.string.savegifsuccess,
-                                                Toast.LENGTH_SHORT
                                             ).show()
                                         }
                                     }
                                 }, {
                                     isEncoding = false
-                                    Toast.makeText(
-                                        PxEZApp.instance,
-                                        R.string.savegifsuccesserr,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }, { }).add()
-                            } else {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    File(path).copyTo(file1, true)
-                                    MediaScannerConnection.scanFile(
-                                        PxEZApp.instance,
-                                        arrayOf(path2),
-                                        arrayOf(
-                                            MimeTypeMap.getSingleton()
-                                                .getMimeTypeFromExtension(
-                                                    file1.extension
-                                                )
-                                        )
-                                    ) { _, _ -> }
-                                    isEncoding = false
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(
-                                            PxEZApp.instance,
-                                            R.string.savegifsuccess,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            }
+                                    Toasty.error(PxEZApp.instance, R.string.savegifsuccesserr)
+                                        .show()
+                                })
                         } else {
-                            Toasty.info(
-                                PxEZApp.instance,
-                                mContext.getString(R.string.already_encoding),
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toasty.warning(PxEZApp.instance, R.string.already_encoding).show()
                         }
                     }
 
@@ -760,11 +726,7 @@ class PictureXAdapter(
                                 File(path2.substringBeforeLast(".") + ".zip"),
                                 overwrite = true
                             )
-                            Toasty.info(
-                                PxEZApp.instance,
-                                mContext.getString(R.string.save_zip_success),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toasty.info(PxEZApp.instance, R.string.save_zip_success).show()
                         }
                     }
                 }
@@ -772,9 +734,9 @@ class PictureXAdapter(
         }
     }
 
-    private fun encodingGif(): Observable<Int>? {
+    private suspend fun encodingGif() {
         if (File(path).exists()) {
-            return null
+            return
         }
         val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
         val listFiles = File(parentPath).listFiles()
@@ -784,9 +746,8 @@ class PictureXAdapter(
         if (listFiles.size < size) {
             throw RuntimeException("something wrong in ugoira files")
         }
-        Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成", Toast.LENGTH_SHORT)
-            .show()
-        return Observable.create<Int> {
+        Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成").show()
+        withContext(Dispatchers.Default) {
             listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
             val gifEncoder = GifEncoder()
             for (i in listFiles.indices) {
@@ -806,13 +767,13 @@ class PictureXAdapter(
                 }
             }
             gifEncoder.close()
-            it.onNext(1)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }
     }
 
     var size = 1
     var duration: Int = 50
     private var gifProgressBar: CircularProgressIndicator? = null
+    private var gifPlay: View? = null
     var imageViewGif: AnimationView? = null
     fun setProgress(progress: Int) {
         if (gifProgressBar != null) {
@@ -828,6 +789,10 @@ class PictureXAdapter(
     private var previewImageView: ImageView? = null
     fun setProgressComplete(it: Boolean) {
         gifProgressBar?.visibility = View.GONE
+        if (!it){
+            gifPlay?.visibility = View.VISIBLE
+            return
+        }
         previewImageView?.visibility = View.GONE
         val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
         val parentFile = File(parentPath)

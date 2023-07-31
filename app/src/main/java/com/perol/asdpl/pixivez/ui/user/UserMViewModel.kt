@@ -26,14 +26,18 @@
 package com.perol.asdpl.pixivez.ui.user
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
-import io.reactivex.Observable
+import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.ResponseBody
 import java.io.File
 
 class UserMViewModel : BaseViewModel() {
@@ -42,39 +46,37 @@ class UserMViewModel : BaseViewModel() {
     val currentTab = MutableLiveData(0)
 
     fun getData(userid: Long) {
-        retrofit.getUserDetail(userid).subscribe({
-            userDetail.value = it
-            isfollow.value = it.user.is_followed
-        }, {
-            it.printStackTrace()
-        }, {}).add()
+        viewModelScope.launch {
+            retrofit.api.getUserDetail(userid).let{
+                userDetail.value = it
+                isfollow.value = it.user.is_followed
+            }
+        }
     }
 
     fun onFabClick(userid: Long) {
-        if (isfollow.value!!) {
-            retrofit.postUnfollowUser(userid).subscribe({
-                isfollow.value = false
-            }, {
-                it.printStackTrace()
-            }, {}).add()
-        } else {
-            retrofit.postFollowUser(userid, "public").subscribe({
-                isfollow.value = true
-            }, {
-                it.printStackTrace()
-            }, {}).add()
+        MainScope().launch {
+            (if (isfollow.value!!)
+                retrofit.api.postUnfollowUser(userid)
+            else
+                retrofit.api.postFollowUser(userid, "public")
+            ).let{
+                isfollow.value = !isfollow.value!!
+            }
         }
     }
 
     fun onFabLongClick(userid: Long) {
-        if (isfollow.value!!) {
-            retrofit.postUnfollowUser(userid).subscribe({
-                isfollow.value = false
-            }, {}, {}).add()
-        } else {
-            retrofit.postFollowUser(userid, "private").subscribe({
-                isfollow.value = true
-            }, {}, {}).add()
+        viewModelScope.launch{
+            if (isfollow.value!!) {
+                retrofit.api.postUnfollowUser(userid).let {
+                    isfollow.value = false
+                }
+            } else {
+                retrofit.api.postFollowUser(userid, "private").let {
+                    isfollow.value = true
+                }
+            }
         }
     }
 
@@ -82,12 +84,21 @@ class UserMViewModel : BaseViewModel() {
         return AppDataRepo.currentUser.userid == id
     }
 
-    fun tryToChangeProfile(path: String): Observable<ResponseBody> {
-        val file = File(path)
-        val builder = MultipartBody.Builder()
-        builder.setType(MultipartBody.FORM)
-        val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        builder.addFormDataPart("profile_image", file.name, body)
-        return retrofit.postUserProfileEdit(builder.build().part(0))
+    fun tryToChangeProfile(path: String) {
+        viewModelScope.launch {
+            try {
+                val file = File(path)
+                val builder = MultipartBody.Builder()
+                builder.setType(MultipartBody.FORM)
+                val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                builder.addFormDataPart("profile_image", file.name, body)
+                retrofit.api.postUserProfileEdit(builder.build().part(0))
+                    .let {
+                        Toasty.info(PxEZApp.instance, R.string.upload_success).show()
+                    }
+            } catch (e: Exception) {
+                Toasty.info(PxEZApp.instance, R.string.update_failed).show()
+            }
+        }
     }
 }

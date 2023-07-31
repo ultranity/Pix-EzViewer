@@ -80,7 +80,7 @@ class TrendTagFragment : Fragment() {
         trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
             val keyword = trendingtagAdapter.data[position].tag
             upToPage(keyword)
-            viewModel.addhistory(keyword)
+            viewModel.addHistory(keyword)
         }
         trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
             DataHolder.setIllustList(

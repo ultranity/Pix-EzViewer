@@ -31,7 +31,6 @@ import android.content.SharedPreferences
 import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -44,11 +43,9 @@ import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.tencent.mmkv.MMKV
-import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -147,12 +144,7 @@ class PxEZApp : Application() {
                 }
             }
         }
-
         //initBugly(this)
-        RxJavaPlugins.setErrorHandler {
-            Log.e("onRxJavaErrorHandler", "${it.message}")
-            it.printStackTrace()
-        }
         if (pre.getBoolean("infoCache", true)) {
             MMKV.initialize(this)
         }
@@ -175,7 +167,7 @@ class PxEZApp : Application() {
         )!!
         saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
-            CrashHandler.getInstance().init(this)
+            CrashHandler.getInstance().init()
         }
         locale = LanguageUtil.getLocale() // System locale
         language = pre.getString("language", "-1")?.toIntOrNull()
@@ -198,10 +190,9 @@ class PxEZApp : Application() {
             override fun onActivityStopped(activity: Activity) {
             }
 
-            override fun onActivityPostDestroyed(activity: Activity) {
-                super.onActivityPostDestroyed(activity)
-                InteractionUtil.onDestroy()
-            }
+            //override fun onActivityPostDestroyed(activity: Activity) {
+            //    super.onActivityPostDestroyed(activity)
+            //}
 
             override fun onActivityDestroyed(activity: Activity) {
                 ActivityCollector.discard(activity)

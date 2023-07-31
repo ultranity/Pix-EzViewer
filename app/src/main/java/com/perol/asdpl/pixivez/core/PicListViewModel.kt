@@ -27,12 +27,10 @@ package com.perol.asdpl.pixivez.core
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.DMutableLiveData
-import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
 import com.perol.asdpl.pixivez.data.model.IIllustNext
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.DataHolder
-import io.reactivex.Observable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -112,7 +110,7 @@ open class PicListViewModel : BaseViewModel() {
     val isRefreshing = DMutableLiveData(false)
     val restrict = DMutableLiveData(RESTRICT_TYPE.all)
     lateinit var args: MutableMap<String, Any?>
-    protected lateinit var onLoadFirstRx: () -> Observable<out IIllustNext>
+    protected lateinit var onLoadFirstRx: suspend () -> IIllustNext
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         TAG = mode
@@ -121,37 +119,34 @@ open class PicListViewModel : BaseViewModel() {
         }
         when (TAG_TYPE.check(mode)) {
             TAG_TYPE.WalkThrough -> {
-                { retrofit.getWalkThrough() }
+                { retrofit.api.walkthroughIllusts() }
             }
 
             TAG_TYPE.Recommend -> {
-                { retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) } }
+                { retrofit.api.getRecommend().let { IllustNext(it.illusts, it.next_url) } }
             }
 
             TAG_TYPE.Rank -> {
-                { retrofit.getIllustRanking(args["mode"] as String, args["pickDate"] as String?) }
+                { retrofit.api.getIllustRanking(args["mode"] as String, args["pickDate"] as String?) }
             }
 
             TAG_TYPE.MyFollow -> {
-                { retrofit.getFollowIllusts(restrict.value!!.name) }
+                { retrofit.api.getFollowIllusts(restrict.value!!.name) }
             }
 
             TAG_TYPE.UserIllust -> {
-                { retrofit.getUserIllusts(args["userid"] as Long, "illust") }
+                { retrofit.api.getUserIllusts(args["userid"] as Long, "illust") }
             }
 
             TAG_TYPE.UserManga -> {
-                { retrofit.getUserIllusts(args["userid"] as Long, "manga") }
+                { retrofit.api.getUserIllusts(args["userid"] as Long, "manga") }
             }
 
             TAG_TYPE.UserBookmark -> {
                 {
                     val id = args["userid"] as Long
                     val pub = args["pub"] as String? ?: "public"
-                    if (tags == null) {
-                        getTags(id)
-                    }
-                    retrofit.getLikeIllust(
+                    retrofit.api.getLikeIllust(
                         id, pub,
                         args["tag"] as String?
                     )
@@ -159,13 +154,11 @@ open class PicListViewModel : BaseViewModel() {
             }
 
             TAG_TYPE.Collect -> {
-                {
-                    Observable.just(1).map {
-                        IllustNext(
-                            DataHolder.dataListRef ?: arrayListOf(),
-                            DataHolder.nextUrlRef
-                        )
-                    }
+                suspend {
+                    IllustNext(
+                        DataHolder.dataListRef ?: arrayListOf(),
+                        DataHolder.nextUrlRef
+                    )
                 }
             }
 
@@ -179,26 +172,14 @@ open class PicListViewModel : BaseViewModel() {
         onLoadFirst(onLoadFirstRx)
     }
 
-    open fun onLoadFirst(onLoadFirstRx: () -> Observable<out IIllustNext> = this.onLoadFirstRx) {
+    open fun onLoadFirst(onLoadFirstRx: suspend () -> IIllustNext = this.onLoadFirstRx) {
         isRefreshing.value = true
-        onLoadFirstRx().subscribeNext(data, nextUrl) {
-            isRefreshing.value = false
-        }
+        subscribeNext(onLoadFirstRx, data, nextUrl) { isRefreshing.value = false }
     }
 
-    //fun onLoadMoreRx(nextUrl: String): Observable<IllustNext> = retrofit.getNext(nextUrl)
     open fun onLoadMore() {
         if (nextUrl.value != null) {
-            retrofit.getNextIllusts(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
+            subscribeNext({ retrofit.getIllustNext(nextUrl.value!!) }, dataAdded, nextUrl)
         }
-    }
-
-    // for UserBookmark
-    var tags: BookMarkTagsResponse? = null
-
-    fun getTags(id: Long) {
-        retrofit.getIllustBookmarkTags(id, "public").subscribe({
-            tags = it
-        }, {}, {}).add()
     }
 }

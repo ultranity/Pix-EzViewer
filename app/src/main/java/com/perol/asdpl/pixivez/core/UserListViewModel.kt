@@ -29,18 +29,17 @@ import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
-import io.reactivex.Observable
 import kotlin.properties.Delegates
 
 class UserListViewModel : BaseViewModel() {
     var needHeader: Boolean = false
     private lateinit var args: MutableMap<String, Any?>
-    val data = MutableLiveData<List<UserPreviewsBean>?>()
-    val dataAdded = MutableLiveData<List<UserPreviewsBean>?>()
+    val data = MutableLiveData<MutableList<UserPreviewsBean>?>()
+    val dataAdded = MutableLiveData<MutableList<UserPreviewsBean>?>()
     val nextUrl = MutableLiveData<String?>()
     val isRefreshing = DMutableLiveData(false)
     var restrict = DMutableLiveData("public")
-    protected lateinit var onLoadFirstRx: () -> Observable<SearchUserResponse>
+    protected lateinit var onLoadFirstRx: suspend () -> SearchUserResponse
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         if (extraArgs != null) {
@@ -50,17 +49,17 @@ class UserListViewModel : BaseViewModel() {
             "Following" -> {
                 needHeader = true
                 {
-                    retrofit.getUserFollowing(userid, restrict.value!!)
+                    retrofit.api.getUserFollowing(userid, restrict.value!!)
                 }
             }
             "Follower" -> {
-                { retrofit.getUserFollower(userid) }
+                { retrofit.api.getUserFollower(userid) }
             }
             "Search" -> {
-                { retrofit.getSearchUser(keyword) }
+                { retrofit.api.getSearchUser(keyword) }
             }
             else -> { //"Recommend"
-                { retrofit.getUserRecommended() }
+                { retrofit.api.getUserRecommended() }
             }
         }
     }
@@ -71,11 +70,11 @@ class UserListViewModel : BaseViewModel() {
     var userid by Delegates.notNull<Long>()
     // -----------------
     fun onLoadMore() {
-        retrofit.getNextSearchUser(nextUrl.value!!).subscribeNext(dataAdded, nextUrl)
+        subscribeNext({ retrofit.getNextSearchUser(nextUrl.value!!) }, dataAdded, nextUrl)
     }
 
     fun onLoadFirst(){
         isRefreshing.value = true
-        onLoadFirstRx().subscribeNext(data, nextUrl){ isRefreshing.value = false }
+        subscribeNext(onLoadFirstRx, data, nextUrl){ isRefreshing.value = false }
     }
 }

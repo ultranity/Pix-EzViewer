@@ -1,7 +1,6 @@
 package com.perol.asdpl.pixivez.services
 
 import com.perol.asdpl.pixivez.data.model.DnsQueryResponse
-import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -20,13 +19,13 @@ interface CloudflareService {
      * @param cd CD bit - set to disable validation (either boolean or numeric value): Optional.
      */
     @GET("dns-query")
-    fun queryDns(
+    suspend fun queryDns(
         @Header("accept") accept: String = "application/dns-json",
         @Query("name") name: String,
         @Query("type") type: String = "A",
         @Query("do") `do`: Boolean? = null,
         @Query("cd") cd: Boolean? = null
-    ): Observable<DnsQueryResponse>
+    ): DnsQueryResponse
 
     companion object {
         const val URL = "https://api.cloudflare.com/"

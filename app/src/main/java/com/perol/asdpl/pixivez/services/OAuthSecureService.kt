@@ -24,8 +24,6 @@
 package com.perol.asdpl.pixivez.services
 
 import com.perol.asdpl.pixivez.data.model.PixivOAuthResponse
-import io.reactivex.Observable
-import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
@@ -34,11 +32,11 @@ import retrofit2.http.POST
 interface OAuthSecureService {
     @FormUrlEncoded
     @POST("/auth/token")
-    fun postAuthToken(@FieldMap map: HashMap<String, Any>): Observable<PixivOAuthResponse>
+    suspend fun postAuthToken(@FieldMap map: HashMap<String, Any>): PixivOAuthResponse
 
     @FormUrlEncoded
     @POST("/auth/token")
-    fun postAuthTokenx(
+    suspend fun postAuthTokenx(
         @Field("client_id") client_id: String,
         @Field("client_secret") client_secret: String,
         @Field("grant_type") grant_type: String, // authorization_code
@@ -46,40 +44,15 @@ interface OAuthSecureService {
         @Field("code_verifier") code_verifier: String, // cwnuOPjfkM1f65Cqaf94Pu4EqFNZJcAzfDGKmrAr0vQ
         @Field("redirect_uri") redirect_uri: String, // https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback
         @Field("include_policy") include_policy: Boolean
-    ): Observable<PixivOAuthResponse>
+    ): PixivOAuthResponse
 
     @FormUrlEncoded
     @POST("/auth/token")
-    fun postRefreshAuthTokenX(
+    suspend fun postRefreshAuthTokenX(
         @Field("client_id") client_id: String,
         @Field("client_secret") client_secret: String,
         @Field("grant_type") grant_type: String,
         @Field("refresh_token") refresh_token: String,
         @Field("include_policy") get_secure_url: Boolean
-    ): Observable<PixivOAuthResponse>
-
-    @FormUrlEncoded
-    @POST("/auth/token")
-    @Deprecated("device_token->OAuth2.0, use postAuthToken instead")
-    fun postAuthTokenSync(
-        @Field("client_id") client_id: String,
-        @Field("client_secret") client_secret: String,
-        @Field("grant_type") grant_type: String,
-        @Field("username") username: String,
-        @Field("password") password: String,
-        @Field("device_token") device_token: String,
-        @Field("get_secure_url") paramBoolean: Boolean
-    ): Call<PixivOAuthResponse>
-
-    @FormUrlEncoded
-    @POST("/auth/token")
-    @Deprecated("device_token->OAuth2.0, use postRefreshAuthTokenX instead")
-    fun postRefreshAuthToken(
-        @Field("client_id") client_id: String,
-        @Field("client_secret") client_secret: String,
-        @Field("grant_type") grant_type: String,
-        @Field("refresh_token") refresh_token: String,
-        @Field("device_token") device_token: String,
-        @Field("get_secure_url") get_secure_url: Boolean
-    ): Observable<PixivOAuthResponse>
+    ): PixivOAuthResponse
 }

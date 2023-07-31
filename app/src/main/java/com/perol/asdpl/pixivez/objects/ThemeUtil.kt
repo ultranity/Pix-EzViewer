@@ -227,7 +227,7 @@ object ThemeUtil {
                 )
                 else BackgroundGridItem(context.getColorFromStyle(it), index.toString(), false)
             }
-            var action: () -> Unit = {}
+            var action: () -> Unit = { }
             title(R.string.title_change_theme)
             val gridItems = gridItems(colorArray) { _, index, item ->
                 if (index == 0) {

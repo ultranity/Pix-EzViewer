@@ -35,7 +35,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.KotlinUtil.lauchCatching
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.FragmentAccountBinding
@@ -43,7 +42,6 @@ import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
 import kotlinx.coroutines.runBlocking
 
 class AccountFragment : Fragment() {
@@ -105,12 +103,8 @@ class AccountFragment : Fragment() {
             .setTitle("Token")
             .setMessage(R.string.token_warning)
             .setNeutralButton(R.string.refresh_token) { _, _ ->
-                Observable.just(1).flatMap { RefreshToken.getInstance().reFreshToken() }
-                    .subscribe({
-                        Toasty.shortToast(R.string.refresh_token)
-                    }, {
-                        Toasty.shortToast(R.string.refresh_token_fail)
-                    }).add()
+                try { RefreshToken.getInstance().refreshToken()}
+                catch (e:Exception) { Toasty.shortToast(R.string.refresh_token_fail) }
             }
             .setNegativeButton("SHOW") { _, _ ->
                 MaterialAlertDialogBuilder(context)

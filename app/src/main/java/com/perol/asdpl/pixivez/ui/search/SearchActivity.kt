@@ -143,7 +143,7 @@ class SearchActivity : RinkActivity() {
                 if (!query.isNullOrBlank()) {
                     when (binding.tablayoutSearch.selectedTabPosition) {
                         0 -> {
-                            trendTagViewModel.addhistory(query)
+                            trendTagViewModel.addHistory(query)
                             searchFor(query)
                         }
 

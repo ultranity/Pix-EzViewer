@@ -69,7 +69,7 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
         pictureXViewModel.tags.observe(this) {
             tagsAdapter.setNewInstance(it.tags)
         }
-        pictureXViewModel.fabOnLongClick()
+        pictureXViewModel.onLoadTags() //TODO: refresh when asked
         // Create the AlertDialog object and return it
         builder
             .setNegativeButton(android.R.string.cancel) { dialog, id -> }

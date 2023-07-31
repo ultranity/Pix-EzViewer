@@ -51,6 +51,7 @@ import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
+import com.perol.asdpl.pixivez.ui.user.BookMarkTagViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import kotlinx.coroutines.launch
@@ -220,11 +221,12 @@ open class PicListFragment : Fragment() {
 
     open fun configByTAG() = when (TAG) {
         TAG_TYPE.UserBookmark.name -> {
+            val tagModel: BookMarkTagViewModel by viewModels(::ownerProducer)
             headerBinding.imgBtnR.setText(R.string.publics)
             headerBinding.imgBtnR.setOnClickListener {
                 val id = extraArgs!!.get("userid") as Long
-                viewModel.tags?.also {
-                    TagsShowDialog.newInstance(id, it).also {
+                tagModel.tags.value.also {
+                    TagsShowDialog.newInstance(id).also {
                         it.callback =
                             TagsShowDialog.Callback { tag, public ->
                                 extraArgs!!["tag"] = tag

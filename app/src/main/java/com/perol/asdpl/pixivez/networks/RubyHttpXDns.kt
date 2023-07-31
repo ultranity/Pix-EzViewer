@@ -25,6 +25,9 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Dns
 import java.net.InetAddress
 
@@ -68,28 +71,6 @@ D/httpdns init end: ========================================
 D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pixiv.net.cdn.cloudflare.net./104.18.30.199, accounts.pixiv.net.cdn.cloudflare.net./104.18.30.199, /210.140.92.138, /210.140.92.140, /210.140.131.147, /210.140.174.37, www.pixiv.net.cdn.cloudflare.net./104.18.30.199]
      */
     private var inited = false
-    fun dlookup(): List<InetAddress> {
-        val addressList = mutableMapOf<String, List<InetAddress>>()
-        val addressListX = mutableMapOf<String, List<InetAddress>>()
-        apiAddress.forEach { addressListX[it] = InetAddress.getAllByName(it).asList() }
-        Log.d("httpdns", "========================================")
-        apiAddress.forEach { k ->
-            try {
-                val response = service.queryDns(name = k).blockingSingle()
-                response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
-                    addressList[k] = it
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        Log.d("httpdns addressList", addressList.toString())
-        Log.d("httpdns addressListX", addressListX.toString())
-        Log.d("httpdns init end", "========================================")
-        return addressList.map {
-            it.value[0]
-        }
-    }
     override fun lookup(hostname: String): List<InetAddress> {
         if (!inited) {
             inited = true
@@ -124,13 +105,16 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
         // if (addressList.isNotEmpty()) return addressList
         Log.d("httpdns", "========================================")
         val addressList = mutableListOf<InetAddress>()
-        try {
-            val response = service.queryDns(name = hostname).blockingSingle()
-            response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
-                addressList.addAll(it)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = service.queryDns(name = hostname)
+                response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
+                    addressList.addAll(it)
+                }
+            } catch (e: Exception) {
+                addressList.addAll(Dns.SYSTEM.lookup(hostname))
             }
-        } catch (e: Exception) {
-            addressList.addAll(Dns.SYSTEM.lookup(hostname))
         }
         Log.d("httpdns", addressList.toString())
         Log.d("httpdns end", "========================================")

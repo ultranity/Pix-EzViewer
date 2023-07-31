@@ -1,7 +1,6 @@
 package com.perol.asdpl.pixivez.objects
 
 import android.content.Context
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,11 +41,7 @@ class UpToTopListener(
     private var exitTime: Long = 0
     override fun onTabReselected(tab: TabLayout.Tab) {
         if ((System.currentTimeMillis() - exitTime) > 3000) {
-            Toast.makeText(
-                PxEZApp.instance,
-                context.getString(R.string.back_to_the_top),
-                Toast.LENGTH_SHORT
-            ).show()
+            Toasty.normal(PxEZApp.instance, R.string.back_to_the_top).show()
             exitTime = System.currentTimeMillis()
         } else {
             fragmentGetter(tab.position)?.view

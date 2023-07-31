@@ -9,25 +9,19 @@ import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
 import com.perol.asdpl.pixivez.databinding.ViewTagsShowBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.argument
-import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
-import com.perol.asdpl.pixivez.objects.argumentNullable
 
 // UserBookMarkFragment
 class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
     companion object {
-        fun newInstance(uid: Long, tags: BookMarkTagsResponse, index:Int=0) = TagsShowDialog().apply {
+        fun newInstance(uid: Long, index:Int=0) = TagsShowDialog().apply {
             this.uid = uid
-            this.tags = tags.bookmark_tags
-            this.nextUrl = tags.next_url
             this.index = index
         }
     }
 
-    private var nextUrl: String? by argumentNullable()
-    private var tags: MutableList<BookMarkTagsResponse.BookmarkTagsBean> by argument()
     private var uid: Long by argument()
     private var index: Int by argument()
-    val viewModel: BookMarkTagViewModel by viewModels(ownerProducer = { requireParentFragment() })
+    val viewModel: BookMarkTagViewModel by viewModels({ requireParentFragment() })
     var callback: Callback? = null
 
     fun interface Callback {
@@ -35,10 +29,9 @@ class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
     }
 
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
-        viewModel.nextUrl.value = nextUrl
-        viewModel.tags.value = tags
+        if (viewModel.noFirst) viewModel.first(uid, viewModel.pub)
         val tagsShowAdapter =
-            TagsShowAdapter(R.layout.view_tags_show_item, viewModel.tags.value!!)
+            TagsShowAdapter(R.layout.view_tags_show_item, null)
         tagsShowAdapter.setOnItemClickListener { adapter, view, position ->
             callback!!.onClick(
                 tagsShowAdapter.data[position].name,

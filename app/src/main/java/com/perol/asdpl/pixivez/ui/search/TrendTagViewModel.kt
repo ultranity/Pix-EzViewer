@@ -26,14 +26,12 @@
 package com.perol.asdpl.pixivez.ui.search
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
 import com.perol.asdpl.pixivez.data.model.TrendTagsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,11 +46,15 @@ class TrendTagViewModel : BaseViewModel() {
         reloadSearchHistory()
     }
 
-    fun getIllustTrendTags() = retrofit.getIllustTrendTags().subscribe{
-        trendTags.value = it?.trend_tags
-    }.add()
+    fun getIllustTrendTags() = viewModelScope.launch {
+        trendTags.value = try{
+            retrofit.api.getIllustTrendTags().trend_tags
+        } catch (e:Exception){
+            null
+        }
+    }
 
-    fun addhistory(keyword: String) {
+    fun addHistory(keyword: String) {
         CoroutineScope(Dispatchers.IO).launch {
             appDatabase.searchhistoryDao().insert(SearchHistoryEntity(keyword))
             searchHistory.value?.add(0, keyword)
@@ -60,14 +62,11 @@ class TrendTagViewModel : BaseViewModel() {
     }
 
     fun clearHistory() {
-        Observable.create<Int> {
-            appDatabase.searchhistoryDao().deletehistory()
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe({}, { }, {}).add()
+        CoroutineScope(Dispatchers.IO).launch{ appDatabase.searchhistoryDao().deletehistory() }
     }
 
     private fun reloadSearchHistory() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             val history = appDatabase.searchhistoryDao().getSearchHistory()
                 .asReversed().map { it.word }.toMutableList()
             withContext(Dispatchers.Main) {

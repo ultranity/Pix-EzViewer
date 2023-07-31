@@ -28,38 +28,28 @@ package com.perol.asdpl.pixivez.ui.user
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.data.RetrofitRepository
-import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.perol.asdpl.pixivez.data.model.BookmarkTagsBean
 import kotlin.properties.Delegates
 
 class BookMarkTagViewModel : BaseViewModel() {
+    var noFirst: Boolean = true
     var id by Delegates.notNull<Long>()
-    lateinit var pub:String
+    var pub:String = "public"
     val nextUrl = MutableLiveData<String?>()
-    val tags = MutableLiveData<MutableList<BookMarkTagsResponse.BookmarkTagsBean>>()
-    val tagsAdded = MutableLiveData<List<BookMarkTagsResponse.BookmarkTagsBean>?>()
+    val tags = MutableLiveData<MutableList<BookmarkTagsBean>>()
+    val tagsAdded = MutableLiveData<MutableList<BookmarkTagsBean>?>()
 
     fun isSelfPage(): Boolean {
         return AppDataRepo.currentUser.userid == id
     }
 
     fun first(id: Long, pub: String) {
+        noFirst = false
         this.pub = pub
-        retrofit.getIllustBookmarkTags(id, pub).subscribe({
-            tags.value = it.bookmark_tags
-            nextUrl.value = it.next_url
-        }, {}, {}).add()
+        subscribeNext({retrofit.api.getIllustBookmarkTags(id, pub)}, tagsAdded, nextUrl)
     }
 
     fun onLoadMore() {
-        RetrofitRepository.getInstance().getNextTags(nextUrl.value!!)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                tagsAdded.value = it.bookmark_tags
-                nextUrl.value = it.next_url
-            }, { tagsAdded.value = null }, {}).add()
+        subscribeNext({ retrofit.getNextTags(nextUrl.value!!) },tagsAdded, nextUrl)
     }
 }

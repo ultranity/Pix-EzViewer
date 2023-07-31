@@ -26,23 +26,27 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
+import android.widget.Toast
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.contentType
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.IOException
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -60,7 +64,8 @@ object RestClient {
     private val ISO8601DATETIMEFORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
     private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
-    private val disableProxy by lazy { PxEZApp.instance.pre.getBoolean("disableproxy", false) }
+    private val disableProxy
+        get() = PxEZApp.instance.pre.getBoolean("disableproxy", false)
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(object : Interceptor {
@@ -99,7 +104,8 @@ object RestClient {
 
     val retrofitAppApi: Retrofit
         get() {
-            return buildRetrofit("https://app-api.pixiv.net", okHttpClient("app-api.pixiv.net"))
+            return buildRetrofit("https://app-api.pixiv.net",
+                okHttpClient("app-api.pixiv.net", needAuth = true))
         }
     val gifAppApi = buildRetrofit("https://oauth.secure.pixiv.net", imageHttpClient)
 
@@ -111,69 +117,108 @@ object RestClient {
         "https://oauth.secure.pixiv.net",
         okHttpClient("oauth.secure.pixiv.net", true)
     )
+    private val MD5 = MessageDigest.getInstance("MD5")
+    private fun encode(text: String) = MD5.digest(text.toByteArray())
+        .joinToString("") { "%02x".format(it) }
 
-    private fun encode(text: String): String {
-        try {
-            val instance: MessageDigest = MessageDigest.getInstance("MD5")
-            val digest: ByteArray = instance.digest(text.toByteArray())
-            val sb = StringBuffer()
-            for (b in digest) {
-                val i: Int = b.toInt() and 0xff
-                var hexString = Integer.toHexString(i)
-                if (hexString.length < 2) {
-                    hexString = "0$hexString"
-                }
-                sb.append(hexString)
+    /*val httpLoggingInterceptor =
+        HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                Log.d("GlideInterceptor", message)
             }
-            return sb.toString()
-        } catch (e: NoSuchAlgorithmException) {
+        }).apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }*/
+    private fun headerInterceptor(host: String) = Interceptor { chain ->
+        val isoDate = ISO8601DATETIMEFORMAT.format(Date())
+        val original = chain.request()
+        var Authorization = ""
+        try {
+            Authorization = AppDataRepo.currentUser.Authorization
+        } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("OkHttpClient", "get Authorization failed")
         }
-        return ""
+        val request = original.newBuilder()
+            .header("User-Agent", UA)
+            .addHeader("App-OS", App_OS)
+            .addHeader("App-OS-Version", App_OS_Version)
+            .addHeader("App-Version", App_Version)
+            .addHeader("Accept-Language", "${local.language}_${local.country}")
+            .header("Authorization", Authorization)
+            .addHeader("X-Client-Time", isoDate)
+            .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
+            .addHeader("Host", host)
+            .build()
+        chain.proceed(request)
     }
-
-    private fun okHttpClient(host: String, disableProxy: Boolean = false): OkHttpClient {
-        /*val httpLoggingInterceptor =
-            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    Log.d("GlideInterceptor", message)
+    enum class HttpStatus(val code: Int) {
+        OK(200),
+        BadRequest(400),
+        Unauthorized(401),
+        PaymentRequired(402),
+        Forbidden(403),
+        NotFound(404),
+        Else(-1);
+        companion object {
+            @JvmStatic
+            fun check(value: Int): HttpStatus? {
+                return HttpStatus.values().firstOrNull { it.code == value }
+            }
+        }
+    }
+    private const val TOKEN_ERROR = "Error occurred at the OAuth process"
+    private const val TOKEN_INVALID = "Invalid refresh token"
+    private fun authInterceptor() = Interceptor { chain ->
+        val request  = chain.request()
+        val response = chain.proceed(request)
+        when (HttpStatus.check(response.code)){
+            HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
+                if (response.message.contains(TOKEN_INVALID)) {
+                    runBlocking(Dispatchers.Main) {
+                        Toasty.error(
+                            PxEZApp.instance,
+                            R.string.login_expired,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else { //if (response.message.contains(TOKEN_ERROR)) {
+                    runBlocking(Dispatchers.Main){
+                        Toasty.warning(
+                            PxEZApp.instance,
+                            R.string.token_expired,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        RefreshToken.getInstance()
+                            .refreshToken(AppDataRepo.currentUser.Refresh_token)
+                    }
+                    response.closeQuietly()
+                    return@Interceptor chain.proceed(chain.request())
                 }
-            }).apply {
-                level =
-                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-            }*/
+            }
+            HttpStatus.NotFound -> {
+                Log.d("404", response.message+response.body)
+                Toasty.warning(
+                    PxEZApp.instance,
+                    "404 " + response.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            HttpStatus.OK-> {
+                response.message
+            }
+            else -> {
+                Log.e("okhttp", request.toString()+"\n"+response.message)
+            }
+        }
+        return@Interceptor response
+    }
+    private fun okHttpClient(host: String, disableProxy: Boolean = false, needAuth:Boolean=false): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
-            addInterceptor(
-                Interceptor { chain ->
-                    val isoDate = ISO8601DATETIMEFORMAT.format(Date())
-                    val original = chain.request()
-                    var Authorization = ""
-                    try {
-                        Authorization = AppDataRepo.currentUser.Authorization
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        Log.d("OkHttpClient", "get Authorization failed")
-                    }
-                    Log.d(
-                        "OkHttpClient",
-                        "Request $Authorization and original ${original.header("Authorization")}"
-                    )
-                    val requestBuilder = original.newBuilder()
-                        .header("User-Agent", UA)
-                        .addHeader("App-OS", App_OS)
-                        .addHeader("App-OS-Version", App_OS_Version)
-                        .addHeader("App-Version", App_Version)
-                        .addHeader("Accept-Language", "${local.language}_${local.country}")
-                        .header("Authorization", Authorization)
-                        .addHeader("X-Client-Time", isoDate)
-                        .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
-                        .addHeader("Host", host)
-                    val request = requestBuilder.build()
-                    chain.proceed(request)
-                }
-            )
-            // addInterceptor(httpLoggingInterceptor)
+            addInterceptor(headerInterceptor(host))
+            // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
+            if (needAuth) addInterceptor(authInterceptor())
             if (!disableProxy) {
                 apiProxySocket()
             }
@@ -202,7 +247,7 @@ object RestClient {
     private fun OkHttpClient.Builder.proxySocket(dns: Dns = apiDns): OkHttpClient.Builder {
         if (!disableProxy) {
             this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
-                .hostnameVerifier { p0, p1 -> true }
+                .hostnameVerifier { _, _ -> true }
             this.dns(dns)
         }
         return this
@@ -216,7 +261,6 @@ object RestClient {
             .addConverterFactory(gson.asConverterFactory(contentType) {
                 JsonObject(jsonObject.filterKeys { it != "response" && it != "search_span_limit" })
             })
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 }

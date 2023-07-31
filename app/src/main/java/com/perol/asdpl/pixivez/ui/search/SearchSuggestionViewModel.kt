@@ -39,9 +39,11 @@ class SearchSuggestionViewModel : BaseViewModel() {
     private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     val autoCompleteTags = MutableLiveData<List<Tag>>()
     fun onQueryTextChange(newText: String) {
-        retrofit.getSearchAutoCompleteKeywords(newText).subscribe({
-            autoCompleteTags.value = it.tags
-        }, {}).add()
+        viewModelScope.launch{
+            retrofit.api.getSearchAutoCompleteKeywords(newText).let {
+                autoCompleteTags.value = it.tags
+            }
+        }
     }
 
     fun addHistory(tag: Tag) = viewModelScope.launch {

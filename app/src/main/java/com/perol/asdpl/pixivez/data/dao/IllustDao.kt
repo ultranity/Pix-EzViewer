@@ -33,8 +33,8 @@ import com.perol.asdpl.pixivez.data.entity.Illust
 @Dao
 abstract class IllustDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: Illust)
+    abstract suspend fun insert(query: Illust)
 
     @Query("SELECT * FROM illusts WHERE userid=:userid")
-    abstract fun findIllustsByUserId(userid: Int): MutableList<Illust>
+    abstract suspend fun findIllustsByUserId(userid: Int): MutableList<Illust>
 }

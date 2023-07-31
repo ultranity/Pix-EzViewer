@@ -28,7 +28,9 @@ package com.perol.asdpl.pixivez.ui.pic
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
 import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
@@ -36,11 +38,9 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.lingala.zip4j.ZipFile
@@ -62,7 +62,7 @@ class PictureXViewModel : BaseViewModel() {
             "${PxEZApp.instance.cacheDir.path}/${illustDetail.value!!.id}.zip"
         val file = File(zipPath)
         if (file.exists()) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Default).launch {
                 try {
                     ZipFile(file).extractAll(
                         PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
@@ -72,7 +72,7 @@ class PictureXViewModel : BaseViewModel() {
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                    Toasty.shortToast("Unzip Failed")
+                        Toasty.shortToast("Unzip Failed")
                     }
                     File(PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id).deleteRecursively()
                     file.delete()
@@ -84,44 +84,46 @@ class PictureXViewModel : BaseViewModel() {
         }
     }
 
-    fun loadGif(id: Long) = retrofit.getUgoiraMetadata(id)
+    suspend fun loadGif(id: Long) = retrofit.api.getUgoiraMetadata(id)
 
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"
         val file = File(zipPath)
         progress.value = 0
-        retrofit.getGIFFile(medium).subscribe({ response ->
+        CoroutineScope(Dispatchers.IO).launchCatching({
+            retrofit.gif.getGIFFile(medium)
+        }, { response ->
             val inputStream = response.byteStream()
-            Observable.create<Int> { ob ->
-                val output = file.outputStream()
-                Log.d("GIF", "----------")
-                val totalLen = response.contentLength()
-                var bytesCopied: Long = 0
-                val buffer = ByteArray(8 * 1024)
-                var bytes = inputStream.read(buffer)
-                Log.d("GIF", Thread.currentThread().toString())
-                while (bytes >= 0) {
-                    output.write(buffer, 0, bytes)
-                    bytesCopied += bytes
-                    bytes = inputStream.read(buffer)
-                    launchUI {
-                        progress.value = (100 * bytesCopied / totalLen).toInt()
-                    }
+            val output = file.outputStream()
+            Log.d("GIF", "----------")
+            val totalLen = response.contentLength()
+            var bytesCopied: Long = 0
+            val buffer = ByteArray(8 * 1024)
+            var bytes = inputStream.read(buffer)
+            Log.d("GIF", Thread.currentThread().toString())
+            while (bytes >= 0) {
+                output.write(buffer, 0, bytes)
+                bytesCopied += bytes
+                bytes = inputStream.read(buffer)
+                launchUI {
+                    progress.value = (100 * bytesCopied / totalLen).toInt()
                 }
-                inputStream.close()
-                output.close()
-                Log.d("GIF", "++++${progress.value}++++")
-                ZipFile(file).extractAll(
-                    PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
-                )
-                ob.onNext(1)
-            }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
+            }
+            inputStream.close()
+            output.close()
+            Log.d("GIF", "++++${progress.value}++++")
+            ZipFile(file).extractAll(
+                PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
+            )
+            launchUI {
                 downloadGifSuccess.value = true
-                Log.d("GIF", "wwwwwwwwwwwwwwwwwwwwww")
-            }, {
-                it.printStackTrace()
-            }).add()
-        }, {}, {}).add()
+            }
+            Log.d("GIF", "wwwwwwwwwwwwwwwwwwwwww")
+        }, {
+            it.printStackTrace()
+            Log.d("GIF", "xxxxxxxxxxxxxxxxxxxxxx")
+            throw it
+        }, contextOnSuccess = Dispatchers.IO)
     }
 
     fun firstGet(illust: Illust) {
@@ -142,7 +144,9 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun firstGet(toLong: Long) {
-        retrofit.getIllust(toLong).subscribe({
+        CoroutineScope(Dispatchers.IO).launchCatching({
+            retrofit.api.getIllust(toLong)
+        }, {
             firstGet(it.illust)
         }, {
             Toasty.warning(
@@ -151,77 +155,91 @@ class PictureXViewModel : BaseViewModel() {
                 Toast.LENGTH_SHORT
             ).show()
             illustDetail.value = null
-        }, {}).add()
+        })
     }
 
     fun getRelated(pid: Long) {
-        retrofit.getIllustRelated(pid).subscribeNext(relatedPics, nextRelatedPics)
+        subscribeNext({ retrofit.api.getIllustRelated(pid) }, relatedPics, nextRelatedPics)
     }
 
     fun fabClick() {
         val id = illustDetail.value!!.id
         val x_restrict = visRestrictTag(illustDetail.value!!)
         if (illustDetail.value!!.is_bookmarked) {
-            retrofit.postUnlikeIllust(id).subscribe({
+            CoroutineScope(Dispatchers.IO).launchCatching({
+                retrofit.api.postUnlikeIllust(id)
+            }, {
                 likeIllust.value = false
                 illustDetail.value!!.is_bookmarked = false
             }, {
-            }, {}, {}).add()
+
+            })
         } else {
-            retrofit.postLikeIllustWithTags(id, x_restrict, null).subscribe({
+            CoroutineScope(Dispatchers.IO).launchCatching({
+                retrofit.api.postLikeIllust(id, x_restrict, null)
+            }, {
                 likeIllust.value = true
                 illustDetail.value!!.is_bookmarked = true
-            }, {}, {}).add()
+            }, {
+
+            })
         }
     }
 
-    fun fabOnLongClick() {
+    fun onLoadTags() {
         if (illustDetail.value != null) {
-            retrofit
-                .getBookmarkDetail(illustDetail.value!!.id)
-                .subscribe(
-                    { tags.value = it.bookmark_detail },
-                    {},
-                    {}
-                ).add()
-        } else {
-            val a = illustDetail.value
-            print(a)
+            viewModelScope.launch {
+                retrofit.api.getIllustBookmarkDetail(illustDetail.value!!.id)
+                    .let { tags.value = it.bookmark_detail }
+            }
         }
     }
 
     fun onDialogClick(private: Boolean) {
         val toLong = illustDetail.value!!.id
-        if (!illustDetail.value!!.is_bookmarked or private) {
-            //TODO: default tag to add?
-            val tagList = tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
-            retrofit.postLikeIllustWithTags(toLong, visRestrictTag(private), tagList).subscribe({
-                likeIllust.value = true
-                illustDetail.value!!.is_bookmarked = true
-            }, {}, {}).add()
-        } else {
-            retrofit.postUnlikeIllust(toLong)
-                .subscribe({
-                    likeIllust.value = false
-                    illustDetail.value!!.is_bookmarked = false
-                }, {}, {}).add()
-        }
+
+        CoroutineScope(Dispatchers.IO).launchCatching({
+            if (!illustDetail.value!!.is_bookmarked or private) {
+                //TODO: default tag to add?
+                val tagList =
+                    tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
+                retrofit.api.postLikeIllust(toLong, visRestrictTag(private), tagList)
+            } else {
+                retrofit.api.postUnlikeIllust(toLong)
+            }
+        }, {
+            likeIllust.value = true
+            illustDetail.value!!.is_bookmarked = true
+            likeIllust.value = false
+            illustDetail.value!!.is_bookmarked = false
+        }, {})
     }
 
     fun likeUser() {
-        val id = illustDetail.value!!.user.id
-        if (!illustDetail.value!!.user.is_followed) {
-            retrofit.postFollowUser(id, "public").subscribe({
-                followUser.value = true
-                illustDetail.value!!.user.is_followed = true
-            }, {}, {}).add()
-        } else {
-            retrofit.postUnfollowUser(id).subscribe(
-                {
-                    followUser.value = false
-                    illustDetail.value!!.user.is_followed = false
-                }, {}, {}).add()
-        }
+        val user = illustDetail.value!!.user
+        val is_followed = illustDetail.value!!.user.is_followed
+        MainScope().launchCatching(
+            {
+                if (is_followed) {
+                    retrofit.api.postUnfollowUser(user.id)
+                } else {
+                    retrofit.api.postFollowUser(user.id, "public")
+                }
+            },
+            {
+                followUser.value = !is_followed
+                illustDetail.value!!.user.is_followed = !is_followed
+                Toasty.success(
+                    PxEZApp.instance,
+                    "${if (is_followed) "unfollow" else "follow"} ${user.id} ${user.name}"
+                ).show()
+            },
+            {
+                Toasty.error(
+                    PxEZApp.instance,
+                    "failed to ${if (is_followed) "unfollow" else "follow"} ${user.id} ${user.name}"
+                ).show()
+            })
     }
 }
 

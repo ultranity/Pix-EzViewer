@@ -113,12 +113,10 @@ open class PicListXAdapter(
     }
 
     override fun setUILike(status: Boolean, position: Int) {
-        (
-                getViewByAdapterPosition(
-                    position,
-                    R.id.imageview_like
-                ) as NiceImageView?
-                )?.setLike(context, status)
+        (getViewByAdapterPosition(
+            position,
+            R.id.imageview_like
+        ) as NiceImageView?)?.setLike(context, status)
     }
 
     override fun setUILike(status: Boolean, view: View) {

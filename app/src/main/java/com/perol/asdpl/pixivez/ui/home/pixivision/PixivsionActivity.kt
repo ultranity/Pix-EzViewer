@@ -30,12 +30,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.ui.WebViewActivity
+import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import com.perol.asdpl.pixivez.databinding.ActivityPixivisionBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.base.factory.sharedViewModel
+import com.perol.asdpl.pixivez.ui.OKWebViewActivity
+import com.perol.asdpl.pixivez.ui.WebViewActivity
 
 class PixivsionActivity : RinkActivity() {
     private lateinit var binding: ActivityPixivisionBinding
@@ -49,7 +49,7 @@ class PixivsionActivity : RinkActivity() {
         setSupportActionBar(binding.toobarPixivision)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         initbind()
-        if (viewmodel.banners.value == null) {
+        if (viewmodel.data.value == null) {
             viewmodel.onRefreshListener()
         }
     }
@@ -69,21 +69,21 @@ class PixivsionActivity : RinkActivity() {
             R.layout.view_pixivision_item,
             null
         )
-        viewmodel.banners.observe(this) {
+        viewmodel.data.observe(this) {
             if (it != null) {
                 pixiVisionAdapter.setNewInstance(it)
             } else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
-        viewmodel.addbanners.observe(this) {
+        viewmodel.dataAdded.observe(this) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
             } else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
-        viewmodel.nextPixivisonUrl.observe(this) {
+        viewmodel.nextUrl.observe(this) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreEnd()

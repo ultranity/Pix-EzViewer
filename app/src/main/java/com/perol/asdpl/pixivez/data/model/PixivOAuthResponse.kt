@@ -23,6 +23,7 @@
  */
 package com.perol.asdpl.pixivez.data.model
 
+import com.perol.asdpl.pixivez.data.entity.UserEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -71,7 +72,13 @@ class UserBean(
     val profile_image_urls: ProfileImageUrlsBean,
     @SerialName("require_policy_agreement")
     val requirePolicyAgreement: Boolean = false,
-)
+){
+    fun toUserEntity(refreshToken: String, accessToken: String) = UserEntity(
+        id, name, mail_address,
+        is_premium, profile_image_urls.px_170x170,
+        "OAuth2", refreshToken, "Bearer $accessToken"
+    )
+}
 
 /**
  * px_16x16 : https://s.pximg.net/common/images/no_profile_s.png

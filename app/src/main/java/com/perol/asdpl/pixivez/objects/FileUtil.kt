@@ -257,7 +257,7 @@ object FileUtil {
     fun pasteFile(targetDir: String, file: File): Int {
         val newFile = File(targetDir, file.name)
         if (newFile.exists()) {
-            // Toast.makeText(this,newPath+" already exists",Toast.LENGTH_SHORT).show();
+            // Toasty.error(this,newPath+" already exists").show();
             return 1
         }
         else {

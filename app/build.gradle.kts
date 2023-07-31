@@ -262,9 +262,9 @@ dependencies {
     implementation("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:$ViewBindingKTX")
     }*/
 
-    implementation(libs.rxkotlin)
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
+    //implementation(libs.rxkotlin)
+    //implementation(libs.rxjava)
+    //implementation(libs.rxandroid)
 
     // okhttp3系列组件版本最高到 4.4.1
     implementation(libs.okhttp)
@@ -282,7 +282,7 @@ dependencies {
     implementation(libs.retrofit)
     //implementation(libs.retrofit.converter.gson)
     //implementation(libs.retrofit.kotlinx.serialization.converter) included for code  debug
-    implementation(libs.retrofit.adapter.rxjava2)
+    //implementation(libs.retrofit.adapter.rxjava2)
 
 
     // Material Dialogs: https://github.com/afollestad/material-dialogs

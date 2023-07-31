@@ -37,18 +37,17 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.objects.InteractionUtil.add
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +58,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.io.File
 import java.io.IOException
 import java.net.InetAddress
@@ -119,7 +117,6 @@ class SaucenaoActivity : RinkActivity() {
                 "https://saucenao.com"
             )
             .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
         binding.ssl.isChecked = false
         api = service.create(SaucenaoService::class.java)
@@ -151,30 +148,28 @@ class SaucenaoActivity : RinkActivity() {
                         ).show()
                         val builder = MultipartBody.Builder()
                         builder.setType(MultipartBody.FORM)
-//                        val baos = ByteArrayOutputStream();
-//                        if (file.length() > 10000000L) {
-//                            val options = BitmapFactory.Options()
-//                            options.inSampleSize = 4
-//                            val decodeFile = BitmapFactory.decodeFile(path, options)
-//                            builder.addFormDataPart("file", file.name, object : RequestBody() {
-//                                override fun contentType(): MediaType? =
-//                                    "image/jpeg".toMediaTypeOrNull()
-//
-//                                override fun writeTo(sink: BufferedSink) {
-//                                    decodeFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                                }
-//
-//                            })
-//                            Log.d("bitmap", "large file")
-//                        } else
+                        /*val baos = ByteArrayOutputStream();
+                        if (file.length() > 10000000L) {
+                            val options = BitmapFactory.Options()
+                            options.inSampleSize = 4
+                            val decodeFile = BitmapFactory.decodeFile(path, options)
+                            builder.addFormDataPart("file", file.name, object : RequestBody() {
+                                override fun contentType(): MediaType? =
+                                    "image/jpeg".toMediaTypeOrNull()
+
+                                override fun writeTo(sink: BufferedSink) {
+                                    decodeFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                }
+
+                            })
+                            Log.d("bitmap", "large file")
+                        } else*/
                         builder.addFormDataPart(
                             "file",
                             file.name,
                             file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                         )
-                        api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe(
-                                {
+                        lifecycleScope.launchCatching({ api.search(builder.build().part(0)) }, {
                                     Toasty.success(
                                         PxEZApp.instance,
                                         getString(R.string.saucenao_upload_success),
@@ -185,8 +180,7 @@ class SaucenaoActivity : RinkActivity() {
                                         file.delete()
                                     }
                                     tryToParseHtml(it.string())
-                                },
-                                {
+                                }, {
                                     Toasty.error(
                                         PxEZApp.instance,
                                         getString(R.string.saucenao_upload_error) + it.message
@@ -194,10 +188,7 @@ class SaucenaoActivity : RinkActivity() {
                                     if (file.exists()) {
                                         file.delete()
                                     }
-                                },
-                                {
-                                }
-                            ).add()
+                                })
                     }
                 }
             }
@@ -205,7 +196,7 @@ class SaucenaoActivity : RinkActivity() {
     }
 
     lateinit var api: SaucenaoService
-    private fun trytosearch(path: String) {
+    private fun trySearch(path: String) {
         Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT)
             .show()
         val file = File(path)
@@ -213,22 +204,15 @@ class SaucenaoActivity : RinkActivity() {
         builder.setType(MultipartBody.FORM)
         val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         builder.addFormDataPart("file", file.name, body)
-        api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe(
-                {
-                    Toasty.success(
-                        this,
-                        getString(R.string.saucenao_upload_success),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    tryToParseHtml(it.string())
-                },
-                {
-                    Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message)
-                        .show()
-                },
-                {
-                }).add()
+        lifecycleScope.launchCatching({
+            api.search(builder.build().part(0))
+        }, {
+            Toasty.success(this, getString(R.string.saucenao_upload_success), Toast.LENGTH_SHORT).show()
+            tryToParseHtml(it.string())
+        },
+        {
+            Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show()
+        })
     }
 
     private fun tryToParseHtml(string: String) {
@@ -295,7 +279,7 @@ class SaucenaoActivity : RinkActivity() {
             c!!.moveToFirst()
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
-            trytosearch(imagePath)
+            trySearch(imagePath)
             c.close()
         }
     }

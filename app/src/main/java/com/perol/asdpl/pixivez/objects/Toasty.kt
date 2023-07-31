@@ -55,15 +55,15 @@ object Toasty {
         return Toast.makeText(context, context.getText(stringId), length)
     }
 
-    fun error(context: Context, stringId: Int): Toast {
-        return Toast.makeText(context, context.getText(stringId), Toast.LENGTH_SHORT)
+    fun error(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG): Toast {
+        return Toast.makeText(context, context.getText(stringId), length)
     }
 
     fun info(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
         return Toast.makeText(context, context.getText(stringId), length)
     }
 
-    fun warning(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
+    fun warning(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG): Toast {
         return Toast.makeText(context, context.getText(stringId), length)
     }
 
@@ -75,15 +75,15 @@ object Toasty {
         return Toast.makeText(context, string, length)
     }
 
-    fun error(context: Context, string: String): Toast {
-        return Toast.makeText(context, string, Toast.LENGTH_SHORT)
+    fun error(context: Context, string: String, length: Int = Toast.LENGTH_LONG): Toast {
+        return Toast.makeText(context, string, length)
     }
 
     fun info(context: Context, string: String, length: Int = Toast.LENGTH_SHORT): Toast {
         return Toast.makeText(context, string, length)
     }
 
-    fun warning(context: Context, string: String, length: Int = Toast.LENGTH_SHORT): Toast {
+    fun warning(context: Context, string: String, length: Int = Toast.LENGTH_LONG): Toast {
         return Toast.makeText(context, string, length)
     }
 

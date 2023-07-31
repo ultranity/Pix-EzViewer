@@ -36,8 +36,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -110,14 +108,7 @@ class UserMActivity : RinkActivity() {
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
             Toasty.info(this, getString(R.string.uploading), Toast.LENGTH_SHORT).show()
-            viewModel.disposables.add(
-                viewModel.tryToChangeProfile(imagePath).subscribe({
-                    Toasty.info(this, getString(R.string.upload_success), Toast.LENGTH_SHORT)
-                        .show()
-                }, {
-                    it.printStackTrace()
-                }, {})
-            )
+            viewModel.tryToChangeProfile(imagePath)
             c.close()
         }
     }
@@ -137,10 +128,11 @@ class UserMActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUserMBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        /*window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)*/
+        window.decorView.fitsSystemWindows = false
         window.statusBarColor = Color.TRANSPARENT
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.apply {

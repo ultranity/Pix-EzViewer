@@ -25,6 +25,9 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Dns
 import java.net.InetAddress
 
@@ -109,17 +112,19 @@ private var inited = true
                 .filter { it.isReachable(250) }
         }
         Log.d("httpdns", "========================================")
-        apiAddress.forEach { k ->
-            try {
-                val response = service.queryDns(name = k).blockingSingle()
-                response.answer.flatMap {
-                    InetAddress.getAllByName(it.data)
-                        .filter { it.isReachable(250) }
-                }.also {
-                    addressList[k] = it
+        CoroutineScope(Dispatchers.IO).launch {
+            apiAddress.forEach { k ->
+                try {
+                    val response = service.queryDns(name = k)
+                    response.answer.flatMap {
+                        InetAddress.getAllByName(it.data)
+                            .filter { it.isReachable(250) }
+                    }.also {
+                        addressList[k] = it
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
         Log.d("httpdns addressList", addressList.toString())
@@ -159,14 +164,16 @@ private var inited = true
             it.isReachable(250)
         }
         Log.d("httpdns", "========================================")
-        try {
-            val response = service.queryDns(name = hostname).blockingSingle()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = service.queryDns(name = hostname)
 
-            response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }
-                .filter { it.isReachable(250) }.also {
-                    addressList.addAll(it)
-                }
-        } catch (e: Exception) {
+                response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }
+                    .filter { it.isReachable(250) }.also {
+                        addressList.addAll(it)
+                    }
+            } catch (e: Exception) {
+            }
         }
         // if (addressList.isEmpty())
         addressList.addAll(defaultList)

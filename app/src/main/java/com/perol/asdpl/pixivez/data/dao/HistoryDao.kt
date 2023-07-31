@@ -58,32 +58,32 @@ abstract class SearchHistoryDao {
     abstract suspend fun getSearchHistory(): List<SearchHistoryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: SearchHistoryEntity)
+    abstract suspend fun insert(query: SearchHistoryEntity)
 
     @Query("DELETE FROM history")
-    abstract fun deletehistory()
+    abstract suspend fun deletehistory()
 
     @Query("DELETE FROM history WHERE word = (:word)")
-    abstract fun deleteHistory(word: String)
+    abstract suspend fun deleteHistory(word: String)
 
     @Delete
-    abstract fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity)
+    abstract suspend fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity)
 }
 
 @Dao
-abstract class IllustHistoryDao {
+interface IllustHistoryDao {
     @Query("SELECT * FROM illusthistory")
     abstract suspend fun getIllustHistory(): List<IllustBeanEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: IllustBeanEntity)
+    abstract suspend fun insert(query: IllustBeanEntity)
 
     @Query("DELETE FROM illusthistory")
-    abstract fun deleteHistory()
+    abstract suspend fun deleteHistory()
 
     @Query("SELECT * FROM illusthistory WHERE illustid=:illustid")
-    abstract fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
+    abstract suspend fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
 
     @Delete
-    abstract fun deleteOne(query: IllustBeanEntity)
+    abstract suspend fun deleteOne(query: IllustBeanEntity)
 }

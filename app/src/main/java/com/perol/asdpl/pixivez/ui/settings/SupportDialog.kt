@@ -16,7 +16,6 @@ import android.text.style.ForegroundColorSpan
 import android.util.Base64
 import android.view.View
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +26,7 @@ import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
+import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -46,7 +46,7 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "你好像没有安装微信", Toast.LENGTH_SHORT).show()
+            Toasty.error(requireContext(), "你好像没有安装微信").show()
         }
     }
 
@@ -62,7 +62,7 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "你好像没有安装支付宝", Toast.LENGTH_SHORT).show()
+            Toasty.error(requireContext(), "你好像没有安装支付宝").show()
         }
     }
 

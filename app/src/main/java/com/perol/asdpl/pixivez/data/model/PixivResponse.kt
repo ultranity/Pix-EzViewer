@@ -25,8 +25,8 @@
 package com.perol.asdpl.pixivez.data.model
 
 import kotlinx.serialization.Serializable
-
-data class PixivResponse(
+@Serializable
+class PixivResponse(
     val tags: List<Tag>
 )
 
@@ -34,7 +34,7 @@ data class PixivResponse(
  * name : 97式
  */
 @Serializable
-data class Tag(
+class Tag(
     val name: String,
     val translated_name: String?
 ) {

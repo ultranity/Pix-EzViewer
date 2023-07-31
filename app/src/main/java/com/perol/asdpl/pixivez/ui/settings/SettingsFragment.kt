@@ -113,8 +113,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun onClick(position: Int) {
-        Toast.makeText(PxEZApp.instance, getString(R.string.changeing_icon_tip), Toast.LENGTH_SHORT)
-            .show()
+        Toasty.warning(PxEZApp.instance, R.string.changeing_icon_tip).show()
         when (position) {
             0 -> {
                 enableComponent(defaultComponent)
@@ -254,11 +253,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             if (requireContext().allPermissionsGranted(storagePermissions)) {
                 showDirectorySelectionDialog()
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Permissions not granted by the user",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toasty.error(requireContext(), "Permissions not granted by the user",).show()
             }
         }
     }

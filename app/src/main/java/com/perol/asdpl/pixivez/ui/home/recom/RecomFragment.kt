@@ -66,11 +66,11 @@ import com.perol.asdpl.pixivez.view.RepeatLayoutManager
 class RecomViewModel : PicListViewModel() {
     lateinit var bannerLoader: () -> Unit
     var loadNew = false
-    val onLoadFirstDataRx = {
+    val onLoadFirstDataRx = suspend {
         if (loadNew)
-            retrofit.getNew()
+            retrofit.api.getNew()
         else
-            retrofit.getRecommend().map { IllustNext(it.illusts, it.next_url) }
+            retrofit.api.getRecommend().let { IllustNext(it.illusts, it.next_url) }
     }
 
     override fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>?) {
@@ -85,21 +85,21 @@ class RecomFragment : PicListFragment() {
     override var TAG: String = TAG_TYPE.Recommend.name
 
     private fun initViewModel() {
-        pixivisionModel.banners.observe(viewLifecycleOwner) {
+        pixivisionModel.data.observe(viewLifecycleOwner) {
             //TODO: check if loaded
             spotlightView.setPadding(0)
             spotlightView.layoutManager =
                 RepeatLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
             pixiVisionAdapter.setNewInstance(it)
         }
-        pixivisionModel.addbanners.observe(viewLifecycleOwner) {
+        pixivisionModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 pixiVisionAdapter.addData(it)
             } else {
                 pixiVisionAdapter.loadMoreFail()
             }
         }
-        pixivisionModel.nextPixivisonUrl.observe(viewLifecycleOwner) {
+        pixivisionModel.nextUrl.observe(viewLifecycleOwner) {
             if (::pixiVisionAdapter.isInitialized) {
                 if (it == null) {
                     pixiVisionAdapter.loadMoreEnd()
@@ -208,7 +208,7 @@ class RecomFragment : PicListFragment() {
         //    spotlightView.visibility = View.GONE
         //} else {
         //    headerLogo.visibility = View.GONE
-        if (pixivisionModel.banners.value.isNullOrEmpty()) {
+        if (pixivisionModel.data.value.isNullOrEmpty()) {
             headerLogo.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             val padding: Int = (screenWidthPx() - headerLogo.measuredWidth) / 2 - 10.dp
             spotlightView.setPadding(padding, 0, padding, 0)

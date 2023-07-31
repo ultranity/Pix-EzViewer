@@ -32,9 +32,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SearchUserResponse(
-    val next_url: String?,
+    override val next_url: String?,
     val user_previews: MutableList<UserPreviewsBean>
-)
+):INext<MutableList<UserPreviewsBean>> {
+    override fun data() = user_previews
+}
 
 @Serializable
 class UserPreviewsBean(

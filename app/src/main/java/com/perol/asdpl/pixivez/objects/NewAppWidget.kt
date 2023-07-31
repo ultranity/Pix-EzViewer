@@ -34,13 +34,12 @@ import android.widget.RemoteViews
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.AppWidgetTarget
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.networks.RestClient
-import com.perol.asdpl.pixivez.objects.InteractionUtil.add
-import com.perol.asdpl.pixivez.services.AppApiPixivService
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.perol.asdpl.pixivez.services.PixivApiService
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -84,10 +83,10 @@ class NewAppWidget : AppWidgetProvider() {
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            val appApiPixivService =
-                RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
-            appApiPixivService.walkthroughIllusts().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io()).subscribe {resp->
+            val pixivApiService =
+                RestClient.retrofitAppApi.create(PixivApiService::class.java)
+            MainScope().launch {
+                pixivApiService.walkthroughIllusts().let { resp ->
                     // Construct the RemoteViews object
                     val rand = Random()
                     val randomnum = rand.nextInt(resp.illusts.size - 2)
@@ -121,7 +120,8 @@ class NewAppWidget : AppWidgetProvider() {
                             appWidgetId
                         ) {})
 //                            appWidgetManager.updateAppWidget(appWidgetId, views)
-                }.add()
+                }
+            }
         }
     }
 }

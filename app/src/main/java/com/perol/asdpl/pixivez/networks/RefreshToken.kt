@@ -29,188 +29,18 @@ import android.util.Log
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.data.RetrofitRepository
-import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.services.AppApiPixivService
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.net.SocketException
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
-import kotlin.math.pow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
-class RefreshToken private constructor() : Function<Observable<Throwable>, ObservableSource<*>> {
-    private val TOKEN_ERROR = "Error occurred at the OAuth process"
-    private val TOKEN_ERROR_2 = "Invalid refresh token"
-    private var oAuthSecureService: OAuthSecureService? = null
-    private var i = 0
-    private val maxRetries = 3
-    private var retryCount = 0
-
-    init {
-        this.oAuthSecureService =
-            RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
-    }
-
-    @Throws(Exception::class)
-    override fun apply(throwableObservable: Observable<Throwable>): ObservableSource<*> {
-        return throwableObservable.flatMap(
-            Function<Throwable, ObservableSource<*>> { throwable ->
-                Log.d("reFreshFunction", throwable.message.toString())
-                if (throwable is TimeoutException || throwable is SocketTimeoutException ||
-                    throwable is ConnectException
-                ) {
-                    return@Function Observable.error<Any>(throwable)
-                }
-                else if (throwable is HttpException) {
-                    if (throwable.response()!!.code() == 400) {
-                        if (throwable.message().contains(TOKEN_ERROR)) {
-                            Toasty.info(
-                                PxEZApp.instance,
-                                PxEZApp.instance.getString(R.string.token_expired),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        if (throwable.message().contains(TOKEN_ERROR_2)) {
-                            Toasty.info(
-                                PxEZApp.instance,
-                                PxEZApp.instance.getString(R.string.login_expired),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@Function Observable.error<Any>(throwable)
-                        }
-                        retryCount++
-                        Log.d("init", "400 retryCount $retryCount refreshing $refreshing")
-                        if (refreshing && retryCount <= maxRetries - 1) {
-                            return@Function Observable.timer(
-                                (2000 * (0.8).pow(retryCount)).toLong(),
-                                TimeUnit.MILLISECONDS
-                            )
-                        }
-                        else if (retryCount <= maxRetries) {
-                            return@Function reFreshToken()
-                        }
-                        else {
-                            retryCount = 0
-                            return@Function Observable.error<Any>(throwable)
-                        }
-                    }
-                    else if (throwable.response()!!.code() == 404) {
-                        // if (i == 0) {
-                        Log.d("d", throwable.response()!!.message())
-                        Toasty.warning(
-                            PxEZApp.instance,
-                            "404 " + throwable.response()!!.message(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        //    i++
-                        // }
-                        return@Function Observable.error<Any>(throwable)
-                    }
-                }
-                else if (throwable is SocketException) {
-                    Toasty.warning(
-                        PxEZApp.instance,
-                        "连接状态异常 $throwable",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    throwable.printStackTrace()
-                    Log.e("SocketException", throwable.localizedMessage ?: throwable.toString())
-                    RetrofitRepository.getInstance().appApiPixivService = RestClient.retrofitAppApi.create(AppApiPixivService::class.java)
-                }
-                return@Function Observable.error<Any>(throwable)
-            }
-        )
-    }
-
-    @Synchronized
-    fun reFreshToken(): ObservableSource<*> {
-        if (refreshing) {
-            return Observable.timer(2000, TimeUnit.MILLISECONDS)
-        }
-        refreshing = true
-        val user = AppDataRepo.currentUser
-        CoroutineScope(Dispatchers.Main).launch {
-            Toasty.info(
-                PxEZApp.instance,
-                "reFreshToken",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        return reFreshToken(user.Refresh_token)
-    }
-
-    fun reFreshToken(refreshToken: String, newToken:Boolean=false): ObservableSource<*> {
-        Log.d("init", "reFreshToken")
-        // AppDataRepo.pre.setString("Device_token", it.Device_token)
-        return oAuthSecureService!!.postRefreshAuthTokenX(
-            Companion.client_id,
-            Companion.client_secret,
-            "refresh_token",
-            refreshToken,
-            true
-        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { pixivOAuthResponse ->
-                val user = pixivOAuthResponse.user
-                val userEntity = UserEntity(
-                    user.id,
-                    user.name,
-                    user.mail_address,
-                    user.is_premium,
-                    user.profile_image_urls.px_170x170,
-                    "OAuth2", // pixivOAuthResponse.device_token,
-                    pixivOAuthResponse.refresh_token,
-                    "Bearer " + pixivOAuthResponse.access_token
-                )
-                runBlocking {
-                    if(newToken){
-                        AppDataRepo.insertUser(userEntity)
-                    }
-                    else {
-                        userEntity.Id = AppDataRepo.currentUser.Id
-                        AppDataRepo.updateUser(userEntity)
-                    }
-                    Toasty.info(
-                        PxEZApp.instance,
-                        PxEZApp.instance.getString(R.string.refresh_token),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.d("init", "reFreshToken end")
-
-                    AppDataRepo.pre.setInt("user_x_restrict", user.x_restrict)
-                    AppDataRepo.pre.setLong("lastRefresh", System.currentTimeMillis())
-                }
-            }.doOnError {
-
-                it.printStackTrace()
-                Log.d("RefreshToken", it.message.toString())
-                Toasty.info(
-                    PxEZApp.instance,
-                    PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + it.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }.delay(500, TimeUnit.MILLISECONDS)
-            .doFinally {
-                refreshing = false
-            }
-    }
-
+class RefreshToken{
     companion object {
-        @Volatile
-        var refreshing = false
 
         @Volatile
         private var instance: RefreshToken? = null
@@ -222,5 +52,70 @@ class RefreshToken private constructor() : Function<Observable<Throwable>, Obser
 
         const val client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
         const val client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+    }
+    private var oAuthSecureService: OAuthSecureService =
+            RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
+
+    fun refreshToken(block:(() -> Unit)?=null) {
+        MainScope().launch {
+            Toasty.info(
+                PxEZApp.instance,
+                "refreshToken",
+                Toast.LENGTH_SHORT
+            ).show()
+            refreshToken(AppDataRepo.currentUser.Refresh_token)
+            block?.invoke()
+        }
+    }
+    private var lastRefresh = 0L
+    private val mutex: Mutex = Mutex()
+    suspend fun refreshToken(
+        refreshToken: String,
+        newToken: Boolean = false
+    ) = mutex.withLock {
+        if (System.currentTimeMillis()- lastRefresh<1000){
+            return@withLock
+        }
+        try {
+            withContext(Dispatchers.IO){
+                val it = oAuthSecureService.postRefreshAuthTokenX(
+                    client_id,
+                    client_secret,
+                    "refresh_token",
+                    refreshToken,
+                    true
+                )
+
+                Log.d(
+                    "refreshToken",
+                    "refresh ${it.access_token} and original ${AppDataRepo.currentUser.Authorization}"
+                )
+
+                val userEntity = it.user.toUserEntity(refreshToken, it.access_token)
+                if (newToken) {
+                    AppDataRepo.insertUser(userEntity)
+                } else {
+                    userEntity.Id = AppDataRepo.currentUser.Id
+                    AppDataRepo.updateUser(userEntity)
+                }
+            }
+            lastRefresh = System.currentTimeMillis()
+            AppDataRepo.pre.setLong("lastRefresh", lastRefresh)
+            Toasty.info(
+                PxEZApp.instance,
+                PxEZApp.instance.getString(R.string.refresh_token),
+                Toast.LENGTH_SHORT
+            ).show()
+            Log.d("init", "refreshToken end")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("RefreshToken", e.message.toString(), e)
+            Toasty.info(
+                PxEZApp.instance,
+                PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + e.message,
+                Toast.LENGTH_SHORT
+            ).show()
+            throw e
+        }
     }
 }

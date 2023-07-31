@@ -192,10 +192,10 @@ object KotlinUtil {
     operator fun Int.times(b: Boolean): Int = if (b) this else 0
     operator fun Int.plus(b: Boolean): Int = if (b) this + 1 else this
 
-    inline suspend fun <T : Any> lauchCatching(
-        block: () -> T,
-        crossinline onSuccess: (T) -> Unit,
-        crossinline onError: (e: Exception) -> Unit,
+    suspend inline fun <T : Any> launchCatching(
+        block: suspend() -> T,
+        crossinline onSuccess: suspend(T) -> Unit,
+        crossinline onError: suspend(e: Exception) -> Unit,
         contextOnSuccess: CoroutineContext = Dispatchers.Main,
         contextOnError: CoroutineContext = Dispatchers.Main,
     ) {
@@ -211,17 +211,17 @@ object KotlinUtil {
         }
     }
 
-    fun <T : Any> CoroutineScope.lauchCatching(
-        block: () -> T,
-        onSuccess: (T) -> Unit,
-        onError: (e: Exception) -> Unit,
+    inline fun <T : Any> CoroutineScope.launchCatching(
+        crossinline block: suspend () -> T,
+        crossinline onSuccess: suspend(T) -> Unit,
+        crossinline onError: suspend(e: Exception) -> Unit,
         context: CoroutineContext = Dispatchers.IO,
-        contextOnSuccess: CoroutineContext = Dispatchers.Default,
+        contextOnSuccess: CoroutineContext = Dispatchers.Main,
         contextOnError: CoroutineContext = Dispatchers.Main,
         start: CoroutineStart = CoroutineStart.DEFAULT,
     ) {
         launch(context, start) {
-            lauchCatching(block, onSuccess, onError, contextOnSuccess, contextOnError)
+            KotlinUtil.launchCatching(block, onSuccess, onError, contextOnSuccess, contextOnError)
         }
     }
 

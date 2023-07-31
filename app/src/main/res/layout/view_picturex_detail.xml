@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout_detail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -28,7 +29,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            android:text="@{illust.title}"
+            tools:text="@{illust.title}"
             android:transitionName="title"
             android:textIsSelectable="true"
             android:textSize="14sp" />
@@ -41,7 +42,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            android:text="@{illust.user.name}"
+            tools:text="@{illust.user.name}"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             android:textSize="14sp" />
@@ -54,7 +55,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            android:text="@{illust.create_date}"
+            tools:text="@{illust.create_date}"
             android:textSize="12sp" />
     </RelativeLayout>
 
@@ -78,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{String.valueOf(illust.id)}"
+            tools:text="@{(illust.id)}"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textview11"
@@ -121,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{String.valueOf(illust.total_view)}"
+            tools:text="@{(illust.totalView)}"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textView23"
@@ -141,7 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{String.valueOf(illust.total_bookmarks)}"
+            tools:text="@{(illust.totalBookmarks)}"
             android:textColor="?attr/colorPrimary"
             app:layout_constraintStart_toEndOf="@+id/textView26"
             app:layout_constraintTop_toTopOf="@+id/textView26" />

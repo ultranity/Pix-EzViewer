@@ -31,8 +31,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
@@ -43,9 +45,10 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.getMaxColumn
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
+//TODO: merge with UerListFragment
 class UserRelatedListFragment : Fragment() {
     companion object {
         fun start(context: Context, illustid: Long) {
@@ -68,7 +71,7 @@ class UserRelatedListFragment : Fragment() {
     private lateinit var userShowAdapter: UserShowAdapter
     private lateinit var userListAdapter: UserListAdapter
     private var nextUrl: String? = null
-    private val retrofitRepository = RetrofitRepository.getInstance()
+    private val retrofit = RetrofitRepository.getInstance()
     private val username: String? = null // TODO: title?
     private var illustId: Long = 0
     private var illustData: ListUserResponse? = null
@@ -153,36 +156,34 @@ class UserRelatedListFragment : Fragment() {
         refreshFollowData()
     }
 
-    private fun refreshFollowData() {
+    private fun refreshFollowData() =
+        MainScope().launch {
         (
-                if (getFollowing)
-                    retrofitRepository.getUserFollowing(userid, restrict)
-                else
-                    retrofitRepository.getUserFollower(userid)
-            ).subscribe({
-                userData = it
-                nextUrl = it.next_url
-                userShowAdapter.setNewInstance(it.user_previews)
-            }, {}, {}).add()
+            if (getFollowing)
+                retrofit.api.getUserFollowing(userid, restrict)
+            else
+                retrofit.api.getUserFollower(userid)
+            ).let {
+            userData = it
+            nextUrl = it.next_url
+            userShowAdapter.setNewInstance(it.user_previews)
+        }
     }
 
     private fun onLoadMoreUserPreview() {
-        retrofitRepository.getNextSearchUser(nextUrl!!).subscribe {
+        lifecycleScope.launchCatching({retrofit.getNextSearchUser(nextUrl!!)}, {
             nextUrl = it.next_url
             userShowAdapter.addData(it.user_previews)
             userShowAdapter.loadMoreComplete()
-        }.add()
-    }
-
-    private var disposables = CompositeDisposable()
-    fun Disposable.add() {
-        disposables.add(this)
+        },{ userShowAdapter.loadMoreFail() })
     }
 
     private fun initIllustData() {
         userListAdapter = UserListAdapter(R.layout.view_usershow_item)
         binding.recyclerview.adapter = userListAdapter
-        retrofitRepository.getIllustBookmarkUsers(illustId).subscribe({
+        lifecycleScope.launchCatching({
+            retrofit.api.getIllustBookmarkUsers(illustId)
+        }, {
             illustData = it
             nextUrl = it.next_url
             userListAdapter.setNewInstance(it.users)
@@ -193,28 +194,24 @@ class UserRelatedListFragment : Fragment() {
                     onLoadMoreUser()
                 }
             }
-        }, {}, {}).add()
+        }, { userListAdapter.loadMoreFail() })
     }
 
     private fun onLoadMoreUser() {
-        // retrofitRepository.getIllustBookmarkUsers(illust_id,
-        //    Next_url!!.substringAfter("offset=").toInt())
-        retrofitRepository.getNextUser(nextUrl!!).subscribe({
+        lifecycleScope.launchCatching({ retrofit.getNextUser(nextUrl!!) }, {
             illustData = it
             nextUrl = it.next_url
             userListAdapter.addData(it.users)
             userListAdapter.loadMoreComplete()
-        }, {
-            userListAdapter.loadMoreFail()
-            it.printStackTrace()
-        }, {}).add()
+        }, { userListAdapter.loadMoreFail() })
     }
 
 
     private fun initRelatedData() {
         userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
         binding.recyclerview.adapter = userShowAdapter
-        retrofitRepository.getUserRelated(userid).subscribe({
+        lifecycleScope.launchCatching({
+        retrofit.api.getUserRelated(userid)}, {
             userData = it
             nextUrl = it.next_url
             userShowAdapter.setNewInstance(it.user_previews)
@@ -228,18 +225,15 @@ class UserRelatedListFragment : Fragment() {
         }, {
             userShowAdapter.loadMoreFail()
             it.printStackTrace()
-           }, {}).add()
+           })
     }
 
     private fun onLoadMoreUserRelated() {
-        retrofitRepository.getNextSearchUser(nextUrl!!).subscribe({
+        lifecycleScope.launchCatching({retrofit.getNextSearchUser(nextUrl!!)}, {
             userData = it
             nextUrl = it.next_url
             userShowAdapter.addData(it.user_previews)
             userShowAdapter.loadMoreComplete()
-        }, {
-            userShowAdapter.loadMoreFail()
-            it.printStackTrace()
-        }, {}).add()
+        },{ userShowAdapter.loadMoreFail() })
     }
 }

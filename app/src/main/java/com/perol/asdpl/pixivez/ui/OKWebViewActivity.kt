@@ -34,7 +34,6 @@ import android.net.http.SslCertificate
 import android.net.http.SslError
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.webkit.*
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
@@ -48,6 +47,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import okhttp3.Request
 import java.io.ByteArrayInputStream
@@ -68,7 +68,7 @@ object GlideUtil {
                     .decode(GifDrawable::class.java).submit()
                 return target.get()
             } catch (e: java.lang.Exception) {
-                Log.e(TAG, e.printStackTrace().toString())
+                CrashHandler.instance.e(TAG, e.printStackTrace().toString())
             }
             return null
         }
@@ -80,7 +80,7 @@ object GlideUtil {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             return baos.toByteArray()
         } catch (e: java.lang.Exception) {
-            Log.e(TAG, e.printStackTrace().toString())
+            CrashHandler.instance.e(TAG, e.printStackTrace().toString())
         }
         return null
     }
@@ -123,9 +123,9 @@ object WebviewDnsInterceptUtil {
                 return chain.proceed(request)
             }
         }).httpProxySocket()*/
-        Log.d(TAG, "try load url: $url")
+        CrashHandler.instance.d(TAG, "try load url: $url")
         if (url.toString().contains("recaptcha")) {
-            Log.d(TAG, "recaptcha")
+            CrashHandler.instance.d(TAG, "recaptcha")
         }
         try {
             val url = URL(url.toString())
@@ -143,7 +143,7 @@ object WebviewDnsInterceptUtil {
             }
             val type = response.headers["content-type"]?.split(";")?.get(0) ?: "text/html"
             val res = response.body?.byteStream()
-            Log.d(
+            CrashHandler.instance.d(
                 TAG,
                 "url:$type $url\n" + if (res == null) "$url response empty" else "loaded"
             )
@@ -153,7 +153,7 @@ object WebviewDnsInterceptUtil {
                 it.responseHeaders["Access-Control-Allow-Origin"] = "*"
             }
         } catch (e: Exception) {
-            // Log.e(TAG, e.printStackTrace().toString())
+            // CrashHandler.instance.e(TAG, e.printStackTrace().toString())
             try {
                 val url = URL(url.toString())
                 val response = RestClient.pixivOkHttpClient.newCall(
@@ -164,7 +164,7 @@ object WebviewDnsInterceptUtil {
 
                 val type = response.headers["content-type"]?.split(";")?.get(0) ?: "text/html"
                 val res = response.body?.byteStream()
-                Log.d(
+                CrashHandler.instance.d(
                     TAG,
                     "url:$type $url\n" + if (res == null) "$url response empty" else "2loaded"
                 )
@@ -174,8 +174,8 @@ object WebviewDnsInterceptUtil {
                     it.responseHeaders["Access-Control-Allow-Origin"] = "*"
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Load $url failed")
-                Log.e(TAG, e.printStackTrace().toString())
+                CrashHandler.instance.e(TAG, "Load $url failed")
+                CrashHandler.instance.e(TAG, e.printStackTrace().toString())
                 return null
             }
         }
@@ -185,13 +185,13 @@ object WebviewDnsInterceptUtil {
         val scheme: String = Uri.parse(url).scheme!!.trim()
         var ip: String? = Uri.parse(url).host?.let { RubyHttpXDns.lookup(it)[0].hostAddress }
         if (ip.isNullOrBlank()) {
-            Log.d(TAG, "web log 不拦截：$url")
+            CrashHandler.instance.d(TAG, "web log 不拦截：$url")
             return null
         }
-        Log.d(TAG, "web log 请求 url: $url ->$ip")
+        CrashHandler.instance.d(TAG, "web log 请求 url: $url ->$ip")
 
         if (url.contains("/recaptcha/")) {
-            Log.d(TAG, "recaptcha")
+            CrashHandler.instance.d(TAG, "recaptcha")
             ip = URL(url).host.toString()
         }
         // HttpDns解析css文件的网络请求及图片请求
@@ -199,21 +199,21 @@ object WebviewDnsInterceptUtil {
             try {
                 val oldUrl = URL(url)
                 // 获取HttpDns域名解析结果 // 通过HTTPDNS获取IP成功，进行URL替换和HOST头设置
-                Log.d(TAG, "HttpDns ips are: " + ip + " for host: " + oldUrl.host)
+                CrashHandler.instance.d(TAG, "HttpDns ips are: " + ip + " for host: " + oldUrl.host)
                 val newUrl: String = url.replaceFirst(oldUrl.host.toRegex(), ip)
-                Log.d(TAG, "newUrl a is: $newUrl")
+                CrashHandler.instance.d(TAG, "newUrl a is: $newUrl")
                 val connection: HttpsURLConnection =
                     URL(newUrl).openConnection() as HttpsURLConnection // 设置HTTP请求头Host域
                 connection.hostnameVerifier = getNullHostNameVerifier()
                 connection.sslSocketFactory = getIgnoreSSLContext()?.socketFactory ?: RubySSLSocketFactory()
                 connection.setRequestProperty("Host", oldUrl.host)
                 connection.setRequestProperty("Referer", "https://app-api.pixiv.net/")
-                Log.d(TAG, "ContentType a: " + connection.contentType)
+                CrashHandler.instance.d(TAG, "ContentType a: " + connection.contentType)
                 // 有可能是text/html; charset=utf-8的形式，只需要第一个
                 val type = connection.contentType?.split(";")?.get(0) ?: "text/html"
                 return WebResourceResponse(type, "UTF-8", connection.inputStream)
             } catch (e: Exception) {
-                Log.e(TAG, e.printStackTrace().toString())
+                CrashHandler.instance.e(TAG, e.printStackTrace().toString())
             }
         }
         return null
@@ -238,7 +238,7 @@ object WebviewDnsInterceptUtil {
                             )
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, e.printStackTrace().toString())
+                        CrashHandler.instance.e(TAG, e.printStackTrace().toString())
                     }
                 }
             }
@@ -319,7 +319,7 @@ class OKWebViewActivity : RinkActivity() {
                 view: WebView?,
                 request: WebResourceRequest
             ): WebResourceResponse? {
-                Log.d("shouldInterceptRequest", request.url.toString())
+                CrashHandler.instance.d("shouldInterceptRequest", request.url.toString())
                 // no analytics & platform
                 if (listOf(
                         "d.pixiv.org",
@@ -369,7 +369,7 @@ class OKWebViewActivity : RinkActivity() {
             ): Boolean {
                 try {
                     val uri = request.url
-                    Log.d(className, "loading $uri")
+                    CrashHandler.instance.d(className, "loading $uri")
                     if (uri != null) {
                         val scheme = uri.scheme
                         val host = uri.host
@@ -416,15 +416,13 @@ class OKWebViewActivity : RinkActivity() {
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e("OverrideUrlLoading", e.printStackTrace().toString())
+                    CrashHandler.instance.e("OverrideUrlLoading", e.printStackTrace().toString())
                 }
                 return false
             }
 
             override fun onLoadResource(view: WebView, url: String) {
-                if (BuildConfig.DEBUG) {
-                    Log.d("onLoadResource", url)
-                }
+                CrashHandler.instance.d("onLoadResource", url)
             }
 
             override fun onReceivedError(
@@ -434,7 +432,7 @@ class OKWebViewActivity : RinkActivity() {
             ) {
                 super.onReceivedError(view, request, error)
                 if (BuildConfig.DEBUG) {
-                    Log.d("onReceivedError", "$request $error")
+                    CrashHandler.instance.d("onReceivedError", "$request $error")
                 }
             }
             val sslErrors: Array<String> = arrayOf(
@@ -585,7 +583,7 @@ class OKWebViewActivity : RinkActivity() {
                 )
             }*/
         } catch (e: Exception) {
-            Log.e("injectCSS", e.printStackTrace().toString())
+            CrashHandler.instance.e("injectCSS", e.printStackTrace().toString())
         }
     }
     private fun injectCSS() {
@@ -620,7 +618,7 @@ class OKWebViewActivity : RinkActivity() {
                     "})()"
             )
         } catch (e: Exception) {
-            Log.e("injectCSS", e.printStackTrace().toString())
+            CrashHandler.instance.e("injectCSS", e.printStackTrace().toString())
         }
     }
 }
@@ -683,7 +681,7 @@ class TlsSniSocketFactory(private val conn: HttpsURLConnection) :
     ): Socket {
         var peerHost = conn.getRequestProperty("Host")
         if (peerHost == null) peerHost = host
-        Log.i(TAG, "customized createSocket. host: $peerHost")
+        CrashHandler.instance.i(TAG, "customized createSocket. host: $peerHost")
         val address = plainSocket.inetAddress
         if (autoClose) {
             // we don't need the plainSocket
@@ -698,7 +696,7 @@ class TlsSniSocketFactory(private val conn: HttpsURLConnection) :
         ssl.enabledProtocols = ssl.supportedProtocols
 
         // set up SNI before the handshake
-        Log.i(TAG, "Setting SNI hostname")
+        CrashHandler.instance.i(TAG, "Setting SNI hostname")
         sslSocketFactory.setHostname(ssl, peerHost)
 
         // verify hostname and certificate
@@ -706,7 +704,7 @@ class TlsSniSocketFactory(private val conn: HttpsURLConnection) :
         if (!hostnameVerifier.verify(peerHost, session)) throw SSLPeerUnverifiedException(
             "Cannot verify hostname: $peerHost"
         )
-        Log.i(
+        CrashHandler.instance.i(
             TAG, "Established " + session.protocol + " connection with " + session.peerHost +
                     " using " + session.cipherSuite
         )

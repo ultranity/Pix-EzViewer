@@ -98,7 +98,7 @@ class ArgumentProperty<T>(private val defaultValue: T? = null) :
     }
 
     override fun setValue(thisRef: PicListViewModel, property: KProperty<*>, value: T) {
-        thisRef.args.set(property.name, value)
+        thisRef.args[property.name] = value
     }
 }
 open class PicListViewModel : BaseViewModel() {

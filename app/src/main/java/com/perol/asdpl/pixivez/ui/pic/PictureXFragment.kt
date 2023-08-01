@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.fragments
+package com.perol.asdpl.pixivez.ui.pic
 
 import android.app.Activity
 import android.app.ActivityOptions
@@ -57,10 +57,6 @@ import com.perol.asdpl.pixivez.services.Event
 import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.FragmentActivity
-import com.perol.asdpl.pixivez.ui.pic.CommentDialog
-import com.perol.asdpl.pixivez.ui.pic.PictureXAdapter
-import com.perol.asdpl.pixivez.ui.pic.PictureXViewModel
-import com.perol.asdpl.pixivez.ui.pic.TagsBookMarkDialog
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
@@ -130,7 +126,7 @@ class PictureXFragment : BaseFragment() {
     }
 
     private fun initViewModel() {
-        pictureXViewModel.illustDetail.observe(viewLifecycleOwner) { it ->
+        pictureXViewModel.illustDetail.observe(viewLifecycleOwner) {
             binding.progressView.visibility = View.GONE
             if (it != null) {
                 page_size = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1

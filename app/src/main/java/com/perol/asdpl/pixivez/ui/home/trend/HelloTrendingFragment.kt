@@ -31,38 +31,51 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.drake.brv.BindingAdapter
-import com.drake.brv.annotaion.ItemOrientation
-import com.drake.brv.item.ItemDrag
-import com.drake.brv.listener.DefaultItemTouchCallback
-import com.drake.brv.utils.linear
-import com.drake.brv.utils.setup
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
+import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.BaseItemAdapter
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.base.linear
+import com.perol.asdpl.pixivez.base.onClick
+import com.perol.asdpl.pixivez.base.onItemClick
+import com.perol.asdpl.pixivez.base.setDragCallback
+import com.perol.asdpl.pixivez.base.setList
+import com.perol.asdpl.pixivez.base.setup
 import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.databinding.ViewTagsItemBinding
 import com.perol.asdpl.pixivez.objects.UpToTopListener
-import com.perol.asdpl.pixivez.objects.dp
+import com.perol.asdpl.pixivez.objects.dpf
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
+import kotlinx.serialization.Serializable
 
 class HelloTrendingFragment : LazyFragment() {
-    private val titles by lazy { resources.getStringArray(R.array.modellist) }
+    private val titles by lazy { resources.getStringArray(R.array.modellist).toList() }
 
-    class DragModel(
-        val index: Int,
-        val title: String,
-        var isChecked: Boolean = true,
-    ) : ItemDrag {
-        override var itemOrientationDrag: Int = 0
-            get() = ItemOrientation.ALL // 只会返回该值
+    @Serializable
+    class TagsBindingItem(val name: String, var index: Int) :
+        AbstractBindingItem<ViewTagsItemBinding>(), IDraggable {
+        override val type: Int = R.id.item
+        override val isDraggable: Boolean = true
+        override fun bindView(binding: ViewTagsItemBinding, payloads: List<Any>) {
+            binding.textview.text = name
+            binding.checkBox.isChecked = isSelected
+        }
+
+        override fun createBinding(
+            inflater: LayoutInflater,
+            parent: ViewGroup?
+        ): ViewTagsItemBinding {
+            return ViewTagsItemBinding.inflate(inflater, parent, false)
+        }
     }
 
-    private val titleModels by lazy { titles.mapIndexed { index, it -> DragModel(index, it) } }
+    private lateinit var titleModels: List<TagsBindingItem>
 
     override fun loadData() {
         val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
@@ -89,35 +102,20 @@ class HelloTrendingFragment : LazyFragment() {
         })
         binding.imageviewRank.setOnClickListener {
             val listView = DialogThanksBinding.inflate(layoutInflater)
-            listView.list.linear().setup {
-
-                addType<DragModel>(R.layout.view_tags_item)
-                onBind {
-                    val model = getModel<DragModel>()
-                    getBinding<ViewTagsItemBinding>().apply {
-                        textview.text = model.title
-                        checkBox.isChecked = model.isChecked
-                    }
+            val fastAdapter = listView.list.linear()
+                .setup {
+                    BaseItemAdapter<TagsBindingItem>().also {
+                        setDragCallback(it)
+                    }.setList(titleModels)
                 }
-                onClick(R.id.item, R.id.checkBox) {
-                    val model = getModel<DragModel>()
-                    model.isChecked = !model.isChecked
-                    setChecked(modelPosition, model.isChecked) // 在点击事件中触发选择事件, 即点击列表条目就选中
-                    getBinding<ViewTagsItemBinding>().checkBox.isChecked = model.isChecked
-                }
-                itemTouchHelper = ItemTouchHelper(object : DefaultItemTouchCallback() {
-
-                    /**
-                     * 当拖拽动作完成且松开手指时触发
-                     */
-                    override fun onDrag(
-                        source: BindingAdapter.BindingViewHolder,
-                        target: BindingAdapter.BindingViewHolder
-                    ) {
-                        // 这是拖拽交换后回调, 这里可以同步服务器
-                    }
-                })
-            }.models = titleModels
+            fastAdapter.onClick { v, adapter, item, position ->
+                item.isSelected = !item.isSelected
+                fastAdapter.notifyAdapterItemChanged(position, true)
+                true
+            }.onItemClick(R.id.checkBox) { v, adapter, item, position ->
+                item.isSelected = (v as MaterialCheckBox).isChecked
+                return@onItemClick true
+            }
             MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.sort_by)
                 .setView(listView.root)
@@ -126,8 +124,8 @@ class HelloTrendingFragment : LazyFragment() {
                 }.show()
         }
         binding.imageviewRank.animate()
-            .translationXBy(40.dp.toFloat())
-            //.translationZBy(40.dp.toFloat())
+            .translationXBy(40.dpf)
+            //.translationZBy(40.dpf)
             .setDuration(2000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -144,6 +142,15 @@ class HelloTrendingFragment : LazyFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHelloTrendingBinding.inflate(inflater, container, false)
+        savedInstanceState?.getIntArray("index")?.also {
+            titleModels = it.map { i -> TagsBindingItem(titles[i], i) }
+            savedInstanceState.getBooleanArray("selected")
+                ?.forEachIndexed { i, it -> titleModels[i].isSelected = it }
+        } ?: run {
+            titleModels = titles.mapIndexed { i, it ->
+                TagsBindingItem(it, i).apply { isSelected = true }
+            }
+        }
         configTabs()
         // use custom layout manager to prevent nested scrolling
         (binding.viewpager.getChildAt(0) as RecyclerView).apply {
@@ -166,19 +173,21 @@ class HelloTrendingFragment : LazyFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     private fun configTabs() {
         binding.tablayout.removeAllTabs()
         for (i in titleModels) {
             val tab = binding.tablayout.newTab()
-            tab.text = i.title
+            tab.text = i.name
             tab.tag = i.index
-            if (!i.isChecked) tab.view.visibility = View.GONE
+            if (!i.isSelected) tab.view.visibility = View.GONE
             binding.tablayout.addTab(tab, false)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putIntArray("index", titleModels.map { it.index }.toIntArray())
+        outState.putBooleanArray("selected", titleModels.map { it.isSelected }.toBooleanArray())
     }
 
     companion object {

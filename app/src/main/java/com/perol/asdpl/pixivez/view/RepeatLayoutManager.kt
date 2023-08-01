@@ -15,6 +15,13 @@ class RepeatLayoutManager(
 ) :
     LinearLayoutManager(context, orientation, reverseLayout) {
 
+    private val itemPaddingEnd: Int
+        get() = if (orientation == RecyclerView.HORIZONTAL) paddingEnd else paddingBottom
+    private val itemPaddingLength: Int
+        get() = if (orientation == RecyclerView.HORIZONTAL) width else height
+    private val itemPaddingCross: Int
+        get() = if (orientation == RecyclerView.HORIZONTAL) paddingTop else paddingStart
+
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         if (itemCount <= 0) {
             return
@@ -28,40 +35,19 @@ class RepeatLayoutManager(
     }
 
     private fun layoutChunk(recycler: RecyclerView.Recycler) {
-        if (orientation == RecyclerView.HORIZONTAL) {
-            var itemLeft = paddingLeft
-            var i = 0
-            while (true) {
-                if (itemLeft > width - paddingRight) {
-                    break
-                }
-                val itemView = recycler.getViewForPosition(i % itemCount)
-                addView(itemView)
-                measureChildWithMargins(itemView, 0, 0)
-                val top = paddingTop
-                val right = itemLeft + getDecoratedMeasuredWidth(itemView)
-                val bottom = top + getDecoratedMeasuredHeight(itemView)
-                layoutDecorated(itemView, itemLeft, top, right, bottom)
-                itemLeft = right
-                i++
-            }
-        } else {
-            var itemTop = paddingTop
-            var i = 0
-            while (true) {
-                if (itemTop > height - paddingBottom) {
-                    break
-                }
-                val itemView = recycler.getViewForPosition(i % itemCount)
-                addView(itemView)
-                measureChildWithMargins(itemView, 0, 0)
-                val left = paddingLeft
-                val bottom = itemTop + getDecoratedMeasuredHeight(itemView)
-                val right = left + getDecoratedMeasuredWidth(itemView)
-                layoutDecorated(itemView, left, itemTop, right, bottom)
-                itemTop = bottom
-                i++
-            }
+        var itemStart = if (orientation == RecyclerView.HORIZONTAL) paddingStart else paddingTop
+        var i = 0
+        while (true) {
+            if (itemStart > itemPaddingLength - itemPaddingEnd) break
+            val itemView = recycler.getViewForPosition(i % itemCount)
+            addView(itemView)
+            measureChildWithMargins(itemView, 0, 0)
+            val right = itemStart + getDecoratedMeasuredWidth(itemView)
+            val bottom = itemPaddingCross + getDecoratedMeasuredHeight(itemView)
+            layoutDecorated(itemView, itemStart, itemPaddingCross, right, bottom)
+            itemStart = right
+            i++
+            if (i == itemCount) break
         }
     }
 

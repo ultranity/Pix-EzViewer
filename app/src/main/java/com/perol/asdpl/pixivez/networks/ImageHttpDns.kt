@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.networks
 
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,25 +34,29 @@ import java.net.InetAddress
 object ImageHttpDns : Dns {
 
     private val addressList = mutableListOf<InetAddress>()
-    private val service = ServiceFactory.cloudflareService
+    private val defaultList = listOf(
+        "210.140.92.145",
+        "210.140.92.140",
+        "210.140.92.137",
+    ).map { InetAddress.getByName(it) }
 
     override fun lookup(hostname: String): List<InetAddress> {
         if (addressList.isNotEmpty()) return addressList
-        val defaultList = listOf(
-            "210.140.92.145",
-            "210.140.92.140",
-            "210.140.92.137",
-        ).map { InetAddress.getByName(it) }
         CoroutineScope(Dispatchers.IO).launch {
+
             try {
-                val response = service.queryDns(name = hostname)
-                response.answer.flatMap {
-                    InetAddress.getAllByName(it.data).asList()
-                }.also {
-                    addressList.addAll(it)
-                }
+                val response = ServiceFactory.CFDNS.lookup(hostname)
+                addressList.addAll(response)
             } catch (e: Exception) {
-                e.printStackTrace()
+                try {
+                    CrashHandler.instance
+                        .e("ImageHttpDns", "CF DNS for $hostname failed", e)
+                    addressList.addAll(Dns.SYSTEM.lookup(hostname))
+                } catch (e: Exception) {
+                    CrashHandler.instance
+                        .e("ImageHttpDns", "SYSTEM DNS for $hostname failed", e)
+                    // ignore
+                }
             }
         }
 

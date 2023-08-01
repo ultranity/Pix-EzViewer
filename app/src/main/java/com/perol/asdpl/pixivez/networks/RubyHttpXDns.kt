@@ -24,7 +24,7 @@
 
 package com.perol.asdpl.pixivez.networks
 
-import android.util.Log
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +36,6 @@ object RubyHttpXDns : Dns {
     private val addressCacheX = mutableMapOf<String, List<InetAddress>>()
     private val ip_regex =
         "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex()
-    private val service = ServiceFactory.cloudflareService
     private val apiAddress = listOf(
         "app-api.pixiv.net",
         "oauth.secure.pixiv.net",
@@ -74,9 +73,9 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
     override fun lookup(hostname: String): List<InetAddress> {
         if (!inited) {
             inited = true
-            // Log.d("httpdns init", "========================================")
-            // Log.d("httpdns", dlookup().toString())
-            // Log.d("httpdns", "========================================")
+            //  CrashHandler.instance.d("httpdns init", "========================================")
+            //  CrashHandler.instance.d("httpdns", dlookup().toString())
+            //  CrashHandler.instance.d("httpdns", "========================================")
             apiAddress.forEachIndexed { index, host ->
                 InetAddress.getByName(defaultApiAddress[index]).also {
                     // addressCache[host]= it
@@ -94,7 +93,7 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
                     return listOf(it)
             }
         }catch (e: UnknownHostException){
-            Log.d("httpdns", "UnknownHostException $e")
+             CrashHandler.instance.d("httpdns", "UnknownHostException $e")
 
         }*/
         // if (addressCache.contains(hostname))
@@ -103,21 +102,19 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
             return addressCacheX[hostname]!!
         }
         // if (addressList.isNotEmpty()) return addressList
-        Log.d("httpdns", "========================================")
+        CrashHandler.instance.d("httpdns", "========================================")
         val addressList = mutableListOf<InetAddress>()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = service.queryDns(name = hostname)
-                response.answer.flatMap { InetAddress.getAllByName(it.data).asList() }.also {
-                    addressList.addAll(it)
-                }
+                val response = ServiceFactory.CFDNS.lookup(hostname)
+                addressList.addAll(response)
             } catch (e: Exception) {
                 addressList.addAll(Dns.SYSTEM.lookup(hostname))
             }
         }
-        Log.d("httpdns", addressList.toString())
-        Log.d("httpdns end", "========================================")
+        CrashHandler.instance.d("httpdns", addressList.toString())
+        CrashHandler.instance.d("httpdns end", "========================================")
         if (addressList.isNotEmpty()) {
             addressCache[hostname] = addressList[0]
             addressCacheX[hostname] = addressList

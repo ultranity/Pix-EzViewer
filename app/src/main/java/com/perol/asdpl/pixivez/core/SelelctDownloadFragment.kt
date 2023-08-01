@@ -62,9 +62,7 @@ class DownPicListAdapter(
     }
 }
 
-class SelectDownloadViewModel : PicListViewModel() {
-
-}
+class SelectDownloadViewModel : PicListViewModel()
 
 class SelectDownloadFragment : PicListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -293,8 +291,4 @@ class SelectDownloadFragment : PicListFragment() {
         //outState.putParcelableArray("illusts", DataHolder.tmpList?.toTypedArray())
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        //DataHolder.tmpList = null
-    }
 }

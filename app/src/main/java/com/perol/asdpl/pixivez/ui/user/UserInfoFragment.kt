@@ -178,7 +178,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
                 }
             )
         }
-        if (!userDetail.profile.webpage.isNullOrBlank()) {
+        if (userDetail.profile.webpage.isNotBlank()) {
             binding.chipgroup.addView(
                 getChip(userDetail.profile.webpage, "webpage", userDetail.profile.webpage)
             )

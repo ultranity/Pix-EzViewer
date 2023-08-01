@@ -86,11 +86,13 @@ class RecomFragment : PicListFragment() {
 
     private fun initViewModel() {
         pixivisionModel.data.observe(viewLifecycleOwner) {
-            //TODO: check if loaded
-            spotlightView.setPadding(0)
-            spotlightView.layoutManager =
-                RepeatLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
-            pixiVisionAdapter.setNewInstance(it)
+            if (it != null) {
+                //TODO: check if loaded
+                spotlightView.setPadding(0)
+                spotlightView.layoutManager =
+                    RepeatLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL)
+                pixiVisionAdapter.setNewInstance(it)
+            }
         }
         pixivisionModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -162,7 +164,12 @@ class RecomFragment : PicListFragment() {
                     Pair(headerLogo, "shared_element_container")
                 ).toBundle()
             } else null
-            startActivity(Intent(context, PixivsionActivity::class.java), options)
+            startActivity(
+                Intent(
+                    context,
+                    PixivsionActivity::class.java
+                ).setAction("your.custom.action"), options
+            )
         }
         pixiVisionAdapter = PixiVisionAdapter(
             R.layout.view_pixivision_item_small,
@@ -190,7 +197,7 @@ class RecomFragment : PicListFragment() {
                 } else {
                     OKWebViewActivity::class.java
                 }
-            )
+            ).setAction("your.custom.action")
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)
             view.findViewById<View>(R.id.pixivision_viewed).setBackgroundColor(Color.YELLOW)
@@ -210,7 +217,7 @@ class RecomFragment : PicListFragment() {
         //    headerLogo.visibility = View.GONE
         if (pixivisionModel.data.value.isNullOrEmpty()) {
             headerLogo.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            val padding: Int = (screenWidthPx() - headerLogo.measuredWidth) / 2 - 10.dp
+            val padding: Int = (screenWidthPx() - headerLogo.measuredWidth) / 2 - 20.dp
             spotlightView.setPadding(padding, 0, padding, 0)
         }
         /* reset layoutManager after data loaded to prevent flicker loop

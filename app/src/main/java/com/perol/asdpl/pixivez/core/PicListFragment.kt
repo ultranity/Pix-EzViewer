@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.core
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +42,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderFilterBinding
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
@@ -107,11 +107,11 @@ open class PicListFragment : Fragment() {
     override fun onResume() {
         isLoaded = viewModel.data.value != null
         super.onResume()
-        Log.d("PicListFragment", "$TAG $tabPosition resume $isLoaded")
+        CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition resume $isLoaded")
         if (!isLoaded) {
             isLoaded = true
             viewModel.onLoadFirst()
-            Log.d("PicListFragment", "$TAG $tabPosition resume data reload")
+            CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition resume data reload")
         }
     }
 
@@ -224,7 +224,7 @@ open class PicListFragment : Fragment() {
             val tagModel: BookMarkTagViewModel by viewModels(::ownerProducer)
             headerBinding.imgBtnR.setText(R.string.publics)
             headerBinding.imgBtnR.setOnClickListener {
-                val id = extraArgs!!.get("userid") as Long
+                val id = extraArgs!!["userid"] as Long
                 tagModel.tags.value.also {
                     TagsShowDialog.newInstance(id).also {
                         it.callback =

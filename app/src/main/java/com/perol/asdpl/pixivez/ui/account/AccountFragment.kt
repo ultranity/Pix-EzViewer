@@ -34,6 +34,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
@@ -60,7 +61,12 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnLogin.setOnClickListener {
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            startActivity(
+                Intent(
+                    requireContext(),
+                    LoginActivity::class.java
+                ).setAction("your.custom.action")
+            )
         }
         binding.btnLogout.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.logoutallaccount)
@@ -69,7 +75,10 @@ class AccountFragment : Fragment() {
                         AppDataRepo.deleteAllUser()
                     }
                     startActivity(
-                        Intent(requireContext(), LoginActivity::class.java)
+                        Intent(
+                            requireContext(),
+                            LoginActivity::class.java
+                        ).setAction("your.custom.action")
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear task stack.
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     )
@@ -103,13 +112,20 @@ class AccountFragment : Fragment() {
             .setTitle("Token")
             .setMessage(R.string.token_warning)
             .setNeutralButton(R.string.refresh_token) { _, _ ->
-                try { RefreshToken.getInstance().refreshToken()}
-                catch (e:Exception) { Toasty.shortToast(R.string.refresh_token_fail) }
+                if (BuildConfig.DEBUG) {
+                    AppDataRepo.currentUser.Authorization = ""
+                } else {
+                    try {
+                        RefreshToken.getInstance().refreshToken()
+                    } catch (e: Exception) {
+                        Toasty.shortToast(R.string.refresh_token_fail)
+                    }
+                }
             }
             .setNegativeButton("SHOW") { _, _ ->
                 MaterialAlertDialogBuilder(context)
                     .setTitle("Token|OAuth")
-                    .setMessage(userToken + "|${user.Device_token}")
+                    .setMessage(userToken + "|${user.Authorization}")
                     .show()
             }
             .setPositiveButton(androidx.preference.R.string.copy) { _, _ ->

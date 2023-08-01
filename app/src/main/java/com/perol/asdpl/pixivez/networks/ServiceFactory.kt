@@ -1,13 +1,12 @@
 package com.perol.asdpl.pixivez.networks
 
-import android.util.Log
 import com.perol.asdpl.pixivez.BuildConfig
-import com.perol.asdpl.pixivez.services.CloudflareService
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -27,36 +26,59 @@ object ServiceFactory {
         allowStructuredMapKeys = true
         prettyPrint = false
         useArrayPolymorphism = false
-        //ignoreUnknownKeys = true
+        ignoreUnknownKeys = true
         //namingStrategy = JsonNamingStrategy.SnakeCase
+    }
+
+    val CFDNS = DnsOverHttps("https://1.0.0.1/") // Or https://1.0.0.1/.
+    private fun DnsOverHttps(url: String): DnsOverHttps {
+        return DnsOverHttps.Builder()
+            .client(OkHttpClient())
+            .url(url.toHttpUrl())
+            .post(true)
+            .resolvePrivateAddresses(false)
+            .resolvePublicAddresses(true)
+            .build()
     }
 
     /**
      * API declarations([T]) must be interfaces.
      */
     inline fun <reified T : Any> create(
-        httpUrl: HttpUrl = "https://0.0.0.0/".toHttpUrl(),
+        httpUrl: String = "https://0.0.0.0/",
         httpClient: OkHttpClient = HttpClient.DEFAULT,
+        converterFactory: Converter.Factory? = gson.asConverterFactory(contentType),
         callAdapterFactory: CallAdapter.Factory? = null,
-        converterFactory: Converter.Factory? = gson.asConverterFactory(contentType)
     ): T {
         require(T::class.java.isInterface && T::class.java.interfaces.isEmpty()) {
             "API declarations must be interfaces and API interfaces must not extend other interfaces."
         }
 
+        val retrofit = build(httpUrl, httpClient, converterFactory, callAdapterFactory)
+
+        return retrofit.create()
+    }
+
+    fun build(
+        httpUrl: String, //.toHttpUrl()
+        httpClient: OkHttpClient,
+        converterFactory: Converter.Factory? = gson.asConverterFactory(contentType),
+        callAdapterFactory: CallAdapter.Factory? = null,
+        block: (Retrofit.Builder.() -> Unit)? = null
+    ): Retrofit {
         val retrofit = Retrofit.Builder()
             .apply {
                 callAdapterFactory?.let { addCallAdapterFactory(it) }
                 converterFactory?.let { addConverterFactory(it) }
+                block?.invoke(this)
             }
             .baseUrl(httpUrl)
             .client(httpClient)
             .validateEagerly(BuildConfig.DEBUG)
             .build()
 
-        return retrofit.create()
+        return retrofit
     }
-
     object HttpClient {
         val DEFAULT: OkHttpClient by lazy {
             OkHttpClient.Builder()
@@ -68,17 +90,15 @@ object ServiceFactory {
         }
 
         private val httpLoggingInterceptor by lazy {
-            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    Log.d("GlideInterceptor", message)
-                }
-            }).apply {
+            HttpLoggingInterceptor { message ->
+                CrashHandler.instance.d(
+                    "GlideInterceptor",
+                    message
+                )
+            }.apply {
                 level =
                     if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             }
         }
     }
-
-    val cloudflareService: CloudflareService =
-        create(CloudflareService.URL_DNS_RESOLVER.toHttpUrl())
 }

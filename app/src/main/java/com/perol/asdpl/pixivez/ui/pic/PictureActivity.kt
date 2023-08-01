@@ -49,7 +49,8 @@ class PictureActivity : RinkActivity() {
             val bundle = Bundle()
             bundle.putLongArray("illustidlist", arrayList)
             bundle.putLong("illustid", id)
-            val intent = Intent(context, PictureActivity::class.java)
+            val intent =
+                Intent(context, PictureActivity::class.java).setAction("your.custom.action")
             intent.putExtras(bundle)
             context.startActivity(intent)
         }
@@ -64,7 +65,8 @@ class PictureActivity : RinkActivity() {
             val bundle = Bundle()
             bundle.putInt("position", position - max(position - limit, 0))
             bundle.putLong("illustid", id)
-            val intent = Intent(context, PictureActivity::class.java)
+            val intent =
+                Intent(context, PictureActivity::class.java).setAction("your.custom.action")
             intent.putExtras(bundle)
             context.startActivity(intent, options)
         }
@@ -78,7 +80,8 @@ class PictureActivity : RinkActivity() {
             bundle.putLongArray("illustidlist", arrayList)
             bundle.putParcelable("illust", illust)
             bundle.putLong("illustid", illust.id)
-            val intent = Intent(context, PictureActivity::class.java)
+            val intent =
+                Intent(context, PictureActivity::class.java).setAction("your.custom.action")
             intent.putExtras(bundle)
             context.startActivity(intent)
         }

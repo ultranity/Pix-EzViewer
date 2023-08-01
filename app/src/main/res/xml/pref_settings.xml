@@ -127,7 +127,10 @@
             app:title="@string/crash_report" />
         <Preference
             app:key="viewreport"
-            android:title="@string/viewreport"/>
+            android:title="@string/viewreport" />
+        <Preference
+            app:key="view_logs"
+            android:title="Logs" />
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

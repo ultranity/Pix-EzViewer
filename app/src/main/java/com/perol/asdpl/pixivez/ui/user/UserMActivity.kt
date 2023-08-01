@@ -68,25 +68,25 @@ import java.io.File
 class UserMActivity : RinkActivity() {
     companion object {
         fun start(context: Context, id: Long, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java)
+            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
             intent.putExtra("data", id)
             context.startActivity(intent, options)
         }
 
         fun start(context: Context, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java)
+            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
             context.startActivity(intent, options)
         }
 
         fun UserEntity.toUser() = User(userid, username, "", ProfileImageUrls(userimage), "", false)
         fun start(context: Context, user: UserEntity, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java)
+            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
             intent.putExtra("user", user.toUser())
             context.startActivity(intent, options)
         }
 
         fun start(context: Context, user: User, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java)
+            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
             //intent.putExtra("user", user)
             intent.putExtra("userid", user.id)
             DataStore.save("user${user.id}", user)//.register()
@@ -107,7 +107,7 @@ class UserMActivity : RinkActivity() {
             c!!.moveToFirst()
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
-            Toasty.info(this, getString(R.string.uploading), Toast.LENGTH_SHORT).show()
+            Toasty.info(this, R.string.uploading).show()
             viewModel.tryToChangeProfile(imagePath)
             c.close()
         }
@@ -208,11 +208,7 @@ class UserMActivity : RinkActivity() {
                             getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val clip: ClipData = ClipData.newPlainText("share Link", shareLink)
                         clipboard.setPrimaryClip(clip)
-                        Toasty.info(
-                            this@UserMActivity,
-                            getString(R.string.copied),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toasty.info(this@UserMActivity, R.string.copied).show()
                     }
 
                     1 -> {
@@ -237,10 +233,7 @@ class UserMActivity : RinkActivity() {
                             ) { _, _ -> }
 
                             withContext(Dispatchers.Main) {
-                                Toasty.info(
-                                    this@UserMActivity,
-                                    getString(R.string.saved)
-                                ).show()
+                                Toasty.info(this@UserMActivity, R.string.saved).show()
                             }
                         }
                     }

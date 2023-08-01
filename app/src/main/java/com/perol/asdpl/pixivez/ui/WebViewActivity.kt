@@ -27,17 +27,17 @@ package com.perol.asdpl.pixivez.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.perol.asdpl.pixivez.IntentActivity
+import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
-import com.perol.asdpl.pixivez.IntentActivity
-import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import java.io.ByteArrayInputStream
 
@@ -81,7 +81,7 @@ class WebViewActivity : RinkActivity() {
             ): Boolean {
                 try {
                     val uri = request.url
-                    Log.d(className, "loading $uri")
+                    CrashHandler.instance.d(className, "loading $uri")
                     if (uri != null) {
                         val scheme = uri.scheme
                         val host = uri.host

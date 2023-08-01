@@ -30,6 +30,7 @@ import android.util.TypedValue
 const val MEDIUM_SCREEN_WIDTH_SIZE = 600
 const val LARGE_SCREEN_WIDTH_SIZE = 1240
 val Int.dp: Int get() = toFloat().dp.toInt()
+val Int.dpf: Float get() = toFloat().dp
 
 val Float.dp: Float
     get() = TypedValue.applyDimension(

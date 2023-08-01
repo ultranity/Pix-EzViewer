@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.databinding.DialogCommentBinding
@@ -52,7 +52,7 @@ import retrofit2.HttpException
 // TODO: Refactor as Bottom Sheet
 // TODO: comment select emoji
 // TODO: panel helper
-class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
+class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
 
     private var pid: Long by argument()
     private var parent_comment_id = 1
@@ -61,7 +61,7 @@ class CommentDialog : BaseVBDialogFragment<DialogCommentBinding>() {
 
     private fun getData(commentAdapter: CommentAdapter) {
         lifecycleScope.launchCatching({
-            retrofit.api.getIllustComments(pid,0,true)
+            retrofit.api.getIllustComments(pid, 0, true)
         }, {
             Toasty.longToast("${it.comments.size}/${it.total_comments} comments in total")
             commentAdapter.setNewInstance(it.comments)

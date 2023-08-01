@@ -13,6 +13,7 @@ import com.google.android.material.color.utilities.TemperatureCache
 import com.google.android.material.color.utilities.TonalPalette
 import com.google.android.material.color.utilities.Variant
 import com.google.android.material.resources.MaterialAttributes
+import kotlin.math.max
 
 
 /**
@@ -70,7 +71,7 @@ class SchemeContent(sourceColorHct: Hct, isDark: Boolean, contrastLevel: Double)
     TonalPalette.fromHueAndChroma(sourceColorHct.hue, sourceColorHct.chroma),
     TonalPalette.fromHueAndChroma(
         sourceColorHct.hue,
-        Math.max(sourceColorHct.chroma - 32.0, sourceColorHct.chroma * 0.5)
+        max(sourceColorHct.chroma - 32.0, sourceColorHct.chroma * 0.5)
     ),
     TonalPalette.fromHct(
         DislikeAnalyzer.fixIfDisliked(

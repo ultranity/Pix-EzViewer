@@ -49,9 +49,6 @@ class RefreshToken{
             instance ?: synchronized(this) {
                 instance ?: RefreshToken().also { instance = it }
             }
-
-        const val client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
-        const val client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
     }
     private var oAuthSecureService: OAuthSecureService =
             RestClient.retrofitOauthSecure.create(OAuthSecureService::class.java)
@@ -78,13 +75,7 @@ class RefreshToken{
         }
         try {
             withContext(Dispatchers.IO){
-                val it = oAuthSecureService.postRefreshAuthTokenX(
-                    client_id,
-                    client_secret,
-                    "refresh_token",
-                    refreshToken,
-                    true
-                )
+                val it = oAuthSecureService.postRefreshAuthTokenX(refreshToken)
 
                 Log.d(
                     "refreshToken",
@@ -101,11 +92,8 @@ class RefreshToken{
             }
             lastRefresh = System.currentTimeMillis()
             AppDataRepo.pre.setLong("lastRefresh", lastRefresh)
-            Toasty.info(
-                PxEZApp.instance,
-                PxEZApp.instance.getString(R.string.refresh_token),
-                Toast.LENGTH_SHORT
-            ).show()
+            Toasty.info(PxEZApp.instance, PxEZApp.instance.getString(R.string.refresh_token))
+                .show()
             Log.d("init", "refreshToken end")
         } catch (e: Exception) {
             e.printStackTrace()
@@ -113,7 +101,6 @@ class RefreshToken{
             Toasty.info(
                 PxEZApp.instance,
                 PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + e.message,
-                Toast.LENGTH_SHORT
             ).show()
             throw e
         }

@@ -29,6 +29,9 @@ import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
+const val client_id: String = "MOBrBDS8blbauoSck0ZfDbtuzpyT"
+const val client_secret: String = "lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj"
+
 interface OAuthSecureService {
     @FormUrlEncoded
     @POST("/auth/token")
@@ -36,23 +39,23 @@ interface OAuthSecureService {
 
     @FormUrlEncoded
     @POST("/auth/token")
-    suspend fun postAuthTokenx(
-        @Field("client_id") client_id: String,
-        @Field("client_secret") client_secret: String,
-        @Field("grant_type") grant_type: String, // authorization_code
+    suspend fun postAuthTokenX(
         @Field("code") code: String, // BB5_yxZvE1n3ECFH9KmPQV3Tu3pfaJqUp-5fuWP-msg
         @Field("code_verifier") code_verifier: String, // cwnuOPjfkM1f65Cqaf94Pu4EqFNZJcAzfDGKmrAr0vQ
-        @Field("redirect_uri") redirect_uri: String, // https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback
-        @Field("include_policy") include_policy: Boolean
+        @Field("client_id") id: String = client_id,
+        @Field("client_secret") secret: String = client_secret,
+        @Field("grant_type") grant_type: String = "authorization_code", // authorization_code
+        @Field("redirect_uri") redirect_uri: String = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback",
+        @Field("include_policy") include_policy: Boolean = true
     ): PixivOAuthResponse
 
     @FormUrlEncoded
     @POST("/auth/token")
     suspend fun postRefreshAuthTokenX(
-        @Field("client_id") client_id: String,
-        @Field("client_secret") client_secret: String,
-        @Field("grant_type") grant_type: String,
         @Field("refresh_token") refresh_token: String,
-        @Field("include_policy") get_secure_url: Boolean
+        @Field("client_id") id: String = client_id,
+        @Field("client_secret") secret: String = client_secret,
+        @Field("grant_type") grant_type: String = "refresh_token",
+        @Field("include_policy") get_secure_url: Boolean = true
     ): PixivOAuthResponse
 }

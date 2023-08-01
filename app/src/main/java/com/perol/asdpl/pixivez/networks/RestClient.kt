@@ -26,34 +26,28 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
-import android.widget.Toast
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.networks.ServiceFactory.contentType
-import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.networks.ServiceFactory.build
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.closeQuietly
 import retrofit2.Retrofit
-import java.io.IOException
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
-    private val httpDns by lazy { RubyHttpDns }
     private val imageDns by lazy { ImageHttpDns }
     private val local = LanguageUtil.langToLocale(PxEZApp.language)
     private const val App_OS = "Android"
@@ -68,17 +62,15 @@ object RestClient {
         get() = PxEZApp.instance.pre.getBoolean("disableproxy", false)
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
-        builder.addInterceptor(object : Interceptor {
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("Accept-Language", "${local.language}_${local.country}")
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("referer", "https://app-api.pixiv.net/")
-                // .addHeader("Host", "https://app-api.pixiv.net")
-                val request = requestBuilder.build()
-                return chain.proceed(request)
-            }
+        builder.addInterceptor(Interceptor { chain ->
+            val original = chain.request()
+            val requestBuilder = original.newBuilder()
+                .header("Accept-Language", "${local.language}_${local.country}")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("referer", "https://app-api.pixiv.net/")
+            // .addHeader("Host", "https://app-api.pixiv.net")
+            val request = requestBuilder.build()
+            chain.proceed(request)
         }).apiProxySocket()
 
         return@lazy builder.build()
@@ -87,16 +79,13 @@ object RestClient {
     private val imageHttpClient: OkHttpClient
         get() {
             val builder = OkHttpClient.Builder()
-            builder.addInterceptor(object : Interceptor {
-                @Throws(IOException::class)
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val original = chain.request()
-                    val requestBuilder = original.newBuilder()
-                        .addHeader("User-Agent", RestClient.UA)
-                        .header("referer", "https://app-api.pixiv.net/")
-                    val request = requestBuilder.build()
-                    return chain.proceed(request)
-                }
+            builder.addInterceptor(Interceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .addHeader("User-Agent", UA)
+                    .header("referer", "https://app-api.pixiv.net/")
+                val request = requestBuilder.build()
+                chain.proceed(request)
             }).imageProxySocket()
 
             return builder.build()
@@ -104,16 +93,18 @@ object RestClient {
 
     val retrofitAppApi: Retrofit
         get() {
-            return buildRetrofit("https://app-api.pixiv.net",
-                okHttpClient("app-api.pixiv.net", needAuth = true))
+            return build(
+                "https://app-api.pixiv.net",
+                okHttpClient("app-api.pixiv.net", needAuth = true)
+            )
         }
-    val gifAppApi = buildRetrofit("https://oauth.secure.pixiv.net", imageHttpClient)
+    val gifAppApi = build("https://oauth.secure.pixiv.net", imageHttpClient)
 
-    // val pixivAppApi = buildRetrofit(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
-    // val retrofitAccount = buildRetrofit("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
+    // val pixivAppApi = build(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
+    // val retrofitAccount = build("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
     val retrofitOauthSecure =
-        buildRetrofit("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
-    val retrofitOauthSecureDirect = buildRetrofit(
+        build("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
+    val retrofitOauthSecureDirect = build(
         "https://oauth.secure.pixiv.net",
         okHttpClient("oauth.secure.pixiv.net", true)
     )
@@ -129,7 +120,14 @@ object RestClient {
         }).apply {
             level = HttpLoggingInterceptor.Level.BODY
         }*/
-    private fun headerInterceptor(host: String) = Interceptor { chain ->
+    class HeaderInterceptor(private val host: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            return headerInject(host, chain)
+        }
+
+    }
+
+    private fun headerInject(host: String, chain: Interceptor.Chain): Response {
         val isoDate = ISO8601DATETIMEFORMAT.format(Date())
         val original = chain.request()
         var Authorization = ""
@@ -150,7 +148,7 @@ object RestClient {
             .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
             .addHeader("Host", host)
             .build()
-        chain.proceed(request)
+        return chain.proceed(request)
     }
     enum class HttpStatus(val code: Int) {
         OK(200),
@@ -169,40 +167,28 @@ object RestClient {
     }
     private const val TOKEN_ERROR = "Error occurred at the OAuth process"
     private const val TOKEN_INVALID = "Invalid refresh token"
-    private fun authInterceptor() = Interceptor { chain ->
-        val request  = chain.request()
+    private fun authInterceptor(host: String) = Interceptor { chain ->
+        val request = chain.request()
         val response = chain.proceed(request)
-        when (HttpStatus.check(response.code)){
+        when (HttpStatus.check(response.code)) {
             HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
                 if (response.message.contains(TOKEN_INVALID)) {
                     runBlocking(Dispatchers.Main) {
-                        Toasty.error(
-                            PxEZApp.instance,
-                            R.string.login_expired,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toasty.error(PxEZApp.instance, R.string.login_expired).show()
                     }
                 } else { //if (response.message.contains(TOKEN_ERROR)) {
-                    runBlocking(Dispatchers.Main){
-                        Toasty.warning(
-                            PxEZApp.instance,
-                            R.string.token_expired,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    runBlocking(Dispatchers.Main) {
+                        Toasty.warning(PxEZApp.instance, R.string.token_expired).show()
                         RefreshToken.getInstance()
                             .refreshToken(AppDataRepo.currentUser.Refresh_token)
                     }
                     response.closeQuietly()
-                    return@Interceptor chain.proceed(chain.request())
+                    return@Interceptor headerInject(host, chain)
                 }
             }
             HttpStatus.NotFound -> {
-                Log.d("404", response.message+response.body)
-                Toasty.warning(
-                    PxEZApp.instance,
-                    "404 " + response.message,
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.d("404", response.message + response.body)
+                Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
             }
             HttpStatus.OK-> {
                 response.message
@@ -216,9 +202,9 @@ object RestClient {
     private fun okHttpClient(host: String, disableProxy: Boolean = false, needAuth:Boolean=false): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
-            addInterceptor(headerInterceptor(host))
+            addInterceptor(HeaderInterceptor(host))
             // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
-            if (needAuth) addInterceptor(authInterceptor())
+            if (needAuth) addInterceptor(authInterceptor(host))
             if (!disableProxy) {
                 apiProxySocket()
             }
@@ -251,16 +237,5 @@ object RestClient {
             this.dns(dns)
         }
         return this
-    }
-
-    private fun buildRetrofit(baseUrl: String, client: OkHttpClient) =
-        retrofit { baseUrl(baseUrl).client(client) }
-
-    private fun retrofit(block: Retrofit.Builder.() -> Unit): Retrofit {
-        return Retrofit.Builder().apply(block)
-            .addConverterFactory(gson.asConverterFactory(contentType) {
-                JsonObject(jsonObject.filterKeys { it != "response" && it != "search_span_limit" })
-            })
-            .build()
     }
 }

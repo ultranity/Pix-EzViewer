@@ -312,7 +312,12 @@ class DownloadManagerActivity : RinkActivity() {
 
     companion object {
         fun start(context: Context) {
-            context.startActivity(Intent(context, DownloadManagerActivity::class.java))
+            context.startActivity(
+                Intent(
+                    context,
+                    DownloadManagerActivity::class.java
+                ).setAction("your.custom.action")
+            )
         }
     }
 }

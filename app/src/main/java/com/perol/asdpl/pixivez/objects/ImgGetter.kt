@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Html.ImageGetter
-import android.util.Log
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.Request
@@ -39,7 +38,7 @@ class HtmlAssetsImageGetter(context: Context, private val folder: String = "") :
             d
         } catch (e: IOException) {
             // prevent a crash if the resource still can't be found
-            Log.e("HtmlTextView", "source could not be found: $source")
+            CrashHandler.instance.e("HtmlTextView", "source could not be found: $source")
             null
         }
     }

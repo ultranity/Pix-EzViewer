@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 /** fix: MutableLiveData default value will be observed
  * Creates a MutableLiveData initialized with the given `default value`.
  * but skip first observe/expose currentVersion
- * @param value initial value
+ * @param defaultValue initial value
  */
 class DMutableLiveData<T>(val defaultValue: T) : MutableLiveData<T>() {
     var currentVersion = 0

@@ -35,7 +35,7 @@ interface PixivApiService { //TODO: check filter=for_android
     @GET("v1/walkthrough/illusts")
     suspend fun walkthroughIllusts(): IllustNext
 
-    @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true")
+    @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true&include_ranking_illusts=false")
     suspend fun getRecommend(
     ): RecommendResponse
 
@@ -245,19 +245,19 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("type") type: String //illust manga novel
     ): UserIllustNext
 
-    /*@GET
+    @GET
     suspend fun getUrl(
         @Url url: String
     ): ResponseBody
-    @GET
+    /*@GET
     suspend fun getBody(
         @Url url: String
     ): ResponseBody*/
 
-    @GET
+    /*@GET //retrofit runtime reflection cannot access T
     suspend fun <T> get(
         @Url url: String
-    ): T
+    ): T*/
 }
 interface PixivFileService{
     @Streaming

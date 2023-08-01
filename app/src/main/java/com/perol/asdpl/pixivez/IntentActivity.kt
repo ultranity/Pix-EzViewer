@@ -29,14 +29,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.ErrorResponse
 import com.perol.asdpl.pixivez.networks.Pkce
-import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.ui.MainActivity
@@ -52,13 +51,13 @@ import java.io.IOException
 class IntentActivity : RinkActivity() {
     companion object {
         fun start(context: Context, string: String) {
-            val intent = Intent(context, IntentActivity::class.java)
+            val intent = Intent(context, IntentActivity::class.java).setAction("your.custom.action")
             intent.data = Uri.parse(string)
             context.startActivity(intent)
         }
 
         fun start(context: Context, uri: Uri) {
-            val intent = Intent(context, IntentActivity::class.java)
+            val intent = Intent(context, IntentActivity::class.java).setAction("your.custom.action")
             intent.data = uri
             context.startActivity(intent)
         }
@@ -105,7 +104,7 @@ class IntentActivity : RinkActivity() {
                 // }
             }
             if (uri.host?.equals("pixiv.me") == true) {
-                val i = Intent(this, WebViewActivity::class.java)
+                val i = Intent(this, WebViewActivity::class.java).setAction("your.custom.action")
                 intent.putExtra("url", uri)
                 startActivity(i)
             }
@@ -177,24 +176,12 @@ class IntentActivity : RinkActivity() {
     }
 
     private fun tryLogin(code: String) {
-        val map = HashMap<String, Any>()
-        map["client_id"] = RefreshToken.client_id
-        map["client_secret"] = RefreshToken.client_secret
-        map["grant_type"] = "authorization_code"
-        map["code"] = code
-        map["code_verifier"] = Pkce.getPkce().verify
-        // map["username"] = username!!
-        // map["password"] = password!!
-        // map["device_token"] = AppDataRepo.pre.getString("Device_token") ?: "pixiv"
-        map["redirect_uri"] = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
-        // map["get_secure_url"] = true
-        map["include_policy"] = true
         val oAuthSecureService =
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
         CoroutineScope(Dispatchers.Default).launch {
-            Toasty.warning(applicationContext, getString(R.string.try_to_login),).show()
+            Toasty.warning(applicationContext, R.string.try_to_login).show()
             try {
-                oAuthSecureService.postAuthToken(map).let {
+                oAuthSecureService.postAuthTokenX(code, Pkce.getPkce().verify).let {
                     val user = it.user.toUserEntity(it.refresh_token, it.access_token)
                     AppDataRepo.insertUser(user)
                 }
@@ -212,7 +199,7 @@ class IntentActivity : RinkActivity() {
                         val errorBody = e.response()?.errorBody()?.string()!!
                         val errorResponse = gson.decodeFromString<ErrorResponse>(errorBody)
                         var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
-                        Log.e(className, errMsg)
+                        CrashHandler.instance.e(className, errMsg)
                         errMsg =
                             if (errorResponse.has_error && errorResponse.errors.system.message.contains(
                                     Regex(""".*103:.*""")

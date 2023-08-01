@@ -66,7 +66,7 @@ class ImgManagerViewModel : BaseViewModel() {
                     retrofit.api.getIllust(this).let{rt->
 
                     }
-                    Log.d("imgMgr", "get$this")
+                   CrashHandler.instance.d("imgMgr", "get$this")
                 }
             return@map it
         }.collect()*/
@@ -89,28 +89,28 @@ class ImgManagerViewModel : BaseViewModel() {
                         null
                     }
             }?.let{ rt ->
-                    // Log.d("imgMgr","get"+this+"p"+it.part)
+                    //CrashHandler.instance.d("imgMgr","get"+this+"p"+it.part)
                     val it = taskmap[rt.id]!!
                     it.file.illust = rt
                     it.file.target =
                         Works.parseSaveFormat(rt, it.part, saveformat, TagSeparator, false)
                     it.file.checked = (it.file.target != it.file.name)
-                    // Log.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
+                    //CrashHandler.instance.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
                     if (rename_once) {
                         rename(it)
                     }
                     it
-            }?.let{ it ->
-                // Log.d("imgMgr","refresh"+it.pid+"p"+it.part)
-                val preIndex = files!!.indexOf(it.file)
-                if (preIndex >= layoutManager.findFirstVisibleItemPosition() &&
-                    preIndex <= layoutManager.findLastVisibleItemPosition()
-                ) {
-                    adapter.notifyItemChanged(preIndex)
+                }?.let {
+                    //CrashHandler.instance.d("imgMgr","refresh"+it.pid+"p"+it.part)
+                    val preIndex = files!!.indexOf(it.file)
+                    if (preIndex >= layoutManager.findFirstVisibleItemPosition() &&
+                        preIndex <= layoutManager.findLastVisibleItemPosition()
+                    ) {
+                        adapter.notifyItemChanged(preIndex)
+                    }
                 }
-            }
         }
-        // Log.d("imgMgr","all")
+        //CrashHandler.instance.d("imgMgr","all")
         File(path.value + File.separatorChar + "rename.log")
             .writeText(gson.encodeToString(task))
         taskmap.clear()

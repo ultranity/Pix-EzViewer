@@ -105,7 +105,7 @@ class TrendTagFragment : Fragment() {
                 trendingtagAdapter.setNewInstance(it)
             }
         }
-        viewModel.searchHistory.observe(viewLifecycleOwner) { it ->
+        viewModel.searchHistory.observe(viewLifecycleOwner) {
             binding.chipgroup.removeAllViews()
             it.take(foldedChipIndex).forEachIndexed { index, s ->
                 val chip = getChip(s)

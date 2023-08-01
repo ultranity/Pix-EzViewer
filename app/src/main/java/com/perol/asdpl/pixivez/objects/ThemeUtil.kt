@@ -55,6 +55,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.settings.ThemeFragment
 import com.perol.asdpl.pixivez.view.applySeedColorToActivityIfAvailable
+import kotlin.math.roundToInt
 
 
 object ThemeUtil {
@@ -141,7 +142,7 @@ object ThemeUtil {
     fun getAttrColor(context: Context, attr: Int, alpha: Float): Int {
         val color = getAttrColor(context, attr)
         val originalAlpha = Color.alpha(color)
-        return ColorUtils.setAlphaComponent(color, Math.round(originalAlpha * alpha))
+        return ColorUtils.setAlphaComponent(color, (originalAlpha * alpha).roundToInt())
     }
 
     fun getAttrResID(context: Context, attrId: Int): Int {
@@ -220,17 +221,17 @@ object ThemeUtil {
             BottomSheet(LayoutMode.WRAP_CONTENT)
         ).show {
             val seedColor = PxEZApp.instance.pre.getInt("color_int", -16738310)
-            val colorArray = colorThemeArray.mapIndexed { index, it ->
-                if (index == 0) BackgroundGridItem(
+            val colorArray = colorThemeArray.mapIndexed { i, it ->
+                if (i == 0) BackgroundGridItem(
                     R.drawable.ic_color_palette,
                     themeFragment.getString(R.string.action_select)
                 )
-                else BackgroundGridItem(context.getColorFromStyle(it), index.toString(), false)
+                else BackgroundGridItem(context.getColorFromStyle(it), i.toString(), false)
             }
             var action: () -> Unit = { }
             title(R.string.title_change_theme)
-            val gridItems = gridItems(colorArray) { _, index, item ->
-                if (index == 0) {
+            val gridItems = gridItems(colorArray) { _, i, item ->
+                if (i == 0) {
                     action = {
                         ColorPickerDialog.Builder(context)
                             //.setTitle("Pick Theme")           	// Default "Choose Color"
@@ -252,7 +253,7 @@ object ThemeUtil {
                     action = {
                         it.summary = item.title
                         PxEZApp.instance.pre.edit {
-                            putString("color_theme", index.toString())
+                            putString("color_theme", i.toString())
                             putInt("color_int", item.color)
                             resetColor(themeFragment.requireActivity())
                             PxEZApp.ActivityCollector.recreate()

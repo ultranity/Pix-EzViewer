@@ -23,8 +23,7 @@ class UpToTopListener(
     ) : this(
         contextFragment.requireContext(), contextFragment.childFragmentManager,
         tabReselected, tabUnSelected, tabSelected,
-    ) {
-    }
+    )
 
     constructor(
         context: Context,
@@ -35,8 +34,7 @@ class UpToTopListener(
     ) : this(
         context, { fragmentManager.fragments[it] },
         tabReselected, tabUnSelected, tabSelected,
-    ) {
-    }
+    )
 
     private var exitTime: Long = 0
     override fun onTabReselected(tab: TabLayout.Tab) {

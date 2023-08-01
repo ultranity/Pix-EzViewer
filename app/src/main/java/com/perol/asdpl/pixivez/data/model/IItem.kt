@@ -1,8 +1,8 @@
 package com.perol.asdpl.pixivez.data.model
 
-interface  INext<T:Any> {
+interface INext<T> {
     val next_url: String?
-    fun data():T
+    fun data(): T
 }
 
 interface IIllustNext : INext<MutableList<Illust>> {

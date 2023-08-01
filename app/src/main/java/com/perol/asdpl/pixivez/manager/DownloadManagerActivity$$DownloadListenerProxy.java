@@ -14,52 +14,52 @@ public final class DownloadManagerActivity$$DownloadListenerProxy extends AptNor
 
   @Override
   public void onTaskPre(final DownloadTask task) {
-    obj.onTaskPre((DownloadTask)task);
+    obj.onTaskPre(task);
   }
 
   @Override
   public void onTaskFail(final DownloadTask task, Exception e) {
-    obj.onTaskFail((DownloadTask)task);
+    obj.onTaskFail(task);
   }
 
   @Override
   public void onTaskStop(final DownloadTask task) {
-    obj.onTaskStop((DownloadTask)task);
+    obj.onTaskStop(task);
   }
 
   @Override
   public void onTaskComplete(final DownloadTask task) {
-    obj.onTaskComplete((DownloadTask)task);
+    obj.onTaskComplete(task);
   }
 
   @Override
   public void onTaskStart(final DownloadTask task) {
-    obj.onTaskStart((DownloadTask)task);
+    obj.onTaskStart(task);
   }
 
   @Override
   public void onWait(final DownloadTask task) {
-    obj.onWait((DownloadTask)task);
+    obj.onWait(task);
   }
 
   @Override
   public void onPre(final DownloadTask task) {
-    obj.onPre((DownloadTask)task);
+    obj.onPre(task);
   }
 
   @Override
   public void onTaskCancel(final DownloadTask task) {
-    obj.onTaskCancel((DownloadTask)task);
+    obj.onTaskCancel(task);
   }
 
   @Override
   public void onTaskResume(final DownloadTask task) {
-    obj.onTaskResume((DownloadTask)task);
+    obj.onTaskResume(task);
   }
 
   @Override
   public void onTaskRunning(final DownloadTask task) {
-    obj.onTaskRunning((DownloadTask)task);
+    obj.onTaskRunning(task);
   }
 
   @Override

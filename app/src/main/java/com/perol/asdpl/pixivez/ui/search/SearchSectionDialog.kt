@@ -31,11 +31,11 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
 import java.util.*
 
-class SearchSectionDialog : BaseVBDialogFragment<DialogSearchSectionBinding>() {
+class SearchSectionDialog : BaseDialogFragment<DialogSearchSectionBinding>() {
 
     private val tms: Calendar = Calendar.getInstance()
     val thisMonth01 = "${tms.get(Calendar.YEAR)}-${tms.get(Calendar.MONTH) + 1}-01"

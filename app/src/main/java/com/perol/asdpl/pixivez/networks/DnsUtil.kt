@@ -1,45 +1,43 @@
 package com.perol.asdpl.pixivez.networks
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
+import com.perol.asdpl.pixivez.objects.CrashHandler
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
-import java.util.stream.Collectors
 import kotlin.math.roundToInt
 
 class DnsUtil {
     companion object {
-
         const val TAG = "DnsUtil"
         const val google1 = "8.8.8.8"
         const val cloudFlare = "1.1.1.1"
         const val comcast = "4.2.2.1"
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun run() {
-        Log.d(TAG, "Starting Connection Tests...")
-        val maxFailurePercent: Int =
-            listOf(
+        CrashHandler.instance.d(TAG, "Starting Connection Tests...")
+
+        runBlocking {
+            val failurePercent = listOf(
                 cloudFlare,
                 google1,
                 comcast
-            )
-                .parallelStream()
-                .map {
-                    verify(it)
-                }
-                .collect(Collectors.toList())
-                .maxOrNull() ?: 0
+            ).asFlow().flatMapMerge {
+                flow { emit(verify(it)) }
+            }.toList()
+            val maxFailurePercent = failurePercent.max()
+            CrashHandler.instance.d(TAG, "Max Failure Rate: $maxFailurePercent%")
+            if (maxFailurePercent < 1) {
+                CrashHandler.instance.d(TAG, "Connection is Stable.")
+            } else {
+                CrashHandler.instance.e(TAG, "Connection is NOT Stable.")
+            }
+        }
 
-        Log.d(TAG, "Max Failure Rate: $maxFailurePercent%")
-        if (maxFailurePercent < 1) {
-            Log.d(TAG, "Connection is Stable.")
-        }
-        else {
-            Log.e(TAG, "Connection is NOT Stable.")
-        }
     }
 
     private fun verify(host: String, times: Int = 20): Int {
@@ -47,7 +45,10 @@ class DnsUtil {
 
         (1..times).forEach {
             val result = ping(host)
-            Log.d(TAG, "Ping #$it for $host: ${if (result.first) "Success" else "Failure"} time: ${result.second}ms")
+            CrashHandler.instance.d(
+                TAG,
+                "Ping #$it for $host: ${if (result.first) "Success" else "Failure"} time: ${result.second}ms"
+            )
             results.add(result)
             Thread.sleep(500) // add a little delay for better verification
         }
@@ -57,7 +58,10 @@ class DnsUtil {
         val averageTime = results
             .map { it.second }
             .average()
-        Log.d(TAG, "Test for $host has fail rate of $failPercentage% and an average response time of ${averageTime}ms")
+        CrashHandler.instance.d(
+            TAG,
+            "Test for $host has fail rate of $failPercentage% and an average response time of ${averageTime}ms"
+        )
         return failPercentage
     }
 
@@ -72,7 +76,7 @@ class DnsUtil {
                     return result to elapsedTime(startTime)
                 }
         } catch (ex: Exception) {
-            Log.e(TAG, ex.localizedMessage ?: "")
+            CrashHandler.instance.e(TAG, ex.localizedMessage ?: "")
             return false to elapsedTime(startTime)
         }
     }

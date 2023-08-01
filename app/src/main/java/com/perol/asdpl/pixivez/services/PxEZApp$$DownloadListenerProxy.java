@@ -14,7 +14,7 @@ public final class PxEZApp$$DownloadListenerProxy extends AptNormalTaskListener<
 
   @Override
   public void onTaskComplete(final DownloadTask task) {
-    obj.taskComplete((DownloadTask)task);
+    obj.taskComplete(task);
   }
 
   @Override

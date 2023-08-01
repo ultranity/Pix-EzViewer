@@ -73,17 +73,17 @@ abstract class SearchHistoryDao {
 @Dao
 interface IllustHistoryDao {
     @Query("SELECT * FROM illusthistory")
-    abstract suspend fun getIllustHistory(): List<IllustBeanEntity>
+    suspend fun getIllustHistory(): List<IllustBeanEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(query: IllustBeanEntity)
+    suspend fun insert(query: IllustBeanEntity)
 
     @Query("DELETE FROM illusthistory")
-    abstract suspend fun deleteHistory()
+    suspend fun deleteHistory()
 
     @Query("SELECT * FROM illusthistory WHERE illustid=:illustid")
-    abstract suspend fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
+    suspend fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
 
     @Delete
-    abstract suspend fun deleteOne(query: IllustBeanEntity)
+    suspend fun deleteOne(query: IllustBeanEntity)
 }

@@ -42,7 +42,6 @@ import android.os.Build
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -235,7 +234,7 @@ class PictureXAdapter(
             }
             binding.textviewCaption.text = Html.fromHtml(illust.caption.ifBlank { "~" })
             Linkify.addLinks(binding.textviewCaption, Linkify.WEB_URLS)
-            Log.d("url", binding.textviewCaption.urls.toString())
+            CrashHandler.instance.d("url", binding.textviewCaption.urls.toString())
             binding.textviewCaption.movementMethod = LinkMovementMethod.getInstance()
             //TODO: get real comment count
             // binding.textviewViewComment.text = "${binding.textviewViewComment.text}(${illust.total_comments})"
@@ -656,7 +655,7 @@ class PictureXAdapter(
                     it.ugoira_metadata.zip_urls.medium
                 )
             }, {
-                Log.d("gif ", "loading failed")
+                CrashHandler.instance.d("gif ", "loading failed")
                 gifPlay?.visibility = View.VISIBLE
             })
         }
@@ -763,7 +762,7 @@ class PictureXAdapter(
                         )
                     }
                     gifEncoder.encodeFrame(bitmap, duration)
-                    Log.d("progressset", i.toString())
+                    CrashHandler.instance.d("progressset", i.toString())
                 }
             }
             gifEncoder.close()

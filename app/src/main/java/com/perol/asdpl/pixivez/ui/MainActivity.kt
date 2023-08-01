@@ -185,7 +185,12 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.nav_search_pic -> {
-                startActivity(Intent(this, SaucenaoActivity::class.java))
+                startActivity(
+                    Intent(
+                        this,
+                        SaucenaoActivity::class.java
+                    ).setAction("your.custom.action")
+                )
             }
 
             R.id.nav_cache_clean -> {
@@ -193,7 +198,8 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.nav_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
+                val intent =
+                    Intent(this, SettingsActivity::class.java).setAction("your.custom.action")
                 startActivity(intent)
             }
 
@@ -206,7 +212,12 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.nav_rename -> {
-                startActivity(Intent(this, ImgManagerActivity::class.java))
+                startActivity(
+                    Intent(
+                        this,
+                        ImgManagerActivity::class.java
+                    ).setAction("your.custom.action")
+                )
             }
 
             R.id.nav_progress -> {
@@ -232,7 +243,12 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AppDataRepo.userInited().not()) {
-            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+            startActivity(
+                Intent(
+                    this@MainActivity,
+                    LoginActivity::class.java
+                ).setAction("your.custom.action")
+            )
             finish()
             return
         }
@@ -452,7 +468,8 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                         binding.navRail.selectedItemId =
                             binding.navRail.menu.getItem(binding.tablayout.selectedTabPosition).itemId
                     }
-                val intent = Intent(this, SearchActivity::class.java)
+                val intent =
+                    Intent(this, SearchActivity::class.java).setAction("your.custom.action")
                 startActivity(intent)
                 true
             }

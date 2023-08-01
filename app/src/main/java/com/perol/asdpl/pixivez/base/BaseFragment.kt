@@ -52,10 +52,6 @@ abstract class BaseFragment : Fragment() {
 
     protected abstract fun loadData()
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)

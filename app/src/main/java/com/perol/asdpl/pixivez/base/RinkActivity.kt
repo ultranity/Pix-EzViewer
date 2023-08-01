@@ -50,7 +50,7 @@ abstract class RinkActivity : AppCompatActivity() {
             "dimen",
             "android"
         )
-        // Log.v("dbg", "Navi height:$height")
+        // CrashHandler.instance.d("dbg", "Navi height:$height")
         return resources.getDimensionPixelSize(resourceId)
     }
 

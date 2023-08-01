@@ -1,7 +1,7 @@
 //copied from package com.jakewharton.retrofit2.converter.kotlinx.serialization for debug
 package com.perol.asdpl.pixivez.networks
 
-import android.util.Log
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
@@ -13,6 +13,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.serializer
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -107,7 +108,7 @@ internal sealed class Serializer {
                     format.decodeFromString(loader, string)
                 }
             } catch (e: Exception) {
-                Log.d("Serializer", string, e)
+                CrashHandler.instance.d("Serializer", string, e)
                 throw e
             }
         }
@@ -118,7 +119,7 @@ internal sealed class Serializer {
             value: T
         ): RequestBody {
             val string = format.encodeToString(saver, value)
-            return RequestBody.create(contentType, string)
+            return string.toRequestBody(contentType)
         }
     }
 
@@ -137,7 +138,7 @@ internal sealed class Serializer {
             value: T
         ): RequestBody {
             val bytes = format.encodeToByteArray(saver, value)
-            return RequestBody.create(contentType, bytes)
+            return bytes.toRequestBody(contentType, 0, bytes.size)
         }
     }
 }

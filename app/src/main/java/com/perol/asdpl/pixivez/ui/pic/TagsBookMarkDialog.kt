@@ -28,11 +28,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.data.model.TagsBean
 import com.perol.asdpl.pixivez.databinding.DialogBookmarkBinding
 
-class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
+class TagsBookMarkDialog : BaseDialogFragment<DialogBookmarkBinding>() {
 
     private lateinit var pictureXViewModel: PictureXViewModel
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
@@ -84,6 +84,6 @@ class TagsBookMarkDialog : BaseVBDialogFragment<DialogBookmarkBinding>() {
     }
 
     companion object {
-        val TAG: String = "BookmarkTags"
+        const val TAG: String = "BookmarkTags"
     }
 }

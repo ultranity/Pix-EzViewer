@@ -25,21 +25,20 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
+import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 
-class ThanksDialog : BaseVBDialogFragment<DialogThanksBinding>() {
+class ThanksDialog : BaseDialogFragment<DialogThanksBinding>() {
 
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val array =
             requireContext().resources.openRawResource(R.raw.thanks_list).reader().readLines()
-        binding.list.adapter = ThanksAdapter(R.layout.simple_list_item, array).apply {
+        binding.list.linear().adapter = ThanksAdapter(R.layout.simple_list_item, array).apply {
             setHeaderView(layoutInflater.inflate(R.layout.dialog_thanks_header, null))
         }
-        binding.list.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+
     }
 }

@@ -5,15 +5,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.databinding.ViewTagsShowBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.argument
 
 // UserBookMarkFragment
-class TagsShowDialog : BaseVBDialogFragment<ViewTagsShowBinding>() {
+class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
     companion object {
-        fun newInstance(uid: Long, index:Int=0) = TagsShowDialog().apply {
+        fun newInstance(uid: Long, index: Int = 0) = TagsShowDialog().apply {
             this.uid = uid
             this.index = index
         }

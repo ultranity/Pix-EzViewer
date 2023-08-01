@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.ui.pic
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.perol.asdpl.pixivez.data.model.Illust
-import com.perol.asdpl.pixivez.fragments.PictureXFragment
 
 class PicturePagerAdapter(
     fm: FragmentManager,

@@ -225,7 +225,7 @@ object KotlinUtil {
         }
     }
 
-    public inline suspend fun <R> runSuspendCatching(block: () -> R): Result<R> {
+    inline fun <R> runSuspendCatching(block: () -> R): Result<R> {
         return try {
             Result.success(block())
         } catch (c: CancellationException) {
@@ -241,6 +241,10 @@ object KotlinUtil {
         if (all { it == first() })
             return first()
         return null
+    }
+
+    fun <E> MutableList<E>.swap(index1: Int, index2: Int) {
+        this[index1] = this[index2].also { this[index2] = this[index1] }
     }
 
     // reference:https://gist.github.com/bartekpacia/eb1c92886acf3972c3f030cde2579ebb

@@ -39,7 +39,7 @@ class UserListViewModel : BaseViewModel() {
     val nextUrl = MutableLiveData<String?>()
     val isRefreshing = DMutableLiveData(false)
     var restrict = DMutableLiveData("public")
-    protected lateinit var onLoadFirstRx: suspend () -> SearchUserResponse
+    private lateinit var onLoadFirstRx: suspend () -> SearchUserResponse
 
     open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         if (extraArgs != null) {

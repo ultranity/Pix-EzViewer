@@ -104,7 +104,7 @@ class PixivsionActivity : RinkActivity() {
                 } else {
                     OKWebViewActivity::class.java
                 }
-            )
+            ).setAction("your.custom.action")
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)
         }

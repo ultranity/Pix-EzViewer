@@ -45,7 +45,7 @@ class CommentAdapter(
         if (item.parent_comment.user != null) {
             holder.setText(
                 R.id.commentusername,
-                item.user.name + " to " + item.parent_comment.user!!.name
+                item.user.name + " to " + item.parent_comment.user.name
             )
         } else {
             holder.setText(

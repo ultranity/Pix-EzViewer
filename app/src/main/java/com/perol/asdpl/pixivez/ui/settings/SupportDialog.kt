@@ -17,12 +17,11 @@ import android.util.Base64
 import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseVBDialogFragment
+import com.perol.asdpl.pixivez.base.BaseDialogFragment
+import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
@@ -32,7 +31,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
+class SupportDialog : BaseDialogFragment<DialogThanksBinding>() {
 
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")
@@ -114,13 +113,11 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
         bindingWX.textStatic.text = spannableString
         val array =
             requireContext().resources.openRawResource(R.raw.thanks_list).reader().readLines()
-        binding.list.adapter = ThanksAdapter(R.layout.simple_list_item, array).apply {
+        binding.list.linear().adapter = ThanksAdapter(R.layout.simple_list_item, array).apply {
             setHeaderView(bindingWX.root)
         }
-        binding.list.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-
         builder
-            .setTitle(getString(R.string.support_popup_title))
+            .setTitle(R.string.support_popup_title)
             .setOnDismissListener {
                 AppDataRepo.pre.setLong(
                     "last_time_ms",
@@ -155,7 +152,10 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
                 } else {
                     setPositiveButton(R.string.supporttitle) { _, _ ->
                         startActivity(
-                            Intent(requireActivity(), SettingsActivity::class.java).apply {
+                            Intent(
+                                requireActivity(),
+                                SettingsActivity::class.java
+                            ).setAction("your.custom.action").apply {
                                 putExtra("page", 1)
                             }
                         )
@@ -178,20 +178,20 @@ class SupportDialog : BaseVBDialogFragment<DialogThanksBinding>() {
 
         fun checkTime(supportFragmentManager: FragmentManager): Boolean {
             val time: Long = System.currentTimeMillis()
-            if (BuildConfig.FLAVOR == "bugly" &&
+            return if (BuildConfig.FLAVOR == "bugly" &&
                 TimeUnit.MILLISECONDS.toDays(
                     (time - AppDataRepo.pre.getLong("last_time_ms", time))
                 ) >= 90
             ) {
                 SupportDialog().show(supportFragmentManager, TAG)
-                return false
+                false
             } else {
                 AppDataRepo.pre
                     .setLong(
                         "last_time_ms",
                         AppDataRepo.pre.getLong("last_time_ms") - 1
                     )
-                return true
+                true
             }
         }
     }

@@ -34,7 +34,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -50,11 +49,16 @@ import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.BaseBindingItem
+import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
+import com.perol.asdpl.pixivez.databinding.SimpleTextItemBinding
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppUpdater
@@ -82,7 +86,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var testComponent: ComponentName
     private lateinit var mdComponent: ComponentName
     private fun enableComponent(componentName: ComponentName) {
-        Log.d("compon", componentName.packageName)
+        CrashHandler.instance.d("compon", componentName.packageName)
         val state = activity?.packageManager!!.getComponentEnabledSetting(componentName)
         if (state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
             return
@@ -169,7 +173,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val pi = pm.getPackageInfo(context.packageName, 0)
                 summary = pi.versionName
             } catch (e: Exception) {
-                Log.e("VersionInfo", "Exception", e)
+                CrashHandler.instance.e("VersionInfo", "Exception", e)
             }
         }
         findPreference<ListPreference>("language")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -184,8 +188,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreferenceCompat>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
-                .show()
+            Toasty.normal(PxEZApp.instance, R.string.needtorestart).show()
             true
         }
         findPreference<SwitchPreferenceCompat>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -210,7 +213,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun snackbarForceRestart() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
-                val intent = Intent(context, MainActivity::class.java)
+                val intent =
+                    Intent(context, MainActivity::class.java).setAction("your.custom.action")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 requireContext().startActivity(intent)
             }.show()
@@ -253,7 +257,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             if (requireContext().allPermissionsGranted(storagePermissions)) {
                 showDirectorySelectionDialog()
             } else {
-                Toasty.error(requireContext(), "Permissions not granted by the user",).show()
+                Toasty.error(requireContext(), "Permissions not granted by the user").show()
             }
         }
     }
@@ -374,30 +378,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             "viewreport" -> {
-                val list = getCrashReportFiles()
-                var report = ""
-                for (a in list!!.indices) {
-                    if (a > 10) {
-                        continue
-                    }
-                    val cr = File(activity?.filesDir, list[a])
-                    report += cr.readText()
-                    report += "wwwwwwwwwwwwwwwwwwwwwwww"
+                val list = getCrashReportFiles() ?: arrayOf()
+                val cr = list.map {
+                    File(activity?.filesDir, it)
+                        .readText().replace("\\n", "\n")
+                        .replace("\\t", "\t")
+                        .replace("\\:", ":")
                 }
-                report = report.replace("\\n", "\n")
-                    .replace("\\t", "\t")
-                    .replace("\\:", ":")
-                MaterialAlertDialogBuilder(requireActivity())
-                    .setMessage(report).setTitle(getString(R.string.crash_title))
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                    }
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.crash_title)
+                    .setItems(cr.map { LogsBindingItem(it) })
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
                     .setNeutralButton(R.string.clearhistory) { _, _ ->
-                        for (f in list) {
-                            val cr = File(activity?.filesDir, f)
-                            cr.delete()
+                        list.forEach {
+                            File(activity?.filesDir, it).delete()
                         }
-                    }
-                    .create().show()
+                    }.show()
+            }
+
+            "view_logs" -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Logs")
+                    .setItems(CrashHandler.instance.logs.map { LogsBindingItem(it.toString()) })
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .setNeutralButton(R.string.clearhistory) { _, _ ->
+                        CrashHandler.instance.logs.clear()
+                    }.show()
             }
         }
 
@@ -541,5 +547,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 1
+    }
+}
+
+class LogsBindingItem(val text: String) : BaseBindingItem<SimpleTextItemBinding>(), IDraggable {
+    override val type: Int = R.id.text
+    override val isDraggable: Boolean = true
+    override fun bindView(binding: SimpleTextItemBinding, payloads: List<Any>) {
+        binding.text.text = text
     }
 }

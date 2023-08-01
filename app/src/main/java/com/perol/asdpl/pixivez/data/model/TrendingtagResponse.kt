@@ -35,8 +35,7 @@ import kotlinx.serialization.Serializable
 class TrendingtagResponse(
     @SerialName("trend_tags")
     val trend_tags: MutableList<TrendTagsBean>
-) {
-}
+)
 
 @Serializable
 class TrendTagsBean(

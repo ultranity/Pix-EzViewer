@@ -47,7 +47,7 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 class SearchActivity : RinkActivity() {
     companion object {
         fun start(context: Context, keyword: String?) {
-            val intent = Intent(context, SearchActivity::class.java)
+            val intent = Intent(context, SearchActivity::class.java).setAction("your.custom.action")
             keyword?.let {
                 intent.putExtra("keyword", it)
             }
@@ -170,9 +170,7 @@ class SearchActivity : RinkActivity() {
                 if (binding.tablayoutSearch.selectedTabPosition != 0) {
                     return true
                 }
-                if (newText.isNullOrBlank()) {
-
-                } else {
+                if (!newText.isNullOrBlank()) {
                     searchSuggestionViewModel.onQueryTextChange(newText)
                 }
                 return true

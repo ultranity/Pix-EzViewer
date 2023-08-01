@@ -127,7 +127,7 @@ class PxEZApp : Application() {
             if (pre.getBoolean("resume_unfinished_task", true)
                 // && Aria.download(this).allNotCompleteTask?.isNotEmpty()
             ) {
-                // Toasty.normal(this, getString(R.string.unfinished_task_title), Toast.LENGTH_SHORT).show()
+                // Toasty.normal(this, R.string.unfinished_task_title).show()
                 Aria.download(this).allNotCompleteTask?.forEach {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
@@ -167,7 +167,7 @@ class PxEZApp : Application() {
         )!!
         saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
-            CrashHandler.getInstance().init()
+            CrashHandler.instance.init()
         }
         locale = LanguageUtil.getLocale() // System locale
         language = pre.getString("language", "-1")?.toIntOrNull()

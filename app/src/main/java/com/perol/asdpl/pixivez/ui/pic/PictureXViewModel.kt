@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.ui.pic
 
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -35,6 +34,7 @@ import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
 import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -95,12 +95,12 @@ class PictureXViewModel : BaseViewModel() {
         }, { response ->
             val inputStream = response.byteStream()
             val output = file.outputStream()
-            Log.d("GIF", "----------")
+            CrashHandler.instance.d("GIF", "----------")
             val totalLen = response.contentLength()
             var bytesCopied: Long = 0
             val buffer = ByteArray(8 * 1024)
             var bytes = inputStream.read(buffer)
-            Log.d("GIF", Thread.currentThread().toString())
+            CrashHandler.instance.d("GIF", Thread.currentThread().toString())
             while (bytes >= 0) {
                 output.write(buffer, 0, bytes)
                 bytesCopied += bytes
@@ -111,17 +111,17 @@ class PictureXViewModel : BaseViewModel() {
             }
             inputStream.close()
             output.close()
-            Log.d("GIF", "++++${progress.value}++++")
+            CrashHandler.instance.d("GIF", "++++${progress.value}++++")
             ZipFile(file).extractAll(
                 PxEZApp.instance.cacheDir.path + File.separatorChar + illustDetail.value!!.id
             )
             launchUI {
                 downloadGifSuccess.value = true
             }
-            Log.d("GIF", "wwwwwwwwwwwwwwwwwwwwww")
+            CrashHandler.instance.d("GIF", "wwwwwwwwwwwwwwwwwwwwww")
         }, {
             it.printStackTrace()
-            Log.d("GIF", "xxxxxxxxxxxxxxxxxxxxxx")
+            CrashHandler.instance.d("GIF", "xxxxxxxxxxxxxxxxxxxxxx")
             throw it
         }, contextOnSuccess = Dispatchers.IO)
     }

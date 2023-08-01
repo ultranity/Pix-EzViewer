@@ -5,15 +5,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mikepenz.fastadapter.GenericItem
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
 
-abstract class BaseVBDialogFragment<VB : ViewBinding> : DialogFragment() {
+abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     open val TAG: String = this::class.java.simpleName
     private var _binding: VB? = null
     private val handler by lazy { Handler(Looper.getMainLooper()) }
@@ -44,8 +47,19 @@ abstract class BaseVBDialogFragment<VB : ViewBinding> : DialogFragment() {
         onCreateDialogBinding(builder)
         return builder.create()
     }
+}
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(data: List<T>): MaterialAlertDialogBuilder {
+    val recyclerView = RecyclerView(context)
+    val params = RecyclerView.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    recyclerView.layoutParams = params
+    setView(recyclerView)
+    recyclerView.linear()
+        .setup {
+            BaseItemAdapter<T>().setList(data)
+        }
+    return this
 }

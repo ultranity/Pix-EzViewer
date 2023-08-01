@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
-@file:Suppress("UnstableApiUsage")
 
 import java.io.FileInputStream
 import java.util.Properties
@@ -252,7 +251,16 @@ dependencies {
 
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
     implementation(libs.brvah)
-    implementation(libs.brv)
+    //implementation(libs.brv)
+    implementation(libs.fastadapter)
+    implementation(libs.fastadapter.extensions.binding)// view binding helpers
+    implementation(libs.fastadapter.extensions.diff)// diff util helpers
+    implementation(libs.fastadapter.extensions.drag)// drag support
+    implementation(libs.fastadapter.extensions.paged)// paging support
+    implementation(libs.fastadapter.extensions.scroll)// scroll helpers
+    implementation(libs.fastadapter.extensions.swipe)// swipe support
+    //implementation(libs.fastadapter.extensions.ui)// pre-defined ui components
+    implementation(libs.fastadapter.extensions.utils)// needs the `expandable`, `drag` and `scroll` extension.
 
     /*val ViewBindingKTX = "2.1.0"
     run{

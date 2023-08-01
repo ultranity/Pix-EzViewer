@@ -56,7 +56,7 @@ class HistoryFragment : Fragment() {
         }
         historyAdapter.setOnItemLongClickListener { _, _, i ->
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.history_delete_confirm_title))
+                .setTitle(R.string.history_delete_confirm_title)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     historyMViewModel.deleteSelect(i)
                     historyAdapter.notifyItemRemoved(i)

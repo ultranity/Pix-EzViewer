@@ -32,7 +32,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -44,6 +43,7 @@ import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
@@ -52,16 +52,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.*
+import okhttp3.Dns
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import java.io.File
-import java.io.IOException
 import java.net.InetAddress
-import java.util.*
+import java.util.Date
 
 class SaucenaoActivity : RinkActivity() {
 
@@ -78,25 +80,23 @@ class SaucenaoActivity : RinkActivity() {
             )
             startActivityForResult(intent, IMAGE)
         }
-        val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-            override fun log(message: String) {
-                Log.d("aaa", "a:$message")
-            }
-        })
+        val httpLoggingInterceptor = HttpLoggingInterceptor { message ->
+            CrashHandler.instance.d(
+                "aaa",
+                "a:$message"
+            )
+        }
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val builder1 = OkHttpClient.Builder()
-        builder1.addInterceptor(object : Interceptor {
-            @Throws(IOException::class)
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("User-Agent", RestClient.UA)
-                    .addHeader("referer", "https://app-api.pixiv.net/")
-                val request = requestBuilder.build()
-                return chain.proceed(request)
-            }
+        builder1.addInterceptor(Interceptor { chain ->
+            val original = chain.request()
+            val requestBuilder = original.newBuilder()
+                .header("User-Agent", RestClient.UA)
+                .addHeader("referer", "https://app-api.pixiv.net/")
+            val request = requestBuilder.build()
+            chain.proceed(request)
         }).addInterceptor(httpLoggingInterceptor).dns(object : Dns {
             override fun lookup(hostname: String): List<InetAddress> {
                 val list = ArrayList<InetAddress>()
@@ -162,7 +162,7 @@ class SaucenaoActivity : RinkActivity() {
                                 }
 
                             })
-                            Log.d("bitmap", "large file")
+                            CrashHandler.instance.d("bitmap", "large file")
                         } else*/
                         builder.addFormDataPart(
                             "file",
@@ -197,8 +197,7 @@ class SaucenaoActivity : RinkActivity() {
 
     lateinit var api: SaucenaoService
     private fun trySearch(path: String) {
-        Toasty.success(this, getString(R.string.saucenao_compress_success), Toast.LENGTH_SHORT)
-            .show()
+        Toasty.success(this, R.string.saucenao_compress_success).show()
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -207,7 +206,7 @@ class SaucenaoActivity : RinkActivity() {
         lifecycleScope.launchCatching({
             api.search(builder.build().part(0))
         }, {
-            Toasty.success(this, getString(R.string.saucenao_upload_success), Toast.LENGTH_SHORT).show()
+            Toasty.success(this, R.string.saucenao_upload_success).show()
             tryToParseHtml(it.string())
         },
         {
@@ -222,7 +221,7 @@ class SaucenaoActivity : RinkActivity() {
             val el = doc.select("a[href]")
             for (i in el.indices) {
                 val url = el[i].attr("href")
-                Log.d("w", url)
+                CrashHandler.instance.d("w", url)
                 if (url.startsWith("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=")) {
                     val id = url.replace(
                         "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",

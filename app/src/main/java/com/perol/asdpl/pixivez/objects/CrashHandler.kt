@@ -27,11 +27,13 @@ package com.perol.asdpl.pixivez.objects
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.os.Looper
 import android.os.Process
 import android.util.Log
 import android.view.Gravity
 import android.view.InflateException
+import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.services.PxEZApp
 import java.io.File
 import java.io.FilenameFilter
@@ -44,6 +46,7 @@ import java.util.Locale
 import java.util.Properties
 import java.util.TimeZone
 import java.util.TreeSet
+import kotlin.system.exitProcess
 
 /** @noinspection BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext, BlockingMethodInNonBlockingContext
  */
@@ -59,8 +62,6 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
          * 在Release状态下关闭以提示程序性能
          */
         const val DEBUG = true
-        private const val VERSION_NAME = "versionName"
-        private const val VERSION_CODE = "versionCode"
         private const val STACK_TRACE = "STACK_TRACE"
 
         /**
@@ -74,13 +75,21 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
          */
         @SuppressLint("StaticFieldLeak")
         @Volatile
-        private var instance: CrashHandler? = null
-
-        fun getInstance():CrashHandler =
-            instance ?: synchronized(this) {
-                instance ?: CrashHandler().also { instance = it }
+        private var _instance: CrashHandler? = null
+        val instance: CrashHandler
+            get() = _instance ?: synchronized(this) {
+                _instance ?: CrashHandler().also { _instance = it }
             }
     }
+
+    var logs: MutableList<LogItem> = mutableListOf()
+
+    class LogItem(val tag: String, val msg: String, val tr: Throwable?) {
+        override fun toString(): String {
+            return "$tag: $msg\n${tr?.stackTraceToString()}"
+        }
+    }
+
     /**
      * 系统默认的UncaughtException处理类
      */
@@ -99,10 +108,35 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      *
      * @param ctx Context
      */
-    fun init(ctx: Context?=null) {
+    fun init(ctx: Context? = null) {
         ctx?.let { mContext = ctx }
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler(this)
+    }
+
+    val LOG_ID_MAIN = 0
+    val LOG_ID_RADIO = 1
+    val LOG_ID_EVENTS = 2
+    val LOG_ID_SYSTEM = 3
+    val LOG_ID_CRASH = 4
+    fun i(tag: String, msg: String, tr: Throwable? = null) {
+        if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
+        Log.i(tag, msg, tr)
+    }
+
+    fun d(tag: String, msg: String, tr: Throwable? = null) {
+        if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
+        Log.d(tag, msg, tr)
+    }
+
+    fun w(tag: String, msg: String, tr: Throwable? = null) {
+        if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
+        Log.w(tag, msg, tr)
+    }
+
+    fun e(tag: String, msg: String, tr: Throwable? = null) {
+        if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
+        Log.e(tag, msg, tr)
     }
 
     /**
@@ -120,7 +154,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
                 Log.e(TAG, "Error : ", e)
             }
             Process.killProcess(Process.myPid())
-            System.exit(10)
+            exitProcess(10)
         }
     }
 
@@ -155,7 +189,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             Looper.loop()
         }.start()
         //收集设备信息
-        collectCrashDeviceInfo(mContext)
+        //collectCrashDeviceInfo(mContext)
         //保存错误报告文件
         saveCrashInfoToFile(ex)
         //发送错误报告到服务器
@@ -230,7 +264,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             val time = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.ROOT).format(t)
 
             val fileName = "crash-${time}$CRASH_REPORTER_EXTENSION"
-            val trace = mContext!!.openFileOutput(
+            val trace = mContext.openFileOutput(
                 fileName,
                 Context.MODE_PRIVATE
             )
@@ -247,7 +281,8 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      *
      * @param ctx Context
      */
-    fun collectCrashDeviceInfo(ctx: Context?) {
+    fun collectCrashDeviceInfo(ctx: Context?): String {
+        return EasyFormatter.DEFAULT.format(Build())
 //        try {
 //            PackageManager pm = ctx.getPackageManager();
 //            PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(),

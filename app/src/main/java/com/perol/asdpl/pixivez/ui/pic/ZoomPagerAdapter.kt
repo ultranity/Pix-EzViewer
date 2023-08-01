@@ -154,7 +154,7 @@ class ZoomPagerAdapter(
                                 resource: File,
                                 transition: Transition<in File>?
                             ) {
-                                // Log.d("origin","load preview")
+                                //CrashHandler.instance.d("origin","load preview")
                                 binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                                 resourceFile = resource
                             }
@@ -165,7 +165,7 @@ class ZoomPagerAdapter(
                 }
 
                 override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    // Log.d("origin","from cache")
+                    //CrashHandler.instance.d("origin","from cache")
                     // buttonOrigin.visibility =View.GONE
                     binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
@@ -187,7 +187,7 @@ class ZoomPagerAdapter(
                     binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
                     resourceFile = resource
                     binding.progressbarOrigin.visibility = View.GONE
-                    // Log.d("origin","load from net")
+                    //CrashHandler.instance.d("origin","load from net")
                     ProgressInterceptor.removeListener(origin!![position])
                 }
             })

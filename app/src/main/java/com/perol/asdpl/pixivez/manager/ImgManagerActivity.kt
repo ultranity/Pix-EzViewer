@@ -114,9 +114,6 @@ class ImgManagerActivity : RinkActivity() {
         }
     }
 
-    fun loadData() {
-    }
-
     private fun reset() {
         getInfo = false
         Glide.with(this).load(R.drawable.ic_action_search).thumbnail(0.5f).into(binding.fabStart)

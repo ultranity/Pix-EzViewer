@@ -32,14 +32,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.objects.FastKVUtil
 import com.perol.asdpl.pixivez.objects.FileInfo
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
-import com.tencent.mmkv.MMKV
+import io.fastkv.FastKV
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import java.io.File
+
 
 class RenameTask(fileInfo: FileInfo) {
     val file: FileInfo = fileInfo
@@ -70,23 +72,23 @@ class ImgManagerViewModel : BaseViewModel() {
                 }
             return@map it
         }.collect()*/
-        val kv = MMKV.defaultMMKV(MMKV.MULTI_PROCESS_MODE, null)
+        val kv = FastKVUtil.Default
         val taskmap = HashMap<Long, RenameTask>()
         task?.filter {
             (!length_filter || it.file.name.length < 50) && it.pid != null
         }?.forEach {
                 taskmap[it.pid!!] = it
-                if (kv.containsKey(it.pid.toString())) {
-                    kv.decodeSerializable<Illust>(it.pid.toString())
-                } else {
-                    try {
-                         retrofit.api.getIllust(it.pid).let {
-                            kv.encode(it.illust.id.toString(), it.illust)
-                            it.illust
-                        }
-                    }catch (e:Exception){
-                        Log.e("imgMgr", "getIllust ${it.pid} : ${e.message} ")
-                        null
+            if (kv.contains(it.pid.toString())) {
+                kv.decodeSerializable<Illust>(it.pid.toString())
+            } else {
+                try {
+                    retrofit.api.getIllust(it.pid).let {
+                        kv.encode(it.illust.id.toString(), it.illust)
+                        it.illust
+                    }
+                } catch (e: Exception) {
+                    Log.e("imgMgr", "getIllust ${it.pid} : ${e.message} ")
+                    null
                     }
             }?.let{ rt ->
                     //CrashHandler.instance.d("imgMgr","get"+this+"p"+it.part)
@@ -157,8 +159,8 @@ class ImgManagerViewModel : BaseViewModel() {
     }
 }
 
-private inline fun <reified T : Any> MMKV.encode(key: String, target: T?) =
-    encode(key, gson.encodeToString(target))
+private inline fun <reified T : Any> FastKV.encode(key: String, target: T?) =
+    putString(key, gson.encodeToString(target))
 
-private inline fun <reified T : Any> MMKV.decodeSerializable(key: String): T? =
-    decodeString(key)?.let { gson.decodeFromString<T>(it) }
+private inline fun <reified T : Any> FastKV.decodeSerializable(key: String): T? =
+    getString(key)?.let { gson.decodeFromString<T>(it) }

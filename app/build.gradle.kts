@@ -304,7 +304,8 @@ dependencies {
     //implementation("org.greenrobot:eventbus:3.3.1") replace with kotlin flow
 
     //implementation("com.esotericsoftware.kryo:kryo:2.24.0")
-    implementation(libs.mmkv.static)
+    //implementation(libs.mmkv.static)
+    implementation(libs.fastkv.java)
     implementation(libs.roaringBitmap)
 
     //implementation("com.just.agentweb:agentweb:4.1.4")

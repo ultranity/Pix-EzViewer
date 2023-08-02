@@ -42,12 +42,14 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.FastKVLogger
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.tencent.mmkv.MMKV
+import io.fastkv.FastKVConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -145,14 +147,10 @@ class PxEZApp : Application() {
             }
         }
         //initBugly(this)
-        if (pre.getBoolean("infoCache", true)) {
-            MMKV.initialize(this)
-        }
+        FastKVConfig.setLogger(FastKVLogger())
+        FastKVConfig.setExecutor(Dispatchers.Default.asExecutor())
         AppCompatDelegate.setDefaultNightMode(
-            pre.getString(
-                "dark_mode",
-                "-1"
-            )!!.toInt()
+            pre.getString("dark_mode", "-1")!!.toInt()
         )
         animationEnable = pre.getBoolean("animation", false)
         ShowDownloadToast = pre.getBoolean("ShowDownloadToast", true)
@@ -257,11 +255,9 @@ class PxEZApp : Application() {
         @JvmStatic
         var CollectMode: Int = 0
 
-        lateinit var instance: PxEZApp
-
         @JvmStatic
         var TagSeparator: String = "#"
 
-        private const val TAG = "PxEZApp"
+        lateinit var instance: PxEZApp
     }
 }

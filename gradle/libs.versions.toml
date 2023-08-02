@@ -2,6 +2,7 @@
 agp = "8.1.0"
 brv = "1.4.3"
 fastadapter = "5.7.0"
+fastkvJava = "1.2.2"
 kotlin = "1.9.0"
 aboutlibraries = "10.8.3"
 androidndkgif = "0.3.3"
@@ -92,6 +93,7 @@ fastadapter-extensions-ui = { module = "com.mikepenz:fastadapter-extensions-ui",
 fastadapter-extensions-swipe = { module = "com.mikepenz:fastadapter-extensions-swipe", version.ref = "fastadapter" }
 fastadapter-extensions-scroll = { module = "com.mikepenz:fastadapter-extensions-scroll", version.ref = "fastadapter" }
 fastadapter-extensions-paged = { module = "com.mikepenz:fastadapter-extensions-paged", version.ref = "fastadapter" }
+fastkv-java = { module = "io.github.billywei01:fastkv-java", version.ref = "fastkvJava" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 flowlayout-lib = { group = "com.hyman", name = "flowlayout-lib", version.ref = "flowlayoutLib" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }

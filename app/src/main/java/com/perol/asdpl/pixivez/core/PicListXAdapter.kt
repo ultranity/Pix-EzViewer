@@ -63,7 +63,7 @@ class Payload(
 open class PicListXAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    filter: PicListFilter
+    filter: PicsFilter
 ) :
     PicListAdapter(layoutResId, data, filter) {
 

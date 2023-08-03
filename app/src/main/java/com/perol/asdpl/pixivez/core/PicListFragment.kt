@@ -78,6 +78,7 @@ open class PicListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.setonLoadFirstRx(TAG, extraArgs)
+        filterModel.TAG = TAG
     }
 
     var isLoaded = false
@@ -127,9 +128,8 @@ open class PicListFragment : Fragment() {
             TAG_TYPE.Rank.name -> {
                 requireParentFragment()//requireActivity()
             }
-            else -> {
-                this
-            }
+
+            else -> this
         }
     }
 
@@ -140,15 +140,16 @@ open class PicListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //viewModel.filterModel = filterModel
+        filterModel.init(TAG)
         configAdapter(false)
 
-        viewModel.filterModel = filterModel
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.setNewInstance(onDataLoadedListener(it))
+                picListAdapter.initData(onDataLoadedListener(it))
                 binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
             } else {
                 picListAdapter.loadMoreFail()
@@ -184,7 +185,6 @@ open class PicListFragment : Fragment() {
             }
         }
         filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
-        filterModel.applyConfig()
         headerBinding.imgBtnConfig.setOnClickListener {
             //TODO: support other layoutManager
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager

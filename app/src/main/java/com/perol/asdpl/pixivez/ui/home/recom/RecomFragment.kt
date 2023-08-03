@@ -44,15 +44,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.factory.sharedViewModel
-import com.perol.asdpl.pixivez.core.PicListFilter
 import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.PicListViewModel
 import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.objects.screenWidthPx
-import com.perol.asdpl.pixivez.services.Event
-import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
@@ -110,11 +107,6 @@ class RecomFragment : PicListFragment() {
                 }
             }
         }
-
-        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
-            filter.blockTags = it.blockTags
-            picListAdapter.notifyFilterChanged()
-        }
     }
 
     private val pixivisionModel: PixivisionModel by sharedViewModel("pixivision")
@@ -127,7 +119,6 @@ class RecomFragment : PicListFragment() {
     private lateinit var headerLogo: View
     private lateinit var spotlightView: RecyclerView
     private lateinit var pixiVisionAdapter: PixiVisionAdapter
-    private lateinit var filter: PicListFilter
     override fun configByTAG() {
         headerBinding.imgBtnR.apply {
             setText(R.string.newwork)

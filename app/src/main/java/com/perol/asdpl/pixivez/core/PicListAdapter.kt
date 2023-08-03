@@ -45,26 +45,46 @@ import kotlin.math.min
 //TODO: fling optimize
 abstract class PicListAdapter(
     layoutResId: Int,
-    data: MutableList<Illust>?,
-    val filter: PicListFilter
+    var mData: MutableList<Illust>?,
+    val filter: PicsFilter
 ) :
-    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
+    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, null) {
 
     var colorPrimary: Int = R.color.colorPrimary
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
-    var hidedFlag = BitSet(data?.size ?: 128) //TODO:consider RoaringBitmap
-    var blockedFlag = BitSet(data?.size ?: 128)
-    var selectedFlag = BitSet(data?.size ?: 128)
-    val filtered = BitSet(data?.size ?: 128)
+
+    //TODO:consider RoaringBitmap
+    var blockedFlag = BitSet(mData?.size ?: 128)
+    var selectedFlag = BitSet(mData?.size ?: 128)
+    val filtered = BitSet(mData?.size ?: 128)
     private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
-    val mBoundViewHolders: Set<BaseViewHolder> = Collections.newSetFromMap(_mBoundViewHolders)
+    private val mBoundViewHolders: Set<BaseViewHolder> =
+        Collections.newSetFromMap(_mBoundViewHolders)
+    private val mBoundPosition = kotlin.Pair(0, 0)
+    fun initData(initData: MutableList<Illust>?) {
+        mData = initData
+        resetFilterFlag()
+        notifyFilterChanged()
+    }
+
     fun resetFilterFlag() {
         filtered.clear()
-        hidedFlag.clear()
         blockedFlag.clear()
+        //CoroutineScope(Dispatchers.IO).launch {
+        mData?.apply {
+            chunked(32).forEach {
+                val l = it.filterIndexed { i, illust ->
+                    filtered.set(i)
+                    val needHide = filter.needHide(illust)
+                    !needHide
+                }
+                addData(l)
+            }
+        }
+        //}
     }
 
     //fun notifyAllChanged() {
@@ -208,25 +228,10 @@ abstract class PicListAdapter(
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         val pos = holder.bindingAdapterPosition - headerLayoutCount
-        if (filtered[pos]) {
-            if (hidedFlag[pos]) {
-                hideItemView(holder)
-                return
-            }
-        } else {
-            filtered.set(pos)
-            var needHide = filter.needHide(item)
-            if (!needHide) {
-                if (filter.showBlocked)
-                    blockedFlag[pos] = filter.needBlock(item)
-                else
-                    needHide = filter.needBlock(item)
-            }
-            if (needHide) { //(mFilterList[pos]){//
-                hideItemView(holder)
-                hidedFlag.set(pos)
-                return
-            }
+        blockedFlag[pos] = filter.needBlock(item)
+        if (filter.showBlocked and blockedFlag[pos]) {
+            hideItemView(holder)
+            return
         }
         showItemView(holder.itemView)
         // if (!context.resources.configuration.orientation==ORIENTATION_LANDSCAPE)
@@ -258,7 +263,7 @@ abstract class PicListAdapter(
             return
         }
         // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-        if (!filter.R18on && item.x_restrict == 1) {
+        if (filter.blockSanity(item)) {
             Glide.with(context)
                 .load(R.drawable.h).transition(withCrossFade())
                 .placeholder(R.drawable.h)
@@ -316,7 +321,19 @@ abstract class PicListAdapter(
 
     //TODO: ?????
     override fun addData(newData: Collection<Illust>) {
-        super.addData(newData)
+        mData?.addAll(newData)
+        val filtered = newData.filterIndexed { i, illust ->
+            filtered.set(i)
+            !filter.needHide(illust)
+        }
+        this.data.addAll(filtered)
+        if (recyclerView.layoutManager?.isAttachedToWindow == true) {
+            notifyItemRangeInserted(
+                this.data.size - filtered.size + headerLayoutCount,
+                filtered.size
+            )
+            compatibilityDataSizeChanged(newData.size)
+        }
         DataHolder.picPagerAdapter?.notifyDataSetChanged().also {
             DataHolder.picPagerAdapter = null
         }

@@ -103,7 +103,7 @@ class ArgumentProperty<T>(private val defaultValue: T? = null) :
 }
 open class PicListViewModel : BaseViewModel() {
     private var TAG: String = javaClass.simpleName
-    lateinit var filterModel: FilterViewModel
+    //lateinit var filterModel: FilterViewModel
     val data = MutableLiveData<MutableList<Illust>?>()
     val dataAdded = MutableLiveData<MutableList<Illust>?>()
     val nextUrl = MutableLiveData<String?>()

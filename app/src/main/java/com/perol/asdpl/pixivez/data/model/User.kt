@@ -40,7 +40,7 @@ data class User(
     var account: String,
     var profile_image_urls: ProfileImageUrls,
     var comment: String = "",
-    var is_followed: Boolean,
+    var is_followed: Boolean = false,
     var is_access_blocking_user: Boolean = false,
 ) {
     fun copyFrom(src: User) {

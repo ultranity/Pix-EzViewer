@@ -31,7 +31,7 @@ import java.util.BitSet
 class DownPicListAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    filter: PicListFilter
+    filter: PicsFilter
 ) :
     PicListXAdapter(layoutResId, data, filter) {
 
@@ -80,7 +80,6 @@ class SelectDownloadFragment : PicListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         filterModel.modeCollect = true
         super.onViewCreated(view, savedInstanceState)
-        //picListAdapter.setList(allData)
         binding.swipeRefreshLayout.isEnabled = false
     }
 
@@ -118,10 +117,8 @@ class SelectDownloadFragment : PicListFragment() {
         super.configAdapter(renew)
         if (::selectedFlag.isInitialized) {
             picListAdapter.selectedFlag = selectedFlag
-            picListAdapter.hidedFlag = hidedFlag
         } else {
             selectedFlag = picListAdapter.selectedFlag
-            hidedFlag = picListAdapter.hidedFlag
         }
         val touchListener = DragSelectTouchListener.create(requireContext(), receiver) {
             // hotspotHeight = resources.getDimensionPixelSize(R.dimen.default_56dp)

@@ -41,7 +41,7 @@ import com.perol.asdpl.pixivez.services.Works
 open class PicListBtnAdapter(
     layoutResId: Int,
     data: MutableList<Illust>?,
-    filter: PicListFilter
+    filter: PicsFilter
 ) :
     PicListAdapter(layoutResId, data, filter) {
 

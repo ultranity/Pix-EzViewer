@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.base.KotlinUtil.times
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.KVData
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlin.reflect.KMutableProperty0
 
@@ -51,51 +52,68 @@ enum class ADAPTER_TYPE {
     PIC_USER_BTN,
 }
 
-data class PicListFilter(
-    var R18on: Boolean = false,
-    var blockTags: List<String>? = null,
-    var blockUser: List<Long>? = null,
-    var max_sanity: Int = 8,
+//PicListFilterKV(TAG)
 
-    var minLike: Int = 0,
-    var minViewed: Int = 0,
-    var minLikeRate: Float = 0f,
+open class PicListFilterKV(tag: String) : KVData(tag) {
+    init {
+        kv.disableAutoCommit()
+    }
 
-    var showBlocked: Boolean = false,
+    fun applyConfig() {
+        kv.commit()
+    }
 
-    var showBookmarked: Boolean = true,
-    var showNotBookmarked: Boolean = true,
-    var showDownloaded: Boolean = true,
-    var showNotDownloaded: Boolean = true,
+    var R18on by boolean("R18on", false)
+    var max_sanity by int("max_sanity", 8)
 
-    var showIllust: Boolean = true,
-    var showManga: Boolean = true,
-    var showUgoira: Boolean = true,
+    var minLike by int("minLike", 0)
+    var minViewed by int("minViewed", 0)
+    var minLikeRate by int("minLikeRate", 0)
 
-    var showFollowed: Boolean = true,
-    var showNotFollowed: Boolean = true,
+    var showBlocked by boolean("showBlocked", false)
 
-    var showAINone: Boolean = true,
-    var showAIHalf: Boolean = true,
-    var showAIFull: Boolean = true,
+    var showBookmarked by boolean("showBookmarked", true)
+    var showNotBookmarked by boolean("showNotBookmarked", true)
+    var showDownloaded by boolean("showDownloaded", true)
+    var showNotDownloaded by boolean("showNotDownloaded", true)
 
-    var showPrivate: Boolean = true,
-    var showPublic: Boolean = true,
+    var showIllust by boolean("showIllust", true)
+    var showManga by boolean("showManga", true)
+    var showUgoira by boolean("showUgoira", true)
 
-    var startTime: Long = 0,
-    var endTime: Long = Long.MAX_VALUE,
+    var showFollowed by boolean("showFollowed", true)
+    var showNotFollowed by boolean("showNotFollowed", true)
 
-    var sortTime: Boolean = false,
-    var sortLike: Boolean = false,
-    var sortLikeRate: Boolean = false,
-) {
+    var showAINone by boolean("showAINone", true)
+    var showAIHalf by boolean("showAIHalf", true)
+    var showAIFull by boolean("showAIFull", true)
+
+    var showPrivate by boolean("showPrivate", true)
+    var showPublic by boolean("showPublic", true)
+
+    var startTime by long("startTime", 0)
+    var endTime by long("endTime", Long.MAX_VALUE)
+
+    var sortTime by boolean("sortTime", false)
+    var sortLike by boolean("sortLike", false)
+    var sortLikeRate by boolean("sortLikeRate", false)
+}
+
+fun checkTrilean(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean {
+    //(!showBookmarked && item.is_bookmarked) || (!showNotBookmarked && !item.is_bookmarked)
+    return (!(showTrue and showFalse)) && (showTrue xor bool)
+}
+
+class PicsFilter(tag: String) : PicListFilterKV(tag) {
+    var blockTags: List<String>? = null
+    var blockUser: List<Long>? = null
     fun needHide(item: Illust): Boolean =
-        (!showBookmarked && item.is_bookmarked) || (!showNotBookmarked && !item.is_bookmarked) ||
-        (!showFollowed && item.user.is_followed) || (!showNotFollowed && !item.user.is_followed) ||
-        (!showDownloaded && FileUtil.isDownloaded(item)) || (!showNotDownloaded && !FileUtil.isDownloaded(item))||
-        (!showAINone && item.illust_ai_type==0) || (!showAIHalf && item.illust_ai_type==1) ||(!showAIFull && item.illust_ai_type==2) ||
-        (!showIllust && (item.type == "illust")) || (!showManga && (item.type == "manga")) || (!showUgoira && (item.type == "ugoira"))
-        //|| (minLike > item.total_bookmarks) || (minViewed > item.total_view) || (minLikeRate*item.total_view> item.total_bookmarks)
+        checkTrilean(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
+                checkTrilean(showFollowed, showNotFollowed, item.user.is_followed) ||
+                checkTrilean(showDownloaded, showNotDownloaded, FileUtil.isDownloaded(item)) ||
+                (!showAINone && item.illust_ai_type == 0) || (!showAIHalf && item.illust_ai_type == 1) || (!showAIFull && item.illust_ai_type == 2) ||
+                (!showIllust && (item.type == "illust")) || (!showManga && (item.type == "manga")) || (!showUgoira && (item.type == "ugoira"))
+    //|| (minLike > item.total_bookmarks) || (minViewed > item.total_view) || (minLikeRate*item.total_view> item.total_bookmarks)
 
     fun needBlock(item: Illust): Boolean {
         if (blockTags.isNullOrEmpty() and blockUser.isNullOrEmpty()) {
@@ -113,17 +131,23 @@ data class PicListFilter(
         return blockUser?.contains(item.user.id) == true
     }
 
-    fun applyConfig() {
-        //TODO: check
+    fun blockSanity(item: Illust): Boolean {
+        if ((max_sanity != 8) && (item.sanity_level > max_sanity)) {
+            return true
+        }
+        return !R18on && (item.x_restrict == 1)
     }
 }
+
 class FilterViewModel : ViewModel() {
     var TAG = "FilterViewModel"
     val spanNum = DMutableLiveData(2)
-    val filter = PicListFilter()
+    lateinit var filter: PicsFilter
     var adapterType = DMutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
     var modeCollect = false
-    init {
+    fun init(tag: String) {
+        TAG = tag
+        filter = PicsFilter(TAG)
         filter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
     }
 
@@ -211,9 +235,9 @@ fun showFilterDialog(
             val adapterVersion = ADAPTER_TYPE.values()[
                 dialog.showShowSave.isChecked * 2 + dialog.showShowUserImg.isChecked]
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
-                val data = picListAdapter.data
+                val data = picListAdapter.mData
                 configAdapter()
-                picListAdapter.setNewInstance(data)
+                picListAdapter.initData(data)
             } else {
                 //TODO: check //picListAdapter.notifyDataSetChanged()
             }

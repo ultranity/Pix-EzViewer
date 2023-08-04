@@ -63,7 +63,9 @@ abstract class PicListAdapter(
     private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
     private val mBoundViewHolders: Set<BaseViewHolder> =
         Collections.newSetFromMap(_mBoundViewHolders)
-    private val mBoundPosition = kotlin.Pair(0, 0)
+
+    //private val mBoundPosition = HashSet<Int>()
+    private val mVisiblePosition = HashSet<Int>()
     fun initData(initData: MutableList<Illust>?) {
         mData = initData
         resetFilterFlag()
@@ -205,18 +207,21 @@ abstract class PicListAdapter(
         super.onBindViewHolder(holder, position)
         _mBoundViewHolders[holder] = false
         //println("onBindViewHolder $holder ${holder.bindingAdapterPosition}")
+        //mBoundPosition.add(holder.bindingAdapterPosition)
     }
 
     override fun onViewAttachedToWindow(holder: BaseViewHolder) {
         super.onViewAttachedToWindow(holder)
         //println("onViewAttachedToWindow $holder ${holder.bindingAdapterPosition}")
         _mBoundViewHolders[holder] = true
+        mVisiblePosition.add(holder.bindingAdapterPosition)
     }
 
     override fun onViewDetachedFromWindow(holder: BaseViewHolder) {
         super.onViewDetachedFromWindow(holder)
         //println("onViewDetachedFromWindow $holder ${holder.bindingAdapterPosition}")
         _mBoundViewHolders[holder] = false
+        mVisiblePosition.remove(holder.bindingAdapterPosition)
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {
@@ -224,6 +229,7 @@ abstract class PicListAdapter(
         super.onViewDetachedFromWindow(holder)
         _mBoundViewHolders.remove(holder)
         //println("onViewRecycled $holder ${holder.bindingAdapterPosition}")
+        //mBoundPosition.remove(holder.bindingAdapterPosition)
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {

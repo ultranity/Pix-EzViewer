@@ -29,16 +29,15 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.chrynan.parcelable.core.putParcelable
-import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.ActivityPictureBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlin.math.max
 
@@ -104,13 +103,11 @@ class PictureActivity : RinkActivity() {
         } else {
             binding.toolbar.visibility = View.GONE
         }
-        if (PxEZApp.instance.pre
-                .getBoolean("needstatusbar", false)
-        ) {
-            window.decorView.fitsSystemWindows = true
+        if (PxEZApp.instance.pre.getBoolean("needstatusbar", false)) {
+            binding.rootContainer.fitsSystemWindows = true
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            if (ThemeUtil.isDarkMode(this)) window.statusBarColor = Color.TRANSPARENT
         } else {
-            //WindowCompat.setDecorFitsSystemWindows(window, false)
             window.decorView.fitsSystemWindows = false
             //window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -168,17 +165,10 @@ class PictureActivity : RinkActivity() {
         supportPostponeEnterTransition()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_picture, menu)
-        return true // super.onCreateOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home ->
                 finishAfterTransition()
-
-            R.id.action_share -> share()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -186,16 +176,5 @@ class PictureActivity : RinkActivity() {
     override fun onDestroy() {
         DataHolder.picPagerAdapter = null
         super.onDestroy()
-    }
-
-    private fun share() {
-        val textIntent = Intent(Intent.ACTION_SEND)
-        // val illustId = illustIdList?.get(nowPosition)?: illustList?.get(nowPosition)?.id
-        textIntent.type = "text/plain"
-        textIntent.putExtra(
-            Intent.EXTRA_TEXT,
-            "https://www.pixiv.net/member_illust.php?illust_id=${illustIdList!![nowPosition]}&mode=medium"
-        )
-        startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
     }
 }

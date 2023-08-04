@@ -10,10 +10,4 @@
         android:title="@string/share"
         app:iconTint="?android:colorControlNormal"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_download"
-        android:title="Σ( ° △ °|||)︴"
-        android:icon="@drawable/ic_action_download"
-        app:iconTint="?android:colorControlNormal"
-        app:showAsAction="ifRoom" />
 </menu>

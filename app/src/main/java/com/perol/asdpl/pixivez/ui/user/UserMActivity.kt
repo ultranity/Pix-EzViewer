@@ -288,12 +288,6 @@ class UserMActivity : RinkActivity() {
         when (item.itemId) {
             android.R.id.home -> finishAfterTransition()
             R.id.action_share -> share()
-            R.id.action_download -> {
-//                val intent =Intent(this,WorkActivity::class.java)
-//                intent.putExtra("id",id)
-//                startActivity(intent)
-                // var curr = supportFragmentManager.fragments[binding.viewpager.currentItem]
-            }
         }
         return super.onOptionsItemSelected(item)
     }

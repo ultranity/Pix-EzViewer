@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.objects
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.util.TypedValue
@@ -270,6 +271,10 @@ object ThemeUtil {
             lifecycleOwner(themeFragment)
         }
     }
+
+    fun isDarkMode(context: Context) =
+        ((context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES)
 }
 
 class BackgroundGridItem(var color: Int, override val title: String, val isResID: Boolean = true) :

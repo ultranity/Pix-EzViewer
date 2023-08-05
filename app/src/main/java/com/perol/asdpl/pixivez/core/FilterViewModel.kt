@@ -28,6 +28,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Checkable
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
@@ -63,7 +64,6 @@ open class PicListFilterKV(tag: String) : KVData(tag) {
         kv.commit()
     }
 
-    var R18on by boolean("R18on", false)
     var max_sanity by int("max_sanity", 8)
 
     var minLike by int("minLike", 0)
@@ -108,7 +108,8 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
     var blockTags: List<String>? = null
     var blockUser: List<Long>? = null
     fun needHide(item: Illust): Boolean =
-        checkTrilean(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
+        checkTrilean(showPrivate, showPublic, item.x_restrict == 1) ||
+                checkTrilean(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
                 checkTrilean(showFollowed, showNotFollowed, item.user.is_followed) ||
                 checkTrilean(showDownloaded, showNotDownloaded, FileUtil.isDownloaded(item)) ||
                 (!showAINone && item.illust_ai_type == 0) || (!showAIHalf && item.illust_ai_type == 1) || (!showAIFull && item.illust_ai_type == 2) ||
@@ -132,10 +133,7 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
     }
 
     fun blockSanity(item: Illust): Boolean {
-        if ((max_sanity != 8) && (item.sanity_level > max_sanity)) {
-            return true
-        }
-        return !R18on && (item.x_restrict == 1)
+        return ((max_sanity != 8) && (item.sanity_level > max_sanity))
     }
 }
 
@@ -148,7 +146,8 @@ class FilterViewModel : ViewModel() {
     fun init(tag: String) {
         TAG = tag
         filter = PicsFilter(TAG)
-        filter.R18on = PxEZApp.instance.pre.getBoolean("r18on", false)
+        if (!PxEZApp.instance.pre.getBoolean("r18on", false))
+            filter.showPrivate = false
     }
 
     fun applyConfig() = filter.applyConfig()
@@ -188,9 +187,13 @@ fun showFilterDialog(
             toggleDownload.setOnClickListener {
                 showFilterDownloadDialog(context)
             }
+        if (PxEZApp.instance.pre.getBoolean("r18on", false)) {
+            dialog.toggleRestrict.visibility = View.VISIBLE
+        }
+        val filter = filterModel.filter
+        sliderSanity.value = filter.max_sanity.toFloat()
         sliderSpan.value = layoutManager.spanCount.toFloat()
         //filterModel.spanNum.value!!.toFloat()
-        val filter = filterModel.filter
         pairBtnFilter(showBlocked, filter::showBlocked)
 
         pairBtnFilter(showBookmarked, filter::showBookmarked)
@@ -227,6 +230,7 @@ fun showFilterDialog(
             propsMap.forEach {
                 it.second.set(it.first.isChecked)
             }
+            filterModel.filter.max_sanity = dialog.sliderSanity.value.toInt()
             filterModel.applyConfig()
             picListAdapter.resetFilterFlag()
             picListAdapter.notifyFilterChanged()

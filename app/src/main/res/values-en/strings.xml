@@ -303,4 +303,5 @@
     <string name="walk_through">Random</string>
     <string name="show_block">show filtered view</string>
     <string name="recommend">Recommend</string>
+    <string name="max_sanity">max sanity</string>
 </resources>

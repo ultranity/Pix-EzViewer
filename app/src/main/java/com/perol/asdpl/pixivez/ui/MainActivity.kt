@@ -48,8 +48,9 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -311,50 +312,55 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onResume() {
         super.onResume()
         //if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S)
-        this.window.decorView.post(Runnable {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            if (!clipboard.hasPrimaryClip()) {
-                return@Runnable
-            }
-            val clipData = clipboard.primaryClip
-            if (null != clipData && clipData.itemCount > 0) {
-                // for (item in 0 until clipData.itemCount){
-                //    val content = item.text.toString()
-                // }
-                // clipboard.addPrimaryClipChangedListener {
-                val text = clipData.getItemAt(0)?.text ?: return@Runnable
-                var item = Regex("""\d{7,9}""")
-                    .find(text)
-                    ?.value ?: Regex("""((画师)|(artist)|(by)|(twi(tter)?))([：:\s]*)(\S+)""")
-                    .find(text)?.groupValues?.last()?.trim()
-                ?: return@Runnable
+        if (PxEZApp.instance.pre.getBoolean("check_clipboard", false))
+            this.window.decorView.post(Runnable {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                if (!clipboard.hasPrimaryClip()) return@Runnable
+                val clipData = clipboard.primaryClip
+                if (null != clipData && clipData.itemCount > 0) {
+                    // for (item in 0 until clipData.itemCount){
+                    //    val content = item.text.toString()
+                    // }
+                    // clipboard.addPrimaryClipChangedListener {
+                    val text = clipData.getItemAt(0)?.text ?: return@Runnable
+                    var item = Regex("""\d{7,9}""")
+                        .find(text)
+                        ?.value ?: Regex(getString(R.string.check_clipboard_policy))
+                        .find(text)?.groupValues?.last()?.trim()
+                    ?: return@Runnable
 
-                val pre = PxEZApp.instance.pre
-                if (item == pre.getString("lastclip2", "")) {
-                    return@Runnable
-                }
-                MaterialDialog(this).show {
-                    title(R.string.clipboard_detected)
-                    message(R.string.jumpto)
-                    input(prefill = item, inputType = InputType.TYPE_CLASS_TEXT)
-                    positiveButton(android.R.string.ok) {
-                        item = getInputField().text.toString()
-                        pre.edit().putString("lastclip2", item).apply()
-                        if ((item).toLongOrNull() != null) {
-                            PictureActivity.start(this@MainActivity, item.toLong())
-                        } else {
-                            SearchResultActivity.start(this@MainActivity, item, 1)
+                    val pre = PxEZApp.instance.pre
+                    if (item == pre.getString("lastclip2", "")) {
+                        return@Runnable
+                    }
+                    MaterialDialog(this).show {
+                        title(R.string.clipboard_detected)
+                        message(R.string.jumpto)
+                        customView(com.afollestad.materialdialogs.input.R.layout.md_dialog_stub_input)
+
+                        val inp = getInputField()
+                        inp.inputType = InputType.TYPE_CLASS_TEXT
+                        inp.setText(item)
+
+                        positiveButton(android.R.string.ok) {
+                            item = getInputField().text.toString()
+                            if (item.isBlank()) {
+                                return@positiveButton
+                            }
+                            if ((item).toLongOrNull() != null) {
+                                PictureActivity.start(this@MainActivity, item.toLong())
+                            } else {
+                                SearchResultActivity.start(this@MainActivity, item, 1)
+                            }
+                        }
+                        negativeButton(android.R.string.cancel)
+                        onDismiss {
+                            pre.edit().putString("lastclip2", item).apply()
                         }
                     }
-                    neutralButton(R.string.not_this_one) {
-                        pre.edit().putString("lastclip2", item).apply()
-                    }
-                    negativeButton(android.R.string.cancel)
+                    // }
                 }
-
-                // }
-            }
-        })
+            })
     }
 
     private fun checkAndRequestPermissions(permissionList: ArrayList<String>) {

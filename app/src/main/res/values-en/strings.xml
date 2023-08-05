@@ -303,5 +303,9 @@
     <string name="walk_through">Random</string>
     <string name="show_block">show filtered view</string>
     <string name="recommend">Recommend</string>
+    <string name="harmonize_color">Harmonize Color</string>
+    <string name="harmonizeColorAPIAlert">Only for Android 11/R+ (API 30+)</string>
+    <string name="changeing_icon_tip">icon changed, waiting for launcher update</string>
     <string name="max_sanity">max sanity</string>
+    <string name="check_clipboard">check if clipboard contains pid</string>
 </resources>

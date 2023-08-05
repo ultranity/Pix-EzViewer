@@ -29,7 +29,7 @@
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="harmonizeColor"
-            android:title="@string/harmonize_olor" />
+            android:title="@string/harmonize_color" />
     </PreferenceCategory>
     <PreferenceCategory app:title="UI">
         <SwitchPreferenceCompat

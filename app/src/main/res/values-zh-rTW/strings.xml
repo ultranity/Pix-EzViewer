@@ -303,5 +303,6 @@
     <string name="walk_through">速覽漫步</string>
     <string name="show_block">顯示占位過濾結果</string>
     <string name="recommend">推薦</string>
-    <string name="max_sanity">max sanity</string>
+    <string name="max_sanity">San值保護</string>
+    <string name="check_clipboard">複製id監測</string>
 </resources>

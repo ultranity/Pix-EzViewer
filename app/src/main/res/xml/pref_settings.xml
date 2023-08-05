@@ -52,9 +52,9 @@
             app:key="CollectMode"
             android:entries="@array/CollectMode"
             android:entryValues="@array/CollectMode_value"
-            app:defaultValue= "0"
+            app:defaultValue="0"
             app:title="@string/collectmode"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="resume_unfinished_task"
@@ -62,9 +62,14 @@
             app:summaryOn="@string/resume_unfinished_task_on"
             app:title="@string/unfinished_task" />
         <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="check_clipboard"
+            app:summary="@string/check_clipboard_policy"
+            app:title="@string/check_clipboard" />
+        <SwitchPreferenceCompat
             app:key="ShowDownloadToast"
             app:defaultValue="true"
-            app:title="@string/show_download_toast"/>
+            app:title="@string/show_download_toast" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Selection">
         <Preference

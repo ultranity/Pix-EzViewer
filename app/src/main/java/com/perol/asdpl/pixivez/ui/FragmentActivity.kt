@@ -44,6 +44,15 @@ class FragmentActivity : RinkActivity() {
         fun start(
             context: Context,
             target: String,
+            titleResID: Int,
+            arguments: Bundle? = null
+        ) {
+            start(context, target, "$titleResID", arguments)
+        }
+
+        fun start(
+            context: Context,
+            target: String,
             title: String? = null,
             arguments: Bundle? = null
         ) {

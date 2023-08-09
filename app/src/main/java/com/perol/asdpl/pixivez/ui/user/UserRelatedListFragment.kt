@@ -52,13 +52,18 @@ import kotlinx.coroutines.launch
 class UserRelatedListFragment : Fragment() {
     companion object {
         fun start(context: Context, illustid: Long) {
-            FragmentActivity.start(context, "Users","", Bundle().apply {
+            FragmentActivity.start(context, "Users", R.string.bookmarked, Bundle().apply {
                 putLong("illustid", illustid)
             })
         }
 
         fun start(context: Context, userid: Long, get_following: Boolean?=null) {
-            FragmentActivity.start(context, "Users", "", Bundle().apply {
+            val title = when (get_following) {
+                true -> R.string.following
+                false -> R.string.followers
+                null -> R.string.related
+            }
+            FragmentActivity.start(context, "Users", title, Bundle().apply {
                 putLong("userid", userid)
                 if (get_following != null) {
                     putBoolean("get_following", get_following)

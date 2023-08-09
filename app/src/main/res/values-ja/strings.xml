@@ -188,7 +188,7 @@
     <string name="permission_denied">許可するために、独自のシステムを設定するために許可されていません</string>
     <string name="cache_clear_message">これは、すべてのキャッシュをきれいにします</string>
     <string name="ok">定めます</string>
-    <string name="history_delete_confirm_title">削除しますか？</string>
+    <string name="confirm_title">削除しますか？</string>
     <string name="wrong_id">間違ったID</string>
     <string name="error_unknown">その他のエラー、アクセスポイントの代わりのWAPのAPNネットは、ネットワークをチェックするかどうかのチェックが遮られていません</string>
     <string name="login_success">ログイン成功</string>

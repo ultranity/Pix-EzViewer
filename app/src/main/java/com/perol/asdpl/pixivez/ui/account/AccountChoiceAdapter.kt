@@ -24,45 +24,45 @@
 
 package com.perol.asdpl.pixivez.ui.account
 
-import android.view.ViewGroup
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.databinding.ViewAccountItemBinding
+import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
 import kotlinx.coroutines.runBlocking
 
 class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
     BaseQuickAdapter<UserEntity, BaseViewHolder>(layoutResId, data.toMutableList()) {
 
     override fun convert(holder: BaseViewHolder, item: UserEntity) {
-        val userImage = holder.getView<ImageView>(R.id.imageView4)
-        Glide.with(context).load(item.userimage).circleCrop().into(userImage)
-        holder.setImageResource(R.id.imageview_delete, R.drawable.ic_action_del)
-            .setText(R.id.textView4, item.username)
-            .setText(R.id.textview_email, item.useremail)
-        val delete = holder.getView<ImageView>(R.id.imageview_delete)
-        delete.setOnClickListener {
-            runBlocking {
-                AppDataRepo.deleteUser(item)
-                this@AccountChoiceAdapter.remove(item)
+        val it = holder.getBinding(ViewAccountItemBinding::bind)
+        Glide.with(context).load(item.userimage).circleCrop().into(it.imageviewUser)
+        it.textviewUser.text = item.username
+        it.textviewEmail.text = item.useremail
+        val isCurrent = holder.layoutPosition == AppDataRepo.pre.getInt("usernum", 0)
+        it.root.isClickable = !isCurrent
+        it.imageviewDelete.apply {
+            //isClickable = !isCurrent
+            setOnClickListener {
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.confirm_title)
+                    .setMessage(item.username)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runBlocking {
+                            AppDataRepo.deleteUser(item)
+                            this@AccountChoiceAdapter.remove(item)
+                        }
+                    }
             }
-        }
-        if (holder.layoutPosition == AppDataRepo.pre.getInt(
-                "usernum",
-                0
+            setImageResource(
+                if (isCurrent) R.drawable.ic_check_black_24dp
+                else R.drawable.ic_close_black_24dp
             )
-        ) {
-            (delete.parent as ViewGroup).isClickable = false
-            delete.isClickable = false
-            holder.setImageResource(R.id.imageview_delete, R.drawable.ic_check_black_24dp)
-        } else {
-            (delete.parent as ViewGroup).isClickable = true
-            delete.isClickable = true
-            holder.setImageResource(R.id.imageview_delete, R.drawable.ic_close_black_24dp)
+            //colorFilter = LightingColorFilter(Color.BLACK, Color.BLACK)
         }
-//        delete.colorFilter = LightingColorFilter(Color.BLACK, Color.BLACK)
     }
 }

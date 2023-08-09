@@ -188,7 +188,7 @@
     <string name="permission_denied">未獲得授權，請自行到系統設置進行授權</string>
     <string name="cache_clear_message">這將清理全部的緩存</string>
     <string name="ok">確定</string>
-    <string name="history_delete_confirm_title">刪除？</string>
+    <string name="confirm_title">刪除？</string>
     <string name="wrong_id">id錯誤</string>
     <string name="error_unknown">其他錯誤，檢查接入點APN是否為Net而不是Wap,檢查網絡是否通暢</string>
     <string name="login_success">登錄成功</string>

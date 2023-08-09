@@ -188,7 +188,7 @@
     <string name="permission_denied">Permission denied, please enable it in system settings</string>
     <string name="cache_clear_message">This will clear the cache.</string>
     <string name="ok">OK</string>
-    <string name="history_delete_confirm_title">Delete?</string>
+    <string name="confirm_title">Delete?</string>
     <string name="wrong_id">wrong id</string>
     <string name="error_unknown">Unknown error, please check your connection</string>
     <string name="login_success">Login successful</string>

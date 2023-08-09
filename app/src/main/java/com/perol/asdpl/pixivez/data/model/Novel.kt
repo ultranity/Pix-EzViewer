@@ -23,6 +23,7 @@ data class Novel(
     @SerialName("text_length")
     val text_length: Int,
     val user: User,
+    @Serializable(with = EmptyAsNullSeries::class)
     val series: Series?,
     @SerialName("total_view")
     val totalView: Int,

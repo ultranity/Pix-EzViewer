@@ -25,7 +25,9 @@
 
 package com.perol.asdpl.pixivez.data.model
 
+import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.nullable
 
 @Serializable
 class IllustNext(
@@ -85,7 +87,7 @@ enum class AIType {
 }
 
 @Serializable
-data class MetaPage(
+class MetaPage(
     val image_urls: ImageUrlsX
 )
 
@@ -95,7 +97,7 @@ data class MetaPage(
  * large : https://i.pximg.net/c/600x1200_90/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
  */
 @Serializable
-data class ImageUrlsX(
+class ImageUrlsX(
     val large: String,
     val medium: String,
     val original: String,
@@ -103,7 +105,7 @@ data class ImageUrlsX(
 )
 
 @Serializable
-data class ImageUrls(
+class ImageUrls(
     val large: String,
     val medium: String,
     val square_medium: String
@@ -113,7 +115,7 @@ data class ImageUrls(
  * original_image_url : https://i.pximg.net/img-original/img/2017/12/03/05/15/02/66137839_p0.png
  */
 @Serializable
-data class MetaSinglePage(
+class MetaSinglePage(
     val original_image_url: String?
 )
 
@@ -124,7 +126,10 @@ data class MetaSinglePage(
 }
  */
 @Serializable
-data class Series(
+class Series(
     val id: Int,
     val title: String
 )
+
+class EmptyAsNullSeries :
+    EmptyAsNullJsonTransformingSerializer<Series?>(Series.serializer().nullable)

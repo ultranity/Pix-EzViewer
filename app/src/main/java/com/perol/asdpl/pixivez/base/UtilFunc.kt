@@ -18,6 +18,17 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.internal.writeJson
+import kotlinx.serialization.json.jsonObject
 import org.roaringbitmap.RoaringBitmap
 import java.util.BitSet
 import java.util.IdentityHashMap
@@ -68,7 +79,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @since 1.5
  */
 object UtilFunc {
-    fun <T : Any?> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
+    fun <T> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
         // The collection to be used for contains(). Preference is given to
         // the collection who's contains() has lower O() complexity.
         var contains = c2
@@ -262,4 +273,31 @@ object KotlinUtil {
         observe(owner, wrappedObserver)
         return wrappedObserver
     }
+}
+
+//temp workaround until https://github.com/Kotlin/kotlinx.serialization/issues/1927 fixed
+open class EmptyAsNullJsonTransformingSerializer<T>(
+    private val tSerializer: KSerializer<T>
+) : KSerializer<T> {
+
+    override val descriptor: SerialDescriptor get() = tSerializer.descriptor
+
+    @OptIn(InternalSerializationApi::class)
+    final override fun serialize(encoder: Encoder, value: T) {
+        val output = encoder as JsonEncoder
+        var element = output.json.writeJson(value, tSerializer)
+        element = transformSerialize(element)
+        output.encodeJsonElement(element)
+    }
+
+    final override fun deserialize(decoder: Decoder): T {
+        val input = decoder as JsonDecoder
+        val element = input.decodeJsonElement()
+        return input.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
+    }
+
+    protected open fun transformDeserialize(element: JsonElement): JsonElement =
+        if (element.jsonObject.isEmpty()) JsonNull else element
+
+    protected open fun transformSerialize(element: JsonElement): JsonElement = element
 }

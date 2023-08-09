@@ -20,7 +20,8 @@
                 android:visibility="gone"
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="?android:attr/colorBackground" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint_layout_fold"

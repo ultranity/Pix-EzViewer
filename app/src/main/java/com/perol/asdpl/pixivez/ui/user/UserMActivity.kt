@@ -248,10 +248,12 @@ class UserMActivity : RinkActivity() {
                 }
             }.show()
         }
+        val defaultTablayoutColors = binding.tablayout.tabTextColors
         binding.appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener(140) {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 when (state) {
                     State.COLLAPSED -> {
+                        binding.tablayout.setTag(R.id.tag_first, binding.tablayout.tabTextColors)
                         binding.tablayout.setTabTextColors(
                             ThemeUtil.getTextColorPrimary(this@UserMActivity),
                             ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
@@ -260,10 +262,7 @@ class UserMActivity : RinkActivity() {
                     }
 
                     State.EXPANDED -> {
-                        binding.tablayout.setTabTextColors(
-                            ThemeUtil.getTextColorPrimary(this@UserMActivity),
-                            ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
-                        )
+                        binding.tablayout.tabTextColors = defaultTablayoutColors
                         binding.tablayout.translationX = 0f
                     }
 

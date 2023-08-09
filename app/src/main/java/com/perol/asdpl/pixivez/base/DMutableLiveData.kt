@@ -29,8 +29,8 @@ class DMutableLiveData<T>(val defaultValue: T) : MutableLiveData<T>() {
     }
 
     override fun setValue(value: T?) {
-        super.setValue(value)
         currentVersion++
+        super.setValue(value)
     }
 }
 

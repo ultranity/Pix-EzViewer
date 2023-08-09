@@ -481,7 +481,7 @@ class PictureXAdapter(
         val mainImage = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
         if (mContext.resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
             mainImage.maxHeight = screenHeightPx()
-            mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            //mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
         Glide.with(mContext).load(imageUrls[position])
             .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)

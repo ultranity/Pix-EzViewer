@@ -334,4 +334,5 @@
     <string name="max_sanity">SAN值保护</string>
     <string name="check_clipboard">剪贴板id检测</string>
     <string name="check_clipboard_policy" translatable="false">((pid)|(pixiv)|(画师)|(artist)|(by)|(twi(tter)?))([：:\\s]*)(\\S+)</string>
+    <string name="list_empty" translatable="false">空空如也~</string>
 </resources>

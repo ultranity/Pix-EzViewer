@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -77,14 +76,8 @@ abstract class PicListAdapter(
         blockedFlag.clear()
         //CoroutineScope(Dispatchers.IO).launch {
         mData?.apply {
-            chunked(32).forEach {
-                val l = it.filterIndexed { i, illust ->
-                    filtered.set(i)
-                    val needHide = filter.needHide(illust)
-                    !needHide
-                }
-                addData(l)
-            }
+            data.clear()
+            addData(this)
         }
         //}
     }
@@ -191,11 +184,17 @@ abstract class PicListAdapter(
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        addFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
+        //setFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
+        setEmptyView(R.layout.empty_list)
         setAnimationWithDefault(AnimationType.ScaleIn)
         animationEnable = PxEZApp.animationEnable
         //recyclerView.setItemViewCacheSize(12)
         loadMoreModule.preLoadNumber = 12
+        stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        isUseEmpty = true
+        headerWithEmptyEnable = true
+        footerWithEmptyEnable = true
+        //loadMoreModule.isEnableLoadMoreIfNotFullPage = false
         colorPrimary = ThemeUtil.getColorPrimary(context)
         colorPrimaryDark = ThemeUtil.getColorPrimaryDark(context)
         badgeTextColor = ThemeUtil.getColorHighlight(context)
@@ -327,24 +326,30 @@ abstract class PicListAdapter(
 
     //TODO: ?????
     override fun addData(newData: Collection<Illust>) {
-        mData?.addAll(newData)
-        val filtered = newData.filterIndexed { i, illust ->
-            filtered.set(i)
-            !filter.needHide(illust)
-        }
-        this.data.addAll(filtered)
+        throw NotImplementedError("not filtered")
+    }
+
+    fun addFilterData(newData: Collection<Illust>): Int {
+        if (newData != mData)
+            mData?.addAll(newData)
+        val newData = newData //chunked(32)
+            .filterIndexed { i, illust ->
+                filtered.set(i)
+                !filter.needHide(illust)
+            }
+        this.data.addAll(newData)
         if (recyclerView.layoutManager?.isAttachedToWindow == true) {
             notifyItemRangeInserted(
-                this.data.size - filtered.size + headerLayoutCount,
-                filtered.size
+                this.data.size - newData.size + headerLayoutCount,
+                newData.size
             )
             compatibilityDataSizeChanged(newData.size)
         }
         DataHolder.picPagerAdapter?.notifyDataSetChanged().also {
             DataHolder.picPagerAdapter = null
         }
+        return newData.size
     }
-
     fun getViewByAdapterPosition(position: Int, @IdRes viewId: Int): View? {
         return getViewByPosition(position + headerLayoutCount, viewId)
     }

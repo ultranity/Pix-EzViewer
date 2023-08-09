@@ -34,7 +34,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -142,8 +141,12 @@ open class PicListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //viewModel.filterModel = filterModel
         filterModel.init(TAG)
+        filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
+        binding.recyclerview.layoutManager = StaggeredGridLayoutManager(
+            filterModel.spanNum.value!!,
+            StaggeredGridLayoutManager.VERTICAL
+        )
         configAdapter(false)
-
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
         }
@@ -159,8 +162,11 @@ open class PicListFragment : Fragment() {
         }
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.addData(it)
+                val added = picListAdapter.addFilterData(it)
                 onDataAddedListener?.invoke()
+                if (added == 0) {
+                    //TODO: warn if filter risky!
+                }
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -184,7 +190,6 @@ open class PicListFragment : Fragment() {
                 picListAdapter.notifyFilterChanged()
             }
         }
-        filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
         headerBinding.imgBtnConfig.setOnClickListener {
             //TODO: support other layoutManager
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager
@@ -205,10 +210,6 @@ open class PicListFragment : Fragment() {
             }
         }
         configByTAG()
-        binding.recyclerview.layoutManager = StaggeredGridLayoutManager(
-            filterModel.spanNum.value!!,
-            StaggeredGridLayoutManager.VERTICAL
-        )
         //TODO: check 
         // binding.recyclerview.addItemDecoration(GridItemDecoration())
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -311,12 +312,7 @@ open class PicListFragment : Fragment() {
             }
         }
         picListAdapter = filterModel.getAdapter()
-        picListAdapter.apply {
-            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-            headerWithEmptyEnable = true
-            footerWithEmptyEnable = true
-            addHeaderView(headerBinding.root)
-        }
+        picListAdapter.addHeaderView(headerBinding.root)
         binding.recyclerview.adapter = picListAdapter
     }
 }

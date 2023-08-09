@@ -29,6 +29,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.objects.EasyFormatter
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.view.loadBGImage
 
@@ -81,7 +83,9 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
                 onclickAction(chip)
             }
         }
-        if (!hint.isNullOrBlank()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            chip.tooltipText = hint
+        } else if (!hint.isNullOrBlank()) {
             chip.setOnLongClickListener {
                 chip.text = chip.contentDescription.also { chip.contentDescription = chip.text }
                 it.postDelayed(2000) {
@@ -126,15 +130,17 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
             }
         }
         loadBGImage(binding.imageviewUserBg, userDetail.profile.background_image_url)
-        binding.textViewUserId.text = userDetail.user.id.toString()
-        binding.textViewFans.text = userDetail.profile.total_mypixiv_users.toString()
-        binding.textViewFans.setOnClickListener {
+        binding.textviewId.text = "ID:${userDetail.user.id}"
+        binding.textviewFansNum.text = userDetail.profile.total_mypixiv_users.toString()
+
+        binding.textviewFollower.setOnClickListener {
             UserRelatedListFragment.start(requireContext(), userDetail.user.id, false)
         }
-        binding.textViewFollowing.text = userDetail.profile.total_follow_users.toString()
-        binding.textViewFollowing.setOnClickListener {
+        binding.textviewFollowingNum.text = userDetail.profile.total_follow_users.toString()
+        binding.textviewFollowing.setOnClickListener {
             UserRelatedListFragment.start(requireContext(), userDetail.user.id, true)
         }
+        //binding.textviewFollowingNum.setOnClickListener { binding.textviewFollowing.callOnClick() }
 
         if (!userDetail.profile.twitter_account.isNullOrBlank()) {
             binding.chipgroup.addView(
@@ -199,22 +205,14 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         }
         if (binding.chipgroup.size <= 2) {
             binding.chipgroup.addView(
-                getChip("╮(╯▽╰)╭", "2333") { chip ->
-                    chip.setOnLongClickListener {
-                        chip.text =
-                            chip.contentDescription.also { chip.contentDescription = chip.text }
-                        it.postDelayed(5000) {
-                            chip.contentDescription =
-                                chip.text.also { chip.text = chip.contentDescription }
-                        }
-                        true
-                    }
-                }
+                getChip("╮(╯▽╰)╭", "2333")
             )
         }
         binding.chipgroup.addView(
             getChip(getString(R.string.related), "user_related") {
                 UserRelatedListFragment.start(requireContext(), userid, null)
+            }.also {
+                it.setTextColor(ThemeUtil.getColorHighlight(requireContext()))
             }
         )
     }

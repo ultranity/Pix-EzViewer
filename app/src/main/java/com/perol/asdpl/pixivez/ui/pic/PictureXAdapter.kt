@@ -104,7 +104,7 @@ class PictureXAdapter(
     private val imageUrls = ArrayList<String>()
     private val imageThumbnailUrls = ArrayList<String>()
     val pre = PxEZApp.instance.pre
-    lateinit var mListen: () -> Unit
+    private lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
     private lateinit var mUserPicLongClick: () -> Unit
     fun setUserPicLongClick(listener: () -> Unit) {
@@ -186,7 +186,7 @@ class PictureXAdapter(
 
     //class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class DetailViewHolder(
+    inner class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
@@ -236,25 +236,29 @@ class PictureXAdapter(
             Linkify.addLinks(binding.textviewCaption, Linkify.WEB_URLS)
             CrashHandler.instance.d("url", binding.textviewCaption.urls.toString())
             binding.textviewCaption.movementMethod = LinkMovementMethod.getInstance()
+
+            binding.btnViewRelated.setOnClickListener {
+                pictureXViewModel.getRelated()
+            }
             //TODO: get real comment count
             // binding.textviewViewComment.text = "${binding.textviewViewComment.text}(${illust.total_comments})"
-            binding.textviewViewComment.setOnClickListener {
+            binding.btnViewComment.setOnClickListener {
                 mViewCommentListen.invoke()
             }
-            binding.bookmarkedUserNum.setOnClickListener {
+            binding.textviewBookmarked.setOnClickListener {
                 UserRelatedListFragment.start(mContext, illust.id)
             }
+            binding.bookmarkedUserNum.setOnClickListener {
+                binding.textviewBookmarked.callOnClick()
+            }
             // google translate app btn click listener
-            val intent = Intent()
-                .setType("text/plain")
+            val intent = Intent().setType("text/plain")
             var componentPackageName = ""
             var componentName = ""
             var isGoogleTranslateEnabled = false
             // check google translate
-            for (resolveInfo: ResolveInfo in mContext.packageManager.queryIntentActivities(
-                intent,
-                0
-            )) {
+            for (resolveInfo: ResolveInfo in
+            mContext.packageManager.queryIntentActivities(intent, 0)) {
                 try {
                     // emui null point exception
                     if (resolveInfo.activityInfo.packageName.contains("com.google.android.apps.translate")) {
@@ -266,7 +270,7 @@ class PictureXAdapter(
                     e.printStackTrace()
                 }
             }
-            if (!isGoogleTranslateEnabled) {
+            if (!isGoogleTranslateEnabled || illust.caption.isBlank()) {
                 binding.btnTranslate.visibility = View.GONE
             } else {
                 binding.btnTranslate.setOnClickListener {
@@ -788,7 +792,7 @@ class PictureXAdapter(
     private var previewImageView: ImageView? = null
     fun setProgressComplete(it: Boolean) {
         gifProgressBar?.visibility = View.GONE
-        if (!it){
+        if (!it) {
             gifPlay?.visibility = View.VISIBLE
             return
         }

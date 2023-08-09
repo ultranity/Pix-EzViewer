@@ -214,12 +214,13 @@ class PictureXFragment : BaseFragment() {
         pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext()).apply {
             setListener {
                 // activity?.supportStartPostponedEnterTransition()
+                //TODO: why need scrollToPosition?
                 if (!hasMoved) {
                     binding.recyclerview.scrollToPosition(0)
                     (binding.recyclerview.layoutManager as LinearLayoutManager?)
                         ?.scrollToPositionWithOffset(0, 0)
                 }
-                pictureXViewModel.getRelated(illustid)
+                pictureXViewModel.getRelated()
             }
             setViewCommentListen {
                 CommentDialog.newInstance(illustid)

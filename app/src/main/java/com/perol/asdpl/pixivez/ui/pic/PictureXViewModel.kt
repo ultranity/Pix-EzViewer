@@ -158,8 +158,12 @@ class PictureXViewModel : BaseViewModel() {
         })
     }
 
-    fun getRelated(pid: Long) {
-        subscribeNext({ retrofit.api.getIllustRelated(pid) }, related, nextRelated)
+    fun getRelated() {
+        subscribeNext(
+            { retrofit.api.getIllustRelated(illustDetail.value!!.id) },
+            related,
+            nextRelated
+        )
     }
 
     fun fabClick() {

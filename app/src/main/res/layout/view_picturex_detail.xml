@@ -100,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text='@{width X height}'
+            tools:text='@{width X height}'
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textView29"
@@ -122,14 +122,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="@{(illust.totalView)}"
+            tools:text="0"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textView23"
             app:layout_constraintTop_toTopOf="@+id/textView23" />
 
         <TextView
-            android:id="@+id/textView26"
+            android:id="@+id/textview_bookmarked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -142,10 +142,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="@{(illust.totalBookmarks)}"
+            tools:text="0"
             android:textColor="?attr/colorPrimary"
-            app:layout_constraintStart_toEndOf="@+id/textView26"
-            app:layout_constraintTop_toTopOf="@+id/textView26" />
+            app:layout_constraintStart_toEndOf="@+id/textview_bookmarked"
+            app:layout_constraintTop_toTopOf="@+id/textview_bookmarked" />
 
         <ImageButton
             android:id="@+id/imagebutton_share"
@@ -193,30 +193,30 @@
             android:textIsSelectable="true" />
     </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/btn_translate"
-        android:layout_width="match_parent"
-        android:textStyle="bold"
-        android:gravity="center_horizontal"
+    <FrameLayout
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:linksClickable="true"
-        android:padding="4dp"
-        android:text="@string/translate"
-        />
-    <TextView
-        android:id="@+id/textview_view_comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="@string/view_comment" />
+        android:layout_width="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/related" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view_related"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/related"
+            android:layout_gravity="start" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_comment"
+            android:layout_gravity="center_horizontal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_translate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/translate"
+            android:layout_gravity="end" />
+    </FrameLayout>
 </LinearLayout>

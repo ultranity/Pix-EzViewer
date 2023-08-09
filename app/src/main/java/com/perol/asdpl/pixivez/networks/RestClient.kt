@@ -158,6 +158,7 @@ object RestClient {
         Forbidden(403),
         NotFound(404),
         Else(-1);
+
         companion object {
             @JvmStatic
             fun check(value: Int): HttpStatus? {
@@ -165,46 +166,58 @@ object RestClient {
             }
         }
     }
+
     private const val TOKEN_ERROR = "Error occurred at the OAuth process"
     private const val TOKEN_INVALID = "Invalid refresh token"
-    private fun authInterceptor(host: String) = Interceptor { chain ->
-        val request = chain.request()
-        val response = chain.proceed(request)
-        when (HttpStatus.check(response.code)) {
-            HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
-                if (response.message.contains(TOKEN_INVALID)) {
-                    runBlocking(Dispatchers.Main) {
-                        Toasty.error(PxEZApp.instance, R.string.login_expired).show()
+
+    class AuthInterceptor(private val host: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            val response = chain.proceed(request)
+            when (HttpStatus.check(response.code)) {
+                HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
+                    if (response.message.contains(TOKEN_INVALID)) {
+                        runBlocking(Dispatchers.Main) {
+                            Toasty.error(PxEZApp.instance, R.string.login_expired).show()
+                        }
+                    } else { //if (response.message.contains(TOKEN_ERROR)) {
+                        runBlocking(Dispatchers.Main) {
+                            Toasty.warning(PxEZApp.instance, R.string.token_expired).show()
+                            RefreshToken.getInstance()
+                                .refreshToken(AppDataRepo.currentUser.Refresh_token)
+                        }
+                        response.closeQuietly()
+                        return headerInject(host, chain)
                     }
-                } else { //if (response.message.contains(TOKEN_ERROR)) {
-                    runBlocking(Dispatchers.Main) {
-                        Toasty.warning(PxEZApp.instance, R.string.token_expired).show()
-                        RefreshToken.getInstance()
-                            .refreshToken(AppDataRepo.currentUser.Refresh_token)
-                    }
-                    response.closeQuietly()
-                    return@Interceptor headerInject(host, chain)
+                }
+
+                HttpStatus.NotFound -> {
+                    Log.d("404", response.message + response.body)
+                    Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
+                }
+
+                HttpStatus.OK -> {
+                    response.message
+                }
+
+                else -> {
+                    Log.e("okhttp", request.toString() + "\n" + response.message)
                 }
             }
-            HttpStatus.NotFound -> {
-                Log.d("404", response.message + response.body)
-                Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
-            }
-            HttpStatus.OK-> {
-                response.message
-            }
-            else -> {
-                Log.e("okhttp", request.toString()+"\n"+response.message)
-            }
+            return response
         }
-        return@Interceptor response
     }
-    private fun okHttpClient(host: String, disableProxy: Boolean = false, needAuth:Boolean=false): OkHttpClient {
+
+    private fun okHttpClient(
+        host: String,
+        disableProxy: Boolean = false,
+        needAuth: Boolean = false
+    ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
             addInterceptor(HeaderInterceptor(host))
             // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
-            if (needAuth) addInterceptor(authInterceptor(host))
+            if (needAuth) addInterceptor(AuthInterceptor(host))
             if (!disableProxy) {
                 apiProxySocket()
             }

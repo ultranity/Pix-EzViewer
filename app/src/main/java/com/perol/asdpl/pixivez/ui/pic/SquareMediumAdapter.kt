@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2020 ultranity
  * Copyright (c) 2019 Perol_Notsfsssf
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,27 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
-package com.perol.asdpl.pixivez.ui.user
 
-import android.view.View
+package com.perol.asdpl.pixivez.ui.pic
+
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.chad.library.adapter.base.BaseQuickAdapter
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.Illust
 
-class UserShowIllustAdapter(
+class SquareMediumAdapter(
     layoutResId: Int,
-    data: MutableList<Illust>?
-) : BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
-    override fun convert(
-        holder: BaseViewHolder,
-        item: Illust
-    ) {
-        val mainimage = holder.getView<View>(R.id.imageview) as ImageView
-        Glide.with(mainimage.context).load(item.image_urls.square_medium)
-            .transition(DrawableTransitionOptions.withCrossFade()).into(mainimage)
+    data: MutableList<Illust>? = null
+) :
+    LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
+
+    override fun convert(holder: BaseViewHolder, item: Illust) {
+        val imageView = holder.getView<ImageView>(R.id.imageview)
+        Glide.with(imageView.context).load(item.image_urls.square_medium)
+            .placeholder(if (holder.layoutPosition % 2 != 0) R.color.transparent else R.color.gray)
+            .transition(withCrossFade()).centerInside().into(imageView)
     }
 }

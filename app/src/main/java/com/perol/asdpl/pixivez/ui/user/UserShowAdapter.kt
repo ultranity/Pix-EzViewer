@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import com.perol.asdpl.pixivez.ui.pic.SquareMediumAdapter
 import com.perol.asdpl.pixivez.view.NiceImageView
 
 // TODO: fling optimize
@@ -73,10 +74,10 @@ class UserShowAdapter(layoutResId: Int) :
     override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
         val recyclerview = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (item.illusts.isNotEmpty()) {
-            val userShowIllustAdapter: UserShowIllustAdapter
+            val userShowIllustAdapter: SquareMediumAdapter
             if (recyclerview.adapter == null) {
                 userShowIllustAdapter =
-                    UserShowIllustAdapter(R.layout.view_user_illust_item, item.illusts)
+                    SquareMediumAdapter(R.layout.view_user_illust_item, item.illusts)
                 recyclerview.apply {
                     adapter = userShowIllustAdapter
                     layoutManager = LinearLayoutManager(
@@ -89,7 +90,7 @@ class UserShowAdapter(layoutResId: Int) :
                     isNestedScrollingEnabled = false
                 }
             } else {
-                userShowIllustAdapter = recyclerview.adapter as UserShowIllustAdapter
+                userShowIllustAdapter = recyclerview.adapter as SquareMediumAdapter
                 val itemCount = userShowIllustAdapter.data.size
                 userShowIllustAdapter.data = item.illusts
                 userShowIllustAdapter.notifyItemRangeChanged(0, itemCount)

@@ -4,5 +4,4 @@
     android:layout_height="100dp"
     android:padding="5dp"
     android:id="@+id/imageview"
-    android:adjustViewBounds="true"
-    android:scaleType="centerCrop" />
+    android:adjustViewBounds="true" />

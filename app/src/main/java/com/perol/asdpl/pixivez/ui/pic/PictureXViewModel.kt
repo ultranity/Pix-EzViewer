@@ -48,9 +48,9 @@ import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
-    val relatedPics = MutableLiveData<MutableList<Illust>?>()
-    val relatedPicsAdded = MutableLiveData<MutableList<Illust>?>()
-    val nextRelatedPics = MutableLiveData<String?>()
+    val related = MutableLiveData<MutableList<Illust>?>()
+    val relatedAdded = MutableLiveData<MutableList<Illust>?>()
+    val nextRelated = MutableLiveData<String?>()
     val likeIllust = MutableLiveData<Boolean>()
     val followUser = MutableLiveData<Boolean>()
     var tags = MutableLiveData<BookmarkDetailBean>()
@@ -159,7 +159,7 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun getRelated(pid: Long) {
-        subscribeNext({ retrofit.api.getIllustRelated(pid) }, relatedPics, nextRelatedPics)
+        subscribeNext({ retrofit.api.getIllustRelated(pid) }, related, nextRelated)
     }
 
     fun fabClick() {
@@ -240,6 +240,16 @@ class PictureXViewModel : BaseViewModel() {
                     "failed to ${if (is_followed) "unfollow" else "follow"} ${user.id} ${user.name}"
                 ).show()
             })
+    }
+
+    fun onLoadMoreRelated() {
+        if (nextRelated.value != null) {
+            subscribeNext(
+                { retrofit.getIllustNext(nextRelated.value!!) },
+                relatedAdded,
+                nextRelated
+            )
+        }
     }
 }
 

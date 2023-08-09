@@ -141,8 +141,32 @@ class PictureXFragment : BaseFragment() {
                 }
             }
         }
-        pictureXViewModel.relatedPics.observe(viewLifecycleOwner) {
-            pictureXAdapter?.setRelatedPics(it, pictureXViewModel.nextRelatedPics.value)
+        pictureXViewModel.related.observe(viewLifecycleOwner) {
+            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
+            if (it != null) {
+                relatedPictureAdapter.setNewInstance(it)
+                relatedPictureAdapter.setOnLoadMoreListener {
+                    pictureXViewModel.onLoadMoreRelated()
+                }
+            } else {
+                relatedPictureAdapter.loadMoreFail()
+            }
+        }
+        pictureXViewModel.relatedAdded.observe(viewLifecycleOwner) {
+            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
+            if (it != null) {
+                relatedPictureAdapter.addData(it)
+            } else {
+                relatedPictureAdapter.loadMoreFail()
+            }
+        }
+        pictureXViewModel.nextRelated.observe(viewLifecycleOwner) {
+            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
+            if (it != null) {
+                relatedPictureAdapter.loadMoreComplete()
+            } else {
+                relatedPictureAdapter.loadMoreEnd()
+            }
         }
         pictureXViewModel.likeIllust.observe(viewLifecycleOwner) {
             if (it) {

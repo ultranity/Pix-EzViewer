@@ -379,7 +379,7 @@ class PictureXAdapter(
 
     class RelatedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recyclerview = itemView.findViewById<RecyclerView>(R.id.recyclerview_related)!!
-        fun updateWithPage(s: RelatedPictureAdapter, mContext: Context) {
+        fun updateWithPage(s: SquareMediumAdapter, mContext: Context) {
             recyclerview.layoutManager =
                 GridLayoutManager(mContext, 1 + 2 * mContext.resources.configuration.orientation)
             recyclerview.adapter = s
@@ -805,30 +805,13 @@ class PictureXAdapter(
         imageViewGif?.startAnimation(result)
     }
 
-    private val relatedPictureAdapter = RelatedPictureAdapter(R.layout.view_relatedpic_item).also {
+    val relatedPictureAdapter = SquareMediumAdapter(R.layout.view_relatedpic_item).also {
         it.loadMoreModule.isAutoLoadMore = false
-    }
-
-    fun setRelatedPics(it: MutableList<Illust>?, nextUrl: String?) {
-        if (it == null) {
-            relatedPictureAdapter.loadMoreFail()
-            return
-        }
-        if (nextUrl.isNullOrEmpty()) {
-            relatedPictureAdapter.loadMoreEnd()
-        } else {
-            relatedPictureAdapter.loadMoreComplete()
-        }
-        if (it.isEmpty()) {
-            return
-        }
-        val list = it.map { it.image_urls.square_medium } as MutableList<String>
-
-        relatedPictureAdapter.setNewInstance(list)
-        relatedPictureAdapter.setOnItemClickListener { adapter, view, position ->
-            DataHolder.setIllustList(it)
+        it.setOnItemClickListener { adapter, view, position ->
+            val data = adapter.data as MutableList<Illust>
+            DataHolder.setIllustList(data)
             PictureActivity.start(
-                mContext, it[position].id, position, position,
+                mContext, data[position].id, position, position,
                 ActivityOptions.makeSceneTransitionAnimation(
                     mContext as Activity,
                     Pair(view, "shared_element_container")
@@ -837,5 +820,4 @@ class PictureXAdapter(
             )
         }
     }
-
 }

@@ -77,11 +77,6 @@ class RefreshToken{
             withContext(Dispatchers.IO){
                 val it = oAuthSecureService.postRefreshAuthTokenX(refreshToken)
 
-                Log.d(
-                    "refreshToken",
-                    "refresh ${it.access_token} and original ${AppDataRepo.currentUser.Authorization}"
-                )
-
                 val userEntity = it.user.toUserEntity(refreshToken, it.access_token)
                 if (newToken) {
                     AppDataRepo.insertUser(userEntity)

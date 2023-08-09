@@ -61,25 +61,5 @@
             app:defaultValue="false"
             app:key="banner_auto_loop"
             app:title="@string/banner_auto_loop" />
-        <SwitchPreferenceCompat
-            android:summary="@string/use_picX_layout_subtext"
-            app:defaultValue="true"
-            app:key="use_picX_layout_main"
-            app:title="@string/use_picX_layout_main" />
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="show_user_img_main"
-            app:summary="@string/show_user_img_main_summary"
-            app:title="@string/show_user_img_main" />
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="show_user_img_bookmarked"
-            app:summary="@string/show_user_img_bookmarked_summary"
-            app:title="@string/show_user_img_bookmarked" />
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="show_user_img_searchr"
-            app:summary="@string/show_user_img_searchr_summary"
-            app:title="@string/show_user_img_searchr" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

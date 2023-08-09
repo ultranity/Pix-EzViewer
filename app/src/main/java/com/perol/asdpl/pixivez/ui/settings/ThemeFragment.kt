@@ -82,14 +82,6 @@ class ThemeFragment : PreferenceFragmentCompat() {
             snackbarApplyConfig()
             true
         }
-        findPreference<SwitchPreferenceCompat>("use_picX_layout_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbarApplyConfig()
-            true
-        }
-        findPreference<SwitchPreferenceCompat>("show_user_img_main")!!.setOnPreferenceChangeListener { preference, newValue ->
-            snackbarApplyConfig()
-            true
-        }
         findPreference<SwitchPreferenceCompat>("banner_auto_loop")!!.setOnPreferenceChangeListener { preference, newValue ->
             snackbarApplyConfig()
             true

@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.ui.user
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
-import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.BookmarkTagsBean
 import kotlin.properties.Delegates
 
@@ -38,10 +37,6 @@ class BookMarkTagViewModel : BaseViewModel() {
     val nextUrl = MutableLiveData<String?>()
     val tags = MutableLiveData<MutableList<BookmarkTagsBean>>()
     val tagsAdded = MutableLiveData<MutableList<BookmarkTagsBean>?>()
-
-    fun isSelfPage(): Boolean {
-        return AppDataRepo.currentUser.userid == id
-    }
 
     fun first(id: Long, pub: String) {
         noFirst = false

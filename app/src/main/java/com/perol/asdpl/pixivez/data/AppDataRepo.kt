@@ -42,6 +42,10 @@ object AppDataRepo {
 
     fun userInited() = _currentUser != null
 
+    fun isSelfPage(id: Long): Boolean {
+        return currentUser.userid == id
+    }
+
     suspend fun getUser(): UserEntity? {
         val result = appDatabase.userDao().getUsers()
         if (result.isEmpty()) {

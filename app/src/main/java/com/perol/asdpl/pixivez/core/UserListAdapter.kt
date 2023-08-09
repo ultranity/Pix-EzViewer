@@ -22,7 +22,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.ui.user
+package com.perol.asdpl.pixivez.core
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -45,10 +45,11 @@ import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.pic.SquareMediumAdapter
+import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.NiceImageView
 
 // TODO: fling optimize
-class UserShowAdapter(layoutResId: Int) :
+class UserListAdapter(layoutResId: Int) :
     LBaseQuickAdapter<UserPreviewsBean, BaseViewHolder>(layoutResId) {
     companion object {
         const val itemWidth: Int = 400

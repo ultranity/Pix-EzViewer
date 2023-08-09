@@ -75,7 +75,7 @@ import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import com.perol.asdpl.pixivez.ui.user.UserRelatedListFragment
+import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
 import com.waynejo.androidndkgif.GifEncoder
@@ -246,7 +246,7 @@ class PictureXAdapter(
                 mViewCommentListen.invoke()
             }
             binding.textviewBookmarked.setOnClickListener {
-                UserRelatedListFragment.start(mContext, illust.id)
+                UsersFragment.start(mContext, illust.id)
             }
             binding.bookmarkedUserNum.setOnClickListener {
                 binding.textviewBookmarked.callOnClick()

@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.core
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,8 +40,7 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.objects.getMaxColumn
-import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import com.perol.asdpl.pixivez.ui.user.UserShowAdapter
+import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 
 /**
@@ -52,7 +52,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     }
 
     override fun onResume() {
-        isLoaded = userShowAdapter.data.isNotEmpty()
+        isLoaded = userListAdapter.data.isNotEmpty()
         super.onResume()
     }
 
@@ -68,12 +68,17 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     private var _bindingHeader: ViewRestrictButtonBinding? = null
     private val bindingHeader: ViewRestrictButtonBinding
         get() = requireNotNull(_bindingHeader) { "The property of binding has been destroyed." }
-    private lateinit var userShowAdapter: UserShowAdapter
+    private lateinit var userListAdapter: UserListAdapter
     private val viewModel: UserListViewModel by viewModels()
     private var exitTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (keyword != null) {
+            viewModel.keyword = keyword!!
+        } else if (userid != null) {
+            viewModel.userid = userid!!
+        }
         viewModel.setonLoadFirstRx(TAG)
     }
 
@@ -90,28 +95,15 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (keyword != null) {
-            viewModel.keyword = keyword!!
-        } else if (userid != null) {
-            viewModel.userid = userid!!
-        }
-        userShowAdapter = UserShowAdapter(R.layout.view_usershow_item)
+        userListAdapter = UserListAdapter(R.layout.view_usershow_item)
 
         initViewModel()
 
-        binding.recyclerview.apply {
-            adapter = userShowAdapter
-            layoutManager =
-                GridLayoutManager(requireContext(), getMaxColumn(UserShowAdapter.itemWidth))
-            addItemDecoration(AverageGridItemDecoration(UserShowAdapter.itemWidthPx))
-            // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
-            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
-        }
-        if (viewModel.needHeader) userShowAdapter.addHeaderView(bindingHeader.root)
-        _bindingHeader?.apply {
-            buttonPublic.isChecked = true
-            buttonAll.visibility = View.GONE
-            toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
+        if (viewModel.needHeader) {
+            userListAdapter.addHeaderView(bindingHeader.root)
+            bindingHeader.buttonPublic.isChecked = true
+            bindingHeader.buttonAll.visibility = View.GONE
+            bindingHeader.toggleRestrict.addOnButtonCheckedListener { group, checkedId, isChecked ->
                 if (isChecked) {
                     val checkedIndex = group.indexOfChild(group.findViewById(checkedId))
                     val value = visRestrictTag(checkedIndex == 2)
@@ -122,37 +114,42 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
                 }
             }
         }
-        userShowAdapter.setOnLoadMoreListener {
+        binding.recyclerview.apply {
+            adapter = userListAdapter
+            layoutManager =
+                GridLayoutManager(requireContext(), getMaxColumn(UserListAdapter.itemWidth))
+            addItemDecoration(AverageGridItemDecoration(UserListAdapter.itemWidthPx))
+            // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+            //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
+        }
+        userListAdapter.setOnLoadMoreListener {
             viewModel.onLoadMore()
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onLoadFirst()
-        }
-        userShowAdapter.setOnItemClickListener { _, _, position ->
-            UserMActivity.start(requireContext(), userShowAdapter.data[position].user)
         }
     }
 
     private fun initViewModel() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.setList(it)
+                userListAdapter.setList(it)
             } else {
-                userShowAdapter.loadMoreFail()
+                userListAdapter.loadMoreFail()
             }
         }
         viewModel.nextUrl.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.loadMoreComplete()
+                userListAdapter.loadMoreComplete()
             } else {
-                userShowAdapter.loadMoreEnd()
+                userListAdapter.loadMoreEnd()
             }
         }
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
-                userShowAdapter.addData(it)
+                userListAdapter.addData(it)
             } else {
-                userShowAdapter.loadMoreFail()
+                userListAdapter.loadMoreFail()
             }
         }
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
@@ -166,11 +163,33 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     }
 
     companion object {
+        fun start(context: Context, userid: Long, getFollowing: Boolean? = null) {
+            val title = when (getFollowing) {
+                true -> R.string.following
+                false -> R.string.followers
+                null -> R.string.related
+            }
+            FragmentActivity.start(context, "UserList", title, Bundle().apply {
+                putLong("userid", userid)
+                putString(
+                    "TAG", when (getFollowing) {
+                        true -> "Following"
+                        false -> "Follower"
+                        null -> "Related"
+                    }
+                )
+            })
+        }
+
         @JvmStatic
-        fun newInstance(userid: Long, getFollowing: Boolean) =
+        fun newInstance(userid: Long, getFollowing: Boolean? = null) =
             UserListFragment().apply {
                 this.userid = userid
-                this.TAG = if (getFollowing) "Following" else "Follower"
+                this.TAG = when (getFollowing) {
+                    true -> "Following"
+                    false -> "Follower"
+                    null -> "Related"
+                }
             }
 
         @JvmStatic

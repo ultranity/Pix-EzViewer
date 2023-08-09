@@ -44,6 +44,7 @@ import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.core.UserListFragment
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.objects.EasyFormatter
@@ -134,11 +135,11 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         binding.textviewFansNum.text = userDetail.profile.total_mypixiv_users.toString()
 
         binding.textviewFollower.setOnClickListener {
-            UserRelatedListFragment.start(requireContext(), userDetail.user.id, false)
+            UserListFragment.start(requireContext(), userDetail.user.id, false)
         }
         binding.textviewFollowingNum.text = userDetail.profile.total_follow_users.toString()
         binding.textviewFollowing.setOnClickListener {
-            UserRelatedListFragment.start(requireContext(), userDetail.user.id, true)
+            UserListFragment.start(requireContext(), userDetail.user.id, true)
         }
         //binding.textviewFollowingNum.setOnClickListener { binding.textviewFollowing.callOnClick() }
 
@@ -210,7 +211,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         }
         binding.chipgroup.addView(
             getChip(getString(R.string.related), "user_related") {
-                UserRelatedListFragment.start(requireContext(), userid, null)
+                UserListFragment.start(requireContext(), userid, null)
             }.also {
                 it.setTextColor(ThemeUtil.getColorHighlight(requireContext()))
             }

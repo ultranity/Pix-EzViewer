@@ -39,7 +39,7 @@ import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.services.PxEZApp
 
-class UserListAdapter(layoutResId: Int) :
+class UsersAdapter(layoutResId: Int) :
     LBaseQuickAdapter<User, BaseViewHolder>(layoutResId) {
 
     init {

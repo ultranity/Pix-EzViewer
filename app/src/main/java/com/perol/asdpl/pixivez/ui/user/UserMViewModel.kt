@@ -29,7 +29,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseViewModel
-import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -78,10 +77,6 @@ class UserMViewModel : BaseViewModel() {
                 }
             }
         }
-    }
-
-    fun isSelfPage(id: Long): Boolean {
-        return AppDataRepo.currentUser.userid == id
     }
 
     fun tryToChangeProfile(path: String) {

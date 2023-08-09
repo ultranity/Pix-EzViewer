@@ -197,7 +197,7 @@ class UserMActivity : RinkActivity() {
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
         binding.imageviewUserimage.setOnClickListener {
             var array = resources.getStringArray(R.array.user_profile)
-            if (!viewModel.isSelfPage(id)) {
+            if (!AppDataRepo.isSelfPage(id)) {
                 array = array.sliceArray(0..1)
             }
             MaterialAlertDialogBuilder(this)
@@ -270,7 +270,7 @@ class UserMActivity : RinkActivity() {
                 }
             }
         })
-        if (viewModel.isSelfPage(id)) {
+        if (AppDataRepo.isSelfPage(id)) {
             binding.imageviewUserimage.transitionName = "CurrentUserImage"
             viewModel.currentTab.value = 2
         } else {

@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.core
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import kotlin.properties.Delegates
@@ -41,26 +42,31 @@ class UserListViewModel : BaseViewModel() {
     var restrict = DMutableLiveData("public")
     private lateinit var onLoadFirstRx: suspend () -> SearchUserResponse
 
-    open fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
+    fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>? = null) {
         if (extraArgs != null) {
             this.args = extraArgs
         }
+        if (mode == "Following") needHeader = AppDataRepo.isSelfPage(userid)
         onLoadFirstRx = when (mode) {
             "Following" -> {
-                needHeader = true
-                {
-                    retrofit.api.getUserFollowing(userid, restrict.value!!)
-                }
+                { retrofit.api.getUserFollowing(userid, restrict.value!!) }
             }
+
             "Follower" -> {
                 { retrofit.api.getUserFollower(userid) }
             }
+
+            "Related" -> {
+                { retrofit.api.getUserRelated(userid) }
+            }
+
             "Search" -> {
                 { retrofit.api.getSearchUser(keyword) }
             }
-            else -> { //"Recommend"
+
+            else -> {
                 { retrofit.api.getUserRecommended() }
-            }
+            } //"Recommend"
         }
     }
 

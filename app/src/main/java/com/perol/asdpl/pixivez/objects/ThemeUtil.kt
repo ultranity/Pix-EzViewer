@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -216,6 +217,7 @@ object ThemeUtil {
         }
     }
 
+    @SuppressLint("CheckResult")
     fun showColorThemeDialog(themeFragment: ThemeFragment, it: Preference) {
         MaterialDialog(
             themeFragment.requireContext(),
@@ -223,15 +225,12 @@ object ThemeUtil {
         ).show {
             val seedColor = PxEZApp.instance.pre.getInt("color_int", -16738310)
             val colorArray = colorThemeArray.mapIndexed { i, it ->
-                if (i == 0) BackgroundGridItem(
-                    R.drawable.ic_color_palette,
-                    themeFragment.getString(R.string.action_select)
-                )
+                if (i == 0) BackgroundGridItem(R.drawable.ic_color_palette, "Color Picker")
                 else BackgroundGridItem(context.getColorFromStyle(it), i.toString(), false)
             }
             var action: () -> Unit = { }
             title(R.string.title_change_theme)
-            val gridItems = gridItems(colorArray) { _, i, item ->
+            gridItems(colorArray, waitForPositiveButton = false) { _, i, item ->
                 if (i == 0) {
                     action = {
                         ColorPickerDialog.Builder(context)
@@ -250,6 +249,7 @@ object ThemeUtil {
                             }
                             .show()
                     }
+                    dismiss()
                 } else {
                     action = {
                         it.summary = item.title

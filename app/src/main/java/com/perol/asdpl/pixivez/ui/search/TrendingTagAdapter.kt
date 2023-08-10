@@ -33,11 +33,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.TrendTagsBean
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 
-class TrendingTagAdapter(layoutResId: Int, data: MutableList<TrendTagsBean>?) :
-    BaseQuickAdapter<TrendTagsBean, BaseViewHolder>(
-        layoutResId,
-        data
-    ) {
+class TrendingTagAdapter(data: MutableList<TrendTagsBean>?) :
+    BaseQuickAdapter<TrendTagsBean, BaseViewHolder>(R.layout.view_trendingtag_item, data) {
     override fun convert(holder: BaseViewHolder, item: TrendTagsBean) {
         holder.setText(R.id.textview_tag, item.tag)
         val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)

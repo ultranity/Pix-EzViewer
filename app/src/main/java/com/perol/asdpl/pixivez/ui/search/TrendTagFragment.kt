@@ -39,6 +39,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
@@ -65,26 +66,22 @@ class TrendTagFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.clearAll.setOnClickListener {
-            viewModel.clearHistory()
-        }
         //binding.recyclerview.isNestedScrollingEnabled = false
         binding.recyclerview.layoutManager =
             StaggeredGridLayoutManager(
                 getMaxColumn(50 + requireContext().resources.configuration.orientation * 100),
                 StaggeredGridLayoutManager.VERTICAL
             )
-        val trendingtagAdapter =
-            TrendingTagAdapter(R.layout.view_trendingtag_item, null)
-        binding.recyclerview.adapter = trendingtagAdapter
-        trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
-            val keyword = trendingtagAdapter.data[position].tag
+        val trendTagAdapter = TrendingTagAdapter(null)
+        binding.recyclerview.adapter = trendTagAdapter
+        trendTagAdapter.setOnItemClickListener { adapter, view, position ->
+            val keyword = trendTagAdapter.data[position].tag
             upToPage(keyword)
             viewModel.addHistory(keyword)
         }
-        trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
+        trendTagAdapter.setOnItemLongClickListener { adapter, view, position ->
             DataHolder.setIllustList(
-                trendingtagAdapter.data.map { it.illust }
+                trendTagAdapter.data.map { it.illust }
                         as MutableList<Illust> //TODO: check if need toMutableList()
             )
             val options = if (PxEZApp.animationEnable) {
@@ -96,13 +93,13 @@ class TrendTagFragment : Fragment() {
             } else null
             PictureActivity.start(
                 requireContext(),
-                trendingtagAdapter.data[position].illust.id, position, options = options
+                trendTagAdapter.data[position].illust.id, position, options = options
             )
             true
         }
         viewModel.trendTags.observe(viewLifecycleOwner) {
             if (it != null) {
-                trendingtagAdapter.setNewInstance(it)
+                trendTagAdapter.setNewInstance(it)
             }
         }
         viewModel.searchHistory.observe(viewLifecycleOwner) {
@@ -114,12 +111,7 @@ class TrendTagFragment : Fragment() {
             //NOT WORK: if (binding.chipgroup.getRowIndex(chip) > 3){
             //binding.chipgroup.removeViewAt(index)
             if (it.size > foldedChipIndex) binding.chipgroup.addView(getExpandChip())
-
-            if (it.isNotEmpty()) {
-                binding.clearAll.visibility = View.VISIBLE
-            } else {
-                binding.clearAll.visibility = View.GONE
-            }
+            if (it.isNotEmpty()) binding.chipgroup.addView(getClearChip())
         }
         viewModel.getIllustTrendTags()
     }
@@ -138,6 +130,24 @@ class TrendTagFragment : Fragment() {
         return chip
     }
 
+    private fun getClearChip(): Chip {
+        val chip = Chip(requireContext())
+        chip.setChipIconResource(R.drawable.ic_action_del)
+        chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
+        chip.setText(R.string.clearhistory)
+        chip.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.clearhistory)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    viewModel.clearHistory()
+                    binding.chipgroup.removeAllViews()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .show()
+        }
+        return chip
+    }
+
     private fun getExpandChip(): Chip {
         val chip = Chip(requireContext())
         chip.setChipIconResource(R.drawable.ic_menu_more)
@@ -147,9 +157,9 @@ class TrendTagFragment : Fragment() {
             binding.chipgroup.removeViewAt(foldedChipIndex)
             viewModel.searchHistory.value!!.drop(foldedChipIndex).forEachIndexed { index, s ->
                 val chip = getChip(s)
-                binding.chipgroup.addView(chip)
+                binding.chipgroup.addView(chip, index + foldedChipIndex)
             }
-            binding.chipgroup.addView(getFoldChip())
+            binding.chipgroup.addView(getFoldChip(), viewModel.searchHistory.value!!.size)
         }
         return chip
     }
@@ -159,10 +169,10 @@ class TrendTagFragment : Fragment() {
         chip.setChipIconResource(R.drawable.ic_action_fold)
         chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
         chip.setOnClickListener {
-            (foldedChipIndex.until(binding.chipgroup.size)).forEach { _ ->
+            (foldedChipIndex.until(binding.chipgroup.size - 1)).forEach { _ ->
                 binding.chipgroup.removeViewAt(foldedChipIndex)
             }
-            binding.chipgroup.addView(getExpandChip())
+            binding.chipgroup.addView(getExpandChip(), foldedChipIndex)
         }
         return chip
     }

@@ -30,8 +30,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
-import com.perol.asdpl.pixivez.data.AppDatabase
-import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
+import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.CrashHandler
@@ -56,7 +55,7 @@ class PictureXViewModel : BaseViewModel() {
     var tags = MutableLiveData<BookmarkDetailBean>()
     val progress = MutableLiveData<Int>()
     val downloadGifSuccess = MutableLiveData<Boolean>()
-    private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    private val historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
     fun downloadZip(medium: String) {
         val zipPath =
             "${PxEZApp.instance.cacheDir.path}/${illustDetail.value!!.id}.zip"
@@ -130,16 +129,12 @@ class PictureXViewModel : BaseViewModel() {
         illustDetail.value = illust
         likeIllust.value = illust.is_bookmarked
         CoroutineScope(Dispatchers.IO).launch {
-            val ee = appDatabase.illusthistoryDao().getHistoryOne(illust.id)
-            if (ee.isNotEmpty()) {
-                appDatabase.illusthistoryDao().deleteOne(ee[0])
-            }
-            appDatabase.illusthistoryDao().insert(
-                IllustBeanEntity(
-                    illust.id,
-                    illust.image_urls.square_medium
-                )
-            )
+            val ee = historyDatabase.viewHistoryDao().getEntity(illust.id)
+            if (ee != null) {
+                historyDatabase.viewHistoryDao().increment(ee)
+            } else
+                historyDatabase.viewHistoryDao()
+                    .insert(illust.id, illust.title, illust.image_urls.square_medium)
         }
     }
 

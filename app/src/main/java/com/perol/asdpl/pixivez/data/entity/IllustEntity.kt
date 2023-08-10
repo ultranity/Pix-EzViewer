@@ -24,16 +24,26 @@
 
 package com.perol.asdpl.pixivez.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "illusts")
-data class Illust(
+@Entity(tableName = "illusts", primaryKeys = ["illustid", "part"])
+data class IllustEntity(
+    @PrimaryKey
+    var pid: Int,
+    var part: String?,
+    var uid: Int,
     var url: String,
-    var illustid: Int,
-    var userid: Int,
-    var part: String?
-) {
-    @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
-}
+)
+
+@Entity(tableName = "download")
+class IllustsEntity(
+    @PrimaryKey
+    var pid: Long,
+    var part: String?,
+    var uid: Int,
+    var url: String,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") var modifiedAt: Long
+)

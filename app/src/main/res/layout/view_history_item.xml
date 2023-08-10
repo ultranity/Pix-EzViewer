@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,7 +9,7 @@
     android:layout_margin="4dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="2dp"
-    app:cardElevation="10dp"
+    app:cardElevation="8dp"
     app:cardPreventCornerOverlap="true">
 
     <ImageView
@@ -20,5 +21,13 @@
         android:src="@color/grayx"
         android:maxHeight="720dp"
         android:transitionName="mainimage" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="TextView"
+        android:layout_marginBottom="14dp"
+        android:layout_gravity="bottom|center_horizontal" />
 </com.google.android.material.card.MaterialCardView>
 

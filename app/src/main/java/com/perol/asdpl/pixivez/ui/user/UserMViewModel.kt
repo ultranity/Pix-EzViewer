@@ -29,9 +29,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.HistoryDatabase
+import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.data.model.UserDetailResponse
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -46,7 +50,7 @@ class UserMViewModel : BaseViewModel() {
 
     fun getData(userid: Long) {
         viewModelScope.launch {
-            retrofit.api.getUserDetail(userid).let{
+            retrofit.api.getUserDetail(userid).let {
                 userDetail.value = it
                 isfollow.value = it.user.is_followed
             }
@@ -59,14 +63,14 @@ class UserMViewModel : BaseViewModel() {
                 retrofit.api.postUnfollowUser(userid)
             else
                 retrofit.api.postFollowUser(userid, "public")
-            ).let{
-                isfollow.value = !isfollow.value!!
-            }
+                    ).let {
+                    isfollow.value = !isfollow.value!!
+                }
         }
     }
 
     fun onFabLongClick(userid: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             if (isfollow.value!!) {
                 retrofit.api.postUnfollowUser(userid).let {
                     isfollow.value = false
@@ -94,6 +98,20 @@ class UserMViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 Toasty.info(PxEZApp.instance, R.string.update_failed).show()
             }
+        }
+    }
+
+    fun insertHistory(user: User) {
+        val historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
+        CoroutineScope(Dispatchers.IO).launch {
+            val ee = historyDatabase.viewHistoryDao().getEntity(user.id, true)
+            if (ee != null) {
+                //ee.thumb = user.profile_image_urls.medium
+                //ee.title = user.name
+                historyDatabase.viewHistoryDao().increment(ee)
+            } else
+                historyDatabase.viewHistoryDao()
+                    .insert(user.id, user.name, user.profile_image_urls.medium, true)
         }
     }
 }

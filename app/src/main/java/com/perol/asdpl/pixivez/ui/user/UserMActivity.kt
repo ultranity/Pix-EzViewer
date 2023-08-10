@@ -40,6 +40,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
+import com.chrynan.parcelable.core.getParcelableExtra
 import com.chrynan.parcelable.core.putExtra
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -69,7 +70,7 @@ class UserMActivity : RinkActivity() {
     companion object {
         fun start(context: Context, id: Long, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
-            intent.putExtra("data", id)
+            intent.putExtra("uid", id)
             context.startActivity(intent, options)
         }
 
@@ -122,6 +123,7 @@ class UserMActivity : RinkActivity() {
         id = user.id
         binding.textviewUsername.text = user.name
         loadUserImage(binding.imageviewUserimage, user.profile_image_urls.medium)
+        viewModel.insertHistory(user)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,9 +152,9 @@ class UserMActivity : RinkActivity() {
                 DataStore.register("user$id", this)
             }
         } else if (intent.extras!!.containsKey("user")) {
-            setUser(intent.getSerializableExtra("user") as User)
-        } else if (intent.extras!!.containsKey("data")) {
-            id = intent.getLongExtra("data", 0)
+            setUser(intent.getParcelableExtra("user", User.serializer())!!)
+        } else if (intent.extras!!.containsKey("uid")) {
+            id = intent.getLongExtra("uid", 0)
         }
         //避免重复加载
         if (!viewModel.userDetail.isInitialized)
@@ -162,16 +164,14 @@ class UserMActivity : RinkActivity() {
         val upToTopListener = UpToTopListener(this, supportFragmentManager)
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = getString(UserMPagerAdapter.getPageTitle(position))
-        }.attach()
-            .setOnTabReSelectedStrategy { upToTopListener.onTabReselected(it) }
+        }.attach().setOnTabReSelectedStrategy { upToTopListener.onTabReselected(it) }
         viewModel.currentTab.observe(this) {
             binding.viewpager.currentItem = it
         }
         viewModel.userDetail.observe(this) {
             if (it != null) {
-                setUser(
-                    DataStore.update("user${it.user.id}", it.user) ?: it.user
-                )
+                if (!::user.isInitialized)
+                    setUser(DataStore.update("user${it.user.id}", it.user) ?: it.user)
                 loadBGImage(binding.imageviewUserBackground, it.profile.background_image_url)
             }
         }
@@ -201,52 +201,52 @@ class UserMActivity : RinkActivity() {
                 array = array.sliceArray(0..1)
             }
             MaterialAlertDialogBuilder(this)
-            .setItems(array) { i, which ->
-                when (which) {
-                    0 -> {
-                        val clipboard =
-                            getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip: ClipData = ClipData.newPlainText("share Link", shareLink)
-                        clipboard.setPrimaryClip(clip)
-                        Toasty.info(this@UserMActivity, R.string.copied).show()
-                    }
+                .setItems(array) { i, which ->
+                    when (which) {
+                        0 -> {
+                            val clipboard =
+                                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip: ClipData = ClipData.newPlainText("share Link", shareLink)
+                            clipboard.setPrimaryClip(clip)
+                            Toasty.info(this@UserMActivity, R.string.copied).show()
+                        }
 
-                    1 -> {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val f = Glide.with(this@UserMActivity).asFile()
-                                .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
-                                .submit()
-                            val file = f.get()
-                            val target = File(
-                                PxEZApp.storepath,
-                                "user_${viewModel.userDetail.value!!.user.id}.png"
-                            )
-                            file.copyTo(target, overwrite = true)
-                            MediaScannerConnection.scanFile(
-                                PxEZApp.instance,
-                                arrayOf(target.path),
-                                arrayOf(
-                                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                        target.extension
-                                    )
+                        1 -> {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val f = Glide.with(this@UserMActivity).asFile()
+                                    .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
+                                    .submit()
+                                val file = f.get()
+                                val target = File(
+                                    PxEZApp.storepath,
+                                    "user_${viewModel.userDetail.value!!.user.id}.png"
                                 )
-                            ) { _, _ -> }
+                                file.copyTo(target, overwrite = true)
+                                MediaScannerConnection.scanFile(
+                                    PxEZApp.instance,
+                                    arrayOf(target.path),
+                                    arrayOf(
+                                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                                            target.extension
+                                        )
+                                    )
+                                ) { _, _ -> }
 
-                            withContext(Dispatchers.Main) {
-                                Toasty.info(this@UserMActivity, R.string.saved).show()
+                                withContext(Dispatchers.Main) {
+                                    Toasty.info(this@UserMActivity, R.string.saved).show()
+                                }
                             }
                         }
-                    }
 
-                    else -> {
-                        val intent = Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                        )
-                        startActivityForResult(intent, SELECT_IMAGE)
+                        else -> {
+                            val intent = Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            )
+                            startActivityForResult(intent, SELECT_IMAGE)
+                        }
                     }
-                }
-            }.show()
+                }.show()
         }
         val defaultTablayoutColors = binding.tablayout.tabTextColors
         binding.appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener(140) {

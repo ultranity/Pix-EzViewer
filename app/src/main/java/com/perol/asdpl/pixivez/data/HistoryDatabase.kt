@@ -25,38 +25,29 @@
 package com.perol.asdpl.pixivez.data
 
 import android.content.Context
-import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
-import com.perol.asdpl.pixivez.data.dao.BlockTagDao
-import com.perol.asdpl.pixivez.data.dao.UserDao
-import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
-import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.data.dao.SearchHistoryDao
+import com.perol.asdpl.pixivez.data.dao.ViewHistoryDao
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
+import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
 
 @Database(
-    entities = [UserEntity::class, BlockTagEntity::class],
-    version = 7,
-    autoMigrations = [
-        AutoMigration(from = 6, to = 7, spec = AppDatabase.AutoMigration6to7::class)
-    ]
+    entities = [SearchHistoryEntity::class, HistoryEntity::class],
+    version = 1
 )
-abstract class AppDatabase : RoomDatabase() {
-    @DeleteTable("illusthistory")
-    @DeleteTable("history")
-    @DeleteTable("illusts")
-    class AutoMigration6to7 : AutoMigrationSpec
+abstract class HistoryDatabase : RoomDatabase() {
+    abstract fun searchHistoryDao(): SearchHistoryDao
 
-    abstract fun userDao(): UserDao
-    abstract fun blockTagDao(): BlockTagDao
+    //abstract fun downloadHistoryDao(): DownloadHistoryDao
+    abstract fun viewHistoryDao(): ViewHistoryDao
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: HistoryDatabase? = null
 
-        fun getInstance(context: Context): AppDatabase =
+        fun getInstance(context: Context): HistoryDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
@@ -64,8 +55,8 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                AppDatabase::class.java,
-                "app.db"
+                HistoryDatabase::class.java,
+                "history.db"
             ).fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }

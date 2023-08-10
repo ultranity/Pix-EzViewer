@@ -27,8 +27,7 @@ package com.perol.asdpl.pixivez.ui.search
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
-import com.perol.asdpl.pixivez.data.AppDatabase
-import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
+import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchSuggestionViewModel : BaseViewModel() {
-    private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    private var historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
     val autoCompleteTags = MutableLiveData<List<Tag>>()
     fun onQueryTextChange(newText: String) {
         viewModelScope.launch{
@@ -48,7 +47,7 @@ class SearchSuggestionViewModel : BaseViewModel() {
 
     fun addHistory(tag: Tag) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(tag.vis()))
+            historyDatabase.searchHistoryDao().insert(tag.vis())
         }
     }
 }

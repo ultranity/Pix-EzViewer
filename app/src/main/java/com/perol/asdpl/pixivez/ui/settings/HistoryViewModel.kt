@@ -26,38 +26,39 @@ package com.perol.asdpl.pixivez.ui.settings
 
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.data.HistoryDatabase
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.data.AppDatabase
-import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HistoryViewModel : BaseViewModel() {
-    val illustBeans = MutableLiveData<MutableList<IllustBeanEntity>>()
-    private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    val history = MutableLiveData<MutableList<HistoryEntity>>()
+    private val historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
 
     fun first() {
         CoroutineScope(Dispatchers.IO).launch {
-            val history = appDatabase.illusthistoryDao().getIllustHistory().asReversed()
+            val history = historyDatabase.viewHistoryDao().getViewHistory() as MutableList
             withContext(Dispatchers.Main) {
-                illustBeans.value = history.toMutableList()
+                this@HistoryViewModel.history.value = history
             }
         }
     }
 
-    fun fabOnClick() {
+    fun clearHistory() {
         CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.illusthistoryDao().deleteHistory()
+            historyDatabase.viewHistoryDao().clear()
         }
     }
 
-    fun deleteSelect(i: Int) {
+    fun deleteSelect(i: Int, after: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.illusthistoryDao().deleteOne(illustBeans.value!![i])
+            historyDatabase.viewHistoryDao().delete(history.value!![i])
             withContext(Dispatchers.Main) {
-                illustBeans.value!!.removeAt(i)
+                history.value!!.removeAt(i)
+                after()
             }
         }
     }

@@ -29,62 +29,35 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/*@Entity(tableName = "history")
-class SearchHistoryEntity (
-    @PrimaryKey var word: String
-    )*/
-
-// TODO: fix duplicate
-@Entity(tableName = "history")
+@Entity(tableName = "search")
 class SearchHistoryEntity(
     @ColumnInfo(name = "word")
     var word: String,
     @PrimaryKey(autoGenerate = true)
     var Id: Long = 0
 )
-/*
-@Entity(tableName = "downillusts")
-class DownIllustsEntity constructor(
-        @ColumnInfo(name = "userid")
-        var userid: Long,
-        @ColumnInfo(name = "pid")
-        var pid: String,
-        @ColumnInfo(name = "imageurl")
-        var imageurl: String,
-        @ColumnInfo(name = "imageurl")
-        var imageurls: List<String>
-) {
-    @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
-}
+/*@Entity(tableName = "search")
+class SearchHistoryEntity(
+    @PrimaryKey val word: String,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val modifiedAt: Long
+){
+    constructor(word: String):this(word, System.currentTimeMillis(), System.currentTimeMillis())
+    constructor(word: String, modifiedAt: Long):this(word, System.currentTimeMillis(), modifiedAt)
+}*/
 
-@Entity(tableName = "downuser")
-class DownUserEntity constructor(
-        @ColumnInfo(name = "userid")
-        var userid: Long,
-        @ColumnInfo(name = "username")
-        var username: String,
-        @ColumnInfo(name = "userpic")
-        var userpic: String,
-        @ColumnInfo(name = "totalbookmark")
-        var totalbookmark: Long,
-        @ColumnInfo(name = "totalillust")
-        var totalillust: Long,
-        @ColumnInfo(name = "username")
-        var nextUrl: String
-
-) {
-    @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
-}
-*/
-
-@Entity(tableName = "illusthistory")
-class IllustBeanEntity(
-    @ColumnInfo(name = "illustid")
-    var illustid: Long,
-    @ColumnInfo(name = "imageurl")
-    var imageurl: String,
-    @PrimaryKey(autoGenerate = true)
-    var Id: Long? = null
+@Entity(
+    tableName = "history",
+    primaryKeys = ["id", "isUser"]
+)
+class HistoryEntity(
+    val id: Long,
+    val title: String,
+    val thumb: String,
+    @ColumnInfo(defaultValue = "false")
+    val isUser: Boolean = false,
+    @ColumnInfo(defaultValue = "1")
+    var count: Int = 1,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") var modifiedAt: Long
 )

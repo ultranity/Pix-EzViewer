@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.FragmentHistoryBinding
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import com.perol.asdpl.pixivez.ui.user.UserMActivity
 
 class HistoryFragment : Fragment() {
     private lateinit var historyAdapter: HistoryAdapter
@@ -30,36 +30,35 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        historyMViewModel.illustBeans.observe(requireActivity()) {
+        historyMViewModel.history.observe(requireActivity()) {
             historyAdapter.setNewInstance(it)
         }
         historyMViewModel.first()
 
         binding.recyclerview.layoutManager =
             GridLayoutManager(requireContext(), 2 * resources.configuration.orientation)
-        historyAdapter = HistoryAdapter(R.layout.view_recommand_itemh)
+        historyAdapter = HistoryAdapter()
         binding.recyclerview.adapter = historyAdapter
         binding.recyclerview.smoothScrollToPosition(historyAdapter.data.size)
         binding.fab.setOnClickListener {
-            MaterialDialog(requireContext()).show {
-                title(R.string.clearhistory)
-                positiveButton {
-                    historyMViewModel.fabOnClick()
-                }
-            }
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.clearhistory)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    historyMViewModel.clearHistory()
+                }.show()
         }
         historyAdapter.setOnItemClickListener { _, _, position ->
-            PictureActivity.start(
-                requireContext(),
-                historyMViewModel.illustBeans.value!![position].illustid
-            )
+            val item = historyMViewModel.history.value!![position]
+            if (item.isUser) UserMActivity.start(requireContext(), item.id)
+            else PictureActivity.start(requireContext(), item.id)
         }
         historyAdapter.setOnItemLongClickListener { _, _, i ->
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.confirm_title)
                 .setPositiveButton(R.string.ok) { _, _ ->
-                    historyMViewModel.deleteSelect(i)
-                    historyAdapter.notifyItemRemoved(i)
+                    historyMViewModel.deleteSelect(i) {
+                        historyAdapter.notifyItemRemoved(i)
+                    }
                 }.show()
             true
         }

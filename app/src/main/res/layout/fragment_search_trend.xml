@@ -30,17 +30,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/clear_all"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/clearhistory"
-            app:chipIcon="@drawable/ic_action_del"
-            app:chipIconTint="?android:attr/textColorPrimary"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp" />
-
         <TextView
             android:layout_marginStart="18dp"
             android:layout_width="wrap_content"

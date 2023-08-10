@@ -30,60 +30,83 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
+import androidx.room.Update
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
 
 /*@Dao
-abstract class DownIllustsDao {
-    @Query("SELECT * FROM downillusts WHERE userid=(:userid)")
-    abstract fun getDownUser(userid: Long): Flowable<List<DownIllustsEntity>>
+abstract class DownloadHistoryDao {
+    @Query("SELECT * FROM download WHERE pid=(:pid)")
+    abstract fun getDownloads(pid: Long): List<IllustsEntity>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: DownIllustsEntity)
-    @Query("DELETE FROM downillusts WHERE userid=(:userid)")
-    abstract fun deleteDownIllust(userid:Long)
-}
-@Dao
-abstract class  DownUserDao {
-    @Query("SELECT * FROM downuser")
-    abstract fun getDownUser(): Flowable<List<DownUserEntity>>
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(query: DownUserEntity)
-    @Query("DELETE FROM downuser WHERE userid=(:userid)")
-    abstract fun deleteDownUser(userid:Long)
+    abstract fun insert(query: IllustsEntity)
+    @Query("DELETE FROM download WHERE pid=(:pid)")
+    abstract fun delete(pid:Long)
 }*/
-@Dao
-abstract class SearchHistoryDao {
 
-    @Query("SELECT * FROM history")
-    abstract suspend fun getSearchHistory(): List<SearchHistoryEntity>
+@Dao
+interface SearchHistoryDao {
+
+    @Query("SELECT * FROM search")
+    suspend fun getSearchHistory(): List<SearchHistoryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(query: SearchHistoryEntity)
+    suspend fun insert(query: SearchHistoryEntity)
+
+    suspend fun insert(word: String) {
+        insert(SearchHistoryEntity(word))
+    }
+    /*class UpdateSearchHistory(val word:String, val modifiedAt:Long)
+    @Update(entity = SearchHistoryEntity::class)
+    abstract suspend fun update(query: UpdateSearchHistory)
+    suspend fun update(word: String){
+        update(UpdateSearchHistory(word, System.currentTimeMillis()))
+    }*/
+
+    @Query("DELETE FROM search")
+    suspend fun clear()
+
+    @Query("DELETE FROM search WHERE word = (:word)")
+    suspend fun deleteHistory(word: String)
+
+    //@Delete(entity = SearchHistoryEntity::class)
+    //suspend fun deleteHistory(word: String)
+}
+
+@Dao
+interface ViewHistoryDao {
+    @Query("SELECT * FROM history ORDER BY modifiedAt DESC")
+    suspend fun getViewHistory(): List<HistoryEntity>
+
+    @Query("SELECT * FROM history where id=(:id) and isUser=(:isUser) LIMIT 1")
+    suspend fun getEntity(id: Long, isUser: Boolean = false): HistoryEntity?
+
+    //@Query("SELECT * FROM history where id=(:id) and NOT user LIMIT 1")
+    //suspend fun getIllust(id: Long): IllustEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(query: HistoryEntity)
+
+    @Query("INSERT INTO history (id,title,thumb,isUser) VALUES (:id,:title,:thumb,:isUser)")
+    suspend fun insert(id: Long, title: String, thumb: String, isUser: Boolean = false)
+
+    @Update(entity = HistoryEntity::class)
+    suspend fun update(item: HistoryEntity)
+
+    suspend fun increment(item: HistoryEntity) {
+        update(item.apply {
+            count++
+            modifiedAt = System.currentTimeMillis()
+        })
+    }
+
+    @Delete
+    suspend fun delete(query: HistoryEntity)
+
+    //@Delete(entity = HistoryEntity::class)
+    @Query("DELETE FROM history WHERE id=(:id) and isUser=(:isUser)")
+    suspend fun delete(id: Long, isUser: Boolean)
 
     @Query("DELETE FROM history")
-    abstract suspend fun deletehistory()
-
-    @Query("DELETE FROM history WHERE word = (:word)")
-    abstract suspend fun deleteHistory(word: String)
-
-    @Delete
-    abstract suspend fun deleteHistoryEntity(searchHistoryEntity: SearchHistoryEntity)
-}
-
-@Dao
-interface IllustHistoryDao {
-    @Query("SELECT * FROM illusthistory")
-    suspend fun getIllustHistory(): List<IllustBeanEntity>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(query: IllustBeanEntity)
-
-    @Query("DELETE FROM illusthistory")
-    suspend fun deleteHistory()
-
-    @Query("SELECT * FROM illusthistory WHERE illustid=:illustid")
-    suspend fun getHistoryOne(illustid: Long): List<IllustBeanEntity>
-
-    @Delete
-    suspend fun deleteOne(query: IllustBeanEntity)
+    suspend fun clear()
 }

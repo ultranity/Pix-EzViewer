@@ -28,8 +28,7 @@ package com.perol.asdpl.pixivez.ui.search
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
-import com.perol.asdpl.pixivez.data.AppDatabase
-import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
+import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.model.TrendTagsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TrendTagViewModel : BaseViewModel() {
-    private var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+    private var historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
     val searchHistory = MutableLiveData<MutableList<String>>()
     val trendTags = MutableLiveData<MutableList<TrendTagsBean>?>()
 
@@ -56,18 +55,18 @@ class TrendTagViewModel : BaseViewModel() {
 
     fun addHistory(keyword: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.searchhistoryDao().insert(SearchHistoryEntity(keyword))
+            historyDatabase.searchHistoryDao().insert(keyword)
             searchHistory.value?.add(0, keyword)
         }
     }
 
     fun clearHistory() {
-        CoroutineScope(Dispatchers.IO).launch{ appDatabase.searchhistoryDao().deletehistory() }
+        CoroutineScope(Dispatchers.IO).launch { historyDatabase.searchHistoryDao().clear() }
     }
 
     private fun reloadSearchHistory() {
         viewModelScope.launch {
-            val history = appDatabase.searchhistoryDao().getSearchHistory()
+            val history = historyDatabase.searchHistoryDao().getSearchHistory()
                 .asReversed().map { it.word }.toMutableList()
             withContext(Dispatchers.Main) {
                 searchHistory.value = history
@@ -76,6 +75,6 @@ class TrendTagViewModel : BaseViewModel() {
     }
 
     fun deleteHistory(word: String) = CoroutineScope(Dispatchers.IO).launch {
-        appDatabase.searchhistoryDao().deleteHistory(word)
+        historyDatabase.searchHistoryDao().deleteHistory(word)
     }
 }

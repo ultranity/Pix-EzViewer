@@ -28,13 +28,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.perol.asdpl.pixivez.data.entity.Illust
+import com.perol.asdpl.pixivez.data.entity.IllustEntity
 
 @Dao
 abstract class IllustDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(query: Illust)
+    abstract suspend fun insert(query: IllustEntity)
 
-    @Query("SELECT * FROM illusts WHERE userid=:userid")
-    abstract suspend fun findIllustsByUserId(userid: Int): MutableList<Illust>
+    @Query("SELECT * FROM illusts WHERE uid=:userid")
+    abstract suspend fun findIllustsByUserID(userid: Int): MutableList<IllustEntity>
 }

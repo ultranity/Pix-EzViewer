@@ -26,19 +26,21 @@ package com.perol.asdpl.pixivez.ui.settings
 
 import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.data.entity.IllustBeanEntity
 
 // TODO: reuse
-class HistoryAdapter(layoutResId: Int) :
-    BaseQuickAdapter<IllustBeanEntity, BaseViewHolder>(layoutResId) {
-    override fun convert(holder: BaseViewHolder, item: IllustBeanEntity) {
+class HistoryAdapter() :
+    BaseQuickAdapter<HistoryEntity, BaseViewHolder>(R.layout.view_history_item) {
+    override fun convert(holder: BaseViewHolder, item: HistoryEntity) {
         val imageView = holder.getView<ImageView>(R.id.item_img)
-        Glide.with(imageView.context).load(item.imageurl)
+        Glide.with(imageView.context).load(item.thumb)
             .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(imageView)
+        holder.getView<TextView>(R.id.title).text = item.title
     }
 }

@@ -119,10 +119,7 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
         window.attributes = params
         window.setBackgroundDrawable(
             ColorDrawable(
-                ThemeUtil.getAttrColor(
-                    requireContext(),
-                    com.google.android.material.R.attr.colorSurfaceContainerHigh
-                )
+                ThemeUtil.getAttrColor(requireContext(), android.R.attr.colorBackground)
             )
         )
     }

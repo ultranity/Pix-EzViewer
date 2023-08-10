@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.ui.search
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
@@ -148,8 +149,10 @@ class TrendTagFragment : Fragment() {
         return chip
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getExpandChip(): Chip {
         val chip = Chip(requireContext())
+        chip.text = "more"
         chip.setChipIconResource(R.drawable.ic_menu_more)
         chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
         chip.iconEndPadding = 0F

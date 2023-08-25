@@ -217,7 +217,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     Intent(
                         this,
                         ImgManagerActivity::class.java
-                    ).setAction("your.custom.action")
+                    ).setAction("ImgMgr.start")
                 )
             }
 
@@ -248,7 +248,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 Intent(
                     this@MainActivity,
                     LoginActivity::class.java
-                ).setAction("your.custom.action")
+                ).setAction("login.try")
             )
             finish()
             return
@@ -474,9 +474,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                         binding.navRail.selectedItemId =
                             binding.navRail.menu.getItem(binding.tablayout.selectedTabPosition).itemId
                     }
-                val intent =
-                    Intent(this, SearchActivity::class.java).setAction("your.custom.action")
-                startActivity(intent)
+                SearchActivity.start(this)
                 true
             }
 

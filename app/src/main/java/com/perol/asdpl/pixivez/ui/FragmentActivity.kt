@@ -59,7 +59,7 @@ class FragmentActivity : RinkActivity() {
             arguments: Bundle? = null
         ) {
             val intent =
-                Intent(context, FragmentActivity::class.java).setAction("your.custom.action")
+                Intent(context, FragmentActivity::class.java).setAction("$target.start")
             intent.putExtra("target", target)
             intent.putExtra("args", arguments)
             intent.putExtra("title", title)

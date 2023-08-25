@@ -69,25 +69,25 @@ import java.io.File
 class UserMActivity : RinkActivity() {
     companion object {
         fun start(context: Context, id: Long, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, UserMActivity::class.java).setAction("user.id.start")
             intent.putExtra("uid", id)
             context.startActivity(intent, options)
         }
 
         fun start(context: Context, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, UserMActivity::class.java).setAction("user.start")
             context.startActivity(intent, options)
         }
 
         fun UserEntity.toUser() = User(userid, username, "", ProfileImageUrls(userimage), "", false)
         fun start(context: Context, user: UserEntity, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, UserMActivity::class.java).setAction("user.entity.start")
             intent.putExtra("user", user.toUser())
             context.startActivity(intent, options)
         }
 
         fun start(context: Context, user: User, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, UserMActivity::class.java).setAction("user.start")
             //intent.putExtra("user", user)
             intent.putExtra("userid", user.id)
             DataStore.save("user${user.id}", user)//.register()

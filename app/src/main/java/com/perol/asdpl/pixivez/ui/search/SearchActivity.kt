@@ -46,8 +46,8 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 
 class SearchActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, keyword: String?) {
-            val intent = Intent(context, SearchActivity::class.java).setAction("your.custom.action")
+        fun start(context: Context, keyword: String? = null) {
+            val intent = Intent(context, SearchActivity::class.java).setAction("search.start")
             keyword?.let {
                 intent.putExtra("keyword", it)
             }

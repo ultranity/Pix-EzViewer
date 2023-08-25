@@ -62,10 +62,8 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnLogin.setOnClickListener {
             startActivity(
-                Intent(
-                    requireContext(),
-                    LoginActivity::class.java
-                ).setAction("your.custom.action")
+                Intent(requireContext(), LoginActivity::class.java)
+                    .setAction("login.try")
             )
         }
         binding.btnLogout.setOnClickListener {
@@ -75,10 +73,8 @@ class AccountFragment : Fragment() {
                         AppDataRepo.deleteAllUser()
                     }
                     startActivity(
-                        Intent(
-                            requireContext(),
-                            LoginActivity::class.java
-                        ).setAction("your.custom.action")
+                        Intent(requireContext(), LoginActivity::class.java)
+                            .setAction("login.try")
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear task stack.
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     )
@@ -131,9 +127,7 @@ class AccountFragment : Fragment() {
             .setPositiveButton(androidx.preference.R.string.copy) { _, _ ->
                 ClipBoardUtil.putTextIntoClipboard(
                     context,
-                    userToken,
-                    false,
-                    "PxEz Token"
+                    userToken, false, "PxEz Token"
                 )
             }.show()
     }

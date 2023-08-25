@@ -316,7 +316,7 @@ class DownloadManagerActivity : RinkActivity() {
                 Intent(
                     context,
                     DownloadManagerActivity::class.java
-                ).setAction("your.custom.action")
+                ).setAction("DownMgr.start")
             )
         }
     }

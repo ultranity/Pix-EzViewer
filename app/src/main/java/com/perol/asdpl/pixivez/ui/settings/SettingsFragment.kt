@@ -214,7 +214,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
                 val intent =
-                    Intent(context, MainActivity::class.java).setAction("your.custom.action")
+                    Intent(context, MainActivity::class.java).setAction("app.restart")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 requireContext().startActivity(intent)
             }.show()

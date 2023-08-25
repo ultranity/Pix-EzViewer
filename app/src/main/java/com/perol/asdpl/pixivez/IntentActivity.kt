@@ -51,13 +51,13 @@ import java.io.IOException
 class IntentActivity : RinkActivity() {
     companion object {
         fun start(context: Context, string: String) {
-            val intent = Intent(context, IntentActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, IntentActivity::class.java).setAction("intent.action")
             intent.data = Uri.parse(string)
             context.startActivity(intent)
         }
 
         fun start(context: Context, uri: Uri) {
-            val intent = Intent(context, IntentActivity::class.java).setAction("your.custom.action")
+            val intent = Intent(context, IntentActivity::class.java).setAction("intent.action")
             intent.data = uri
             context.startActivity(intent)
         }
@@ -104,7 +104,7 @@ class IntentActivity : RinkActivity() {
                 // }
             }
             if (uri.host?.equals("pixiv.me") == true) {
-                val i = Intent(this, WebViewActivity::class.java).setAction("your.custom.action")
+                val i = Intent(this, WebViewActivity::class.java).setAction("view.pixiv.me")
                 intent.putExtra("url", uri)
                 startActivity(i)
             }

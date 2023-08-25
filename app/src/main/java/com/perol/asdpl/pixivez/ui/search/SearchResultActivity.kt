@@ -43,7 +43,7 @@ class SearchResultActivity : RinkActivity() {
     companion object {
         fun start(context: Context, keyword: String, type: Int = 0) {
             val intent =
-                Intent(context, SearchResultActivity::class.java).setAction("your.custom.action")
+                Intent(context, SearchResultActivity::class.java).setAction("search.result")
             intent.putExtra("keyword", keyword)
             intent.putExtra("type", type)
             context.startActivity(intent)

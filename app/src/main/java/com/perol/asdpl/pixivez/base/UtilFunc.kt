@@ -284,16 +284,16 @@ open class EmptyAsNullJsonTransformingSerializer<T>(
 
     @OptIn(InternalSerializationApi::class)
     final override fun serialize(encoder: Encoder, value: T) {
-        val output = encoder as JsonEncoder
-        var element = output.json.writeJson(value, tSerializer)
+        require(encoder is JsonEncoder)
+        var element = encoder.json.writeJson(value, tSerializer)
         element = transformSerialize(element)
-        output.encodeJsonElement(element)
+        encoder.encodeJsonElement(element)
     }
 
     final override fun deserialize(decoder: Decoder): T {
-        val input = decoder as JsonDecoder
-        val element = input.decodeJsonElement()
-        return input.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
+        require(decoder is JsonDecoder)
+        val element = decoder.decodeJsonElement()
+        return decoder.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
     }
 
     protected open fun transformDeserialize(element: JsonElement): JsonElement =

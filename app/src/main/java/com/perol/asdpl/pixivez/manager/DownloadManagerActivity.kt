@@ -210,7 +210,7 @@ class DownloadManagerActivity : RinkActivity() {
                                 val part = (
                                         Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
                                             .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
-                                            ?: ""
+                                            ?: "0"
                                         ).toIntOrNull()
                                 if (pid != null && part != null && !FileUtil.isDownloaded(pid)) {
                                     Works.imgD(pid, part)

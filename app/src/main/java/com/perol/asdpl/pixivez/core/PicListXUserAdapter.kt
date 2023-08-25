@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.core
 import android.app.Activity
 import android.app.ActivityOptions
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import android.util.Pair
 import android.view.View
 import com.bumptech.glide.Glide
@@ -50,9 +49,9 @@ class PicListXUserAdapter(
     layoutResId: Int, data: MutableList<Illust>?, filter: PicsFilter
 ) : PicListXAdapter(layoutResId, data, filter) {
 
-    //override fun viewPicsOptions(view: View, illust: Illust): Bundle {
-    //    return viewOptions(this, view, illust)
-    //}
+    /*override fun viewPicsOptions(view: View, illust: Illust): Bundle {
+        return viewOptions(this, view, illust)
+    }*/
 
     override fun setUIFollow(status: Boolean, position: Int) {
         (getViewByAdapterPosition(
@@ -128,11 +127,11 @@ class PicListXUserAdapter(
             }
         }
 
-        fun viewOptions(picListAdapter: PicListAdapter, view: View, illust: Illust): Bundle {
+        /*fun viewOptions(picListAdapter: PicListAdapter, view: View, illust: Illust): Bundle {
             val mainimage = view.findViewById<View>(R.id.item_img)
             val userImage = view.findViewById<View>(R.id.imageview_user)
 
-            val options = if (illust.meta_pages.size > 1) {
+            val options = if (illust.meta.size > 1) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     picListAdapter.context as Activity, Pair(mainimage, "mainimage")
                 ).toBundle()
@@ -140,10 +139,10 @@ class PicListXUserAdapter(
                 ActivityOptions.makeSceneTransitionAnimation(
                     picListAdapter.context as Activity,
                     Pair(mainimage, "mainimage"),
-                    //Pair(userImage, "userimage")
+                    Pair(userImage, "userimage")
                 ).toBundle()
             }
             return options
-        }
+        }*/
     }
 }

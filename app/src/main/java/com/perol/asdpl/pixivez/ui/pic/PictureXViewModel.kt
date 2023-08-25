@@ -134,7 +134,7 @@ class PictureXViewModel : BaseViewModel() {
                 historyDatabase.viewHistoryDao().increment(ee)
             } else
                 historyDatabase.viewHistoryDao()
-                    .insert(illust.id, illust.title, illust.image_urls.square_medium)
+                    .insert(illust.id, illust.title, illust.meta[0].square_medium)
         }
     }
 

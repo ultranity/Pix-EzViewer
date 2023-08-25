@@ -89,20 +89,20 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
-// TODO: support double panel in Tablet
-// TODO: save zip ugoira by default
+// support double panel in wide screen device
+// if? save zip ugoira by default
 class PictureXAdapter(
     private val pictureXViewModel: PictureXViewModel,
     private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var data: Illust
-    fun setInstance(illusts: Illust) {
-        data = illusts
+    fun setInstance(illust: Illust) {
+        data = illust
         initConfig()
     }
 
-    private val imageUrls = ArrayList<String>()
-    private val imageThumbnailUrls = ArrayList<String>()
+    private lateinit var imageUrls: List<String>
+    private lateinit var imageThumbnail: String
     val pre = PxEZApp.instance.pre
     private lateinit var mListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
@@ -120,71 +120,29 @@ class PictureXAdapter(
     }
 
 
-    fun initConfig() {
-        val quality =
-            pre.getString("quality", "0")?.toInt() ?: 0
-        when (quality) {
-            0 -> {
-                if (data.meta_pages.isEmpty()) {
-                    imageUrls.add(data.image_urls.medium)
-                } else {
-                    data.meta_pages.map {
-                        imageUrls.add(it.image_urls.medium)
-                    }
-                }
-            }
-
-            else -> {
-                if (data.meta_pages.isEmpty()) {
-                    imageUrls.add(data.image_urls.large)
-                } else {
-                    data.meta_pages.map {
-                        imageUrls.add(it.image_urls.large)
-                    }
-                }
-            }
+    private fun initConfig() {
+        val quality = pre.getString("quality", "0")?.toInt() ?: 0
+        imageUrls = when (quality) {
+            0 -> data.meta.map { it.medium }
+            1 -> data.meta.map { it.large }
+            2 -> data.meta.map { it.original }
+            else -> data.meta.map { it.large }
         }
         val needSmall = if (quality == 1) {
             (data.height / data.width > 3) || (data.width / data.height >= 3)
         } else {
             data.height > 1800
         }
-        if (needSmall) {
-            imageThumbnailUrls.add(data.image_urls.square_medium)
+        imageThumbnail = if (needSmall) {
+            data.meta[0].square_medium
         } else {
-            imageThumbnailUrls.add(data.image_urls.medium)
+            data.meta[0].medium
         }
-
-        /*if (needSmall) {
-            if (data.meta_pages.isEmpty()) {
-                imageThumbnailUrls.add(data.image_urls.square_medium)
-            } 
-            else {
-                data.meta_pages.map {
-                    imageThumbnailUrls.add(it.image_urls.square_medium)
-                }
-            }
-        }
-        else {
-            if (data.meta_pages.isEmpty()) {
-                imageUrls.add(data.image_urls.medium)
-            } 
-            else {
-                data.meta_pages.map {
-                    imageUrls.add(it.image_urls.medium)
-                }
-            }
-        }*/
     }
 
     class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    //class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    class SurfaceGifViewHolder(containerView: View) :
-        RecyclerView.ViewHolder(containerView)
-
-    //class FisrtDetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class SurfaceGifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     inner class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
@@ -462,13 +420,11 @@ class PictureXAdapter(
 
             is SurfaceGifViewHolder -> setGifViewHolder(holder, position)
 
-            is DetailViewHolder ->
-                holder.updateWithPage(
-                    mContext,
-                    data,
-                    mViewCommentListen,
-                    mUserPicLongClick
-                )
+            is DetailViewHolder -> holder.updateWithPage(
+                mContext, data,
+                mViewCommentListen,
+                mUserPicLongClick
+            )
 
             is RelatedHolder -> {
 //            relatedtureAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
@@ -486,12 +442,13 @@ class PictureXAdapter(
         if (mContext.resources.configuration.orientation == ORIENTATION_LANDSCAPE) {
             mainImage.maxHeight = screenHeightPx()
             //mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            //TODO: check wh ratio and span size
         }
         Glide.with(mContext).load(imageUrls[position])
             .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
             .run {
                 if (position == 0) thumbnail(
-                    Glide.with(mContext).load(imageThumbnailUrls[0])
+                    Glide.with(mContext).load(imageThumbnail)
                         .override(data.width, data.height)
                         .centerCrop()
                         .listener(object : RequestListener<Drawable> {
@@ -533,10 +490,10 @@ class PictureXAdapter(
                     Works.imgD(data, position)
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            if (data.meta_pages.isNotEmpty()) {
+            if (data.meta.size > 1) {
                 dialog.setNeutralButton(R.string.multichoicesave) { _, _ ->
                     val mSelectedItems = ArrayList<Int>() // Where we track the selected items
-                    val showList = data.meta_pages.indices.map { it.toString() }.toTypedArray()
+                    val showList = data.meta.indices.map { it.toString() }.toTypedArray()
                     val boolList = BooleanArray(showList.size)//all elements initialized to false
                     val dialog = MaterialAlertDialogBuilder(mContext)
                         .setTitle(R.string.choice)

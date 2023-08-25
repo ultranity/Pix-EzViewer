@@ -33,8 +33,9 @@ import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -177,11 +178,11 @@ object RestClient {
             when (HttpStatus.check(response.code)) {
                 HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
                     if (response.message.contains(TOKEN_INVALID)) {
-                        runBlocking(Dispatchers.Main) {
+                        CoroutineScope(Dispatchers.Main).launch {
                             Toasty.error(PxEZApp.instance, R.string.login_expired).show()
                         }
                     } else { //if (response.message.contains(TOKEN_ERROR)) {
-                        runBlocking(Dispatchers.Main) {
+                        CoroutineScope(Dispatchers.Main).launch {
                             Toasty.warning(PxEZApp.instance, R.string.token_expired).show()
                             RefreshToken.getInstance()
                                 .refreshToken(AppDataRepo.currentUser.Refresh_token)
@@ -193,7 +194,9 @@ object RestClient {
 
                 HttpStatus.NotFound -> {
                     Log.d("404", response.message + response.body)
-                    Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
+                    }
                 }
 
                 HttpStatus.OK -> {

@@ -106,7 +106,7 @@ class NewAppWidget : AppWidgetProvider() {
                     )
                     views.setOnClickPendingIntent(R.id.widget_image, pendingIntent)
                     Glide.with(context.applicationContext).asBitmap()
-                        .load(resp.illusts[randomnum].image_urls.medium)
+                        .load(resp.illusts[randomnum].meta[0].medium)
                         .transform(
                             RoundedCornersTransformation(
                                 24,

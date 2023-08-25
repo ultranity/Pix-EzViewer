@@ -1,7 +1,9 @@
 package com.perol.asdpl.pixivez.data.model
 
+import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.nullable
 
 @Serializable
 data class Novel(
@@ -44,3 +46,5 @@ data class Novel(
     @SerialName("novel_ai_type")
     val novel_ai_type: Int
 )
+object EmptyAsNullSeries :
+    EmptyAsNullJsonTransformingSerializer<Series?>(Series.serializer().nullable)

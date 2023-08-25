@@ -41,7 +41,7 @@ class SquareMediumAdapter(
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         val imageView = holder.getView<ImageView>(R.id.imageview)
-        Glide.with(imageView.context).load(item.image_urls.square_medium)
+        Glide.with(imageView.context).load(item.meta[0].square_medium)
             .placeholder(if (holder.layoutPosition % 2 != 0) R.color.transparent else R.color.gray)
             .transition(withCrossFade()).centerInside().into(imageView)
     }

@@ -247,8 +247,8 @@ abstract class PicListAdapter(
         if (item.type == "ugoira") {
             numLayout.text = "GIF"
             numLayout.visibility = View.VISIBLE
-        } else if (item.meta_pages.isNotEmpty()) {
-            val meta_pages_size = item.meta_pages.size.toString()
+        } else if (item.meta.size > 1) {
+            val meta_pages_size = item.meta.size.toString()
 
             numLayout.text = when (item.type) {
                 "illust" -> meta_pages_size
@@ -277,16 +277,16 @@ abstract class PicListAdapter(
         }
 
         // Load Images
-        mainImage.setTag(R.id.tag_first, item.image_urls.medium)
+        mainImage.setTag(R.id.tag_first, item.meta[0].medium)
         val needSmall = if (quality == 1) {
             (1.0 * item.height / item.width > 3) || (item.width / item.height > 4)
         } else {
             item.height > 1800
         }
         val loadUrl = if (needSmall) {
-            item.image_urls.square_medium
+            item.meta[0].square_medium
         } else {
-            item.image_urls.medium
+            item.meta[0].medium
         }
         Glide.with(context).load(loadUrl).transition(withCrossFade())
             .placeholder(ColorDrawable(ThemeUtil.halftrans))
@@ -301,7 +301,7 @@ abstract class PicListAdapter(
                     resource: Drawable,
                     transition: Transition<in Drawable>?
                 ) {
-                    if (mainImage.getTag(R.id.tag_first) === item.image_urls.medium) {
+                    if (mainImage.getTag(R.id.tag_first) === item.meta[0].medium) {
                         super.onResourceReady(resource, transition)
                     }
                 }

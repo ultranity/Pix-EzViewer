@@ -86,6 +86,7 @@ class PictureXFragment : BaseFragment() {
     }
 
     override fun onDestroy() {
+        _binding = null
         pictureXAdapter?.setListener { }
         pictureXAdapter?.setViewCommentListen { }
         pictureXAdapter?.setUserPicLongClick { }
@@ -129,7 +130,7 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.illustDetail.observe(viewLifecycleOwner) {
             binding.progressView.visibility = View.GONE
             if (it != null) {
-                page_size = if (it.meta_pages.isNotEmpty()) it.meta_pages.size else 1
+                page_size = it.meta.size
                 // stop loading here if blocked
                 checkBlock(it)
                 loadIllust(it)
@@ -235,21 +236,20 @@ class PictureXFragment : BaseFragment() {
         binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.5F)
         pictureXAdapter!!.setInstance(it)
         if (screenWidthDp() > 840) { //double pannel in wide screen
-            binding.recyclerview.layoutManager =
-                GridLayoutManager(
-                    requireContext(), 2,
-                    //RecyclerView.HORIZONTAL, false
-                ).apply {
-                    spanSizeLookup = object : SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            if (pictureXAdapter!!.getItemViewType(position) ==
-                                PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
-                            )
-                                return 2
-                            return 1
-                        }
+            binding.recyclerview.layoutManager = GridLayoutManager(
+                requireContext(), 2,
+                //RecyclerView.HORIZONTAL, false
+            ).apply {
+                spanSizeLookup = object : SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        if (pictureXAdapter!!.getItemViewType(position) ==
+                            PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+                        )
+                            return 2
+                        return 1
                     }
                 }
+            }
             //TODO: padding when only single image
         }
         if (it.user.is_followed) {
@@ -347,17 +347,20 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
     }
 
-    lateinit var binding: FragmentPictureXBinding
+    private var _binding: FragmentPictureXBinding? = null
+    private val binding: FragmentPictureXBinding
+        get() = requireNotNull(_binding) { "The property of binding has been destroyed." }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        if (!this::binding.isInitialized) {
-            binding = FragmentPictureXBinding.inflate(inflater, container, false)
+        if (_binding == null) {
+            _binding = FragmentPictureXBinding.inflate(inflater, container, false)
         }
-        page_size = illustobj?.meta_pages?.size ?: 1
+        page_size = illustobj?.meta?.size ?: 1
         return binding.root
     }
 

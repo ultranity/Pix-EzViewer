@@ -25,9 +25,14 @@
 
 package com.perol.asdpl.pixivez.data.model
 
-import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 class IllustNext(
@@ -48,8 +53,9 @@ class UserIllustNext(
 @Serializable
 class IllustDetailResponse(val illust: Illust)
 
+/*
 @Serializable
-data class Illust(
+data class Illust_original(
     val id: Long,
     val title: String,
     val type: String, // illust, ugoira, manga //TODO: novel?
@@ -66,8 +72,48 @@ data class Illust(
     val sanity_level: Int, //TODO: sanity_level > 5 is nsfw
     val x_restrict: Int,
     val series: Series?,
-    val meta_single_page: MetaSinglePage,
-    val meta_pages: List<MetaPage>,
+    @Serializable(with = EmptyAsNullMetaSinglePage::class)
+    val meta_single_page: MetaSinglePage?,
+    var meta_pages: List<MetaPage>,
+    val total_view: Int,
+    val total_bookmarks: Int,
+    var is_bookmarked: Boolean,
+    var visible: Boolean,
+    val is_muted: Boolean,
+    val total_comments: Int = 0, //not included in recommends
+    val illust_ai_type: Int,
+    val illust_book_style: Int, //TODO:
+    val comment_access_control: Int = 0, //TODO:
+){
+    fun merge_meta(){
+        if (meta_pages.isEmpty()){
+            meta_pages = listOf(MetaPage(ImageUrlsX(
+                image_urls.large,
+                image_urls.medium,
+                meta_single_page!!.original_image_url,
+                image_urls.square_medium)))
+        }
+    }
+}
+*/
+@Serializable
+data class IllustX(
+    val id: Long,
+    val title: String,
+    val type: String, // illust, ugoira, manga //TODO: novel?
+    val caption: String,
+    val restrict: Int, //TODO: level 分级
+    val user: User,
+    val tags: List<Tag>,
+    val tools: List<String>,
+    val create_date: String,
+    val page_count: Int,
+    val width: Int,
+    val height: Int,
+    val sanity_level: Int, //TODO: sanity_level > 5 is nsfw
+    val x_restrict: Int,
+    val series: Series?,
+    val meta: List<ImageUrlsX>,
     val total_view: Int,
     val total_bookmarks: Int,
     var is_bookmarked: Boolean,
@@ -78,6 +124,42 @@ data class Illust(
     val illust_book_style: Int, //TODO:
     val comment_access_control: Int = 0, //TODO:
 )
+// workaround until https://github.com/Kotlin/kotlinx.serialization/issues/1169 fixed
+typealias Illust = @Serializable(with = MergeMetaIllustSerializer::class) IllustX
+
+object MergeMetaIllustSerializer : JsonTransformingSerializer<Illust>(IllustX.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val transformed = buildJsonObject {
+            val meta_pages = if (element.jsonObject["meta_pages"]!!.jsonArray.isEmpty()) {
+                JsonArray(listOf(buildJsonObject {
+                    put(
+                        "original", element.jsonObject["meta_single_page"]!!
+                            .jsonObject["original_image_url"]!!.jsonPrimitive
+                    )
+                    element.jsonObject["image_urls"]!!.jsonObject.forEach {
+                        put(it.key, it.value)
+                    }
+                }))
+            } else {
+                JsonArray(element.jsonObject["meta_pages"]!!.jsonArray.map {
+                    it.jsonObject["image_urls"]!!
+                })
+            }
+            element.jsonObject.filterKeys {
+                it != "meta_single_page" && it != "image_urls" && it != "meta_pages"
+            }.forEach {
+                put(it.key, it.value)
+            }
+            put("meta", meta_pages)
+        }
+        return super.transformDeserialize(transformed)
+    }
+
+    override fun transformSerialize(element: JsonElement): JsonElement {
+        return super.transformSerialize(element)
+    }
+}
+
 
 //ref: https://github.com/ArkoClub/async-pixiv/blob/0fcce0c5a096b5473424310ce5d9b6db35c7fd23/src/async_pixiv/model/other.py#L40
 enum class AIType {
@@ -86,10 +168,10 @@ enum class AIType {
     FULL,  //2使用AI生成
 }
 
-@Serializable
+/*@Serializable
 class MetaPage(
     val image_urls: ImageUrlsX
-)
+)*/
 
 /**
  * square_medium : https://i.pximg.net/c/360x360_70/img-master/img/2017/12/03/05/15/02/66137839_p0_square1200.jpg
@@ -114,10 +196,10 @@ class ImageUrls(
 /**
  * original_image_url : https://i.pximg.net/img-original/img/2017/12/03/05/15/02/66137839_p0.png
  */
-@Serializable
+/*@Serializable
 class MetaSinglePage(
-    val original_image_url: String?
-)
+    val original_image_url: String
+)*/
 
 /**
  * {
@@ -131,5 +213,5 @@ class Series(
     val title: String
 )
 
-class EmptyAsNullSeries :
-    EmptyAsNullJsonTransformingSerializer<Series?>(Series.serializer().nullable)
+//class EmptyAsNullMetaSinglePage:
+//    EmptyAsNullJsonTransformingSerializer<MetaSinglePage?>(MetaSinglePage.serializer().nullable)

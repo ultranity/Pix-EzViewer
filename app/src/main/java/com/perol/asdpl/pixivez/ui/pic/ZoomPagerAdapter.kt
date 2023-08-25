@@ -54,11 +54,7 @@ class ZoomPagerAdapter(
     private var origin: List<String>? = null
     private var preview: List<String>? = null
     override fun getCount(): Int {
-        return if (illust.meta_pages.isEmpty()) {
-            1
-        } else {
-            illust.meta_pages.size
-        }
+        return illust.meta.size
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -67,24 +63,11 @@ class ZoomPagerAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val large = PxEZApp.instance.pre.getString(
-            "quality",
-            "0"
-        )!!.toInt() != 0
-        if (illust.meta_pages.isEmpty()) {
-            origin = listOf(illust.meta_single_page.original_image_url!!)
-            preview = if (large) {
-                listOf(illust.image_urls.large)
-            } else {
-                listOf(illust.image_urls.medium)
-            }
+        origin = illust.meta.map { it.original }
+        preview = if (PxEZApp.instance.pre.getString("quality", "0")?.toInt() == 0) {
+            illust.meta.map { it.medium }
         } else {
-            origin = illust.meta_pages.map { it.image_urls.original }
-            preview = if (large) {
-                illust.meta_pages.map { it.image_urls.large }
-            } else {
-                illust.meta_pages.map { it.image_urls.medium }
-            }
+            illust.meta.map { it.large }
         }
         val layoutInflater = LayoutInflater.from(context)
         val binding = ViewPagerZoomBinding.inflate(layoutInflater, container, false)
@@ -117,15 +100,11 @@ class ZoomPagerAdapter(
                             MaterialDialog(context).show {
                                 title(R.string.saveselectpic1)
                                 positiveButton(android.R.string.ok) {
-                                    if (illust.meta_pages.isNotEmpty()) {
-                                        Works.imageDownloadWithFile(
-                                            illust,
-                                            resourceFile!!,
-                                            position
-                                        )
-                                    } else {
-                                        Works.imageDownloadWithFile(illust, resourceFile!!, null)
-                                    }
+                                    Works.imageDownloadWithFile(
+                                        illust,
+                                        resourceFile!!,
+                                        position
+                                    )
                                 }
                                 negativeButton(android.R.string.cancel)
                                 lifecycleOwner((this@ZoomPagerAdapter.context as AppCompatActivity))

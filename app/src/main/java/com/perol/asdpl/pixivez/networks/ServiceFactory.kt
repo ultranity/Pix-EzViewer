@@ -28,6 +28,7 @@ object ServiceFactory {
         useArrayPolymorphism = false
         ignoreUnknownKeys = true
         //namingStrategy = JsonNamingStrategy.SnakeCase
+        //useAlternativeNames = false
     }
 
     val CFDNS = DnsOverHttps("https://1.0.0.1/") // Or https://1.0.0.1/.

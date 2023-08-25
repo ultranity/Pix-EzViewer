@@ -43,15 +43,15 @@ class SpotlightAdapter(layoutResId: Int, data: MutableList<Spotlight>?) :
     BaseQuickAdapter<Spotlight, BaseViewHolder>(layoutResId, data) {
 
     override fun convert(holder: BaseViewHolder, item: Spotlight) {
-        if (item.illust.meta_pages.isNotEmpty()) {
-            holder.setText(R.id.textview_num, item.illust.meta_pages.size.toString())
+        if (item.illust.meta.size > 1) {
+            holder.setText(R.id.textview_num, item.illust.meta.size.toString())
         }
-        holder.setGone(R.id.textview_num, item.illust.meta_pages.isNotEmpty())
+        holder.setGone(R.id.textview_num, item.illust.meta.size > 1)
         val userImage = holder.getView<ImageView>(R.id.imageview_user)
         val mainImage = holder.getView<ImageView>(R.id.item_img)
         holder.setText(R.id.textview_context, item.username)
             .setText(R.id.title, item.title)
-        Glide.with(mainImage.context).load(item.illust.image_urls.medium)
+        Glide.with(mainImage.context).load(item.illust.meta[0].medium)
             .error(R.drawable.ai).transition(withCrossFade()).into(mainImage)
         Glide.with(userImage.context).load(item.illust.user.profile_image_urls.medium)
             .placeholder(R.mipmap.ic_noimage_foreground)

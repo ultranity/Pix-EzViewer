@@ -39,7 +39,7 @@ class TrendingTagAdapter(data: MutableList<TrendTagsBean>?) :
         holder.setText(R.id.textview_tag, item.tag)
         val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
         Glide.with(imageView.context)
-            .load(item.illust.image_urls.square_medium)
+            .load(item.illust.meta[0].square_medium)
             .placeholder(ColorDrawable(ThemeUtil.halftrans))
             .into(imageView)
     }

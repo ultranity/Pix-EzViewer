@@ -36,7 +36,7 @@ object InteractionUtil {
                 "sanity_level:${it.sanity_level} restrict:${it.restrict} x_restrict:${it.x_restrict}"
     // "meta_pages:" + illust.meta_pages.toString() + "\n" +
     // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
-    // "image_urls:" + illust.image_urls.toString()
+    // "image_urls:" + illust.meta_pages[0].toString()
 
     fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit = { }) =
         MainScope().launchCatching(

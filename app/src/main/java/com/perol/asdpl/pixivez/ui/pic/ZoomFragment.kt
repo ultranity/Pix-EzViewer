@@ -37,12 +37,7 @@ class ZoomFragment : BaseVBFragment<FragmentZoomBinding>() {
         val illust = requireArguments().getParcelable<Illust>("illust")!!
         val num = requireArguments().getInt("num", 0)
         val zoomPagerAdapter = ZoomPagerAdapter(requireContext(), illust)
-        val size =
-            if (illust.meta_pages.isEmpty()) {
-                1
-            } else {
-                illust.meta_pages.size
-            }
+        val size = illust.meta.size
         binding.textviewZoom.text = getString(R.string.fractional, 1, size)
         binding.viewpageZoom.adapter = zoomPagerAdapter
         binding.viewpageZoom.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

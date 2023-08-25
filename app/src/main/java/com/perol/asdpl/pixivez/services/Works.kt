@@ -101,18 +101,16 @@ object Works {
             .replace("{R18}", if (illust.x_restrict == 1) "R18" else "")
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
-        if (part != null && illust.meta_pages.isNotEmpty()) {
+        if (part != null && part < illust.meta.size) {
             url = getQualityUrl(illust, part)
             filename = filename.replace("{part}", part.toString())
-        }
-        else if (illust.meta_single_page.original_image_url != null) {
+        } else if (illust.meta.size == 1) {
             url = getQualityUrl(illust)
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
-        }
-        else {
-            url = ""
+        } else { //error config
+            throw Error("part $part while illust.meta.size ${illust.meta.size}")
         }
         if (R18Folder && illust.x_restrict == 1) {
             filename = "？$filename"
@@ -202,11 +200,10 @@ object Works {
             Toasty.shortToast(R.string.join_download_queue)
         }
         CoroutineScope(Dispatchers.IO).launch {
-            if (illust.meta_pages.isEmpty()) {
-                imgD(illust, null)
-            }
-            else {
-                for (i in illust.meta_pages.indices) {
+            if (illust.meta.size == 1) {
+                imgD(illust, null) //hide _0 if is single image
+            } else {
+                for (i in illust.meta.indices) {
                     imgD(illust, i)
                 }
             }
@@ -270,21 +267,22 @@ object Works {
             .replace("{part}", part?.toString() ?: "0")
             .replace("{type}", type)
     }
-    fun imgD(pid: Long, part: Int?) {
+
+    fun imgD(pid: Long, part: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             RetrofitRepository.getInstance().api.getIllust(pid).let {
-                    imgD(it.illust, part)
-                }
+                imgD(it.illust, part)
+            }
         }
     }
+
     fun imgD(illust: Illust, part: Int?) {
         var url = (
-            if (part != null && illust.meta_pages.isNotEmpty()) {
-                getQualityUrl(illust, part)
-            }
-            else {
-                getQualityUrl(illust)
-            }
+                if (part != null && illust.meta.size > 1) {
+                    getQualityUrl(illust, part)
+                } else {
+                    getQualityUrl(illust)
+                }
             )
         // url = mirror(illust, part, url)
         url = mirrorLinkDownload(url)
@@ -306,7 +304,7 @@ object Works {
         val illustD = IllustD(
             id = illust.id,
             part = part ?: 0,
-            preview = illust.image_urls.square_medium,
+            preview = illust.meta[0].square_medium,
             userName = name,
             userId = illust.user.id,
             userAvatar = illust.user.profile_image_urls.medium,
@@ -323,95 +321,74 @@ object Works {
             .create()
     }
 
-    private fun getQualityUrl(illust: Illust, part: Int): String {
-        //TODO: is this necessary?
-        //val part = part.coerceAtMost(illust.meta_pages.size - 1)
-        val urls = illust.meta_pages[part].image_urls
+    private fun getQualityUrl(illust: Illust, part: Int = 0): String {
+        //TODO if need: val part = part.coerceAtMost(illust.meta_pages.size - 1)
+        val urls = illust.meta[part]
         return when (pre.getString("quality_download", "0")?.toInt()) {
-            0 -> {
-                urls.original
-            }
-            1 -> {
-                urls.medium
-            }
-            else -> { // 2
-                urls.large
-            }
-        }
-    }
-    private fun getQualityUrl(illust: Illust): String {
-        val urls = illust.image_urls
-        return when (pre.getString("quality_download", "0")?.toInt()) {
-            0 -> {
-                illust.meta_single_page.original_image_url!!
-            }
-            1 -> {
-                urls.medium
-            }
-            else -> { // 2
-                urls.large
-            }
+            0 -> urls.original
+            1 -> urls.medium
+            else -> urls.large // 2
         }
     }
 
-/*
-    @Deprecated("imgD")
-    fun imageDownloadOne(illust: Illust, part: Int?) {
-        var url = ""
-        val title = illust.title.toLegal()
-        val userName = illust.user.name.toLegal()
-        val user = illust.user.id
-        val name = illust.id
-        val format = pre.getString(
-            "saveformat",
-            "0"
-        )?.toInt()
-            ?: 0
-        val needCreateFold = pre.getBoolean("needcreatefold", false)
-        var type = ".png"
-        var filename = "${name}_p$part$type"
-        if (part != null && illust.meta_pages.isNotEmpty()) {
-            url = illust.meta_pages[part].image_urls.original
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (format) {
-                0 -> {
-                    filename = "${name}_$part$type"
-                }
-                1 -> {
-                    filename = "${name}_p$part$type"
-                }
-                2 -> {
-                    filename = "${name}_${name}_$part$type"
-                }
-                3 -> {
-                    filename = "${name}_${title}_$part$type"
-                }
-            }
-        }
-        else {
-            url = illust.meta_single_page.original_image_url!!
-            type = if (url.contains("png")) {
-                ".png"
-            } else ".jpg"
-            when (format) {
-                0 -> {
-                    filename = "$name$type"
-                }
-                1 -> {
-                    filename = "$name$type"
-                }
-                2 -> {
-                    filename = "${name}_$name$type"
-                }
-                3 -> {
-                    filename = "${name}_${title}$type"
+    /*
+        @Deprecated("imgD")
+        fun imageDownloadOne(illust: Illust, part: Int?) {
+            var url = ""
+            val title = illust.title.toLegal()
+            val userName = illust.user.name.toLegal()
+            val user = illust.user.id
+            val name = illust.id
+            val format = pre.getString(
+                "saveformat",
+                "0"
+            )?.toInt()
+                ?: 0
+            val needCreateFold = pre.getBoolean("needcreatefold", false)
+            var type = ".png"
+            var filename = "${name}_p$part$type"
+            if (part != null && illust.meta_pages.isNotEmpty()) {
+                url = illust.meta_pages[part].meta_pages[0].original
+                type = if (url.contains("png")) {
+                    ".png"
+                } else ".jpg"
+                when (format) {
+                    0 -> {
+                        filename = "${name}_$part$type"
+                    }
+                    1 -> {
+                        filename = "${name}_p$part$type"
+                    }
+                    2 -> {
+                        filename = "${name}_${name}_$part$type"
+                    }
+                    3 -> {
+                        filename = "${name}_${title}_$part$type"
+                    }
                 }
             }
+            else {
+                url = illust.meta_single_page.original_image_url!!
+                type = if (url.contains("png")) {
+                    ".png"
+                } else ".jpg"
+                when (format) {
+                    0 -> {
+                        filename = "$name$type"
+                    }
+                    1 -> {
+                        filename = "$name$type"
+                    }
+                    2 -> {
+                        filename = "${name}_$name$type"
+                    }
+                    3 -> {
+                        filename = "${name}_${title}$type"
+                    }
+                }
+            }
+
+
         }
-
-
-    }
-*/
+    */
 }

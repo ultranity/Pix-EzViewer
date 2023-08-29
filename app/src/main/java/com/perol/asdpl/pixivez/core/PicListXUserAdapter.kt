@@ -77,8 +77,7 @@ class PicListXUserAdapter(
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         picListAdapter.context as Activity,
-                        Pair(imageViewUser, "shared_element_container")
-                        //Pair(imageViewUser, "userimage")
+                        Pair(imageViewUser, "shared_element_container")//"userimage")
                     ).toBundle()
                 } else null
                 UserMActivity.start(picListAdapter.context, illust.user, options)

@@ -151,7 +151,7 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         requireActivity(),
-                        Pair(view, "userimage")
+                        Pair(view, "shared_element_container")//"userimage")
                     ).toBundle()
                 } else null
                 UserMActivity.start(

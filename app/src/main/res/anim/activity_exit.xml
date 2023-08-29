@@ -4,10 +4,18 @@
     <translate
         android:duration="@android:integer/config_shortAnimTime"
         android:fromYDelta="0%p"
-        android:toYDelta="15%p" />
+        android:toYDelta="10%p" />
 
     <alpha
         android:duration="@android:integer/config_shortAnimTime"
-        android:fromAlpha="0.8"
-        android:toAlpha="0.0" />
+        android:fromAlpha="1.0"
+        android:toAlpha="0" />
+    <scale
+        android:duration="@android:integer/config_shortAnimTime"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:toXScale="0.8"
+        android:toYScale="0.8"
+        android:pivotX="50%"
+        android:pivotY="50%" />
 </set>

@@ -44,14 +44,17 @@ import kotlin.math.max
 
 class PictureActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id }) {
+        fun start(
+            context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id },
+            options: Bundle? = null
+        ) {
             val bundle = Bundle()
             bundle.putIntArray("illustidlist", arrayList)
             bundle.putInt("illustid", id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
-            context.startActivity(intent)
+            context.startActivity(intent, options)
         }
 
         fun start(

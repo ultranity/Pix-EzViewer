@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.ui
 
 import android.Manifest
-import android.app.ActivityOptions
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -34,7 +33,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.text.InputType
-import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -411,13 +409,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             .load(user.userimage)
             .circleCrop().into(header.imageView)
         header.imageView.setOnClickListener {
-            val options = if (PxEZApp.animationEnable) {
-                ActivityOptions.makeSceneTransitionAnimation(
-                    this@MainActivity,
-                    Pair(header.imageView, "userimage")
-                ).toBundle()
-            } else null
-            UserMActivity.start(this@MainActivity, options)
+            UserMActivity.start(this@MainActivity)
             binding.drawerLayout.close()
         }
 

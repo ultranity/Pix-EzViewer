@@ -64,8 +64,7 @@ class SpotlightAdapter(layoutResId: Int, data: MutableList<Spotlight>?) :
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
-                    Pair(userImage, "shared_element_container")
-                    //Pair(userImage, "userimage")
+                    Pair(userImage, "shared_element_container")//"userimage")
                 ).toBundle()
             } else null
             UserMActivity.start(context, item.illust.user, options)

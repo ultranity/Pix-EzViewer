@@ -16,6 +16,7 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true"
         android:theme="@style/AppThemeBase"
         tools:replace="android:theme">
 

@@ -1,6 +1,8 @@
 package com.perol.asdpl.pixivez.ui.settings
 
+import android.app.ActivityOptions
 import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.FragmentHistoryBinding
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 
@@ -47,10 +50,16 @@ class HistoryFragment : Fragment() {
                     historyMViewModel.clearHistory()
                 }.show()
         }
-        historyAdapter.setOnItemClickListener { _, _, position ->
+        historyAdapter.setOnItemClickListener { _, view, position ->
             val item = historyMViewModel.history.value!![position]
-            if (item.isUser) UserMActivity.start(requireContext(), item.id)
-            else PictureActivity.start(requireContext(), item.id)
+            val options = if (PxEZApp.animationEnable) {
+                ActivityOptions.makeSceneTransitionAnimation(
+                    requireActivity(),
+                    Pair(view, "shared_element_container")
+                ).toBundle()
+            } else null
+            if (item.isUser) UserMActivity.start(requireContext(), item.id, options)
+            else PictureActivity.start(requireContext(), item.id, options = options)
         }
         historyAdapter.setOnItemLongClickListener { _, _, i ->
             MaterialAlertDialogBuilder(requireContext())

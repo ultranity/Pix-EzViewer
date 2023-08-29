@@ -98,7 +98,7 @@ class WebViewActivity : RinkActivity() {
                                     if (uri.host?.contains("www.pixiv.net") == true) {
                                         if (segment.contains("artworks")) {
                                             val id =
-                                                segment[segment.indexOf("artworks") + 1].toLong()
+                                                segment[segment.indexOf("artworks") + 1].toInt()
                                             PictureActivity.start(this@WebViewActivity, id)
                                             return true
                                         }
@@ -106,7 +106,7 @@ class WebViewActivity : RinkActivity() {
                                             val userId = segment[segment.indexOf("users") + 1]
                                             UserMActivity.start(
                                                 this@WebViewActivity,
-                                                userId.toLong()
+                                                userId.toInt()
                                             )
                                             return true
                                         }
@@ -116,7 +116,7 @@ class WebViewActivity : RinkActivity() {
                                             request.url.getQueryParameter("id")?.let {
                                                 UserMActivity.start(
                                                     this@WebViewActivity,
-                                                    it.toLong()
+                                                    it.toInt()
                                                 )
                                             }
                                         }

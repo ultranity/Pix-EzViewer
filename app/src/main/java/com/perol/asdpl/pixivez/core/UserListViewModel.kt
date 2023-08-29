@@ -71,9 +71,10 @@ class UserListViewModel : BaseViewModel() {
     }
 
     // -----------------
-    lateinit var keyword:String
+    lateinit var keyword: String
+
     // -----------------
-    var userid by Delegates.notNull<Long>()
+    var userid by Delegates.notNull<Int>()
     // -----------------
     fun onLoadMore() {
         subscribeNext({ retrofit.getNextSearchUser(nextUrl.value!!) }, dataAdded, nextUrl)

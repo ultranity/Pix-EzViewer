@@ -83,7 +83,7 @@ class PictureXViewModel : BaseViewModel() {
         }
     }
 
-    suspend fun loadGif(id: Long) = retrofit.api.getUgoiraMetadata(id)
+    suspend fun loadGif(id: Int) = retrofit.api.getUgoiraMetadata(id)
 
     private fun reDownLoadGif(medium: String) {
         val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetail.value!!.id}.zip"
@@ -138,15 +138,15 @@ class PictureXViewModel : BaseViewModel() {
         }
     }
 
-    fun firstGet(toLong: Long) {
+    fun firstGet(illust_id: Int) {
         CoroutineScope(Dispatchers.IO).launchCatching({
-            retrofit.api.getIllust(toLong)
+            retrofit.api.getIllust(illust_id)
         }, {
             firstGet(it.illust)
         }, {
             Toasty.warning(
                 PxEZApp.instance,
-                "PID 404: $toLong",
+                "PID 404: $illust_id",
                 Toast.LENGTH_SHORT
             ).show()
             illustDetail.value = null
@@ -195,16 +195,16 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun onDialogClick(private: Boolean) {
-        val toLong = illustDetail.value!!.id
+        val pid = illustDetail.value!!.id
 
         CoroutineScope(Dispatchers.IO).launchCatching({
             if (!illustDetail.value!!.is_bookmarked or private) {
                 //TODO: default tag to add?
                 val tagList =
                     tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
-                retrofit.api.postLikeIllust(toLong, visRestrictTag(private), tagList)
+                retrofit.api.postLikeIllust(pid, visRestrictTag(private), tagList)
             } else {
-                retrofit.api.postUnlikeIllust(toLong)
+                retrofit.api.postUnlikeIllust(pid)
             }
         }, {
             likeIllust.value = true

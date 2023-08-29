@@ -218,7 +218,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         )
     }
 
-    private var userid: Long by argument()
+    private var userid: Int by argument()
 
     private lateinit var binding: FragmentUserInfoBinding
     override fun onCreateView(
@@ -232,7 +232,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
     }
 
     companion object {
-        fun newInstance(userid: Long): Fragment {
+        fun newInstance(userid: Int): Fragment {
             return UserInfoFragment().apply {
                 this.userid = userid
             }

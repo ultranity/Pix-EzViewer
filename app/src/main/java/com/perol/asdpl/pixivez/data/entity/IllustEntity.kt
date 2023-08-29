@@ -40,7 +40,7 @@ data class IllustEntity(
 @Entity(tableName = "download")
 class IllustsEntity(
     @PrimaryKey
-    var pid: Long,
+    var pid: Int,
     var part: String?,
     var uid: Int,
     var url: String,

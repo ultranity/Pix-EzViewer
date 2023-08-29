@@ -106,7 +106,7 @@ fun checkTrilean(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean 
 
 class PicsFilter(tag: String) : PicListFilterKV(tag) {
     var blockTags: List<String>? = null
-    var blockUser: List<Long>? = null
+    var blockUser: List<Int>? = null
     fun needHide(item: Illust): Boolean =
         checkTrilean(showPrivate, showPublic, item.x_restrict == 1) ||
                 checkTrilean(showBookmarked, showNotBookmarked, item.is_bookmarked) ||

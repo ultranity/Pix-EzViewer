@@ -7,7 +7,7 @@ import kotlinx.serialization.builtins.nullable
 
 @Serializable
 data class Novel(
-    val id: Long,
+    val id: Int,
     val title: String,
     val caption: String,
     val restrict: Int,

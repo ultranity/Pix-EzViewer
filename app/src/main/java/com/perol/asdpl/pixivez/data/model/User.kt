@@ -35,7 +35,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class User(
-    var id: Long,
+    var id: Int,
     var name: String,
     var account: String,
     var profile_image_urls: ProfileImageUrls,

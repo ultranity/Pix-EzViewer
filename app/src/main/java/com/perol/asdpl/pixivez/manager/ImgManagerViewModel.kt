@@ -45,7 +45,7 @@ import java.io.File
 
 class RenameTask(fileInfo: FileInfo) {
     val file: FileInfo = fileInfo
-    val pid: Long? = if (file.isPic()) file.pid else null
+    val pid: Int? = if (file.isPic()) file.pid else null
     val part: Int? = if (file.isPic()) fileInfo.part.toIntOrNull() else null
 }
 //TODO: clear
@@ -73,7 +73,7 @@ class ImgManagerViewModel : BaseViewModel() {
             return@map it
         }.collect()*/
         val kv = FastKVUtil.Default
-        val taskmap = HashMap<Long, RenameTask>()
+        val taskmap = HashMap<Int, RenameTask>()
         task?.filter {
             (!length_filter || it.file.name.length < 50) && it.pid != null
         }?.forEach {

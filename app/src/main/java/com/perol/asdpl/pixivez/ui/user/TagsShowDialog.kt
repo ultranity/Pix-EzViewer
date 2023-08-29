@@ -13,13 +13,13 @@ import com.perol.asdpl.pixivez.objects.argument
 // UserBookMarkFragment
 class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
     companion object {
-        fun newInstance(uid: Long, index: Int = 0) = TagsShowDialog().apply {
+        fun newInstance(uid: Int, index: Int = 0) = TagsShowDialog().apply {
             this.uid = uid
             this.index = index
         }
     }
 
-    private var uid: Long by argument()
+    private var uid: Int by argument()
     private var index: Int by argument()
     val viewModel: BookMarkTagViewModel by viewModels({ requireParentFragment() })
     var callback: Callback? = null

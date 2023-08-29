@@ -214,7 +214,7 @@ class ImgManagerActivity : RinkActivity() {
                             viewModel.files!!.size,
                             max(position - 30, 0) + 60
                         )
-                    ).mapNotNull { it.pid }.toLongArray()
+                    ).mapNotNull { it.pid }.toIntArray()
                     PictureActivity.start(this, pid, arrayList)
                 }
             }

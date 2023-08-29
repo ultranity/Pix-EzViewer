@@ -61,7 +61,7 @@ class PixivOAuthResponse(
  */
 @Serializable
 class UserBean(
-    val id: Long,
+    val id: Int,
     val name: String,
     val account: String,
     val mail_address: String,

@@ -42,7 +42,7 @@ object AppDataRepo {
 
     fun userInited() = _currentUser != null
 
-    fun isSelfPage(id: Long): Boolean {
+    fun isSelfPage(id: Int): Boolean {
         return currentUser.userid == id
     }
 
@@ -86,7 +86,7 @@ object AppDataRepo {
         getUser()
     }
 
-    suspend fun findUser(id: Long): List<UserEntity> = appDatabase.userDao().findUsers(id)
+    suspend fun findUser(id: Int): List<UserEntity> = appDatabase.userDao().findUsers(id)
 
     suspend fun getAllBlockTags() = appDatabase.blockTagDao().getAllTags()
 

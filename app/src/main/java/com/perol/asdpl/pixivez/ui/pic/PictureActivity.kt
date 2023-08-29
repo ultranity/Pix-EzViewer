@@ -44,10 +44,10 @@ import kotlin.math.max
 
 class PictureActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, id: Long, arrayList: LongArray? = LongArray(1) { id }) {
+        fun start(context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id }) {
             val bundle = Bundle()
-            bundle.putLongArray("illustidlist", arrayList)
-            bundle.putLong("illustid", id)
+            bundle.putIntArray("illustidlist", arrayList)
+            bundle.putInt("illustid", id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -56,14 +56,14 @@ class PictureActivity : RinkActivity() {
 
         fun start(
             context: Context,
-            id: Long,
+            id: Int,
             position: Int,
             limit: Int = 30,
             options: Bundle? = null
         ) {
             val bundle = Bundle()
             bundle.putInt("position", position - max(position - limit, 0))
-            bundle.putLong("illustid", id)
+            bundle.putInt("illustid", id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -73,12 +73,12 @@ class PictureActivity : RinkActivity() {
         fun start(
             context: Context,
             illust: Illust,
-            arrayList: LongArray? = LongArray(1) { illust.id }
+            arrayList: IntArray = IntArray(1) { illust.id }
         ) {
             val bundle = Bundle()
-            bundle.putLongArray("illustidlist", arrayList)
+            bundle.putIntArray("illustidlist", arrayList)
             bundle.putParcelable("illust", illust)
-            bundle.putLong("illustid", illust.id)
+            bundle.putInt("illustid", illust.id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -86,8 +86,8 @@ class PictureActivity : RinkActivity() {
         }
     }
 
-    private var illustId: Long = 0
-    private var illustIdList: LongArray? = null
+    private var illustId: Int = 0
+    private var illustIdList: IntArray? = null
     private var illustList: MutableList<Illust>? = null
     private var nowPosition: Int = 0
 
@@ -116,12 +116,12 @@ class PictureActivity : RinkActivity() {
             // window.navigationBarColor = Color.TRANSPARENT
         }
         val bundle = this.intent.extras!!
-        illustId = bundle.getLong("illustid")
+        illustId = bundle.getInt("illustid")
         nowPosition = bundle.getInt("position", 0)
 
         when {
             bundle.containsKey("illustidlist") -> {
-                illustIdList = bundle.getLongArray("illustidlist")
+                illustIdList = bundle.getIntArray("illustidlist")
                 nowPosition = illustIdList!!.indexOf(illustId)
                 binding.viewpagePicture.adapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList!!)
@@ -130,9 +130,9 @@ class PictureActivity : RinkActivity() {
             DataHolder.checkIllustList(nowPosition, illustId) -> {
                 illustList = DataHolder.getIllustList() // ?.toList()
                 illustIdList = if (illustList != null) {
-                    illustList!!.map { it.id }.toLongArray()
+                    illustList!!.map { it.id }.toIntArray()
                 } else {
-                    LongArray(1) { illustId }
+                    IntArray(1) { illustId }
                 }
 
                 binding.viewpagePicture.adapter =
@@ -141,7 +141,7 @@ class PictureActivity : RinkActivity() {
             }
 
             else -> {
-                illustIdList = LongArray(1) { illustId }
+                illustIdList = IntArray(1) { illustId }
                 nowPosition = 0 // illustIdList!!.indexOf(illustId)
                 binding.viewpagePicture.adapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList)

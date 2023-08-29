@@ -66,7 +66,7 @@ class IllustCommentsResponse(
      */
     @Serializable
     class UserBean(
-        val id: Long = 0,
+        val id: Int = 0,
         val name: String?,
         val account: String?,
         val profile_image_urls: CommentProfileImageUrls

@@ -135,16 +135,16 @@ open class PicListViewModel : BaseViewModel() {
             }
 
             TAG_TYPE.UserIllust -> {
-                { retrofit.api.getUserIllusts(args["userid"] as Long, "illust") }
+                { retrofit.api.getUserIllusts(args["userid"] as Int, "illust") }
             }
 
             TAG_TYPE.UserManga -> {
-                { retrofit.api.getUserIllusts(args["userid"] as Long, "manga") }
+                { retrofit.api.getUserIllusts(args["userid"] as Int, "manga") }
             }
 
             TAG_TYPE.UserBookmark -> {
                 {
-                    val id = args["userid"] as Long
+                    val id = args["userid"] as Int
                     val pub = args["pub"] as String? ?: "public"
                     retrofit.api.getLikeIllust(
                         id, pub,

@@ -54,10 +54,10 @@ fun String.toLegal(): String {
 
 @Serializable
 class IllustD(
-    var id: Long = 0,
-    var part: Int = 0,
+    var id: Int = 0,
     var preview: String? = null,
-    var userId: Long = 0,
+    var part: Int = 0,
+    var userId: Int = 0,
     var userName: String? = null,
     var userAvatar: String? = null,
     var title: String? = null,
@@ -268,7 +268,7 @@ object Works {
             .replace("{type}", type)
     }
 
-    fun imgD(pid: Long, part: Int) {
+    fun imgD(pid: Int, part: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             RetrofitRepository.getInstance().api.getIllust(pid).let {
                 imgD(it.illust, part)

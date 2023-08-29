@@ -92,10 +92,9 @@ class NewAppWidget : AppWidgetProvider() {
                     val randomnum = rand.nextInt(resp.illusts.size - 2)
                     val views = RemoteViews(context.packageName, R.layout.new_app_widget)
                     val bundle = Bundle()
-                    bundle.putLong("illustid", resp.illusts[randomnum].id)
-                    val illustIdList =
-                        LongArray(1) { resp.illusts[randomnum].id }
-                    bundle.putLongArray("illustidlist", illustIdList)
+                    bundle.putInt("illustid", resp.illusts[randomnum].id)
+                    val illustIdList = IntArray(1) { resp.illusts[randomnum].id }
+                    bundle.putIntArray("illustidlist", illustIdList)
                     val intent = Intent(context, PictureActivity::class.java)
                     intent.putExtras(bundle)
                     val pendingIntent = PendingIntent.getActivity(

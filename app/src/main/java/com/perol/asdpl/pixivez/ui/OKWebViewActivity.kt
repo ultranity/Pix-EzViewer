@@ -36,18 +36,18 @@ import android.os.Bundle
 import android.util.Base64
 import android.webkit.*
 import com.perol.asdpl.pixivez.BuildConfig
+import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.RubyHttpXDns
 import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
-import com.perol.asdpl.pixivez.IntentActivity
-import com.perol.asdpl.pixivez.base.RinkActivity
-import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import okhttp3.Request
 import java.io.ByteArrayInputStream
@@ -386,7 +386,7 @@ class OKWebViewActivity : RinkActivity() {
                                     if (uri.host?.contains("www.pixiv.net") == true) {
                                         if (segment.contains("artworks")) {
                                             val id =
-                                                segment[segment.indexOf("artworks") + 1].toLong()
+                                                segment[segment.indexOf("artworks") + 1].toInt()
                                             PictureActivity.start(this@OKWebViewActivity, id)
                                             return true
                                         }
@@ -394,7 +394,7 @@ class OKWebViewActivity : RinkActivity() {
                                             val userId = segment[segment.indexOf("users") + 1]
                                             UserMActivity.start(
                                                 this@OKWebViewActivity,
-                                                userId.toLong()
+                                                userId.toInt()
                                             )
                                             return true
                                         }
@@ -404,7 +404,7 @@ class OKWebViewActivity : RinkActivity() {
                                             request.url.getQueryParameter("id")?.let {
                                                 UserMActivity.start(
                                                     this@OKWebViewActivity,
-                                                    it.toLong()
+                                                    it.toInt()
                                                 )
                                                 return true
                                             }

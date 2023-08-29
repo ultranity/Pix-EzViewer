@@ -46,9 +46,9 @@ import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
 //TODO: merge with UerListFragment
 class UsersFragment : Fragment() {
     companion object {
-        fun start(context: Context, illustid: Long) {
+        fun start(context: Context, illustid: Int) {
             FragmentActivity.start(context, "Users", R.string.bookmarked, Bundle().apply {
-                putLong("illustid", illustid)
+                putInt("illustid", illustid)
             })
         }
     }
@@ -57,7 +57,7 @@ class UsersFragment : Fragment() {
     private lateinit var usersAdapter: UsersAdapter
     private var nextUrl: String? = null
     private val retrofit = RetrofitRepository.getInstance()
-    private var illustId: Long = 0
+    private var illustId: Int = 0
     private var illustData: ListUserResponse? = null
     private lateinit var binding: FragmentListBinding
 
@@ -80,7 +80,7 @@ class UsersFragment : Fragment() {
             addItemDecoration(AverageGridItemDecoration(UserListAdapter.itemWidthPx))
         }
         requireArguments().let {
-            illustId = it.getLong("illustid")
+            illustId = it.getInt("illustid")
             requireActivity().actionBar?.setTitle(R.string.bookmark)
             //binding.title.setText(R.string.bookmark)
             initIllustData()

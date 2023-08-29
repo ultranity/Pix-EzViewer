@@ -82,7 +82,7 @@ class IntentActivity : RinkActivity() {
                             return
                         } else if (host.contains("users")) {
                             try {
-                                UserMActivity.start(this, segment[0].toLong())
+                                UserMActivity.start(this, segment[0].toInt())
                                 finish()
                                 return
                             } catch (e: Exception) {
@@ -90,7 +90,7 @@ class IntentActivity : RinkActivity() {
                             }
                         } else if (host.contains("illusts")) {
                             try {
-                                PictureActivity.start(this, segment[0].toLong())
+                                PictureActivity.start(this, segment[0].toInt())
                                 finish()
                                 return
                             } catch (e: Exception) {
@@ -111,7 +111,7 @@ class IntentActivity : RinkActivity() {
             if (uri.path?.contains("artworks") == true) {
                 val id = segment[segment.size - 1]
                 try {
-                    PictureActivity.start(this, id.toLong())
+                    PictureActivity.start(this, id.toInt())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -124,7 +124,7 @@ class IntentActivity : RinkActivity() {
                 if ((segment[segment.size - 2] == "users") or (segment[segment.size - 2] == "u")) {
                     val id = segment[segment.size - 1]
                     try {
-                        UserMActivity.start(this, id.toLong())
+                        UserMActivity.start(this, id.toInt())
                         finish()
                         return
                     } catch (e: Exception) {
@@ -134,7 +134,7 @@ class IntentActivity : RinkActivity() {
                 if (segment[segment.size - 2] == "i") {
                     val id = segment[segment.size - 1]
                     try {
-                        PictureActivity.start(this, id.toLong())
+                        PictureActivity.start(this, id.toInt())
                         finish()
                         return
                     } catch (e: Exception) {
@@ -144,7 +144,7 @@ class IntentActivity : RinkActivity() {
             }
             uri.getQueryParameter("illust_id")?.let {
                 try {
-                    PictureActivity.start(this, it.toLong())
+                    PictureActivity.start(this, it.toInt())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -153,7 +153,7 @@ class IntentActivity : RinkActivity() {
             }
             uri.getQueryParameter("id")?.let {
                 try {
-                    UserMActivity.start(this, it.toLong())
+                    UserMActivity.start(this, it.toInt())
                     finish()
                     return
                 } catch (e: Exception) {
@@ -163,7 +163,7 @@ class IntentActivity : RinkActivity() {
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
                 val index = uri.pathSegments.indexOf("creator") + 1
                 val targetString = uri.pathSegments[index]
-                targetString.toLongOrNull()?.let {
+                targetString.toIntOrNull()?.let {
                     try {
                         UserMActivity.start(this, it)
                         finish()

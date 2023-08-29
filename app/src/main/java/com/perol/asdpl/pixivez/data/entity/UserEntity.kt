@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user")
 class UserEntity(
-    var userid: Long,
+    var userid: Int,
     var username: String,
     var useremail: String,
     var ispro: Boolean,
@@ -14,5 +14,5 @@ class UserEntity(
     var Refresh_token: String,
     var Authorization: String,
     @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
+    var Id: Int = 0
 )

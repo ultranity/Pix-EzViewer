@@ -112,7 +112,7 @@ class SpotlightActivity : RinkActivity() {
 
     private fun getSpolights() = lifecycleScope.launch{
         for (id in reurls) {
-            retrofit.api.getIllust(id.toLong()).let {
+            retrofit.api.getIllust(id).let {
                 val name = it.illust.user.name
                 val title = it.illust.title
                 list.add(Spotlight(title, name, it.illust))

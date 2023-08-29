@@ -32,16 +32,16 @@ import kotlin.properties.Delegates
 
 class BookMarkTagViewModel : BaseViewModel() {
     var noFirst: Boolean = true
-    var id by Delegates.notNull<Long>()
-    var pub:String = "public"
+    var id by Delegates.notNull<Int>()
+    var pub: String = "public"
     val nextUrl = MutableLiveData<String?>()
     val tags = MutableLiveData<MutableList<BookmarkTagsBean>>()
     val tagsAdded = MutableLiveData<MutableList<BookmarkTagsBean>?>()
 
-    fun first(id: Long, pub: String) {
+    fun first(id: Int, pub: String) {
         noFirst = false
         this.pub = pub
-        subscribeNext({retrofit.api.getIllustBookmarkTags(id, pub)}, tagsAdded, nextUrl)
+        subscribeNext({ retrofit.api.getIllustBookmarkTags(id, pub) }, tagsAdded, nextUrl)
     }
 
     fun onLoadMore() {

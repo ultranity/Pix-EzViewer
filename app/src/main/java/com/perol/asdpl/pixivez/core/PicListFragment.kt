@@ -225,7 +225,7 @@ open class PicListFragment : Fragment() {
             val tagModel: BookMarkTagViewModel by viewModels(::ownerProducer)
             headerBinding.imgBtnR.setText(R.string.publics)
             headerBinding.imgBtnR.setOnClickListener {
-                val id = extraArgs!!["userid"] as Long
+                val id = extraArgs!!["userid"] as Int
                 tagModel.tags.value.also {
                     TagsShowDialog.newInstance(id).also {
                         it.callback =

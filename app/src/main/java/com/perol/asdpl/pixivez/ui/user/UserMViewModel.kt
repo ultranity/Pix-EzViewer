@@ -48,7 +48,7 @@ class UserMViewModel : BaseViewModel() {
     val isfollow = MutableLiveData<Boolean>()
     val currentTab = MutableLiveData(0)
 
-    fun getData(userid: Long) {
+    fun getData(userid: Int) {
         viewModelScope.launch {
             retrofit.api.getUserDetail(userid).let {
                 userDetail.value = it
@@ -57,7 +57,7 @@ class UserMViewModel : BaseViewModel() {
         }
     }
 
-    fun onFabClick(userid: Long) {
+    fun onFabClick(userid: Int) {
         MainScope().launch {
             (if (isfollow.value!!)
                 retrofit.api.postUnfollowUser(userid)
@@ -69,7 +69,7 @@ class UserMViewModel : BaseViewModel() {
         }
     }
 
-    fun onFabLongClick(userid: Long) {
+    fun onFabLongClick(userid: Int) {
         viewModelScope.launch {
             if (isfollow.value!!) {
                 retrofit.api.postUnfollowUser(userid).let {

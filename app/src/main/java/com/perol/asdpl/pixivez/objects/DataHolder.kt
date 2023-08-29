@@ -72,7 +72,7 @@ class DataHolder{
             }
         }
 
-        fun checkIllustList(pos: Int, id: Long): Boolean {
+        fun checkIllustList(pos: Int, id: Int): Boolean {
             return if (this.illustListStack.empty()) {
                 false
             } else {

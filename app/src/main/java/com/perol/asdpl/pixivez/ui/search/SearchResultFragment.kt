@@ -25,7 +25,7 @@ class SearchResultFragment : PicListFragment() {
     override fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
         // jump to illust pid if search result empty and looks like a pid
         if (illusts.isEmpty()) {
-            keyword.toLongOrNull()?.let {
+            keyword.toIntOrNull()?.let {
                 PictureActivity.start(requireContext(), it)
             }
         }

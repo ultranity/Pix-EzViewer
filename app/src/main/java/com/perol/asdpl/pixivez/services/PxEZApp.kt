@@ -83,7 +83,7 @@ class PxEZApp : Application() {
                             .getMimeTypeFromExtension(targetFile.extension)
                     )
                 ) { _, _ ->
-                    FileUtil.ListLog.add(illustD.id.toInt())
+                    FileUtil.ListLog.add(illustD.id)
                 }
                 sourceFile.delete()
 

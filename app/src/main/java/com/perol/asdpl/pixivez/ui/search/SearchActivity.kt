@@ -151,14 +151,14 @@ class SearchActivity : RinkActivity() {
                             if (!query.isDigitsOnly()) {
                                 return true
                             }
-                            PictureActivity.start(this@SearchActivity, query.toLong())
+                            PictureActivity.start(this@SearchActivity, query.toInt())
                         }
 
                         2 -> {
                             if (!query.isDigitsOnly()) {
                                 return true
                             }
-                            UserMActivity.start(this@SearchActivity, query.toLong())
+                            UserMActivity.start(this@SearchActivity, query.toInt())
                         }
                     }
                 }

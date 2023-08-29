@@ -347,8 +347,8 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                             if (item.isBlank()) {
                                 return@positiveButton
                             }
-                            if ((item).toLongOrNull() != null) {
-                                PictureActivity.start(this@MainActivity, item.toLong())
+                            if ((item).toIntOrNull() != null) {
+                                PictureActivity.start(this@MainActivity, item.toInt())
                             } else {
                                 SearchResultActivity.start(this@MainActivity, item, 1)
                             }

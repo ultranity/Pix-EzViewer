@@ -215,7 +215,7 @@ class SaucenaoActivity : RinkActivity() {
     }
 
     private fun tryToParseHtml(string: String) {
-        val arrayList = ArrayList<Long>()
+        val arrayList = ArrayList<Int>()
         runBlocking {
             val doc = Jsoup.parse(string)
             val el = doc.select("a[href]")
@@ -226,7 +226,7 @@ class SaucenaoActivity : RinkActivity() {
                     val id = url.replace(
                         "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
                         ""
-                    ).toLong()
+                    ).toInt()
                     arrayList.add(id)
                 }
             }
@@ -234,7 +234,7 @@ class SaucenaoActivity : RinkActivity() {
         val bundle = Bundle()
 
         if (arrayList.isNotEmpty()) {
-            val it = arrayList.toLongArray()
+            val it = arrayList.toIntArray()
             Toasty.success(this, "id: " + it[0].toString(), Toast.LENGTH_LONG).show()
             PictureActivity.start(this, it[0], it)
         } else {

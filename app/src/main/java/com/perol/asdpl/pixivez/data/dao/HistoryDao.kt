@@ -37,7 +37,7 @@ import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
 /*@Dao
 abstract class DownloadHistoryDao {
     @Query("SELECT * FROM download WHERE pid=(:pid)")
-    abstract fun getDownloads(pid: Long): List<IllustsEntity>
+    abstract fun getDownloads(pid: Int): List<IllustsEntity>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(query: IllustsEntity)
     @Query("DELETE FROM download WHERE pid=(:pid)")
@@ -79,16 +79,16 @@ interface ViewHistoryDao {
     suspend fun getViewHistory(): List<HistoryEntity>
 
     @Query("SELECT * FROM history where id=(:id) and isUser=(:isUser) LIMIT 1")
-    suspend fun getEntity(id: Long, isUser: Boolean = false): HistoryEntity?
+    suspend fun getEntity(id: Int, isUser: Boolean = false): HistoryEntity?
 
     //@Query("SELECT * FROM history where id=(:id) and NOT user LIMIT 1")
-    //suspend fun getIllust(id: Long): IllustEntity
+    //suspend fun getIllust(id: Int): IllustEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(query: HistoryEntity)
 
     @Query("INSERT INTO history (id,title,thumb,isUser) VALUES (:id,:title,:thumb,:isUser)")
-    suspend fun insert(id: Long, title: String, thumb: String, isUser: Boolean = false)
+    suspend fun insert(id: Int, title: String, thumb: String, isUser: Boolean = false)
 
     @Update(entity = HistoryEntity::class)
     suspend fun update(item: HistoryEntity)
@@ -105,7 +105,7 @@ interface ViewHistoryDao {
 
     //@Delete(entity = HistoryEntity::class)
     @Query("DELETE FROM history WHERE id=(:id) and isUser=(:isUser)")
-    suspend fun delete(id: Long, isUser: Boolean)
+    suspend fun delete(id: Int, isUser: Boolean)
 
     @Query("DELETE FROM history")
     suspend fun clear()

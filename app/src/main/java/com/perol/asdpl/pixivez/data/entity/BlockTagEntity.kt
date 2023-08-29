@@ -10,5 +10,5 @@ class BlockTagEntity(
     var name: String,
     var translateName: String,
     @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
+    var Id: Int = 0
 )

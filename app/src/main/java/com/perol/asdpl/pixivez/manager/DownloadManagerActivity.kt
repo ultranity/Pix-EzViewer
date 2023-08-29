@@ -205,7 +205,7 @@ class DownloadManagerActivity : RinkActivity() {
                                 val pid = (
                                         Regex("(?<=(pid)?_?)(\\d{7,9})")
                                             .find(it)?.value ?: ""
-                                        ).toLongOrNull()
+                                        ).toIntOrNull()
                                 val dot = it.lastIndexOf(".")
                                 val part = (
                                         Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
@@ -217,7 +217,7 @@ class DownloadManagerActivity : RinkActivity() {
                                     Thread.sleep(300)
                                 }
                                 /*it.split("_p",".").let {
-                                val pid = it[0].toLongOrNull()
+                                val pid = it[0].toIntOrNull()
                                 val part = it[1].toIntOrNull()
                                 if (pid!=null && part!=null)
                                     Works.imgD(pid,part)

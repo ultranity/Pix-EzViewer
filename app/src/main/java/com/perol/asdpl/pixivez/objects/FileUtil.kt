@@ -79,17 +79,16 @@ class FileInfo(val file: File) {
             return if (name.contains(".")) {
                 val dot = name.lastIndexOf(".") // 123.abc.txt
                 name.substring(dot + 1)
-            }
-            else {
+            } else {
                 ""
             }
         }
-    val pid: Long?
+    val pid: Int?
         get() {
             return (
-                Regex("(?<=(pid)?_?)(\\d{7,9})")
-                    .find(name)?.value ?: ""
-                ).toLongOrNull()
+                    Regex("(?<=(pid)?_?)(\\d{7,9})")
+                        .find(name)?.value ?: ""
+                    ).toIntOrNull()
         }
 
     val part: String
@@ -347,15 +346,17 @@ object FileUtil {
                     extraPath(PxEZApp.storepath + File.separator + "path.txt") ?: extraPath(
                         Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt"
                     )
+                        )
+                        != null
                     )
-                    != null
                 )
-            )
     }
+
     fun isDownloaded(illust: Illust): Boolean {
-        return ListLog.contains(illust.id.toInt())
+        return ListLog.contains(illust.id)
     }
-    fun isDownloaded(pid: Long): Boolean {
-        return ListLog.contains(pid.toInt())
+
+    fun isDownloaded(pid: Int): Boolean {
+        return ListLog.contains(pid)
     }
 }

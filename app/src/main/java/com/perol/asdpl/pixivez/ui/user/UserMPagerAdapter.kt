@@ -34,7 +34,7 @@ import java.util.WeakHashMap
 
 class UserMPagerAdapter(
     var activity: AppCompatActivity,
-    var userid: Long
+    var userid: Int
 ) : FragmentStateAdapter(activity) {
 
     val fragments = WeakHashMap<Int, Fragment>(4)

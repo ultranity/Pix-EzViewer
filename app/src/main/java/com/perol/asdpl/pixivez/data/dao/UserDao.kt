@@ -11,7 +11,7 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 @Dao
 interface UserDao {
     @Query("SELECT * FROM user WHERE userid=:userid")
-    suspend fun findUsers(userid: Long): List<UserEntity>
+    suspend fun findUsers(userid: Int): List<UserEntity>
 
     @Query("SELECT * FROM user")
     suspend fun getUsers(): List<UserEntity>

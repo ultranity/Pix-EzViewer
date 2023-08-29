@@ -54,7 +54,7 @@ import retrofit2.HttpException
 // TODO: panel helper
 class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
 
-    private var pid: Long by argument()
+    private var pid: Int by argument()
     private var parent_comment_id = 1
     private val retrofit = RetrofitRepository.getInstance()
     var nextUrl: String? by argumentNullable()
@@ -192,7 +192,7 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
     }
 
     companion object {
-        fun newInstance(pid: Long): CommentDialog {
+        fun newInstance(pid: Int): CommentDialog {
             return CommentDialog().apply { this.pid = pid }
         }
     }

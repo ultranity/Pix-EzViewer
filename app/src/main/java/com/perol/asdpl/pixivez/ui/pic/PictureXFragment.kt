@@ -72,7 +72,7 @@ import kotlin.properties.Delegates
  */
 class PictureXFragment : BaseFragment() {
 
-    private var illustid by Delegates.notNull<Long>()
+    private var illustid by Delegates.notNull<Int>()
     private var illustobj: Illust? = null
     private lateinit var pictureXViewModel: PictureXViewModel
     override fun loadData() {
@@ -86,6 +86,7 @@ class PictureXFragment : BaseFragment() {
     }
 
     override fun onDestroy() {
+        pictureXAdapter?.imageViewGif?.visibility = View.INVISIBLE
         _binding = null
         pictureXAdapter?.setListener { }
         pictureXAdapter?.setViewCommentListen { }
@@ -341,7 +342,7 @@ class PictureXFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireArguments().let {
-            illustid = it.getLong(ARG_ILLUSTID)
+            illustid = it.getInt(ARG_ILLUSTID)
             illustobj = it.getParcelable<Illust>(ARG_ILLUSTOBJ)
         }
         pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
@@ -378,14 +379,14 @@ class PictureXFragment : BaseFragment() {
         private const val ARG_ILLUSTOBJ = "illustobj"
 
         @JvmStatic
-        fun newInstance(id: Long?, illust: Illust?) =
+        fun newInstance(id: Int?, illust: Illust?) =
             PictureXFragment().apply {
                 arguments = Bundle().apply {
                     if (illust != null) {
                         putParcelable(ARG_ILLUSTOBJ, illust)
-                        putLong(ARG_ILLUSTID, illust.id)
+                        putInt(ARG_ILLUSTID, illust.id)
                     } else {
-                        putLong(ARG_ILLUSTID, id!!)
+                        putInt(ARG_ILLUSTID, id!!)
                     }
                 }
             }

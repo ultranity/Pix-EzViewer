@@ -62,7 +62,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     private var keyword: String? by argumentNullable()
 
     // -----------------
-    private var userid: Long? by argumentNullable()
+    private var userid: Int? by argumentNullable()
     // -----------------
 
     private var _bindingHeader: ViewRestrictButtonBinding? = null
@@ -163,14 +163,14 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     }
 
     companion object {
-        fun start(context: Context, userid: Long, getFollowing: Boolean? = null) {
+        fun start(context: Context, userid: Int, getFollowing: Boolean? = null) {
             val title = when (getFollowing) {
                 true -> R.string.following
                 false -> R.string.followers
                 null -> R.string.related
             }
             FragmentActivity.start(context, "UserList", title, Bundle().apply {
-                putLong("userid", userid)
+                putInt("userid", userid)
                 putString(
                     "TAG", when (getFollowing) {
                         true -> "Following"
@@ -182,7 +182,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
         }
 
         @JvmStatic
-        fun newInstance(userid: Long, getFollowing: Boolean? = null) =
+        fun newInstance(userid: Int, getFollowing: Boolean? = null) =
             UserListFragment().apply {
                 this.userid = userid
                 this.TAG = when (getFollowing) {

@@ -98,7 +98,7 @@ data class Illust_original(
 */
 @Serializable
 data class IllustX(
-    val id: Long,
+    val id: Int,
     val title: String,
     val type: String, // illust, ugoira, manga //TODO: novel?
     val caption: String,

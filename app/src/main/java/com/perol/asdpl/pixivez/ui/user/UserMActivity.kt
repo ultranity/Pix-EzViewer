@@ -68,7 +68,7 @@ import java.io.File
 
 class UserMActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, id: Long, options: Bundle? = null) {
+        fun start(context: Context, id: Int, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java).setAction("user.id.start")
             intent.putExtra("uid", id)
             context.startActivity(intent, options)
@@ -95,7 +95,7 @@ class UserMActivity : RinkActivity() {
         }
     }
 
-    var id: Long = 0
+    var id: Int = 0
     private val SELECT_IMAGE = 2
 
     @Deprecated("Deprecated in Java")
@@ -146,7 +146,7 @@ class UserMActivity : RinkActivity() {
                 setUser(AppDataRepo.currentUser.toUser())
             else return
         } else if (intent.extras!!.containsKey("userid")) {
-            id = intent.extras!!.getLong("userid")
+            id = intent.extras!!.getInt("userid")
             DataStore.retrieve<User?>("user$id")?.let {
                 setUser(it)
                 DataStore.register("user$id", this)
@@ -154,7 +154,7 @@ class UserMActivity : RinkActivity() {
         } else if (intent.extras!!.containsKey("user")) {
             setUser(intent.getParcelableExtra("user", User.serializer())!!)
         } else if (intent.extras!!.containsKey("uid")) {
-            id = intent.getLongExtra("uid", 0)
+            id = intent.getIntExtra("uid", 0)
         }
         //避免重复加载
         if (!viewModel.userDetail.isInitialized)

@@ -34,7 +34,7 @@ class SearchHistoryEntity(
     @ColumnInfo(name = "word")
     var word: String,
     @PrimaryKey(autoGenerate = true)
-    var Id: Long = 0
+    var Id: Int = 0
 )
 /*@Entity(tableName = "search")
 class SearchHistoryEntity(
@@ -51,7 +51,7 @@ class SearchHistoryEntity(
     primaryKeys = ["id", "isUser"]
 )
 class HistoryEntity(
-    val id: Long,
+    val id: Int,
     val title: String,
     val thumb: String,
     @ColumnInfo(defaultValue = "false")

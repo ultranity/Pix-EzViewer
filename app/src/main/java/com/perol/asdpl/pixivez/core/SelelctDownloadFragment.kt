@@ -70,10 +70,10 @@ class SelectDownloadFragment : PicListFragment() {
         if (savedInstanceState != null) {
             //val illusts = savedInstanceState.getParcelableArray("illusts")
             //DataHolder.tmpList = illusts?.toList() as MutableList<Illust>
-            val hide = savedInstanceState.getByteArray("hided")
-            val select = savedInstanceState.getByteArray("selected")
-            hidedFlag = BitSet.valueOf(hide)
-            selectedFlag = BitSet.valueOf(select)
+            val blocked = savedInstanceState.getByteArray("blocked")
+            val selected = savedInstanceState.getByteArray("selected")
+            blockedFlag = BitSet.valueOf(blocked)
+            selectedFlag = BitSet.valueOf(selected)
         }
     }
 
@@ -86,10 +86,10 @@ class SelectDownloadFragment : PicListFragment() {
     override var TAG = TAG_TYPE.Collect.name
 
     //override val viewModel:SelectDownloadViewModel by viewModels()
-    lateinit var hidedFlag: BitSet // = RoaringBitmap()
+    lateinit var blockedFlag: BitSet // = RoaringBitmap()
     lateinit var selectedFlag: BitSet // = RoaringBitmap()
     val selectedButHided: BitSet
-        get() = (selectedFlag.clone() as BitSet).apply { and(hidedFlag) }
+        get() = (selectedFlag.clone() as BitSet).apply { and(blockedFlag) }
     fun toggleSelected(index: Int) {
         selectedFlag.flip(index)
         picListAdapter.notifyItemChanged(
@@ -117,8 +117,10 @@ class SelectDownloadFragment : PicListFragment() {
         super.configAdapter(renew)
         if (::selectedFlag.isInitialized) {
             picListAdapter.selectedFlag = selectedFlag
+            picListAdapter.blockedFlag = blockedFlag
         } else {
             selectedFlag = picListAdapter.selectedFlag
+            blockedFlag = picListAdapter.blockedFlag
         }
         val touchListener = DragSelectTouchListener.create(requireContext(), receiver) {
             // hotspotHeight = resources.getDimensionPixelSize(R.dimen.default_56dp)
@@ -272,7 +274,7 @@ class SelectDownloadFragment : PicListFragment() {
 
     private fun selectedNotHide(): List<Illust> =
         viewModel.data.value?.filterIndexed { index, _ ->
-            selectedFlag[index] and !hidedFlag[index]
+            selectedFlag[index] and !blockedFlag[index]
         } ?: listOf()
 
     private fun selectedHintStr(debug: Boolean = false): String {
@@ -283,7 +285,7 @@ class SelectDownloadFragment : PicListFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putByteArray("hided", hidedFlag.toByteArray())
+        outState.putByteArray("hided", blockedFlag.toByteArray())
         outState.putByteArray("selected", selectedFlag.toByteArray())
         //outState.putParcelableArray("illusts", DataHolder.tmpList?.toTypedArray())
     }

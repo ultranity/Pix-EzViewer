@@ -8,10 +8,10 @@ import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Environment
 import android.view.View
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.Toasty
 import io.noties.markwon.Markwon
@@ -80,21 +80,20 @@ object AppUpdater {
                         if (newUpdateAvailable) R.string.update_available
                         else R.string.no_update
                     ) + "|" + data.name + "|" + data.createdAt
-                    MaterialAlertDialogBuilder(activity)
-                        .setMessage(markwon.toMarkdown(data.body))
-                        .setTitle(title)
-                        .setPositiveButton(R.string.download) { _, _ ->
+                    MaterialDialogs(activity).show {
+                        setTitle(title)
+                        setMessage(markwon.toMarkdown(data.body))
+                        setPositiveButton(R.string.download) { _, _ ->
                             Snackbar.make(
                                 view,
                                 activity.getString(R.string.update_now),
                                 Snackbar.LENGTH_SHORT
                             ).setAction(R.string.download) {
                                 requestDownload(activity)
-                            }
-                                .show()
+                            }.show()
                         }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .show()
+                        cancelButton()
+                    }
                 }
             }
         }

@@ -30,16 +30,14 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.ViewPagerZoomBinding
 import com.perol.asdpl.pixivez.networks.ProgressInterceptor
@@ -97,17 +95,16 @@ class ZoomPagerAdapter(
                     override fun onLongPress(e: MotionEvent) {
                         super.onLongPress(e)
                         if (resourceFile != null) {
-                            MaterialDialog(context).show {
-                                title(R.string.saveselectpic1)
-                                positiveButton(android.R.string.ok) {
+                            MaterialDialogs(context).show {
+                                setTitle(R.string.saveselectpic1)
+                                confirmButton() { _, _ ->
                                     Works.imageDownloadWithFile(
                                         illust,
                                         resourceFile!!,
                                         position
                                     )
                                 }
-                                negativeButton(android.R.string.cancel)
-                                lifecycleOwner((this@ZoomPagerAdapter.context as AppCompatActivity))
+                                cancelButton()
                             }
                         }
                     }

@@ -40,8 +40,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
@@ -137,14 +137,14 @@ class TrendTagFragment : Fragment() {
         chip.setChipIconTintResource(ThemeUtil.getTextColorPrimaryResID(requireContext()))
         chip.setText(R.string.clearhistory)
         chip.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.clearhistory)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.clearhistory)
+                confirmButton() { _, _ ->
                     viewModel.clearHistory()
                     binding.chipgroup.removeAllViews()
                 }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .show()
+                cancelButton()
+            }
         }
         return chip
     }

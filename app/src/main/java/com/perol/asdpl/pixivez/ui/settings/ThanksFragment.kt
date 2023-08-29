@@ -38,9 +38,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 
 class ThanksFragment : PreferenceFragmentCompat() {
     private class GithubUser(
@@ -132,9 +132,10 @@ class ThanksFragment : PreferenceFragmentCompat() {
             "Notsfsssf" -> {
                 val view =
                     requireActivity().layoutInflater.inflate(R.layout.dialog_weixin_notsfsssf, null)
-                MaterialAlertDialogBuilder(requireActivity()).setView(view)
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                    }.show()
+                MaterialDialogs(requireActivity()).show {
+                    setView(view)
+                    confirmButton()
+                }
             }
         }
         return super.onPreferenceTreeClick(preference)

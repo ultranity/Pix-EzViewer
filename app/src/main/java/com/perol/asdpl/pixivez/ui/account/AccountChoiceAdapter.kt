@@ -27,8 +27,8 @@ package com.perol.asdpl.pixivez.ui.account
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.ViewAccountItemBinding
@@ -48,15 +48,16 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
         it.imageviewDelete.apply {
             //isClickable = !isCurrent
             setOnClickListener {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.confirm_title)
-                    .setMessage(item.username)
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                MaterialDialogs(context).show {
+                    setTitle(R.string.confirm_title)
+                    setMessage(item.username)
+                    confirmButton() { _, _ ->
                         runBlocking {
                             AppDataRepo.deleteUser(item)
                             this@AccountChoiceAdapter.remove(item)
                         }
                     }
+                }
             }
             setImageResource(
                 if (isCurrent) R.drawable.ic_check_black_24dp

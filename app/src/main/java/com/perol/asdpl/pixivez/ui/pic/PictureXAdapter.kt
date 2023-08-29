@@ -60,10 +60,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.Tag
@@ -185,7 +185,7 @@ class PictureXAdapter(
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         mContext as Activity,
-                        Pair(binding.imageviewUserPicX, "userimage")
+                        Pair(binding.imageviewUserPicX, "shared_element_container")//"userimage")
                     ).toBundle()
                 } else null
                 UserMActivity.start(mContext, illust.user, options)
@@ -295,11 +295,12 @@ class PictureXAdapter(
             if (illust.type == "ugoira") {
                 // gif
                 binding.imagebuttonDownload.setOnClickListener {
-                    MaterialAlertDialogBuilder(mContext as Activity)
-                        .setTitle(R.string.download)
-                        .setPositiveButton(R.string.savefirst) { _, _ ->
+                    MaterialDialogs(mContext).show {
+                        setTitle(R.string.download)
+                        setPositiveButton(R.string.savefirst) { _, _ ->
                             Works.imageDownloadAll(illust)
-                        }.show()
+                        }
+                    }
                 }
             } else {
                 binding.imagebuttonDownload.setOnClickListener {
@@ -310,21 +311,19 @@ class PictureXAdapter(
             binding.imagebuttonDownload.setOnLongClickListener {
                 // show detail of illust
                 val detailstring = InteractionUtil.toDetailString(illust, false)
-                MaterialAlertDialogBuilder(mContext as Activity)
-                    .setMessage(detailstring)
-                    .setTitle("Detail")
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                    }
-                    .create().show()
+                MaterialDialogs(mContext).show {
+                    setMessage(detailstring)
+                    setTitle("Detail")
+                    confirmButton()
+                }
                 true
             }
         }
 
         private fun showBlockTagDialog(mContext: Context, t: Tag) {
-            MaterialDialog(mContext).show {
-                title(R.string.add_to_block_tag_list)
-                negativeButton(android.R.string.cancel)
-                positiveButton(android.R.string.ok) {
+            MaterialDialogs(mContext).show {
+                setTitle(R.string.add_to_block_tag_list)
+                confirmButton() { _, _ ->
                     runBlocking {
                         BlockViewModel.insertBlockTag(
                             BlockTagEntity(
@@ -334,7 +333,7 @@ class PictureXAdapter(
                         )
                     }
                 }
-                //TODO: lifecycleOwner(mContext)
+                cancelButton()
             }
         }
     }
@@ -482,53 +481,52 @@ class PictureXAdapter(
             .into(mainImage)
         // show detail of illust
         mainImage.setOnLongClickListener {
-            val dialog = MaterialAlertDialogBuilder(mContext)
-                .setTitle(R.string.saveselectpic1)
-                .setMessage(InteractionUtil.toDetailString(data))
-                .setPositiveButton(R.string.confirm) { dialog, which ->
+            MaterialDialogs(mContext).show {
+                setTitle(R.string.saveselectpic1)
+                setMessage(InteractionUtil.toDetailString(data))
+                confirmButton() { _, _ ->
                     Toasty.shortToast(R.string.join_download_queue)
                     Works.imgD(data, position)
                 }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            if (data.meta.size > 1) {
-                dialog.setNeutralButton(R.string.multichoicesave) { _, _ ->
-                    val mSelectedItems = ArrayList<Int>() // Where we track the selected items
-                    val showList = data.meta.indices.map { it.toString() }.toTypedArray()
-                    val boolList = BooleanArray(showList.size)//all elements initialized to false
-                    val dialog = MaterialAlertDialogBuilder(mContext)
-                        .setTitle(R.string.choice)
-                        .setMultiChoiceItems(showList, boolList) { _, which, isChecked ->
-                            if (isChecked) {
-                                // If the user checked the item, add it to the selected items
-
-                                mSelectedItems.add(which)
-                            } else if (mSelectedItems.contains(which)) {
-                                // Else, if the item is already in the array, remove it
-                                mSelectedItems.remove(Integer.valueOf(which))
+                cancelButton()
+                if (data.meta.size > 1) {
+                    setNeutralButton(R.string.multichoicesave) { _, _ ->
+                        val mSelectedItems = ArrayList<Int>() // Where we track the selected items
+                        val showList = data.meta.indices.map { it.toString() }.toTypedArray()
+                        //all elements initialized to false
+                        val boolList = BooleanArray(showList.size)
+                        MaterialDialogs(mContext).show {
+                            setTitle(R.string.choice)
+                            setMultiChoiceItems(showList, boolList) { _, which, isChecked ->
+                                if (isChecked) {
+                                    // If the user checked the item, add it to the selected items
+                                    mSelectedItems.add(which)
+                                } else if (mSelectedItems.contains(which)) {
+                                    // Else, if the item is already in the array, remove it
+                                    mSelectedItems.remove(Integer.valueOf(which))
+                                }
                             }
-                        }
-                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                            Toasty.shortToast(R.string.join_download_queue)
-                            mSelectedItems.map {
-                                Works.imgD(data, it)
+                            confirmButton() { _, _ ->
+                                Toasty.shortToast(R.string.join_download_queue)
+                                mSelectedItems.map {
+                                    Works.imgD(data, it)
+                                }
                             }
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setNeutralButton(R.string.all) { _, _ ->
-                            // see below
-                        }.show()
-                    dialog.getButton(BUTTON_NEUTRAL).setOnClickListener {
-                        mSelectedItems.clear()
-                        for (i in boolList.indices) {
-                            boolList[i] = true
-                            dialog.listView.setItemChecked(i, true)
-                            mSelectedItems.add(i)
+                            cancelButton()
+                            setNeutralButton(R.string.all) { dialog, _ -> } // see below
+                        }.apply {
+                            getButton(BUTTON_NEUTRAL).setOnClickListener {
+                                mSelectedItems.clear()
+                                for (i in boolList.indices) {
+                                    boolList[i] = true
+                                    listView.setItemChecked(i, true)
+                                    mSelectedItems.add(i)
+                                }
+                            }
                         }
                     }
                 }
             }
-
-            dialog.show()
             true
         }
         mainImage.setOnClickListener {

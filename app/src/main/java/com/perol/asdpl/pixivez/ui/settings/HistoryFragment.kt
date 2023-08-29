@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.databinding.FragmentHistoryBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
@@ -44,11 +44,12 @@ class HistoryFragment : Fragment() {
         binding.recyclerview.adapter = historyAdapter
         binding.recyclerview.smoothScrollToPosition(historyAdapter.data.size)
         binding.fab.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.clearhistory)
-                .setPositiveButton(R.string.ok) { _, _ ->
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.clearhistory)
+                confirmButton() { _, _ ->
                     historyMViewModel.clearHistory()
-                }.show()
+                }
+            }
         }
         historyAdapter.setOnItemClickListener { _, view, position ->
             val item = historyMViewModel.history.value!![position]
@@ -62,13 +63,14 @@ class HistoryFragment : Fragment() {
             else PictureActivity.start(requireContext(), item.id, options = options)
         }
         historyAdapter.setOnItemLongClickListener { _, _, i ->
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.confirm_title)
-                .setPositiveButton(R.string.ok) { _, _ ->
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.confirm_title)
+                confirmButton() { _, _ ->
                     historyMViewModel.deleteSelect(i) {
                         historyAdapter.notifyItemRemoved(i)
                     }
-                }.show()
+                }
+            }
             true
         }
     }

@@ -33,12 +33,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.checkbox.MaterialCheckBox
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseItemAdapter
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onItemClick
@@ -116,12 +116,11 @@ class HelloTrendingFragment : LazyFragment() {
                 item.isSelected = (v as MaterialCheckBox).isChecked
                 return@onItemClick true
             }
-            MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(R.string.sort_by)
-                .setView(listView.root)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    configTabs()
-                }.show()
+            MaterialDialogs(requireActivity()).show {
+                setTitle(R.string.sort_by)
+                setView(listView.root)
+                confirmButton() { _, _ -> configTabs() }
+            }
         }
         binding.imageviewRank.animate()
             .translationXBy(40.dpf)

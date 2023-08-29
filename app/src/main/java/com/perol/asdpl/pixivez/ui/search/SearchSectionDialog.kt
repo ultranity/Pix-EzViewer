@@ -32,6 +32,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
+import com.perol.asdpl.pixivez.base.cancelButton
+import com.perol.asdpl.pixivez.base.confirmButton
 import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
 import java.util.*
 
@@ -140,8 +142,8 @@ class SearchSectionDialog : BaseDialogFragment<DialogSearchSectionBinding>() {
         }
 
         builder
-            .setNegativeButton(android.R.string.cancel) { p0, p1 -> }
-            .setPositiveButton(android.R.string.ok) { p0, p1 ->
+            .cancelButton()
+            .confirmButton() { _, _ ->
                 viewModel.sort.value = sorti
                 viewModel.searchTarget = searchTargeti
                 if (word != null) {

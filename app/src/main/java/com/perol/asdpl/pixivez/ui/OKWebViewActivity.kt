@@ -25,8 +25,6 @@
 package com.perol.asdpl.pixivez.ui
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
@@ -38,6 +36,7 @@ import android.webkit.*
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.networks.RestClient
@@ -481,9 +480,9 @@ class OKWebViewActivity : RinkActivity() {
                 val primaryError: Int = error.primaryError
                 val errorStr: String =
                     if (primaryError >= 0 && primaryError < sslErrors.size) sslErrors[primaryError] else "Unknown error $primaryError"
-                AlertDialog.Builder(this@OKWebViewActivity)
-                    .setTitle("Insecure connection")
-                    .setMessage(
+                MaterialDialogs(this@OKWebViewActivity).show {
+                    setTitle("Insecure connection")
+                    setMessage(
                         String.format(
                             "Error: %s\nURL: %s\n\nCertificate:\n%s",
                             errorStr,
@@ -491,13 +490,9 @@ class OKWebViewActivity : RinkActivity() {
                             certificateToStr(error.certificate)
                         )
                     )
-                    .setPositiveButton(
-                        "Proceed"
-                    ) { dialog: DialogInterface?, which: Int -> handler.proceed() }
-                    .setNegativeButton(
-                        "Cancel"
-                    ) { dialog: DialogInterface?, which: Int -> handler.cancel() }
-                    .show()
+                    setPositiveButton("Proceed") { _, _ -> handler.proceed() }
+                    cancelButton() { _, _ -> handler.cancel() }
+                }
             }
         }
         binding.fab.setOnLongClickListener {

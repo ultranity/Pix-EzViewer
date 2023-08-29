@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.FragmentAccountBinding
@@ -67,8 +68,9 @@ class AccountFragment : Fragment() {
             )
         }
         binding.btnLogout.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.logoutallaccount)
-                .setPositiveButton(android.R.string.ok) { i, j ->
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.logoutallaccount)
+                confirmButton() { i, j ->
                     runBlocking {
                         AppDataRepo.deleteAllUser()
                     }
@@ -78,8 +80,9 @@ class AccountFragment : Fragment() {
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear task stack.
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     )
-                }.setNeutralButton(android.R.string.cancel) { i, j ->
-                }.show()
+                }
+                cancelButton()
+            }
         }
         binding.recyclerviewAccount.layoutManager = LinearLayoutManager(requireContext())
         runBlocking {

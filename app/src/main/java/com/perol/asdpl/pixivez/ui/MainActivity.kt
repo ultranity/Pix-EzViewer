@@ -41,22 +41,21 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.input.getInputField
 import com.bumptech.glide.Glide
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.base.getInputField
+import com.perol.asdpl.pixivez.base.setInput
 import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
@@ -331,19 +330,18 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     if (item == pre.getString("lastclip2", "")) {
                         return@Runnable
                     }
-                    MaterialDialog(this).show {
-                        title(R.string.clipboard_detected)
-                        message(R.string.jumpto)
-                        customView(com.afollestad.materialdialogs.input.R.layout.md_dialog_stub_input)
+                    MaterialDialogs(this).show {
+                        setTitle(R.string.clipboard_detected)
+                        setMessage(R.string.jumpto)
+                        setInput {
+                            editText!!.inputType = InputType.TYPE_CLASS_TEXT
+                            editText!!.setText(item)
 
-                        val inp = getInputField()
-                        inp.inputType = InputType.TYPE_CLASS_TEXT
-                        inp.setText(item)
-
-                        positiveButton(android.R.string.ok) {
-                            item = getInputField().text.toString()
+                        }
+                        confirmButton() { dialog, _ ->
+                            item = getInputField(dialog).text.toString()
                             if (item.isBlank()) {
-                                return@positiveButton
+                                return@confirmButton
                             }
                             if ((item).toIntOrNull() != null) {
                                 PictureActivity.start(this@MainActivity, item.toInt())
@@ -351,9 +349,9 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                                 SearchResultActivity.start(this@MainActivity, item, 1)
                             }
                         }
-                        negativeButton(android.R.string.cancel)
-                        onDismiss {
-                            pre.edit().putString("lastclip2", item).apply()
+                        cancelButton()
+                        setOnDismissListener {
+                            pre.edit { putString("lastclip2", item) }
                         }
                     }
                     // }
@@ -475,11 +473,9 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun clean() {
-        MaterialAlertDialogBuilder(this)
-            .setMessage(getString(R.string.cache_clear_message))
-            .setPositiveButton(
-                getString(R.string.ok)
-            ) { _, _ ->
+        MaterialDialogs(this).show {
+            setMessage(getString(R.string.cache_clear_message))
+            confirmButton() { _, _ ->
                 CoroutineScope(Dispatchers.IO).launch {
                     Glide.get(applicationContext).clearDiskCache()
                     deleteDir(applicationContext.cacheDir)
@@ -487,7 +483,8 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                         deleteDir(applicationContext.externalCacheDir)
                     }
                 }
-            }.show()
+            }
+        }
     }
 
     private fun deleteDir(dir: File?): Boolean {

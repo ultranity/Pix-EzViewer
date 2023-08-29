@@ -43,9 +43,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.chrynan.parcelable.core.getParcelable
 import com.chrynan.parcelable.core.putParcelable
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.UtilFunc.firstCommonTags
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
@@ -285,7 +285,7 @@ class PictureXFragment : BaseFragment() {
             }
             Toasty.info(
                 requireActivity(),
-                resources.getString(R.string.fetchtags),
+                R.string.fetchtags,
                 Toast.LENGTH_SHORT
             ).show()
             val tagsBookMarkDialog = TagsBookMarkDialog()
@@ -324,17 +324,17 @@ class PictureXFragment : BaseFragment() {
             FragmentActivity.start(requireContext(), "Block")
         }
         binding.jumpButton.setOnLongClickListener {
-            MaterialAlertDialogBuilder(context as Activity)
-                .setMessage(InteractionUtil.toDetailString(pictureXViewModel.illustDetail.value!!))
-                .setTitle("Detail")
-                .setPositiveButton(R.string.setting) { _, _ ->
+            MaterialDialogs(requireContext()).show {
+                setMessage(InteractionUtil.toDetailString(pictureXViewModel.illustDetail.value!!))
+                setTitle("Detail")
+                setPositiveButton(R.string.setting) { _, _ ->
                     FragmentActivity.start(requireContext(), "Block")
                 }
-                .setNeutralButton("Just Show IT") { _, _ ->
+                setNeutralButton("Just Show IT") { _, _ ->
                     binding.blockView.visibility = View.GONE
                 }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .show()
+                cancelButton()
+            }
             true
         }
     }

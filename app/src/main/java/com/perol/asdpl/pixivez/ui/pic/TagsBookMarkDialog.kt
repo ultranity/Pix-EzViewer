@@ -29,6 +29,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
+import com.perol.asdpl.pixivez.base.cancelButton
+import com.perol.asdpl.pixivez.base.confirmButton
 import com.perol.asdpl.pixivez.data.model.TagsBean
 import com.perol.asdpl.pixivez.databinding.DialogBookmarkBinding
 
@@ -72,8 +74,8 @@ class TagsBookMarkDialog : BaseDialogFragment<DialogBookmarkBinding>() {
         pictureXViewModel.onLoadTags() //TODO: refresh when asked
         // Create the AlertDialog object and return it
         builder
-            .setNegativeButton(android.R.string.cancel) { dialog, id -> }
-            .setPositiveButton(R.string.bookmark_public) { _, _ ->
+            .cancelButton()
+            .confirmButton() { _, _ ->
                 // if (pictureXViewModel.tags.value != null)
                 pictureXViewModel.onDialogClick(false)
             }

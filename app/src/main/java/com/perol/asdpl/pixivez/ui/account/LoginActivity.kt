@@ -36,14 +36,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.lifecycle.lifecycleScope
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
+import com.perol.asdpl.pixivez.base.getInputField
+import com.perol.asdpl.pixivez.base.setInput
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
 import com.perol.asdpl.pixivez.networks.Pkce
@@ -109,11 +108,10 @@ class LoginActivity : RinkActivity() {
         binding.textviewHelp.setOnClickListener {
             // obtain an instance of Markwon
             val markwon = Markwon.create(this)
-            MaterialAlertDialogBuilder(this)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                }
-                .setMessage(markwon.toMarkdown(getString(R.string.login_help_md)))
-                .create().show()
+            MaterialDialogs(this).show {
+                confirmButton()
+                setMessage(markwon.toMarkdown(getString(R.string.login_help_md)))
+            }
         }
 
         binding.loginBtn.setOnLongClickListener {
@@ -146,10 +144,10 @@ class LoginActivity : RinkActivity() {
 
         binding.loginBtn.setOnClickListener {
             // binding.loginBtn.isEnabled = false
-            MaterialDialog(this).show {
-                title(R.string.login_help)
-                message(R.string.login_help_new)
-                positiveButton(R.string.I_know) {
+            MaterialDialogs(this).show {
+                setTitle(R.string.login_help)
+                setMessage(R.string.login_help_new)
+                setPositiveButton(R.string.I_know) { _, _ ->
                     val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
                         .setAction("login.try")
                     startActivity(intent)
@@ -157,13 +155,14 @@ class LoginActivity : RinkActivity() {
             }
         }
         binding.tokenLogin.setOnClickListener {
-
-            MaterialDialog(this).show {
-                title(R.string.token_login)
-                message(R.string.jumpto)
-                input(inputType = InputType.TYPE_CLASS_TEXT)
-                positiveButton(android.R.string.ok) {
-                    val token = getInputField().text.toString()
+            MaterialDialogs(this).show {
+                setTitle(R.string.token_login)
+                setInput {
+                    editText!!.inputType = InputType.TYPE_CLASS_TEXT
+                    hint = "Token"
+                }
+                confirmButton() { dialog, which ->
+                    val token = getInputField(dialog).text.toString()
                     lifecycleScope.launchCatching({
                         RefreshToken.getInstance().refreshToken(token, true)
                     }, {
@@ -172,13 +171,13 @@ class LoginActivity : RinkActivity() {
                             .setAction("login.success").apply {
                                 // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
                                 flags =
-                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                // Or launchMode = "singleTop|singleTask"
                             }.let { startActivity(it) }
                     }, { Toasty.shortToast(R.string.refresh_token_fail) }, Dispatchers.Main)
                 }
-                neutralButton(R.string.login_help) {
-                    it.message(text = "~~~")
-                }
+                //TODO: token login help
+                setNeutralButton(R.string.login_help) { dialog, which -> }
             }
         }
         binding.register.setOnClickListener {

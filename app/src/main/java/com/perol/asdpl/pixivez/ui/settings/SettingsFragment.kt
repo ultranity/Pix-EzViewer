@@ -47,12 +47,12 @@ import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseBindingItem
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
@@ -385,25 +385,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         .replace("\\t", "\t")
                         .replace("\\:", ":")
                 }
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.crash_title)
-                    .setItems(cr.map { LogsBindingItem(it) })
-                    .setPositiveButton(android.R.string.ok) { _, _ -> }
-                    .setNeutralButton(R.string.clearhistory) { _, _ ->
+                MaterialDialogs(requireContext()).show {
+                    setTitle(R.string.crash_title)
+                    setItems(cr.map { LogsBindingItem(it) })
+                    confirmButton()
+                    setNeutralButton(R.string.clearhistory) { _, _ ->
                         list.forEach {
                             File(activity?.filesDir, it).delete()
                         }
-                    }.show()
+                    }
+                }
             }
 
             "view_logs" -> {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Logs")
-                    .setItems(CrashHandler.instance.logs.map { LogsBindingItem(it.toString()) })
-                    .setPositiveButton(android.R.string.ok) { _, _ -> }
-                    .setNeutralButton(R.string.clearhistory) { _, _ ->
+                MaterialDialogs(requireContext()).show {
+                    setTitle("Logs")
+                    setItems(CrashHandler.instance.logs.map { LogsBindingItem(it.toString()) })
+                    confirmButton()
+                    setNeutralButton(R.string.clearhistory) { _, _ ->
                         CrashHandler.instance.logs.clear()
-                    }.show()
+                    }
+                }
             }
         }
 

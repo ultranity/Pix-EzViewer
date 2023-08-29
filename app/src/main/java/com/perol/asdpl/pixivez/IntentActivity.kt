@@ -190,7 +190,8 @@ class IntentActivity : RinkActivity() {
                     .setAction("login.success").apply {
                         // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
                         flags =
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK // Or launchMode = "singleTop|singleTask"
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        // Or launchMode = "singleTop|singleTask"
                     }
                 startActivity(intent)
             } catch (e: Exception) {

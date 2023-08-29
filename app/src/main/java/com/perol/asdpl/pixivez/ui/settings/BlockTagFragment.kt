@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
+import com.perol.asdpl.pixivez.base.getInputField
+import com.perol.asdpl.pixivez.base.setInput
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.databinding.FragmentBlockTagBinding
 import kotlinx.coroutines.runBlocking
@@ -62,11 +63,13 @@ class BlockTagFragment : Fragment() {
         chip = Chip(requireContext())
         chip.text = "+"
         chip.setOnClickListener {
-            MaterialDialog(requireContext()).show {
-                title(R.string.block_tag)
-                val inputitem = input { dialog, text ->
-                    if (text.isBlank()) return@input
-                    runBlocking {
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.block_tag)
+                setInput(true) {
+                    setHint(R.string.block_tag)
+                }
+                confirmButton() { dialog, text ->
+                    if (getInputField(dialog).text.isNullOrBlank().not()) runBlocking {
                         viewModel.insertBlockTag(
                             BlockTagEntity(
                                 text.toString(),
@@ -76,8 +79,7 @@ class BlockTagFragment : Fragment() {
                         getTagList()
                     }
                 }
-                positiveButton()
-                negativeButton()
+                cancelButton()
             }
         }
         binding.chipgroup.addView(chip)

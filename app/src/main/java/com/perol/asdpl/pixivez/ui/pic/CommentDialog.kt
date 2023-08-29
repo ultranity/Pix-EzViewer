@@ -39,6 +39,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.databinding.DialogCommentBinding
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -141,9 +142,9 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
         }
         commentAdapter.setOnItemClickListener { adapter, view, position ->
             val comment = commentAdapter.data[position].comment
-            MaterialAlertDialogBuilder(requireContext())
-                .setMessage(comment)
-                .show()
+            MaterialDialogs(requireContext()).show {
+                setMessage(comment)
+            }
         }
         commentAdapter.addChildClickViewIds(R.id.commentuserimage, R.id.reply_to_hit)
         commentAdapter.setOnItemChildClickListener { adapter, view, position ->

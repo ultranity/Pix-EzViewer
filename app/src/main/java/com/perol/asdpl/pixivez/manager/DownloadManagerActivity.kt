@@ -15,8 +15,8 @@ import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.download.DownloadReceiver
 import com.arialyy.aria.core.task.DownloadTask
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 import com.perol.asdpl.pixivez.databinding.DialogDownloadConfigBinding
@@ -99,12 +99,12 @@ class DownloadManagerActivity : RinkActivity() {
                         "2"
                     )!!.toInt() - 1
                 )
-                MaterialAlertDialogBuilder(this)
-                    .setTitle(resources.getString(R.string.task_setting))
-                    .setView(configDialog.root)
-                    .setNegativeButton(resources.getString(android.R.string.cancel)) { _, _ -> }
-                    .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
-                        Aria.get(this).downloadConfig.apply {
+                MaterialDialogs(this).show {
+                    setTitle(R.string.task_setting)
+                    setView(configDialog.root)
+                    cancelButton()
+                    confirmButton() { _, _ ->
+                        Aria.get(this@DownloadManagerActivity).downloadConfig.apply {
                             maxTaskNum =
                                 (configDialog.spinnerMaxTaskNum.selectedItem as String).toInt()
                             threadNum =
@@ -120,7 +120,8 @@ class DownloadManagerActivity : RinkActivity() {
                                 )
                             }
                         }
-                    }.show()
+                    }
+                }
             }
 
             R.id.action_resume -> {
@@ -153,12 +154,12 @@ class DownloadManagerActivity : RinkActivity() {
             }
 
             R.id.action_cancel -> {
-                MaterialAlertDialogBuilder(this)
-                    .setMessage(R.string.all_cancel)
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                MaterialDialogs(this).show {
+                    setMessage(R.string.all_cancel)
+                    confirmButton() { _, _ ->
                         Aria.download(this).removeAllTask(false)
                     }
-                    .show()
+                }
             }
 
             R.id.action_finished_cancel -> {

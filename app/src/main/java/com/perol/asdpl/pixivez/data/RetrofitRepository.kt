@@ -31,13 +31,10 @@ import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.SpotlightResponse
-import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.services.PixivApiService
 import com.perol.asdpl.pixivez.services.PixivFileService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RetrofitRepository {
 
@@ -45,47 +42,11 @@ class RetrofitRepository {
         RestClient.retrofitAppApi.create(PixivApiService::class.java)
     var gif: PixivFileService =
         RestClient.gifAppApi.create(PixivFileService::class.java)
-    suspend fun apii() = api.also { withContext(Dispatchers.IO){ } }
-    var refreshToken: RefreshToken = RefreshToken.getInstance()
 
-    /* fun getIllust(illust_id: Long): Observable<IllustDetailResponse> =
-         Request(api.getIllust(illust_id)).also {CrashHandler.instance.d("getIllust", illust_id.toString()) }
-
-     private inline fun <reified T> Request(observable: Observable<T>): Observable<T> {
-         return observable.map {
-            CrashHandler.instance.d("Retrofit", "Request ${T::class.java.canonicalName}")
-             it
-         }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-             .retryWhen {
-                CrashHandler.instance.d(
-                     "Retrofit",
-                     "Request ${T::class.java.canonicalName} failed, call reFreshFunction"
-                 )
-                 refreshToken.apply(it)
-             }
-     }
-
-     fun <T> create(observable: Observable<T>): Observable<T> {
-         return observable.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-             .retryWhen(refreshToken)
-     }*/
-
-
-    /*inline fun <reified T> getNext(url: String): Observable<T> =
-        api.getUrl(url).flatMap {
-           CrashHandler.instance.d("Retrofit", "getNext ${T::class.java.simpleName} from $url")
-            Observable.just(gson.decodeFromString<T>(it.string()))
-        }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
-            .retryWhen {
-               CrashHandler.instance.d(
-                    "Retrofit",
-                    "Request ${T::class.java.canonicalName} failed, call reFreshFunction"
-                )
-                refreshToken.apply(it)
-            }*/
-    private suspend inline fun <reified T> getNext(url: String): T = api.getUrl(url).let {
-        gson.decodeFromString<T>(it.string())
-    }
+    private suspend inline fun <reified T> getNext(url: String): T =
+        api.getUrl(url).let {
+            gson.decodeFromString<T>(it.string())
+        }
 
     suspend fun getNextUser(url: String): ListUserResponse = getNext(url)
     suspend fun getNextSearchUser(url: String): SearchUserResponse = getNext(url)

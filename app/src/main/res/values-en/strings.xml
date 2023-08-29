@@ -308,4 +308,5 @@
     <string name="changeing_icon_tip">icon changed, waiting for launcher update</string>
     <string name="max_sanity">max sanity</string>
     <string name="check_clipboard">check if clipboard contains pid</string>
+    <string name="go_to_detail">go to detail</string>
 </resources>

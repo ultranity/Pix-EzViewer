@@ -70,7 +70,6 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
         get() = requireNotNull(_bindingHeader) { "The property of binding has been destroyed." }
     private lateinit var userListAdapter: UserListAdapter
     private val viewModel: UserListViewModel by viewModels()
-    private var exitTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

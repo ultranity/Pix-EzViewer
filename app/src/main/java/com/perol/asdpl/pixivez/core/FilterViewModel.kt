@@ -39,6 +39,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.base.KotlinUtil.plus
 import com.perol.asdpl.pixivez.base.KotlinUtil.times
+import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -216,12 +217,12 @@ fun showFilterDialog(
         pairBtnFilter(showPrivate, filter::showPrivate)
         pairBtnFilter(showPublic, filter::showPublic)
         listOf(
-            showHideUserImg,
-            showShowUserImg
+            hideUserImg,
+            showUserImg
         )[filterModel.adapterType.value!!.ordinal % 2].isChecked = true
         listOf(
-            showHideSave,
-            showShowSave
+            hideSaveBtn,
+            showSaveBtn
         )[filterModel.adapterType.value!!.ordinal / 2].isChecked = true
     }
     return MaterialDialog(context).show {
@@ -237,14 +238,14 @@ fun showFilterDialog(
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
             val adapterVersion = ADAPTER_TYPE.values()[
-                dialog.showShowSave.isChecked * 2 + dialog.showShowUserImg.isChecked]
+                dialog.showSaveBtn.isChecked * 2 + dialog.showUserImg.isChecked]
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
                 val data = picListAdapter.mData
                 configAdapter()
                 picListAdapter.initData(data)
-            } else {
-                //TODO: check //picListAdapter.notifyDataSetChanged()
             }
+            //TODO: check //picListAdapter.notifyDataSetChanged()
+            //else { }
         }
         negativeButton { }
     }

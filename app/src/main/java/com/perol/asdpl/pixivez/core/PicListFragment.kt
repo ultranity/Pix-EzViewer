@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderFilterBinding
@@ -134,8 +135,6 @@ open class PicListFragment : Fragment() {
 
     protected open val viewModel: PicListViewModel by viewModels()
     protected val filterModel: FilterViewModel by viewModels(::ownerProducer)
-    //protected open lateinit var viewModel: PicListViewModel //by viewModels()
-    //protected open lateinit var filterModel: FilterViewModel //by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -164,9 +163,8 @@ open class PicListFragment : Fragment() {
             if (it != null) {
                 val added = picListAdapter.addFilterData(it)
                 onDataAddedListener?.invoke()
-                if (added == 0) {
-                    //TODO: warn if filter risky!
-                }
+                //TODO: warn if filter risky!
+                //if (added == 0) { }
             } else {
                 picListAdapter.loadMoreFail()
             }

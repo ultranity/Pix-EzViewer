@@ -8,11 +8,11 @@ import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.base.checkUpdate
+import com.perol.asdpl.pixivez.core.PicListArgs
+import com.perol.asdpl.pixivez.core.PicListExtraArgs
 import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.PicListViewModel
-import com.perol.asdpl.pixivez.core.arg
-import com.perol.asdpl.pixivez.core.checkUpdate
-import com.perol.asdpl.pixivez.core.extraArg
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -21,7 +21,7 @@ import java.util.Calendar
 
 class SearchResultFragment : PicListFragment() {
 
-    private val keyword: String by extraArg()
+    private val keyword: String by PicListExtraArgs()
     override fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
         // jump to illust pid if search result empty and looks like a pid
         if (illusts.isEmpty()) {
@@ -93,7 +93,7 @@ fun Calendar?.generateDateString(): String? = this?.run {
 }
 
 class SearchResultViewModel : PicListViewModel() {
-    var keyword: String by arg()
+    var keyword: String by PicListArgs()
     lateinit var query: String
     val starnumT = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
     val sortT = arrayOf("date_desc", "date_asc", "popular_desc")

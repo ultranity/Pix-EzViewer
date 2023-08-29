@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/editTextText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/list_empty"

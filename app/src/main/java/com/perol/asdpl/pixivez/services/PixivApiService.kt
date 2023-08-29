@@ -37,6 +37,10 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("offset") offset: Int? = null,
     ): IllustNext
 
+    //https://app-api.pixiv.net/v1/illust/recommended?content_type=illust&filter=for_ios
+    // &include_ranking_label=true&include_ranking_illusts=false
+    // &min_bookmark_id_for_recent_illust=4078859313
+    // &max_bookmark_id_for_recommend=4068770682&offset=0
     @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true&include_ranking_illusts=false")
     suspend fun getRecommend(
     ): RecommendResponse

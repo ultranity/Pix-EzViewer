@@ -274,7 +274,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/show_show_user_img"
+            android:id="@+id/show_user_img"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -282,7 +282,7 @@
             android:text="@string/show_user_img" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/show_hide_user_img"
+            android:id="@+id/hide_user_img"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -301,7 +301,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/show_show_save"
+            android:id="@+id/show_save_btn"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -309,7 +309,7 @@
             android:text="@string/show_button_layout" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/show_hide_save"
+            android:id="@+id/hide_save_btn"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_weight="1"

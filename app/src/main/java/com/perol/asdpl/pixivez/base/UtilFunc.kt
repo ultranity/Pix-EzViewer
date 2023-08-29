@@ -10,6 +10,7 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.data.model.Tag
@@ -300,4 +301,14 @@ open class EmptyAsNullJsonTransformingSerializer<T>(
         if (element.jsonObject.isEmpty()) JsonNull else element
 
     protected open fun transformSerialize(element: JsonElement): JsonElement = element
+}
+
+/**
+ *  check if value update (only then trigger observer)
+ */
+fun <T> MutableLiveData<T>.checkUpdate(value: T): Boolean {
+    return if (this.value != value) {
+        this.value = value
+        true
+    } else false
 }

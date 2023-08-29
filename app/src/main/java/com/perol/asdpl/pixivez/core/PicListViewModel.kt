@@ -39,6 +39,7 @@ enum class RESTRICT_TYPE {
     public,
     private,
 }
+
 enum class TAG_TYPE {
     WalkThrough,
     Recommend,
@@ -62,17 +63,7 @@ enum class TAG_TYPE {
     }
 }
 
-/**
- *  check if value update (only then trigger observer)
- */
-fun <T> MutableLiveData<T>.checkUpdate(value: T): Boolean {
-    return if (this.value != value) {
-        this.value = value
-        true
-    } else false
-}
-
-fun <T> extraArg(defaultValue: T? = null) = ExtraArgumentProperty(defaultValue)
+fun <T> PicListExtraArgs(defaultValue: T? = null) = ExtraArgumentProperty(defaultValue)
 class ExtraArgumentProperty<T>(private val defaultValue: T? = null) :
     ReadWriteProperty<PicListFragment, T> {
 
@@ -83,11 +74,11 @@ class ExtraArgumentProperty<T>(private val defaultValue: T? = null) :
     }
 
     override fun setValue(thisRef: PicListFragment, property: KProperty<*>, value: T) {
-            thisRef.extraArgs?.set(property.name, value)
+        thisRef.extraArgs?.set(property.name, value)
     }
 }
 
-fun <T> arg(defaultValue: T? = null) = ArgumentProperty(defaultValue)
+fun <T> PicListArgs(defaultValue: T? = null) = ArgumentProperty(defaultValue)
 class ArgumentProperty<T>(private val defaultValue: T? = null) :
     ReadWriteProperty<PicListViewModel, T> {
 
@@ -101,9 +92,10 @@ class ArgumentProperty<T>(private val defaultValue: T? = null) :
         thisRef.args[property.name] = value
     }
 }
+
 open class PicListViewModel : BaseViewModel() {
     private var TAG: String = javaClass.simpleName
-    //lateinit var filterModel: FilterViewModel
+
     val data = MutableLiveData<MutableList<Illust>?>()
     val dataAdded = MutableLiveData<MutableList<Illust>?>()
     val nextUrl = MutableLiveData<String?>()

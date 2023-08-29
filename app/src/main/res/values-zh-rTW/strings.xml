@@ -305,4 +305,5 @@
     <string name="recommend">推薦</string>
     <string name="max_sanity">San值保護</string>
     <string name="check_clipboard">複製id監測</string>
+    <string name="go_to_detail">go to detail</string>
 </resources>

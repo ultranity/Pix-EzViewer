@@ -190,12 +190,16 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:linksClickable="true"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            tools:text="@string/app_help" />
+
     </com.google.android.material.card.MaterialCardView>
 
     <FrameLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_view_related"

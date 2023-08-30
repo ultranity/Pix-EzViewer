@@ -329,7 +329,7 @@ class PictureXAdapter(
                 textIntent.type = "text/plain"
                 textIntent.putExtra(
                     Intent.EXTRA_TEXT,
-                    "https://www.pixiv.net/member_illust.php?illust_id=${illust.id}&mode=medium"
+                    "https://www.pixiv.net/artworks/${illust.id}"
                 )
                 mContext.startActivity(Intent.createChooser(textIntent, mContext.getString(R.string.share)))
             }

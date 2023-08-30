@@ -191,7 +191,7 @@ class PictureActivity : RinkActivity() {
         textIntent.type = "text/plain"
         textIntent.putExtra(
             Intent.EXTRA_TEXT,
-            "https://www.pixiv.net/member_illust.php?illust_id=${illustIdList!![nowPosition]}&mode=medium"
+            "https://www.pixiv.net/artworks/{illustIdList!![nowPosition]}"
         )
         startActivity(Intent.createChooser(textIntent, getString(R.string.share)))
     }

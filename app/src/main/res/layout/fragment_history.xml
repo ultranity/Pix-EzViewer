@@ -23,5 +23,5 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="18dp"
-        android:src="@drawable/ic_close_black_24dp" />
+        android:src="@drawable/ic_action_del" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

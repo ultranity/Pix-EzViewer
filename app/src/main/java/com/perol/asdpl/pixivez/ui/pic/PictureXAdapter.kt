@@ -88,6 +88,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 // support double panel in wide screen device
 // if? save zip ugoira by default
@@ -446,11 +448,16 @@ class PictureXAdapter(
         Glide.with(mContext).load(imageUrls[position])
             .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
             .run {
-                if (position == 0) thumbnail(
-                    Glide.with(mContext).load(imageThumbnail)
-                        .override(data.width, data.height)
-                        .centerCrop()
-                        .listener(object : RequestListener<Drawable> {
+                if (position == 0) {
+                    val minPercentage = min(1024f / data.width, 1024f / data.height)
+                    thumbnail(
+                        Glide.with(mContext).load(imageThumbnail)
+                            .override(
+                                (minPercentage * data.width).roundToInt(),
+                                (minPercentage * data.height).roundToInt()
+                            )
+                            .centerCrop()
+                            .listener(object : RequestListener<Drawable> {
 
                             override fun onLoadFailed(
                                 e: GlideException?,
@@ -474,8 +481,9 @@ class PictureXAdapter(
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                                 return false
                             }
-                        })
-                ) else this
+                            })
+                    )
+                } else this
             }
             .transition(withCrossFade())
             .into(mainImage)

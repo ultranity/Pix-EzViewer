@@ -31,6 +31,7 @@ import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.data.HistoryDatabase
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.CrashHandler
@@ -133,8 +134,9 @@ class PictureXViewModel : BaseViewModel() {
             if (ee != null) {
                 historyDatabase.viewHistoryDao().increment(ee)
             } else
-                historyDatabase.viewHistoryDao()
-                    .insert(illust.id, illust.title, illust.meta[0].square_medium)
+                historyDatabase.viewHistoryDao().insert(
+                    HistoryEntity(illust.id, illust.title, illust.meta[0].square_medium)
+                )
         }
     }
 

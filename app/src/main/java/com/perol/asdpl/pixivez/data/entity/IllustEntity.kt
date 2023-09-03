@@ -24,7 +24,6 @@
 
 package com.perol.asdpl.pixivez.data.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -44,6 +43,8 @@ class IllustsEntity(
     var part: String?,
     var uid: Int,
     var url: String,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") var modifiedAt: Long
+    //@ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    val createdAt: Long = System.currentTimeMillis(),
+    //@ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    var modifiedAt: Long = System.currentTimeMillis()
 )

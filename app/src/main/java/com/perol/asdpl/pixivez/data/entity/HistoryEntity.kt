@@ -39,8 +39,10 @@ class SearchHistoryEntity(
 /*@Entity(tableName = "search")
 class SearchHistoryEntity(
     @PrimaryKey val word: String,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val modifiedAt: Long
+    //@ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    val createdAt: Long = System.currentTimeMillis(),
+    //@ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    val modifiedAt: Long = System.currentTimeMillis()
 ){
     constructor(word: String):this(word, System.currentTimeMillis(), System.currentTimeMillis())
     constructor(word: String, modifiedAt: Long):this(word, System.currentTimeMillis(), modifiedAt)
@@ -58,6 +60,11 @@ class HistoryEntity(
     val isUser: Boolean = false,
     @ColumnInfo(defaultValue = "1")
     var count: Int = 1,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") val createdAt: Long,
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP") var modifiedAt: Long
+    //@ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    val createdAt: Long = System.currentTimeMillis(),
+    var modifiedAt: Long = System.currentTimeMillis()
 )
+/*class IncreCount(
+    var count: Int = 1,
+    var modifiedAt: Long = System.currentTimeMillis()
+)*/

@@ -110,8 +110,9 @@ class UserMViewModel : BaseViewModel() {
                 //ee.title = user.name
                 historyDatabase.viewHistoryDao().increment(ee)
             } else
-                historyDatabase.viewHistoryDao()
-                    .insert(user.id, user.name, user.profile_image_urls.medium, true)
+                historyDatabase.viewHistoryDao().insert(
+                    HistoryEntity(user.id, user.name, user.profile_image_urls.medium, true)
+                )
         }
     }
 }

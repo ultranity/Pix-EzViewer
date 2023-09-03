@@ -31,7 +31,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -56,14 +55,11 @@ class UsersAdapter(layoutResId: Int) :
     }
 
     override fun convert(holder: BaseViewHolder, item: User) {
-        // val linearLayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        // val recyclerview = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         val userImage = holder.getView<View>(R.id.imageview_usershow) as ImageView
         val username = holder.getView<View>(R.id.textview_usershowname) as TextView
-        // recyclerview.layoutManager = linearLayoutManager
         username.text = item.name
         Glide.with(userImage.context).load(item.profile_image_urls.medium).circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
+            .transition(withCrossFade())
             .into(userImage)
     }
 }

@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
 //     "profile_publicity": {"gender":"public","region":"public","birth_day":"public","birth_year":"public","job":"public","pawoo":true}
 //     "workspace" : {"pc":"台式机","monitor":"Samsung SyncMaster2333","tool":"SAI、PhotshopCS6","scanner":"WIA CanoScan Lide 110","tablet":"Wacom Cintip 13HD","mouse":"","printer":"","desktop":"","music":"ACGのこと","desk":"","chair":"","comment":"","workspace_image_url":null}
 @Serializable
-class UserDetailResponse(
+class UserDetail(
     val user: User,
     val profile: ProfileBean,
     val profile_publicity: ProfilePublicityBean,

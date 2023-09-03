@@ -74,7 +74,7 @@ class SearchResultFragment : PicListFragment() {
                     viewModel.onLoadFirst()
                     binding.recyclerview.scrollToPosition(0)
                 }
-            builder.create().show()
+            builder.show()
         }
     }
 

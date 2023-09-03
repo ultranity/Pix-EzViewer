@@ -89,7 +89,6 @@ fun loadUserImage(imageView: ImageView, url: String?) {
                     return false
                 }
             })
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(withCrossFade()).into(imageView)
     }
 }
@@ -135,7 +134,6 @@ fun loadBGImage(imageView: ImageView, url: String?) {
             }
         }
         Glide.with(imageView.context).load(url)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(withCrossFade())
             .placeholder(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
             .error(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))

@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -121,6 +120,7 @@ abstract class PicListAdapter(
                         InteractionUtil.like(item) { setUILike(true, position) }
                     }
                     if (!item.user.is_followed) {
+                        //todo: hint auto follow
                         InteractionUtil.follow(item) { setUIFollow(true, position) }
                     }
                 }
@@ -151,7 +151,7 @@ abstract class PicListAdapter(
                         .setNegativeButton(R.string.follow) { _, _ ->
                             InteractionUtil.follow(item) { setUIFollow(true, position) }
                         }
-                        .create().show()
+                        .show()
                 }
                 true
             }
@@ -290,7 +290,6 @@ abstract class PicListAdapter(
         }
         Glide.with(context).load(loadUrl).transition(withCrossFade())
             .placeholder(ColorDrawable(ThemeUtil.halftrans))
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .error(ContextCompat.getDrawable(context, R.drawable.ai))
             .into(object : ImageViewTarget<Drawable>(mainImage) {
                 override fun setResource(resource: Drawable?) {

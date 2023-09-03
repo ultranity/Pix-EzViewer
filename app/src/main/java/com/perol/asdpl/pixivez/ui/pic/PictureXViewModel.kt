@@ -35,12 +35,11 @@ import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.CrashHandler
-import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.lingala.zip4j.ZipFile
@@ -164,26 +163,15 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun fabClick() {
-        val id = illustDetail.value!!.id
-        val x_restrict = visRestrictTag(illustDetail.value!!)
-        if (illustDetail.value!!.is_bookmarked) {
-            CoroutineScope(Dispatchers.IO).launchCatching({
-                retrofit.api.postUnlikeIllust(id)
-            }, {
-                likeIllust.value = false
-                illustDetail.value!!.is_bookmarked = false
-            }, {
-
-            })
-        } else {
-            CoroutineScope(Dispatchers.IO).launchCatching({
-                retrofit.api.postLikeIllust(id, x_restrict, null)
-            }, {
+        val illust = illustDetail.value!!
+        if (!illust.is_bookmarked) {
+            InteractionUtil.like(illust, null) {
                 likeIllust.value = true
-                illustDetail.value!!.is_bookmarked = true
-            }, {
-
-            })
+            }
+        } else {
+            InteractionUtil.unlike(illust) {
+                likeIllust.value = false
+            }
         }
     }
 
@@ -197,50 +185,34 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun onDialogClick(private: Boolean) {
-        val pid = illustDetail.value!!.id
-
-        CoroutineScope(Dispatchers.IO).launchCatching({
-            if (!illustDetail.value!!.is_bookmarked or private) {
-                //TODO: default tag to add?
-                val tagList =
-                    tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
-                retrofit.api.postLikeIllust(pid, visRestrictTag(private), tagList)
-            } else {
-                retrofit.api.postUnlikeIllust(pid)
+        val illust = illustDetail.value!!
+        val need_like = !illustDetail.value!!.is_bookmarked or private
+        if (need_like) {
+            //TODO: default tag to add?
+            val tagList =
+                tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
+            InteractionUtil.like(illust, tagList) {
+                likeIllust.value = true
             }
-        }, {
-            likeIllust.value = true
-            illustDetail.value!!.is_bookmarked = true
-            likeIllust.value = false
-            illustDetail.value!!.is_bookmarked = false
-        }, {})
+        } else {
+            InteractionUtil.unlike(illust) {
+                likeIllust.value = false
+            }
+        }
     }
 
     fun likeUser() {
-        val user = illustDetail.value!!.user
-        val is_followed = illustDetail.value!!.user.is_followed
-        MainScope().launchCatching(
-            {
-                if (is_followed) {
-                    retrofit.api.postUnfollowUser(user.id)
-                } else {
-                    retrofit.api.postFollowUser(user.id, "public")
-                }
-            },
-            {
-                followUser.value = !is_followed
-                illustDetail.value!!.user.is_followed = !is_followed
-                Toasty.success(
-                    PxEZApp.instance,
-                    "${if (is_followed) "unfollow" else "follow"} ${user.id} ${user.name}"
-                ).show()
-            },
-            {
-                Toasty.error(
-                    PxEZApp.instance,
-                    "failed to ${if (is_followed) "unfollow" else "follow"} ${user.id} ${user.name}"
-                ).show()
-            })
+        val illust = illustDetail.value!!
+        val user = illust.user
+        val need_follow = !user.is_followed
+        if (need_follow)
+            InteractionUtil.follow(user) {
+                followUser.value = true
+            }
+        else
+            InteractionUtil.unfollow(user) {
+                followUser.value = false
+            }
     }
 
     fun onLoadMoreRelated() {

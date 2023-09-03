@@ -9,7 +9,7 @@
     android:layout_margin="4dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="2dp"
-    app:cardElevation="8dp"
+    app:cardElevation="3dp"
     app:cardPreventCornerOverlap="true">
 
     <ImageView

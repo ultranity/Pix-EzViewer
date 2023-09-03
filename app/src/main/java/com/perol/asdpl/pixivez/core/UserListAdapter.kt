@@ -33,7 +33,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -126,8 +125,8 @@ class UserListAdapter(layoutResId: Int) :
             userImage.setBorderColor(colorPrimary)
         }
         username.text = "${item.user.name} : ${item.user.account}"
-        Glide.with(userImage.context).load(item.user.profile_image_urls.medium).circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).transition(withCrossFade())
+        Glide.with(userImage.context).load(item.user.profile_image_urls.medium)
+            .circleCrop().transition(withCrossFade())
             .into(userImage)
     }
 }

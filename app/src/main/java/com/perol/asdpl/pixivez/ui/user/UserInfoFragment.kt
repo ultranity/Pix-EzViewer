@@ -45,7 +45,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.core.UserListFragment
-import com.perol.asdpl.pixivez.data.model.UserDetailResponse
+import com.perol.asdpl.pixivez.data.model.UserDetail
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
 import com.perol.asdpl.pixivez.objects.EasyFormatter
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -60,8 +60,8 @@ import com.perol.asdpl.pixivez.view.loadBGImage
 class UserInfoFragment : LazyFragment() { // Required empty public constructor
 
     // TODO: Rename and change types of parameters
-    private val viewModel: UserMViewModel by viewModels({requireActivity()})
-    private lateinit var userDetail: UserDetailResponse
+    private val viewModel: UserMViewModel by viewModels({ requireActivity() })
+    private lateinit var userDetail: UserDetail
 
     private fun getChip(
         word: String,

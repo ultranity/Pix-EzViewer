@@ -33,7 +33,6 @@ import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -51,7 +50,6 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
-import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.Event
 import com.perol.asdpl.pixivez.services.FlowEventBus
@@ -280,11 +278,6 @@ class PictureXFragment : BaseFragment() {
             if (pictureXViewModel.illustDetail.value!!.is_bookmarked) {
                 return@setOnLongClickListener true
             }
-            Toasty.info(
-                requireActivity(),
-                R.string.fetchtags,
-                Toast.LENGTH_SHORT
-            ).show()
             val tagsBookMarkDialog = TagsBookMarkDialog()
             tagsBookMarkDialog.show(childFragmentManager, TagsBookMarkDialog.TAG)
             true

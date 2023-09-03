@@ -95,10 +95,6 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      */
     private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
 
-    /**
-     * 程序的Context对象
-     */
-    private var mContext: Context = PxEZApp.instance
     private val mDeviceCrashInfo = Properties()
 
     /**
@@ -108,8 +104,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      *
      * @param ctx Context
      */
-    fun init(ctx: Context? = null) {
-        ctx?.let { mContext = ctx }
+    fun init() {
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler(this)
     }
@@ -134,9 +129,10 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
         Log.w(tag, msg, tr)
     }
 
-    fun e(tag: String, msg: String, tr: Throwable? = null) {
+    fun e(tag: String, msg: String, tr: Throwable? = null, toast: Boolean = false) {
         if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
         Log.e(tag, msg, tr)
+        if (toast) Toasty.error(PxEZApp.instance, msg).show()
     }
 
     /**
@@ -178,22 +174,25 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             Looper.prepare()
             if (ex is Resources.NotFoundException || ex is InflateException
                 || ex.message != null && ex.message!!.contains("XML")) {
-                val toast = Toasty.error(mContext, """Missing Resource: ${ex.message}""".trimIndent())
+                val toast = Toasty.error(
+                    PxEZApp.instance,
+                    """Missing Resource: ${ex.message}""".trimIndent()
+                )
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             } else if (DEBUG) {
-                val toast = Toasty.error(mContext, """程序出错，即将退出:${ex.message}""")
+                val toast = Toasty.error(PxEZApp.instance, """程序出错，即将退出:${ex.message}""")
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             }
             Looper.loop()
         }.start()
         //收集设备信息
-        //collectCrashDeviceInfo(mContext)
+        //collectCrashDeviceInfo(PxEZApp.instance)
         //保存错误报告文件
         saveCrashInfoToFile(ex)
         //发送错误报告到服务器
-        //sendCrashReportsToServer(mContext);
+        //sendCrashReportsToServer(PxEZApp.instance);
         return true
     }
 
@@ -201,7 +200,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      * 在程序启动时候, 可以调用该函数来发送以前没有发送的报告
      */
     fun sendPreviousReportsToServer() {
-        sendCrashReportsToServer(mContext)
+        sendCrashReportsToServer(PxEZApp.instance)
     }
 
     /**
@@ -264,7 +263,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             val time = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.ROOT).format(t)
 
             val fileName = "crash-${time}$CRASH_REPORTER_EXTENSION"
-            val trace = mContext.openFileOutput(
+            val trace = PxEZApp.instance.openFileOutput(
                 fileName,
                 Context.MODE_PRIVATE
             )

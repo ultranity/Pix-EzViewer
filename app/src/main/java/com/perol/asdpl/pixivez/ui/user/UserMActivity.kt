@@ -36,6 +36,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -124,6 +125,14 @@ class UserMActivity : RinkActivity() {
         binding.textviewUsername.text = user.name
         loadUserImage(binding.imageviewUserimage, user.profile_image_urls.medium)
         viewModel.insertHistory(user)
+
+        if (AppDataRepo.isSelfPage(id)) {
+            //binding.imageviewUserimage.transitionName = "CurrentUserImage"
+            viewModel.currentTab.value = 2
+            binding.fab.visibility = View.GONE
+        } else {
+            binding.fab.show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,8 +174,8 @@ class UserMActivity : RinkActivity() {
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = getString(UserMPagerAdapter.getPageTitle(position))
         }.attach().setOnTabReSelectedStrategy { upToTopListener.onTabReselected(it) }
-        viewModel.currentTab.observe(this) {
-            binding.viewpager.currentItem = it
+        viewModel.currentTab.observeAfterSet(this) {
+            binding.viewpager.setCurrentItem(it, false)
         }
         viewModel.userDetail.observe(this) {
             if (it != null) {
@@ -178,22 +187,22 @@ class UserMActivity : RinkActivity() {
         viewModel.isfollow.observe(this) {
             if (it != null) {
                 user.is_followed = it
-                if (it) {
-                    binding.fab.setImageResource(R.drawable.ic_check_white_24dp)
-                } else {
-                    binding.fab.setImageResource(R.drawable.ic_add_white_24dp)
-                }
+                binding.fab.setIconResource(
+                    if (it) R.drawable.ic_check_white_24dp
+                    else R.drawable.ic_add_white_24dp
+                )
             }
         }
 
         binding.fab.setOnClickListener {
-            viewModel.onFabClick(id)
+            viewModel.onFabClick()
         }
         binding.fab.setOnLongClickListener {
             Toasty.info(applicationContext, "Private....", Toast.LENGTH_SHORT).show()
-            viewModel.onFabLongClick(id)
+            viewModel.onFabLongClick()
             true
         }
+
         val shareLink = "https://www.pixiv.net/member.php?id=$id"
         binding.imageviewUserimage.setOnClickListener {
             var array = resources.getStringArray(R.array.user_profile)
@@ -248,34 +257,33 @@ class UserMActivity : RinkActivity() {
                     }
                 }.show()
         }
+
         val defaultTablayoutColors = binding.tablayout.tabTextColors
-        binding.appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener(140) {
-            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                when (state) {
-                    State.COLLAPSED -> {
-                        binding.tablayout.setTag(R.id.tag_first, binding.tablayout.tabTextColors)
-                        binding.tablayout.setTabTextColors(
-                            ThemeUtil.getTextColorPrimary(this@UserMActivity),
-                            ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
-                        )
-                        binding.tablayout.translationX = -15f
-                    }
+        binding.appBarLayout.addOnOffsetChangedListener(
+            object : AppBarStateChangeListener(140) {
+                override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+                    when (state) {
+                        State.COLLAPSED -> {
+                            binding.tablayout.setTag(
+                                R.id.tag_first,
+                                binding.tablayout.tabTextColors
+                            )
+                            binding.tablayout.setTabTextColors(
+                                ThemeUtil.getTextColorPrimary(this@UserMActivity),
+                                ThemeUtil.getTextColorPrimaryInverse(this@UserMActivity)
+                            )
+                            binding.tablayout.translationX = -15f
+                        }
 
-                    State.EXPANDED -> {
-                        binding.tablayout.tabTextColors = defaultTablayoutColors
-                        binding.tablayout.translationX = 0f
-                    }
+                        State.EXPANDED -> {
+                            binding.tablayout.tabTextColors = defaultTablayoutColors
+                            binding.tablayout.translationX = 0f
+                        }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
-            }
-        })
-        if (AppDataRepo.isSelfPage(id)) {
-            binding.imageviewUserimage.transitionName = "CurrentUserImage"
-            viewModel.currentTab.value = 2
-        } else {
-            binding.fab.show()
-        }
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

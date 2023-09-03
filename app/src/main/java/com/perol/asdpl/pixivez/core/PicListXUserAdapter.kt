@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable
 import android.util.Pair
 import android.view.View
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -100,7 +99,7 @@ class PicListXUserAdapter(
             imageViewUser.setTag(R.id.tag_first, illust.user.profile_image_urls.medium)
 
             Glide.with(imageViewUser.context).load(illust.user.profile_image_urls.medium)
-                .circleCrop().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .circleCrop()
                 .into(object : ImageViewTarget<Drawable>(imageViewUser) {
                     override fun setResource(resource: Drawable?) {
                         imageViewUser.setImageDrawable(resource)

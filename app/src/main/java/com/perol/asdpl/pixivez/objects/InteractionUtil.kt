@@ -38,14 +38,19 @@ object InteractionUtil {
     // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
     // "image_urls:" + illust.meta_pages[0].toString()
 
-    fun like(item: Illust, tagList: ArrayList<String>? = null, callback: () -> Unit = { }) =
+    fun like(item: Illust, tagList: List<String>? = null, callback: () -> Unit = { }) =
         MainScope().launchCatching(
             { retrofit.api.postLikeIllust(item.id, visRestrictTag(item), tagList) }, {
-            item.is_bookmarked = true
-            callback()
-        }, {
-            Toasty.error(PxEZApp.instance, "failed to bookmark ${item.id} ${item.title}").show()
-        })
+                item.is_bookmarked = true
+                callback()
+            }, {
+                CrashHandler.instance.e(
+                    "interaction",
+                    "failed to bookmark ${item.id} ${item.title}",
+                    it,
+                    true
+                )
+            })
 
     fun unlike(item: Illust, callback: () -> Unit = { }) = MainScope().launchCatching({
         retrofit.api.postUnlikeIllust(item.id)
@@ -53,33 +58,49 @@ object InteractionUtil {
         item.is_bookmarked = false
         callback()
     }, {
-        Toasty.error(PxEZApp.instance, "failed to del bookmark ${item.id} ${item.title}").show()
+        CrashHandler.instance.e(
+            "interaction",
+            "failed to del bookmark ${item.id} ${item.title}",
+            it,
+            true
+        )
     })
 
-    fun follow(item: Illust, callback: () -> Unit = { }) {
+    inline fun follow(item: Illust, noinline callback: () -> Unit) {
         follow(item.user, need_restrict(item), callback)
     }
 
-    fun follow(user: User, need_restrict: Boolean, callback: () -> Unit = { }) =
+    fun follow(user: User, private: Boolean = false, callback: () -> Unit) =
         MainScope().launchCatching({
-            retrofit.api.postFollowUser(user.id, visRestrictTag(need_restrict))
+            retrofit.api.postFollowUser(user.id, visRestrictTag(private))
         }, {
             user.is_followed = true
             callback()
         }, {
-            Toasty.error(PxEZApp.instance, "failed to follow ${user.id} ${user.name}").show()
+            CrashHandler.instance.e(
+                "interaction",
+                "failed to follow ${user.id} ${user.name}",
+                it,
+                true
+            )
         })
 
-    fun unfollow(item: Illust, callback: () -> Unit = { }) {
+    inline fun unfollow(item: Illust, noinline callback: () -> Unit) {
         unfollow(item.user, callback)
     }
 
-    private fun unfollow(user: User, callback: () -> Unit = { }) = MainScope().launchCatching({
+    fun unfollow(user: User, callback: () -> Unit) = MainScope().launchCatching({
         retrofit.api.postUnfollowUser(user.id)
     }, {
         user.is_followed = false
         callback()
     }, {
-        Toasty.error(PxEZApp.instance, "failed to unfollow ${user.id} ${user.name}").show()
+        it.printStackTrace()
+        CrashHandler.instance.e(
+            "interaction",
+            "failed to unfollow ${user.id} ${user.name}",
+            it,
+            true
+        )
     })
 }

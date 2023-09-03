@@ -29,14 +29,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.HistoryDatabase
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.User
-import com.perol.asdpl.pixivez.data.model.UserDetailResponse
+import com.perol.asdpl.pixivez.data.model.UserDetail
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -44,9 +46,9 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 class UserMViewModel : BaseViewModel() {
-    val userDetail = MutableLiveData<UserDetailResponse>()
+    val userDetail = MutableLiveData<UserDetail>()
     val isfollow = MutableLiveData<Boolean>()
-    val currentTab = MutableLiveData(0)
+    val currentTab = DMutableLiveData(0)
 
     fun getData(userid: Int) {
         viewModelScope.launch {
@@ -57,28 +59,28 @@ class UserMViewModel : BaseViewModel() {
         }
     }
 
-    fun onFabClick(userid: Int) {
-        MainScope().launch {
-            (if (isfollow.value!!)
-                retrofit.api.postUnfollowUser(userid)
-            else
-                retrofit.api.postFollowUser(userid, "public")
-                    ).let {
-                    isfollow.value = !isfollow.value!!
-                }
+    fun onFabClick() {
+        val user = userDetail.value!!.user
+        if (!isfollow.value!!) {
+            InteractionUtil.follow(user, false) {
+                isfollow.value = true
+            }
+        } else {
+            InteractionUtil.unfollow(user) {
+                isfollow.value = false
+            }
         }
     }
 
-    fun onFabLongClick(userid: Int) {
-        viewModelScope.launch {
-            if (isfollow.value!!) {
-                retrofit.api.postUnfollowUser(userid).let {
-                    isfollow.value = false
-                }
-            } else {
-                retrofit.api.postFollowUser(userid, "private").let {
-                    isfollow.value = true
-                }
+    fun onFabLongClick() {
+        val user = userDetail.value!!.user
+        if (!isfollow.value!!) {
+            InteractionUtil.follow(user, true) {
+                isfollow.value = true
+            }
+        } else {
+            InteractionUtil.unfollow(user) {
+                isfollow.value = false
             }
         }
     }

@@ -243,7 +243,7 @@ interface PixivApiService { //TODO: check filter=for_android
     @GET("/v1/user/detail") //?filter=for_android
     suspend fun getUserDetail(
         @Query("user_id") id: Int
-    ): UserDetailResponse
+    ): UserDetail
 
     @GET("/v1/user/illusts") //?filter=for_android
     suspend fun getUserIllusts(

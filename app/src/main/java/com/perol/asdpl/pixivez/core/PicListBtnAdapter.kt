@@ -40,10 +40,9 @@ import com.perol.asdpl.pixivez.services.Works
  */
 open class PicListBtnAdapter(
     layoutResId: Int,
-    data: MutableList<Illust>?,
     filter: PicsFilter
 ) :
-    PicListAdapter(layoutResId, data, filter) {
+    PicListAdapter(layoutResId, filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

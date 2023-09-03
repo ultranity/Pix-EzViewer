@@ -45,8 +45,8 @@ import com.perol.asdpl.pixivez.view.NiceImageView
  *  simple Adapter for image item with user imageView and heart icon
  */
 class PicListXUserAdapter(
-    layoutResId: Int, data: MutableList<Illust>?, filter: PicsFilter
-) : PicListXAdapter(layoutResId, data, filter) {
+    layoutResId: Int, filter: PicsFilter
+) : PicListXAdapter(layoutResId, filter) {
 
     /*override fun viewPicsOptions(view: View, illust: Illust): Bundle {
         return viewOptions(this, view, illust)

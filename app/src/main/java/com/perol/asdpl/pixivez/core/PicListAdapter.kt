@@ -1,5 +1,6 @@
 package com.perol.asdpl.pixivez.core
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.graphics.drawable.ColorDrawable
@@ -43,7 +44,6 @@ import kotlin.math.min
 //TODO: fling optimize
 abstract class PicListAdapter(
     layoutResId: Int,
-    var mData: MutableList<Illust>?,
     val filter: PicsFilter
 ) :
     LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, null) {
@@ -54,17 +54,19 @@ abstract class PicListAdapter(
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
 
+    lateinit var mData: MutableList<Illust>
+
     //TODO:consider RoaringBitmap
-    var blockedFlag = BitSet(mData?.size ?: 128)
-    var selectedFlag = BitSet(mData?.size ?: 128)
-    val filtered = BitSet(mData?.size ?: 128)
+    var blockedFlag = BitSet(128)
+    var selectedFlag = BitSet(128)
+    val filtered = BitSet(128)
     private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
     private val mBoundViewHolders: Set<BaseViewHolder> =
         Collections.newSetFromMap(_mBoundViewHolders)
 
     //private val mBoundPosition = HashSet<Int>()
     private val mVisiblePosition = HashSet<Int>()
-    fun initData(initData: MutableList<Illust>?) {
+    fun initData(initData: MutableList<Illust>) {
         mData = initData
         resetFilterFlag()
         notifyFilterChanged()
@@ -74,7 +76,7 @@ abstract class PicListAdapter(
         filtered.clear()
         blockedFlag.clear()
         //CoroutineScope(Dispatchers.IO).launch {
-        mData?.apply {
+        mData.apply {
             data.clear()
             addData(this)
         }
@@ -231,6 +233,7 @@ abstract class PicListAdapter(
         //mBoundPosition.remove(holder.bindingAdapterPosition)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: Illust) {
         val pos = holder.bindingAdapterPosition - headerLayoutCount
         blockedFlag[pos] = filter.needBlock(item)
@@ -330,7 +333,7 @@ abstract class PicListAdapter(
 
     fun addFilterData(newData: Collection<Illust>): Int {
         if (newData != mData)
-            mData?.addAll(newData)
+            mData.addAll(newData)
         val newData = newData //chunked(32)
             .filterIndexed { i, illust ->
                 filtered.set(i)

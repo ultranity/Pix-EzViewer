@@ -62,10 +62,9 @@ class Payload(
 // TODO: rename
 open class PicListXAdapter(
     layoutResId: Int,
-    data: MutableList<Illust>?,
     filter: PicsFilter
 ) :
-    PicListAdapter(layoutResId, data, filter) {
+    PicListAdapter(layoutResId, filter) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

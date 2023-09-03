@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.core
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -116,7 +117,7 @@ open class PicListFragment : Fragment() {
         }
     }
 
-    open fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust>? {
+    open fun onDataLoadedListener(illusts: MutableList<Illust>): MutableList<Illust> {
         return illusts
     }
 
@@ -136,6 +137,7 @@ open class PicListFragment : Fragment() {
     protected open val viewModel: PicListViewModel by viewModels()
     protected val filterModel: FilterViewModel by viewModels(::ownerProducer)
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //viewModel.filterModel = filterModel
@@ -153,6 +155,8 @@ open class PicListFragment : Fragment() {
             if (it != null) {
                 picListAdapter.initData(onDataLoadedListener(it))
                 binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
+                headerBinding.imgBtnConfig.text =
+                    "${picListAdapter.data.size}/${it.size}"
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -165,6 +169,8 @@ open class PicListFragment : Fragment() {
                 onDataAddedListener?.invoke()
                 //TODO: warn if filter risky!
                 //if (added == 0) { }
+                headerBinding.imgBtnConfig.text =
+                    "${picListAdapter.data.size}/${picListAdapter.mData.size}"
             } else {
                 picListAdapter.loadMoreFail()
             }

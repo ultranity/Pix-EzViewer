@@ -153,18 +153,17 @@ class FilterViewModel : ViewModel() {
 
     fun applyConfig() = filter.applyConfig()
     fun getAdapter() = if (modeCollect) {
-        DownPicListAdapter(R.layout.view_ranking_item_s, null, filter)
+        DownPicListAdapter(R.layout.view_ranking_item_s, filter)
     } else when (adapterType.value) {
-        ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, null, filter)
-        ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, null, filter)
-        ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, null, filter)
+        ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, filter)
+        ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, filter)
+        ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, filter)
         ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(
             R.layout.view_ranking_item_s,
-            null,
             filter
         )
 
-        else -> PicListXUserAdapter(R.layout.view_ranking_item_s, null, filter)
+        else -> PicListXUserAdapter(R.layout.view_ranking_item_s, filter)
     }
 }
 

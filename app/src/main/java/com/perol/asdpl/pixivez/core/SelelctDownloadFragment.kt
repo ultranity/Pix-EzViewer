@@ -30,10 +30,9 @@ import java.util.BitSet
 
 class DownPicListAdapter(
     layoutResId: Int,
-    data: MutableList<Illust>?,
     filter: PicsFilter
 ) :
-    PicListXAdapter(layoutResId, data, filter) {
+    PicListXAdapter(layoutResId, filter) {
 
     val toggle
         get() = !selectedFlag.isEmpty

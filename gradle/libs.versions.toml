@@ -1,5 +1,5 @@
 [versions]
-agp = "8.1.0"
+agp = "8.1.1"
 brv = "1.4.3"
 fastadapter = "5.7.0"
 fastkvJava = "1.2.2"
@@ -113,13 +113,13 @@ material-dialogs-core = { group = "com.afollestad.material-dialogs", name = "cor
 material-dialogs-files = { group = "com.afollestad.material-dialogs", name = "files", version.ref = "materialDialogs" }
 material-dialogs-input = { group = "com.afollestad.material-dialogs", name = "input", version.ref = "materialDialogs" }
 material-dialogs-lifecycle = { group = "com.afollestad.material-dialogs", name = "lifecycle", version.ref = "materialDialogs" }
-mmkv-static = { group = "com.tencent", name = "mmkv-static", version.ref = "mmkvStatic" }
+#mmkv-static = { group = "com.tencent", name = "mmkv-static", version.ref = "mmkvStatic" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
 okhttp-dnsoverhttps = { module = "com.squareup.okhttp3:okhttp-dnsoverhttps", version.ref = "okhttp3" }
 kotlinx-serialization-parcelable = { module = "com.chrynan.parcelable:parcelable-core", version.ref = "parcelableCore" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
+#retrofit-adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
 #retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 #retrofit-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 roaringBitmap = { group = "org.roaringbitmap", name = "RoaringBitmap", version.ref = "roaringBitmap" }

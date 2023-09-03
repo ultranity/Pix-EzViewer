@@ -7,19 +7,6 @@ import com.chad.library.adapter.base.loadmore.BaseLoadMoreView
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 
-/*class BRVAHLoadMoreModule(baseQuickAdapter: BaseQuickAdapter<*, *>):
-    BaseLoadMoreModule(baseQuickAdapter) {
-    fun loadMoreStart() {
-        if (!hasLoadMoreView()) {
-            return
-        }
-        isLoadEndMoreGone = false
-
-        loadMoreStatus = LoadMoreStatus.End
-
-        baseQuickAdapter.notifyItemInserted(loadMoreViewPosition)
-    }
-}*/
 class BRVAHLoadMoreView : BaseLoadMoreView() {
 
     // 整个 LoadMore 布局

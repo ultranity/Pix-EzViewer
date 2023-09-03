@@ -19,9 +19,9 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-internal class Factory(
+internal class ResponseBodyFactory(
     private val contentType: MediaType,
-    private val serializer: Serializer
+    private val serializer: ResponseBodySerializer
 ) : Converter.Factory() {
     @Suppress("RedundantNullableReturnType") // Retaining interface contract.
     override fun responseBodyConverter(
@@ -57,9 +57,9 @@ fun <T : StringFormat> T.asConverterFactory(
     contentType: MediaType,
     changeElement: (JsonElement.() -> JsonElement)? = null
 ): Converter.Factory {
-    return Factory(
+    return ResponseBodyFactory(
         contentType,
-        Serializer.FromString(this, changeElement)
+        ResponseBodySerializer.FromString(this, changeElement)
     )
 }
 
@@ -72,13 +72,13 @@ fun <T : StringFormat> T.asConverterFactory(
  */
 @JvmName("create")
 fun <T : BinaryFormat> T.asConverterFactory(contentType: MediaType): Converter.Factory {
-    return Factory(
+    return ResponseBodyFactory(
         contentType,
-        Serializer.FromBytes(this)
+        ResponseBodySerializer.FromBytes(this)
     )
 }
 
-internal sealed class Serializer {
+internal sealed class ResponseBodySerializer {
     abstract fun <T> fromResponseBody(loader: DeserializationStrategy<T>, body: ResponseBody): T
     abstract fun <T> toRequestBody(
         contentType: MediaType,
@@ -93,7 +93,7 @@ internal sealed class Serializer {
     class FromString<T : StringFormat>(
         override val format: T,
         val changeElement: (JsonElement.() -> JsonElement)? = null
-    ) : Serializer() {
+    ) : ResponseBodySerializer() {
         override fun <T> fromResponseBody(
             loader: DeserializationStrategy<T>,
             body: ResponseBody
@@ -123,7 +123,7 @@ internal sealed class Serializer {
         }
     }
 
-    class FromBytes(override val format: BinaryFormat) : Serializer() {
+    class FromBytes(override val format: BinaryFormat) : ResponseBodySerializer() {
         override fun <T> fromResponseBody(
             loader: DeserializationStrategy<T>,
             body: ResponseBody
@@ -145,7 +145,7 @@ internal sealed class Serializer {
 
 internal class DeserializationStrategyConverter<T>(
     private val loader: DeserializationStrategy<T>,
-    private val serializer: Serializer
+    private val serializer: ResponseBodySerializer
 ) : Converter<ResponseBody, T> {
     override fun convert(value: ResponseBody) = serializer.fromResponseBody(loader, value)
 }
@@ -153,7 +153,7 @@ internal class DeserializationStrategyConverter<T>(
 internal class SerializationStrategyConverter<T>(
     private val contentType: MediaType,
     private val saver: SerializationStrategy<T>,
-    private val serializer: Serializer
+    private val serializer: ResponseBodySerializer
 ) : Converter<T, RequestBody> {
     override fun convert(value: T) = serializer.toRequestBody(contentType, saver, value)
 }

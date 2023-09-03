@@ -36,16 +36,11 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.BaseItemAdapter
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.base.MaterialDialogs
-import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onItemClick
-import com.perol.asdpl.pixivez.base.setDragCallback
-import com.perol.asdpl.pixivez.base.setList
-import com.perol.asdpl.pixivez.base.setup
-import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
+import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.databinding.ViewTagsItemBinding
 import com.perol.asdpl.pixivez.objects.UpToTopListener
@@ -101,24 +96,17 @@ class HelloTrendingFragment : LazyFragment() {
             binding.viewpager.setCurrentItem(it.tag as Int, false)
         })
         binding.imageviewRank.setOnClickListener {
-            val listView = DialogThanksBinding.inflate(layoutInflater)
-            val fastAdapter = listView.list.linear()
-                .setup {
-                    BaseItemAdapter<TagsBindingItem>().also {
-                        setDragCallback(it)
-                    }.setList(titleModels)
-                }
-            fastAdapter.onClick { v, adapter, item, position ->
-                item.isSelected = !item.isSelected
-                fastAdapter.notifyAdapterItemChanged(position, true)
-                true
-            }.onItemClick(R.id.checkBox) { v, adapter, item, position ->
-                item.isSelected = (v as MaterialCheckBox).isChecked
-                return@onItemClick true
-            }
             MaterialDialogs(requireActivity()).show {
                 setTitle(R.string.sort_by)
-                setView(listView.root)
+                val fastAdapter = setItems(titleModels, true)
+                fastAdapter.onClick { _, _, item, position ->
+                    item.isSelected = !item.isSelected
+                    fastAdapter.notifyAdapterItemChanged(position, true)
+                    true
+                }.onItemClick(R.id.checkBox) { v, adapter, item, position ->
+                    item.isSelected = (v as MaterialCheckBox).isChecked
+                    return@onItemClick true
+                }
                 confirmButton() { _, _ -> configTabs() }
             }
         }

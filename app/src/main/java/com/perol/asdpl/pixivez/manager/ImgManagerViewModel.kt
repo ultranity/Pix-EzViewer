@@ -32,8 +32,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
-import com.perol.asdpl.pixivez.objects.FastKVUtil
 import com.perol.asdpl.pixivez.objects.FileInfo
+import com.perol.asdpl.pixivez.objects.getFastKV
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import io.fastkv.FastKV
@@ -60,6 +60,7 @@ class ImgManagerViewModel : BaseViewModel() {
     var rename_once = false
     lateinit var adapter: ImgManagerAdapter
     lateinit var layoutManager: LinearLayoutManager
+    val kv = getFastKV("ImgMgr")
 
     fun getInfo() = viewModelScope.launch {
         /*files!!.asFlow().map {
@@ -72,7 +73,6 @@ class ImgManagerViewModel : BaseViewModel() {
                 }
             return@map it
         }.collect()*/
-        val kv = FastKVUtil.Default
         val taskmap = HashMap<Int, RenameTask>()
         task?.filter {
             (!length_filter || it.file.name.length < 50) && it.pid != null

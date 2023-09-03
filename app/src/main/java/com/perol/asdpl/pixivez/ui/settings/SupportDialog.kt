@@ -23,7 +23,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
+import com.perol.asdpl.pixivez.databinding.DialogEmptyListBinding
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -31,7 +31,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class SupportDialog : BaseDialogFragment<DialogThanksBinding>() {
+class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
 
     private fun gotoWeChat() {
         val intent = Intent("com.tencent.mm.action.BIZSHORTCUT")

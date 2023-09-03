@@ -11,6 +11,12 @@ object FastKVUtil {
     val Default: FastKV = FastKV.Builder(PxEZApp.instance.filesDir.path, "fkv").build();
 }
 
+fun getFastKV(name: String, encoders: Array<FastKV.Encoder<*>>? = null): FastKV {
+    return FastKV.Builder(PxEZApp.instance.filesDir.path, name)
+        .encoder(encoders)
+        .build()
+}
+
 operator fun <T> FastKV.set(key: String, value: T?) {
     when (value) {
         is Boolean -> putBoolean(key, value)

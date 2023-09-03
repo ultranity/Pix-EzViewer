@@ -29,9 +29,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.base.linear
-import com.perol.asdpl.pixivez.databinding.DialogThanksBinding
+import com.perol.asdpl.pixivez.databinding.DialogEmptyListBinding
 
-class ThanksDialog : BaseDialogFragment<DialogThanksBinding>() {
+class ThanksDialog : BaseDialogFragment<DialogEmptyListBinding>() {
 
     override fun onCreateDialogBinding(builder: MaterialAlertDialogBuilder) {
         val array =

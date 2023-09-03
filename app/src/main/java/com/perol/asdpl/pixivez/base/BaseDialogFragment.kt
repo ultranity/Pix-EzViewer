@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.GenericItem
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
 
@@ -49,7 +50,9 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     }
 }
 
-fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(data: List<T>): MaterialAlertDialogBuilder {
+fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(
+    data: List<T>, dragable: Boolean = false
+): FastAdapter<T> {
     val recyclerView = RecyclerView(context)
     val params = RecyclerView.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -57,9 +60,12 @@ fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(data: List<T>): Materi
     )
     recyclerView.layoutParams = params
     setView(recyclerView)
-    recyclerView.linear()
+    return recyclerView.linear()
         .setup {
-            BaseItemAdapter<T>().setList(data)
+            BaseItemAdapter<T>().also {
+                if (dragable) {
+                    setDragCallback(it)
+                }
+            }.setList(data)
         }
-    return this
 }

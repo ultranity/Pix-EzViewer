@@ -284,17 +284,23 @@ open class EmptyAsNullJsonTransformingSerializer<T>(
     override val descriptor: SerialDescriptor get() = tSerializer.descriptor
 
     @OptIn(InternalSerializationApi::class)
-    final override fun serialize(encoder: Encoder, value: T) {
-        require(encoder is JsonEncoder)
-        var element = encoder.json.writeJson(value, tSerializer)
-        element = transformSerialize(element)
-        encoder.encodeJsonElement(element)
+    override fun serialize(encoder: Encoder, value: T) {
+        if (encoder is JsonEncoder) {
+            var element = encoder.json.writeJson(value, tSerializer)
+            element = transformSerialize(element)
+            encoder.encodeJsonElement(element)
+        } else {
+            encoder.encodeSerializableValue(tSerializer, value)
+        }
     }
 
-    final override fun deserialize(decoder: Decoder): T {
-        require(decoder is JsonDecoder)
-        val element = decoder.decodeJsonElement()
-        return decoder.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
+    override fun deserialize(decoder: Decoder): T {
+        if (decoder is JsonDecoder) {
+            val element = decoder.decodeJsonElement()
+            return decoder.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
+        } else {
+            return decoder.decodeSerializableValue(tSerializer)
+        }
     }
 
     protected open fun transformDeserialize(element: JsonElement): JsonElement =

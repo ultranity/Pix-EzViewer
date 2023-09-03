@@ -65,10 +65,7 @@ import kotlin.properties.Delegates
 
 
 /**
- * A simple [Fragment] subclass for pic detail.
- * Use the [PictureXFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
+ * A simple [Fragment] subclass for single pic detail.
  */
 class PictureXFragment : BaseFragment() {
 

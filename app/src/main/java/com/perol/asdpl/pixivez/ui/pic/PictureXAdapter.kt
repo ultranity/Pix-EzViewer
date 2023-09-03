@@ -65,6 +65,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.data.model.AIType
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
@@ -169,6 +170,16 @@ class PictureXAdapter(
                 pixelWxH.text = "${illust.width}X${illust.height}"
                 textViewTotalView.text = illust.total_view.toString()
                 bookmarkedUserNum.text = illust.total_bookmarks.toString()
+                san.text = illust.sanity_level.toString()
+                if (illust.sanity_level > 5) {
+                    san.setTextColor(Color.RED)
+                }
+                if (illust.illust_ai_type > 0) {
+                    AIText.visibility = View.VISIBLE
+                    AILevel.text = AIType.values()[illust.illust_ai_type].toString()
+                    if (illust.illust_ai_type == 2)
+                        AILevel.setTextColor(Color.RED)
+                }
             }
             // captionTextView.autoLinkMask = Linkify.WEB_URLS
             val colorPrimary = ThemeUtil.getColorPrimary(mContext)

@@ -15,8 +15,7 @@
             android:id="@+id/imageview_user_picX"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_alignParentStart="true"
-            android:layout_margin="8dp"
+            android:layout_marginHorizontal="4dp"
             app:border_color='?attr/colorPrimary'
             app:border_width="4dp"
             app:is_circle="true" />
@@ -25,11 +24,9 @@
             android:id="@+id/textView_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            tools:text="@{illust.title}"
+            tools:text="{illust.title}"
             android:transitionName="title"
             android:textIsSelectable="true"
             android:textSize="14sp" />
@@ -39,10 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView_title"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            tools:text="@{illust.user.name}"
+            tools:text="{illust.user.name}"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             android:textSize="14sp" />
@@ -52,10 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView_user_name"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/imageview_user_picX"
-            tools:text="@{illust.create_date}"
+            tools:text="{illust.create_date}"
             android:textSize="12sp" />
     </RelativeLayout>
 
@@ -79,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="@{(illust.id)}"
+            tools:text="1111111111"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textview11"
@@ -100,11 +93,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text='@{width X height}'
+            tools:text='1024x768'
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textView29"
             app:layout_constraintTop_toTopOf="@+id/textView29" />
+
+        <TextView
+            android:id="@+id/AI_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="AI"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/pixelWxH"
+            app:layout_constraintTop_toTopOf="@+id/pixelWxH" />
+
+        <TextView
+            android:id="@+id/AI_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            tools:text='half'
+            android:textColor="?attr/colorPrimary"
+            android:textIsSelectable="false"
+            app:layout_constraintStart_toEndOf="@+id/AI_text"
+            app:layout_constraintTop_toTopOf="@+id/AI_text" />
 
         <TextView
             android:id="@+id/textView23"
@@ -122,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="0"
+            tools:text="110"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
             app:layout_constraintStart_toEndOf="@+id/textView23"
@@ -142,10 +157,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="0"
+            tools:text="220"
             android:textColor="?attr/colorPrimary"
             app:layout_constraintStart_toEndOf="@+id/textview_bookmarked"
             app:layout_constraintTop_toTopOf="@+id/textview_bookmarked" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="san"
+            app:layout_constraintStart_toEndOf="@+id/bookmarked_user_num"
+            app:layout_constraintTop_toTopOf="@+id/bookmarked_user_num" />
+
+        <TextView
+            android:id="@+id/san"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            tools:text='7'
+            android:textColor="?attr/colorPrimary"
+            android:textIsSelectable="false"
+            app:layout_constraintStart_toEndOf="@+id/textView31"
+            app:layout_constraintTop_toTopOf="@+id/textView31" />
 
         <ImageButton
             android:id="@+id/imagebutton_share"

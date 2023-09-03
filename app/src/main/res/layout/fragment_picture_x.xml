@@ -34,28 +34,26 @@
 
                 <ImageButton
                     android:id="@+id/imageButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:background="?android:attr/colorBackground"
                     android:src="@drawable/ic_action_fold"
                     android:contentDescription="@string/go_to_detail"
                     app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            <com.perol.asdpl.pixivez.view.NiceImageView
-                android:id="@+id/imageview_user_picX"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                app:border_color='?attr/colorPrimary'
-                app:border_width="4dp"
-                app:is_circle="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageButton"
-                app:layout_constraintTop_toTopOf="parent" />
+                <com.perol.asdpl.pixivez.view.NiceImageView
+                    android:id="@+id/imageview_user_picX"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    app:border_color='?attr/colorPrimary'
+                    app:border_width="4dp"
+                    app:is_circle="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageButton"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView_title"
@@ -66,22 +64,25 @@
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:lines="1"
+                tools:text="{illust.title}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageview_user_picX"
                 app:layout_constraintTop_toTopOf="@+id/imageview_user_picX" />
 
-            <TextView
-                android:id="@+id/textView_user_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textColor="?attr/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageview_user_picX"
-                app:layout_constraintTop_toBottomOf="@+id/textView_title" />
+                <TextView
+                    android:id="@+id/textView_user_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    tools:text="{illust.user.name}"
+                    android:layout_toEndOf="@id/imageview_user_picX"
+                    android:textColor="?attr/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageview_user_picX"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_title" />
 
             <TextView
                 android:id="@+id/textView_illust_create_date"
@@ -89,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                tools:text="{illust.create_date}"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"

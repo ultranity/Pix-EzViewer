@@ -29,22 +29,23 @@ import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
+import android.view.LayoutInflater
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -97,8 +98,15 @@ fun loadUserImage(imageView: ImageView, url: String?) {
 fun loadBGImage(imageView: ImageView, url: String?) {
     if (url != null) {
         imageView.setOnClickListener {
-            MaterialAlertDialogBuilder(imageView.context).setMessage(url)
-                .setPositiveButton(R.string.download) { _, _ ->
+            MaterialDialogs(imageView.context).show {
+                setTitle(url)
+                val view = LayoutInflater.from(context).inflate(R.layout.view_history_item, null)
+                val mainImage = view.findViewById<ImageView>(R.id.item_img)!!
+                mainImage.minimumHeight = 200.dp
+                Glide.with(mainImage).load(url)
+                    .into(mainImage)
+                setView(view)
+                setPositiveButton(R.string.download) { _, _ ->
                     CoroutineScope(Dispatchers.IO).launch {
                         val f = Glide.with(imageView).asFile()
                             .load(url)
@@ -123,7 +131,8 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                             Toasty.info(imageView.context, "Saved", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }.create().show()
+                }
+            }
         }
         Glide.with(imageView.context).load(url)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

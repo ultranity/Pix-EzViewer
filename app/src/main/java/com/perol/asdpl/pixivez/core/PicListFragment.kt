@@ -157,6 +157,9 @@ open class PicListFragment : Fragment() {
                 binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
                 headerBinding.imgBtnConfig.text =
                     "${picListAdapter.data.size}/${it.size}"
+                //TODO: warn if filter risky!
+                //if (picListAdapter.data.size == 0 && it.size>0){ }
+                //TODO ERROR: loadMore not work when data is empty
             } else {
                 picListAdapter.loadMoreFail()
             }

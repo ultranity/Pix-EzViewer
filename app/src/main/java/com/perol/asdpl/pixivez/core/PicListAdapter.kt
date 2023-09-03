@@ -70,6 +70,7 @@ abstract class PicListAdapter(
         mData = initData
         resetFilterFlag()
         notifyFilterChanged()
+        isUseEmpty = true
     }
 
     fun resetFilterFlag() {
@@ -193,7 +194,7 @@ abstract class PicListAdapter(
         //recyclerView.setItemViewCacheSize(12)
         loadMoreModule.preLoadNumber = 12
         stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        isUseEmpty = true
+        isUseEmpty = false
         headerWithEmptyEnable = true
         footerWithEmptyEnable = true
         //loadMoreModule.isEnableLoadMoreIfNotFullPage = false
@@ -340,6 +341,8 @@ abstract class PicListAdapter(
                 !filter.needHide(illust)
             }
         this.data.addAll(newData)
+        //emptyLayout?.findViewById<TextView>(R.id.text)?.text
+        //setFooterView()
         if (recyclerView.layoutManager?.isAttachedToWindow == true) {
             notifyItemRangeInserted(
                 this.data.size - newData.size + headerLayoutCount,

@@ -59,7 +59,7 @@ abstract class PicListAdapter(
     //TODO:consider RoaringBitmap
     var blockedFlag = BitSet(128)
     var selectedFlag = BitSet(128)
-    val filtered = BitSet(128)
+    val filtered = BitSet(128) // size of mData
     private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
     private val mBoundViewHolders: Set<BaseViewHolder> =
         Collections.newSetFromMap(_mBoundViewHolders)
@@ -77,10 +77,8 @@ abstract class PicListAdapter(
         filtered.clear()
         blockedFlag.clear()
         //CoroutineScope(Dispatchers.IO).launch {
-        mData.apply {
-            data.clear()
-            addData(this)
-        }
+        data.clear()
+        addFilterData(mData)
         //}
     }
 

@@ -254,7 +254,8 @@ open class PicListFragment : Fragment() {
             shareModel.picDateShare.observe(viewLifecycleOwner) {
                 viewModel.onLoadFirst()
             }
-            binding.recyclerview.setRecycledViewPool(shareModel.pool)
+            //TODO: RecycledViewPool 导致 list 间 item click/longclick事件 错误配置
+            //binding.recyclerview.setRecycledViewPool(shareModel.pool)
             headerBinding.imgBtnR.apply {
                 setText(R.string.choose_date)
                 setIconResource(R.drawable.ic_calendar)

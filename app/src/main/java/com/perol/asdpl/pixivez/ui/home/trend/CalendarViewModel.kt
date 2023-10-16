@@ -2,11 +2,10 @@ package com.perol.asdpl.pixivez.ui.home.trend
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 
 class CalendarViewModel:ViewModel() {
-    val pool = RecyclerView.RecycledViewPool()
+    //val pool = RecyclerView.RecycledViewPool()
     var picDateShare = MutableLiveData<String?>()
 
     class YMD(

@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
@@ -190,7 +190,7 @@ abstract class PicListAdapter(
         super.onAttachedToRecyclerView(recyclerView)
         //setFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
         setEmptyView(R.layout.empty_list)
-        setAnimationWithDefault(AnimationType.ScaleIn)
+        setItemAnimation(AnimationType.ScaleIn)
         animationEnable = PxEZApp.animationEnable
         //recyclerView.setItemViewCacheSize(12)
         loadMoreModule.preLoadNumber = 12

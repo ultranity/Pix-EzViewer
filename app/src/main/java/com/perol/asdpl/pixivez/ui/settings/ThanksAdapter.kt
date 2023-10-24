@@ -24,8 +24,8 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.BaseQuickAdapter
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 
 class ThanksAdapter(layoutResId: Int, data: List<String>?) :

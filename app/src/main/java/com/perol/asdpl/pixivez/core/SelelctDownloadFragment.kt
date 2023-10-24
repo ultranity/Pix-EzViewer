@@ -9,7 +9,7 @@ import com.afollestad.dragselectrecyclerview.DragSelectReceiver
 import com.afollestad.dragselectrecyclerview.DragSelectTouchListener
 import com.afollestad.dragselectrecyclerview.Mode
 import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton

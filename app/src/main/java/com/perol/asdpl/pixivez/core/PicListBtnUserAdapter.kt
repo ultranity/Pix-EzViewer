@@ -26,7 +26,7 @@
 package com.perol.asdpl.pixivez.core
 
 import android.view.View
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.view.NiceImageView

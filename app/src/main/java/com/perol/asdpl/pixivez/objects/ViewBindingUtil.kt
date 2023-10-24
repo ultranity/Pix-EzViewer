@@ -19,7 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType

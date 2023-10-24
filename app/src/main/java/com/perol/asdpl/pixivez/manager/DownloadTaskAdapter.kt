@@ -30,8 +30,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.download.DownloadEntity
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.BaseQuickAdapter
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson

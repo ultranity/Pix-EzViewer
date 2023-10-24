@@ -25,8 +25,8 @@
 package com.perol.asdpl.pixivez.ui.account
 
 import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.BaseQuickAdapter
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.AppDataRepo

@@ -29,7 +29,7 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil

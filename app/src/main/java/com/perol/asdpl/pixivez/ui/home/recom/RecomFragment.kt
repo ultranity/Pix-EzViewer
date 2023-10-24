@@ -41,7 +41,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.brvah.BaseQuickAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import com.perol.asdpl.pixivez.core.PicListFragment
@@ -167,7 +167,7 @@ class RecomFragment : PicListFragment() {
             null
         )
         picListAdapter.apply {
-            setAnimationWithDefault(BaseQuickAdapter.AnimationType.SlideInBottom)
+            setItemAnimation(BaseQuickAdapter.AnimationType.SlideInBottom)
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             headerWithEmptyEnable = true
             footerWithEmptyEnable = true

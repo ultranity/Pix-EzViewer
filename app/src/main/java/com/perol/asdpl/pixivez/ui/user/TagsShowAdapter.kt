@@ -25,7 +25,7 @@
 package com.perol.asdpl.pixivez.ui.user
 
 
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.data.model.BookmarkTagsBean

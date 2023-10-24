@@ -45,8 +45,8 @@ plugins {
     id("com.mikepenz.aboutlibraries.plugin")
 }
 android {
-
-    compileSdk = 33
+    namespace = "com.perol.asdpl.pixivez"
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.perol.asdpl.play.pixivez"
         minSdk = 21
@@ -123,12 +123,12 @@ android {
             //}
         }
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         //dataBinding = true
         viewBinding = true
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -137,11 +137,10 @@ android {
     lint {
         abortOnError = false
     }
-    namespace = "com.perol.asdpl.pixivez"
 
-/*    configurations.all {
-        resolutionStrategy.force "com.google.code.findbugs:jsr305:1.3.9"
-    }*/
+    /*    configurations.all {
+            resolutionStrategy.force "com.google.code.findbugs:jsr305:1.3.9"
+        }*/
 
     aboutLibraries {
         // - If the automatic registered android tasks are disabled, a similar thing can be achieved manually
@@ -155,6 +154,7 @@ android {
 
 
 dependencies {
+    implementation(project(":BRVAH"))
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.serialization.json)
@@ -250,7 +250,7 @@ dependencies {
     //implementation("com.github.ybq:Android-SpinKit:1.4.0")
 
     //implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0-beta14")
-    implementation(libs.brvah)
+    //implementation(libs.brvah) //included
     //implementation(libs.brv)
     implementation(libs.fastadapter)
     implementation(libs.fastadapter.extensions.binding)// view binding helpers

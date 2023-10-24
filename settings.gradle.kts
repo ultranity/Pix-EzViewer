@@ -15,3 +15,4 @@ pluginManagement {
 }*/
 rootProject.name = "Pix-EzViewer"
 include(":app")
+include(":BRVAH")

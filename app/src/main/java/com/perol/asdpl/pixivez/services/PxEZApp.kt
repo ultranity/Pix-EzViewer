@@ -38,7 +38,6 @@ import androidx.preference.PreferenceManager
 import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.task.DownloadTask
-import com.chad.library.adapter.base.module.LoadMoreModuleConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
@@ -47,7 +46,6 @@ import com.perol.asdpl.pixivez.objects.FastKVLogger
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.view.BRVAHLoadMoreView
 import io.fastkv.FastKVConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -148,10 +146,6 @@ class PxEZApp : Application() {
                 }
             }
         }
-        // 在 Application 中配置全局自定义的 LoadMoreView
-
-        // 在 Application 中配置全局自定义的 LoadMoreView
-        LoadMoreModuleConfig.defLoadMoreView = BRVAHLoadMoreView()
         //initBugly(this)
         FastKVConfig.setLogger(FastKVLogger())
         FastKVConfig.setExecutor(Dispatchers.Default.asExecutor())

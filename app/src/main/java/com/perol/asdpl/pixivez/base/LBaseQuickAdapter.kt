@@ -1,10 +1,10 @@
 package com.perol.asdpl.pixivez.base
 
 import androidx.annotation.LayoutRes
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnLoadMoreListener
-import com.chad.library.adapter.base.module.LoadMoreModule
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.brvah.BaseQuickAdapter
+import com.chad.brvah.listener.OnLoadMoreListener
+import com.chad.brvah.module.LoadMoreModule
+import com.chad.brvah.viewholder.BaseViewHolder
 
 abstract class LBaseQuickAdapter<T, VH : BaseViewHolder>(@LayoutRes private val layoutResId: Int,
                                                          data: MutableList<T>?=null)

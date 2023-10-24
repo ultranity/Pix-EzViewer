@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import android.widget.Toast
-import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
@@ -87,16 +86,12 @@ class RefreshToken{
             }
             lastRefresh = System.currentTimeMillis()
             AppDataRepo.pre.setLong("lastRefresh", lastRefresh)
-            Toasty.info(PxEZApp.instance, PxEZApp.instance.getString(R.string.refresh_token))
-                .show()
+            Toasty.tokenRefreshed()
             Log.d("init", "refreshToken end")
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d("RefreshToken", e.message.toString(), e)
-            Toasty.info(
-                PxEZApp.instance,
-                PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + e.message,
-            ).show()
+            Toasty.tokenRefreshed(e)
             throw e
         }
     }

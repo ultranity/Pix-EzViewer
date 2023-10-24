@@ -86,7 +86,7 @@ class IntentActivity : RinkActivity() {
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, R.string.wrong_id)
+                                Toasty.error(this, R.string.wrong_id).show()
                             }
                         } else if (host.contains("illusts")) {
                             try {
@@ -94,7 +94,7 @@ class IntentActivity : RinkActivity() {
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, R.string.wrong_id)
+                                Toasty.error(this, R.string.wrong_id).show()
                             }
                         }
                     }
@@ -115,7 +115,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id)
+                    Toasty.error(this, R.string.wrong_id).show()
                 }
                 return
             }
@@ -128,7 +128,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id)
+                        Toasty.error(this, R.string.wrong_id).show()
                     }
                 }
                 if (segment[segment.size - 2] == "i") {
@@ -138,7 +138,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id)
+                        Toasty.error(this, R.string.wrong_id).show()
                     }
                 }
             }
@@ -148,7 +148,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id)
+                    Toasty.error(this, R.string.wrong_id).show()
                 }
             }
             uri.getQueryParameter("id")?.let {
@@ -157,7 +157,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id)
+                    Toasty.error(this, R.string.wrong_id).show()
                 }
             }
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
@@ -168,7 +168,7 @@ class IntentActivity : RinkActivity() {
                         UserMActivity.start(this, it)
                         finish()
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id)
+                        Toasty.error(this, R.string.wrong_id).show()
                     }
                 }
             }

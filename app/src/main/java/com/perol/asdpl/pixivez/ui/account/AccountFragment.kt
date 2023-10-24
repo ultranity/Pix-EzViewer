@@ -44,6 +44,9 @@ import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class AccountFragment : Fragment() {
@@ -112,7 +115,10 @@ class AccountFragment : Fragment() {
             .setMessage(R.string.token_warning)
             .setNeutralButton(R.string.refresh_token) { _, _ ->
                 if (BuildConfig.DEBUG) {
-                    AppDataRepo.currentUser.Authorization = ""
+                    AppDataRepo.currentUser.Authorization = "invalid_token"
+                    CoroutineScope(Dispatchers.Main).launch {
+                        AppDataRepo.updateUser(AppDataRepo.currentUser)
+                    }
                 } else {
                     try {
                         RefreshToken.getInstance().refreshToken()

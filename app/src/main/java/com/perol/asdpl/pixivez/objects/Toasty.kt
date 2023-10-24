@@ -26,12 +26,45 @@ package com.perol.asdpl.pixivez.objects
 
 import android.content.Context
 import android.widget.Toast
+import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+fun Toast.showInMain() {
+    CoroutineScope(Dispatchers.Main).launch {
+        this@showInMain.show()
+    }
+}
 object Toasty {
     private val lToast: Toast =
         Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
     private val sToast: Toast =
         Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    private val refreshToast: Toast =
+        Toast.makeText(PxEZApp.instance, R.string.token_expired, Toast.LENGTH_SHORT)
+
+    suspend fun tokenRefreshing() {
+        withContext(Dispatchers.Main) {
+            refreshToast.show()
+        }
+    }
+
+    fun tokenRefreshed(e: Exception? = null) {
+        CoroutineScope(Dispatchers.Main).launch {
+            refreshToast.cancel()
+            if (e == null)
+                info(PxEZApp.instance, R.string.refresh_token).show()
+            else
+                info(
+                    PxEZApp.instance,
+                    PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + e.message,
+                ).show()
+
+        }
+    }
 
     fun longToast(string: String) {
         lToast.setText(string)
@@ -51,6 +84,7 @@ object Toasty {
         sToast.setText(string)
         sToast.show()
     }
+
     fun success(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
         return Toast.makeText(context, context.getText(stringId), length)
     }

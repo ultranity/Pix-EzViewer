@@ -31,6 +31,7 @@ import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.build
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.showInMain
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import kotlinx.coroutines.CoroutineScope
@@ -140,14 +141,14 @@ object RestClient {
         }
         val request = original.newBuilder()
             .header("User-Agent", UA)
-            .addHeader("App-OS", App_OS)
-            .addHeader("App-OS-Version", App_OS_Version)
-            .addHeader("App-Version", App_Version)
-            .addHeader("Accept-Language", "${local.language}_${local.country}")
+            .header("App-OS", App_OS)
+            .header("App-OS-Version", App_OS_Version)
+            .header("App-Version", App_Version)
+            .header("Accept-Language", "${local.language}_${local.country}")
+            .header("Host", host)
             .header("Authorization", Authorization)
-            .addHeader("X-Client-Time", isoDate)
-            .addHeader("X-Client-Hash", encode("$isoDate$HashSalt"))
-            .addHeader("Host", host)
+            .header("X-Client-Time", isoDate)
+            .header("X-Client-Hash", encode("$isoDate$HashSalt"))
             .build()
         return chain.proceed(request)
     }
@@ -178,12 +179,10 @@ object RestClient {
             when (HttpStatus.check(response.code)) {
                 HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
                     if (response.message.contains(TOKEN_INVALID)) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Toasty.error(PxEZApp.instance, R.string.login_expired).show()
-                        }
+                        Toasty.error(PxEZApp.instance, R.string.login_expired).showInMain()
                     } else { //if (response.message.contains(TOKEN_ERROR)) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            Toasty.warning(PxEZApp.instance, R.string.token_expired).show()
+                            Toasty.tokenRefreshing()
                             RefreshToken.getInstance()
                                 .refreshToken(AppDataRepo.currentUser.Refresh_token)
                         }
@@ -194,9 +193,7 @@ object RestClient {
 
                 HttpStatus.NotFound -> {
                     Log.d("404", response.message + response.body)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toasty.warning(PxEZApp.instance, "404 " + response.message).show()
-                    }
+                    Toasty.warning(PxEZApp.instance, "404 " + response.message).showInMain()
                 }
 
                 HttpStatus.OK -> {

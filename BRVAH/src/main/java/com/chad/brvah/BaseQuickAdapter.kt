@@ -18,20 +18,32 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.chad.brvah.animation.*
+import com.chad.brvah.animation.AlphaInAnimation
+import com.chad.brvah.animation.ItemAnimator
+import com.chad.brvah.animation.ScaleInAnimation
+import com.chad.brvah.animation.SlideInBottomAnimation
+import com.chad.brvah.animation.SlideInLeftAnimation
+import com.chad.brvah.animation.SlideInRightAnimation
 import com.chad.brvah.diff.BrvahAsyncDiffer
 import com.chad.brvah.diff.BrvahAsyncDifferConfig
 import com.chad.brvah.diff.BrvahListUpdateCallback
-import com.chad.brvah.listener.*
-import com.chad.brvah.module.*
+import com.chad.brvah.listener.GridSpanSizeLookup
+import com.chad.brvah.listener.OnItemChildClickListener
+import com.chad.brvah.listener.OnItemChildLongClickListener
+import com.chad.brvah.listener.OnItemClickListener
+import com.chad.brvah.listener.OnItemLongClickListener
+import com.chad.brvah.module.BaseDraggableModule
+import com.chad.brvah.module.BaseLoadMoreModule
+import com.chad.brvah.module.BaseUpFetchModule
+import com.chad.brvah.module.DraggableModule
+import com.chad.brvah.module.LoadMoreModule
+import com.chad.brvah.module.UpFetchModule
 import com.chad.brvah.util.getItemView
 import com.chad.brvah.viewholder.BaseViewHolder
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Base Class
@@ -267,7 +279,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
             }
             return count
         } else {
-            val loadMoreCount = if (mLoadMoreModule?.hasLoadMoreView() == true) {
+            val loadMoreCount = if (mLoadMoreModule?.showLoadMoreView() == true) {
                 1
             } else {
                 0

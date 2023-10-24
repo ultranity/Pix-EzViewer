@@ -10,7 +10,7 @@ class BrvahListUpdateCallback(private val mAdapter: BaseQuickAdapter<*, *>) : Li
     }
 
     override fun onRemoved(position: Int, count: Int) {
-        if (mAdapter.mLoadMoreModule?.hasLoadMoreView() == true && mAdapter.itemCount == 0) {
+        if (mAdapter.mLoadMoreModule?.showLoadMoreView() == true && mAdapter.itemCount == 0) {
             // 如果注册了加载更多，并且当前itemCount为0，则需要加上loadMore所占用的一行
             mAdapter.notifyItemRangeRemoved(position + mAdapter.headerLayoutCount, count + 1)
         } else {

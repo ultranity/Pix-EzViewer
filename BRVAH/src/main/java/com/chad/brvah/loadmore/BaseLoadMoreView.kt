@@ -10,7 +10,7 @@ import com.chad.brvah.viewholder.BaseViewHolder
  */
 
 enum class LoadMoreStatus {
-    Complete, Loading, Fail, End
+    None, Complete, Loading, Fail, End
 }
 
 /**
@@ -61,6 +61,13 @@ abstract class BaseLoadMoreView {
      */
     open fun convert(holder: BaseViewHolder, position: Int, loadMoreStatus: LoadMoreStatus) {
         when (loadMoreStatus) {
+            LoadMoreStatus.None -> {
+                getLoadingView(holder).isVisible(false)
+                getLoadComplete(holder).isVisible(false)
+                getLoadFailView(holder).isVisible(false)
+                getLoadEndView(holder).isVisible(false)
+            }
+
             LoadMoreStatus.Complete -> {
                 getLoadingView(holder).isVisible(false)
                 getLoadComplete(holder).isVisible(true)

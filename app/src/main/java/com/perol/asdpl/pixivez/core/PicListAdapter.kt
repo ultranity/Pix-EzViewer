@@ -74,11 +74,14 @@ abstract class PicListAdapter(
     }
 
     fun resetFilterFlag() {
-        filtered.clear()
-        blockedFlag.clear()
-        //CoroutineScope(Dispatchers.IO).launch {
-        data.clear()
-        addFilterData(mData)
+        if (::mData.isInitialized) {
+            filtered.clear()
+            blockedFlag.clear()
+            //CoroutineScope(Dispatchers.IO).launch {
+
+            data.clear()
+            addFilterData(mData)
+        }
         //}
     }
 

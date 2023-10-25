@@ -33,7 +33,7 @@ import kotlinx.serialization.Serializable
  * next_url : https://app-api.pixiv.net/v1/illust/recommended?content_type=illust&filter=for_ios&include_ranking_label=true&min_bookmark_id_for_recent_illust=4078859313&max_bookmark_id_for_recommend=4068770682&offset=0&include_ranking_illusts=false
  */
 @Serializable
-data class RecommendResponse(
+data class IllustRecommendResponse(
     val contest_exists: Boolean = false,
     val ranking_illusts: MutableList<Illust>,
     val privacy_policy: Map<String, String?>,

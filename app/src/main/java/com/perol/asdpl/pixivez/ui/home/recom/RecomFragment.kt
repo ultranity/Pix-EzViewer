@@ -65,9 +65,9 @@ class RecomViewModel : PicListViewModel() {
     var loadNew = false
     val onLoadFirstDataRx = suspend {
         if (loadNew)
-            retrofit.api.getNew()
+            retrofit.api.getIllustNew()
         else
-            retrofit.api.getRecommend().let { IllustNext(it.illusts, it.next_url) }
+            retrofit.api.getIllustRecommend().let { IllustNext(it.illusts, it.next_url) }
     }
 
     override fun setonLoadFirstRx(mode: String, extraArgs: MutableMap<String, Any?>?) {

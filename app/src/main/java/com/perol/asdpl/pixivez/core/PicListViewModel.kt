@@ -115,7 +115,7 @@ open class PicListViewModel : BaseViewModel() {
             }
 
             TAG_TYPE.Recommend -> {
-                { retrofit.api.getRecommend().let { IllustNext(it.illusts, it.next_url) } }
+                { retrofit.api.getIllustRecommend().let { IllustNext(it.illusts, it.next_url) } }
             }
 
             TAG_TYPE.Rank -> {

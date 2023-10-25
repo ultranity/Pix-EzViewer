@@ -30,6 +30,7 @@ import android.app.ActivityOptions
 import android.util.Pair
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -37,6 +38,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
+import com.perol.asdpl.pixivez.base.SMutableLiveData
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -46,6 +48,7 @@ import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.pic.SquareMediumAdapter
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.NiceImageView
+import kotlin.properties.Delegates
 
 // TODO: fling optimize
 class UserListAdapter(layoutResId: Int) :
@@ -55,10 +58,26 @@ class UserListAdapter(layoutResId: Int) :
         val itemWidthPx: Int = 400.dp
     }
 
-    private var mSharedPool = RecyclerView.RecycledViewPool()
+    private var colorPrimary by Delegates.notNull<Int>()
+    private var badgeTextColor by Delegates.notNull<Int>()
 
-    init {
+    private var mSharedPool = RecyclerView.RecycledViewPool()
+    private val tempLiveData = SMutableLiveData(false)
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        colorPrimary = ThemeUtil.getColorPrimary(context)
+        badgeTextColor = ThemeUtil.getColorHighlight(context)
         setOnItemClickListener { adapter, view, position ->
+            val user = this.data[position].user
+            //TODO: tempLiveData.overrideValue(user.is_followed)
+            tempLiveData.observeAfterSet(recyclerView.context as LifecycleOwner) {
+                //if (it==tempLiveData.lastValue)
+                //    return@observeAfterSet
+                view.findViewById<NiceImageView>(R.id.imageview_usershow)
+                    .setBorderColor(if (user.is_followed) badgeTextColor else colorPrimary)
+            }
+            user.addBinder(user.account, tempLiveData)
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
@@ -66,10 +85,9 @@ class UserListAdapter(layoutResId: Int) :
                     //Pair(view.findViewById(R.id.imageview_usershow), "userimage")
                 ).toBundle()
             } else null
-            UserMActivity.start(context, this.data[position].user, options)
+            UserMActivity.start(context, user, options)
         }
     }
-
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
         val recyclerview = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
@@ -116,14 +134,8 @@ class UserListAdapter(layoutResId: Int) :
             }
         }
         val userImage = holder.getView<NiceImageView>(R.id.imageview_usershow)
+        userImage.setBorderColor(if (item.user.is_followed) badgeTextColor else colorPrimary)
         val username = holder.getView<TextView>(R.id.textview_usershowname)
-        val colorPrimary = ThemeUtil.getColorPrimary(context)
-        val badgeTextColor = ThemeUtil.getColorHighlight(context)
-        if (item.user.is_followed) {
-            userImage.setBorderColor(badgeTextColor) // Color.YELLOW
-        } else {
-            userImage.setBorderColor(colorPrimary)
-        }
         username.text = "${item.user.name} : ${item.user.account}"
         Glide.with(userImage.context).load(item.user.profile_image_urls.medium)
             .circleCrop().transition(withCrossFade())

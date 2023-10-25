@@ -36,7 +36,7 @@ class HelloMRecomViewPager(var context: Fragment, fragmentManager: FragmentManag
 
     override fun getItem(position: Int) = when (position) {
         0 -> RecomFragment()
-        else -> UserListFragment.newInstance()
+        else -> UserListFragment.recommendUser()
     }
 
     override fun getCount() = 2

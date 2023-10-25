@@ -4,12 +4,29 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
+class SMutableLiveData<T>(lastValue: T?, onlyIfChanged: Boolean = true) :
+    DMutableLiveData<T>(lastValue) {
+    //var observer: Observer<in T>? = null
+    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
+        //if (this.observer != null) {
+        //    removeObserver(this.observer!!)
+        //}
+        //this.observer = observer
+        removeObservers(owner)
+        super.observe(owner, observer)
+    }
+
+    override fun observeAfterSet(owner: LifecycleOwner, observer: Observer<in T>) {
+        removeObservers(owner)
+        super.observe(owner, observer)
+    }
+}
 /** fix: MutableLiveData default value will be observed
  * Creates a MutableLiveData initialized with the given `default value`.
  * but skip first observe/expose currentVersion
  * @param lastValue initial value
  */
-class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = true) :
+open class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = true) :
     MutableLiveData<T>() {
     var currentVersion = 0
         private set
@@ -19,7 +36,7 @@ class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = true) 
         super.setValue(lastValue)
     }
 
-    fun observeAfterSet(owner: LifecycleOwner, observer: Observer<in T>) {
+    open fun observeAfterSet(owner: LifecycleOwner, observer: Observer<in T>) {
         super.observe(owner, observer)
     }
 

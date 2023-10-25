@@ -64,6 +64,10 @@ class UserListViewModel : BaseViewModel() {
                 { retrofit.api.getSearchUser(keyword) }
             }
 
+            "MyPixiv" -> {
+                { retrofit.api.getMyPixivFriend(userid) }
+            }
+
             else -> {
                 { retrofit.api.getUserRecommended() }
             } //"Recommend"

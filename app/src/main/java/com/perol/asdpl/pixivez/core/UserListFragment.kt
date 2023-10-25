@@ -162,11 +162,16 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
     }
 
     companion object {
-        fun start(context: Context, userid: Int, getFollowing: Boolean? = null) {
+        fun start(
+            context: Context,
+            userid: Int,
+            getFollowing: Boolean? = null,
+            getMyPixiv: Boolean = false
+        ) {
             val title = when (getFollowing) {
                 true -> R.string.following
                 false -> R.string.followers
-                null -> R.string.related
+                null -> if (getMyPixiv) R.string.goodpfriend else R.string.related
             }
             FragmentActivity.start(context, "UserList", title, Bundle().apply {
                 putInt("userid", userid)
@@ -174,7 +179,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
                     "TAG", when (getFollowing) {
                         true -> "Following"
                         false -> "Follower"
-                        null -> "Related"
+                        null -> if (getMyPixiv) "MyPixiv" else "Related"
                     }
                 )
             })
@@ -192,14 +197,14 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
             }
 
         @JvmStatic
-        fun newInstance(keyword: String) =
+        fun searchUser(keyword: String) =
             UserListFragment().apply {
                 this.TAG = "Search"
                 this.keyword = keyword
             }
 
         @JvmStatic
-        fun newInstance() =
+        fun recommendUser() =
             UserListFragment().apply {
                 this.TAG = "Recommend"
             }

@@ -25,12 +25,40 @@
 
 package com.perol.asdpl.pixivez.services
 
-import com.perol.asdpl.pixivez.data.model.*
+import com.perol.asdpl.pixivez.data.model.BookMarkDetailResponse
+import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
+import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse
+import com.perol.asdpl.pixivez.data.model.IllustDetailResponse
+import com.perol.asdpl.pixivez.data.model.IllustNext
+import com.perol.asdpl.pixivez.data.model.IllustRecommendResponse
+import com.perol.asdpl.pixivez.data.model.ListUserResponse
+import com.perol.asdpl.pixivez.data.model.PixivResponse
+import com.perol.asdpl.pixivez.data.model.SearchIllustResponse
+import com.perol.asdpl.pixivez.data.model.SearchUserResponse
+import com.perol.asdpl.pixivez.data.model.SpotlightResponse
+import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
+import com.perol.asdpl.pixivez.data.model.UgoiraMetadataResponse
+import com.perol.asdpl.pixivez.data.model.UserDetail
+import com.perol.asdpl.pixivez.data.model.UserFollowDetail
+import com.perol.asdpl.pixivez.data.model.UserIllustNext
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
+import retrofit2.http.Streaming
+import retrofit2.http.Url
 
 interface PixivApiService { //TODO: check filter=for_android
+
+    @GET("/v1/spotlight/articles") //?filter=for_android
+    suspend fun getPixivisionArticles(
+        @Query("category") category: String = "all"
+    ): SpotlightResponse
 
     @GET("v1/walkthrough/illusts")
     suspend fun walkthroughIllusts(
@@ -41,12 +69,12 @@ interface PixivApiService { //TODO: check filter=for_android
     // &include_ranking_label=true&include_ranking_illusts=false
     // &min_bookmark_id_for_recent_illust=4078859313
     // &max_bookmark_id_for_recommend=4068770682&offset=0
-    @GET("/v1/illust/recommended?filter=for_android&include_ranking_label=true&include_ranking_illusts=false")
-    suspend fun getRecommend(
-    ): RecommendResponse
+    @GET("/v1/illust/recommended")
+    suspend fun getIllustRecommend(
+    ): IllustRecommendResponse
 
     @GET("/v1/illust/new")
-    suspend fun getNew(
+    suspend fun getIllustNew(
         @Query("content_type") contentType: String? = null //illust manga
     ): IllustNext
 
@@ -61,14 +89,10 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("restrict") restrict: String
     ): IllustNext
 
-    @GET("/v1/spotlight/articles") //?filter=for_android
-    suspend fun getPixivisionArticles(
-        @Query("category") category: String = "all"
-    ): SpotlightResponse
 
-    //    @FormUrlEncoded
-    //    @POST("/v1/mute/edit")
-    //    public abstract l<PixivResponse> postMuteSetting(@Header("Authorization") String paramString, @Field("add_user_ids[]") List<Long> paramList1, @Field("delete_user_ids[]") List<Long> paramList2, @Field("add_tags[]") List<String> paramList3, @Field("delete_tags[]") List<String> paramList4);
+    // @FormUrlEncoded
+    // @POST("/v1/mute/edit")
+    // public abstract l<PixivResponse> postMuteSetting(@Header("Authorization") String paramString, @Field("add_user_ids[]") List<Long> paramList1, @Field("delete_user_ids[]") List<Long> paramList2, @Field("add_tags[]") List<String> paramList3, @Field("delete_tags[]") List<String> paramList4);
     @GET("/v2/illust/bookmark/detail")
     suspend fun getIllustBookmarkDetail(
         @Query("illust_id") pid: Int
@@ -103,17 +127,17 @@ interface PixivApiService { //TODO: check filter=for_android
     ): IllustNext
 
     @FormUrlEncoded
-    @POST("/v1/illust/bookmark/delete")
-    suspend fun postUnlikeIllust(
-        @Field("illust_id") illust_id: Int
-    ): ResponseBody
-
-    @FormUrlEncoded
     @POST("/v2/illust/bookmark/add")
     suspend fun postLikeIllust(
         @Field("illust_id") illust_id: Int,
         @Field("restrict") restrict: String,
         @Field("tags[]") tagList: List<String>?
+    ): ResponseBody
+
+    @FormUrlEncoded
+    @POST("/v1/illust/bookmark/delete")
+    suspend fun postUnlikeIllust(
+        @Field("illust_id") illust_id: Int
     ): ResponseBody
 
     @GET("/v2/search/autocomplete?merge_plain_keyword_results=true")
@@ -152,6 +176,11 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("duration") duration: String
     ): PixivResponse
 
+    @GET("/v1/search/user") //?filter=for_android
+    suspend fun getSearchUser(
+        @Query("word") word: String
+    ): SearchUserResponse
+
     @GET("/v1/search/novel")
     suspend fun getSearchNovel(
         @Query("word") word: String,
@@ -159,7 +188,7 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("search_target") search_target: String,
         @Query("bookmark_num") paramInteger: Int?,
         @Query("duration") duration: String
-    ): PixivResponse
+    ): ResponseBody
 
     @Multipart
     @POST("/v1/user/profile/edit")
@@ -170,12 +199,6 @@ interface PixivApiService { //TODO: check filter=for_android
     @GET("/v1/user/recommended") //?filter=for_android
     suspend fun getUserRecommended(
         @Query("offset") offset: Int? = null,
-    ): SearchUserResponse
-
-
-    @GET("/v1/search/user") //?filter=for_android
-    suspend fun getSearchUser(
-        @Query("word") word: String
     ): SearchUserResponse
 
     @GET("/v1/user/follower") //?filter=for_android
@@ -189,11 +212,34 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("restrict") restrict: String
     ): SearchUserResponse
 
-    @FormUrlEncoded
-    @POST("/v1/user/follow/delete")
-    suspend fun postUnfollowUser(
-        @Field("user_id") user_id: Int
-    ): ResponseBody
+    @GET("/v1/user/detail") //?filter=for_android
+    suspend fun getUserDetail(
+        @Query("user_id") id: Int
+    ): UserDetail
+
+    @GET("/v1/user/illusts") //?filter=for_android
+    suspend fun getUserIllusts(
+        @Query("user_id") uid: Int,
+        @Query("type") type: String, //illust manga novel
+    ): UserIllustNext
+
+    @GET("/v1/user/related") //?filter=for_android
+    suspend fun getUserRelated(
+        @Query("seed_user_id") seedUserId: Int,
+        @Query("filter") filter: String = "for_android",
+        @Query("offset") offset: Int? = null,
+    ): SearchUserResponse
+
+    //获取好P友
+    @GET("v1/user/mypixiv?filter=for_android")
+    suspend fun getMyPixivFriend(
+        @Query("user_id") user_id: Int
+    ): SearchUserResponse
+
+    @GET("v1/user/follow/detail")
+    suspend fun getFollowDetail(
+        @Query("user_id") user_id: Int
+    ): UserFollowDetail
 
     @FormUrlEncoded
     @POST("/v1/user/follow/add")
@@ -201,6 +247,13 @@ interface PixivApiService { //TODO: check filter=for_android
         @Field("user_id") user_id: Int,
         @Field("restrict") restrict: String
     ): ResponseBody
+
+    @FormUrlEncoded
+    @POST("/v1/user/follow/delete")
+    suspend fun postUnfollowUser(
+        @Field("user_id") user_id: Int
+    ): ResponseBody
+
 
     @GET("/v1/illust/detail") //?filter=for_android
     suspend fun getIllust(
@@ -211,13 +264,6 @@ interface PixivApiService { //TODO: check filter=for_android
     suspend fun getIllustRelated(
         @Query("illust_id") pid: Int
     ): IllustNext
-
-    @GET("/v1/user/related") //?filter=for_android
-    suspend fun getUserRelated(
-        @Query("seed_user_id") seedUserId: Int,
-        @Query("filter") filter: String = "for_android",
-        @Query("offset") offset: Int? = null,
-    ): SearchUserResponse
 
     @GET("/v1/illust/bookmark/users")
     suspend fun getIllustBookmarkUsers(
@@ -239,17 +285,6 @@ interface PixivApiService { //TODO: check filter=for_android
         @Field("comment") comment: String,
         @Field("parent_comment_id") parent_comment_id: Int?
     ): ResponseBody
-
-    @GET("/v1/user/detail") //?filter=for_android
-    suspend fun getUserDetail(
-        @Query("user_id") id: Int
-    ): UserDetail
-
-    @GET("/v1/user/illusts") //?filter=for_android
-    suspend fun getUserIllusts(
-        @Query("user_id") uid: Int,
-        @Query("type") type: String, //illust manga novel
-    ): UserIllustNext
 
     @GET
     suspend fun getUrl(

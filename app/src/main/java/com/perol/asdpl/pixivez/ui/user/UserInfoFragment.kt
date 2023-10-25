@@ -116,7 +116,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         binding.textViewUsercomment.run {
             autoLinkMask = Linkify.WEB_URLS
             text =
-                if (userDetail.user != null || userDetail.user.comment != "") {
+                if (userDetail.user.comment != "") {
                     "${userDetail.user.account}:\r\n${userDetail.user.comment}"
                 } else {
                     "~~~"
@@ -131,15 +131,19 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
             }
         }
         loadBGImage(binding.imageviewUserBg, userDetail.profile.background_image_url)
-        binding.textviewId.text = "ID:${userDetail.user.id}"
+        binding.textviewId.text = "ID:${userid}"
+
+        binding.textviewFans.setOnClickListener {
+            UserListFragment.start(requireContext(), userid, null, true)
+        }
         binding.textviewFansNum.text = userDetail.profile.total_mypixiv_users.toString()
 
         binding.textviewFollower.setOnClickListener {
-            UserListFragment.start(requireContext(), userDetail.user.id, false)
+            UserListFragment.start(requireContext(), userid, false)
         }
         binding.textviewFollowingNum.text = userDetail.profile.total_follow_users.toString()
         binding.textviewFollowing.setOnClickListener {
-            UserListFragment.start(requireContext(), userDetail.user.id, true)
+            UserListFragment.start(requireContext(), userid, true)
         }
         //binding.textviewFollowingNum.setOnClickListener { binding.textviewFollowing.callOnClick() }
 
@@ -211,7 +215,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         }
         binding.chipgroup.addView(
             getChip(getString(R.string.related), "user_related") {
-                UserListFragment.start(requireContext(), userid, null)
+                UserListFragment.start(requireContext(), userid, null, false)
             }.also {
                 it.setTextColor(ThemeUtil.getColorHighlight(requireContext()))
             }

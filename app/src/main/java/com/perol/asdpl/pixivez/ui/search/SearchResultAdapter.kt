@@ -41,7 +41,7 @@ class SearchResultAdapter(
 
     override fun getItem(position: Int): Fragment = when (position) {
         0 -> SearchResultFragment.newInstance(keyword)
-        else -> UserListFragment.newInstance(keyword)
+        else -> UserListFragment.searchUser(keyword)
     }
 
     override fun getPageTitle(position: Int): CharSequence = when (position) {

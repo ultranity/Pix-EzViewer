@@ -132,7 +132,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     fun e(tag: String, msg: String, tr: Throwable? = null, toast: Boolean = false) {
         if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
         Log.e(tag, msg, tr)
-        if (toast) Toasty.error(PxEZApp.instance, msg).show()
+        if (toast) Toasty.error(PxEZApp.instance, msg + (tr?.message ?: "")).show()
     }
 
     /**

@@ -141,30 +141,27 @@ class PictureXFragment : BaseFragment() {
             }
         }
         pictureXViewModel.related.observe(viewLifecycleOwner) {
-            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
             if (it != null) {
-                relatedPictureAdapter.setNewInstance(it)
-                relatedPictureAdapter.setOnLoadMoreListener {
+                pictureXAdapter!!.relatedPictureAdapter.setNewInstance(it)
+                pictureXAdapter!!.relatedPictureAdapter.setOnLoadMoreListener {
                     pictureXViewModel.onLoadMoreRelated()
                 }
             } else {
-                relatedPictureAdapter.loadMoreFail()
+                pictureXAdapter!!.relatedPictureAdapter.loadMoreFail()
             }
         }
         pictureXViewModel.relatedAdded.observe(viewLifecycleOwner) {
-            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
             if (it != null) {
-                relatedPictureAdapter.addData(it)
+                pictureXAdapter!!.relatedPictureAdapter.addData(it)
             } else {
-                relatedPictureAdapter.loadMoreFail()
+                pictureXAdapter!!.relatedPictureAdapter.loadMoreFail()
             }
         }
         pictureXViewModel.nextRelated.observe(viewLifecycleOwner) {
-            val relatedPictureAdapter = pictureXAdapter!!.relatedPictureAdapter
             if (it != null) {
-                relatedPictureAdapter.loadMoreComplete()
+                pictureXAdapter!!.relatedPictureAdapter.loadMoreComplete()
             } else {
-                relatedPictureAdapter.loadMoreEnd()
+                pictureXAdapter!!.relatedPictureAdapter.loadMoreEnd()
             }
         }
         pictureXViewModel.likeIllust.observe(viewLifecycleOwner) {
@@ -239,6 +236,8 @@ class PictureXFragment : BaseFragment() {
                 //RecyclerView.HORIZONTAL, false
             ).apply {
                 spanSizeLookup = object : SpanSizeLookup() {
+                    override fun isSpanIndexCacheEnabled(): Boolean = true
+                    override fun isSpanGroupIndexCacheEnabled(): Boolean = true
                     override fun getSpanSize(position: Int): Int {
                         if (pictureXAdapter!!.getItemViewType(position) ==
                             PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal

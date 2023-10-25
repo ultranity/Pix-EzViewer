@@ -32,7 +32,7 @@ import com.perol.asdpl.pixivez.data.model.Illust
 class PicturePagerAdapter(
     fm: FragmentManager,
     private val idList: IntArray?,
-    private val illustList: MutableList<Illust>? = null
+    private val illustList: List<Illust>? = null
 ) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int) = PictureXFragment.newInstance(
         idList?.get(position),

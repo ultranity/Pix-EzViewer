@@ -94,7 +94,7 @@ class PictureActivity : RinkActivity() {
 
     private var illustId: Int = 0
     private var illustIdList: IntArray? = null
-    private var illustList: MutableList<Illust>? = null
+    private var illustList: List<Illust>? = null
     private var nowPosition: Int = 0
 
     private lateinit var binding: ActivityPictureBinding

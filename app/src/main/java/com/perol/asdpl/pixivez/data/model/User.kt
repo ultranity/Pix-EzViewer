@@ -23,7 +23,14 @@
  */
 package com.perol.asdpl.pixivez.data.model
 
+import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
+import com.perol.asdpl.pixivez.objects.CopyFrom
+import com.perol.asdpl.pixivez.objects.UserCacheRepo
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.encoding.Decoder
+import java.util.WeakHashMap
 
 /**
  * id : 19887389
@@ -34,22 +41,47 @@ import kotlinx.serialization.Serializable
  * is_followed : false
  */
 @Serializable
-data class User(
+class UserX(
     var id: Int,
     var name: String,
     var account: String,
     var profile_image_urls: ProfileImageUrls,
     var comment: String = "",
-    var is_followed: Boolean = false,
     var is_access_blocking_user: Boolean = false,
-) {
-    fun copyFrom(src: User) {
-        id = src.id
+) : CopyFrom<User> {
+    @Transient
+    private val binders = WeakHashMap<MutableLiveData<Boolean>, String>()
+    fun addBinder(key: String, binder: MutableLiveData<Boolean>) {
+        binders[binder] = key
+    }
+
+    var is_followed: Boolean = false
+        set(value) {
+            val updated = field != value
+            if (updated) {
+                field = value
+                binders.forEach { it.key.value = value }
+            }
+
+        }
+
+    override fun copyFrom(src: User) {
+        //TODO: id = src.id
         name = src.name
         account = src.account
         profile_image_urls = src.profile_image_urls
         comment = src.comment
         is_followed = src.is_followed
+    }
+}
+// workaround until https://github.com/Kotlin/kotlinx.serialization/issues/1169 fixed
+typealias User = @Serializable(with = UserSerializer::class) UserX
+
+object UserSerializer : EmptyAsNullJsonTransformingSerializer<User>(User.serializer()) {
+    override fun deserialize(decoder: Decoder): User {
+        var user = super.deserialize(decoder)
+        user = UserCacheRepo.update(user.id, user)
+        return user
     }
 }
 

@@ -30,11 +30,14 @@ import android.app.ActivityOptions
 import android.graphics.drawable.Drawable
 import android.util.Pair
 import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -63,15 +66,30 @@ class PicListXUserAdapter(
         badgeUIFollow(this, status, user)
     }
 
+    val followLiveDatas = ArrayList<DMutableLiveData<Boolean>>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        val holder = super.onCreateViewHolder(parent, viewType)
+        val followLiveData = DMutableLiveData(false, true)
+        followLiveData.observeAfterSet(parent.context as LifecycleOwner) {
+            holder.getView<NiceImageView>(R.id.imageview_user).apply {
+                setUIFollow(it, this)
+            }
+        }
+        likeLiveDatas.add(followLiveData)
+        holder.itemView.setTag(followDataID, followLiveData)
+        return holder
+    }
+
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
         convertUser(this, holder, item)
     }
 
     companion object {
+        private val followDataID = "followLiveData".hashCode()
         fun convertUser(picListAdapter: PicListAdapter, holder: BaseViewHolder, illust: Illust) {
+            val user = illust.user
             val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
-            picListAdapter.setUIFollow(illust.user.is_followed, imageViewUser)
             imageViewUser.setOnClickListener {
                 val options = if (PxEZApp.animationEnable) {
                     ActivityOptions.makeSceneTransitionAnimation(
@@ -79,26 +97,26 @@ class PicListXUserAdapter(
                         Pair(imageViewUser, "shared_element_container")//"userimage")
                     ).toBundle()
                 } else null
-                UserMActivity.start(picListAdapter.context, illust.user, options)
+                UserMActivity.start(picListAdapter.context, user, options)
             }
             imageViewUser.setOnLongClickListener {
-                //val id = illust.user.id
-                if (!illust.user.is_followed) {
+                //val id = user.id
+                if (!user.is_followed) {
                     InteractionUtil.follow(illust) {
                         imageViewUser.setBorderColor(picListAdapter.badgeTextColor) // Color.YELLOW
                         // imageViewUser.alpha = 0.9F
                     }
                 } else {
-                    InteractionUtil.unfollow(illust) {
+                    InteractionUtil.unfollow(user) {
                         imageViewUser.setBorderColor(picListAdapter.colorPrimary)
                         // imageViewUser.alpha = 0.5F
                     }
                 }
                 true
             }
-            imageViewUser.setTag(R.id.tag_first, illust.user.profile_image_urls.medium)
+            imageViewUser.setTag(R.id.tag_first, user.profile_image_urls.medium)
 
-            Glide.with(imageViewUser.context).load(illust.user.profile_image_urls.medium)
+            Glide.with(imageViewUser.context).load(user.profile_image_urls.medium)
                 .circleCrop()
                 .into(object : ImageViewTarget<Drawable>(imageViewUser) {
                     override fun setResource(resource: Drawable?) {
@@ -108,11 +126,17 @@ class PicListXUserAdapter(
                     override fun onResourceReady(
                         resource: Drawable, transition: Transition<in Drawable>?
                     ) {
-                        if (illust.user.profile_image_urls.medium === imageViewUser.getTag(R.id.tag_first)) {
+                        if (user.profile_image_urls.medium === imageViewUser.getTag(R.id.tag_first)) {
                             super.onResourceReady(resource, transition)
                         }
                     }
                 })
+
+            //picListAdapter.setUIFollow(user.is_followed, imageViewUser)
+            (holder.itemView.getTag(followDataID) as DMutableLiveData<Boolean>?)?.let {
+                it.triggerValue(user.is_followed)
+                user.addBinder("${illust.id}-${this.hashCode()}", it)
+            }
         }
 
         fun badgeUIFollow(picListAdapter: PicListAdapter, status: Boolean, user: NiceImageView) {

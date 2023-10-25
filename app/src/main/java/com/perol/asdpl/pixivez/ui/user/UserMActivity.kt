@@ -52,10 +52,10 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ProfileImageUrls
 import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.objects.DataStore
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.UpToTopListener
+import com.perol.asdpl.pixivez.objects.UserCacheRepo
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.view.AutoTabLayoutMediator
@@ -91,7 +91,6 @@ class UserMActivity : RinkActivity() {
             val intent = Intent(context, UserMActivity::class.java).setAction("user.start")
             //intent.putExtra("user", user)
             intent.putExtra("userid", user.id)
-            DataStore.save("user${user.id}", user)//.register()
             context.startActivity(intent, options)
         }
     }
@@ -120,7 +119,8 @@ class UserMActivity : RinkActivity() {
     private lateinit var user: User
     private fun setUser(usr: User) {
         user = usr
-        viewModel.isfollow.value = user.is_followed
+        viewModel.follow.value = user.is_followed
+        user.addBinder("${user.name}|${this.hashCode()}", viewModel.follow)
         id = user.id
         binding.textviewUsername.text = user.name
         loadUserImage(binding.imageviewUserimage, user.profile_image_urls.medium)
@@ -156,10 +156,7 @@ class UserMActivity : RinkActivity() {
             else return
         } else if (intent.extras!!.containsKey("userid")) {
             id = intent.extras!!.getInt("userid")
-            DataStore.retrieve<User?>("user$id")?.let {
-                setUser(it)
-                DataStore.register("user$id", this)
-            }
+            UserCacheRepo.get(id)?.let { setUser(it) }
         } else if (intent.extras!!.containsKey("user")) {
             setUser(intent.getParcelableExtra("user", User.serializer())!!)
         } else if (intent.extras!!.containsKey("uid")) {
@@ -180,11 +177,11 @@ class UserMActivity : RinkActivity() {
         viewModel.userDetail.observe(this) {
             if (it != null) {
                 if (!::user.isInitialized)
-                    setUser(DataStore.update("user${it.user.id}", it.user) ?: it.user)
+                    setUser(it.user)
                 loadBGImage(binding.imageviewUserBackground, it.profile.background_image_url)
             }
         }
-        viewModel.isfollow.observe(this) {
+        viewModel.follow.observe(this) {
             if (it != null) {
                 user.is_followed = it
                 binding.fab.setIconResource(

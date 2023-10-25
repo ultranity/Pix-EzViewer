@@ -10,6 +10,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBFragment
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentZoomBinding
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 
 // zoom pic for viewing when clicked
@@ -34,7 +35,8 @@ class ZoomFragment : BaseVBFragment<FragmentZoomBinding>() {
                             or View.SYSTEM_UI_FLAG_FULLSCREEN
                     )
         }
-        val illust = requireArguments().getParcelable<Illust>("illust")!!
+        var illust = requireArguments().getParcelable<Illust>("illust")!!
+        illust = IllustCacheRepo.update(illust.id, illust)
         val num = requireArguments().getInt("num", 0)
         val zoomPagerAdapter = ZoomPagerAdapter(requireContext(), illust)
         val size = illust.meta.size
@@ -60,10 +62,11 @@ class ZoomFragment : BaseVBFragment<FragmentZoomBinding>() {
     }
 
     companion object {
+        private const val ARG_ILLUST = "illust"
         fun start(mContext: Context, position: Int, illust: Illust) {
             FragmentActivity.start(mContext, "Zoom", "", Bundle().apply {
                 putInt("num", position)
-                putParcelable("illust", illust)
+                putParcelable(ARG_ILLUST, illust)
             })
         }
     }

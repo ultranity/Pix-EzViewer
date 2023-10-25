@@ -7,15 +7,16 @@ import androidx.lifecycle.Observer
 /** fix: MutableLiveData default value will be observed
  * Creates a MutableLiveData initialized with the given `default value`.
  * but skip first observe/expose currentVersion
- * @param defaultValue initial value
+ * @param lastValue initial value
  */
-class DMutableLiveData<T>(val defaultValue: T) : MutableLiveData<T>() {
+class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = true) :
+    MutableLiveData<T>() {
     var currentVersion = 0
         private set
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         super.observe(owner, observer)
-        super.setValue(defaultValue)
+        super.setValue(lastValue)
     }
 
     fun observeAfterSet(owner: LifecycleOwner, observer: Observer<in T>) {
@@ -25,12 +26,24 @@ class DMutableLiveData<T>(val defaultValue: T) : MutableLiveData<T>() {
     override fun getValue(): T? {
         if (isInitialized)
             return super.getValue()
-        return defaultValue
+        return lastValue
     }
 
     override fun setValue(value: T?) {
+        if (onlyIfChanged && value == lastValue) {
+            return
+        }
         currentVersion++
         super.setValue(value)
+        lastValue = value
+    }
+
+    fun triggerValue(value: T?) {
+        super.setValue(value)
+    }
+
+    fun overrideValue(value: T?) {
+        lastValue = value
     }
 }
 

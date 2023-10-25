@@ -30,14 +30,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.TAG_TYPE
-import java.util.WeakHashMap
+import com.perol.asdpl.pixivez.objects.WeakValueHashMap
 
 class UserMPagerAdapter(
     var activity: AppCompatActivity,
     var userid: Int
 ) : FragmentStateAdapter(activity) {
 
-    val fragments = WeakHashMap<Int, Fragment>(4)
+    val fragments = WeakValueHashMap<Int, Fragment>(4)
     override fun getItemCount(): Int {
         return 4
     }

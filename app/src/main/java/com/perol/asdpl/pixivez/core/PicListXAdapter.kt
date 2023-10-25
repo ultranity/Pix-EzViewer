@@ -27,10 +27,13 @@ package com.perol.asdpl.pixivez.core
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -65,9 +68,27 @@ open class PicListXAdapter(
     filter: PicsFilter
 ) :
     PicListAdapter(layoutResId, filter) {
+    val likeLiveDatas = ArrayList<DMutableLiveData<Boolean>>()
+    private val liveDataID = "likeLiveData".hashCode()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        val holder = super.onCreateViewHolder(parent, viewType)
+        val likeLiveData = DMutableLiveData(false, true)
+        likeLiveData.observeAfterSet(parent.context as LifecycleOwner) {
+            holder.getView<NiceImageView>(R.id.imageview_like).apply {
+                setUILike(it, this)
+            }
+        }
+        likeLiveDatas.add(likeLiveData)
+        holder.itemView.setTag(liveDataID, likeLiveData)
+        return holder
+    }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
+        (holder.itemView.getTag(liveDataID) as DMutableLiveData<Boolean>?)?.let {
+            it.triggerValue(item.is_bookmarked)
+            item.addBinder("${item.id}|${this.hashCode()}", it)
+        }
         if (PxEZApp.CollectMode == 1) {
             holder.getView<NiceImageView>(R.id.imageview_like).apply {
                 setOnClickListener {
@@ -77,7 +98,7 @@ open class PicListXAdapter(
                     // set like
                     if (!item.is_bookmarked) {
                         InteractionUtil.like(item, null) {
-                            setUILike(true, this)
+                            //setUILike(true, this)
                         }
                     }
                 }
@@ -88,12 +109,12 @@ open class PicListXAdapter(
                 setOnClickListener {
                     if (item.is_bookmarked) {
                         InteractionUtil.unlike(item) {
-                            setUILike(false, this)
+                            //setUILike(false, this)
                         }
                     }
                     else {
                         InteractionUtil.like(item, null) {
-                            setUILike(true, this)
+                            //setUILike(true, this)
                         }
                     }
                 }
@@ -104,9 +125,8 @@ open class PicListXAdapter(
                 }
             }
         }
-
         holder.getView<NiceImageView>(R.id.imageview_like).apply {
-            setUILike(item.is_bookmarked, this)
+            //setUILike(item.is_bookmarked, this)
             setUIDownload(if (FileUtil.isDownloaded(item)) 2 else 0, this)
         }
     }
@@ -120,14 +140,6 @@ open class PicListXAdapter(
 
     override fun setUILike(status: Boolean, view: View) {
         (view as NiceImageView).setLike(context, status)
-    }
-
-    override fun setUIFollow(status: Boolean, position: Int) {
-        return
-    }
-
-    override fun setUIFollow(status: Boolean, view: View) {
-        return
     }
 
     override fun setUIDownload(status: Int, position: Int) {

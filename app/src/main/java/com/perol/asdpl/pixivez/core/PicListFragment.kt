@@ -113,7 +113,12 @@ open class PicListFragment : Fragment() {
         if (!isLoaded) {
             isLoaded = true
             viewModel.onLoadFirst()
-            CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition resume data reload")
+            CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition data reload")
+        } else {
+            //DataHolder.modifiedIllusts.forEach{
+            //    picListAdapter.notifyItemChanged(picListAdapter.getItemRealPosition(it))
+            //}
+            //picListAdapter.notifyBoundViewChanged()
         }
     }
 
@@ -154,12 +159,15 @@ open class PicListFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.initData(onDataLoadedListener(it))
+                //TODO: IllustCacheRepo.register(this, picListAdapter.mData)
                 binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
                 headerBinding.imgBtnConfig.text =
                     "${picListAdapter.data.size}/${it.size}"
-                //TODO: warn if filter risky!
-                //if (picListAdapter.data.size == 0 && it.size>0){ }
-                //TODO ERROR: loadMore not work when data is empty
+                //warn if filter risky!
+                if (picListAdapter.data.size == 0 && it.size > 0) {
+                    picListAdapter.loadMoreFail()
+                    //TODO: hint
+                }
             } else {
                 picListAdapter.loadMoreFail()
             }

@@ -186,7 +186,7 @@ class PictureXViewModel : BaseViewModel() {
 
     fun onDialogClick(private: Boolean) {
         val illust = illustDetail.value!!
-        val need_like = !illustDetail.value!!.is_bookmarked or private
+        val need_like = !illust.is_bookmarked or private
         if (need_like) {
             //TODO: default tag to add?
             val tagList =

@@ -48,6 +48,7 @@ import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.UtilFunc.firstCommonTags
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.screenWidthDp
@@ -131,6 +132,7 @@ class PictureXFragment : BaseFragment() {
                 checkBlock(it)
                 loadIllust(it)
             } else {
+                // step back
                 if (parentFragmentManager.backStackEntryCount <= 1) {
                     activity?.finish()
                 } else {
@@ -267,6 +269,10 @@ class PictureXFragment : BaseFragment() {
             UserMActivity.start(requireContext(), it.user, options)
         }
         binding.fab.show()
+
+        // 数据绑定
+        it.addBinder("F${it.id}|${this.hashCode()}", pictureXViewModel.likeIllust)
+        it.user.addBinder("U${it.id}-${this.hashCode()}", pictureXViewModel.followUser)
     }
 
     var hasMoved = false
@@ -333,7 +339,10 @@ class PictureXFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         requireArguments().let {
             illustid = it.getInt(ARG_ILLUSTID)
-            illustobj = it.getParcelable<Illust>(ARG_ILLUSTOBJ)
+            it.getParcelable<Illust>(ARG_ILLUSTOBJ)?.let {
+                assert(illustid == it.id) { "id not match when start PictureXFragment" }
+                illustobj = IllustCacheRepo.update(it.id, it)
+            }
         }
         pictureXViewModel = ViewModelProvider(this)[PictureXViewModel::class.java]
     }
@@ -364,7 +373,6 @@ class PictureXFragment : BaseFragment() {
     }
 
     companion object {
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_ILLUSTID = "illustid"
         private const val ARG_ILLUSTOBJ = "illustobj"
 
@@ -373,6 +381,7 @@ class PictureXFragment : BaseFragment() {
             PictureXFragment().apply {
                 arguments = Bundle().apply {
                     if (illust != null) {
+                        // putParcelable 可以保证在IllustCacheRepo 失效后仍能恢复进程
                         putParcelable(ARG_ILLUSTOBJ, illust)
                         putInt(ARG_ILLUSTID, illust.id)
                     } else {

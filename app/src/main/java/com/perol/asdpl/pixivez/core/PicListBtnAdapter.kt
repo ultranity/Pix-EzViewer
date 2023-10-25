@@ -108,14 +108,6 @@ open class PicListBtnAdapter(
         like.setTextColor(if (status) badgeTextColor else colorPrimary)
     }
 
-    override fun setUIFollow(status: Boolean, position: Int) {
-        return
-    }
-
-    override fun setUIFollow(status: Boolean, view: View) {
-        return
-    }
-
     override fun setUIDownload(status: Int, position: Int) {
         (
             getViewByAdapterPosition(

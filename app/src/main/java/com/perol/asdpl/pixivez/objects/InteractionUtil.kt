@@ -66,6 +66,9 @@ object InteractionUtil {
         )
     })
 
+    /*
+     * set private flag by check if need_restrict
+     */
     inline fun follow(item: Illust, noinline callback: () -> Unit) {
         follow(item.user, need_restrict(item), callback)
     }

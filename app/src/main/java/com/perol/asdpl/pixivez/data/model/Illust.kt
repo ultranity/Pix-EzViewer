@@ -25,14 +25,20 @@
 
 package com.perol.asdpl.pixivez.data.model
 
+import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
+import com.perol.asdpl.pixivez.objects.CopyFrom
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.util.WeakHashMap
 
 @Serializable
 class IllustNext(
@@ -114,20 +120,49 @@ data class IllustX(
     val x_restrict: Int,
     val series: Series?,
     val meta: List<ImageUrlsX>,
-    val total_view: Int,
-    val total_bookmarks: Int,
-    var is_bookmarked: Boolean,
+    var total_view: Int,
+    var total_bookmarks: Int,
     var visible: Boolean,
     val is_muted: Boolean,
     val total_comments: Int = 0, //not included in recommends
     val illust_ai_type: Int,
     val illust_book_style: Int, //TODO:
     val comment_access_control: Int = 0, //TODO:
-)
+) : CopyFrom<IllustX> {
+    @Transient
+    private val binders = WeakHashMap<MutableLiveData<Boolean>, String>()
+    fun addBinder(key: String, binder: MutableLiveData<Boolean>) {
+        binders[binder] = key
+    }
+
+    var is_bookmarked: Boolean = false
+        set(value) {
+            val updated = field != value
+            if (updated) {
+                field = value
+                binders.forEach { it.key.value = value }
+            }
+
+        }
+
+    override fun copyFrom(src: IllustX) {
+        total_view = src.total_view
+        total_bookmarks = src.total_bookmarks
+        is_bookmarked = src.is_bookmarked
+        visible = src.visible
+    }
+}
 // workaround until https://github.com/Kotlin/kotlinx.serialization/issues/1169 fixed
 typealias Illust = @Serializable(with = MergeMetaIllustSerializer::class) IllustX
 
-object MergeMetaIllustSerializer : JsonTransformingSerializer<Illust>(IllustX.serializer()) {
+object MergeMetaIllustSerializer :
+    EmptyAsNullJsonTransformingSerializer<Illust>(IllustX.serializer()) {
+    override fun deserialize(decoder: Decoder): Illust {
+        var illust = super.deserialize(decoder)
+        illust = IllustCacheRepo.update(illust.id, illust)
+        return illust
+    }
+
     override fun transformDeserialize(element: JsonElement): JsonElement {
         val transformed = buildJsonObject {
             val meta_pages = if (element.jsonObject["meta_pages"]!!.jsonArray.isEmpty()) {

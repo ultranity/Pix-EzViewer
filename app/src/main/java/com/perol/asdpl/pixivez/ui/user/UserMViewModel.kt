@@ -47,40 +47,40 @@ import java.io.File
 
 class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetail>()
-    val isfollow = MutableLiveData<Boolean>()
+    val follow = MutableLiveData<Boolean>()
     val currentTab = DMutableLiveData(0)
 
     fun getData(userid: Int) {
         viewModelScope.launch {
             retrofit.api.getUserDetail(userid).let {
                 userDetail.value = it
-                isfollow.value = it.user.is_followed
+                follow.value = it.user.is_followed
             }
         }
     }
 
     fun onFabClick() {
         val user = userDetail.value!!.user
-        if (!isfollow.value!!) {
+        if (!follow.value!!) {
             InteractionUtil.follow(user, false) {
-                isfollow.value = true
+                follow.value = true
             }
         } else {
             InteractionUtil.unfollow(user) {
-                isfollow.value = false
+                follow.value = false
             }
         }
     }
 
     fun onFabLongClick() {
         val user = userDetail.value!!.user
-        if (!isfollow.value!!) {
+        if (!follow.value!!) {
             InteractionUtil.follow(user, true) {
-                isfollow.value = true
+                follow.value = true
             }
         } else {
             InteractionUtil.unfollow(user) {
-                isfollow.value = false
+                follow.value = false
             }
         }
     }

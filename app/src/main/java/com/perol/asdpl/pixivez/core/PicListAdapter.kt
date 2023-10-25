@@ -30,8 +30,8 @@ import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import com.perol.asdpl.pixivez.view.NiceImageView
 import java.util.BitSet
-import java.util.Collections
 import java.util.WeakHashMap
 import kotlin.math.max
 import kotlin.math.min
@@ -60,9 +60,16 @@ abstract class PicListAdapter(
     var blockedFlag = BitSet(128)
     var selectedFlag = BitSet(128)
     val filtered = BitSet(128) // size of mData
-    private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, Boolean>() //holder: visible
-    private val mBoundViewHolders: Set<BaseViewHolder> =
-        Collections.newSetFromMap(_mBoundViewHolders)
+
+    class VHStatus(
+        val holder: BaseViewHolder,
+        //var item:Illust,
+        val position: Int,
+        var visible: Boolean = false,
+    )
+
+    private val _mBoundViewHolders = WeakHashMap<BaseViewHolder, VHStatus>() //holder: visible
+    private val mBoundViewHolders: MutableCollection<VHStatus> = _mBoundViewHolders.values
 
     //private val mBoundPosition = HashSet<Int>()
     private val mVisiblePosition = HashSet<Int>()
@@ -93,7 +100,7 @@ abstract class PicListAdapter(
         //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
         //notifyItemRangeChanged(headerLayoutCount, filtered.last)
         mBoundViewHolders.forEach {
-            notifyItemChanged(it.bindingAdapterPosition + headerLayoutCount)
+            notifyItemChanged(it.position) //it.bindingAdapterPosition - headerLayoutCount)
         }
     }
 
@@ -170,7 +177,7 @@ abstract class PicListAdapter(
                     adapter.data.size,
                     max(position - 30, 0) + 60
                 )
-            )
+            ).toList()
         )
         val illust = adapter.data[position]
         val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust) else null
@@ -208,7 +215,7 @@ abstract class PicListAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        _mBoundViewHolders[holder] = false
+        _mBoundViewHolders[holder] = VHStatus(holder, position, false)
         //println("onBindViewHolder $holder ${holder.bindingAdapterPosition}")
         //mBoundPosition.add(holder.bindingAdapterPosition)
     }
@@ -216,14 +223,14 @@ abstract class PicListAdapter(
     override fun onViewAttachedToWindow(holder: BaseViewHolder) {
         super.onViewAttachedToWindow(holder)
         //println("onViewAttachedToWindow $holder ${holder.bindingAdapterPosition}")
-        _mBoundViewHolders[holder] = true
+        _mBoundViewHolders[holder]?.visible = true
         mVisiblePosition.add(holder.bindingAdapterPosition)
     }
 
     override fun onViewDetachedFromWindow(holder: BaseViewHolder) {
         super.onViewDetachedFromWindow(holder)
         //println("onViewDetachedFromWindow $holder ${holder.bindingAdapterPosition}")
-        _mBoundViewHolders[holder] = false
+        _mBoundViewHolders[holder]?.visible = false
         mVisiblePosition.remove(holder.bindingAdapterPosition)
     }
 
@@ -310,6 +317,23 @@ abstract class PicListAdapter(
                     }
                 }
             })
+    }
+
+    override fun convert(holder: BaseViewHolder, item: Illust, payloads: List<Any>) {
+        super.convert(holder, item, payloads)
+        val payload = payloads[0] as Payload
+        when (payload.type) {
+            "bookmarked" -> {
+                setUILike(item.is_bookmarked, holder.getView<NiceImageView>(R.id.imageview_like))
+            }
+
+            "followed" -> {
+                setUIFollow(
+                    item.user.is_followed,
+                    holder.getView<NiceImageView>(R.id.imageview_user)
+                )
+            }
+        }
     }
 
     private fun showItemView(itemView: View) {

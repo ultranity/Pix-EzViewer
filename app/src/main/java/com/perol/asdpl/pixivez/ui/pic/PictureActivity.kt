@@ -32,6 +32,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.viewpager.widget.ViewPager
+import com.chrynan.parcelable.core.getParcelable
 import com.chrynan.parcelable.core.putParcelable
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.model.Illust
@@ -44,13 +45,17 @@ import kotlin.math.max
 
 class PictureActivity : RinkActivity() {
     companion object {
+        private const val ARG_ILLUSTOBJ = "illustobj"
+        private const val ARG_ILLUSTID = "illustid"
+        private const val ARG_ILLUSTIDLIST = "illustidlist"
+        private const val ARG_POSITION = "position"
         fun start(
             context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id },
             options: Bundle? = null
         ) {
             val bundle = Bundle()
-            bundle.putIntArray("illustidlist", arrayList)
-            bundle.putInt("illustid", id)
+            bundle.putIntArray(ARG_ILLUSTIDLIST, arrayList)
+            bundle.putInt(ARG_ILLUSTID, id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -65,8 +70,8 @@ class PictureActivity : RinkActivity() {
             options: Bundle? = null
         ) {
             val bundle = Bundle()
-            bundle.putInt("position", position - max(position - limit, 0))
-            bundle.putInt("illustid", id)
+            bundle.putInt(ARG_POSITION, position - max(position - limit, 0))
+            bundle.putInt(ARG_ILLUSTID, id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -76,12 +81,10 @@ class PictureActivity : RinkActivity() {
         fun start(
             context: Context,
             illust: Illust,
-            arrayList: IntArray = IntArray(1) { illust.id }
         ) {
             val bundle = Bundle()
-            bundle.putIntArray("illustidlist", arrayList)
-            bundle.putParcelable("illust", illust)
-            bundle.putInt("illustid", illust.id)
+            bundle.putParcelable(ARG_ILLUSTOBJ, illust)
+            bundle.putInt(ARG_ILLUSTID, illust.id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(bundle)
@@ -118,15 +121,16 @@ class PictureActivity : RinkActivity() {
             window.statusBarColor = Color.TRANSPARENT
             // window.navigationBarColor = Color.TRANSPARENT
         }
-        val bundle = this.intent.extras!!
-        illustId = bundle.getInt("illustid")
-        nowPosition = bundle.getInt("position", 0)
 
+        val bundle = this.intent.extras!!
+        illustId = bundle.getInt(ARG_ILLUSTID)
+        nowPosition = bundle.getInt(ARG_POSITION, 0)
+        val picturePagerAdapter: PicturePagerAdapter
         when {
-            bundle.containsKey("illustidlist") -> {
-                illustIdList = bundle.getIntArray("illustidlist")
+            bundle.containsKey(ARG_ILLUSTIDLIST) -> {
+                illustIdList = bundle.getIntArray(ARG_ILLUSTIDLIST)
                 nowPosition = illustIdList!!.indexOf(illustId)
-                binding.viewpagePicture.adapter =
+                picturePagerAdapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList!!)
             }
 
@@ -138,7 +142,7 @@ class PictureActivity : RinkActivity() {
                     IntArray(1) { illustId }
                 }
 
-                binding.viewpagePicture.adapter =
+                picturePagerAdapter =
                     PicturePagerAdapter(supportFragmentManager, illustIdList, illustList)
                 DataHolder.picPagerAdapter = binding.viewpagePicture.adapter
             }
@@ -146,10 +150,13 @@ class PictureActivity : RinkActivity() {
             else -> {
                 illustIdList = IntArray(1) { illustId }
                 nowPosition = 0 // illustIdList!!.indexOf(illustId)
-                binding.viewpagePicture.adapter =
-                    PicturePagerAdapter(supportFragmentManager, illustIdList)
+                picturePagerAdapter = bundle.getParcelable<Illust>(ARG_ILLUSTOBJ)?.let {
+                    PicturePagerAdapter(supportFragmentManager, illustIdList, arrayListOf(it))
+                } ?: PicturePagerAdapter(supportFragmentManager, illustIdList)
             }
         }
+        binding.viewpagePicture.adapter = picturePagerAdapter
+        //TODO: illustList?.let { IllustCacheRepo.register(this, it) }
         binding.viewpagePicture.currentItem = nowPosition
         binding.viewpagePicture.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}

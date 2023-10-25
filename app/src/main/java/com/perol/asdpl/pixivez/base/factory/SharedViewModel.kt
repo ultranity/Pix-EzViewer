@@ -29,7 +29,7 @@ inline fun <reified VM : ViewModel> Fragment.activitySharedViewModel(
         store = VMStores[scopeName]!!
     }
     else {
-        store = VMStore()
+        store = VMStore(scopeName)
         VMStores[scopeName] = store
     }
     store.register(holder ?: requireActivity())
@@ -46,28 +46,33 @@ inline fun <reified VM : ViewModel> LifecycleOwner.sharedViewModel(
     val store: VMStore
     if (VMStores.keys.contains(scopeName)) {
         store = VMStores[scopeName]!!
-    }
-    else {
-        store = VMStore(clearBindDelay)
+    } else {
+        store = VMStore(scopeName, clearBindDelay)
         VMStores[scopeName] = store
     }
     store.register(holder ?: this)
-    return ViewModelLazy(VM::class, { store.viewModelStore }, { factory ?: ViewModelProvider.NewInstanceFactory() })
+    return ViewModelLazy(
+        VM::class,
+        { store.viewModelStore },
+        { factory ?: ViewModelProvider.NewInstanceFactory() })
 }
-class VMStore(private val clearBindDelay: Long = 1000) : ViewModelStoreOwner {
+
+fun isChangingConfigurations(owner: LifecycleOwner): Boolean {
+    if (owner is Fragment) {
+        val activity = owner.activity ?: return false
+        return activity.isChangingConfigurations
+    }
+    return if (owner is FragmentActivity) {
+        owner.isChangingConfigurations
+    } else false
+}
+
+class VMStore(val scopeName: String, private val clearBindDelay: Long = 1000) :
+    ViewModelStoreOwner {
 
     private val bindTargets = ArrayList<LifecycleOwner>()
     private var vmStore: ViewModelStore? = null
 
-    fun isChangingConfigurations(owner: LifecycleOwner): Boolean {
-        if (owner is Fragment) {
-            val activity = owner.activity ?: return false
-            return activity.isChangingConfigurations
-        }
-        return if (owner is FragmentActivity) {
-            owner.isChangingConfigurations
-        } else false
-    }
     fun register(host: LifecycleOwner) {
         if (!bindTargets.contains(host)) {
             bindTargets.add(host)
@@ -81,10 +86,8 @@ class VMStore(private val clearBindDelay: Long = 1000) : ViewModelStoreOwner {
                                 //check if is restoring: https://blog.csdn.net/huweijian5/article/details/114575986
                                 if (isChangingConfigurations(source))
                                     return@schedule
-                                VMStores.entries.find { it.value == this@VMStore }?.also {
-                                    vmStore?.clear()
-                                    VMStores.remove(it.key)
-                                }
+                                vmStore?.clear()
+                                VMStores.remove(scopeName)
                             }
                         }
                     }

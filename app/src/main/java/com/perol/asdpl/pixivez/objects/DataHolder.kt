@@ -49,22 +49,26 @@ fun <T : Any> T.copyFrom(src:T) {
         .forEach {
             it.setter.call(this, it.getter.call(src))
         }
-    return
-    this.javaClass.declaredFields
-        //.filter{ it.modifiers == Modifier.PUBLIC }
-        .forEach {
-            it.isAccessible = true
-            it.set(this, it.get(src))
-        }
+return
+this.javaClass.declaredFields
+//.filter{ it.modifiers == Modifier.PUBLIC }
+.forEach {
+it.isAccessible = true
+it.set(this, it.get(src))
+}
 }
  */
 
-class DataHolder{
+interface CopyFrom<T> {
+    fun copyFrom(src: T)
+}
+
+class DataHolder {
     companion object {
-        private var illustListStack: Stack<MutableList<Illust>?> = Stack<MutableList<Illust>?>()
+        private var illustListStack: Stack<List<Illust>?> = Stack<List<Illust>?>()
         var picPagerAdapter: PagerAdapter? = null
 
-        fun peekIllustList(): MutableList<Illust>? {
+        fun peekIllustList(): List<Illust>? {
             return if (this.illustListStack.empty()) {
                 null
             } else {
@@ -86,7 +90,7 @@ class DataHolder{
 
         //var dataAddedRef: MutableList<Illust>? = null
         // -----------------
-        fun getIllustList(): MutableList<Illust>? {
+        fun getIllustList(): List<Illust>? {
             return if (this.illustListStack.empty()) {
                 null
             } else {
@@ -94,15 +98,17 @@ class DataHolder{
             }
         }
 
-        fun setIllustList(illustList: MutableList<Illust>) {
+        fun setIllustList(illustList: List<Illust>) {
             this.illustListStack.push(illustList)
         }
     }
 }
 
 val HoldingData = HashMap<String, DataStore<*>>()
-class DataStore<T>(private val key:String, private val clearBindDelay: Long = 2000) {
-    companion object{
+
+@Deprecated("use CacheRepo instead")
+class DataStore<T>(private val key: String, private val clearBindDelay: Long = 2000) {
+    companion object {
         inline fun <reified T> save(id: String, data: T): DataStore<T> {
             val ds = DataStore<T>(id).also { it.data = data }
             HoldingData[id] = ds
@@ -118,10 +124,10 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
          * update data if exists and return the holding data object
          */
         fun update(id: String, data: User): User? {
-            return (HoldingData[id]?.data as? User)?.apply{ copyFrom(data) }
+            return (HoldingData[id]?.data as? User)?.apply { copyFrom(data) }
         }
 
-        inline fun <reified T>  retrieve(id: String): T? {
+        inline fun <reified T> retrieve(id: String): T? {
             return HoldingData[id]?.data as? T
         }
 
@@ -129,6 +135,7 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
             HoldingData[id]?.register(host)
         }
     }
+
     var data: T? = null
     private val bindTargets = ArrayList<LifecycleOwner>()
 
@@ -144,10 +151,6 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
                             if (bindTargets.isEmpty()) { // 如果当前没有关联对象，则释放资源
                                 data = null
                                 HoldingData.remove(key)
-                                /*HoldingData.entries.find { it.value == this@DataStore }?.also {
-                                    data = null
-                                    HoldingData.remove(it.key)
-                                }*/
                             }
                         }
                     }
@@ -156,3 +159,73 @@ class DataStore<T>(private val key:String, private val clearBindDelay: Long = 20
         }
     }
 }
+
+/*TODO: LRU cache
+class MetricWrapper<T : CopyFrom<T>>(
+    val id: Int,
+    val obj: T
+) {
+    var referer = 0
+    var needs_update = false
+}*/
+
+open class CacheRepo<T : CopyFrom<T>> {
+    private val objectStore = WeakValueHashMap<Int, T>(30)
+
+    fun get(id: Int): T? {
+        return objectStore[id]
+    }
+
+    fun update(id: Int, t: T): T {
+        if (objectStore.containsKey(id))
+            objectStore[id]!!.copyFrom(t)
+        else
+            objectStore[id] = t
+        return objectStore[id]!!
+    }
+
+    fun remove(id: Int) {
+        objectStore.remove(id)
+    }
+
+    fun loadFromDisk() {
+        //TODO:
+    }
+
+    fun dumpToDisk() {
+        //TODO:
+    }
+}
+
+object IllustCacheRepo : CacheRepo<Illust>() {
+    /* TODO: clean binders automatically
+    internal const val clearBindDelay: Long = 1000
+    internal val bindTargets = ArrayList<LifecycleOwner>()
+    val objIDStores = HashMap<String, Collection<Illust>>()
+    //val bindingListener = HashMap<Int, ArrayList<Unit>>()
+    fun register(host: LifecycleOwner, mData: Collection<Illust>) {
+        if (!bindTargets.contains(host)) {
+            bindTargets.add(host)
+            objIDStores[host.hashCode().toString()] = mData
+            host.lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        host.lifecycle.removeObserver(this)
+                        bindTargets.remove(host)
+                        Timer().schedule(clearBindDelay) {
+                            if (bindTargets.isEmpty()) { // 如果当前没有关联对象
+                                //check if is restoring: https://blog.csdn.net/huweijian5/article/details/114575986
+                                if (isChangingConfigurations(source))
+                                    return@schedule
+                                objIDStores.remove(host.hashCode().toString())
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    }*/
+}
+
+//class UserDetailCacheRepo: CacheRepo<UserDetail>() {}
+object UserCacheRepo : CacheRepo<User>()

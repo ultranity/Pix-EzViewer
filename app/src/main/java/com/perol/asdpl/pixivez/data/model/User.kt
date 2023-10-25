@@ -27,6 +27,9 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import com.perol.asdpl.pixivez.objects.CopyFrom
 import com.perol.asdpl.pixivez.objects.UserCacheRepo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encoding.Decoder
@@ -60,9 +63,10 @@ class UserX(
             val updated = field != value
             if (updated) {
                 field = value
-                binders.forEach { it.key.value = value }
+                CoroutineScope(Dispatchers.Main).launch {
+                    binders.forEach { it.key.value = value }
+                }
             }
-
         }
 
     override fun copyFrom(src: User) {

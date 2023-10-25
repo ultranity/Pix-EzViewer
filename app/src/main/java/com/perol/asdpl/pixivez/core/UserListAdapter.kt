@@ -28,6 +28,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.util.Pair
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
@@ -39,6 +40,7 @@ import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.base.SMutableLiveData
+import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.data.model.UserPreviewsBean
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -70,13 +72,7 @@ class UserListAdapter(layoutResId: Int) :
         badgeTextColor = ThemeUtil.getColorHighlight(context)
         setOnItemClickListener { adapter, view, position ->
             val user = this.data[position].user
-            //TODO: tempLiveData.overrideValue(user.is_followed)
-            tempLiveData.observeAfterSet(recyclerView.context as LifecycleOwner) {
-                //if (it==tempLiveData.lastValue)
-                //    return@observeAfterSet
-                view.findViewById<NiceImageView>(R.id.imageview_usershow)
-                    .setBorderColor(if (user.is_followed) badgeTextColor else colorPrimary)
-            }
+            addUserBinder(view, user)
             user.addBinder(user.account, tempLiveData)
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
@@ -110,11 +106,13 @@ class UserListAdapter(layoutResId: Int) :
             } else {
                 userShowIllustAdapter = recyclerview.adapter as SquareMediumAdapter
                 val itemCount = userShowIllustAdapter.data.size
-                userShowIllustAdapter.data = item.illusts
+                userShowIllustAdapter.setNewInstance(item.illusts)
                 userShowIllustAdapter.notifyItemRangeChanged(0, itemCount)
             }
 
             userShowIllustAdapter.setOnItemClickListener { adapter, view, position ->
+                val user = item.user
+                addUserBinder(holder.itemView, user)
                 DataHolder.setIllustList(userShowIllustAdapter.data)
                 val options = if (PxEZApp.animationEnable) {
                     val mainimage = view.findViewById<ImageView>(R.id.imageview)
@@ -140,5 +138,16 @@ class UserListAdapter(layoutResId: Int) :
         Glide.with(userImage.context).load(item.user.profile_image_urls.medium)
             .circleCrop().transition(withCrossFade())
             .into(userImage)
+    }
+
+    private fun addUserBinder(rootView: View, user: User) {
+        //TODO: tempLiveData.overrideValue(user.is_followed)
+        tempLiveData.observeAfterSet(recyclerView.context as LifecycleOwner) {
+            //if (it==tempLiveData.lastValue)
+            //    return@observeAfterSet
+            rootView.findViewById<NiceImageView>(R.id.imageview_usershow)
+                .setBorderColor(if (user.is_followed) badgeTextColor else colorPrimary)
+        }
+        user.addBinder(user.account, tempLiveData)
     }
 }

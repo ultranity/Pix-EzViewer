@@ -169,7 +169,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
             getMyPixiv: Boolean = false
         ) {
             val title = when (getFollowing) {
-                true -> R.string.following
+                true -> R.string.followings
                 false -> R.string.followers
                 null -> if (getMyPixiv) R.string.goodpfriend else R.string.related
             }

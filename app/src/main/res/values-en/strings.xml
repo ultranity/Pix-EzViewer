@@ -16,7 +16,10 @@
         "\nYou can reopen this help on the settings page"
     </string>
     <string name="login_help_md"># Troubleshooting\n\nIf you are receive this when trying to log in:\n\n```shell\n    http 400 bad request\n```\n\nPlease try the following steps:\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Check if the access point APN is Net instead of Wap\n3. If it is the latest version, the username or password is wrong (104:), you need to check the account password\n4. The account is not verified or the user account is invalid (103:), you need to go to the official website for verification\n\nps: account password refers to pixiv account password, not github\n\nIf prompted after login\n\n```shell\n    Program error, about to exit, xx resourece not found\n```\n\n1. Make sure the application is up to date, go to one of the official sites linked on GitHub to get the latest version\n2. Make sure that the application is obtained from one of the official sites, not from others\n3. After installing the latest version from the above channels, clear the application data and try to log in again\n\n## If nothing helps\n\nPlease use the feedback email or GitHub Issues, provide details like version number, system information, error message screenshots\n\nBefore giving feedback, you need to make sure\n\n1. The application is obtained from one of the official sites linked on GitHub\n2. Did not use the early adopter system or use the xposed or magisk module to make magic changes\n3. You have read carefully \"please read it all\" in settings</string>
+    <string name="view_cache_repo">In-mem Caches</string>
     <string name="follow">follow</string>
+    <string name="following">Following</string>
+    <string name="following_private">(Following)</string>
     <string name="click">click</string>
     <string name="support_string">Feedback: via GitHub or by email: Pix-Ez@outlook.com</string>
     <string name="current_developer">Current developer</string>
@@ -34,7 +37,7 @@
     <string name="pic_quality_download">Download picture quality</string>
     <string name="origin">Show original</string>
     <string name="searchsource">SauceNAO</string>
-    <string name="cleancatche">Clear cache</string>
+    <string name="clear_cache">Clear cache</string>
     <string name="view_history">History</string>
     <string name="appsetting">Settings</string>
     <string name="logout">Log out</string>
@@ -210,7 +213,7 @@
     <string name="customformat_token">Token</string>
     <string name="customformat_result">Result (click to insert)</string>
     <string name="summary_thanks">Thanks to:</string>
-    <string name="following">Following</string>
+    <string name="followings">Following</string>
     <string name="followers">Followers</string>
     <string name="pixivision_desc2">a creative media that delivers \n \"the best works of creative originality\"</string>
     <string name="change_to_first">change to first</string>

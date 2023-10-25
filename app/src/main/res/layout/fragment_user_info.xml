@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/textview_following"
                     android:layout_marginStart="8dp"
-                    android:text="@string/following"
+                    android:text="@string/followings"
                     app:layout_constraintBaseline_toBaselineOf="@+id/textview_follower"
                     app:layout_constraintStart_toEndOf="@+id/textview_follower" />
 

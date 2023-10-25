@@ -17,6 +17,8 @@
     </string>
     <string name="login_help_md"># TroubleShoot幫助\n\n如果你登錄時提示\n\n```shell\n http 400 bad request\n```\n\n請嘗試以下步驟\n1. 確保應用是最新的，到google </string>
     <string name="follow">關注</string>
+    <string name="following">關注中</string>
+    <string name="following_private">(關注中)</string>
     <string name="click">點擊</string>
     <string name="support_string">反饋郵箱：Pix-Ez@outlook.com 歡迎通過github 反饋及star 也可以通過關於頁面跳轉請我喝杯咖啡</string>
     <string name="current_developer">當前開發者</string>
@@ -34,7 +36,7 @@
     <string name="pic_quality_download">下載圖像品質</string>
     <string name="origin">加載原圖</string>
     <string name="searchsource">以圖搜源</string>
-    <string name="cleancatche">清除快取</string>
+    <string name="clear_cache">清除快取</string>
     <string name="view_history">歷史記錄</string>
     <string name="appsetting">程式設定</string>
     <string name="logout">登出</string>
@@ -210,7 +212,7 @@
     <string name="customformat_token">Token</string>
     <string name="customformat_result">Result（點擊自動填入）</string>
     <string name="summary_thanks">非常感謝你們的支持:</string>
-    <string name="following">關注用戶</string>
+    <string name="followings">關注用戶</string>
     <string name="followers">關注者</string>
     <string name="pixivision_desc2">為不甘於沉悶生活的人提供的\n創作型媒體！</string>
     <string name="change_to_first">更改為第1個</string>

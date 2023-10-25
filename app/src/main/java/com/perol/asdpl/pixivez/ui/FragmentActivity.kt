@@ -38,9 +38,10 @@ class FragmentActivity : RinkActivity() {
             "Users" to FragmentItem(::UsersFragment, null),
             "UserList" to FragmentItem(::UserListFragment, null),
             "History" to FragmentItem(::HistoryFragment, R.string.view_history),
-            TAG_TYPE.Collect.name to FragmentItem(::SelectDownloadFragment, R.string.download),
             "Zoom" to FragmentItem(::ZoomFragment, null),
-            TAG_TYPE.WalkThrough.name to FragmentItem(null, R.string.walk_through)
+            TAG_TYPE.WalkThrough.name to FragmentItem(null, R.string.walk_through),
+            TAG_TYPE.Collect.name to FragmentItem(::SelectDownloadFragment, R.string.download),
+            TAG_TYPE.Cache.name to FragmentItem(null, R.string.view_cache_repo),
         )
 
         fun start(

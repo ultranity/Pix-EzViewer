@@ -209,6 +209,10 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 FragmentActivity.start(this, "History")
             }
 
+            R.id.nav_cache_repo -> {
+                FragmentActivity.start(this, "Cache")
+            }
+
             R.id.nav_rename -> {
                 startActivity(
                     Intent(

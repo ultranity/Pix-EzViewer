@@ -17,6 +17,8 @@
     </string>
     <string name="login_help_md">＃トラブルシューティングヘルプ\ N \ Nログインしている場合は、プロンプト\ N \ n```hell \ n http 400不正な要求\ n`` \ n \ n次の手順を試してください\ N1アプリケーションが最新のGoogleであることを確認してください。 </string>
     <string name="follow">follow</string>
+    <string name="following">Following</string>
+    <string name="following_private">(Following)</string>
     <string name="click">click</string>
     <string name="support_string">フィードバックEメール：githubの星を経由してPix-Ez@outlook.com歓迎のフィードバックは、ページにジャンプすることができます私にコーヒーを喜ば</string>
     <string name="current_developer">現在の開発</string>
@@ -34,7 +36,7 @@
     <string name="pic_quality_download">下載画質</string>
     <string name="origin">ロード画像</string>
     <string name="searchsource">元画像を検索</string>
-    <string name="cleancatche">キャッシュを削除</string>
+    <string name="clear_cache">キャッシュを削除</string>
     <string name="view_history">閲覧履歴</string>
     <string name="appsetting">設定</string>
     <string name="logout">ログアウト</string>
@@ -210,7 +212,7 @@
     <string name="customformat_token">名前</string>
     <string name="customformat_result">結果（自動的に記入します）</string>
     <string name="summary_thanks">ご協力ありがとうございます：</string>
-    <string name="following">ユーザー懸念</string>
+    <string name="followings">ユーザー懸念</string>
     <string name="followers">フォロワー</string>
     <string name="pixivision_desc2">これは型メディアの作成を提供するために\n鈍い人々の生活に不本意です！</string>
     <string name="change_to_first">最初のものを変更</string>

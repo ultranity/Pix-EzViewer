@@ -21,6 +21,8 @@
     <string name="login_help_md"># TroubleShoot帮助\n\n如果你登录时提示\n\n```shell\n    http 400 bad request\n```\n\n请尝试以下步骤\n1. 确保应用是最新的，到google play或者github获取最新的版本\n2. 检查接入点APN是否为Net而不是Wap\n3. 已是最新版，则用户名或者密码有错(104:)，需要核对账号密码\n4. 账号未完成验证或者用户账号无效(103:)，需要到官网进行验证完善\n\nps:账号密码指的是pixiv的账号密码，而不是github的\n\n如果登录后提示\n\n```shell\n    程序出错，即将退出,xx resourece not found\n```\n\n1. 确保应用是最新的，到google play或者github获取最新的版本\n2. 确保应用是google play或者github获取的，而不是别人传的甚至某某dalao卖的\n3. 到以上渠道安装完最新版本后，清除应用数据并重新尝试登录\n\n## 若都无帮助\n\n请通过反馈邮箱，详细反馈版本号，系统信息，错误信息截图\n反馈之前,你需要确保\n\n1. 应用是google play或者github获取的\n2. 不是使用尝鲜系统或者使用xposed或者magisk模块进行过魔改\n3. 已仔细阅读完毕\"请务必读完\"</string>
 
     <string name="follow">关注</string>
+    <string name="following">关注中</string>
+    <string name="following_private">（关注）</string>
     <string name="click">点击请我喝杯咖啡</string>
     <string name="support_string">反馈邮箱：Pix-Ez@outlook.com 欢迎通过github 反馈及star 也可以通过关于页面跳转请我喝杯咖啡</string>
     <string name="current_developer">当前开发者</string>
@@ -43,7 +45,7 @@
     <string name="pic_quality_download">下载图片质量</string>
     <string name="origin">加载原图</string>
     <string name="searchsource">以图搜源</string>
-    <string name="cleancatche">清除缓存</string>
+    <string name="clear_cache">清除缓存</string>
     <string name="view_history">历史记录</string>
     <string name="appsetting">应用设置</string>
     <string name="logout">登出</string>
@@ -229,7 +231,7 @@
     <string name="customformat_result">Result（点击自动填入）</string>
     <string name="post_comment" translatable="false">send</string>
     <string name="summary_thanks">非常感谢你们的支持:</string>
-    <string name="following">关注用户</string>
+    <string name="followings">关注用户</string>
     <string name="followers">关注者</string>
     <string name="advices" translatable="false">advices</string>
     <string name="pixivision_desc2">为不甘于沉闷生活的人提供的\n创作型媒体！</string>
@@ -336,4 +338,5 @@
     <string name="check_clipboard_policy" translatable="false">((pid)|(pixiv)|(画师)|(artist)|(by)|(twi(tter)?))([：:\\s]*)(\\S+)</string>
     <string name="list_empty" translatable="false">空空如也~</string>
     <string name="go_to_detail">转到详情</string>
+    <string name="view_cache_repo">运行缓存</string>
 </resources>

@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.core.PicListFragment
+import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.core.UserListFragment
 import com.perol.asdpl.pixivez.data.AppDataRepo
 
@@ -45,7 +46,7 @@ class HelloMThViewPager(
     }
 
     override fun getItem(position: Int) = when (position) {
-        0 -> PicListFragment.newInstance("MyFollow", 0)
+        0 -> PicListFragment.newInstance(TAG_TYPE.MyFollow.name, 0)
         else -> UserListFragment.newInstance(AppDataRepo.currentUser.userid, true)
     }
 

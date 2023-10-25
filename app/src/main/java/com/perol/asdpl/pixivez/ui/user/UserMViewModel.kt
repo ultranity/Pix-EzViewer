@@ -30,6 +30,7 @@ import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.core.RESTRICT_TYPE
 import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.User
@@ -48,6 +49,7 @@ import java.io.File
 class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetail>()
     val follow = MutableLiveData<Boolean>()
+    val privateFollowed = DMutableLiveData(false)
     val currentTab = DMutableLiveData(0)
 
     fun getData(userid: Int) {
@@ -55,6 +57,12 @@ class UserMViewModel : BaseViewModel() {
             retrofit.api.getUserDetail(userid).let {
                 userDetail.value = it
                 follow.value = it.user.is_followed
+                if (it.user.is_followed) {
+                    retrofit.api.getFollowDetail(userid).let {
+                        privateFollowed.value =
+                            it.follow_detail.restrict == RESTRICT_TYPE.private.name
+                    }
+                }
             }
         }
     }

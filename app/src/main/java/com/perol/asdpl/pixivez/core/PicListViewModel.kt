@@ -31,6 +31,7 @@ import com.perol.asdpl.pixivez.data.model.IIllustNext
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -49,6 +50,7 @@ enum class TAG_TYPE {
     UserManga,
     UserBookmark,
     Collect,
+    Cache,
     Else;
 
     companion object {
@@ -144,7 +146,6 @@ open class PicListViewModel : BaseViewModel() {
                     )
                 }
             }
-
             TAG_TYPE.Collect -> {
                 suspend {
                     IllustNext(
@@ -154,6 +155,11 @@ open class PicListViewModel : BaseViewModel() {
                 }
             }
 
+            TAG_TYPE.Cache -> {
+                suspend {
+                    IllustNext(IllustCacheRepo.getAll(), null)
+                }
+            }
             TAG_TYPE.Else -> null
         }?.let {
             onLoadFirstRx = it

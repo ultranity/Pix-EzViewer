@@ -28,25 +28,26 @@ package com.perol.asdpl.pixivez.ui.home.trend
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.perol.asdpl.pixivez.core.PicListFragment
+import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.objects.WeakValueHashMap
 
 class RankingMAdapter(fragment: Fragment, private var isR18on: Boolean) :
     FragmentStateAdapter(fragment) {
 
-    private val modelist = arrayOf(
+    private val modeList = arrayOf(
         "day", "day_male", "day_female", "day_ai", "week_original", "week_rookie", "week", "month",
         "day_manga", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
     )
 
-    override fun getItemCount() = if (isR18on) modelist.size else modelist.size - 5
+    override fun getItemCount() = if (isR18on) modeList.size else modeList.size - 5
 
     //TODO: LRU cache
     val fragments = WeakValueHashMap<Int, PicListFragment>(3)
     override fun createFragment(position: Int): Fragment {
         if (fragments[position] == null) {
             fragments[position] = PicListFragment.newInstance(
-                "Rank", position, mutableMapOf(
-                    "mode" to modelist[position]
+                TAG_TYPE.Rank.name, position, mutableMapOf(
+                    "mode" to modeList[position]
                 )
             )
         }

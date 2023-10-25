@@ -113,7 +113,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/following" />
+            android:text="@string/followings" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/show_not_followed"

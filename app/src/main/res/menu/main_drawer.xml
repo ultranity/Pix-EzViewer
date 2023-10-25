@@ -44,9 +44,13 @@
             android:title="@string/block_tag"
             android:icon="@drawable/ic_action_block" />
         <item
+            android:id="@+id/nav_cache_repo"
+            android:icon="@drawable/ic_star"
+            android:title="@string/view_cache_repo" />
+        <item
             android:id="@+id/nav_cache_clean"
             android:icon="@drawable/ic_action_del"
-            android:title="@string/cleancatche" />
+            android:title="@string/clear_cache" />
     </group>
 
 </menu>

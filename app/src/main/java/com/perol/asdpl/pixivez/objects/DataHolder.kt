@@ -172,6 +172,10 @@ class MetricWrapper<T : CopyFrom<T>>(
 open class CacheRepo<T : CopyFrom<T>> {
     private val objectStore = WeakValueHashMap<Int, T>(30)
 
+    fun getAll(): MutableList<T> {
+        return objectStore.values.toMutableList()
+    }
+
     fun get(id: Int): T? {
         return objectStore[id]
     }

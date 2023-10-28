@@ -114,6 +114,7 @@ class PictureXFragment : BaseFragment() {
             binding.blocktagTextview.text = it.vis()
             binding.blocktagInfo.text = illust.title
             binding.blockView.visibility = View.VISIBLE
+            binding.recyclerview.visibility = View.GONE
             binding.blockView.bringToFront()
             loadIllust(illust)
             return true
@@ -321,14 +322,16 @@ class PictureXFragment : BaseFragment() {
             FragmentActivity.start(requireContext(), "Block")
         }
         binding.jumpButton.setOnLongClickListener {
+            val illust = pictureXViewModel.illustDetail.value!!
             MaterialDialogs(requireContext()).show {
-                setMessage(InteractionUtil.toDetailString(pictureXViewModel.illustDetail.value!!))
+                setMessage(InteractionUtil.toDetailString(illust))
                 setTitle("Detail")
                 setPositiveButton(R.string.setting) { _, _ ->
                     FragmentActivity.start(requireContext(), "Block")
                 }
                 setNeutralButton("Just Show IT") { _, _ ->
                     binding.blockView.visibility = View.GONE
+                    binding.recyclerview.visibility = View.VISIBLE
                 }
                 cancelButton()
             }

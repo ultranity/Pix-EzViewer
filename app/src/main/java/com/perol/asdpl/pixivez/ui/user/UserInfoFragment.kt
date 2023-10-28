@@ -167,14 +167,14 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         }
         if (userDetail.profile.total_illusts > 0) {
             binding.chipgroup.addView(
-                getChip("ta的插画${userDetail.profile.total_illusts}", "total_illusts") {
+                getChip("ta的插画 ${userDetail.profile.total_illusts}", "total_illusts") {
                     viewModel.currentTab.value = 0
                 }
             )
         }
         if (userDetail.profile.total_manga > 0) {
             binding.chipgroup.addView(
-                getChip("ta的漫画" + userDetail.profile.total_manga, "total_manga") {
+                getChip("ta的漫画 ${userDetail.profile.total_manga}", "total_manga") {
                     viewModel.currentTab.value = 1
                 }
             )

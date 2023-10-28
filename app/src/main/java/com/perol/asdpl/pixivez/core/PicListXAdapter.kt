@@ -68,7 +68,6 @@ open class PicListXAdapter(
     filter: PicsFilter
 ) :
     PicListAdapter(layoutResId, filter) {
-    val likeLiveDatas = ArrayList<DMutableLiveData<Boolean>>()
     private val liveDataID = "likeLiveData".hashCode()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder = super.onCreateViewHolder(parent, viewType)
@@ -78,7 +77,6 @@ open class PicListXAdapter(
                 setUILike(it, this)
             }
         }
-        likeLiveDatas.add(likeLiveData)
         holder.itemView.setTag(liveDataID, likeLiveData)
         return holder
     }

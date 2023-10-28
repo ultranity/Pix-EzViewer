@@ -50,7 +50,7 @@ class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetail>()
     val follow = MutableLiveData<Boolean>()
     val privateFollowed = DMutableLiveData(false)
-    val currentTab = DMutableLiveData(0)
+    val currentTab = DMutableLiveData(0, false)
 
     fun getData(userid: Int) {
         viewModelScope.launch {

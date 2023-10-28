@@ -73,7 +73,6 @@ class UserListAdapter(layoutResId: Int) :
         setOnItemClickListener { adapter, view, position ->
             val user = this.data[position].user
             addUserBinder(view, user)
-            user.addBinder(user.account, tempLiveData)
             val options = if (PxEZApp.animationEnable) {
                 ActivityOptions.makeSceneTransitionAnimation(
                     context as Activity,
@@ -141,7 +140,7 @@ class UserListAdapter(layoutResId: Int) :
     }
 
     private fun addUserBinder(rootView: View, user: User) {
-        //TODO: tempLiveData.overrideValue(user.is_followed)
+        tempLiveData.overrideValue(user.is_followed)
         tempLiveData.observeAfterSet(recyclerView.context as LifecycleOwner) {
             //if (it==tempLiveData.lastValue)
             //    return@observeAfterSet

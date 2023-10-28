@@ -66,7 +66,6 @@ class PicListXUserAdapter(
         badgeUIFollow(this, status, user)
     }
 
-    val followLiveDatas = ArrayList<DMutableLiveData<Boolean>>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder = super.onCreateViewHolder(parent, viewType)
         val followLiveData = DMutableLiveData(false, true)
@@ -75,7 +74,6 @@ class PicListXUserAdapter(
                 setUIFollow(it, this)
             }
         }
-        likeLiveDatas.add(followLiveData)
         holder.itemView.setTag(followDataID, followLiveData)
         return holder
     }

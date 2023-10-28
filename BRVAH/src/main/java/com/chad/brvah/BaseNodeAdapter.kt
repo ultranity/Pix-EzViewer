@@ -282,7 +282,7 @@ abstract class BaseNodeAdapter(nodeList: MutableList<BaseNode>? = null) :
 
             val parentIndex = this.data.indexOf(parentNode)
             val pos = parentIndex + 1 + childIndex
-            remove(pos)
+            removeAt(pos)
 
             it.removeAt(childIndex)
         }

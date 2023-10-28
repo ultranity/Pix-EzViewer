@@ -32,6 +32,8 @@ import com.chad.brvah.listener.OnItemChildClickListener
 import com.chad.brvah.listener.OnItemChildLongClickListener
 import com.chad.brvah.listener.OnItemClickListener
 import com.chad.brvah.listener.OnItemLongClickListener
+import com.chad.brvah.loadmore.EmptyViewConfig
+import com.chad.brvah.loadmore.EmptyViewStatus
 import com.chad.brvah.module.BaseDraggableModule
 import com.chad.brvah.module.BaseLoadMoreModule
 import com.chad.brvah.module.BaseUpFetchModule
@@ -80,7 +82,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     /** 当显示空布局时，是否显示 Foot */
     var footerWithEmptyEnable = false
 
-    /** 是否使用空布局 */
+    /** 是否使用空布局(需要手动触发显示) */
     var isUseEmpty = true
 
     /**
@@ -153,6 +155,9 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     private var mUpFetchModule: BaseUpFetchModule? = null
     private var mDraggableModule: BaseDraggableModule? = null
     internal var mLoadMoreModule: BaseLoadMoreModule? = null
+
+    private var emptyView = EmptyViewConfig.defEmptyView
+    private var emptyViewStatus = EmptyViewStatus.Hide
 
     var recyclerViewOrNull: RecyclerView? = null
         private set
@@ -356,7 +361,11 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
                 }
             }
 
-            HEADER_VIEW, EMPTY_VIEW, FOOTER_VIEW -> return
+            EMPTY_VIEW -> {
+                emptyView.convert(holder, position, emptyViewStatus)
+            }
+
+            HEADER_VIEW, FOOTER_VIEW -> return
             else -> convert(holder, getItem(position - headerLayoutCount))
         }
     }
@@ -1042,13 +1051,21 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     }
 
     fun hasEmptyView(): Boolean {
-        if (!this::mEmptyLayout.isInitialized || mEmptyLayout.childCount == 0) {
-            return false
-        }
         if (!isUseEmpty) {
             return false
         }
-        return data.isEmpty()
+        if (!this::mEmptyLayout.isInitialized || mEmptyLayout.childCount == 0) {
+            return false
+        }
+        return emptyViewStatus != EmptyViewStatus.Hide
+    }
+
+    fun showEmptyView(failed: Boolean) {
+        emptyViewStatus = if (data.isEmpty()) {
+            if (failed) EmptyViewStatus.Fail else EmptyViewStatus.Show
+        } else {
+            EmptyViewStatus.Hide
+        }
     }
 
     /**
@@ -1123,20 +1140,6 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     }
 
     /*************************** 设置数据相关 ******************************************/
-
-    /**
-     * setting up a new instance to data;
-     * 设置新的数据实例
-     *
-     * @param data
-     */
-    @Deprecated(
-        "Please use setNewInstance(), This method will be removed in the next version",
-        replaceWith = ReplaceWith("setNewInstance(data)")
-    )
-    open fun setNewData(data: MutableList<T>?) {
-        setNewInstance(data)
-    }
 
     /**
      * setting up a new instance to data;
@@ -1243,17 +1246,6 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      *
      * @param position
      */
-    @Deprecated("Please use removeAt()", replaceWith = ReplaceWith("removeAt(position)"))
-    open fun remove(@IntRange(from = 0) position: Int) {
-        removeAt(position)
-    }
-
-    /**
-     * remove the item associated with the specified position of adapter
-     * 删除指定位置的数据
-     *
-     * @param position
-     */
     open fun removeAt(@IntRange(from = 0) position: Int) {
         if (position >= data.size) {
             return
@@ -1327,7 +1319,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      */
     @JvmOverloads
     open fun setDiffNewData(list: MutableList<T>?, commitCallback: Runnable? = null) {
-        if (hasEmptyView()) {
+        if (data.isEmpty()) {
             // If the current view is an empty view, set the new data directly without diff
             setNewInstance(list)
             commitCallback?.run()
@@ -1344,7 +1336,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      * @param list New Data
      */
     open fun setDiffNewData(@NonNull diffResult: DiffUtil.DiffResult, list: MutableList<T>) {
-        if (hasEmptyView()) {
+        if (data.isEmpty()) {
             // If the current view is an empty view, set the new data directly without diff
             setNewInstance(list)
             return

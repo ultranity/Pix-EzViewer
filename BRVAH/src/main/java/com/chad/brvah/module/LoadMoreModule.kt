@@ -46,6 +46,7 @@ object LoadMoreModuleConfig {
 open class BaseLoadMoreModule(private val baseQuickAdapter: BaseQuickAdapter<*, *>) :
     LoadMoreListenerImp {
 
+    private var mManualLoadMoreListener: OnLoadMoreListener? = null
     private var mLoadMoreListener: OnLoadMoreListener? = null
 
     /** 不满一屏时，是否可以继续加载的标记位 */
@@ -145,6 +146,7 @@ open class BaseLoadMoreModule(private val baseQuickAdapter: BaseQuickAdapter<*, 
         }
         loadMoreStatus = LoadMoreStatus.Loading
         baseQuickAdapter.notifyItemChanged(loadMoreViewPosition)
+        mManualLoadMoreListener?.invoke()
         invokeLoadMoreListener()
     }
 
@@ -194,8 +196,8 @@ open class BaseLoadMoreModule(private val baseQuickAdapter: BaseQuickAdapter<*, 
     private fun invokeLoadMoreListener() {
         loadMoreStatus = LoadMoreStatus.Loading
         baseQuickAdapter.recyclerViewOrNull?.let {
-            it.post { mLoadMoreListener?.onLoadMore() }
-        } ?: mLoadMoreListener?.onLoadMore()
+            it.post { mLoadMoreListener?.invoke() }
+        } ?: mLoadMoreListener?.invoke()
     }
 
     /**
@@ -297,6 +299,14 @@ open class BaseLoadMoreModule(private val baseQuickAdapter: BaseQuickAdapter<*, 
             return
         }
         baseQuickAdapter.notifyItemChanged(loadMoreViewPosition)
+    }
+
+    /**
+     * 设置加载监听事件
+     * @param listener OnLoadMoreListener?
+     */
+    fun setOnManualLoadMoreListener(listener: OnLoadMoreListener?) {
+        this.mManualLoadMoreListener = listener
     }
 
     /**

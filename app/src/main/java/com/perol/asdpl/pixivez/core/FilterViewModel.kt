@@ -232,19 +232,17 @@ fun showFilterDialog(
             }
             filterModel.filter.max_sanity = dialog.sliderSanity.value.toInt()
             filterModel.applyConfig()
-            picListAdapter.resetFilterFlag()
-            picListAdapter.notifyFilterChanged()
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
-            val adapterVersion = ADAPTER_TYPE.values()[
-                dialog.showSaveBtn.isChecked * 2 + dialog.showUserImg.isChecked]
+            val adapterVersion =
+                ADAPTER_TYPE.entries[dialog.showSaveBtn.isChecked * 2 + dialog.showUserImg.isChecked]
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
                 val data = picListAdapter.mData
                 configAdapter()
                 picListAdapter.initData(data)
+            } else {
+                picListAdapter.resetFilterFlag()
             }
-            //TODO: check //picListAdapter.notifyDataSetChanged()
-            //else { }
         }
         negativeButton { }
     }

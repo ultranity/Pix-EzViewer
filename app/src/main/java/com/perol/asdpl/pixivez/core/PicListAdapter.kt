@@ -54,12 +54,13 @@ abstract class PicListAdapter(
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
 
-    lateinit var mData: MutableList<Illust>
+    var mData: MutableList<Illust> = arrayListOf()
 
     //TODO:consider RoaringBitmap
     var blockedFlag = BitSet(128)
     var selectedFlag = BitSet(128)
     val filtered = BitSet(128) // size of mData
+    var checkEmptyListener: (() -> Unit)? = null // size of mData
 
     class VHStatus(
         val holder: BaseViewHolder,
@@ -76,25 +77,19 @@ abstract class PicListAdapter(
     fun initData(initData: MutableList<Illust>) {
         mData = initData
         resetFilterFlag()
-        notifyFilterChanged()
-        isUseEmpty = true
     }
 
-    fun resetFilterFlag() {
-        if (::mData.isInitialized) {
-            filtered.clear()
-            blockedFlag.clear()
-            //CoroutineScope(Dispatchers.IO).launch {
-
-            data.clear()
+    fun resetFilterFlag(notify: Boolean = true) {
+        filtered.clear()
+        blockedFlag.clear()
+        //CoroutineScope(Dispatchers.IO).launch {
+        data.clear()
+        if (mData.isNotEmpty())
             addFilterData(mData)
-        }
-        //}
+        checkEmptyListener?.invoke()
+        if (notify)
+            notifyFilterChanged()
     }
-
-    //fun notifyAllChanged() {
-    //    notifyItemRangeChanged(headerLayoutCount, getDefItemCount() + headerLayoutCount)
-    //}
 
     fun notifyFilterChanged() {
         //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
@@ -196,13 +191,11 @@ abstract class PicListAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         //setFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
-        setEmptyView(R.layout.empty_list)
         setItemAnimation(AnimationType.ScaleIn)
         animationEnable = PxEZApp.animationEnable
         //recyclerView.setItemViewCacheSize(12)
         loadMoreModule.preLoadNumber = 12
         stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        isUseEmpty = false
         headerWithEmptyEnable = true
         footerWithEmptyEnable = true
         //loadMoreModule.isEnableLoadMoreIfNotFullPage = false
@@ -380,6 +373,7 @@ abstract class PicListAdapter(
         }
         return newData.size
     }
+
     fun getViewByAdapterPosition(position: Int, @IdRes viewId: Int): View? {
         return getViewByPosition(position + headerLayoutCount, viewId)
     }

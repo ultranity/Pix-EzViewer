@@ -9,6 +9,9 @@ import com.chad.brvah.viewholder.BaseViewHolder
 abstract class LBaseQuickAdapter<T, VH : BaseViewHolder>(@LayoutRes private val layoutResId: Int,
                                                          data: MutableList<T>?=null)
     :BaseQuickAdapter<T,VH>(layoutResId, data), LoadMoreModule {
+
+    var isAutoLoadMore by loadMoreModule::isAutoLoadMore
+    val isLoading by loadMoreModule::isLoading
     fun loadMoreEnd() {
         this.loadMoreModule.loadMoreEnd()
     }
@@ -21,7 +24,11 @@ abstract class LBaseQuickAdapter<T, VH : BaseViewHolder>(@LayoutRes private val 
         this.loadMoreModule.loadMoreFail()
     }
 
-    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener) {
+    fun setOnManualLoadMoreListener(listener: OnLoadMoreListener?) {
+        this.loadMoreModule.setOnManualLoadMoreListener(listener)
+    }
+
+    fun setOnLoadMoreListener(onLoadMoreListener: OnLoadMoreListener?) {
         this.loadMoreModule.setOnLoadMoreListener(onLoadMoreListener)
     }
 }

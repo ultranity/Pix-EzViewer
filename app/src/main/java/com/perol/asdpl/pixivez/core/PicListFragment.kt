@@ -153,6 +153,20 @@ open class PicListFragment : Fragment() {
             StaggeredGridLayoutManager.VERTICAL
         )
         configAdapter(false)
+        picListAdapter.checkEmptyListener = {
+            if (picListAdapter.data.size == 0) {
+                picListAdapter.showEmptyView(false)
+                //stop autoload as a warning if filter risky!
+                if (picListAdapter.mData.size > 0) {
+                    picListAdapter.isAutoLoadMore = false
+                    picListAdapter.setOnManualLoadMoreListener {
+                        picListAdapter.isAutoLoadMore = true
+                        picListAdapter.setOnManualLoadMoreListener(null)
+                    }
+                }
+            }
+            updateHintText()
+        }
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
         }
@@ -161,27 +175,17 @@ open class PicListFragment : Fragment() {
                 picListAdapter.initData(onDataLoadedListener(it))
                 //TODO: IllustCacheRepo.register(this, picListAdapter.mData)
                 binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
-                headerBinding.imgBtnConfig.text =
-                    "${picListAdapter.data.size}/${it.size}"
-                //warn if filter risky!
-                if (picListAdapter.data.size == 0 && it.size > 0) {
-                    picListAdapter.loadMoreFail()
-                    //TODO: hint
-                }
             } else {
-                picListAdapter.loadMoreFail()
+                if (picListAdapter.mData.isEmpty()) //show error only if first load
+                    picListAdapter.showEmptyView(true)
             }
             isLoaded = true
             viewModel.isRefreshing.value = false
         }
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
-                val added = picListAdapter.addFilterData(it)
+                picListAdapter.addFilterData(it)
                 onDataAddedListener?.invoke()
-                //TODO: warn if filter risky!
-                //if (added == 0) { }
-                headerBinding.imgBtnConfig.text =
-                    "${picListAdapter.data.size}/${picListAdapter.mData.size}"
             } else {
                 picListAdapter.loadMoreFail()
             }
@@ -202,7 +206,6 @@ open class PicListFragment : Fragment() {
                 filterModel.filter.blockTags = it.blockTags
                 //refresh current
                 picListAdapter.resetFilterFlag()
-                picListAdapter.notifyFilterChanged()
             }
         }
         headerBinding.imgBtnConfig.setOnClickListener {
@@ -233,6 +236,10 @@ open class PicListFragment : Fragment() {
         picListAdapter.setOnLoadMoreListener {
             viewModel.onLoadMore()
         }
+    }
+
+    private fun updateHintText() {
+        headerBinding.imgBtnConfig.text = "${picListAdapter.data.size}/${picListAdapter.mData.size}"
     }
 
     open fun configByTAG() = when (TAG) {

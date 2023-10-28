@@ -3,4 +3,5 @@
     <string name="brvah_load_failed">加载失败，点击重试</string>
     <string name="brvah_load_end">没有更多数据</string>
     <string name="brvah_load_complete">点击加载更多</string>
+    <string name="brvah_load_empty">空空如也~</string>
 </resources>

@@ -47,7 +47,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -70,7 +72,13 @@ import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.Tag
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
 import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
-import com.perol.asdpl.pixivez.objects.*
+import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.screenHeightPx
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
@@ -784,7 +792,7 @@ class PictureXAdapter(
     }
 
     val relatedPictureAdapter = SquareMediumAdapter(R.layout.view_relatedpic_item).also {
-        it.loadMoreModule.isAutoLoadMore = false
+        it.isAutoLoadMore = false
         it.setOnItemClickListener { adapter, view, position ->
             val data = adapter.data as MutableList<Illust>
             DataHolder.setIllustList(data)

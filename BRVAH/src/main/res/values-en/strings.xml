@@ -3,4 +3,5 @@
     <string name="brvah_load_failed">Load failed, click retry</string>
     <string name="brvah_load_end">No more data</string>
     <string name="brvah_load_complete">Click to load more</string>
+    <string name="brvah_load_empty">No data~</string>
 </resources>

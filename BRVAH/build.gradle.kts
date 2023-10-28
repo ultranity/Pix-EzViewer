@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
 
     implementation(libs.androidx.databinding.runtime)
+    implementation(libs.material)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

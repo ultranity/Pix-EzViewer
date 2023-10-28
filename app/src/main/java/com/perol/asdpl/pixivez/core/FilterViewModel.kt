@@ -100,19 +100,19 @@ open class PicListFilterKV(tag: String) : KVData(tag) {
     var sortLikeRate by boolean("sortLikeRate", false)
 }
 
-fun checkTrilean(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean {
+fun xorCondition(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean {
     //(!showBookmarked && item.is_bookmarked) || (!showNotBookmarked && !item.is_bookmarked)
     return (!(showTrue and showFalse)) && (showTrue xor bool)
 }
 
 class PicsFilter(tag: String) : PicListFilterKV(tag) {
-    var blockTags: List<String>? = null
+    var blockTags: Set<String>? = null
     var blockUser: List<Int>? = null
     fun needHide(item: Illust): Boolean =
-        checkTrilean(showPrivate, showPublic, item.x_restrict == 1) ||
-                checkTrilean(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
-                checkTrilean(showFollowed, showNotFollowed, item.user.is_followed) ||
-                checkTrilean(showDownloaded, showNotDownloaded, FileUtil.isDownloaded(item)) ||
+        xorCondition(showPrivate, showPublic, item.x_restrict == 1) ||
+                xorCondition(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
+                xorCondition(showFollowed, showNotFollowed, item.user.is_followed) ||
+                xorCondition(showDownloaded, showNotDownloaded, FileUtil.isDownloaded(item)) ||
                 (!showAINone && item.illust_ai_type == 0) || (!showAIHalf && item.illust_ai_type == 1) || (!showAIFull && item.illust_ai_type == 2) ||
                 (!showIllust && (item.type == "illust")) || (!showManga && (item.type == "manga")) || (!showUgoira && (item.type == "ugoira"))
     //|| (minLike > item.total_bookmarks) || (minViewed > item.total_view) || (minLikeRate*item.total_view> item.total_bookmarks)
@@ -121,11 +121,11 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
         if (blockTags.isNullOrEmpty() and blockUser.isNullOrEmpty()) {
             return false
         }
-        val tags = item.tags.map{ it.name }
+        val tags = item.tags.map { it.name }
         if (tags.isNotEmpty()) {
             // if (blockTags.intersect(tags).isNotEmpty())
-            for (i in blockTags!!) {
-                if (tags.contains(i)) {
+            for (i in tags) {
+                if (blockTags!!.contains(i)) {
                     return true
                 }
             }

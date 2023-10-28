@@ -41,8 +41,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.base.MaterialDialogs
-import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentSearchTrendBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
@@ -82,8 +82,7 @@ class TrendTagFragment : Fragment() {
         }
         trendTagAdapter.setOnItemLongClickListener { adapter, view, position ->
             DataHolder.setIllustList(
-                trendTagAdapter.data.map { it.illust }
-                        as MutableList<Illust> //TODO: check if need toMutableList()
+                trendTagAdapter.data.map { it.illust }.asMutableList()
             )
             val options = if (PxEZApp.animationEnable) {
                 val mainimage = view.findViewById<ImageView>(R.id.imageview_trendingtag)

@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
@@ -36,7 +37,7 @@ import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
 import kotlinx.coroutines.runBlocking
 
 class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
-    BaseQuickAdapter<UserEntity, BaseViewHolder>(layoutResId, data.toMutableList()) {
+    BaseQuickAdapter<UserEntity, BaseViewHolder>(layoutResId, data.asMutableList()) {
 
     override fun convert(holder: BaseViewHolder, item: UserEntity) {
         val it = holder.getBinding(ViewAccountItemBinding::bind)

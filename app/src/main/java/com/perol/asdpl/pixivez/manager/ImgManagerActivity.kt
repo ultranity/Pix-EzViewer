@@ -80,7 +80,7 @@ class ImgManagerActivity : RinkActivity() {
                 viewModel.files = FileUtil.getGroupList(
                     it
                 )
-                // .filter{it.isPic()}.toMutableList()
+                // .filter{it.isPic()}.asMutableList()
                 viewModel.task = viewModel.files!!.map { RenameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()
@@ -94,7 +94,7 @@ class ImgManagerActivity : RinkActivity() {
                 viewModel.files = FileUtil.getGroupList(
                     viewModel.path.value!!
                 )
-                // .filter{it.isPic()}.toMutableList()
+                // .filter{it.isPic()}.asMutableList()
                 viewModel.task = viewModel.files!!.map { RenameTask(it) }
                 runOnUiThread {
                     binding.imgCount.text = viewModel.files!!.size.toString()

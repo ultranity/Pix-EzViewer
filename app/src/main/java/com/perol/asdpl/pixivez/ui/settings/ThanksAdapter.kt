@@ -27,9 +27,10 @@ package com.perol.asdpl.pixivez.ui.settings
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 
 class ThanksAdapter(layoutResId: Int, data: List<String>?) :
-    BaseQuickAdapter<String, BaseViewHolder>(layoutResId, data?.toMutableList()) {
+    BaseQuickAdapter<String, BaseViewHolder>(layoutResId, data?.asMutableList()) {
     override fun convert(holder: BaseViewHolder, item: String) {
         holder.setText(R.id.name, item)
     }

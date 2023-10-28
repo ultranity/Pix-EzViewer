@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseDialogFragment
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.base.cancelButton
 import com.perol.asdpl.pixivez.base.confirmButton
 import com.perol.asdpl.pixivez.data.model.TagsBean
@@ -65,7 +66,7 @@ class TagsBookMarkDialog : BaseDialogFragment<DialogBookmarkBinding>() {
                         name = it.toString(),
                         is_registered = false,
                     )
-                } as MutableList<TagsBean> //TODO: check if need toMutableList()
+                }.asMutableList()
             )
         }
         pictureXViewModel.tags.observe(this) {

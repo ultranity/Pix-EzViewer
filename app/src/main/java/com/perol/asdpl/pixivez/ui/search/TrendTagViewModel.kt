@@ -28,6 +28,7 @@ package com.perol.asdpl.pixivez.ui.search
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.model.TrendTagsBean
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -67,7 +68,7 @@ class TrendTagViewModel : BaseViewModel() {
     private fun reloadSearchHistory() {
         viewModelScope.launch {
             val history = historyDatabase.searchHistoryDao().getSearchHistory()
-                .asReversed().map { it.word }.toMutableList()
+                .asReversed().map { it.word }.asMutableList()
             withContext(Dispatchers.Main) {
                 searchHistory.value = history
             }

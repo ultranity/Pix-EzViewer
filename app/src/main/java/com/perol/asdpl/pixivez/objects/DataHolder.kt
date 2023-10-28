@@ -28,6 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.User
 import java.util.Stack
@@ -173,7 +174,7 @@ open class CacheRepo<T : CopyFrom<T>> {
     private val objectStore = WeakValueLinkedHashMap<Int, T>(32)
 
     fun getAll(): MutableList<T> {
-        return objectStore.values.toMutableList()
+        return objectStore.values.asMutableList()
     }
 
     fun get(id: Int): T? {

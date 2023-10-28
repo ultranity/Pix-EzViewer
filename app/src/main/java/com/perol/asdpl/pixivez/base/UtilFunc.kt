@@ -198,6 +198,26 @@ object UtilFunc {
 }
 
 object KotlinUtil {
+    fun <T> Collection<T>.asMutableList(): MutableList<T> {
+        return when (this) {
+            is java.util.ArrayList -> {
+                this
+            }
+
+            is MutableList -> {
+                this
+            }
+
+            else -> {
+                this.toMutableList()
+            }
+        }
+    }
+
+    public fun <T> MutableList<T>.asList(): List<T> {
+        return this
+    }
+
     fun Boolean.Int(): Int = if (this) 1 else 0
     operator fun Boolean.times(i: Int): Int = if (this) i else 0
     operator fun Boolean.plus(i: Int): Int = if (this) i + 1 else i

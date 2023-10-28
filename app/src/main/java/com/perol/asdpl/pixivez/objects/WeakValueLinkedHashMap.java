@@ -9,72 +9,50 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
-// inspired by http://www.java2s.com/Code/Java/Collections-Data-Structure/WeakValueHashMap.htm
-// implementation from https://github.com/hzulla/WeakValueHashMap/blob/master/WeakValueHashMap.java
-
-
-// for faster removal in {@link #processQueue()} we need to keep track of the key for a value
-class WeakValue<K, T> extends WeakReference<T> {
-    final K key;
-
-    protected WeakValue(K key, T value, ReferenceQueue<T> queue) {
-        super(value, queue);
-        this.key = key;
-    }
-
-    public K getKey() {
-        return key;
-    }
-}
 /**
- * The desired behaviour of an in-memory cache is to keep a weak reference to the cached object,
- * this will allow the garbage collector to remove an object from memory once it isn't needed
- * anymore.
- * <p>
- * A {@link HashMap} doesn't help here since it will keep hard references for key and
- * value objects. A {@link WeakHashMap} doesn't either, because it keeps weak references to the
- * key objects, but we want to track the value objects.
- * <p>
- * This implementation of a Map uses a {@link WeakReference} to the value objects. Once the
- * garbage collector decides it wants to finalize a value object, it will be removed from the
- * map automatically.
+ * Similar with WeakValueHashMap, This implementation of
+ * a LinkedHashMap uses a {@link WeakReference} to the value objects.
+ * Once the garbage collector decides it wants to finalize a value object,
+ * it will be removed from the map automatically.
+ * !! Note that entries and values will be sorted !!reversely!! as they added.
  *
  * @param <K> - the type of the key object
  * @param <V> - the type of the value object
  */
-public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
+public class WeakValueLinkedHashMap<K, V> extends AbstractMap<K, V> {
 
     // the internal hash map to the weak references of the actual value objects
-    protected HashMap<K, WeakValue<K, V>> references;
+    protected HashMap<K, WeakLinkedValue> references;
     // the garbage collector's removal queue
     protected ReferenceQueue<V> gcQueue;
 
+    private WeakLinkedValue headRef = new WeakLinkedValue(null, null, null);
+    private WeakLinkedValue tailRef = headRef;
 
     /**
      * Creates a WeakValueHashMap with a desired initial capacity
      *
      * @param capacity - the initial capacity
      */
-    public WeakValueHashMap(int capacity) {
+    public WeakValueLinkedHashMap(int capacity) {
         references = new HashMap<>(capacity);
         gcQueue = new ReferenceQueue<>();
     }
 
     /**
-     * Creates a WeakValueHashMap with an initial capacity of 1
+     * Creates a WeakValueLinkedHashMap with an initial capacity of 1
      */
-    public WeakValueHashMap() {
+    public WeakValueLinkedHashMap() {
         this(1);
     }
 
     /**
-     * Creates a WeakValueHashMap and copies the content from an existing map
+     * Creates a WeakValueLinkedHashMap and copies the content from an existing map
      *
      * @param map - the map to copy from
      */
-    public WeakValueHashMap(Map<? extends K, ? extends V> map) {
+    public WeakValueLinkedHashMap(Map<? extends K, ? extends V> map) {
         this(map.size());
         for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
@@ -84,9 +62,11 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
     @Override
     public V put(K key, V value) {
         processQueue();
-        WeakValue<K, V> valueRef = new WeakValue<>(key, value, gcQueue);
+        WeakLinkedValue valueRef = new WeakLinkedValue(key, value, gcQueue, tailRef);
         return getReferenceValue(references.put(key, valueRef));
     }
+
+    ;
 
     @Override
     public V get(Object key) {
@@ -113,7 +93,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
     @Override
     public boolean containsValue(Object value) {
         processQueue();
-        for (Map.Entry<K, WeakValue<K, V>> entry : references.entrySet()) {
+        for (Map.Entry<K, WeakLinkedValue> entry : references.entrySet()) {
             if (value == getReferenceValue(entry.getValue())) {
                 return true;
             }
@@ -138,8 +118,10 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
         processQueue();
 
         Set<Map.Entry<K, V>> entries = new LinkedHashSet<>();
-        for (Map.Entry<K, WeakValue<K, V>> entry : references.entrySet()) {
-            entries.add(new AbstractMap.SimpleEntry<>(entry.getKey(), getReferenceValue(entry.getValue())));
+        WeakLinkedValue entry = tailRef;
+        while (entry != null) {
+            entries.add(new AbstractMap.SimpleEntry<>(entry.getKey(), entry.get()));
+            entry = entry.beforeRef;
         }
         return entries;
     }
@@ -147,23 +129,60 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
     public Collection<V> values() {
         processQueue();
 
-        Collection<V> values = new ArrayList<V>();
-        for (WeakValue<K, V> valueRef : references.values()) {
-            values.add(getReferenceValue(valueRef));
+        Collection<V> values = new ArrayList<>();
+        WeakLinkedValue entry = tailRef;
+        while (entry != null) {
+            if (entry.get() != null) {
+                values.add(entry.get());
+            }
+            entry = entry.beforeRef;
         }
         return values;
     }
 
-    private V getReferenceValue(WeakValue<K, V> valueRef) {
+    private V getReferenceValue(WeakLinkedValue valueRef) {
         return valueRef == null ? null : valueRef.get();
     }
 
     // remove entries once their value is scheduled for removal by the garbage collector
     @SuppressWarnings("unchecked")
     public void processQueue() {
-        WeakValue<K, V> valueRef;
-        while ((valueRef = (WeakValue<K, V>) gcQueue.poll()) != null) {
+        WeakLinkedValue valueRef;
+        while ((valueRef = (WeakLinkedValue) gcQueue.poll()) != null) {
+            valueRef.detach();
             references.remove(valueRef.getKey());
+        }
+    }
+
+    // for faster removal in {@link #processQueue()} we need to keep track of the key for a value
+    class WeakLinkedValue extends WeakReference<V> {
+        public WeakLinkedValue beforeRef;
+        public WeakLinkedValue afterRef;
+        final K key;
+
+        private WeakLinkedValue(K key, V value, ReferenceQueue<V> queue) {
+            super(value, queue);
+            this.key = key;
+        }
+
+        private WeakLinkedValue(K key, V value, ReferenceQueue<V> queue, WeakLinkedValue beforeRef) {
+            super(value, queue);
+            this.key = key;
+            this.beforeRef = beforeRef;
+            beforeRef.afterRef = this;
+            tailRef = this;
+        }
+
+        private K getKey() {
+            return key;
+        }
+
+        private void detach() {
+            beforeRef.afterRef = afterRef;
+            if (afterRef != null) {
+                afterRef.beforeRef = beforeRef;
+            }
+            afterRef = beforeRef = null;
         }
     }
 }

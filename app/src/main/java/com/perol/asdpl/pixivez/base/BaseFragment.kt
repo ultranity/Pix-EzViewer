@@ -33,13 +33,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
-import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.coroutines.runBlocking
-import java.util.LinkedList
 
 abstract class BaseFragment : Fragment() {
-    var isR18on = false
-    var blockTags = emptyList<String>()
     var isLoaded = false
 
     override fun onResume() {
@@ -51,19 +46,6 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected abstract fun loadData()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
-        try {
-            runBlocking {
-                blockTags = LinkedList<String>()//BlockViewModel.getAllTags()
-                //if (blockTags.isEmpty()) blockTags = emptyList()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 }
 
 abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {

@@ -1,6 +1,5 @@
 package com.perol.asdpl.pixivez.ui.settings
 
-import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.data.AppDatabase
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.services.Event
@@ -9,50 +8,44 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.util.LinkedList
 
 object BlockViewModel{
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    var allTags:MutableLiveData<LinkedList<BlockTagEntity>>? = null
-    private var allTagString:LinkedList<String>? = null
+    private var allTags: MutableSet<BlockTagEntity>? = null
+    private var allTagString: MutableSet<String>? = null
     /*private val initTask: Job
     init {
         initTask = CoroutineScope(Dispatchers.IO).launch{
             getAllTags()
         }
     }*/
-    fun getBlockTagString(): List<String> {
-        return allTagString ?:
-        runBlocking(Dispatchers.IO){ fetchAllTags() }.map { it.name }.also { allTagString = LinkedList(it) }
-    }
-    fun getBlockTags(): List<String> {
-        return (allTags?.value?:runBlocking(Dispatchers.IO){ fetchAllTags() }).map { it.name }
-    }
-    suspend fun getAllTags() = withContext(Dispatchers.IO) {
-        //if (initTask.isActive)
-        //    initTask.join()
-        (allTags?.value?: fetchAllTags()).map{ it.name }
-    }
-    suspend fun fetchAllTags() = withContext(Dispatchers.IO) {
-        allTags = MutableLiveData(LinkedList(appDatabase.blockTagDao().getAllTags()))
-        allTagString = LinkedList(allTags!!.value!!.map { it.name })
-        allTags!!.value!!
+    fun getBlockTagString(): Set<String> {
+        return allTagString ?: run {
+            runBlocking(Dispatchers.IO) { fetchAllTags() }
+            allTagString!!
+        }
     }
 
-    suspend fun deleteSingleTag(blockTagEntity: BlockTagEntity) = withContext(Dispatchers.IO) {
+    suspend fun getAllTags(): Set<BlockTagEntity> = allTags ?: fetchAllTags()
+
+    suspend fun fetchAllTags() = withContext(Dispatchers.IO) {
+        allTags = HashSet(appDatabase.blockTagDao().getAllTags())
+        allTagString = HashSet(allTags!!.map { it.name })
+        allTags!!
+    }
+
+    suspend fun deleteBlockTag(blockTagEntity: BlockTagEntity) = withContext(Dispatchers.IO) {
         appDatabase.blockTagDao().deleteTag(blockTagEntity)
-        allTags!!.value!!.remove(blockTagEntity)
-        //EventBus.getDefault().post(AdapterRefreshEvent())
-        allTagString!!.remove(blockTagEntity.name).apply {
+        allTags?.remove(blockTagEntity)
+        allTagString?.remove(blockTagEntity.name)?.apply {
             FlowEventBus.post(Event.BlockTagsChanged(allTagString!!))
         }
     }
 
     suspend fun insertBlockTag(blockTagEntity: BlockTagEntity) = withContext(Dispatchers.IO) {
         appDatabase.blockTagDao().insert(blockTagEntity)
-        allTags!!.value!!.addFirst(blockTagEntity)//.name)
-        //EventBus.getDefault().post(AdapterRefreshEvent())
-        allTagString!!.addFirst(blockTagEntity.name).apply {
+        allTags?.add(blockTagEntity)//.name)
+        allTagString?.add(blockTagEntity.name)?.apply {
             FlowEventBus.post(Event.BlockTagsChanged(allTagString!!))
         }
     }

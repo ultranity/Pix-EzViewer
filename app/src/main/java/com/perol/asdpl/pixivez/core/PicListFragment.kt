@@ -56,7 +56,6 @@ import com.perol.asdpl.pixivez.ui.user.BookMarkTagViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 open class PicListFragment : Fragment() {
     companion object {
@@ -198,8 +197,7 @@ open class PicListFragment : Fragment() {
             }
         }
 
-        filterModel.filter.blockTags =
-            (runBlocking { BlockViewModel.getAllTags() })
+        filterModel.filter.blockTags = BlockViewModel.getBlockTagString()
         lifecycleScope.launch {
             //check change
             FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {

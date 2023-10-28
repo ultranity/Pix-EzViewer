@@ -106,20 +106,22 @@ class PictureXFragment : BaseFragment() {
     /**
      * Block view and return true if need block.
      */
-    private fun checkBlock(illust: Illust): Boolean {
-        blockTags = BlockViewModel.getBlockTagString()
+    private fun checkBlockThenLoad(illust: Illust): Boolean {
+        val blockTags = BlockViewModel.getBlockTagString()
         //tags.forEach { if (blockTags.contains(it.name)) needBlock = true }
-        firstCommonTags(blockTags.toHashSet(), illust.tags)?.let {
+        firstCommonTags(blockTags, illust.tags)?.let {
             //needBlock = true
             binding.blocktagTextview.text = it.vis()
             binding.blocktagInfo.text = illust.title
             binding.blockView.visibility = View.VISIBLE
             binding.blockView.bringToFront()
+            loadIllust(illust)
             return true
         }
         //var needBlock = false
         binding.blockView.visibility = View.GONE
         binding.recyclerview.visibility = View.VISIBLE
+        loadIllust(illust)
         return false
     }
 
@@ -129,8 +131,7 @@ class PictureXFragment : BaseFragment() {
             if (it != null) {
                 page_size = it.meta.size
                 // stop loading here if blocked
-                checkBlock(it)
-                loadIllust(it)
+                checkBlockThenLoad(it)
             } else {
                 // step back
                 if (parentFragmentManager.backStackEntryCount <= 1) {
@@ -140,6 +141,13 @@ class PictureXFragment : BaseFragment() {
                 }
             }
         }
+
+        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
+            pictureXViewModel.illustDetail.value?.let {
+                checkBlockThenLoad(it)
+            }
+        }
+
         pictureXViewModel.related.observe(viewLifecycleOwner) {
             if (it != null) {
                 pictureXAdapter!!.relatedPictureAdapter.setNewInstance(it)
@@ -189,12 +197,6 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.downloadGifSuccess.observe(viewLifecycleOwner) {
             pictureXAdapter?.setProgressComplete(it)
         }
-
-        FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
-            pictureXViewModel.illustDetail.value?.let {
-                checkBlock(it)
-            }
-        }
     }
 
     private var illustLoaded = false
@@ -207,6 +209,7 @@ class PictureXFragment : BaseFragment() {
             textViewUserName.text = it.user.name
             textViewIllustCreateDate.text = it.create_date
         }
+
         pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext()).apply {
             setListener {
                 // activity?.supportStartPostponedEnterTransition()
@@ -226,7 +229,6 @@ class PictureXFragment : BaseFragment() {
                 pictureXViewModel.likeUser()
             }
         }
-
         binding.recyclerview.adapter = pictureXAdapter
         binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.5F)
         pictureXAdapter!!.setInstance(it)

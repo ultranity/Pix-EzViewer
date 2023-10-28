@@ -107,7 +107,7 @@ fun xorCondition(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean 
 
 class PicsFilter(tag: String) : PicListFilterKV(tag) {
     var blockTags: Set<String>? = null
-    var blockUser: List<Int>? = null
+    var blockUser: Set<Int>? = null
     fun needHide(item: Illust): Boolean =
         xorCondition(showPrivate, showPublic, item.x_restrict == 1) ||
                 xorCondition(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
@@ -118,15 +118,17 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
     //|| (minLike > item.total_bookmarks) || (minViewed > item.total_view) || (minLikeRate*item.total_view> item.total_bookmarks)
 
     fun needBlock(item: Illust): Boolean {
-        if (blockTags.isNullOrEmpty() and blockUser.isNullOrEmpty()) {
-            return false
-        }
-        val tags = item.tags.map { it.name }
-        if (tags.isNotEmpty()) {
-            // if (blockTags.intersect(tags).isNotEmpty())
-            for (i in tags) {
-                if (blockTags!!.contains(i)) {
-                    return true
+        if (blockTags.isNullOrEmpty()) {
+            if (blockUser.isNullOrEmpty()) {
+                return false
+            }
+        } else {
+            val tags = item.tags.map { it.name }
+            if (tags.isNotEmpty()) {
+                for (i in tags) {
+                    if (blockTags!!.contains(i)) {
+                        return true
+                    }
                 }
             }
         }

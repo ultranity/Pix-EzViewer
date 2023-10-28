@@ -25,7 +25,7 @@ class BlockTagFragment : Fragment() {
 
         chip.setOnLongClickListener {
             runBlocking {
-                viewModel.deleteSingleTag(blockTagEntity)
+                viewModel.deleteBlockTag(blockTagEntity)
                 getTagList()
             }
             true

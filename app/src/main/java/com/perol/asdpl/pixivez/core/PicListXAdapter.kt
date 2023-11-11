@@ -82,11 +82,12 @@ open class PicListXAdapter(
     }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
-        super.convert(holder, item)
         (holder.itemView.getTag(liveDataID) as DMutableLiveData<Boolean>?)?.let {
+            (holder.itemView.getTag(illustID) as Illust?)?.removeBinder(it)
             it.triggerValue(item.is_bookmarked)
             item.addBinder("${item.id}|${this.hashCode()}", it)
         }
+        super.convert(holder, item)
         if (PxEZApp.CollectMode == 1) {
             holder.getView<NiceImageView>(R.id.imageview_like).apply {
                 setOnClickListener {
@@ -137,7 +138,7 @@ open class PicListXAdapter(
     }
 
     override fun setUILike(status: Boolean, view: View) {
-        (view as NiceImageView).setLike(context, status)
+        (view as NiceImageView).setLike(view.context, status)
     }
 
     override fun setUIDownload(status: Int, position: Int) {

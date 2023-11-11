@@ -138,6 +138,10 @@ data class IllustX(
         binders[binder] = key
     }
 
+    fun removeBinder(binder: MutableLiveData<Boolean>) {
+        binders.remove(binder)
+    }
+
     var is_bookmarked: Boolean = false
         set(value) {
             val updated = field != value

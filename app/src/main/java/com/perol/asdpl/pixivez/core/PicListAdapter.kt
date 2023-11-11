@@ -92,10 +92,14 @@ abstract class PicListAdapter(
     }
 
     fun notifyFilterChanged() {
-        //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
-        //notifyItemRangeChanged(headerLayoutCount, filtered.last)
-        mBoundViewHolders.forEach {
-            notifyItemChanged(it.position) //it.bindingAdapterPosition - headerLayoutCount)
+        if (mBoundViewHolders.isEmpty()) {
+            notifyDataSetChanged()
+        } else {
+            //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
+            //notifyItemRangeChanged(headerLayoutCount, filtered.last)
+            mBoundViewHolders.forEach {
+                notifyItemChanged(it.position + headerLayoutCount)
+            }
         }
     }
 
@@ -104,7 +108,7 @@ abstract class PicListAdapter(
      */
     fun getItemRealPosition(item: Illust) = getItemPosition(item) + headerLayoutCount
 
-    /*override fun onConreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    /*override fun onCreateDefViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return createBaseViewHolder(parent, layoutResId)
     }*/
     private fun setFullSpan(holder: RecyclerView.ViewHolder, isFullSpan: Boolean) {
@@ -235,8 +239,25 @@ abstract class PicListAdapter(
         //mBoundPosition.remove(holder.bindingAdapterPosition)
     }
 
+    //Fix setOnItemClick when using RecyclerViewPool
+    protected val adapterID = "adapter".hashCode()
+    override fun setOnItemClick(v: View, position: Int) {
+        super.mOnItemClickListener?.onItemClick(v.getTag(adapterID) as PicListAdapter, v, position)
+    }
+
+    override fun setOnItemLongClick(v: View, position: Int): Boolean {
+        return mOnItemLongClickListener?.onItemLongClick(
+            v.getTag(adapterID) as PicListAdapter,
+            v,
+            position
+        ) ?: false
+    }
+
+    protected val illustID = "illust".hashCode()
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: Illust) {
+        holder.itemView.setTag(illustID, item)
+        holder.itemView.setTag(adapterID, this)
         val pos = holder.bindingAdapterPosition - headerLayoutCount
         blockedFlag[pos] = filter.needBlock(item)
         if (filter.showBlocked and blockedFlag[pos]) {
@@ -361,7 +382,7 @@ abstract class PicListAdapter(
         this.data.addAll(newData)
         //emptyLayout?.findViewById<TextView>(R.id.text)?.text
         //setFooterView()
-        if (recyclerView.layoutManager?.isAttachedToWindow == true) {
+        if (recyclerViewOrNull?.layoutManager?.isAttachedToWindow == true) {
             notifyItemRangeInserted(
                 this.data.size - newData.size + headerLayoutCount,
                 newData.size

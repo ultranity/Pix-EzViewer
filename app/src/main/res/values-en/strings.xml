@@ -93,7 +93,7 @@
     <string name="savesuccess">saved!</string>
     <string name="alreadysaved">already saved</string>
     <string name="registerclose">In-app registration has been disabled, please register at pixiv.net</string>
-    <string name="proxy">Not in Mainland China</string>
+    <string name="proxy">API Config</string>
     <string name="encode_gif">Encode as gif</string>
     <string name="save_zip">Save as zip</string>
     <string name="savefirst">Save preview</string>

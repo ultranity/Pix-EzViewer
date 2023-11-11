@@ -99,10 +99,10 @@ class PixivsionActivity : RinkActivity() {
         pixiVisionAdapter.setOnItemChildClickListener { adapter, view, position ->
             val intent = Intent(
                 this@PixivsionActivity,
-                if (PxEZApp.instance.pre.getBoolean("disableproxy", false)) {
-                    WebViewActivity::class.java
-                } else {
+                if (PxEZApp.instance.pre.getBoolean("dnsProxy", false)) {
                     OKWebViewActivity::class.java
+                } else {
+                    WebViewActivity::class.java
                 }
             ).setAction("your.custom.action")
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)

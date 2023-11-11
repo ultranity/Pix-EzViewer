@@ -217,23 +217,23 @@ object Works {
                 addHeader("referer", "https://app-api.pixiv.net/")
             }
     }
-    var mirrorLinkView = pre.getBoolean("mirrorLinkView", false)
-    var mirrorLinkDownload = pre.getBoolean("mirrorLinkDownload", false)
+    var mirrorForView = pre.getBoolean("mirrorLinkView", false)
+    var mirrorForDownload = pre.getBoolean("mirrorLinkDownload", false)
     const val opximg = "i.pximg.net"
     var mirrorURL = pre.getString("mirrorURL", opximg)!!
     var mirrorFormat = pre.getString("mirrorFormat", "{host}/{params}")!!
     var spximg = lookup(opximg)
     var smirrorURL = lookup(mirrorURL)
     fun lookup(url: String): String {
-        return if (pre.getBoolean("disableproxy", false)) {
+        return if (pre.getBoolean("dnsProxy", false)) {
+            ImageHttpDns.lookup(url)[0].hostAddress!!
+        } else {
             url
         }
-        else {
-            ImageHttpDns.lookup(url)[0].hostAddress!!
-        }
     }
-    fun mirrorLinkView(url: String) = mirror(url, mirrorLinkView)
-    private fun mirrorLinkDownload(url: String) = mirror(url, mirrorLinkDownload)
+
+    fun mirrorLinkView(url: String) = mirror(url, mirrorForView)
+    private fun mirrorLinkDownload(url: String) = mirror(url, mirrorForDownload)
     private fun mirror(url: String, mirror: Boolean = true): String {
         if (!mirror) {
             return url.replace(opximg, spximg)

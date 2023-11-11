@@ -60,8 +60,8 @@ object RestClient {
     private val ISO8601DATETIMEFORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
     private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
-    private val disableProxy
-        get() = PxEZApp.instance.pre.getBoolean("disableproxy", false)
+    private val dnsProxy
+        get() = PxEZApp.instance.pre.getBoolean("dnsProxy", false)
     val pixivOkHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(Interceptor { chain ->
@@ -102,7 +102,7 @@ object RestClient {
         }
     val gifAppApi = build("https://oauth.secure.pixiv.net", imageHttpClient)
 
-    // val pixivAppApi = build(if(disableProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
+    // val pixivAppApi = build(if(!dnsProxy) "https://app-api.pixiv.net" else "https://210.140.131.208",pixivOkHttpClient)
     // val retrofitAccount = build("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
     val retrofitOauthSecure =
         build("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
@@ -210,7 +210,6 @@ object RestClient {
 
     private fun okHttpClient(
         host: String,
-        disableProxy: Boolean = false,
         needAuth: Boolean = false
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
@@ -218,9 +217,7 @@ object RestClient {
             addInterceptor(HeaderInterceptor(host))
             // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
             if (needAuth) addInterceptor(AuthInterceptor(host))
-            if (!disableProxy) {
-                apiProxySocket()
-            }
+            apiProxySocket()
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(20, TimeUnit.SECONDS)
@@ -230,7 +227,7 @@ object RestClient {
 
     private fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
     fun OkHttpClient.Builder.imageProxySocket() = apply {
-        if (Works.mirrorLinkView) {
+        if (Works.mirrorForView) {
             addInterceptor {
                 val original = it.request()
                 val requestBuilder = original.newBuilder()
@@ -244,7 +241,7 @@ object RestClient {
     }
 
     private fun OkHttpClient.Builder.proxySocket(dns: Dns = apiDns): OkHttpClient.Builder {
-        if (!disableProxy) {
+        if (dnsProxy) {
             this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
                 .hostnameVerifier { _, _ -> true }
             this.dns(dns)

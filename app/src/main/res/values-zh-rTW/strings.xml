@@ -92,7 +92,7 @@
     <string name="savesuccess">儲存成功!</string>
     <string name="alreadysaved">圖像已存在</string>
     <string name="registerclose">軟體內註冊入口已關閉，請自行前往官網註冊</string>
-    <string name="proxy">不啟用防屏蔽方案</string>
+    <string name="proxy">連接設定</string>
     <string name="encode_gif">合成gif</string>
     <string name="save_zip">儲存zip</string>
     <string name="savefirst">下載首圖</string>

@@ -38,8 +38,8 @@
             app:title="@string/checkupdate" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
-        <SwitchPreferenceCompat
-            app:key="disableproxy"
+        <Preference
+            app:key="dnsProxy"
             app:title="@string/proxy"
             app:summary="@string/set_mirror"/>
         <SwitchPreferenceCompat

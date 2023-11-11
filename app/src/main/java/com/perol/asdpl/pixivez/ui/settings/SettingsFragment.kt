@@ -37,7 +37,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BasicGridItem
@@ -141,18 +144,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
-        findPreference<SwitchPreferenceCompat>("disableproxy")!!.apply {
-            if (Works.mirrorLinkDownload || Works.mirrorLinkView) {
+        findPreference<Preference>("dnsProxy")!!.apply {
+            if (Works.mirrorForDownload || Works.mirrorForView) {
                 summary = getString(R.string.mirror) + ":" + Works.mirrorURL
             }
             setOnPreferenceClickListener {
                 showMirrorLinkDialog()
-                Works.spximg = Works.lookup(Works.opximg)
-                Works.smirrorURL = Works.lookup(Works.mirrorURL)
-                snackbarForceRestart()
-                true
-            }
-            setOnPreferenceChangeListener { preference, newValue ->
                 true
             }
         }
@@ -417,10 +414,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val descTable = binding.formatDescTable
         val urlInput = binding.urlInput
         val formatInput = binding.formatInput
-        val mirrorLinkDownload = binding.mirrorLinkDownload
-        val mirrorLinkView = binding.mirrorLinkView
-        mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView", false)
-        mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload", false)
+        binding.dnsProxy.isChecked = pre.getBoolean("dnsProxy", false)
+        binding.mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView", false)
+        binding.mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload", false)
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
         val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
@@ -430,17 +426,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
             positiveButton(R.string.save) { dialog ->
                 Works.mirrorURL = "${urlInput.text}"
                 Works.mirrorFormat = "${formatInput.text}"
-                Works.mirrorLinkView = mirrorLinkView.isChecked
-                Works.mirrorLinkDownload = mirrorLinkDownload.isChecked
-                findPreference<Preference>("disableproxy")!!.apply {
+                Works.mirrorForView = binding.mirrorLinkView.isChecked
+                Works.mirrorForDownload = binding.mirrorLinkDownload.isChecked
+                findPreference<Preference>("dnsProxy")!!.apply {
                     summary = Works.mirrorURL + Works.mirrorFormat
                 }
                 pre.apply {
                     putString("mirrorURL", Works.mirrorURL)
                     putString("mirrorFormat", Works.mirrorFormat)
-                    putBoolean("mirrorLinkView", Works.mirrorLinkView)
-                    putBoolean("mirrorLinkDownload", Works.mirrorLinkDownload)
+                    putBoolean("dnsProxy", binding.dnsProxy.isChecked)
+                    putBoolean("mirrorLinkView", Works.mirrorForView)
+                    putBoolean("mirrorLinkDownload", Works.mirrorForDownload)
                 }
+                Works.spximg = Works.lookup(Works.opximg)
+                Works.smirrorURL = Works.lookup(Works.mirrorURL)
+                snackbarForceRestart()
             }
             negativeButton(android.R.string.cancel)
             lifecycleOwner(this@SettingsFragment)

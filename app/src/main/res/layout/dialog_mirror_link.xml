@@ -6,16 +6,23 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/dns_proxy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dns_proxy" />
+
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/mirror_link_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/dns_proxy"
         android:text="@string/mirror_link_download" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/mirror_link_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/dns_proxy"
         android:layout_toEndOf="@+id/mirror_link_download"
         android:text="@string/mirror_link_view" />
 

@@ -101,7 +101,7 @@
     <string name="savesuccess">保存成功!</string>
     <string name="alreadysaved">图片已存在</string>
     <string name="registerclose">应用内注册入口已关闭，请自行前往Pixiv官网注册</string>
-    <string name="proxy">不启用直连</string>
+    <string name="proxy">连接设置</string>
     <string name="encode_gif">合成gif</string>
     <string name="save_zip">保存zip</string>
     <string name="savefirst">下载首图</string>
@@ -330,7 +330,7 @@
     <string name="walk_through">速览漫步</string>
     <string name="recommend">推荐</string>
     <string name="show_block">显示过滤内容占位</string>
-    <string name="harmonize_color">颜色和谐化</string>
+    <string name="harmonize_color">色彩和谐化</string>
     <string name="harmonizeColorAPIAlert">色彩和谐化要求 Android 11/R+ (API 30+)</string>
     <string name="changeing_icon_tip">正在尝试更换，等待启动器刷新</string>
     <string name="max_sanity">SAN值保护</string>
@@ -338,4 +338,5 @@
     <string name="check_clipboard_policy" translatable="false">((pid)|(pixiv)|(画师)|(artist)|(by)|(twi(tter)?))([：:\\s]*)(\\S+)</string>
     <string name="go_to_detail">转到详情</string>
     <string name="view_cache_repo">运行缓存</string>
+    <string name="dns_proxy">dns proxy</string>
 </resources>

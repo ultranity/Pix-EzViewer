@@ -71,7 +71,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      * data, Only allowed to get.
      * 数据, 只允许 get。
      */
-    var data: MutableList<T> = data ?: arrayListOf()
+    open var data: MutableList<T> = data ?: arrayListOf()
         internal set
 
     /**
@@ -147,13 +147,13 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
 
     private var mLastPosition = -1
 
-    private var mSpanSizeLookup: GridSpanSizeLookup? = null
-    private var mOnItemClickListener: OnItemClickListener? = null
-    private var mOnItemLongClickListener: OnItemLongClickListener? = null
-    private var mOnItemChildClickListener: OnItemChildClickListener? = null
-    private var mOnItemChildLongClickListener: OnItemChildLongClickListener? = null
-    private var mUpFetchModule: BaseUpFetchModule? = null
-    private var mDraggableModule: BaseDraggableModule? = null
+    protected var mSpanSizeLookup: GridSpanSizeLookup? = null
+    protected var mOnItemClickListener: OnItemClickListener? = null
+    protected var mOnItemLongClickListener: OnItemLongClickListener? = null
+    protected var mOnItemChildClickListener: OnItemChildClickListener? = null
+    protected var mOnItemChildLongClickListener: OnItemChildLongClickListener? = null
+    internal var mUpFetchModule: BaseUpFetchModule? = null
+    internal var mDraggableModule: BaseDraggableModule? = null
     internal var mLoadMoreModule: BaseLoadMoreModule? = null
 
     private var emptyView = EmptyViewConfig.defEmptyView

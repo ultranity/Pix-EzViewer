@@ -35,8 +35,10 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.list.listItems
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.base.KotlinUtil.plus
 import com.perol.asdpl.pixivez.base.KotlinUtil.times
 import com.perol.asdpl.pixivez.base.checkUpdate
@@ -97,7 +99,7 @@ open class PicListFilterKV(tag: String) : KVData(tag) {
 
     var sortTime by boolean("sortTime", false)
     var sortLike by boolean("sortLike", false)
-    var sortLikeRate by boolean("sortLikeRate", false)
+    var sortView by boolean("sortView", false)
 }
 
 fun xorCondition(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean {
@@ -142,7 +144,7 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
 
 class FilterViewModel : ViewModel() {
     var TAG = "FilterViewModel"
-    val spanNum = DMutableLiveData(2)
+    var spanNum = 2
     lateinit var filter: PicsFilter
     var adapterType = DMutableLiveData(ADAPTER_TYPE.PIC_USER_LIKE)
     var modeCollect = false
@@ -171,11 +173,10 @@ class FilterViewModel : ViewModel() {
 
 fun showFilterDialog(
     context: Context,
+    picListFragment: PicListFragment,
     filterModel: FilterViewModel,
-    picListAdapter: PicListAdapter,
     layoutInflater: LayoutInflater,
-    layoutManager: StaggeredGridLayoutManager,
-    configAdapter: () -> Unit
+    layoutManager: StaggeredGridLayoutManager
 ): MaterialDialog {
     val propsMap = hashSetOf<Pair<Checkable, KMutableProperty0<Boolean>>>()
     fun pairBtnFilter(view: Checkable, props: KMutableProperty0<Boolean>) {
@@ -235,18 +236,39 @@ fun showFilterDialog(
             filterModel.filter.max_sanity = dialog.sliderSanity.value.toInt()
             filterModel.applyConfig()
             val span = dialog.sliderSpan.value.toInt()
-            layoutManager.spanCount = if (span == 0) filterModel.spanNum.value!! else span
+            layoutManager.spanCount = if (span == 0) filterModel.spanNum else span
             val adapterVersion =
                 ADAPTER_TYPE.entries[dialog.showSaveBtn.isChecked * 2 + dialog.showUserImg.isChecked]
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
-                val data = picListAdapter.mData
-                configAdapter()
-                picListAdapter.initData(data)
+                val data = picListFragment.picListAdapter.mData
+                picListFragment.configAdapter()
+                picListFragment.picListAdapter.initData(data)
             } else {
-                picListAdapter.resetFilterFlag()
+                picListFragment.picListAdapter.resetFilterFlag()
             }
         }
-        negativeButton { }
+        negativeButton(R.string.sort_by) {
+            MaterialDialog(context).show {
+                val items = listItems(items = listOf(
+                    R.string.illustid,
+                    R.string.bookmark,
+                    R.string.view,
+                    R.string.view_comment,
+                    R.string.origin
+                ).map { context.getString(it) }) { dialog, index, text ->
+                    val sorted = when (index) { //in-place sort
+                        0 -> picListFragment.picListAdapter.data.sortedBy { it.id }
+                        1 -> picListFragment.picListAdapter.data.sortedBy { it.total_bookmarks }
+                        2 -> picListFragment.picListAdapter.data.sortedBy { it.total_view }
+                        3 -> picListFragment.picListAdapter.data.sortedBy { it.total_comments }
+                        else -> null
+                    }
+
+                    if (sorted != null)
+                        picListFragment.picListAdapter.setDiffNewData(sorted.asMutableList())
+                }
+            }
+        }
     }
 }
 

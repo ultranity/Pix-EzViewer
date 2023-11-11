@@ -127,7 +127,7 @@ open class PicListFragment : Fragment() {
 
     protected var onDataAddedListener: (() -> Unit)? = null
 
-    protected open lateinit var picListAdapter: PicListAdapter
+    open lateinit var picListAdapter: PicListAdapter
     protected open fun ownerProducer(): ViewModelStoreOwner {
         return when (TAG) {
             TAG_TYPE.Rank.name -> {
@@ -146,9 +146,9 @@ open class PicListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //viewModel.filterModel = filterModel
         filterModel.init(TAG)
-        filterModel.spanNum.value = 2 * requireContext().resources.configuration.orientation
+        filterModel.spanNum = 2 * requireContext().resources.configuration.orientation
         binding.recyclerview.layoutManager = StaggeredGridLayoutManager(
-            filterModel.spanNum.value!!,
+            filterModel.spanNum,
             StaggeredGridLayoutManager.VERTICAL
         )
         configAdapter(false)
@@ -211,11 +211,10 @@ open class PicListFragment : Fragment() {
             val layoutManager = binding.recyclerview.layoutManager as StaggeredGridLayoutManager
             showFilterDialog(
                 requireContext(),
+                this,
                 filterModel,
-                picListAdapter,
                 layoutInflater,
                 layoutManager,
-                ::configAdapter
             ).apply {
                 if (TAG != TAG_TYPE.Collect.name)
                     neutralButton(R.string.download) {
@@ -333,7 +332,9 @@ open class PicListFragment : Fragment() {
             }
         }
         picListAdapter = filterModel.getAdapter()
+        //TODO: decouple header view
         picListAdapter.addHeaderView(headerBinding.root)
+        //binding.recyclerview.swapAdapter(picListAdapter, true)
         binding.recyclerview.adapter = picListAdapter
     }
 }

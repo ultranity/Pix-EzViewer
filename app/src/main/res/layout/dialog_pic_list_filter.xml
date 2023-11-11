@@ -17,6 +17,7 @@
 
         <TextView
             android:layout_margin="8dp"
+            android:paddingHorizontal="10dp"
             android:id="@+id/filter_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -270,6 +271,7 @@
         android:paddingHorizontal="10dp"
         android:layout_gravity="center_horizontal"
         app:singleSelection="true"
+        app:selectionRequired="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -297,6 +299,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         app:singleSelection="true"
+        app:selectionRequired="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

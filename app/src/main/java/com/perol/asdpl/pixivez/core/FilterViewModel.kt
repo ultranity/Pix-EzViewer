@@ -153,6 +153,8 @@ class FilterViewModel : ViewModel() {
         filter = PicsFilter(TAG)
         if (!PxEZApp.instance.pre.getBoolean("r18on", false))
             filter.showPrivate = false
+        if (TAG_TYPE.isUserContent(TAG))
+            adapterType.overrideValue(ADAPTER_TYPE.PIC_LIKE)
     }
 
     fun applyConfig() = filter.applyConfig()

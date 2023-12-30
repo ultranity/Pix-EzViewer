@@ -62,6 +62,9 @@ enum class TAG_TYPE {
                 Else
             }
         }
+        fun isUserContent(value: String): Boolean {
+            return value == UserIllust.name || value == UserManga.name
+        }
     }
 }
 

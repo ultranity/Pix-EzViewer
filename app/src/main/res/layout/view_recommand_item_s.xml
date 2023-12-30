@@ -43,18 +43,20 @@
 
         <com.perol.asdpl.pixivez.view.NiceImageView
             android:id="@+id/imageview_like"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="2dp"
+            android:padding="2dp"
+            android:alpha="0.9"
             android:src="@drawable/ic_heart"
             android:background="@drawable/round_ripple"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:alpha="0.9"
-            android:translationY="18dp"
+            android:hapticFeedbackEnabled="true"
             app:border_width="2dp"
             app:is_circle="true"
-            app:layout_constraintBottom_toTopOf="@+id/title"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
+        <!--TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -64,7 +66,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_img" />
+            app:layout_constraintTop_toBottomOf="@+id/item_img" /-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

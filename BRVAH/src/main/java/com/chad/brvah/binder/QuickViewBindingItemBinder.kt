@@ -16,7 +16,7 @@ abstract class QuickViewBindingItemBinder<T, VB : ViewBinding> :
     /**
      * 此 Holder 不适用于其他 BaseAdapter，仅针对[BaseBinderAdapter]
      */
-    class BinderVBHolder<VB : ViewBinding>(val viewBinding: VB) : BaseViewHolder(viewBinding.root)
+    class BinderVBHolder<VB : ViewBinding>(viewBinding: VB) : BaseViewHolder(viewBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinderVBHolder<VB> {
         return BinderVBHolder(

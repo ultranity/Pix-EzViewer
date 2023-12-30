@@ -34,7 +34,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.ListPreference
@@ -360,7 +359,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Toasty.info(PxEZApp.instance, "no browser found", Toast.LENGTH_SHORT).show()
+                        Toasty.info(PxEZApp.instance, "no browser found").show()
                     }
                 } else {
                     val url = "https://github.com/ultranity/Pix-EzViewer"

@@ -38,7 +38,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.chrynan.parcelable.core.getParcelableExtra
@@ -200,7 +199,7 @@ class UserMActivity : RinkActivity() {
             viewModel.onFabClick()
         }
         binding.fab.setOnLongClickListener {
-            Toasty.info(applicationContext, "Private...", Toast.LENGTH_SHORT).show()
+            Toasty.info(applicationContext, "Private...").show()
             viewModel.onFabLongClick()
             true
         }

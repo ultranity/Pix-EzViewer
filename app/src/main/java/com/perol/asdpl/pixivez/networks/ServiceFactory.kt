@@ -46,7 +46,7 @@ object ServiceFactory {
      * API declarations([T]) must be interfaces.
      */
     inline fun <reified T : Any> create(
-        httpUrl: String = "https://0.0.0.0/",
+        httpUrl: String,
         httpClient: OkHttpClient = HttpClient.DEFAULT,
         converterFactory: Converter.Factory? = gson.asConverterFactory(contentType),
         callAdapterFactory: CallAdapter.Factory? = null,

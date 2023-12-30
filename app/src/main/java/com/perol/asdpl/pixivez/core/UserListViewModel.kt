@@ -49,7 +49,7 @@ class UserListViewModel : BaseViewModel() {
         if (mode == "Following") needHeader = AppDataRepo.isSelfPage(userid)
         onLoadFirstRx = when (mode) {
             "Following" -> {
-                { retrofit.api.getUserFollowing(userid, restrict.value!!) }
+                { retrofit.api.getUserFollowing(userid, restrict.value) }
             }
 
             "Follower" -> {

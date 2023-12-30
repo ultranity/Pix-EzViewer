@@ -180,7 +180,7 @@ object Works {
                     MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
                 )
             ) { _, _ ->
-                FileUtil.ListLog.add(illust.id.toInt())
+                FileUtil.ListLog.add(illust.id)
             }
         } catch (e: Exception) {
             e.printStackTrace()

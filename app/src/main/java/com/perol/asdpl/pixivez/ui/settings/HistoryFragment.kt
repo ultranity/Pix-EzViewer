@@ -46,7 +46,7 @@ class HistoryFragment : Fragment() {
         binding.fab.setOnClickListener {
             MaterialDialogs(requireContext()).show {
                 setTitle(R.string.clearhistory)
-                confirmButton() { _, _ ->
+                confirmButton { _, _ ->
                     historyMViewModel.clearHistory()
                 }
             }
@@ -65,7 +65,7 @@ class HistoryFragment : Fragment() {
         historyAdapter.setOnItemLongClickListener { _, _, i ->
             MaterialDialogs(requireContext()).show {
                 setTitle(R.string.confirm_title)
-                confirmButton() { _, _ ->
+                confirmButton { _, _ ->
                     historyMViewModel.deleteSelect(i) {
                         historyAdapter.notifyItemRemoved(i)
                     }

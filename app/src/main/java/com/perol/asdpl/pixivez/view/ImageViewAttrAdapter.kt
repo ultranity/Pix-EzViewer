@@ -32,7 +32,6 @@ import android.media.MediaScannerConnection
 import android.view.LayoutInflater
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -70,7 +69,7 @@ fun loadUserImage(imageView: ImageView, url: String?) {
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
-                    model: Any,
+                    model: Any?,
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
@@ -127,7 +126,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                         ) { _, _ -> }
 
                         withContext(Dispatchers.Main) {
-                            Toasty.info(imageView.context, "Saved", Toast.LENGTH_SHORT).show()
+                            Toasty.info(imageView.context, "Saved").show()
                         }
                     }
                 }

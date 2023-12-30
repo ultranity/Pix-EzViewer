@@ -32,7 +32,14 @@ import android.net.http.SslCertificate
 import android.net.http.SslError
 import android.os.Bundle
 import android.util.Base64
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
@@ -53,7 +60,11 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URL
 import java.security.SecureRandom
-import javax.net.ssl.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSession
+import javax.net.ssl.TrustManager
 
 /*
 object GlideUtil {
@@ -491,7 +502,7 @@ class OKWebViewActivity : RinkActivity() {
                         )
                     )
                     setPositiveButton("Proceed") { _, _ -> handler.proceed() }
-                    cancelButton() { _, _ -> handler.cancel() }
+                    cancelButton { _, _ -> handler.cancel() }
                 }
             }
         }

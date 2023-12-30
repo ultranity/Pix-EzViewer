@@ -73,7 +73,7 @@ class AccountFragment : Fragment() {
         binding.btnLogout.setOnClickListener {
             MaterialDialogs(requireContext()).show {
                 setTitle(R.string.logoutallaccount)
-                confirmButton() { i, j ->
+                confirmButton { i, j ->
                     runBlocking {
                         AppDataRepo.deleteAllUser()
                     }
@@ -108,7 +108,7 @@ class AccountFragment : Fragment() {
         }
     }
 
-    fun showTokenDialog(context: Context, user: UserEntity) {
+    private fun showTokenDialog(context: Context, user: UserEntity) {
         val userToken = user.Refresh_token
         MaterialAlertDialogBuilder(context)
             .setTitle("Token")

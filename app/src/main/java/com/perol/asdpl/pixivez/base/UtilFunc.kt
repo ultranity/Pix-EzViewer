@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -28,57 +27,12 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.internal.writeJson
 import kotlinx.serialization.json.jsonObject
 import org.roaringbitmap.RoaringBitmap
 import java.util.BitSet
-import java.util.IdentityHashMap
-import java.util.SortedSet
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
 
-
-/**
- * Returns Null if the two specified collections have no
- * elements in common. else the first common element.
- *
- *
- * Care must be exercised if this method is used on collections that
- * do not comply with the general contract for `Collection`.
- * Implementations may elect to iterate over either collection and test
- * for containment in the other collection (or to perform any equivalent
- * computation).  If either collection uses a nonstandard equality test
- * (as does a [SortedSet] whose ordering is not *compatible with
- * equals*, or the key set of an [IdentityHashMap]), both
- * collections must use the same nonstandard equality test, or the
- * result of this method is undefined.
- *
- *
- * Care must also be exercised when using collections that have
- * restrictions on the elements that they may contain. Collection
- * implementations are allowed to throw exceptions for any operation
- * involving elements they deem ineligible. For absolute safety the
- * specified collections should contain only elements which are
- * eligible elements for both collections.
- *
- *
- * Note that it is permissible to pass the same collection in both
- * parameters, in which case the method will return `true` if and
- * only if the collection is empty.
- *
- * @param c1 a collection
- * @param c2 a collection
- * @return `true` if the two specified collections have no
- * elements in common.
- * @throws NullPointerException if either collection is `null`.
- * @throws NullPointerException if one collection contains a `null`
- * element and `null` is not an eligible element for the other collection.
- * ([optional](Collection.html#optional-restrictions))
- * @throws ClassCastException if one collection contains an element that is
- * of a type which is ineligible for the other collection.
- * ([optional](Collection.html#optional-restrictions))
- * @since 1.5
- */
 object UtilFunc {
     fun <T> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
         // The collection to be used for contains(). Preference is given to
@@ -214,10 +168,6 @@ object KotlinUtil {
         }
     }
 
-    public fun <T> MutableList<T>.asList(): List<T> {
-        return this
-    }
-
     fun Boolean.Int(): Int = if (this) 1 else 0
     operator fun Boolean.times(i: Int): Int = if (this) i else 0
     operator fun Boolean.plus(i: Int): Int = if (this) i + 1 else i
@@ -285,8 +235,8 @@ object KotlinUtil {
         reactToChange: (T) -> Unit
     ): Observer<T> {
         val wrappedObserver = object : Observer<T> {
-            override fun onChanged(data: T) {
-                reactToChange(data)
+            override fun onChanged(value: T) {
+                reactToChange(value)
                 removeObserver(this)
             }
         }
@@ -303,10 +253,9 @@ open class EmptyAsNullJsonTransformingSerializer<T>(
 
     override val descriptor: SerialDescriptor get() = tSerializer.descriptor
 
-    @OptIn(InternalSerializationApi::class)
     override fun serialize(encoder: Encoder, value: T) {
         if (encoder is JsonEncoder) {
-            var element = encoder.json.writeJson(value, tSerializer)
+            var element = encoder.json.encodeToJsonElement(tSerializer, value)
             element = transformSerialize(element)
             encoder.encodeJsonElement(element)
         } else {

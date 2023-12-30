@@ -161,7 +161,7 @@ class LoginActivity : RinkActivity() {
                     editText!!.inputType = InputType.TYPE_CLASS_TEXT
                     hint = "Token"
                 }
-                confirmButton() { dialog, which ->
+                confirmButton { dialog, which ->
                     val token = getInputField(dialog).text.toString()
                     lifecycleScope.launchCatching({
                         RefreshToken.getInstance().refreshToken(token, true)

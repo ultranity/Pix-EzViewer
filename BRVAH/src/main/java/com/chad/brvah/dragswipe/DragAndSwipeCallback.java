@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.brvah.R;
 import com.chad.brvah.BaseQuickAdapter;
+import com.chad.brvah.R;
 import com.chad.brvah.module.BaseDraggableModule;
 
 
@@ -19,7 +19,7 @@ import com.chad.brvah.module.BaseDraggableModule;
 public class DragAndSwipeCallback extends ItemTouchHelper.Callback {
 
 
-    private BaseDraggableModule mDraggableModule;
+    private final BaseDraggableModule mDraggableModule;
     private float mMoveThreshold = 0.1f;
     private float mSwipeThreshold = 0.7f;
 

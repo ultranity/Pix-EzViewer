@@ -23,11 +23,11 @@ import java.util.Set;
 public class WeakValueLinkedHashMap<K, V> extends AbstractMap<K, V> {
 
     // the internal hash map to the weak references of the actual value objects
-    protected HashMap<K, WeakLinkedValue> references;
+    protected final HashMap<K, WeakLinkedValue> references;
     // the garbage collector's removal queue
-    protected ReferenceQueue<V> gcQueue;
+    protected final ReferenceQueue<V> gcQueue;
 
-    private WeakLinkedValue headRef = new WeakLinkedValue(null, null, null);
+    private final WeakLinkedValue headRef = new WeakLinkedValue(null, null, null);
     private WeakLinkedValue tailRef = headRef;
 
     /**
@@ -54,9 +54,7 @@ public class WeakValueLinkedHashMap<K, V> extends AbstractMap<K, V> {
      */
     public WeakValueLinkedHashMap(Map<? extends K, ? extends V> map) {
         this(map.size());
-        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
+        putAll(map);
     }
 
     @Override
@@ -65,8 +63,6 @@ public class WeakValueLinkedHashMap<K, V> extends AbstractMap<K, V> {
         WeakLinkedValue valueRef = new WeakLinkedValue(key, value, gcQueue, tailRef);
         return getReferenceValue(references.put(key, valueRef));
     }
-
-    ;
 
     @Override
     public V get(Object key) {

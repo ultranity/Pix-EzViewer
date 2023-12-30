@@ -34,7 +34,7 @@ import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 
 // TODO: reuse
-class HistoryAdapter() :
+class HistoryAdapter :
     BaseQuickAdapter<HistoryEntity, BaseViewHolder>(R.layout.view_history_item) {
     override fun convert(holder: BaseViewHolder, item: HistoryEntity) {
         val imageView = holder.getView<ImageView>(R.id.item_img)

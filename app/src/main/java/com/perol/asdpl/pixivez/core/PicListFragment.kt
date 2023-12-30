@@ -235,6 +235,7 @@ open class PicListFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateHintText() {
         headerBinding.imgBtnConfig.text = "${picListAdapter.data.size}/${picListAdapter.mData.size}"
     }
@@ -306,15 +307,15 @@ open class PicListFragment : Fragment() {
                 if (viewModel.restrict.currentVersion > 0)
                     viewModel.onLoadFirst()
                 headerBinding.imgBtnR.text =
-                    resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value!!.ordinal]
+                    resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value.ordinal]
             }
             headerBinding.imgBtnR.setOnClickListener {
                 MaterialDialog(requireContext()).show {
                     val list = listItemsSingleChoice(
                         R.array.restrict_type, disabledIndices = intArrayOf(),
-                        initialSelection = viewModel.restrict.value!!.ordinal
+                        initialSelection = viewModel.restrict.value.ordinal
                     ) { dialog, index, text ->
-                        viewModel.restrict.checkUpdate(RESTRICT_TYPE.values()[index])
+                        viewModel.restrict.checkUpdate(RESTRICT_TYPE.entries[index])
                         headerBinding.imgBtnR.text = text
                     }
                 }

@@ -32,7 +32,6 @@ import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.os.Environment
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.arialyy.annotations.Download
@@ -88,10 +87,8 @@ class PxEZApp : Application() {
                 if (ShowDownloadToast) {
                     Toasty.success(
                         this,
-                        "${title}${getString(R.string.savesuccess)}",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                        "${title}${getString(R.string.savesuccess)}"
+                    ).show()
                 }
             }
         }

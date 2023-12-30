@@ -162,12 +162,7 @@ class FilterViewModel : ViewModel() {
         ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, filter)
         ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, filter)
         ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, filter)
-        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(
-            R.layout.view_ranking_item_s,
-            filter
-        )
-
-        else -> PicListXUserAdapter(R.layout.view_ranking_item_s, filter)
+        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(R.layout.view_ranking_item_s, filter)
     }
 }
 
@@ -221,11 +216,11 @@ fun showFilterDialog(
         listOf(
             hideUserImg,
             showUserImg
-        )[filterModel.adapterType.value!!.ordinal % 2].isChecked = true
+        )[filterModel.adapterType.value.ordinal % 2].isChecked = true
         listOf(
             hideSaveBtn,
             showSaveBtn
-        )[filterModel.adapterType.value!!.ordinal / 2].isChecked = true
+        )[filterModel.adapterType.value.ordinal / 2].isChecked = true
     }
     return MaterialDialog(context).show {
         customView(view = dialog.root, scrollable = true)

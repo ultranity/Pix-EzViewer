@@ -8,7 +8,7 @@ plugins {
     id("com.android.library") version libs.versions.agp apply false
     id("org.jetbrains.kotlin.android") version libs.versions.kotlin apply false
     id("org.jmailen.kotlinter") version "3.15.0" apply false
-    id("com.google.devtools.ksp") version libs.versions.kotlin.get() + "-1.0.11" apply false
+    id("com.google.devtools.ksp") version libs.versions.kotlin.get() + "-1.0.16" apply false
     id("com.mikepenz.aboutlibraries.plugin") version libs.versions.aboutlibraries apply false
     kotlin("plugin.serialization") version libs.versions.kotlin apply false
 }

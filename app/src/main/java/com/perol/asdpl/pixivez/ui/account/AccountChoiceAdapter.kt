@@ -52,7 +52,7 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
                 MaterialDialogs(context).show {
                     setTitle(R.string.confirm_title)
                     setMessage(item.username)
-                    confirmButton() { _, _ ->
+                    confirmButton { _, _ ->
                         runBlocking {
                             AppDataRepo.deleteUser(item)
                             this@AccountChoiceAdapter.remove(item)

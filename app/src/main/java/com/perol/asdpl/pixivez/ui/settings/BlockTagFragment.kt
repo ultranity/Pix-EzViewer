@@ -68,7 +68,7 @@ class BlockTagFragment : Fragment() {
                 setInput(true) {
                     setHint(R.string.block_tag)
                 }
-                confirmButton() { dialog, text ->
+                confirmButton { dialog, text ->
                     if (getInputField(dialog).text.isNullOrBlank().not()) runBlocking {
                         viewModel.insertBlockTag(
                             BlockTagEntity(

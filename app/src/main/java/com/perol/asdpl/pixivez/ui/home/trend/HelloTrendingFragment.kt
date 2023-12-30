@@ -107,7 +107,7 @@ class HelloTrendingFragment : LazyFragment() {
                     item.isSelected = (v as MaterialCheckBox).isChecked
                     return@onItemClick true
                 }
-                confirmButton() { _, _ -> configTabs() }
+                confirmButton { _, _ -> configTabs() }
             }
         }
         binding.imageviewRank.animate()

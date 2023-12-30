@@ -8,7 +8,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 object FastKVUtil {
-    val Default: FastKV = FastKV.Builder(PxEZApp.instance.filesDir.path, "fkv").build();
+    val Default: FastKV = FastKV.Builder(PxEZApp.instance.filesDir.path, "fkv").build()
 }
 
 fun getFastKV(name: String, encoders: Array<FastKV.Encoder<*>>? = null): FastKV {
@@ -89,8 +89,8 @@ open class KVData(name: String) {
         IntEnumProperty(key, converter)
     //protected fun combineKey(key: String) = CombineKeyProperty(key)
 
-    interface BaseProperty<V> : ReadWriteProperty<KVData, V> {}
-    abstract class FlagPProperty<V : Any>() : BaseProperty<V> {
+    interface BaseProperty<V> : ReadWriteProperty<KVData, V>
+    abstract class FlagPProperty<V : Any> : BaseProperty<V> {
         abstract val defValue: V
         var inited = false
         fun checkInitValue(thisRef: KVData, property: KProperty<*>, value: V) {

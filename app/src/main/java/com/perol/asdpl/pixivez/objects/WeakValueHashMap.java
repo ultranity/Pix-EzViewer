@@ -47,9 +47,9 @@ class WeakValue<K, T> extends WeakReference<T> {
 public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
 
     // the internal hash map to the weak references of the actual value objects
-    protected HashMap<K, WeakValue<K, V>> references;
+    protected final HashMap<K, WeakValue<K, V>> references;
     // the garbage collector's removal queue
-    protected ReferenceQueue<V> gcQueue;
+    protected final ReferenceQueue<V> gcQueue;
 
 
     /**
@@ -76,9 +76,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
      */
     public WeakValueHashMap(Map<? extends K, ? extends V> map) {
         this(map.size());
-        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
+        putAll(map);
     }
 
     @Override
@@ -147,7 +145,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
     public Collection<V> values() {
         processQueue();
 
-        Collection<V> values = new ArrayList<V>();
+        Collection<V> values = new ArrayList<>();
         for (WeakValue<K, V> valueRef : references.values()) {
             values.add(getReferenceValue(valueRef));
         }

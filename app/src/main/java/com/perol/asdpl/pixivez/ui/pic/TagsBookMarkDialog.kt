@@ -76,7 +76,7 @@ class TagsBookMarkDialog : BaseDialogFragment<DialogBookmarkBinding>() {
         // Create the AlertDialog object and return it
         builder
             .cancelButton()
-            .confirmButton() { _, _ ->
+            .confirmButton { _, _ ->
                 // if (pictureXViewModel.tags.value != null)
                 pictureXViewModel.onDialogClick(false)
             }

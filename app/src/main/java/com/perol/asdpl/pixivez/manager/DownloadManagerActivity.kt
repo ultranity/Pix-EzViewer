@@ -103,7 +103,7 @@ class DownloadManagerActivity : RinkActivity() {
                     setTitle(R.string.task_setting)
                     setView(configDialog.root)
                     cancelButton()
-                    confirmButton() { _, _ ->
+                    confirmButton { _, _ ->
                         Aria.get(this@DownloadManagerActivity).downloadConfig.apply {
                             maxTaskNum =
                                 (configDialog.spinnerMaxTaskNum.selectedItem as String).toInt()
@@ -156,7 +156,7 @@ class DownloadManagerActivity : RinkActivity() {
             R.id.action_cancel -> {
                 MaterialDialogs(this).show {
                     setMessage(R.string.all_cancel)
-                    confirmButton() { _, _ ->
+                    confirmButton { _, _ ->
                         Aria.download(this).removeAllTask(false)
                     }
                 }

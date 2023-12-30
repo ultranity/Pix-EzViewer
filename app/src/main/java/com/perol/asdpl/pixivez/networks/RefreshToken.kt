@@ -26,7 +26,6 @@
 package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
-import android.widget.Toast
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
@@ -54,11 +53,7 @@ class RefreshToken{
 
     fun refreshToken(block:(() -> Unit)?=null) {
         MainScope().launch {
-            Toasty.info(
-                PxEZApp.instance,
-                "refreshToken",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toasty.info(PxEZApp.instance, "refreshToken").show()
             refreshToken(AppDataRepo.currentUser.Refresh_token)
             block?.invoke()
         }

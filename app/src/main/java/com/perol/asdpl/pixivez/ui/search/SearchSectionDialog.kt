@@ -35,7 +35,7 @@ import com.perol.asdpl.pixivez.base.BaseDialogFragment
 import com.perol.asdpl.pixivez.base.cancelButton
 import com.perol.asdpl.pixivez.base.confirmButton
 import com.perol.asdpl.pixivez.databinding.DialogSearchSectionBinding
-import java.util.*
+import java.util.Calendar
 
 class SearchSectionDialog : BaseDialogFragment<DialogSearchSectionBinding>() {
 
@@ -67,7 +67,7 @@ class SearchSectionDialog : BaseDialogFragment<DialogSearchSectionBinding>() {
         var sorti = viewModel.sort.value
         binding.tablayoutSort.apply {
             clearOnTabSelectedListeners()
-            sorti?.let { getTabAt(it)?.select() }
+            sorti.let { getTabAt(it)?.select() }
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(tab: TabLayout.Tab?) {}
 
@@ -143,7 +143,7 @@ class SearchSectionDialog : BaseDialogFragment<DialogSearchSectionBinding>() {
 
         builder
             .cancelButton()
-            .confirmButton() { _, _ ->
+            .confirmButton { _, _ ->
                 viewModel.sort.value = sorti
                 viewModel.searchTarget = searchTargeti
                 if (word != null) {

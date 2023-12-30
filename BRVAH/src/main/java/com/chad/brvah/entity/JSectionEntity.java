@@ -14,10 +14,10 @@ public abstract class JSectionEntity implements SectionEntity {
     @Override
     public int getItemType() {
         if (isHeader()) {
-            return SectionEntity.Companion.HEADER_TYPE;
+            return SectionEntity.HEADER_TYPE;
         } else {
             // 拷贝 重写此处，返回自己的多布局类型
-            return SectionEntity.Companion.NORMAL_TYPE;
+            return SectionEntity.NORMAL_TYPE;
         }
     }
 }

@@ -79,6 +79,7 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.screenHeightPx
+import com.perol.asdpl.pixivez.objects.showInMain
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
@@ -184,7 +185,7 @@ class PictureXAdapter(
                 }
                 if (illust.illust_ai_type > 0) {
                     AIText.visibility = View.VISIBLE
-                    AILevel.text = AIType.values()[illust.illust_ai_type].toString()
+                    AILevel.text = AIType.entries[illust.illust_ai_type].toString()
                     if (illust.illust_ai_type == 2)
                         AILevel.setTextColor(Color.RED)
                 }
@@ -344,7 +345,7 @@ class PictureXAdapter(
         private fun showBlockTagDialog(mContext: Context, t: Tag) {
             MaterialDialogs(mContext).show {
                 setTitle(R.string.add_to_block_tag_list)
-                confirmButton() { _, _ ->
+                confirmButton { _, _ ->
                     runBlocking {
                         BlockViewModel.insertBlockTag(
                             BlockTagEntity(
@@ -480,7 +481,7 @@ class PictureXAdapter(
 
                             override fun onLoadFailed(
                                 e: GlideException?,
-                                model: Any,
+                                model: Any?,
                                 target: Target<Drawable>,
                                 isFirstResource: Boolean
                             ): Boolean {
@@ -511,7 +512,7 @@ class PictureXAdapter(
             MaterialDialogs(mContext).show {
                 setTitle(R.string.saveselectpic1)
                 setMessage(InteractionUtil.toDetailString(data))
-                confirmButton() { _, _ ->
+                confirmButton { _, _ ->
                     Toasty.shortToast(R.string.join_download_queue)
                     Works.imgD(data, position)
                 }
@@ -533,7 +534,7 @@ class PictureXAdapter(
                                     mSelectedItems.remove(Integer.valueOf(which))
                                 }
                             }
-                            confirmButton() { _, _ ->
+                            confirmButton { _, _ ->
                                 Toasty.shortToast(R.string.join_download_queue)
                                 mSelectedItems.map {
                                     Works.imgD(data, it)
@@ -593,7 +594,7 @@ class PictureXAdapter(
             .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
-                    model: Any,
+                    model: Any?,
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
@@ -731,7 +732,7 @@ class PictureXAdapter(
         if (listFiles.size < size) {
             throw RuntimeException("something wrong in ugoira files")
         }
-        Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成").show()
+        Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成").showInMain()
         withContext(Dispatchers.Default) {
             listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
             val gifEncoder = GifEncoder()

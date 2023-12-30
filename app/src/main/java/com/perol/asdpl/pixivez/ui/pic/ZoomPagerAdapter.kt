@@ -101,7 +101,7 @@ class ZoomPagerAdapter(
                         if (resourceFile != null) {
                             MaterialDialogs(context).show {
                                 setTitle(R.string.saveselectpic1)
-                                confirmButton() { _, _ ->
+                                confirmButton { _, _ ->
                                     Works.imageDownloadWithFile(
                                         illust,
                                         resourceFile!!,

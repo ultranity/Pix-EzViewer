@@ -34,7 +34,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -143,8 +142,7 @@ class SaucenaoActivity : RinkActivity() {
                         }
                         Toasty.success(
                             this,
-                            getString(R.string.saucenao_compress_success),
-                            Toast.LENGTH_SHORT
+                            R.string.saucenao_compress_success
                         ).show()
                         val builder = MultipartBody.Builder()
                         builder.setType(MultipartBody.FORM)
@@ -170,25 +168,23 @@ class SaucenaoActivity : RinkActivity() {
                             file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                         )
                         lifecycleScope.launchCatching({ api.search(builder.build().part(0)) }, {
-                                    Toasty.success(
-                                        PxEZApp.instance,
-                                        getString(R.string.saucenao_upload_success),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                    if (file.exists()) {
-                                        file.delete()
-                                    }
-                                    tryToParseHtml(it.string())
-                                }, {
-                                    Toasty.error(
-                                        PxEZApp.instance,
-                                        getString(R.string.saucenao_upload_error) + it.message
-                                    ).show()
-                                    if (file.exists()) {
-                                        file.delete()
-                                    }
-                                })
+                            Toasty.success(
+                                PxEZApp.instance,
+                                getString(R.string.saucenao_upload_success),
+                            ).show()
+                            if (file.exists()) {
+                                file.delete()
+                            }
+                            tryToParseHtml(it.string())
+                        }, {
+                            Toasty.error(
+                                PxEZApp.instance,
+                                getString(R.string.saucenao_upload_error) + it.message
+                            ).show()
+                            if (file.exists()) {
+                                file.delete()
+                            }
+                        })
                     }
                 }
             }
@@ -209,9 +205,9 @@ class SaucenaoActivity : RinkActivity() {
             Toasty.success(this, R.string.saucenao_upload_success).show()
             tryToParseHtml(it.string())
         },
-        {
-            Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show()
-        })
+            {
+                Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show()
+            })
     }
 
     private fun tryToParseHtml(string: String) {
@@ -235,7 +231,7 @@ class SaucenaoActivity : RinkActivity() {
 
         if (arrayList.isNotEmpty()) {
             val it = arrayList.toIntArray()
-            Toasty.success(this, "id: " + it[0].toString(), Toast.LENGTH_LONG).show()
+            Toasty.success(this, "id: " + it[0].toString()).show()
             PictureActivity.start(this, it[0], it)
         } else {
             Glide.with(this).load(

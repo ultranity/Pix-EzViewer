@@ -305,7 +305,10 @@
     <string name="walk_through">速覽漫步</string>
     <string name="show_block">顯示占位過濾結果</string>
     <string name="recommend">推薦</string>
+    <string name="harmonize_color">色彩和諧化</string>
+    <string name="changeing_icon_tip">正在嘗試更換，等待啓動器刷新</string>
     <string name="max_sanity">San值保護</string>
     <string name="check_clipboard">複製id監測</string>
     <string name="go_to_detail">go to detail</string>
+    <string name="view_cache_repo">運行快取</string>
 </resources>

@@ -37,7 +37,7 @@ class UserMPagerAdapter(
     var userid: Int
 ) : FragmentStateAdapter(activity) {
 
-    val fragments = WeakValueHashMap<Int, Fragment>(4)
+    private val fragments = WeakValueHashMap<Int, Fragment>(4)
     override fun getItemCount(): Int {
         return 4
     }

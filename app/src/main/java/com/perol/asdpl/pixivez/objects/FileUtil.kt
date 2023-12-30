@@ -313,13 +313,14 @@ object FileUtil {
         extraPath = extraPath(PxEZApp.storepath + File.separator + "path.txt")
             ?: extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt")
             ?: listOf()
-        var fileList = getGroupList(PxEZApp.storepath, true).mapNotNull { it.pid?.toInt() }.sorted().toIntArray()
+        var fileList =
+            getGroupList(PxEZApp.storepath, true).mapNotNull { it.pid }.sorted().toIntArray()
         val before = ListLog.cardinality
         ListLog.addN(fileList, 0, fileList.size)
 
         if (extraPath.isNotEmpty()) {
             extraPath.forEach {
-                fileList = getGroupList(it, true).mapNotNull { it.pid?.toInt() }.sorted().toIntArray()
+                fileList = getGroupList(it, true).mapNotNull { it.pid }.sorted().toIntArray()
                 ListLog.addN(fileList, 0, fileList.size)
             }
         }

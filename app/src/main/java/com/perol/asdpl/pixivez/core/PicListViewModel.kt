@@ -125,7 +125,7 @@ open class PicListViewModel : BaseViewModel() {
             }
 
             TAG_TYPE.MyFollow -> {
-                { retrofit.api.getFollowIllusts(restrict.value!!.name) }
+                { retrofit.api.getFollowIllusts(restrict.value.name) }
             }
 
             TAG_TYPE.UserIllust -> {

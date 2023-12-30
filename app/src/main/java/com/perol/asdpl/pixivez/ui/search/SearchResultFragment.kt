@@ -43,7 +43,7 @@ class SearchResultFragment : PicListFragment() {
             MaterialDialog(requireContext()).show {
                 val list = listItemsSingleChoice(
                     R.array.sort, disabledIndices = intArrayOf(),
-                    initialSelection = viewModel.sort.value!!
+                    initialSelection = viewModel.sort.value
                 ) { dialog, index, text ->
                     viewModel.sort.checkUpdate(index)
                     headerBinding.imgBtnR.text = text
@@ -139,7 +139,7 @@ class SearchResultViewModel : PicListViewModel() {
             Toasty.error(PxEZApp.instance, "not premium!").show()
             setPreview(
                 word,
-                sortT[sort.value!!],
+                sortT[sort.value],
                 searchTargetT[searchTarget],
                 durationT[selectDuration]
             )
@@ -147,7 +147,7 @@ class SearchResultViewModel : PicListViewModel() {
             subscribeNext({
                 retrofit.api.getSearchIllust(
                     word,
-                    sortT[sort.value!!],
+                    sortT[sort.value],
                     searchTargetT[searchTarget],
                     startDate.value.generateDateString(),
                     endDate.value.generateDateString(),

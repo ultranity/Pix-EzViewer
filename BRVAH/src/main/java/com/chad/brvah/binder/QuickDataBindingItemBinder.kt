@@ -16,7 +16,7 @@ abstract class QuickDataBindingItemBinder<T, DB : ViewDataBinding> :
     /**
      * 此 Holder 不适用于其他 BaseAdapter，仅针对[BaseBinderAdapter]
      */
-    class BinderDataBindingHolder<DB : ViewDataBinding>(val dataBinding: DB) :
+    class BinderDataBindingHolder<DB : ViewDataBinding>(dataBinding: DB) :
         BaseViewHolder(dataBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinderDataBindingHolder<DB> {

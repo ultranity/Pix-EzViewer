@@ -164,7 +164,7 @@ object RestClient {
         companion object {
             @JvmStatic
             fun check(value: Int): HttpStatus? {
-                return HttpStatus.values().firstOrNull { it.code == value }
+                return entries.firstOrNull { it.code == value }
             }
         }
     }

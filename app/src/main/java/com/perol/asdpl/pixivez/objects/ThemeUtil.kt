@@ -61,7 +61,7 @@ import kotlin.math.roundToInt
 
 
 object ThemeUtil {
-    val colorThemeArray = arrayOf(
+    private val colorThemeArray = arrayOf(
         R.style.AppThemeBase3,
         R.style.primary,
         R.style.blue,
@@ -277,7 +277,11 @@ object ThemeUtil {
                 == Configuration.UI_MODE_NIGHT_YES)
 }
 
-class BackgroundGridItem(var color: Int, override val title: String, val isResID: Boolean = true) :
+class BackgroundGridItem(
+    var color: Int,
+    override val title: String,
+    private val isResID: Boolean = true
+) :
     GridItem {
     var icon: Int? = null
 

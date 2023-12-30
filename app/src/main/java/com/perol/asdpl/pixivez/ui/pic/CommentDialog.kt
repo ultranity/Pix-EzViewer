@@ -30,7 +30,6 @@ import android.graphics.drawable.ColorDrawable
 import android.util.Pair
 import android.view.Gravity
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -93,10 +92,8 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
                     403 -> {
                         Toasty.warning(
                             requireContext(),
-                            getString(R.string.rate_limited),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                            getString(R.string.rate_limited)
+                        ).show()
                     }
 
                     404 -> {

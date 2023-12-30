@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.ui.pic
 
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
@@ -147,8 +146,7 @@ class PictureXViewModel : BaseViewModel() {
         }, {
             Toasty.warning(
                 PxEZApp.instance,
-                "PID 404: $illust_id",
-                Toast.LENGTH_SHORT
+                "PID 404: $illust_id ${it.message}"
             ).show()
             illustDetail.value = null
         })

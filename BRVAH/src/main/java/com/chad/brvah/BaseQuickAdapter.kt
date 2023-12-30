@@ -818,10 +818,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      * @return Boolean
      */
     fun hasHeaderLayout(): Boolean {
-        if (this::mHeaderLayout.isInitialized && mHeaderLayout.childCount > 0) {
-            return true
-        }
-        return false
+        return this::mHeaderLayout.isInitialized && mHeaderLayout.childCount > 0
     }
 
     fun removeHeaderView(header: View) {
@@ -947,10 +944,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     }
 
     fun hasFooterLayout(): Boolean {
-        if (this::mFooterLayout.isInitialized && mFooterLayout.childCount > 0) {
-            return true
-        }
-        return false
+        return this::mFooterLayout.isInitialized && mFooterLayout.childCount > 0
     }
 
     val footerViewPosition: Int
@@ -1173,7 +1167,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
                 this.data.addAll(list)
             }
         } else {
-            if (!list.isNullOrEmpty()) {
+            if (!list.isEmpty()) {
                 val newList = ArrayList(list)
                 this.data.clear()
                 this.data.addAll(newList)
@@ -1234,7 +1228,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
         compatibilityDataSizeChanged(newData.size)
     }
 
-    open fun addData(@NonNull newData: Collection<T>) {
+    open fun addData(newData: Collection<T>) {
         this.data.addAll(newData)
         notifyItemRangeInserted(this.data.size - newData.size + headerLayoutCount, newData.size)
         compatibilityDataSizeChanged(newData.size)
@@ -1335,7 +1329,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      * @param diffResult DiffResult
      * @param list New Data
      */
-    open fun setDiffNewData(@NonNull diffResult: DiffUtil.DiffResult, list: MutableList<T>) {
+    open fun setDiffNewData(diffResult: DiffUtil.DiffResult, list: MutableList<T>) {
         if (data.isEmpty()) {
             // If the current view is an empty view, set the new data directly without diff
             setNewInstance(list)

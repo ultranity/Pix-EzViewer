@@ -4,7 +4,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-class SMutableLiveData<T>(lastValue: T?, onlyIfChanged: Boolean = true) :
+// MutableLiveData with singe observer
+class SMutableLiveData<T>(lastValue: T, onlyIfChanged: Boolean = true) :
     DMutableLiveData<T>(lastValue, onlyIfChanged) {
     //var observer: Observer<in T>? = null
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
@@ -27,7 +28,7 @@ class SMutableLiveData<T>(lastValue: T?, onlyIfChanged: Boolean = true) :
  * but skip first observe/expose currentVersion
  * @param lastValue initial value
  */
-open class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = true) :
+open class DMutableLiveData<T>(var lastValue: T, val onlyIfChanged: Boolean = true) :
     MutableLiveData<T>() {
     var currentVersion = 0
         private set
@@ -41,13 +42,11 @@ open class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = t
         super.observe(owner, observer)
     }
 
-    override fun getValue(): T? {
-        if (isInitialized)
-            return super.getValue()
+    override fun getValue(): T {
         return lastValue
     }
 
-    override fun setValue(value: T?) {
+    override fun setValue(value: T) {
         if (onlyIfChanged && value == lastValue) {
             return
         }
@@ -56,11 +55,11 @@ open class DMutableLiveData<T>(var lastValue: T?, val onlyIfChanged: Boolean = t
         lastValue = value
     }
 
-    fun triggerValue(value: T?) {
+    fun triggerValue(value: T) {
         super.setValue(value)
     }
 
-    fun overrideValue(value: T?) {
+    fun overrideValue(value: T) {
         lastValue = value
     }
 }

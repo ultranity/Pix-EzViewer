@@ -342,7 +342,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                             editText!!.setText(item)
 
                         }
-                        confirmButton() { dialog, _ ->
+                        confirmButton { dialog, _ ->
                             item = getInputField(dialog).text.toString()
                             if (item.isBlank()) {
                                 return@confirmButton
@@ -479,7 +479,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
     private fun clean() {
         MaterialDialogs(this).show {
             setMessage(getString(R.string.cache_clear_message))
-            confirmButton() { _, _ ->
+            confirmButton { _, _ ->
                 CoroutineScope(Dispatchers.IO).launch {
                     Glide.get(applicationContext).clearDiskCache()
                     deleteDir(applicationContext.cacheDir)

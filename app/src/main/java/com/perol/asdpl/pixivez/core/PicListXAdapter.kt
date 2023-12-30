@@ -71,7 +71,7 @@ open class PicListXAdapter(
     private val liveDataID = "likeLiveData".hashCode()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder = super.onCreateViewHolder(parent, viewType)
-        val likeLiveData = DMutableLiveData(false, true)
+        val likeLiveData = DMutableLiveData(lastValue = false, onlyIfChanged = true)
         likeLiveData.observeAfterSet(parent.context as LifecycleOwner) {
             holder.getView<NiceImageView>(R.id.imageview_like).apply {
                 setUILike(it, this)

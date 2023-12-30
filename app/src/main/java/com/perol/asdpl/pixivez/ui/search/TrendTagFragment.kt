@@ -138,7 +138,7 @@ class TrendTagFragment : Fragment() {
         chip.setOnClickListener {
             MaterialDialogs(requireContext()).show {
                 setTitle(R.string.clearhistory)
-                confirmButton() { _, _ ->
+                confirmButton { _, _ ->
                     viewModel.clearHistory()
                     binding.chipgroup.removeAllViews()
                 }

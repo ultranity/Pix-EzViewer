@@ -30,7 +30,7 @@ object InteractionUtil {
                 "width:${it.width} height:${it.height}\n" +
                 "tags:${it.tags}\n" +
                 "total_bookmarks:${it.total_bookmarks} total_view:${it.total_view}\n" +
-                "AI: ${AIType.values()[it.illust_ai_type]} book_style:${it.illust_book_style} tools:${it.tools}\n" +
+                "AI: ${AIType.entries[it.illust_ai_type]} book_style:${it.illust_book_style} tools:${it.tools}\n" +
                 "type:${it.type} page_count:${it.page_count}\n" +
                 "visible:${it.visible} is_muted:${it.is_muted} CAC:${it.comment_access_control}\n" +
                 "sanity_level:${it.sanity_level} restrict:${it.restrict} x_restrict:${it.x_restrict}"

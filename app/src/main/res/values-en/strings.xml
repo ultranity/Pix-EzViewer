@@ -87,13 +87,13 @@
     <string name="word">WORD</string>
     <string name="goodpfriend">P</string>
     <string name="ta">about</string>
-    <string name="taziliao">information</string>
+    <string name="user_info">information</string>
     <string name="theme">Theme</string>
     <string name="setting">Settings</string>
     <string name="savesuccess">saved!</string>
     <string name="alreadysaved">already saved</string>
     <string name="registerclose">In-app registration has been disabled, please register at pixiv.net</string>
-    <string name="proxy">API Config</string>
+    <string name="api_config">API Config</string>
     <string name="encode_gif">Encode as gif</string>
     <string name="save_zip">Save as zip</string>
     <string name="savefirst">Save preview</string>

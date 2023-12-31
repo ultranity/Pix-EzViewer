@@ -95,13 +95,13 @@
     <string name="word">综合</string>
     <string name="goodpfriend">好P友</string>
     <string name="ta">ta的介绍</string>
-    <string name="taziliao">ta的资料</string>
+    <string name="user_info">ta的资料</string>
     <string name="theme">主题样式</string>
     <string name="setting">设置</string>
     <string name="savesuccess">保存成功!</string>
     <string name="alreadysaved">图片已存在</string>
     <string name="registerclose">应用内注册入口已关闭，请自行前往Pixiv官网注册</string>
-    <string name="proxy">连接设置</string>
+    <string name="api_config">连接设置</string>
     <string name="encode_gif">合成gif</string>
     <string name="save_zip">保存zip</string>
     <string name="savefirst">下载首图</string>

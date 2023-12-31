@@ -170,7 +170,13 @@ object RestClient {
     class AuthInterceptor(private val host: String) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
-            val response = chain.proceed(request)
+            val response = try {
+                chain.proceed(request)
+            } catch (e: Exception) {
+                Log.e("okhttpAuth", e.message, e)
+                //TODO: warn to check API Config
+                throw e
+            }
             when (HttpStatus.check(response.code)) {
                 HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
                     if (response.message.contains(TOKEN_INVALID)) {

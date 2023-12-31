@@ -30,12 +30,12 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -56,8 +56,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseBindingItem
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.setItems
+import com.perol.asdpl.pixivez.databinding.DialogApiConfigBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
-import com.perol.asdpl.pixivez.databinding.DialogMirrorLinkBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.databinding.SimpleTextItemBinding
 import com.perol.asdpl.pixivez.objects.CrashHandler
@@ -72,11 +72,8 @@ import java.io.FilenameFilter
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    private lateinit var pre: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        pre = PxEZApp.instance.pre
         defaultComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =
@@ -143,12 +140,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
-        findPreference<Preference>("dnsProxy")!!.apply {
+        findPreference<Preference>("APIConfig")!!.apply {
             if (Works.mirrorForDownload || Works.mirrorForView) {
                 summary = getString(R.string.mirror) + ":" + Works.mirrorURL
             }
             setOnPreferenceClickListener {
-                showMirrorLinkDialog()
+                showAPIConfigDialog()
                 true
             }
         }
@@ -210,7 +207,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
                 val intent =
-                    Intent(context, MainActivity::class.java).setAction("app.restart")
+                    Intent(requireContext(), MainActivity::class.java).setAction("app.restart")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 requireContext().startActivity(intent)
             }.show()
@@ -230,7 +227,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 //            if (requestCode == 887) {
 //                val path = data!!.getStringExtra("path")
 //                PxEZApp.storepath = path
-//                pre.edit().putString("storepath1", PxEZApp.storepath).apply()
+//                PxEZApp.instance.pre.edit().putString("storepath1", PxEZApp.storepath).apply()
 //                findPreference<Preference>("storepath1")!!.apply {
 //                    summary = path
 //                }
@@ -338,7 +335,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                                 }
                         }
                         positiveButton(R.string.save) { dialog ->
-                            pre.apply {
+                            PxEZApp.instance.pre.edit {
                                 putString("R18FolderPath", PxEZApp.R18FolderPath)
                             }
                             findPreference<Preference>("R18Folder")!!.apply {
@@ -408,17 +405,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return super.onPreferenceTreeClick(preference)
     }
 
-    private fun showMirrorLinkDialog() {
-        val binding = DialogMirrorLinkBinding.inflate(layoutInflater)
+    private fun showAPIConfigDialog() {
+        val binding = DialogApiConfigBinding.inflate(layoutInflater)
         val descTable = binding.formatDescTable
         val urlInput = binding.urlInput
         val formatInput = binding.formatInput
-        binding.dnsProxy.isChecked = pre.getBoolean("dnsProxy", false)
-        binding.mirrorLinkView.isChecked = pre.getBoolean("mirrorLinkView", false)
-        binding.mirrorLinkDownload.isChecked = pre.getBoolean("mirrorLinkDownload", false)
+        PxEZApp.instance.pre.run {
+            binding.dnsProxy.isChecked = getBoolean("dnsProxy", false)
+            binding.mirrorLinkView.isChecked = getBoolean("mirrorLinkView", false)
+            binding.mirrorLinkDownload.isChecked = getBoolean("mirrorLinkDownload", false)
+        }
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
-        val dialog = MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
+        val urlInputEditable = formatInput.editableText
+        for (i in 1 until descTable.childCount)
+            descTable.getChildAt(i).setOnClickListener {
+                urlInputEditable.insert(formatInput.selectionStart, it.tag.toString())
+            }
+        val dialog =
+            MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
         dialog.show {
             title(R.string.saveformat)
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
@@ -427,10 +432,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Works.mirrorFormat = "${formatInput.text}"
                 Works.mirrorForView = binding.mirrorLinkView.isChecked
                 Works.mirrorForDownload = binding.mirrorLinkDownload.isChecked
-                findPreference<Preference>("dnsProxy")!!.apply {
+                findPreference<Preference>("APIConfig")!!.apply {
                     summary = Works.mirrorURL + Works.mirrorFormat
                 }
-                pre.apply {
+                PxEZApp.instance.pre.edit {
                     putString("mirrorURL", Works.mirrorURL)
                     putString("mirrorFormat", Works.mirrorFormat)
                     putBoolean("dnsProxy", binding.dnsProxy.isChecked)
@@ -444,11 +449,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             negativeButton(android.R.string.cancel)
             lifecycleOwner(this@SettingsFragment)
         }
-        val urlInputEditable = formatInput.editableText
-        for (i in 1 until descTable.childCount)
-            descTable.getChildAt(i).setOnClickListener {
-                urlInputEditable.insert(formatInput.selectionStart, it.tag.toString())
-            }
     }
 
     private fun showSaveFormatDialog() {
@@ -466,14 +466,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             customView(view = binding.root, scrollable = true, horizontalPadding = true)
             positiveButton(R.string.save) { dialog ->
                 PxEZApp.saveformat = "${customizedFormatInput.text}"
-                pre.apply {
+                PxEZApp.instance.pre.edit {
                     putString("filesaveformat", PxEZApp.saveformat)
                 }
                 findPreference<Preference>("filesaveformat")!!.apply {
                     summary = PxEZApp.saveformat
                 }
                 PxEZApp.TagSeparator = "${tagSeparator.text}"
-                pre.apply {
+                PxEZApp.instance.pre.edit {
                     putString("TagSeparator", PxEZApp.TagSeparator)
                 }
             }
@@ -502,7 +502,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             ) { _, folder ->
                 with(folder.absolutePath) {
                     PxEZApp.storepath = this
-                    pre.apply {
+                    PxEZApp.instance.pre.edit {
                         putString("storepath1", PxEZApp.storepath)
                     }
                     findPreference<Preference>("storepath1")!!.apply {
@@ -541,10 +541,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-
-    private inline fun SharedPreferences.apply(modifier: SharedPreferences.Editor.() -> Unit) {
-        edit().apply { modifier() }.run { apply() }
-    }
 
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 1

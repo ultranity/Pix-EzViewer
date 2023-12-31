@@ -39,8 +39,8 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="Switch">
         <Preference
-            app:key="dnsProxy"
-            app:title="@string/proxy"
+            app:key="APIConfig"
+            app:title="@string/api_config"
             app:summary="@string/set_mirror"/>
         <SwitchPreferenceCompat
             android:summaryOn="@string/h_is_ok"

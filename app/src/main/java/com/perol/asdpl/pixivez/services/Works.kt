@@ -63,6 +63,7 @@ class IllustD(
     var title: String? = null,
     var url: String
 )
+
 fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: Int): String {
     var result = tags.mapNotNull {
         if (!title.contains(it)
@@ -82,28 +83,49 @@ fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: I
 
     return result
 }
+
 object Works {
 
     val pre: SharedPreferences = PxEZApp.instance.pre
     fun parseSaveFormat(illust: Illust, part: Int? = null): String {
-        return parseSaveFormat(illust, part, PxEZApp.saveformat, PxEZApp.TagSeparator, PxEZApp.R18Folder)
+        return parseSaveFormat(
+            illust,
+            part,
+            PxEZApp.saveformat,
+            PxEZApp.TagSeparator,
+            PxEZApp.R18Folder
+        )
     }
 
-    fun parseSaveFormat(illust: Illust, part: Int?, saveformat: String, TagSeparator: String, R18Folder: Boolean): String {
+    fun parseSaveFormat(
+        illust: Illust,
+        part: Int?,
+        saveformat: String,
+        TagSeparator: String,
+        R18Folder: Boolean
+    ): String {
         val url: String
         val tag = if (saveformat.contains("{tag")) {
             illust.tags
         } else null
         var filename = saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
-            .replace("{name}", illust.user.name.let { if (it.length > 8) it.substringBeforeLast("@") else it }.toLegal())
+            .replace(
+                "{name}",
+                illust.user.name.let { if (it.length > 8) it.substringBeforeLast("@") else it }
+                    .toLegal()
+            )
             .replace("{account}", illust.user.account.toLegal())
             .replace("{R18}", if (illust.x_restrict == 1) "R18" else "")
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
         if (part != null && part < illust.meta.size) {
             url = getQualityUrl(illust, part)
-            filename = filename.replace("{part}", part.toString())
+            filename = filename.replace(
+                "{part}",
+                if (illust.meta.size > 10) part.toString().padStart(2, '0')
+                else part.toString()
+            )
         } else if (illust.meta.size == 1) {
             url = getQualityUrl(illust)
             filename = filename.replace("_p{part}", "")
@@ -117,12 +139,8 @@ object Works {
         }
 
         val type = when {
-            url.contains("png") -> {
-                ".png"
-            }
-            url.contains("jpeg") -> {
-                ".jpeg"
-            }
+            url.contains("png") -> ".png"
+            url.contains("jpeg") -> ".jpeg"
             else -> ".jpg"
         }
         filename = filename.replace("{type}", type)
@@ -133,16 +151,14 @@ object Works {
                     .distinct().sortedBy { it.length }
                     .joinToString(TagSeparator, limit = 8).take(110 - filename.length).toLegal()
             )
-        }
-        else if (saveformat.contains("{tagso")) {
+        } else if (saveformat.contains("{tagso")) {
             filename = filename.replace(
                 "{tagso}",
-                tag!!.map{ it.name }
+                tag!!.map { it.name }
                     .distinct().sortedBy { it.length }
                     .joinToString(TagSeparator).take(110 - filename.length).toLegal()
             )
-        }
-        else if (saveformat.contains("{tags")) {
+        } else if (saveformat.contains("{tags")) {
             val tags = tag!!.map {
                 it.translated_name?.let { ot ->
                     if (ot.length < it.name.length * 2.5) ot else it.name
@@ -163,8 +179,8 @@ object Works {
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val targetFile = File(
             "${PxEZApp.storepath}/" +
-                (if (PxEZApp.R18Folder && filename.startsWith("？")) PxEZApp.R18FolderPath else "") +
-                if (needCreateFold) "${name}_$userid" else "",
+                    (if (PxEZApp.R18Folder && filename.startsWith("？")) PxEZApp.R18FolderPath else "") +
+                    if (needCreateFold) "${name}_$userid" else "",
             filename.removePrefix("？")
         )
         try {
@@ -254,6 +270,7 @@ object Works {
             .replace("{part}", part.toString())
             .replace("{type}", type)
     }
+
     fun mirror(illust: Illust, part: Int?, url: String): String {
         var params = url.substringAfterLast(opximg).trimStart('/')
         val pname = params.substringAfterLast('/')
@@ -283,7 +300,7 @@ object Works {
                 } else {
                     getQualityUrl(illust)
                 }
-            )
+                )
         // url = mirror(illust, part, url)
         url = mirrorLinkDownload(url)
         val name = illust.user.name.toLegal()
@@ -292,8 +309,7 @@ object Works {
         val needCreateFold = pre.getBoolean("needcreatefold", false)
         val path = if (needCreateFold) {
             "${PxEZApp.storepath}/${name}_${illust.user.id}"
-        }
-        else {
+        } else {
             PxEZApp.storepath
         }
         val targetFile = File(path, filename)
@@ -330,65 +346,4 @@ object Works {
             else -> urls.large // 2
         }
     }
-
-    /*
-        @Deprecated("imgD")
-        fun imageDownloadOne(illust: Illust, part: Int?) {
-            var url = ""
-            val title = illust.title.toLegal()
-            val userName = illust.user.name.toLegal()
-            val user = illust.user.id
-            val name = illust.id
-            val format = pre.getString(
-                "saveformat",
-                "0"
-            )?.toInt()
-                ?: 0
-            val needCreateFold = pre.getBoolean("needcreatefold", false)
-            var type = ".png"
-            var filename = "${name}_p$part$type"
-            if (part != null && illust.meta_pages.isNotEmpty()) {
-                url = illust.meta_pages[part].meta_pages[0].original
-                type = if (url.contains("png")) {
-                    ".png"
-                } else ".jpg"
-                when (format) {
-                    0 -> {
-                        filename = "${name}_$part$type"
-                    }
-                    1 -> {
-                        filename = "${name}_p$part$type"
-                    }
-                    2 -> {
-                        filename = "${name}_${name}_$part$type"
-                    }
-                    3 -> {
-                        filename = "${name}_${title}_$part$type"
-                    }
-                }
-            }
-            else {
-                url = illust.meta_single_page.original_image_url!!
-                type = if (url.contains("png")) {
-                    ".png"
-                } else ".jpg"
-                when (format) {
-                    0 -> {
-                        filename = "$name$type"
-                    }
-                    1 -> {
-                        filename = "$name$type"
-                    }
-                    2 -> {
-                        filename = "${name}_$name$type"
-                    }
-                    3 -> {
-                        filename = "${name}_${title}$type"
-                    }
-                }
-            }
-
-
-        }
-    */
 }

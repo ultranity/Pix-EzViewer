@@ -75,6 +75,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         defaultComponent =
+            ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.pure")
+        normalComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.normal")
         testComponent =
             ComponentName(requireContext().packageName, "com.perol.asdpl.pixivez.triangle")
@@ -82,6 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private lateinit var defaultComponent: ComponentName
+    private lateinit var normalComponent: ComponentName
     private lateinit var testComponent: ComponentName
     private lateinit var mdComponent: ComponentName
     private fun enableComponent(componentName: ComponentName) {
@@ -115,24 +118,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return filesDir?.list(filter)
     }
 
-    private fun onClick(position: Int) {
+    private fun changeCompoent(position: Int) {
         Toasty.warning(PxEZApp.instance, R.string.changeing_icon_tip).show()
         when (position) {
             0 -> {
                 enableComponent(defaultComponent)
+                disableComponent(normalComponent)
                 disableComponent(testComponent)
                 disableComponent(mdComponent)
             }
 
             1 -> {
-                enableComponent(testComponent)
+                enableComponent(normalComponent)
                 disableComponent(defaultComponent)
+                disableComponent(testComponent)
                 disableComponent(mdComponent)
             }
 
             2 -> {
+                enableComponent(testComponent)
+                disableComponent(defaultComponent)
+                disableComponent(normalComponent)
+                disableComponent(mdComponent)
+            }
+
+            else -> {
                 enableComponent(mdComponent)
                 disableComponent(defaultComponent)
+                disableComponent(normalComponent)
                 disableComponent(testComponent)
             }
         }
@@ -520,6 +533,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @SuppressLint("CheckResult")
     private fun showApplicationIconReplacementDialog() {
         val items = listOf(
+            BasicGridItem(R.mipmap.ic_launcher_blue, "Pure"),
             BasicGridItem(R.mipmap.ic_launcher, "MD"),
             BasicGridItem(R.mipmap.ic_launcherep, "Triangle"),
             BasicGridItem(R.mipmap.ic_launchermd, "Probe")
@@ -528,7 +542,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT)).show {
             title(R.string.title_change_icon)
             gridItems(items) { _, index, _ ->
-                onClick(index)
+                changeCompoent(index)
             }
             cornerRadius(16.0F)
             negativeButton(android.R.string.cancel)

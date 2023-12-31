@@ -31,7 +31,6 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun Toast.showInMain() {
     CoroutineScope(Dispatchers.Main).launch {
@@ -46,10 +45,8 @@ object Toasty {
     private val refreshToast: Toast =
         Toast.makeText(PxEZApp.instance, R.string.token_expired, Toast.LENGTH_SHORT)
 
-    suspend fun tokenRefreshing() {
-        withContext(Dispatchers.Main) {
-            refreshToast.show()
-        }
+    fun tokenRefreshing() {
+        refreshToast.show()
     }
 
     fun tokenRefreshed(e: Exception? = null) {

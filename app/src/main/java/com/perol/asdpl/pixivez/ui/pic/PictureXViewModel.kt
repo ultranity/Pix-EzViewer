@@ -146,7 +146,7 @@ class PictureXViewModel : BaseViewModel() {
         }, {
             Toasty.warning(
                 PxEZApp.instance,
-                "PID 404: $illust_id ${it.message}"
+                "Failed pid:$illust_id ${it.message}"
             ).show()
             illustDetail.value = null
         })

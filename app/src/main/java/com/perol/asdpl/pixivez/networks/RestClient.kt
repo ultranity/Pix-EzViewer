@@ -37,6 +37,7 @@ import com.perol.asdpl.pixivez.services.Works
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -132,13 +133,7 @@ object RestClient {
     private fun headerInject(host: String, chain: Interceptor.Chain): Response {
         val isoDate = ISO8601DATETIMEFORMAT.format(Date())
         val original = chain.request()
-        var Authorization = ""
-        try {
-            Authorization = AppDataRepo.currentUser.Authorization
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("OkHttpClient", "get Authorization failed")
-        }
+        val Authorization = AppDataRepo.currentUser.Authorization
         val request = original.newBuilder()
             .header("User-Agent", UA)
             .header("App-OS", App_OS)
@@ -183,6 +178,8 @@ object RestClient {
                     } else { //if (response.message.contains(TOKEN_ERROR)) {
                         CoroutineScope(Dispatchers.Main).launch {
                             Toasty.tokenRefreshing()
+                        }
+                        runBlocking {
                             RefreshToken.getInstance()
                                 .refreshToken(AppDataRepo.currentUser.Refresh_token)
                         }

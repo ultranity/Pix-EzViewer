@@ -35,12 +35,12 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.list.listItems
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.base.KotlinUtil.asMutableList
 import com.perol.asdpl.pixivez.base.KotlinUtil.plus
 import com.perol.asdpl.pixivez.base.KotlinUtil.times
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.DialogPicListFilterBinding
@@ -245,14 +245,16 @@ fun showFilterDialog(
             }
         }
         negativeButton(R.string.sort_by) {
-            MaterialDialog(context).show {
-                val items = listItems(items = listOf(
-                    R.string.illustid,
-                    R.string.bookmark,
-                    R.string.view,
-                    R.string.view_comment,
-                    R.string.origin
-                ).map { context.getString(it) }) { dialog, index, text ->
+            MaterialDialogs(context).show {
+                setItems(
+                    arrayOf(
+                        context.getString(R.string.illustid),
+                        context.getString(R.string.bookmark),
+                        context.getString(R.string.view),
+                        context.getString(R.string.view_comment),
+                        context.getString(R.string.origin)
+                    )
+                ) { _, index ->
                     val sorted = when (index) { //in-place sort
                         0 -> picListFragment.picListAdapter.data.sortedBy { it.id }
                         1 -> picListFragment.picListAdapter.data.sortedBy { it.total_bookmarks }

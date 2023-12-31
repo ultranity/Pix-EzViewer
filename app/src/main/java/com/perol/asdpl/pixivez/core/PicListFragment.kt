@@ -36,9 +36,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
@@ -303,20 +302,18 @@ open class PicListFragment : Fragment() {
         }
 
         else -> {
+            val restrictTypes = resources.getStringArray(R.array.restrict_type)
             viewModel.restrict.observe(viewLifecycleOwner) {
                 if (viewModel.restrict.currentVersion > 0)
                     viewModel.onLoadFirst()
-                headerBinding.imgBtnR.text =
-                    resources.getStringArray(R.array.restrict_type)[viewModel.restrict.value.ordinal]
+                headerBinding.imgBtnR.text = restrictTypes[viewModel.restrict.value.ordinal]
             }
             headerBinding.imgBtnR.setOnClickListener {
-                MaterialDialog(requireContext()).show {
-                    val list = listItemsSingleChoice(
-                        R.array.restrict_type, disabledIndices = intArrayOf(),
-                        initialSelection = viewModel.restrict.value.ordinal
-                    ) { dialog, index, text ->
+                MaterialDialogs(requireContext()).show {
+                    setSingleChoiceItems(restrictTypes, viewModel.restrict.value.ordinal)
+                    { dialog, index ->
                         viewModel.restrict.checkUpdate(RESTRICT_TYPE.entries[index])
-                        headerBinding.imgBtnR.text = text
+                        headerBinding.imgBtnR.text = restrictTypes[index]
                     }
                 }
             }

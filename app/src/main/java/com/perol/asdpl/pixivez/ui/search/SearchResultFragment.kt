@@ -3,11 +3,10 @@ package com.perol.asdpl.pixivez.ui.search
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.DMutableLiveData
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.core.PicListArgs
 import com.perol.asdpl.pixivez.core.PicListExtraArgs
@@ -40,13 +39,12 @@ class SearchResultFragment : PicListFragment() {
         viewModel.query = keyword
         headerBinding.imgBtnR.setText(R.string.sort_by)
         headerBinding.imgBtnR.setOnClickListener {
-            MaterialDialog(requireContext()).show {
-                val list = listItemsSingleChoice(
-                    R.array.sort, disabledIndices = intArrayOf(),
-                    initialSelection = viewModel.sort.value
-                ) { dialog, index, text ->
+            MaterialDialogs(requireContext()).show {
+                setSingleChoiceItems(
+                    R.array.sort, viewModel.sort.value
+                ) { dialog, index ->
                     viewModel.sort.checkUpdate(index)
-                    headerBinding.imgBtnR.text = text
+                    headerBinding.imgBtnR.text = resources.getStringArray(R.array.sort)[index]
                 }
             }
         }

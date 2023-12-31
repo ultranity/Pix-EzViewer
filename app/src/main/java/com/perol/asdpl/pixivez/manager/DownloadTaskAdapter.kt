@@ -26,13 +26,12 @@
 package com.perol.asdpl.pixivez.manager
 
 import android.annotation.SuppressLint
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.aria.core.Aria
 import com.arialyy.aria.core.download.DownloadEntity
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
@@ -52,9 +51,9 @@ class DownloadTaskAdapter :
         }
         this.setOnItemLongClickListener { adapter, view, position ->
             val item = data[position]
-            MaterialDialog(context).show {
-                title(text = item.fileName)
-                listItems(R.array.download_task_choice) { _, index, string ->
+            MaterialDialogs(context).show {
+                setTitle(item.fileName)
+                setItems(R.array.download_task_choice) { _, index ->
                     when (index) {
                         0 -> {
                             Aria.download(PxEZApp.instance)

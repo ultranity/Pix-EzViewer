@@ -27,8 +27,10 @@ package com.perol.asdpl.pixivez.base
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.transition.platform.MaterialArcMotion
@@ -93,6 +95,10 @@ abstract class RinkActivity : AppCompatActivity() {
             // window.decorView.fitsSystemWindows = true
             window.navigationBarColor = Color.TRANSPARENT
             window.statusBarColor = ThemeUtil.getColorPrimary(this)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
     }
 }

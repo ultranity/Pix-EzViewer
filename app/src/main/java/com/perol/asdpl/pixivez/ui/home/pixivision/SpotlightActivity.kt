@@ -52,7 +52,7 @@ class SpotlightActivity : RinkActivity() {
     private val retrofit = RetrofitRepository.getInstance()
     private var spotlightAdapter: SpotlightAdapter? = null
     private val list = ArrayList<Spotlight>()
-    private var url = ""
+    private var pageUrl = ""
     private var num = 0
 
     private lateinit var binding: ActivitySpotlightBinding
@@ -65,11 +65,11 @@ class SpotlightActivity : RinkActivity() {
 
     private fun getData() {
         val intent = intent
-        url = intent.getStringExtra("url").toString()
+        pageUrl = intent.getStringExtra("url").toString()
         binding.textViewDesc.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
-            val contentUrl = Uri.parse(url)
+            val contentUrl = Uri.parse(pageUrl)
             intent.data = contentUrl
             startActivity(intent)
         }
@@ -78,7 +78,7 @@ class SpotlightActivity : RinkActivity() {
             val builder = OkHttpClient.Builder()
             val okHttpClient = builder.build()
             val request = Request.Builder()
-                .url(url)
+                .url(pageUrl)
                 .addHeader("Accept-Language", "${local.language}_${local.country}")
                 .build()
             val response = okHttpClient.newCall(request).execute()
@@ -94,23 +94,21 @@ class SpotlightActivity : RinkActivity() {
                 stringBuilder.append(element.text())
             }
             binding.textViewDesc.text = stringBuilder
-            for (string in urls) {
-                if (!string.contains("svg") && string.contains("https://www.pixiv.net/member_illust.php?")) {
-                    reurls.add(
-                        Integer.valueOf(
-                            string.replace(
-                                "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
-                                ""
-                            )
-                        )
-                    )
-                }
+            for (url in urls) {
+                if (!url.contains("svg"))
+                    if (url.startsWith("https://www.pixiv.net/member_illust.php")) {
+                        Uri.parse(url).getQueryParameter("illust_id")
+                            ?.toIntOrNull()?.let { reurls.add(it) }
+                    } else if (url.startsWith("https://www.pixiv.net/artworks/")) {
+                        url.replace("https://www.pixiv.net/artworks/", "")
+                            .toIntOrNull()?.let { reurls.add(it) }
+                    }
             }
             getSpolights()
         }, { })
     }
 
-    private fun getSpolights() = lifecycleScope.launch{
+    private fun getSpolights() = lifecycleScope.launch {
         for (id in reurls) {
             retrofit.api.getIllust(id).let {
                 val name = it.illust.user.name

@@ -218,12 +218,12 @@ class SaucenaoActivity : RinkActivity() {
             for (i in el.indices) {
                 val url = el[i].attr("href")
                 CrashHandler.instance.d("w", url)
-                if (url.startsWith("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=")) {
-                    val id = url.replace(
-                        "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=",
-                        ""
-                    ).toInt()
-                    arrayList.add(id)
+                if (url.startsWith("https://www.pixiv.net/member_illust.php")) {
+                    Uri.parse(url).getQueryParameter("illust_id")
+                        ?.toIntOrNull()?.let { arrayList.add(it) }
+                } else if (url.startsWith("https://www.pixiv.net/artworks/")) {
+                    url.replace("https://www.pixiv.net/artworks/", "")
+                        .toIntOrNull()?.let { arrayList.add(it) }
                 }
             }
         }

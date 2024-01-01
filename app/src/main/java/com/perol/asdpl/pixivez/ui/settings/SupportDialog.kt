@@ -178,7 +178,7 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
 
         fun checkTime(supportFragmentManager: FragmentManager): Boolean {
             val time: Long = System.currentTimeMillis()
-            return if (BuildConfig.FLAVOR == "bugly" &&
+            return if (BuildConfig.FLAVOR == "git" &&
                 TimeUnit.MILLISECONDS.toDays(
                     (time - AppDataRepo.pre.getLong("last_time_ms", time))
                 ) >= 90

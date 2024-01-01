@@ -74,7 +74,7 @@ android {
     }
     flavorDimensions += "version"
     productFlavors{
-        create("bugly") {
+        create("git") {
             dimension = "version"
             signingConfig = signingConfigs.getByName("config")
         }
@@ -109,6 +109,7 @@ android {
             isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             //buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
+            setProperty("archivesBaseName", "PixEzViewer-" + defaultConfig.versionName)
         }
         getByName("debug") {
             //applicationIdSuffix ".debug"
@@ -126,6 +127,7 @@ android {
     buildFeatures {
         //dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
     kotlinOptions {
         jvmTarget = "17"

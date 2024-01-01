@@ -212,8 +212,8 @@
     <string name="customformat_token">名前</string>
     <string name="customformat_result">結果（自動的に記入します）</string>
     <string name="summary_thanks">ご協力ありがとうございます：</string>
-    <string name="followings">ユーザー懸念</string>
-    <string name="followers">フォロワー</string>
+    <string name="followings">關注用戶</string>
+    <string name="followers">關注者</string>
     <string name="pixivision_desc2">これは型メディアの作成を提供するために\n鈍い人々の生活に不本意です！</string>
     <string name="change_to_first">最初のものを変更</string>
     <string name="notsf_subtext">開発、テスト、リリース</string>
@@ -257,8 +257,8 @@
     <string name="format">フォーマット</string>
     <string name="mirror_link_hint">i.pximg.netミラーのWebサイトは、i.pixiv.cat、original.img.pixivic.netなどのURLに設定されています。</string>
     <string name="params_desc">{time}/{ILLUSTID}_p{part}{type}を含むオリジナルのパラメータ</string>
-    <string name="mirror_link_download">ダウンロード時にミラーを有効にします</string>
-    <string name="mirror_link_view">閲覧時にイメージを有効にします</string>
+    <string name="mirror_link_download">ダウンロード時API</string>
+    <string name="mirror_link_view">閲覧時API</string>
     <string name="icon_draw_by">描画：你主人(探姬);HK流星(MD)</string>
     <string name="set_mirror">クリックしてミラーステーションを設定します</string>
     <string name="login_expired">ログインが異常です、またログインしてください</string>
@@ -278,7 +278,7 @@
     <string name="downloaded">ダウンロード済み</string>
     <string name="not_downloaded">ダウンロードしていない</string>
     <string name="state_filter">ステータス フィルタ</string>
-    <string name="not_followed">ユーザーがフォローしていません</string>
+    <string name="not_followed">Not followed</string>
     <string name="show_user_img">アバターを表示</string>
     <string name="no_button_layout">簡素化されたレイアウト</string>
     <string name="show_button_layout">キー配列</string>

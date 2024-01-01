@@ -150,9 +150,9 @@
     <string name="auto_check_update">自動檢查更新</string>
     <string name="bookmark_private">私密收藏</string>
     <string name="bookmark_public">公開收藏</string>
-    <string name="start_date">Start Date</string>
-    <string name="end_date">End Date</string>
-    <string name="choose_date">Choose Date</string>
+    <string name="start_date">開始日期</string>
+    <string name="end_date">結束日期</string>
+    <string name="choose_date">選擇時間</string>
     <string name="hide_bookmarked">隐藏已收藏圖像</string>
     <string name="summary">在剛接觸JAVA的時候邊學官方文檔邊做,摸索著完成了這個客戶端,因為個人能力的問題,出過不少丟人的BUG,優化問題,在完善這個應用的過程中，我獲得了很多</string>
     <string name="title_change_theme">更換主題</string>
@@ -163,9 +163,9 @@
     <string name="action_select">選擇</string>
     <string name="action_change">更換</string>
     <string name="create_painter_folder">為每個繪師單獨建立資料夾</string>
-    <string name="create_separate_folder">create separate folder</string>
-    <string name="create_R18_folder">創建單獨R18文件夾</string>
-    <string name="R18_folder">單獨R18文件夾名稱\n（默認xRestrict/）</string>
+    <string name="create_separate_folder">單獨建立資料夾</string>
+    <string name="create_R18_folder">創建單獨R18資料夾</string>
+    <string name="R18_folder">單獨R18資料夾名稱\n（默認xRestrict/）</string>
     <string name="R18_private">自動私密收藏</string>
     <string name="refresh_token">重新載入 token</string>
     <string name="refresh_token_fail">重新載入 token失敗</string>
@@ -235,7 +235,7 @@
     <string name="hide_downloaded">隱藏已下載圖片</string>
     <string name="only_bookmarked">只顯示已收藏</string>
     <string name="comment_successful">评论成功！</string>
-    <string name="rate_limited">速率有限。</string>
+    <string name="rate_limited">速率受限</string>
     <string name="enableonlybookmarked">允許僅顯示已收藏</string>
     <string name="supportsummary">如果你覺得這個應用還不錯，支持一下吧</string>
     <string name="welcomePR">如果你希望且有能力幫助改進這個應用，歡迎PR</string>
@@ -253,7 +253,7 @@
     <string name="action_export">導出</string>
     <string name="action_import">導入</string>
     <string name="mirror">鏡像</string>
-    <string name="url">URL.</string>
+    <string name="url">URL</string>
     <string name="format">格式</string>
     <string name="mirror_link_hint">URL中設置的i.pximg.net鏡像網站，如i.pixiv.cat，original.img.pixivic.net等</string>
     <string name="params_desc">original參數,包括{time}/{illustid}_p{part}{type}</string>
@@ -297,7 +297,7 @@
     <string name="dynamic_color">動態顏色</string>
     <string name="ai_type">AI類别</string>
     <string name="artificial">人工</string>
-    <string name="assisted">AI輔助</string>
+    <string name="assisted">疑似AI</string>
     <string name="ai_generated">AI生成</string>
     <string name="select_reverse">反選</string>
     <string name="flip">狀態反轉</string>
@@ -309,6 +309,6 @@
     <string name="changeing_icon_tip">正在嘗試更換，等待啓動器刷新</string>
     <string name="max_sanity">San值保護</string>
     <string name="check_clipboard">複製id監測</string>
-    <string name="go_to_detail">go to detail</string>
+    <string name="go_to_detail">轉到詳情</string>
     <string name="view_cache_repo">運行快取</string>
 </resources>

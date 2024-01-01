@@ -153,7 +153,7 @@
     <string name="bookmark_public">public</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
-    <string name="choose_date">Choose Date</string>
+    <string name="choose_date">Date</string>
     <string name="hide_bookmarked">Hide bookmarked pic</string>
     <string name="summary">When I first came into contact with Java, I learned from the official docs while developing, and groped to complete this client. Because of my skills there were many embarrassing bugs and optimization problems. In the process of improving this application, I got a lot developer experience and relatively profound lessons have also been helped and supported by many people.</string>
     <string name="title_change_theme">Change accent</string>
@@ -258,8 +258,8 @@
     <string name="format">format</string>
     <string name="mirror_link_hint">i.pximg.net mirror website set in the URL, such as i.pixiv.cat, original.img.pixivic.net, etc.</string>
     <string name="params_desc">Original parameters, same to {time}/{illustid}_p{part}{type}</string>
-    <string name="mirror_link_download">Use mirror website when downloading</string>
-    <string name="mirror_link_view">Use mirror website when viewing</string>
+    <string name="mirror_link_download">Alt download API</string>
+    <string name="mirror_link_view">Alt browse API</string>
     <string name="icon_draw_by">Drawing by:你主人(探姬);HK流星(MD) </string>
     <string name="set_mirror">Click to set the mirror website</string>
     <string name="login_expired">Login expired, please login again</string>
@@ -279,7 +279,7 @@
     <string name="downloaded">Downloaded</string>
     <string name="not_downloaded">not downloaded</string>
     <string name="state_filter">Status filter</string>
-    <string name="not_followed">User not following</string>
+    <string name="not_followed">Not followed</string>
     <string name="show_user_img">show avatar</string>
     <string name="no_button_layout">Simplified layout</string>
     <string name="show_button_layout">key layout</string>

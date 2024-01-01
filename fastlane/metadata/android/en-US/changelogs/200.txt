@@ -1,0 +1,13 @@
+## 2.0.0
+- [x] Feature: UI optimization for horizontal view & large screen; optional bottom navigation bar; optimized user, image details, tag blocking, search page
+- [x] Feature: Pic list sorting, filtering & UI layout customization, batch download,image count hint
+- [x] Feature: Add entry for walkthrough, new content, current cache, user related, more pictures;add user page access history, add AI/sanity information
+- [x] Feature: Trending content items can be customized now.
+- [x] Optim: global object pool & weak hash to reuse memory, auto update content status.
+- [x] Optim: more Material3 effects, allow custom theme colors (Android 11+), RTL layout
+- [x] Optim: code refactoring, reuse activity, list item reuse, kotlin flow, enhanced serialization
+- [x] Fix: token refresh request, token login
+- [x] Fix: content filter loading error, empty screen info, load more logic
+- [x] Fix: large image memory crash, comment UI, ugoira/GIF download
+- [x] Feature: Auto zero paddingwhen the number of pictures is more than 10 to facilitate sorting
+- [x] Optim: code cleanup and other adjustments

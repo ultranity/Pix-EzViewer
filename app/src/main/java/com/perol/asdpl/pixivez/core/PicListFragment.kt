@@ -124,7 +124,7 @@ open class PicListFragment : Fragment() {
         return illusts
     }
 
-    protected var onDataAddedListener: (() -> Unit)? = null
+    protected open val onDataAddedListener: (() -> Unit) = { updateHintText() }
 
     open lateinit var picListAdapter: PicListAdapter
     protected open fun ownerProducer(): ViewModelStoreOwner {
@@ -183,7 +183,7 @@ open class PicListFragment : Fragment() {
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addFilterData(it)
-                onDataAddedListener?.invoke()
+                onDataAddedListener.invoke()
             } else {
                 picListAdapter.loadMoreFail()
             }

@@ -111,7 +111,7 @@ class SelectDownloadFragment : PicListFragment() {
             setBtnHintText()
         }
     }
-
+    override val onDataAddedListener = { setBtnHintText() }
     override fun configAdapter(renew: Boolean) {
         super.configAdapter(renew)
         if (::selectedFlag.isInitialized) {
@@ -142,9 +142,6 @@ class SelectDownloadFragment : PicListFragment() {
         if (itemAnimator != null) {
             itemAnimator.changeDuration = 0
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        }
-        onDataAddedListener = {
-            setBtnHintText()
         }
     }
 

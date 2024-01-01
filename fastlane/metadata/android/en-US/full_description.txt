@@ -1,17 +1,23 @@
  !!this app requires an existing Pixiv account (No registration in app).
 
  A third-party Pixiv.net Android client. (Android 5.0+)  with:
- * anti dns-pollution support
- * aria download (speed up!)
- * custom file naming (save the information such as tags)
- * local pid detection & batch rename
- * one-click collection mode
- * night mode switch 
- * multi-user support
- * search-by-image(sauceNAO)
- * GIF play
- * Google Translate support (need to install the app)
- * view, add, reply comments
- * private LIKE/FOLLOW, separate download folder
- * sort picture by LIKE status
-and other enhancements for you to explore~
+* Multilingual support (zh-cn, zh-tw, ja-jp, en-us)
+* Material 2/3 UI, dark mode, custom theme color
+* Custom UI, horizontal view, top/bottom navbar
+* image filter, batch download
+* original size image preview, zoom in/out
+* view history, download history
+* one-click collection mode
+* multi-user support
+* aria multi thread downloader
+* anti dns-pollution support
+* custom API endpoint config
+* custom file naming (save the information such as tags)
+* local image pid detection & batch rename
+* enhanced search
+* GIF play & save
+* translation for content desc
+* view, add, reply comments
+* Pixivision support
+*auto private bookmark for restricted content, seperate download folder
+*and other enhancements for you to explore~

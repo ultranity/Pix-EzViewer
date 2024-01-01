@@ -6,39 +6,46 @@
 [![当前版本](https://img.shields.io/github/v/release/ultranity/Pix-EzViewer.svg)](https://github.com/ultranity/Pix-EzViewer/releases/latest)
  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a030ea8419b84907aeed53472abdcd91)](https://app.codacy.com/manual/ultranity/Pix-EzViewer?utm_source=github.com&utm_medium=referral&utm_content=ultranity/Pix-EzViewer&utm_campaign=Badge_Grade_Dashboard)
 [![Downloads](https://img.shields.io/github/downloads/ultranity/Pix-EzViewer/total?color=FFAA11)](https://github.com/ultranity/Pix-EzViewer/releases)
- 
-**!原作者[Notsfsssf](https://github.com/Notsfsssf)因学业及flutter android版PixEz开发原因停止维护**
 
-**经商议，从 1.5.4W 版本开始将由 [我](https://github.com/ultranity) 接手继续维护 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md),目前建议优先通过本repo提交issue进行反馈**
+基于Kotlin+jetpack
+维护的 [Pix-EzViewer](https://github.com/ultranity/Pix-EzViewer)，[点此查看更新记录及TODO](https://github.com/ultranity/Pix-EzViewer/blob/master/ReleaseNote.md)
+,目前建议优先通过本repo提交issue进行反馈
 
 ## 1.功能特性
-* aria下载加速
-* 多种自定义文件命名方式（保存tags等信息）
-* 夜间模式
+
+* Material 2/3切换，夜间模式，自定义主题
+* 自定义UI，横/竖屏自适应，可切换顶部/底部导航栏
+* 内容过滤(隐藏已收藏/已保存图片)，批量下载
+* 历史记录，下载记录
+* 一键收集模式（下载、收藏、关注三连）
 * 多用户切换
-* GIF播放、保存
+* aria下载加速
+* 通过`SSLSocket` 实现绕过 SNI 审查（旁路阻断）直连 Pixiv
+* 多种自定义文件命名方式（保存tags等信息）
+* 本地图片pid检测&批量重命名
+* 增强搜索, 图片搜索（sauceNAO）
+* GIF 播放、保存
+* 谷歌翻译（需安装app）
 * 查看\添加\回复评论
-* Pixiv特辑
+* Pixiv 特辑
 * R80显示（需自行到官网开启），自动私密收藏，独立下载文件夹
-* 隐藏已收藏图片
 * …… 更多特性请下载体验
 
-如果你觉得这个应用还不错，[点此](https://github.com/Notsfsssf/Pix-EzViewer#支持) 支持一下吧！
+如果你觉得这个应用还不错，[点此](https://github.com/Ultranity/Pix-EzViewer#支持) 支持一下吧！
 
 # 下载
 
-|                                            来源                                             |                            说明                            |
-|:-----------------------------------------------------------------------------------------:|:--------------------------------------------------------:|
-|           [GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)            | 点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时 |
-| [Google Play](https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez) |                           ~~**                           |
-|         ★推荐!** 点这个，从 Google Play 上下载<br />需要已配置好 Play 全家桶，更新方便~~<br />因bugly依赖已下架         |                                                          |
-|        [F-droid](https://f-droid.org/packages/com.perol.asdpl.play.pixivez.libre/)        |                F-droid 分发，无bugly日志，社区更新较慢                |
+|                                     来源                                      |                            说明                            |
+|:---------------------------------------------------------------------------:|:--------------------------------------------------------:|
+|    [GitHub Release](https://github.com/ultranity/Pix-EzViewer/releases)     | 点这个，在 GitHub Release 页面下载完整 APK<br />适用于没有 Play / 分享给他人时 |
+| [F-droid](https://f-droid.org/packages/com.perol.asdpl.play.pixivez.libre/) |             F-droid 分发，注意与Github release包名不同             |
 
 Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁路阻断）直连 Pixiv 的功能
 
 - 具体实现 [点此](https://github.com/Notsfsssf/Pix-EzViewer/tree/master/app/src/main/java/com/perol/asdpl/pixivez/networks) 浏览
 
-如果直连代码对你有所启发，在项目或者程序中注明我的 ID 的话，我会很高兴的ヽ✿゜▽゜)ノ
+如果直连代码对你有所启发，在项目或者程序中注明 [Notsfsssf](https://github.com/Notsfsssf) 的 ID
+的话，[Notsfsssf](https://github.com/Notsfsssf) 会很高兴的ヽ✿゜▽゜)ノ
 
 ***
 
@@ -50,8 +57,20 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 
 # Preview
 
-| ![Preview](./preview/2.jpg) | ![Preview](./preview/1.jpg) | ![Preview](./preview/3.jpg) |
-|:---------------------------:|:---------------------------:|:---------------------------:|
+## 丰富功能
+
+| ![Preview](./preview/home.jpg) | ![Preview](./preview/filter.jpg) | ![Preview](./preview/search.jpg) | ![Preview](./preview/detail_dark.jpg) |
+|:------------------------------:|:--------------------------------:|:--------------------------------:|:-------------------------------------:|
+
+## UI自定义
+
+| ![Preview](./preview/UI_config.jpg) | ![Preview](./preview/home_blue.jpg) | ![Preview](./preview/2.jpg) | ![Preview](./preview/user_blue.jpg) |
+|:-----------------------------------:|:-----------------------------------:|:---------------------------:|:-----------------------------------:|
+
+## 横屏支持
+
+| ![Preview](./preview/home_h.jpg) | ![Preview](./preview/search_h.jpg) | ![Preview](./preview/trend_h.jpg) |
+|:--------------------------------:|:----------------------------------:|:---------------------------------:|
 
 # 交流反馈
 
@@ -65,7 +84,7 @@ Java 端通过修改 `OkHttp` 的 `SSLSocket` 实现绕过 SNI 审查（即旁�
 
 此外，你可以进企鹅群交流经验或者反馈：815791942
 
-也可以在 Telegram 群交流反馈：[@PixEzViewer](https://t.me/PixEzViewer)
+也可以在 Telegram 群交流反馈：[@PixEzViewer](https://t.me/PixEz_Viewer)
 
 ## 支持
 

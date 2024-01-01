@@ -36,6 +36,7 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.transformIf
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.onClick
@@ -50,7 +51,8 @@ import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
 import kotlinx.serialization.Serializable
 
 class HelloTrendingFragment : LazyFragment() {
-    private val titles by lazy { resources.getStringArray(R.array.modellist).toList() }
+    private val titles by lazy { resources.getStringArray(R.array.mode_list).toList() }
+    private val isR18on by lazy { PxEZApp.instance.pre.getBoolean("r18on", false) }
 
     @Serializable
     class TagsBindingItem(val name: String, var index: Int) :
@@ -73,7 +75,6 @@ class HelloTrendingFragment : LazyFragment() {
     private lateinit var titleModels: List<TagsBindingItem>
 
     override fun loadData() {
-        val isR18on = PxEZApp.instance.pre.getBoolean("r18on", false)
         val adapter = RankingMAdapter(this, isR18on)
         binding.viewpager.adapter = adapter
 
@@ -134,7 +135,7 @@ class HelloTrendingFragment : LazyFragment() {
             savedInstanceState.getBooleanArray("selected")
                 ?.forEachIndexed { i, it -> titleModels[i].isSelected = it }
         } ?: run {
-            titleModels = titles.mapIndexed { i, it ->
+            titleModels = titles.transformIf(isR18on.not()) { dropLast(5) }.mapIndexed { i, it ->
                 TagsBindingItem(it, i).apply { isSelected = true }
             }
         }

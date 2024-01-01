@@ -24,7 +24,7 @@
         <item>medium (very low quality)</item>
         <item>large (low quality)</item>
     </string-array>
-    <string-array name="modellist">
+    <string-array name="mode_list">
         <item>day</item>
         <item>day_male</item>
         <item>day_female</item>

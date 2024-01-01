@@ -152,6 +152,9 @@ object UtilFunc {
 }
 
 object KotlinUtil {
+    inline fun <T> T.transformIf(condition: Boolean, block: T.() -> T): T {
+        return if (condition) block() else this
+    }
     fun <T> Collection<T>.asMutableList(): MutableList<T> {
         return when (this) {
             is java.util.ArrayList -> {

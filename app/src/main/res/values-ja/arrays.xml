@@ -24,7 +24,7 @@
         <item>標準画質（高速）</item>
         <item>高画質（低速）</item>
     </string-array>
-    <string-array name="modellist">
+    <string-array name="mode_list">
         <item>一日以内</item>
         <item>男性向け</item>
         <item>女性向け</item>

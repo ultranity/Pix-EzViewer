@@ -24,7 +24,7 @@
         <item>中圖（低畫質）</item>
         <item>大圖（中畫質）</item>
     </string-array>
-    <string-array name="modellist">
+    <string-array name="mode_list">
         <item>每日</item>
         <item>男性</item>
         <item>女性</item>

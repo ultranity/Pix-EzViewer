@@ -51,7 +51,7 @@ class AboutXFragment : PreferenceFragmentCompat() {
                 startActivity(Intent.createChooser(email, "Choose an Email Client"))
             }
             "about_feedback_telegram" -> {
-                val url = "https://t.me/PixEzViewer"
+                val url = "https://t.me/PixEz_Viewer"
                 val uri = Uri.parse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)

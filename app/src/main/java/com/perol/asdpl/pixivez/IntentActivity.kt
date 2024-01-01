@@ -38,13 +38,12 @@ import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
+import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.MainActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -178,46 +177,45 @@ class IntentActivity : RinkActivity() {
     private fun tryLogin(code: String) {
         val oAuthSecureService =
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
-        CoroutineScope(Dispatchers.Default).launch {
-            Toasty.warning(applicationContext, R.string.try_to_login).show()
-            try {
+        Toasty.warning(PxEZApp.instance, R.string.try_to_login).show()
+        try {
+            runBlocking {
                 oAuthSecureService.postAuthTokenX(code, Pkce.getPkce().verify).let {
                     val user = it.user.toUserEntity(it.refresh_token, it.access_token)
                     AppDataRepo.insertUser(user)
                 }
-                Toasty.success(applicationContext, getString(R.string.login_success)).show()
-                val intent = Intent(this@IntentActivity, MainActivity::class.java)
-                    .setAction("login.success").apply {
-                        // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
-                        flags =
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        // Or launchMode = "singleTop|singleTask"
-                    }
-                startActivity(intent)
-            } catch (e: Exception) {
-                if (e is HttpException) {
-                    try {
-                        val errorBody = e.response()?.errorBody()?.string()!!
-                        val errorResponse = gson.decodeFromString<ErrorResponse>(errorBody)
-                        var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
-                        CrashHandler.instance.e(className, errMsg)
-                        errMsg =
-                            if (errorResponse.has_error && errorResponse.errors.system.message.contains(
-                                    Regex(""".*103:.*""")
-                                )
-                            ) {
-                                getString(R.string.error_invalid_account_password)
-                            } else {
-                                getString(R.string.error_unknown) + "\n" + errMsg
-                            }
-
-                        Toasty.error(applicationContext, errMsg).show()
-                    } catch (e1: IOException) {
-                        Toasty.error(applicationContext, e.message.toString()).show()
-                    }
-                } else {
-                    Toasty.error(applicationContext, "${e.message}").show()
+            }
+            Toasty.success(PxEZApp.instance, getString(R.string.login_success)).show()
+            val intent = Intent(this@IntentActivity, MainActivity::class.java)
+                .setAction("login.success").apply {
+                    // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
+                    flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    // Or launchMode = "singleTop|singleTask"
                 }
+            startActivity(intent)
+        } catch (e: Exception) {
+            if (e is HttpException) {
+                try {
+                    val errorBody = e.response()?.errorBody()?.string()!!
+                    val errorResponse = gson.decodeFromString<ErrorResponse>(errorBody)
+                    var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
+                    CrashHandler.instance.e(className, errMsg)
+                    errMsg =
+                        if (errorResponse.has_error && errorResponse.errors.system.message.contains(
+                                Regex(""".*103:.*""")
+                            )
+                        ) {
+                            getString(R.string.error_invalid_account_password)
+                        } else {
+                            getString(R.string.error_unknown) + "\n" + errMsg
+                        }
+                    Toasty.error(PxEZApp.instance, errMsg).show()
+                } catch (e1: IOException) {
+                    Toasty.error(PxEZApp.instance, e.message.toString()).show()
+                }
+            } else {
+                Toasty.error(applicationContext, "${e.message}").show()
             }
         }
     }

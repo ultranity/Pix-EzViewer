@@ -163,6 +163,10 @@ class LoginActivity : RinkActivity() {
                 }
                 confirmButton { dialog, which ->
                     val token = getInputField(dialog).text.toString()
+                    if (token.isEmpty()) {
+                        Toasty.shortToast(R.string.refresh_token_fail)
+                        return@confirmButton
+                    }
                     lifecycleScope.launchCatching({
                         RefreshToken.getInstance().refreshToken(token, true)
                     }, {
@@ -176,8 +180,15 @@ class LoginActivity : RinkActivity() {
                             }.let { startActivity(it) }
                     }, { Toasty.shortToast(R.string.refresh_token_fail) }, Dispatchers.Main)
                 }
+                cancelButton()
                 //TODO: token login help
-                setNeutralButton(R.string.login_help) { dialog, which -> }
+                setNeutralButton(R.string.login_help) { dialog, which ->
+                    MaterialDialogs(this@LoginActivity).show {
+                        setTitle(R.string.token_login)
+                        setMessage(R.string.token_warning)
+                        confirmButton()
+                    }
+                }
             }
         }
         binding.register.setOnClickListener {

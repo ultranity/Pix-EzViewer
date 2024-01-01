@@ -107,10 +107,7 @@ object RestClient {
     // val retrofitAccount = build("https://accounts.pixiv.net", okHttpClient("accounts.pixiv.net"))
     val retrofitOauthSecure =
         build("https://oauth.secure.pixiv.net", okHttpClient("oauth.secure.pixiv.net"))
-    val retrofitOauthSecureDirect = build(
-        "https://oauth.secure.pixiv.net",
-        okHttpClient("oauth.secure.pixiv.net", true)
-    )
+    val retrofitOauthSecureDirect = build("https://oauth.secure.pixiv.net", pixivOkHttpClient)
     private val MD5 = MessageDigest.getInstance("MD5")
     private fun encode(text: String) = MD5.digest(text.toByteArray())
         .joinToString("") { "%02x".format(it) }

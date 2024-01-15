@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.GenericItem
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
@@ -48,24 +44,4 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
         onCreateDialogBinding(builder)
         return builder.create()
     }
-}
-
-fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(
-    data: List<T>, dragable: Boolean = false
-): FastAdapter<T> {
-    val recyclerView = RecyclerView(context)
-    val params = RecyclerView.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    )
-    recyclerView.layoutParams = params
-    setView(recyclerView)
-    return recyclerView.linear()
-        .setup {
-            BaseItemAdapter<T>().also {
-                if (dragable) {
-                    setDragCallback(it)
-                }
-            }.setList(data)
-        }
 }

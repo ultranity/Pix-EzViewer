@@ -55,11 +55,14 @@ import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseBindingItem
 import com.perol.asdpl.pixivez.base.MaterialDialogs
+import com.perol.asdpl.pixivez.base.onClick
+import com.perol.asdpl.pixivez.base.onLongClick
 import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.databinding.DialogApiConfigBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.databinding.SimpleTextItemBinding
+import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -383,7 +386,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 showApplicationIconReplacementDialog()
             }
 
-            "viewreport" -> {
+            "view_report" -> {
                 val list = getCrashReportFiles() ?: arrayOf()
                 val cr = list.map {
                     File(activity?.filesDir, it)
@@ -394,6 +397,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 MaterialDialogs(requireContext()).show {
                     setTitle(R.string.crash_title)
                     setItems(cr.map { LogsBindingItem(it) })
+                        .onClick { v, adapter, item, position ->
+                            MaterialDialogs(requireContext()).show {
+                                setMessage(item.text)
+                            }
+                            true
+                        }.onLongClick { v, adapter, item, position ->
+                            ClipBoardUtil.putTextIntoClipboard(requireContext(), item.text)
+                            true
+                        }
                     confirmButton()
                     setNeutralButton(R.string.clearhistory) { _, _ ->
                         list.forEach {
@@ -407,6 +419,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 MaterialDialogs(requireContext()).show {
                     setTitle("Logs")
                     setItems(CrashHandler.instance.logs.map { LogsBindingItem(it.toString()) })
+                        .onClick { v, adapter, item, position ->
+                            MaterialDialogs(requireContext()).show {
+                                setMessage(item.text)
+                            }
+                            true
+                        }.onLongClick { v, adapter, item, position ->
+                            ClipBoardUtil.putTextIntoClipboard(requireContext(), item.text)
+                            true
+                        }
                     confirmButton()
                     setNeutralButton(R.string.clearhistory) { _, _ ->
                         CrashHandler.instance.logs.clear()

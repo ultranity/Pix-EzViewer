@@ -127,7 +127,7 @@
     <string name="refreshTab_summary">Enable to reduce memory usage</string>
     <string name="changeicons">Change icons</string>
     <string name="supporttitle">Support</string>
-    <string name="viewreport">View report</string>
+    <string name="view_report">View report</string>
     <string name="needtorestart">Restart needed to apply!</string>
     <string name="collectmode">Collection mode</string>
     <string name="animation">Animation</string>

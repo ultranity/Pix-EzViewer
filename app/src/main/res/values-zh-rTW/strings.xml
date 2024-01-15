@@ -126,7 +126,7 @@
     <string name="refreshTab_summary">首頁等切換後不保留先前狀態，節省內存</string>
     <string name="changeicons">更換圖示</string>
     <string name="supporttitle">支援</string>
-    <string name="viewreport">查看報告</string>
+    <string name="view_report">查看報告</string>
     <string name="needtorestart">重新啟動程式以生效</string>
     <string name="collectmode">收圖模式</string>
     <string name="animation">動畫</string>

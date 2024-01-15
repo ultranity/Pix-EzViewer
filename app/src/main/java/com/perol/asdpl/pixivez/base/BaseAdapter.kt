@@ -55,6 +55,10 @@ fun <T : GenericItem> FastAdapter<T>.onClick(listener: ClickListener<T>): FastAd
     return this
 }
 
+fun <T : GenericItem> FastAdapter<T>.onLongClick(listener: ClickListener<T>): FastAdapter<T> {
+    onLongClickListener = listener
+    return this
+}
 fun <T : GenericItem> FastAdapter<T>.onItemClick(
     id: Int,
     listener: ClickListener<T>

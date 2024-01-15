@@ -126,7 +126,7 @@
     <string name="refreshTab_summary">メモリを節約するために、ハンドオーバ後に以前の状態を保持していないホーム、</string>
     <string name="changeicons">アイコンを変更</string>
     <string name="supporttitle">支援</string>
-    <string name="viewreport">リポートを閲覧</string>
+    <string name="view_report">リポートを閲覧</string>
     <string name="needtorestart">アプリの再起動が必要です</string>
     <string name="collectmode">図は、受信モード</string>
     <string name="animation">アニメーション</string>

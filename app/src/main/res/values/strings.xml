@@ -143,7 +143,7 @@
     <string name="refreshTab_summary">首页等切换后不保留先前状态，节省内存</string>
     <string name="changeicons">更换图标</string>
     <string name="supporttitle">支持</string>
-    <string name="viewreport">查看报告</string>
+    <string name="view_report">查看报告</string>
     <string name="needtorestart">重启应用生效</string>
     <string name="collectmode">收图模式</string>
     <string name="animation">更多动画</string>

@@ -131,8 +131,8 @@
             app:defaultValue="true"
             app:title="@string/crash_report" />
         <Preference
-            app:key="viewreport"
-            android:title="@string/viewreport" />
+            app:key="view_report"
+            android:title="@string/view_report" />
         <Preference
             app:key="view_logs"
             android:title="Logs" />

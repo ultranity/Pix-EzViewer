@@ -2,11 +2,15 @@ package com.perol.asdpl.pixivez.base
 
 import android.content.Context
 import android.content.DialogInterface
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.GenericItem
 import com.perol.asdpl.pixivez.R
 
 
@@ -90,4 +94,24 @@ fun MaterialDialogs.getInputLayout(dialog: DialogInterface): TextInputLayout {
 
 fun MaterialDialogs.getInputField(dialog: DialogInterface): TextInputEditText {
     return (dialog as AlertDialog).findViewById(R.id.edit_text)!!
+}
+
+fun <T : GenericItem> MaterialAlertDialogBuilder.setItems(
+    data: List<T>, dragable: Boolean = false
+): FastAdapter<T> {
+    val recyclerView = RecyclerView(context)
+    val params = RecyclerView.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    recyclerView.layoutParams = params
+    setView(recyclerView)
+    return recyclerView.linear()
+        .setup {
+            BaseItemAdapter<T>().also {
+                if (dragable) {
+                    setDragCallback(it)
+                }
+            }.setList(data)
+        }
 }

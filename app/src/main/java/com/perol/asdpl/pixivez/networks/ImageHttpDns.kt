@@ -39,8 +39,8 @@ object ImageHttpDns : Dns {
     private val addressList = mutableListOf<InetAddress>()
     private val defaultList = listOf(
         "210.140.92.145",
-        "210.140.92.140",
-        "210.140.92.137",
+        "210.140.92.149",
+        "210.140.92.144",
     ).map { InetAddress.getByName(it) }
     const val IPListPattern =
         "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(,\\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*\$"

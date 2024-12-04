@@ -36,31 +36,17 @@ object RubyHttpXDns : Dns {
     private val addressCacheX = mutableMapOf<String, List<InetAddress>>()
     private val ip_regex =
         "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}".toRegex()
-    private val apiAddress = listOf(
-        "app-api.pixiv.net",
-        "oauth.secure.pixiv.net",
-        "accounts.pixiv.net",
-        "s.pximg.net",
-        "i.pximg.net",
-        "imgaz.pixiv.net",
-        "sketch.pixiv.net",
-        "www.pixiv.net",
-        //"www.recaptcha.net",
-        //"www.gstatic.cn"
-    )
-
-    private val defaultApiAddress = listOf(
-        "210.140.131.220", // "210.140.131.208" //app-api.pixiv.net
-        "210.140.131.219", // "oauth.secure.pixiv.net",
-        "210.140.131.219", // "accounts.pixiv.net",
-        "210.140.92.141", // "s.pximg.net"
-        "210.140.92.140", // "i.pximg.net",
-        "210.140.131.145", // "imgaz.pixiv.net",
-        "210.140.170.179", // "sketch.pixiv.net",
-        "210.140.131.223", // "www.pixiv.net",
-        //"203.208.41.34", // "www.recaptcha.net",
-        //"203.208.40.66" // "www.gstatic.cn"
-
+    private val apiAddress = mapOf(
+        "app-api.pixiv.net" to "210.140.139.155",
+        "oauth.secure.pixiv.net" to "210.140.139.155",
+        "accounts.pixiv.net" to "210.140.131.219",
+        "s.pximg.net" to "210.140.92.141",
+        "i.pximg.net" to "210.140.92.149",
+        "imgaz.pixiv.net" to "210.140.131.145",
+        "sketch.pixiv.net" to "210.140.170.179",
+        "www.pixiv.net" to "210.140.131.223",
+        //"www.recaptcha.net" to "203.208.41.34",
+        //"www.gstatic.cn" to "203.208.40.66",
     )
 
     /*
@@ -76,8 +62,8 @@ D/httpdns: [app-api.pixiv.net.cdn.cloudflare.net./104.18.31.199, oauth.secure.pi
             //  CrashHandler.instance.d("httpdns init", "========================================")
             //  CrashHandler.instance.d("httpdns", dlookup().toString())
             //  CrashHandler.instance.d("httpdns", "========================================")
-            apiAddress.forEachIndexed { index, host ->
-                InetAddress.getByName(defaultApiAddress[index]).also {
+            for ((host, ip) in apiAddress) {
+                InetAddress.getByName(ip).also {
                     // addressCache[host]= it
                     addressCacheX[host] = listOf(it)
                 }

@@ -31,7 +31,7 @@ object ServiceFactory {
         //useAlternativeNames = false
     }
 
-    val CFDNS = DnsOverHttps("https://1.0.0.1/") // Or https://1.0.0.1/.
+    val CFDNS = DnsOverHttps("https://dns.pub") // Or https://1.0.0.1/.
     private fun DnsOverHttps(url: String): DnsOverHttps {
         return DnsOverHttps.Builder()
             .client(OkHttpClient())

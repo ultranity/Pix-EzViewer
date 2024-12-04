@@ -323,6 +323,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     // }
                     // clipboard.addPrimaryClipChangedListener {
                     val text = clipData.getItemAt(0)?.text ?: return@Runnable
+                    if (text.length > 200) return@Runnable //prevent issues 85
                     var item = Regex("""\d{7,9}""")
                         .find(text)
                         ?.value ?: Regex(getString(R.string.check_clipboard_policy))

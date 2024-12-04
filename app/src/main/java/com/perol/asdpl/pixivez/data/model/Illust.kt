@@ -29,6 +29,7 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import com.perol.asdpl.pixivez.objects.CopyFrom
 import com.perol.asdpl.pixivez.objects.IllustCacheRepo
+import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -119,8 +120,8 @@ data class IllustX(
     val page_count: Int,
     val width: Int,
     val height: Int,
-    val sanity_level: Int, //TODO: sanity_level > 5 is nsfw
-    val x_restrict: Int,
+    val sanity_level: Int, //sanity_level > 5 is nsfw, max=6
+    var x_restrict: Int, //1=nsfw, 2=18G
     val series: Series?,
     val meta: List<ImageUrlsX>,
     var total_view: Int,
@@ -142,6 +143,14 @@ data class IllustX(
         binders.remove(binder)
     }
 
+    //santiy_level + x_restrict
+    val sanity
+        get() = sanity_level + x_restrict
+    val restricted: Boolean
+        get() {
+            // if (PxEZApp.restrictSanity ==7) return x_restrict >= 1 else
+            return sanity > PxEZApp.restrictSanity
+        }
     var is_bookmarked: Boolean = false
         set(value) {
             val updated = field != value
@@ -153,7 +162,13 @@ data class IllustX(
             }
 
         }
+    fun extendUgoira(size: Int): IllustX {
+        //copy but replace meta with extended one
+        return copy(meta = meta.toMutableList().apply {
+            for (i in 1 until size) add(meta[0].clone(i, prefix = "ugoira"))
+        })
 
+    }
     override fun copyFrom(src: IllustX) {
         total_view = src.total_view
         total_bookmarks = src.total_bookmarks
@@ -207,19 +222,27 @@ class MetaPage(
     val image_urls: ImageUrlsX
 )*/
 
-/**
- * square_medium : https://i.pximg.net/c/360x360_70/img-master/img/2017/12/03/05/15/02/66137839_p0_square1200.jpg
- * medium : https://i.pximg.net/c/540x540_70/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
- * large : https://i.pximg.net/c/600x1200_90/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
- */
 @Serializable
 class ImageUrlsX(
     val large: String,
     val medium: String,
     val original: String,
     val square_medium: String
-)
+) {
+    fun clone(i: Int, src: Int = 0, prefix: String = "p") =
+        ImageUrlsX(
+            large.replace("$prefix$src", "$prefix$i"),
+            medium.replace("$prefix$src", "$prefix$i"),
+            original.replace("$prefix$src", "$prefix$i"),
+            square_medium.replace("$prefix$src", "$prefix$i")
+        )
+}
 
+/**
+ * square_medium : https://i.pximg.net/c/360x360_70/img-master/img/2017/12/03/05/15/02/66137839_p0_square1200.jpg
+ * medium : https://i.pximg.net/c/540x540_70/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
+ * large : https://i.pximg.net/c/600x1200_90/img-master/img/2017/12/03/05/15/02/66137839_p0_master1200.jpg
+ */
 @Serializable
 class ImageUrls(
     val large: String,

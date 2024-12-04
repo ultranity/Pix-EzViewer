@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.data
 
-import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.services.PxEZApp
 
@@ -87,12 +86,4 @@ object AppDataRepo {
     }
 
     suspend fun findUser(id: Int): List<UserEntity> = appDatabase.userDao().findUsers(id)
-
-    suspend fun getAllBlockTags() = appDatabase.blockTagDao().getAllTags()
-
-    suspend fun deleteSingleBlockTag(blockTagEntity: BlockTagEntity) =
-        appDatabase.blockTagDao().deleteTag(blockTagEntity)
-
-    suspend fun insertBlockTag(blockTagEntity: BlockTagEntity) =
-        appDatabase.blockTagDao().insert(blockTagEntity)
 }

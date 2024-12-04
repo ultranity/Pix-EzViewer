@@ -52,7 +52,7 @@ class NewUserActivity : RinkActivity() {
             if (url.startsWith("pixiv://account/login")) {
                 val code = Uri.parse(url).getQueryParameter("code").toString()
                 if (code.isBlank()) {
-                    Toasty.error(applicationContext, R.string.error_unknown).show()
+                    Toasty.error(applicationContext, R.string.error_unknown)
                     finish()
                     return
                 }

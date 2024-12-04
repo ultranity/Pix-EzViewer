@@ -51,24 +51,17 @@ class SearchResultFragment : PicListFragment() {
         binding.fab.visibility = View.VISIBLE
         binding.fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(requireActivity())
-            val arrayList = arrayOfNulls<String>(viewModel.starnumT.size)
+            val arrayList = Array<String>(viewModel.starnumT.size) { "" }
             for (i in viewModel.starnumT.indices) {
-                if (viewModel.starnumT[i] == 0) {
-                    arrayList[i] = ("$keyword users入り")
-                } else {
-                    arrayList[i] = (keyword + " " + viewModel.starnumT[i].toString() + "users入り")
-                }
+                arrayList[i] = if (viewModel.starnumT[i] == -1) "$keyword 000"
+                else if (viewModel.starnumT[i] == 0) "$keyword users入り"
+                else "$keyword ${viewModel.starnumT[i]}users入り"
             }
             builder.setTitle("users入り")
                 .setItems(
                     arrayList
                 ) { _, which ->
-
-                    viewModel.query = if (viewModel.starnumT[which] == 0) {
-                        "$keyword users入り"
-                    } else {
-                        keyword + " " + viewModel.starnumT[which].toString() + "users入り"
-                    }
+                    viewModel.query = arrayList[which]
                     viewModel.onLoadFirst()
                     binding.recyclerview.scrollToPosition(0)
                 }
@@ -93,7 +86,7 @@ fun Calendar?.generateDateString(): String? = this?.run {
 class SearchResultViewModel : PicListViewModel() {
     var keyword: String by PicListArgs()
     lateinit var query: String
-    val starnumT = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
+    val starnumT = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0, -1)
     val sortT = arrayOf("date_desc", "date_asc", "popular_desc")
     val searchTargetT =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
@@ -134,7 +127,7 @@ class SearchResultViewModel : PicListViewModel() {
         }
         //if (!AppDataRepository.currentUser.ispro && sort.value == 2)
         if (isPreview && sort.value == 2) {
-            Toasty.error(PxEZApp.instance, "not premium!").show()
+            Toasty.error(PxEZApp.instance, "not premium!")
             setPreview(
                 word,
                 sortT[sort.value],

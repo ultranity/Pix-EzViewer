@@ -24,12 +24,16 @@
 
 package com.perol.asdpl.pixivez.objects
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.view.Gravity
 import android.widget.Toast
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 fun Toast.showInMain() {
@@ -37,12 +41,50 @@ fun Toast.showInMain() {
         this@showInMain.show()
     }
 }
-object Toasty {
+
+
+object ToastQ {
+    data class ToastInfo(val content: String, val duration: Int, val context: String)
+
+    private val queue = MutableSharedFlow<ToastInfo>(
+        extraBufferCapacity = Int.MAX_VALUE //避免挂起导致数据发送失败
+    )
+
+    @SuppressLint("StaticFieldLeak")
     private val lToast: Toast =
-        Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_LONG)
-    private val sToast: Toast =
         Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
-    private val refreshToast: Toast =
+
+    init {
+        CoroutineScope(Dispatchers.Main).launch {
+            queue.collect {
+                //TODO: it.duration
+                lToast.setText(it.content)
+                lToast.show()
+            }
+        }
+    }
+
+    fun post(
+        stringId: Int, duration: Int = Toast.LENGTH_SHORT, context: String = "", delay: Long = 0,
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(delay)
+            queue.emit(ToastInfo(PxEZApp.instance.getString(stringId), duration, context))
+        }
+    }
+
+    fun post(
+        content: String, duration: Int = Toast.LENGTH_SHORT, context: String = "", delay: Long = 0,
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(delay)
+            queue.emit(ToastInfo(content, duration, context))
+        }
+    }
+}
+
+object Toasty {
+    private val refreshToast =
         Toast.makeText(PxEZApp.instance, R.string.token_expired, Toast.LENGTH_SHORT)
 
     fun tokenRefreshing() {
@@ -53,72 +95,54 @@ object Toasty {
         CoroutineScope(Dispatchers.Main).launch {
             refreshToast.cancel()
             if (e == null)
-                info(PxEZApp.instance, R.string.refresh_token).show()
+                info(PxEZApp.instance, R.string.refresh_token)
             else
                 info(
                     PxEZApp.instance,
                     PxEZApp.instance.getString(R.string.refresh_token_fail) + ":" + e.message,
-                ).show()
+                )
 
         }
     }
 
-    fun longToast(string: String) {
-        lToast.setText(string)
-        lToast.show()
+    fun success(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, context.getText(stringId), length).show()
     }
 
-    fun shortToast(string: String) {
-        sToast.setText(string)
-        sToast.show()
+    fun error(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG) {
+        return Toast.makeText(context, context.getText(stringId), length).show()
     }
 
-    fun longToast(string: Int) {
-        lToast.setText(string)
-        lToast.show()
-    }
-    fun shortToast(string: Int) {
-        sToast.setText(string)
-        sToast.show()
+    fun info(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, context.getText(stringId), length).show()
     }
 
-    fun success(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, context.getText(stringId), length)
+    fun warning(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG) {
+        return Toast.makeText(context, context.getText(stringId), length).show()
     }
 
-    fun error(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG): Toast {
-        return Toast.makeText(context, context.getText(stringId), length)
+    fun normal(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, context.getText(stringId), length).show()
     }
 
-    fun info(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, context.getText(stringId), length)
+    fun success(context: Context, string: String, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, string, length).show()
     }
 
-    fun warning(context: Context, stringId: Int, length: Int = Toast.LENGTH_LONG): Toast {
-        return Toast.makeText(context, context.getText(stringId), length)
+    fun error(context: Context, string: String, length: Int = Toast.LENGTH_LONG) {
+        return Toast.makeText(context, string, length).apply { setGravity(Gravity.CENTER, 0, 0) }
+            .show()
     }
 
-    fun normal(context: Context, stringId: Int, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, context.getText(stringId), length)
+    fun info(context: Context, string: String, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, string, length).show()
     }
 
-    fun success(context: Context, string: String, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, string, length)
+    fun warning(context: Context, string: String, length: Int = Toast.LENGTH_LONG) {
+        return Toast.makeText(context, string, length).show()
     }
 
-    fun error(context: Context, string: String, length: Int = Toast.LENGTH_LONG): Toast {
-        return Toast.makeText(context, string, length)
-    }
-
-    fun info(context: Context, string: String, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, string, length)
-    }
-
-    fun warning(context: Context, string: String, length: Int = Toast.LENGTH_LONG): Toast {
-        return Toast.makeText(context, string, length)
-    }
-
-    fun normal(context: Context, string: String, length: Int = Toast.LENGTH_SHORT): Toast {
-        return Toast.makeText(context, string, length)
+    fun normal(context: Context, string: String, length: Int = Toast.LENGTH_SHORT) {
+        return Toast.makeText(context, string, length).show()
     }
 }

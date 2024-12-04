@@ -22,7 +22,7 @@
 
     <string name="follow">关注</string>
     <string name="following">关注中</string>
-    <string name="following_private">（关注）</string>
+    <string name="following_private">（悄悄关注）</string>
     <string name="click">点击请我喝杯咖啡</string>
     <string name="support_string">反馈邮箱：Pix-Ez@outlook.com 欢迎通过github 反馈及star 也可以通过关于页面跳转请我喝杯咖啡</string>
     <string name="current_developer">当前开发者</string>
@@ -190,6 +190,7 @@
     <string name="back_to_the_top">双击回顶</string>
     <string name="add_to_block_tag_list">添加到屏蔽标签列表</string>
     <string name="block_tag">屏蔽标签</string>
+    <string name="block_user">屏蔽用户</string>
     <string name="block_face" translatable="false"><![CDATA[>_<]]></string>
     <string name="title_activity_manager_settings">设置</string>
     <string name="max_task_num">最大任务数</string>
@@ -275,7 +276,8 @@
     <string name="action_export">导出</string>
     <string name="action_import">导入</string>
     <string name="mirror">镜像</string>
-    <string name="url">URL</string>
+    <string name="url" translatable="false">URL</string>
+    <string name="ip" translatable="false">IP</string>
     <string name="format">格式</string>
     <string name="mirror_link_hint">URL中设置的i.pximg.net镜像网站，如i.pixiv.cat，original.img.pixivic.net等</string>
     <string name="params_desc">original参数,包括{time}/{illustid}_p{part}{type}</string>
@@ -338,5 +340,10 @@
     <string name="check_clipboard_policy" translatable="false">((pid)|(pixiv)|(画师)|(artist)|(by)|(twi(tter)?))([：:\\s]*)(\\S+)</string>
     <string name="go_to_detail">转到详情</string>
     <string name="view_cache_repo">运行缓存</string>
-    <string name="dns_proxy">dns proxy</string>
+    <string name="dns_proxy" translatable="false">dns proxy</string>
+    <string name="ip_download">强制DNS解析</string>
+    <string name="i_pximg_net_ip_list">自定义i.pximg.net IP列表,用\",\"分隔</string>
+    <string name="ip_shuffle">负载均衡</string>
+    <string name="restrict_sanity">等效 private 阈值</string>
+    <string name="view_user_blocked">User %1$d blocked, 确定打开么？</string>
 </resources>

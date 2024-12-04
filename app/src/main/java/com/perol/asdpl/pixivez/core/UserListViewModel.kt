@@ -79,13 +79,22 @@ class UserListViewModel : BaseViewModel() {
 
     // -----------------
     var userid by Delegates.notNull<Int>()
+
     // -----------------
     fun onLoadMore() {
-        subscribeNext({ retrofit.getNextSearchUser(nextUrl.value!!) }, dataAdded, nextUrl)
+        subscribeNext(
+            { retrofit.getNextSearchUser(nextUrl.value!!) },
+            dataAdded,
+            nextUrl,
+            { it.removeAll { it.user.is_blocked == true }; it })
     }
 
-    fun onLoadFirst(){
+    fun onLoadFirst() {
         isRefreshing.value = true
-        subscribeNext(onLoadFirstRx, data, nextUrl){ isRefreshing.value = false }
+        subscribeNext(
+            onLoadFirstRx,
+            data,
+            nextUrl,
+            { it.removeAll { it.user.is_blocked == true }; it }) { isRefreshing.value = false }
     }
 }

@@ -36,9 +36,11 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.widget.addTextChangedListener
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
@@ -58,10 +60,13 @@ import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onLongClick
 import com.perol.asdpl.pixivez.base.setItems
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.DialogApiConfigBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.databinding.SimpleTextItemBinding
+import com.perol.asdpl.pixivez.networks.ImageHttpDns
+import com.perol.asdpl.pixivez.networks.ImageHttpDns.ipPattern
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
@@ -122,7 +127,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun changeCompoent(position: Int) {
-        Toasty.warning(PxEZApp.instance, R.string.changeing_icon_tip).show()
+        Toasty.warning(PxEZApp.instance, R.string.changeing_icon_tip)
         when (position) {
             0 -> {
                 enableComponent(defaultComponent)
@@ -197,7 +202,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreferenceCompat>("resume_unfinished_task")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, R.string.needtorestart).show()
+            Toasty.normal(PxEZApp.instance, R.string.needtorestart)
             true
         }
         findPreference<SwitchPreferenceCompat>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -215,6 +220,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<ListPreference>("CollectMode")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.CollectMode = (newValue as String).toInt()
             snackbarRestart()
+            true
+        }
+        findPreference<ListPreference>("qualityDownload")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Works.qualityDownload = (newValue as String).toInt()
+            true
+        }
+        findPreference<SeekBarPreference>("restrictSanity")!!.apply {
+            max = AppDataRepo.currentUser.x_restrict + 6
+        }.setOnPreferenceChangeListener { preference, newValue ->
+            PxEZApp.restrictSanity = (newValue as Int)
             true
         }
     }
@@ -266,7 +281,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             if (requireContext().allPermissionsGranted(storagePermissions)) {
                 showDirectorySelectionDialog()
             } else {
-                Toasty.error(requireContext(), "Permissions not granted by the user").show()
+                Toasty.error(requireContext(), "Permissions not granted by the user")
             }
         }
     }
@@ -372,7 +387,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Toasty.info(PxEZApp.instance, "no browser found").show()
+                        Toasty.info(PxEZApp.instance, "no browser found")
                     }
                 } else {
                     val url = "https://github.com/ultranity/Pix-EzViewer"
@@ -446,9 +461,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val formatInput = binding.formatInput
         PxEZApp.instance.pre.run {
             binding.dnsProxy.isChecked = getBoolean("dnsProxy", false)
+            binding.forceIP.isChecked = getBoolean("forceIP", true)
+            binding.shuffleIP.isChecked = getBoolean("shuffleIP", true)
             binding.mirrorLinkView.isChecked = getBoolean("mirrorLinkView", false)
             binding.mirrorLinkDownload.isChecked = getBoolean("mirrorLinkDownload", false)
         }
+        binding.ipInput.setText(ImageHttpDns.customIPs.joinToString())
+        binding.ipInput.addTextChangedListener(afterTextChanged = { s -> //onTextChanged ={ s: CharSequence?, _,_,_->
+            if (!s.isNullOrEmpty()) {
+                val isValid = ipPattern.matches(s)
+                if (isValid) {
+                    binding.ipInput.error = null
+                } else {
+                    binding.ipInput.error = "Invalid IP address list format"
+                }
+            }
+        })
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
         val urlInputEditable = formatInput.editableText
@@ -464,6 +492,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             positiveButton(R.string.save) { dialog ->
                 Works.mirrorURL = "${urlInput.text}"
                 Works.mirrorFormat = "${formatInput.text}"
+                Works.forceIP = binding.forceIP.isChecked
+                ImageHttpDns.shuffleIP = binding.shuffleIP.isChecked
+                ImageHttpDns.setCustomIPs(binding.ipInput.text.toString())
                 Works.mirrorForView = binding.mirrorLinkView.isChecked
                 Works.mirrorForDownload = binding.mirrorLinkDownload.isChecked
                 findPreference<Preference>("APIConfig")!!.apply {
@@ -473,10 +504,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putString("mirrorURL", Works.mirrorURL)
                     putString("mirrorFormat", Works.mirrorFormat)
                     putBoolean("dnsProxy", binding.dnsProxy.isChecked)
+                    putBoolean("forceIP", Works.forceIP)
+                    putBoolean("shuffleIP", ImageHttpDns.shuffleIP)
+                    putString("customIPs", ImageHttpDns.customIPs.joinToString())
                     putBoolean("mirrorLinkView", Works.mirrorForView)
                     putBoolean("mirrorLinkDownload", Works.mirrorForDownload)
                 }
-                Works.spximg = Works.lookup(Works.opximg)
                 Works.smirrorURL = Works.lookup(Works.mirrorURL)
                 snackbarForceRestart()
             }

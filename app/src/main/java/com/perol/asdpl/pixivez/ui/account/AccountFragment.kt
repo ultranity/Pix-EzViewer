@@ -42,7 +42,7 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.FragmentAccountBinding
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
-import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -123,7 +123,7 @@ class AccountFragment : Fragment() {
                     try {
                         RefreshToken.getInstance().refreshToken()
                     } catch (e: Exception) {
-                        Toasty.shortToast(R.string.refresh_token_fail)
+                        ToastQ.post(R.string.refresh_token_fail)
                     }
                 }
             }

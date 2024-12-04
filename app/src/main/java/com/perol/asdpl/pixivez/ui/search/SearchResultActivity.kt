@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.ui.search
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -71,7 +70,7 @@ class SearchResultActivity : RinkActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_search_block, menu)
+        menuInflater.inflate(R.menu.menu_block_tag, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -82,7 +81,7 @@ class SearchResultActivity : RinkActivity() {
                 return true
             }
 
-            R.id.action_bloctag -> {
+            R.id.action_block_tag -> {
                 FragmentActivity.start(this, "Block")
             }
         }
@@ -103,7 +102,7 @@ class SearchResultActivity : RinkActivity() {
         binding.searchtext.text = keyword
         binding.searchtext.setOnClickListener {
             setResult(
-                Activity.RESULT_OK,
+                RESULT_OK,
                 Intent().apply {
                     putExtra("word", binding.searchtext.text.toString())
                 }

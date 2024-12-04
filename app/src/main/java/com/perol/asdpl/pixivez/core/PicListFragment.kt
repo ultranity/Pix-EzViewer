@@ -44,6 +44,7 @@ import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderFilterBinding
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.DataHolder
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.services.Event
@@ -51,7 +52,6 @@ import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
-import com.perol.asdpl.pixivez.ui.user.BookMarkTagViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import kotlinx.coroutines.launch
@@ -139,6 +139,8 @@ open class PicListFragment : Fragment() {
 
     protected open val viewModel: PicListViewModel by viewModels()
     protected val filterModel: FilterViewModel by viewModels(::ownerProducer)
+    private var emptyLoadNum: Int = 0
+    private var manualLoadNum: Int = 1
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -152,12 +154,15 @@ open class PicListFragment : Fragment() {
         )
         configAdapter(false)
         picListAdapter.checkEmptyListener = {
-            if (picListAdapter.data.size == 0) {
-                picListAdapter.showEmptyView(false)
+            if (picListAdapter.data.isEmpty()) picListAdapter.showEmptyView(false)
+            if (it == 0) {
+                emptyLoadNum++
                 //stop autoload as a warning if filter risky!
-                if (picListAdapter.mData.size > 0) {
+                if ((picListAdapter.mData.isNotEmpty()) and (emptyLoadNum >= manualLoadNum)) {
                     picListAdapter.isAutoLoadMore = false
                     picListAdapter.setOnManualLoadMoreListener {
+                        emptyLoadNum = 0
+                        manualLoadNum *= 2
                         picListAdapter.isAutoLoadMore = true
                         picListAdapter.setOnManualLoadMoreListener(null)
                     }
@@ -201,9 +206,20 @@ open class PicListFragment : Fragment() {
             //check change
             FlowEventBus.observe<Event.BlockTagsChanged>(viewLifecycleOwner) {
                 filterModel.filter.blockTags = it.blockTags
-                //refresh current
-                picListAdapter.resetFilterFlag()
+                it.diff?.apply { picListAdapter.resetFilterTag(this, it.add) }
+                    ?: picListAdapter.resetFilterFlag()
             }
+
+            FlowEventBus.observe<Event.BlockUsersChanged>(viewLifecycleOwner) {
+                filterModel.filter.blockUsers = it.blockUsers
+                it.diff?.apply { picListAdapter.resetFilterUser(this, it.add) }
+                    ?: picListAdapter.resetFilterFlag()
+            }
+        }
+        headerBinding.imgBtnConfig.setOnLongClickListener {
+            picListAdapter.isAutoLoadMore = picListAdapter.isAutoLoadMore.not()
+            ToastQ.post(if (picListAdapter.isAutoLoadMore) R.string.all_stop else R.string.loading)
+            true
         }
         headerBinding.imgBtnConfig.setOnClickListener {
             //TODO: support other layoutManager
@@ -241,22 +257,18 @@ open class PicListFragment : Fragment() {
 
     open fun configByTAG() = when (TAG) {
         TAG_TYPE.UserBookmark.name -> {
-            val tagModel: BookMarkTagViewModel by viewModels(::ownerProducer)
             headerBinding.imgBtnR.setText(R.string.publics)
             headerBinding.imgBtnR.setOnClickListener {
                 val id = extraArgs!!["userid"] as Int
-                tagModel.tags.value.also {
-                    TagsShowDialog.newInstance(id).also {
-                        it.callback =
-                            TagsShowDialog.Callback { tag, public ->
-                                extraArgs!!["tag"] = tag
-                                extraArgs!!["pub"] = public
-                                viewModel.onLoadFirst()
-                            }
-                    }.show(childFragmentManager)
-                } ?: run {
-                    //TODO: viewModel.getTags(id)
-                }
+                TagsShowDialog.newInstance(id).also {
+                    it.callback =
+                        TagsShowDialog.Callback { tag, public ->
+                            extraArgs!!["tag"] = tag
+                            extraArgs!!["pub"] = public
+                            headerBinding.imgBtnR.setText(if (public == "public") R.string.publics else R.string.privates)
+                            viewModel.onLoadFirst()
+                        }
+                }.show(childFragmentManager)
             }
         }
 

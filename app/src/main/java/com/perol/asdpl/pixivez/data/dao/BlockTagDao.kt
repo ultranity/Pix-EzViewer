@@ -12,9 +12,9 @@ abstract class BlockTagDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(query: BlockTagEntity)
 
-    @Query("SELECT * FROM blockTag")
-    abstract suspend fun getAllTags(): MutableList<BlockTagEntity>
+    @Query("SELECT * FROM blockTag ORDER BY id DESC")
+    abstract suspend fun getAll(): MutableList<BlockTagEntity>
 
     @Delete
-    abstract suspend fun deleteTag(blockTagEntity: BlockTagEntity)
+    abstract suspend fun delete(blockTagEntity: BlockTagEntity)
 }

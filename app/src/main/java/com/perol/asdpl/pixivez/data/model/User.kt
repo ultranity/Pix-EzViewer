@@ -27,6 +27,7 @@ import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import com.perol.asdpl.pixivez.objects.CopyFrom
 import com.perol.asdpl.pixivez.objects.UserCacheRepo
+import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,6 +68,14 @@ class UserX(
                     binders.forEach { it.key.value = value }
                 }
             }
+        }
+
+    var is_blocked: Boolean? = null
+        get() {
+            if (field == null) {
+                field = BlockViewModel.getBlockUIDs().contains(id)
+            }
+            return field
         }
 
     override fun copyFrom(src: User) {

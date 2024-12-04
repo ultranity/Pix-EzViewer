@@ -1,18 +1,20 @@
-package com.perol.asdpl.pixivez.manager
+package com.perol.asdpl.pixivez.ui.manager
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.fileChooser
 import com.afollestad.materialdialogs.files.folderChooser
+import com.afollestad.materialdialogs.list.listItems
 import com.arialyy.annotations.Download
 import com.arialyy.aria.core.Aria
+import com.arialyy.aria.core.download.DownloadEntity
 import com.arialyy.aria.core.download.DownloadReceiver
 import com.arialyy.aria.core.task.DownloadTask
 import com.perol.asdpl.pixivez.R
@@ -20,31 +22,32 @@ import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 import com.perol.asdpl.pixivez.databinding.DialogDownloadConfigBinding
+import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import com.perol.asdpl.pixivez.services.Works.option
+import kotlinx.serialization.encodeToString
 import java.io.File
 
 class DownloadManagerActivity : RinkActivity() {
 
     private lateinit var binding: ActivityDownloadManagerBinding
-    private lateinit var viewModel: DownLoadManagerViewModel
     private lateinit var downloadTaskAdapter: DownloadTaskAdapter
     private lateinit var aria: DownloadReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        aria = Aria.download(this)
+        aria.register()
         binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
-        viewModel = ViewModelProvider(this)[DownLoadManagerViewModel::class.java]
-        viewModel.progress.observe(this) {
-            binding.progress.text = it
-        }
-        aria = Aria.download(this)
-        aria.register()
-        //TaskSchedulers.getInstance().register(this, TaskEnum.DOWNLOAD)
+        binding.progress.text = getString(
+            R.string.fractional,
+            aria.allNotCompleteTask?.size ?: 0, aria.taskList?.size ?: 0
+        )
         downloadTaskAdapter = DownloadTaskAdapter()
         binding.progressList.apply {
             adapter = downloadTaskAdapter
@@ -61,12 +64,8 @@ class DownloadManagerActivity : RinkActivity() {
 
     private fun refreshSingle(task: DownloadTask?) {
         task?.let {
-            var index = -1
-            for (i in downloadTaskAdapter.data.indices) {
-                if (downloadTaskAdapter.data[i].id == task.downloadEntity.id) {
-                    index = i
-                    break
-                }
+            val index = downloadTaskAdapter.data.indexOfFirst { ot ->
+                ot.id == it.downloadEntity.id
             }
 
             if (index != -1) {
@@ -74,8 +73,10 @@ class DownloadManagerActivity : RinkActivity() {
                 downloadTaskAdapter.notifyItemChanged(index, it.entity)
             }
         }
-        viewModel.progress.value =
-            "${aria.allNotCompleteTask?.size ?: 0}/${aria.taskList?.size ?: 0}"
+        binding.progress.text = getString(
+            R.string.fractional,
+            aria.allNotCompleteTask?.size ?: 0, aria.taskList?.size ?: 0
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,6 +84,7 @@ class DownloadManagerActivity : RinkActivity() {
         return true
     }
 
+    @SuppressLint("CheckResult")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
@@ -129,49 +131,49 @@ class DownloadManagerActivity : RinkActivity() {
                     // wait for resumeAllTask
                     Thread.sleep(2000)
                     // restart other failed task
-                    Aria.download(this).allNotCompleteTask?.forEach {
+                    aria.allNotCompleteTask?.asReversed()?.forEach {
                         if (it.state == 0) {
-                            Aria.download(this).load(it.id).cancel(true)
+                            aria.load(it.id).cancel(false)
                             Thread.sleep(500)
                             // val illustD = gson.decodeFromString<IllustD>(item.str)
-                            Aria.download(this).load(it.url)
+                            aria.load(it.url)
                                 .setFilePath(it.filePath) // 设置文件保存的完整路径
                                 .ignoreFilePathOccupy()
                                 .setExtendField(it.str)
-                                .option(Works.option)
+                                .option(option)
                                 .create()
                             Thread.sleep(300)
                         }
                     }
                     runOnUiThread {
-                        val taskList = Aria.download(this).taskList
+                        val taskList = aria.taskList
                         if (taskList?.isNotEmpty() == true) {
                             downloadTaskAdapter.setNewInstance(taskList.asReversed())
                         }
                     }
                 }.start()
-                Aria.download(this).resumeAllTask()
+                aria.resumeAllTask()
             }
 
             R.id.action_cancel -> {
                 MaterialDialogs(this).show {
                     setMessage(R.string.all_cancel)
                     confirmButton { _, _ ->
-                        Aria.download(this).removeAllTask(false)
+                        aria.removeAllTask(false)
                     }
                 }
             }
 
             R.id.action_finished_cancel -> {
                 Thread {
-                    Aria.download(this).allCompleteTask?.forEach {
-                        Aria.download(this).load(it.id).cancel(true)
+                    aria.allCompleteTask?.forEach {
+                        aria.load(it.id).cancel(true)
                     }
                 }.start()
             }
 
             R.id.action_stop -> {
-                Aria.download(this).stopAllTask()
+                aria.stopAllTask()
             }
 
             R.id.action_restart -> {
@@ -181,16 +183,35 @@ class DownloadManagerActivity : RinkActivity() {
             R.id.action_export -> {
                 MaterialDialog(this).show {
                     folderChooser(
+                        initialDirectory = File(PxEZApp.storepath),
                         allowFolderCreation = true,
                         context = context
                     ) { _, folder ->
-                        val writer = File(folder.absolutePath + File.separatorChar + "download.log")
-                            .writer()
-                        Aria.download(this).taskList.map {
-                            writer.appendLine(it.url.substringAfterLast("/"))
+                        MaterialDialog(context).show {
+                            listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
+                                val writer =
+                                    File(folder.absolutePath + File.separatorChar + "download.log")
+                                        .writer()
+                                when (index) {
+                                    0 -> aria.taskList.forEach {
+                                        writer.appendLine(it.fileName)
+                                        writer.appendLine(it.url)
+                                        writer.appendLine(it.str)
+                                    }
+
+                                    1 -> aria.taskList.forEach {
+                                        writer.appendLine(it.url.substringAfterLast("/"))
+                                    }
+
+                                    2 -> aria.taskList.forEach {
+                                        writer.appendLine(gson.encodeToString(it))
+                                    }
+
+                                }
+                                writer.flush()
+                                writer.close()
+                            }
                         }
-                        writer.flush()
-                        writer.close()
                     }
                 }
             }
@@ -198,38 +219,66 @@ class DownloadManagerActivity : RinkActivity() {
             R.id.action_import -> {
                 MaterialDialog(this).show {
                     fileChooser(
+                        initialDirectory = File(PxEZApp.storepath),
                         filter = { it.isDirectory || it.extension == "log" },
                         context = context
                     ) { _, file ->
-                        Thread {
-                            file.readLines().forEach {
-                                val pid = (
-                                        Regex("(?<=(pid)?_?)(\\d{7,9})")
-                                            .find(it)?.value ?: ""
-                                        ).toIntOrNull()
-                                val dot = it.lastIndexOf(".")
-                                val part = (
-                                        Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
-                                            .find(it, if (dot - 4 > 0) dot - 4 else 0)?.value
-                                            ?: "0"
-                                        ).toIntOrNull()
-                                if (pid != null && part != null && !FileUtil.isDownloaded(pid)) {
-                                    Works.imgD(pid, part)
-                                    Thread.sleep(300)
-                                }
-                                /*it.split("_p",".").let {
-                                val pid = it[0].toIntOrNull()
-                                val part = it[1].toIntOrNull()
-                                if (pid!=null && part!=null)
-                                    Works.imgD(pid,part)
-                            }*/
+                        MaterialDialog(context).show {
+                            listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
+                                Thread {
+                                    when (index) {
+                                        0 -> file.readLines().chunked(3).forEach {
+                                            val targetPath =
+                                                "${PxEZApp.instance.cacheDir}${File.separator}${it[0]}"
+                                            aria.load(it[1]) // 读取下载地址
+                                                .setFilePath(targetPath) // 设置文件保存的完整路径
+                                                .ignoreFilePathOccupy()
+                                                .setExtendField(it[2])
+                                                .option(option)
+                                                .create()
+                                        }
+
+                                        1 -> file.readLines().forEach {
+                                            val pid = (
+                                                    Regex("(?<=(pid)?_?)(\\d{7,9})")
+                                                        .find(it)?.value ?: ""
+                                                    ).toIntOrNull()
+                                            val dot = it.lastIndexOf(".")
+                                            val part = (
+                                                    Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
+                                                        .find(
+                                                            it, //TODO: if necessary?
+                                                            if (dot - 4 > 0) dot - 4 else 0
+                                                        )?.value ?: "0"
+                                                    ).toIntOrNull()
+                                            if (pid != null && part != null && !FileUtil.isDownloaded(
+                                                    pid
+                                                )
+                                            ) {
+                                                Works.imgD(pid, part)
+                                                Thread.sleep(300)
+                                            }
+                                        }
+
+                                        2 -> file.readLines().forEach {
+                                            val task = gson.decodeFromString<DownloadEntity>(it)
+                                            aria.load(task.url) // 读取下载地址
+                                                .setFilePath(task.filePath) // 设置文件保存的完整路径
+                                                .ignoreFilePathOccupy()
+                                                .setExtendField(task.str)
+                                                .option(option)
+                                                .create()
+                                        }
+
+                                    }
+                                }.start()
                             }
-                        }.start()
+                        }
                     }
                 }
             }
         }
-        val taskList = Aria.download(this).taskList
+        val taskList = aria.taskList
         if (taskList?.isNotEmpty() == true) {
             downloadTaskAdapter.setNewInstance(taskList.asReversed())
         }
@@ -254,14 +303,7 @@ class DownloadManagerActivity : RinkActivity() {
     @Download.onTaskCancel
     fun onTaskCancel(task: DownloadTask) {
         task.let {
-            var index = -1
-            for (i in downloadTaskAdapter.data.indices) {
-                if (downloadTaskAdapter.data[i].id == task.downloadEntity.id) {
-                    index = i
-                    break
-                }
-            }
-
+            val index = downloadTaskAdapter.data.indexOfFirst { it.id == task.downloadEntity.id }
             if (index != -1) {
                 downloadTaskAdapter.removeAt(index)
             }
@@ -299,7 +341,7 @@ class DownloadManagerActivity : RinkActivity() {
     }
 
     override fun onDestroy() {
-        Aria.download(this).unRegister()
+        aria.unRegister()
         super.onDestroy()
     }
 

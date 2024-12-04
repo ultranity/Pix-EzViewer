@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/commentusername"
+        android:id="@+id/comment_username"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
 android:textColor="@color/colorAccent"
@@ -47,20 +47,20 @@ android:textColor="@color/colorAccent"
 
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/commentdetail"
-            app:layout_constraintStart_toEndOf="@+id/commentusername" />
+            app:layout_constraintBottom_toTopOf="@+id/comment_detail"
+            app:layout_constraintStart_toEndOf="@+id/comment_username" />
 
         <TextView
-            android:id="@+id/commentdate"
+            android:id="@+id/comment_date"
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
             tools:text="datetime"
-            app:layout_constraintBottom_toTopOf="@+id/commentdetail"
+            app:layout_constraintBottom_toTopOf="@+id/comment_detail"
             app:layout_constraintStart_toEndOf="@+id/reply_to_hit" />
 
     <TextView
-        android:id="@+id/commentdetail"
+        android:id="@+id/comment_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
 android:textIsSelectable="true"
@@ -69,7 +69,7 @@ android:textIsSelectable="true"
         tools:text="1111111122"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/commentuserimage"
-        app:layout_constraintTop_toBottomOf="@+id/commentusername" />
+        app:layout_constraintTop_toBottomOf="@+id/comment_username" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

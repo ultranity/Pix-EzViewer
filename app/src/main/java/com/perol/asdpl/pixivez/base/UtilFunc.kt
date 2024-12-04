@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.perol.asdpl.pixivez.base.KotlinUtil.Int
 import com.perol.asdpl.pixivez.data.model.Tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -133,13 +134,74 @@ object UtilFunc {
             i = nextSetBit(i)
         }
     }
+    fun BitSet.forEachNot(block: (it: Int) -> Unit) {
+        var i = nextClearBit(0)
+        while (i >= 0) {
+            block(i)
+            i = nextClearBit(i)
+        }
+    }
 
+    fun BitSet.forEachIndexed(block: (it: Int, index: Int) -> Unit) {
+        var i = nextSetBit(0)
+        var index = 0
+        while (i >= 0) {
+            block(i, index)
+            i = nextSetBit(i + 1)
+            index++
+        }
+    }
+
+    fun BitSet.forEachNotIndexed(block: (it: Int, index: Int) -> Unit) {
+        var i = nextClearBit(0)
+        var index = 0
+        var size = size
+        while (i < size) {
+            block(i, index)
+            i = nextClearBit(i + 1)
+            index++
+        }
+    }
+
+    fun BitSet.previousCount(index: Int): Int {
+        var count = get(index).Int()
+        var i = previousSetBit(index) - 1
+        while (i >= 0) {
+            count++
+            i = previousSetBit(i) - 1
+        }
+        return count
+    }
+
+    fun BitSet.getPosition(index: Int): Int {
+        var i = nextSetBit(0)
+        for (j in (index - 1).downTo(0)) {
+            i = nextSetBit(i + 1)
+        }
+        return i
+    }
+
+    fun <T> BitSet.mapIndexed(block: (it: Int) -> T): List<T> {
+        val list = mutableListOf<T>()
+        forEach {
+            list.add(block(it))
+        }
+        return list
+    }
     val BitSet.first
         get() = nextSetBit(0)
     val BitSet.last
         get() = previousSetBit(size())
     val BitSet.size: Int
         get() = cardinality()
+    inline fun BitSet.compute(block: BitSet.() -> Unit): BitSet {
+        return (this.clone() as BitSet).apply(block)
+    }
+
+    fun BitSet.flip(): BitSet {
+        flip(0, size)
+        return this
+    }
     val RoaringBitmap.size: Int
         get() = cardinality
 
@@ -155,6 +217,7 @@ object KotlinUtil {
     inline fun <T> T.transformIf(condition: Boolean, block: T.() -> T): T {
         return if (condition) block() else this
     }
+
     fun <T> Collection<T>.asMutableList(): MutableList<T> {
         return when (this) {
             is java.util.ArrayList -> {
@@ -172,6 +235,10 @@ object KotlinUtil {
     }
 
     fun Boolean.Int(): Int = if (this) 1 else 0
+    fun Boolean.alsoIf(block: () -> Unit): Boolean {
+        if (this) block()
+        return this
+    }
     operator fun Boolean.times(i: Int): Int = if (this) i else 0
     operator fun Boolean.plus(i: Int): Int = if (this) i + 1 else i
     operator fun Int.times(b: Boolean): Int = if (b) this else 0

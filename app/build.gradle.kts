@@ -105,7 +105,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            isZipAlignEnabled = true
+            //isZipAlignEnabled = true
             isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             //buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
@@ -114,7 +114,7 @@ android {
         getByName("debug") {
             //applicationIdSuffix ".debug"
             isMinifyEnabled = false
-            isZipAlignEnabled = true
+            //isZipAlignEnabled = true
             isShrinkResources = false
             isDebuggable = true
             signingConfig = signingConfigs.getByName("config")
@@ -156,6 +156,7 @@ android {
 
 
 dependencies {
+    implementation(project(":ketch"))
     implementation(project(":BRVAH"))
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
     implementation(libs.kotlin.stdlib)
@@ -226,6 +227,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.common.java8)
     // optional - ReactiveStreams support for LiveData
     //implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle")
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    //implementation(libs.androidx.lifecycle.process)
 
     //val arch = "2.1.0"
     // optional - Test helpers for LiveData
@@ -288,7 +291,7 @@ dependencies {
     ksp(libs.glide.ksp)
 
     implementation(libs.glide.transformations)
-
+    implementation(libs.gpuimage)
     implementation(libs.retrofit)
     //implementation(libs.retrofit.converter.gson)
     //implementation(libs.retrofit.kotlinx.serialization.converter) included for code  debug

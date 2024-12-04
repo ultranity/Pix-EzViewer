@@ -22,7 +22,12 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.alsoIf
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
+import com.perol.asdpl.pixivez.base.UtilFunc.compute
+import com.perol.asdpl.pixivez.base.UtilFunc.flip
+import com.perol.asdpl.pixivez.base.UtilFunc.forEachIndexed
+import com.perol.asdpl.pixivez.base.UtilFunc.forEachNotIndexed
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -31,6 +36,8 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.view.NiceImageView
+import com.perol.asdpl.pixivez.view.ResizeTransformation
+import jp.wasabeef.glide.transformations.gpu.PixelationFilterTransformation
 import java.util.BitSet
 import java.util.WeakHashMap
 import kotlin.math.max
@@ -43,8 +50,8 @@ import kotlin.math.min
 //TODO: reuse more code
 //TODO: fling optimize
 abstract class PicListAdapter(
+    val filter: PicsFilter,
     layoutResId: Int,
-    val filter: PicsFilter
 ) :
     LBaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, null) {
 
@@ -57,10 +64,10 @@ abstract class PicListAdapter(
     var mData: MutableList<Illust> = arrayListOf()
 
     //TODO:consider RoaringBitmap
+    var hidedFlag = BitSet(128) // size of mData
     var blockedFlag = BitSet(128)
     var selectedFlag = BitSet(128)
-    val filtered = BitSet(128) // size of mData
-    var checkEmptyListener: (() -> Unit)? = null // size of mData
+    var checkEmptyListener: ((Int) -> Unit)? = null // size of mData
 
     class VHStatus(
         val holder: BaseViewHolder,
@@ -80,15 +87,69 @@ abstract class PicListAdapter(
     }
 
     fun resetFilterFlag(notify: Boolean = true) {
-        filtered.clear()
+        hidedFlag.clear()
         blockedFlag.clear()
         //CoroutineScope(Dispatchers.IO).launch {
         data.clear()
         if (mData.isNotEmpty())
             addFilterData(mData)
-        checkEmptyListener?.invoke()
         if (notify)
             notifyFilterChanged()
+    }
+
+    fun resetFilterTag(tag: String, add: Boolean = false, notify: Boolean = true) {
+        //TODO: not finished
+        val visFlag = blockedFlag.compute { or(hidedFlag) }.flip()
+        var count = 0
+
+        if (add) {
+            visFlag.forEachIndexed { i, index ->
+                if (mData[index].tags.any { it.name == tag }) {
+                    //if (!filter.showBlocked)notifyItemRemoved(index - count) else
+                    notifyItemChanged(index - count)
+                    count++
+                    blockedFlag.set(i)
+                }
+            }
+        } else {
+            visFlag.forEachNotIndexed { i, index ->
+                if (mData[index].tags.any { it.name == tag }) {
+                    filter.needBlock(mData[index]).not().alsoIf {
+                        //if (!filter.showBlocked)notifyItemInserted(index + count) else
+                        notifyItemChanged(index + count)
+                        count++
+                        blockedFlag.clear(i)
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetFilterUser(UID: Int, add: Boolean = false, notify: Boolean = true) {
+        val visFlag = blockedFlag.compute { or(hidedFlag) }.flip()
+        var count = 0
+        if (add) {
+            visFlag.forEachIndexed { i, index ->
+                if (mData[index].user.id == UID) {
+                    if (!filter.showBlocked) notifyItemRemoved(index - count)
+                    else notifyItemChanged(index - count)
+                    count++
+                    blockedFlag.set(i)
+                }
+            }
+        } else {
+            visFlag.forEachNotIndexed { i, index ->
+                if (mData[index].user.id == UID) {
+                    filter.needBlock(mData[index]).not().alsoIf {
+                        if (!filter.showBlocked) notifyItemInserted(index + count)
+                        else notifyItemChanged(index + count)
+                        count++
+                        blockedFlag.clear(i)
+                    }
+                }
+            }
+        }
+        //notifyFilterChanged()
     }
 
     fun notifyFilterChanged() {
@@ -250,7 +311,7 @@ abstract class PicListAdapter(
             v.getTag(adapterID) as PicListAdapter,
             v,
             position
-        ) ?: false
+        ) == true
     }
 
     protected val illustID = "illust".hashCode()
@@ -259,8 +320,10 @@ abstract class PicListAdapter(
         holder.itemView.setTag(illustID, item)
         holder.itemView.setTag(adapterID, this)
         val pos = holder.bindingAdapterPosition - headerLayoutCount
+        //Alt1: on the flight test
         blockedFlag[pos] = filter.needBlock(item)
-        if (filter.showBlocked and blockedFlag[pos]) {
+        val blockSanity = filter.blockSanity(item)
+        if (!filter.showBlocked and (blockedFlag[pos] or blockSanity)) {
             hideItemView(holder)
             return
         }
@@ -293,14 +356,6 @@ abstract class PicListAdapter(
                 .into(mainImage)
             return
         }
-        // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
-        if (filter.blockSanity(item)) {
-            Glide.with(context)
-                .load(R.drawable.h).transition(withCrossFade())
-                .placeholder(R.drawable.h)
-                .into(mainImage)
-            return
-        }
 
         // Load Images
         mainImage.setTag(R.id.tag_first, item.meta[0].medium)
@@ -313,6 +368,16 @@ abstract class PicListAdapter(
             item.meta[0].square_medium
         } else {
             item.meta[0].medium
+        }
+        // val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+        if (blockSanity) { //show blur image
+            Glide.with(context)
+                .load(loadUrl)
+                .transition(withCrossFade())
+                .placeholder(R.drawable.h)
+                .transform(ResizeTransformation(8), PixelationFilterTransformation(4F))
+                .into(mainImage)
+            return
         }
         Glide.with(context).load(loadUrl).transition(withCrossFade())
             .placeholder(ColorDrawable(ThemeUtil.halftrans))
@@ -360,10 +425,7 @@ abstract class PicListAdapter(
 
     private fun hideItemView(holder: BaseViewHolder) {
         holder.itemView.visibility = View.GONE
-        holder.itemView.layoutParams.apply {
-            height = 0
-            width = 0
-        }
+        holder.itemView.layoutParams.apply { width = 0; height = 0 }
     }
 
     //TODO: ?????
@@ -376,10 +438,14 @@ abstract class PicListAdapter(
             mData.addAll(newData)
         val newData = newData //chunked(32)
             .filterIndexed { i, illust ->
-                filtered.set(i)
-                !filter.needHide(illust)
+                //see Alt1: which also on the flight test
+                val i = i + mData.size - newData.size
+                filter.needBlock(illust).alsoIf { blockedFlag.set(i) }
+                !filter.needHide(illust, checkSanity = !filter.showBlocked)
+                    .alsoIf { hidedFlag.set(i) }
             }
         this.data.addAll(newData)
+        checkEmptyListener?.invoke(newData.size)
         //emptyLayout?.findViewById<TextView>(R.id.text)?.text
         //setFooterView()
         if (recyclerViewOrNull?.layoutManager?.isAttachedToWindow == true) {

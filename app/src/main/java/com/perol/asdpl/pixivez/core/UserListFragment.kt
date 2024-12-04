@@ -31,6 +31,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseVBFragment
@@ -40,8 +41,11 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil.visRestrictTag
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
 import com.perol.asdpl.pixivez.objects.getMaxColumn
+import com.perol.asdpl.pixivez.services.Event
+import com.perol.asdpl.pixivez.services.FlowEventBus
 import com.perol.asdpl.pixivez.ui.FragmentActivity
 import com.perol.asdpl.pixivez.view.AverageGridItemDecoration
+import kotlinx.coroutines.launch
 
 /**
  * Fragment of userid following/followed users
@@ -126,6 +130,16 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onLoadFirst()
+        }
+        lifecycleScope.launch {
+            FlowEventBus.observe<Event.BlockUsersChanged>(viewLifecycleOwner) {
+                userListAdapter.data.forEach { user ->
+                    if (it.diff == user.user.id) {
+                        user.user.is_blocked = it.add
+                        userListAdapter.notifyItemChanged(userListAdapter.getItemPosition(user))
+                    }
+                }
+            }
         }
     }
 

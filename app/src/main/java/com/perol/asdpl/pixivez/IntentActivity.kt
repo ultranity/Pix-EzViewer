@@ -85,7 +85,7 @@ class IntentActivity : RinkActivity() {
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, R.string.wrong_id).show()
+                                Toasty.error(this, R.string.wrong_id)
                             }
                         } else if (host.contains("illusts")) {
                             try {
@@ -93,7 +93,7 @@ class IntentActivity : RinkActivity() {
                                 finish()
                                 return
                             } catch (e: Exception) {
-                                Toasty.error(this, R.string.wrong_id).show()
+                                Toasty.error(this, R.string.wrong_id)
                             }
                         }
                     }
@@ -114,7 +114,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id).show()
+                    Toasty.error(this, R.string.wrong_id)
                 }
                 return
             }
@@ -127,7 +127,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id).show()
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
                 if (segment[segment.size - 2] == "i") {
@@ -137,7 +137,7 @@ class IntentActivity : RinkActivity() {
                         finish()
                         return
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id).show()
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
             }
@@ -147,7 +147,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id).show()
+                    Toasty.error(this, R.string.wrong_id)
                 }
             }
             uri.getQueryParameter("id")?.let {
@@ -156,7 +156,7 @@ class IntentActivity : RinkActivity() {
                     finish()
                     return
                 } catch (e: Exception) {
-                    Toasty.error(this, R.string.wrong_id).show()
+                    Toasty.error(this, R.string.wrong_id)
                 }
             }
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
@@ -167,7 +167,7 @@ class IntentActivity : RinkActivity() {
                         UserMActivity.start(this, it)
                         finish()
                     } catch (e: Exception) {
-                        Toasty.error(this, R.string.wrong_id).show()
+                        Toasty.error(this, R.string.wrong_id)
                     }
                 }
             }
@@ -177,7 +177,7 @@ class IntentActivity : RinkActivity() {
     private fun tryLogin(code: String) {
         val oAuthSecureService =
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
-        Toasty.warning(PxEZApp.instance, R.string.try_to_login).show()
+        Toasty.warning(PxEZApp.instance, R.string.try_to_login)
         try {
             runBlocking {
                 oAuthSecureService.postAuthTokenX(code, Pkce.getPkce().verify).let {
@@ -185,7 +185,7 @@ class IntentActivity : RinkActivity() {
                     AppDataRepo.insertUser(user)
                 }
             }
-            Toasty.success(PxEZApp.instance, getString(R.string.login_success)).show()
+            Toasty.success(PxEZApp.instance, R.string.login_success)
             val intent = Intent(this@IntentActivity, MainActivity::class.java)
                 .setAction("login.success").apply {
                     // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
@@ -210,12 +210,12 @@ class IntentActivity : RinkActivity() {
                         } else {
                             getString(R.string.error_unknown) + "\n" + errMsg
                         }
-                    Toasty.error(PxEZApp.instance, errMsg).show()
+                    Toasty.error(PxEZApp.instance, errMsg)
                 } catch (e1: IOException) {
-                    Toasty.error(PxEZApp.instance, e.message.toString()).show()
+                    Toasty.error(PxEZApp.instance, e.message.toString())
                 }
             } else {
-                Toasty.error(applicationContext, "${e.message}").show()
+                Toasty.error(applicationContext, "${e.message}")
             }
         }
     }

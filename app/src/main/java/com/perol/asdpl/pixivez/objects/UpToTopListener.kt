@@ -39,7 +39,7 @@ class UpToTopListener(
     private var exitTime: Long = 0
     override fun onTabReselected(tab: TabLayout.Tab) {
         if ((System.currentTimeMillis() - exitTime) > 3000) {
-            Toasty.normal(PxEZApp.instance, R.string.back_to_the_top).show()
+            Toasty.normal(PxEZApp.instance, R.string.back_to_the_top)
             exitTime = System.currentTimeMillis()
         } else {
             fragmentGetter(tab.position)?.view

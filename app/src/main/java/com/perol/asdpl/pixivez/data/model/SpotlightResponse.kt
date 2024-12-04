@@ -34,7 +34,7 @@ import kotlinx.serialization.Serializable
 data class SpotlightResponse(
     override val next_url: String?,
     val spotlight_articles: MutableList<SpotlightArticlesBean>
-):INext<MutableList<SpotlightArticlesBean>> {
+) : INext<SpotlightArticlesBean> {
     override fun data() = spotlight_articles
 }
 

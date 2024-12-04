@@ -49,20 +49,24 @@ import java.io.File
 class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetail>()
     val follow = MutableLiveData<Boolean>()
-    val privateFollowed = DMutableLiveData(false)
+    val privateFollowed = MutableLiveData<Boolean>()
     val currentTab = DMutableLiveData(0, false)
 
     fun getData(userid: Int) {
         viewModelScope.launch {
-            retrofit.api.getUserDetail(userid).let {
-                userDetail.value = it
-                follow.value = it.user.is_followed
-                if (it.user.is_followed) {
-                    retrofit.api.getFollowDetail(userid).let {
-                        privateFollowed.value =
-                            it.follow_detail.restrict == RESTRICT_TYPE.private.name
+            try {
+                retrofit.api.getUserDetail(userid).let {
+                    userDetail.value = it
+                    follow.value = it.user.is_followed
+                    if (it.user.is_followed) {
+                        retrofit.api.getFollowDetail(userid).let {
+                            privateFollowed.value =
+                                it.follow_detail.restrict == RESTRICT_TYPE.private.name
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -85,10 +89,12 @@ class UserMViewModel : BaseViewModel() {
         if (!follow.value!!) {
             InteractionUtil.follow(user, true) {
                 follow.value = true
+                privateFollowed.value = true
             }
         } else {
             InteractionUtil.unfollow(user) {
                 follow.value = false
+                privateFollowed.value = false
             }
         }
     }
@@ -103,10 +109,10 @@ class UserMViewModel : BaseViewModel() {
                 builder.addFormDataPart("profile_image", file.name, body)
                 retrofit.api.postUserProfileEdit(builder.build().part(0))
                     .let {
-                        Toasty.info(PxEZApp.instance, R.string.upload_success).show()
+                        Toasty.info(PxEZApp.instance, R.string.upload_success)
                     }
             } catch (e: Exception) {
-                Toasty.info(PxEZApp.instance, R.string.update_failed).show()
+                Toasty.info(PxEZApp.instance, R.string.update_failed)
             }
         }
     }

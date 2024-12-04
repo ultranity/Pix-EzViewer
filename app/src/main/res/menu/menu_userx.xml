@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.perol.asdpl.pixivez.activity.UserActivity">
-
+    <item
+        android:id="@+id/action_block_user"
+        android:title="@string/block_user"
+        android:icon="@drawable/ic_action_block"
+        app:iconTint="?android:colorControlNormal"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share"

@@ -242,8 +242,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:valueFrom="1"
-        android:valueTo="8"
-        android:value="8"
+        android:valueTo="7"
+        android:value="7"
         android:stepSize="1" />
 
     <View

@@ -35,10 +35,10 @@ import com.perol.asdpl.pixivez.view.NiceImageView
  *  simple Adapter for image item with user imageView and save/like button
  */
 class PicListBtnUserAdapter(
-    layoutResId: Int,
-    filter: PicsFilter
+    filter: PicsFilter,
+    layoutResId: Int = R.layout.view_ranking_item,
 ) :
-    PicListBtnAdapter(layoutResId, filter) {
+    PicListBtnAdapter(filter, layoutResId) {
 
     //override fun viewPicsOptions(view: View, illust: Illust): Bundle {
     //    return PicListXUserAdapter.viewOptions(this, view, illust)

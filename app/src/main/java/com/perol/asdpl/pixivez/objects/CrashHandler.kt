@@ -31,7 +31,6 @@ import android.os.Build
 import android.os.Looper
 import android.os.Process
 import android.util.Log
-import android.view.Gravity
 import android.view.InflateException
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -101,8 +100,6 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
      * 初始化,注册Context对象,
      * 获取系统默认的UncaughtException处理器,
      * 设置该CrashHandler为程序的默认处理器
-     *
-     * @param ctx Context
      */
     fun init() {
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -132,7 +129,7 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     fun e(tag: String, msg: String, tr: Throwable? = null, toast: Boolean = false) {
         if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
         Log.e(tag, msg, tr)
-        if (toast) Toasty.error(PxEZApp.instance, msg + (tr?.message ?: "")).show()
+        if (toast) Toasty.error(PxEZApp.instance, msg + (tr?.message ?: ""))
     }
 
     /**
@@ -174,16 +171,12 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
             Looper.prepare()
             if (ex is Resources.NotFoundException || ex is InflateException
                 || ex.message != null && ex.message!!.contains("XML")) {
-                val toast = Toasty.error(
+                Toasty.error(
                     PxEZApp.instance,
                     """Missing Resource: ${ex.message}""".trimIndent()
                 )
-                toast.setGravity(Gravity.CENTER, 0, 0)
-                toast.show()
             } else if (DEBUG) {
-                val toast = Toasty.error(PxEZApp.instance, """程序出错，即将退出:${ex.message}""")
-                toast.setGravity(Gravity.CENTER, 0, 0)
-                toast.show()
+                Toasty.error(PxEZApp.instance, """程序出错，即将退出:${ex.message}""")
             }
             Looper.loop()
         }.start()

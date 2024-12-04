@@ -48,6 +48,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import io.fastkv.FastKVConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ import java.util.Locale
 
 class PxEZApp : Application() {
     lateinit var pre: SharedPreferences
+    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     @Download.onTaskComplete
     fun taskComplete(task: DownloadTask?) {
         task?.let {
@@ -85,10 +87,7 @@ class PxEZApp : Application() {
                 sourceFile.delete()
 
                 if (ShowDownloadToast) {
-                    Toasty.success(
-                        this,
-                        "${title}${getString(R.string.savesuccess)}"
-                    ).show()
+                    Toasty.success(this, "${title}${getString(R.string.savesuccess)}")
                 }
             }
         }
@@ -126,7 +125,7 @@ class PxEZApp : Application() {
             if (pre.getBoolean("resume_unfinished_task", true)
                 // && Aria.download(this).allNotCompleteTask?.isNotEmpty()
             ) {
-                // Toasty.normal(this, R.string.unfinished_task_title).show()
+                // Toasty.normal(this, R.string.unfinished_task_title)
                 Aria.download(this).allNotCompleteTask?.forEach {
                     if (it.state == 0) {
                         Aria.download(this).load(it.id).cancel()
@@ -155,6 +154,7 @@ class PxEZApp : Application() {
         R18Private = pre.getBoolean("R18Private", true)
         R18Folder = pre.getBoolean("R18Folder", false)
         R18FolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
+        restrictSanity = pre.getInt("restrictSanity", 8)
         TagSeparator = pre.getString("TagSeparator", "#")!!
         storepath = pre.getString(
             "storepath1",
@@ -230,6 +230,9 @@ class PxEZApp : Application() {
 
         @JvmStatic
         var R18FolderPath = "xrestrict"
+
+        @JvmStatic
+        var restrictSanity: Int = 8
 
         @JvmStatic
         var saveformat = ""

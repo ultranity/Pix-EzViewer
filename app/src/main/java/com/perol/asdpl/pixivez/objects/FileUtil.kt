@@ -23,6 +23,7 @@
  */
 package com.perol.asdpl.pixivez.objects
 
+import android.annotation.SuppressLint
 import android.os.Environment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
@@ -193,6 +194,7 @@ object FileUtil {
     /**
      * 格式转换应用大小 单位"B,KB,MB,GB"
      */
+    @SuppressLint("DefaultLocale")
     fun getSize(length: Float): String {
         val kb: Long = 1024
         val mb = 1024 * kb
@@ -256,7 +258,7 @@ object FileUtil {
     fun pasteFile(targetDir: String, file: File): Int {
         val newFile = File(targetDir, file.name)
         if (newFile.exists()) {
-            // Toasty.error(this,newPath+" already exists").show();
+            // Toasty.error(this,newPath+" already exists");
             return 1
         }
         else {

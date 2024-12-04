@@ -5,10 +5,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.perol.asdpl.pixivez.ui.settings.BlockTagFragment">
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipgroup"
-        app:chipSpacing="2dp"
-        android:padding="8dp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hold_to_delete" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/block_tags"
+            app:chipSpacing="2dp"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/block_user" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/block_users"
+            app:chipSpacing="2dp"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </ScrollView>

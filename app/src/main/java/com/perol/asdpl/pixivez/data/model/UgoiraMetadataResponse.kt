@@ -29,32 +29,31 @@ import kotlinx.serialization.Serializable
  * ugoira_metadata : {"zip_urls":{"medium":"https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira600x600.zip"},"frames":[{"file":"000000.jpg","delay":50},{"file":"000001.jpg","delay":50},{"file":"000002.jpg","delay":50},{"file":"000003.jpg","delay":50},{"file":"000004.jpg","delay":50},{"file":"000005.jpg","delay":50},{"file":"000006.jpg","delay":50},{"file":"000007.jpg","delay":50},{"file":"000008.jpg","delay":50},{"file":"000009.jpg","delay":50},{"file":"000010.jpg","delay":50},{"file":"000011.jpg","delay":50},{"file":"000012.jpg","delay":50},{"file":"000013.jpg","delay":50},{"file":"000014.jpg","delay":50},{"file":"000015.jpg","delay":50},{"file":"000016.jpg","delay":50},{"file":"000017.jpg","delay":50},{"file":"000018.jpg","delay":50},{"file":"000019.jpg","delay":50},{"file":"000020.jpg","delay":50},{"file":"000021.jpg","delay":50},{"file":"000022.jpg","delay":50},{"file":"000023.jpg","delay":50},{"file":"000024.jpg","delay":50},{"file":"000025.jpg","delay":50},{"file":"000026.jpg","delay":50},{"file":"000027.jpg","delay":50},{"file":"000028.jpg","delay":50},{"file":"000029.jpg","delay":50},{"file":"000030.jpg","delay":50},{"file":"000031.jpg","delay":50},{"file":"000032.jpg","delay":50},{"file":"000033.jpg","delay":50},{"file":"000034.jpg","delay":50},{"file":"000035.jpg","delay":50},{"file":"000036.jpg","delay":50},{"file":"000037.jpg","delay":50},{"file":"000038.jpg","delay":50},{"file":"000039.jpg","delay":50},{"file":"000040.jpg","delay":50},{"file":"000041.jpg","delay":50},{"file":"000042.jpg","delay":50},{"file":"000043.jpg","delay":50},{"file":"000044.jpg","delay":50},{"file":"000045.jpg","delay":50}]}
  */
 @Serializable
-class UgoiraMetadataResponse(val ugoira_metadata: UgoiraMetadataBean) {
+class UgoiraMetadataResponse(val ugoira_metadata: UgoiraMetadataBean)
 
-    /**
-     * zip_urls : {"medium":"https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira600x600.zip"}
-     * frames : [{"file":"000000.jpg","delay":50},{"file":"000001.jpg","delay":50},{"file":"000002.jpg","delay":50},{"file":"000003.jpg","delay":50},{"file":"000004.jpg","delay":50},{"file":"000005.jpg","delay":50},{"file":"000006.jpg","delay":50},{"file":"000007.jpg","delay":50},{"file":"000008.jpg","delay":50},{"file":"000009.jpg","delay":50},{"file":"000010.jpg","delay":50},{"file":"000011.jpg","delay":50},{"file":"000012.jpg","delay":50},{"file":"000013.jpg","delay":50},{"file":"000014.jpg","delay":50},{"file":"000015.jpg","delay":50},{"file":"000016.jpg","delay":50},{"file":"000017.jpg","delay":50},{"file":"000018.jpg","delay":50},{"file":"000019.jpg","delay":50},{"file":"000020.jpg","delay":50},{"file":"000021.jpg","delay":50},{"file":"000022.jpg","delay":50},{"file":"000023.jpg","delay":50},{"file":"000024.jpg","delay":50},{"file":"000025.jpg","delay":50},{"file":"000026.jpg","delay":50},{"file":"000027.jpg","delay":50},{"file":"000028.jpg","delay":50},{"file":"000029.jpg","delay":50},{"file":"000030.jpg","delay":50},{"file":"000031.jpg","delay":50},{"file":"000032.jpg","delay":50},{"file":"000033.jpg","delay":50},{"file":"000034.jpg","delay":50},{"file":"000035.jpg","delay":50},{"file":"000036.jpg","delay":50},{"file":"000037.jpg","delay":50},{"file":"000038.jpg","delay":50},{"file":"000039.jpg","delay":50},{"file":"000040.jpg","delay":50},{"file":"000041.jpg","delay":50},{"file":"000042.jpg","delay":50},{"file":"000043.jpg","delay":50},{"file":"000044.jpg","delay":50},{"file":"000045.jpg","delay":50}]
-     */
-    @Serializable
-    class UgoiraMetadataBean(
-        val zip_urls: ZipUrlsBean,
-        val frames: List<FramesBean>
-    ) {
+/**
+ * zip_urls : {"medium":"https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira600x600.zip"}
+ * frames : [{"file":"000000.jpg","delay":50},{"file":"000001.jpg","delay":50},{"file":"000002.jpg","delay":50},{"file":"000003.jpg","delay":50},{"file":"000004.jpg","delay":50},{"file":"000005.jpg","delay":50},{"file":"000006.jpg","delay":50},{"file":"000007.jpg","delay":50},{"file":"000008.jpg","delay":50},{"file":"000009.jpg","delay":50},{"file":"000010.jpg","delay":50},{"file":"000011.jpg","delay":50},{"file":"000012.jpg","delay":50},{"file":"000013.jpg","delay":50},{"file":"000014.jpg","delay":50},{"file":"000015.jpg","delay":50},{"file":"000016.jpg","delay":50},{"file":"000017.jpg","delay":50},{"file":"000018.jpg","delay":50},{"file":"000019.jpg","delay":50},{"file":"000020.jpg","delay":50},{"file":"000021.jpg","delay":50},{"file":"000022.jpg","delay":50},{"file":"000023.jpg","delay":50},{"file":"000024.jpg","delay":50},{"file":"000025.jpg","delay":50},{"file":"000026.jpg","delay":50},{"file":"000027.jpg","delay":50},{"file":"000028.jpg","delay":50},{"file":"000029.jpg","delay":50},{"file":"000030.jpg","delay":50},{"file":"000031.jpg","delay":50},{"file":"000032.jpg","delay":50},{"file":"000033.jpg","delay":50},{"file":"000034.jpg","delay":50},{"file":"000035.jpg","delay":50},{"file":"000036.jpg","delay":50},{"file":"000037.jpg","delay":50},{"file":"000038.jpg","delay":50},{"file":"000039.jpg","delay":50},{"file":"000040.jpg","delay":50},{"file":"000041.jpg","delay":50},{"file":"000042.jpg","delay":50},{"file":"000043.jpg","delay":50},{"file":"000044.jpg","delay":50},{"file":"000045.jpg","delay":50}]
+ */
+@Serializable
+class UgoiraMetadataBean(
+    val zip_urls: ZipUrlsBean,
+    val frames: List<FramesBean>
+)
 
-        /**
-         * medium : https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira600x600.zip
-         */
-        @Serializable
-        class ZipUrlsBean(val medium: String)
+/**
+ * max : https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira1920x1080.zip
+ * medium : https://i.pximg.net/img-zip-ugoira/img/2014/11/04/02/25/15/46907945_ugoira600x600.zip
+ */
+@Serializable
+class ZipUrlsBean(val medium: String)
 
-        /**
-         * file : 000000.jpg
-         * delay : 50
-         */
-        @Serializable
-        class FramesBean(
-            val file: String,
-            val delay: Int = 0
-        )
-    }
-}
+/**
+ * file : 000000.jpg
+ * delay : 50
+ */
+@Serializable
+class FramesBean(
+    val file: String,
+    val delay: Int = 0
+)

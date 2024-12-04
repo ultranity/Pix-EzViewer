@@ -253,7 +253,6 @@
     <string name="action_export">書き出す</string>
     <string name="action_import">インポート</string>
     <string name="mirror">ミラーサイト</string>
-    <string name="url">URL</string>
     <string name="format">フォーマット</string>
     <string name="mirror_link_hint">i.pximg.netミラーのWebサイトは、i.pixiv.cat、original.img.pixivic.netなどのURLに設定されています。</string>
     <string name="params_desc">{time}/{ILLUSTID}_p{part}{type}を含むオリジナルのパラメータ</string>

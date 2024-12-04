@@ -66,7 +66,7 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
         }).add()
     }*/
 
-    protected fun <T : INext<MutableList<R>>, R> subscribeNext(
+    protected fun <T : INext<R>, R> subscribeNext(
         getter: suspend () -> T,
         target: MutableLiveData<MutableList<R>?>,
         nextUrl: MutableLiveData<String?>?,

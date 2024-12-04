@@ -75,7 +75,7 @@ class UserBean(
 ){
     fun toUserEntity(refreshToken: String, accessToken: String) = UserEntity(
         id, name, mail_address,
-        is_premium, profile_image_urls.px_170x170,
+        is_premium, x_restrict, profile_image_urls.px_170x170,
         "OAuth2", refreshToken, "Bearer $accessToken"
     )
 }

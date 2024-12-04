@@ -32,7 +32,7 @@ import com.bumptech.glide.Glide
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
-import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse.CommentsBean
+import com.perol.asdpl.pixivez.data.model.CommentsBean
 import com.perol.asdpl.pixivez.objects.EmojiUtil
 import com.perol.asdpl.pixivez.objects.GlideAssetsImageGetter
 
@@ -41,24 +41,14 @@ class CommentAdapter(
     data: MutableList<CommentsBean>?
 ) : LBaseQuickAdapter<CommentsBean, BaseViewHolder>(layoutResId, data) {
     override fun convert(holder: BaseViewHolder, item: CommentsBean) {
-        holder.setText(R.id.commentdate, item.date)
-        if (item.parent_comment.user != null) {
-            holder.setText(
-                R.id.commentusername,
-                item.user.name + " to " + item.parent_comment.user.name
-            )
-        } else {
-            holder.setText(
-                R.id.commentusername,
-                item.user.name
-            )
-        }
-        val commentdetail = holder.getView<TextView>(R.id.commentdetail)
+        holder.setText(R.id.comment_date, item.date)
+        holder.setText(R.id.comment_username, item.user.name)
+        val comment_detail = holder.getView<TextView>(R.id.comment_detail)
         val comment = EmojiUtil.transform(item.comment)
-        commentdetail.text = if (comment.hashCode() == item.comment.hashCode()) {
+        comment_detail.text = if (comment.hashCode() == item.comment.hashCode()) {
             item.comment
         } else {
-            Html.fromHtml(comment, GlideAssetsImageGetter(commentdetail, "Emoji"), null)
+            Html.fromHtml(comment, GlideAssetsImageGetter(comment_detail, "Emoji"), null)
         }
 
         if (!item.user.profile_image_urls.medium!!

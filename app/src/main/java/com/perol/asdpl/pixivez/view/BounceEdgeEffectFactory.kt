@@ -74,7 +74,7 @@ class BounceEdgeEffectFactory(
 
             override fun isFinished(): Boolean {
                 // Without this, will skip future calls to onAbsorb()
-                return translationAnim?.isRunning?.not() ?: true
+                return translationAnim?.isRunning?.not() != false
             }
 
             private fun createAnim() = SpringAnimation(recyclerView, SpringAnimation.TRANSLATION_Y)

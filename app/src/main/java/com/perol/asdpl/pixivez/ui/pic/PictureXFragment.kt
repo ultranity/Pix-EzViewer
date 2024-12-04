@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.ui.pic
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.graphics.Color
@@ -46,6 +47,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.BaseFragment
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.UtilFunc.firstCommonTags
+import com.perol.asdpl.pixivez.data.HistoryDatabase
+import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.IllustCacheRepo
@@ -60,6 +63,9 @@ import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
 import com.perol.asdpl.pixivez.view.loadUserImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 
@@ -106,24 +112,37 @@ class PictureXFragment : BaseFragment() {
     /**
      * Block view and return true if need block.
      */
-    private fun checkBlockThenLoad(illust: Illust): Boolean {
-        val blockTags = BlockViewModel.getBlockTagString()
-        //tags.forEach { if (blockTags.contains(it.name)) needBlock = true }
-        firstCommonTags(blockTags, illust.tags)?.let {
-            //needBlock = true
-            binding.blocktagTextview.text = it.vis()
-            binding.blocktagInfo.text = illust.title
+    @SuppressLint("SetTextI18n")
+    private fun checkBlockThenLoad(illust: Illust) {
+        illustBlocked = BlockViewModel.getBlockUIDs().contains(illust.user.id).also {
+            binding.blocktagTextview.text = illust.user.id.toString()
+            binding.blocktagInfo.text = illust.user.name
+        } || run {
+            val blockTags = BlockViewModel.getBlockTagString()
+            firstCommonTags(blockTags, illust.tags)?.also {
+                binding.blocktagTextview.text = it.vis()
+                binding.blocktagInfo.text = illust.title
+            } != null
+        }
+        if (illustBlocked) {
             binding.blockView.visibility = View.VISIBLE
             binding.recyclerview.visibility = View.GONE
             binding.blockView.bringToFront()
-            loadIllust(illust)
-            return true
+        } else {
+            binding.blockView.visibility = View.GONE
+            binding.recyclerview.visibility = View.VISIBLE
+            val historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
+            CoroutineScope(Dispatchers.IO).launch {
+                val ee = historyDatabase.viewHistoryDao().getEntity(illust.id)
+                if (ee != null) {
+                    historyDatabase.viewHistoryDao().increment(ee)
+                } else
+                    historyDatabase.viewHistoryDao().insert(
+                        HistoryEntity(illust.id, illust.title, illust.meta[0].square_medium)
+                    )
+            }
         }
-        //var needBlock = false
-        binding.blockView.visibility = View.GONE
-        binding.recyclerview.visibility = View.VISIBLE
         loadIllust(illust)
-        return false
     }
 
     private fun initViewModel() {
@@ -195,12 +214,13 @@ class PictureXFragment : BaseFragment() {
         pictureXViewModel.progress.observe(viewLifecycleOwner) {
             pictureXAdapter?.setProgress(it)
         }
-        pictureXViewModel.downloadGifSuccess.observe(viewLifecycleOwner) {
+        pictureXViewModel.downloadUgoiraZipSuccess.observe(viewLifecycleOwner) {
             pictureXAdapter?.setProgressComplete(it)
         }
     }
 
     private var illustLoaded = false
+    private var illustBlocked = false
     private fun loadIllust(it: Illust) {
         if (illustLoaded) return
         illustLoaded = true

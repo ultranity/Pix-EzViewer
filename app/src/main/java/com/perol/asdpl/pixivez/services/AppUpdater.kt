@@ -13,7 +13,7 @@ import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
-import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.ToastQ
 import io.noties.markwon.Markwon
 import kotlinx.serialization.SerialName
 import java.net.URL
@@ -71,7 +71,7 @@ object AppUpdater {
 
                 activity.runOnUiThread {
                     if (newUpdateAvailable == null) {
-                        Toasty.shortToast(R.string.update_failed)
+                        ToastQ.post(R.string.update_failed)
                         return@runOnUiThread
                     }
                     // obtain an instance of Markwon

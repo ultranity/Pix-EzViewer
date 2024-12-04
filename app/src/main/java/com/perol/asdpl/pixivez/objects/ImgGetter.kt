@@ -69,11 +69,7 @@ class GlideAssetsImageGetter(textView: TextView, private val folder: String = ""
  */
 open class GlideImageGetter(textView: TextView) : ImageGetter {
 
-    val container: WeakReference<TextView>
-
-    init {
-        container = WeakReference(textView)
-    }
+    val container: WeakReference<TextView> = WeakReference(textView)
 
     override fun getDrawable(source: String): Drawable {
         val drawable = BitmapDrawablePlaceholder()

@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -140,10 +139,7 @@ class SaucenaoActivity : RinkActivity() {
                             out.flush()
                             out.close()
                         }
-                        Toasty.success(
-                            this,
-                            R.string.saucenao_compress_success
-                        ).show()
+                        Toasty.success(this, R.string.saucenao_compress_success)
                         val builder = MultipartBody.Builder()
                         builder.setType(MultipartBody.FORM)
                         /*val baos = ByteArrayOutputStream();
@@ -168,10 +164,7 @@ class SaucenaoActivity : RinkActivity() {
                             file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                         )
                         lifecycleScope.launchCatching({ api.search(builder.build().part(0)) }, {
-                            Toasty.success(
-                                PxEZApp.instance,
-                                getString(R.string.saucenao_upload_success),
-                            ).show()
+                            Toasty.success(PxEZApp.instance, R.string.saucenao_upload_success)
                             if (file.exists()) {
                                 file.delete()
                             }
@@ -180,7 +173,7 @@ class SaucenaoActivity : RinkActivity() {
                             Toasty.error(
                                 PxEZApp.instance,
                                 getString(R.string.saucenao_upload_error) + it.message
-                            ).show()
+                            )
                             if (file.exists()) {
                                 file.delete()
                             }
@@ -193,7 +186,7 @@ class SaucenaoActivity : RinkActivity() {
 
     lateinit var api: SaucenaoService
     private fun trySearch(path: String) {
-        Toasty.success(this, R.string.saucenao_compress_success).show()
+        Toasty.success(this, R.string.saucenao_compress_success)
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -202,11 +195,11 @@ class SaucenaoActivity : RinkActivity() {
         lifecycleScope.launchCatching({
             api.search(builder.build().part(0))
         }, {
-            Toasty.success(this, R.string.saucenao_upload_success).show()
+            Toasty.success(this, R.string.saucenao_upload_success)
             tryToParseHtml(it.string())
         },
             {
-                Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message).show()
+                Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message)
             })
     }
 
@@ -231,7 +224,7 @@ class SaucenaoActivity : RinkActivity() {
 
         if (arrayList.isNotEmpty()) {
             val it = arrayList.toIntArray()
-            Toasty.success(this, "id: " + it[0].toString()).show()
+            Toasty.success(this, "id: " + it[0].toString())
             PictureActivity.start(this, it[0], it)
         } else {
             Glide.with(this).load(
@@ -267,7 +260,7 @@ class SaucenaoActivity : RinkActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == IMAGE && resultCode == RESULT_OK && data != null) {
             val selectedImage = data.data
             val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
             val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)

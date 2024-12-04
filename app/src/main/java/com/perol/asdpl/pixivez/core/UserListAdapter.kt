@@ -85,6 +85,11 @@ class UserListAdapter(layoutResId: Int) :
     }
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: UserPreviewsBean) {
+        if (item.user.is_blocked == true) {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams.apply { width = 0; height = 0 }
+            return
+        }
         val recyclerview = holder.getView<RecyclerView>(R.id.recyclerview_usershow)
         if (item.illusts.isNotEmpty()) {
             val userShowIllustAdapter: SquareMediumAdapter

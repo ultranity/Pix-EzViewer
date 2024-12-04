@@ -33,16 +33,19 @@ import com.arialyy.aria.core.common.HttpOption
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.UgoiraMetadataBean
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.ToastQ
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import java.io.File
 
 fun String.toLegal(): String {
@@ -55,13 +58,10 @@ fun String.toLegal(): String {
 @Serializable
 class IllustD(
     var id: Int = 0,
-    var preview: String? = null,
     var part: Int = 0,
     var userId: Int = 0,
     var userName: String? = null,
-    var userAvatar: String? = null,
-    var title: String? = null,
-    var url: String
+    var title: String? = null
 )
 
 fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: Int): String {
@@ -105,9 +105,6 @@ object Works {
         R18Folder: Boolean
     ): String {
         val url: String
-        val tag = if (saveformat.contains("{tag")) {
-            illust.tags
-        } else null
         var filename = saveformat.replace("{illustid}", illust.id.toString())
             .replace("{userid}", illust.user.id.toString())
             .replace(
@@ -116,7 +113,7 @@ object Works {
                     .toLegal()
             )
             .replace("{account}", illust.user.account.toLegal())
-            .replace("{R18}", if (illust.x_restrict == 1) "R18" else "")
+            .replace("{R18}", if (illust.restricted) "R18" else "")
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
         if (part != null && part < illust.meta.size) {
@@ -134,7 +131,7 @@ object Works {
         } else { //error config
             throw Error("part $part while illust.meta.size ${illust.meta.size}")
         }
-        if (R18Folder && illust.x_restrict == 1) {
+        if (R18Folder && illust.restricted) {
             filename = "？$filename"
         }
 
@@ -145,21 +142,22 @@ object Works {
         }
         filename = filename.replace("{type}", type)
         if (saveformat.contains("{tagsm")) {
-            filename = filename.replace(
-                "{tagsm}",
-                tag!!.map { it.translated_name + "_" + it.name }
-                    .distinct().sortedBy { it.length }
-                    .joinToString(TagSeparator, limit = 8).take(110 - filename.length).toLegal()
+            filename = filename.replace("{tagsm}",
+                byteLimit(illust.tags.map { it.translated_name + "_" + it.name }
+                    .distinct().sortedBy { it.length },
+                    illust.title,
+                    TagSeparator,
+                    253 - filename.toByteArray().size)
             )
         } else if (saveformat.contains("{tagso")) {
-            filename = filename.replace(
-                "{tagso}",
-                tag!!.map { it.name }
-                    .distinct().sortedBy { it.length }
-                    .joinToString(TagSeparator).take(110 - filename.length).toLegal()
+            filename = filename.replace("{tagso}",
+                byteLimit(illust.tags.map { it.name }.distinct().sortedBy { it.length },
+                    illust.title,
+                    TagSeparator,
+                    253 - filename.toByteArray().size)
             )
         } else if (saveformat.contains("{tags")) {
-            val tags = tag!!.map {
+            val tags = illust.tags.map {
                 it.translated_name?.let { ot ->
                     if (ot.length < it.name.length * 2.5) ot else it.name
                 } ?: it.name
@@ -187,7 +185,7 @@ object Works {
             file.copyTo(targetFile, overwrite = true)
             file.delete()
             if (PxEZApp.ShowDownloadToast) {
-                Toasty.shortToast(R.string.savesuccess)
+                ToastQ.post(R.string.savesuccess)
             }
             MediaScannerConnection.scanFile(
                 PxEZApp.instance,
@@ -213,7 +211,7 @@ object Works {
 
     fun imageDownloadAll(illust: Illust) {
         if (PxEZApp.ShowDownloadToast) {
-            Toasty.shortToast(R.string.join_download_queue)
+            ToastQ.post(R.string.join_download_queue)
         }
         CoroutineScope(Dispatchers.IO).launch {
             if (illust.meta.size == 1) {
@@ -226,11 +224,63 @@ object Works {
         }
     }
 
+    fun ugoiraDownloadAll(ugoira: Illust, ugoiraMetadata: UgoiraMetadataBean) {
+        val targetPath = "${PxEZApp.instance.cacheDir}${File.separator}${ugoira.id}"
+        val taskID = Aria.download(PxEZApp.instance)
+            .loadGroup(when (qualityDownload) {
+                0 -> ugoira.meta.map { it.medium }
+                1 -> ugoira.meta.map { it.large }
+                else -> ugoira.meta.map { it.original }
+            }.map { mirrorLinkDownload(it) })
+            .setDirPath(targetPath)
+            .setSubFileName(ugoiraMetadata.frames.map { it.file })
+            .setGroupAlias(ugoira.id.toString())
+            .unknownSize()
+            .option(option)
+            .create()
+        return
+        val name = ugoira.user.name.toLegal()
+        val title = ugoira.title.toLegal()
+        for (i in ugoira.meta.indices) {
+            var url = (
+                    if (ugoira.meta.size > 1) {
+                        getQualityUrl(ugoira, i)
+                    } else {
+                        getQualityUrl(ugoira)
+                    }
+                    )
+            /*val illustD = IllustD(
+                id = ugoira.id,
+                part = i,
+                userName = name,
+                userId = ugoira.user.id,
+                title = title
+            )
+            val illustDString  = gson.encodeToString(illustD)*/
+            // create json string without create object
+            val illustDString = buildJsonObject {
+                put("id", JsonPrimitive(ugoira.id))
+                put("part", JsonPrimitive(i))
+                put("userName", JsonPrimitive(name))
+                put("userId", JsonPrimitive(ugoira.user.id))
+                put("title", JsonPrimitive(title))
+            }.toString()
+            Aria.download(PxEZApp.instance)
+                .load(url) // 读取下载地址
+                .setFilePath(targetPath) // 设置文件保存的完整路径
+                .ignoreFilePathOccupy()
+                .setExtendField(illustDString)
+                .option(option)
+                .create()
+        }
+    }
+
     val option by lazy {
         HttpOption()
             .apply {
                 addHeader("User-Agent", RestClient.UA)
-                addHeader("referer", "https://app-api.pixiv.net/")
+                addHeader("referer", "https://www.pixiv.net/")
+                addHeader("host", "i.pximg.net")
             }
     }
     var mirrorForView = pre.getBoolean("mirrorLinkView", false)
@@ -238,10 +288,12 @@ object Works {
     const val opximg = "i.pximg.net"
     var mirrorURL = pre.getString("mirrorURL", opximg)!!
     var mirrorFormat = pre.getString("mirrorFormat", "{host}/{params}")!!
-    var spximg = lookup(opximg)
+    var forceIP = pre.getBoolean("forceIP", true)
+    val spximg
+        get() = lookup(opximg)
     var smirrorURL = lookup(mirrorURL)
     fun lookup(url: String): String {
-        return if (pre.getBoolean("dnsProxy", false)) {
+        return if (pre.getBoolean("dnsProxy", false) and forceIP) {
             ImageHttpDns.lookup(url)[0].hostAddress!!
         } else {
             url
@@ -249,7 +301,7 @@ object Works {
     }
 
     fun mirrorLinkView(url: String) = mirror(url, mirrorForView)
-    private fun mirrorLinkDownload(url: String) = mirror(url, mirrorForDownload)
+    fun mirrorLinkDownload(url: String) = mirror(url, mirrorForDownload)
     private fun mirror(url: String, mirror: Boolean = true): String {
         if (!mirror) {
             return url.replace(opximg, spximg)
@@ -314,18 +366,15 @@ object Works {
         }
         val targetFile = File(path, filename)
         if (targetFile.exists()) {
-            Toasty.shortToast(R.string.alreadysaved)
+            ToastQ.post(R.string.alreadysaved)
             return
         }
         val illustD = IllustD(
             id = illust.id,
-            part = part ?: 0,
-            preview = illust.meta[0].square_medium,
+            part = part ?: -1,
             userName = name,
             userId = illust.user.id,
-            userAvatar = illust.user.profile_image_urls.medium,
-            title = title,
-            url = url
+            title = title
         )
         val targetPath = "${PxEZApp.instance.cacheDir}${File.separator}$filename"
         Aria.download(PxEZApp.instance)
@@ -337,13 +386,14 @@ object Works {
             .create()
     }
 
+    var qualityDownload: Int = pre.getString("qualityDownload", "2")!!.toInt()
     private fun getQualityUrl(illust: Illust, part: Int = 0): String {
         //TODO if need: val part = part.coerceAtMost(illust.meta_pages.size - 1)
         val urls = illust.meta[part]
-        return when (pre.getString("quality_download", "0")?.toInt()) {
-            0 -> urls.original
-            1 -> urls.medium
-            else -> urls.large // 2
+        return when (qualityDownload) {
+            0 -> urls.medium
+            1 -> urls.large
+            else -> urls.original // 2
         }
     }
 }

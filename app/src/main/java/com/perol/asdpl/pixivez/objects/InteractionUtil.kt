@@ -12,7 +12,7 @@ import kotlinx.coroutines.MainScope
 object InteractionUtil {
     private val retrofit: RetrofitRepository = RetrofitRepository.getInstance()
 
-    fun need_restrict(item: Illust) = (PxEZApp.R18Private && item.x_restrict == 1)
+    fun need_restrict(item: Illust) = (PxEZApp.R18Private && item.restricted)
     fun visRestrictTag(item: Illust): String = visRestrictTag(need_restrict(item))
     fun visRestrictTag(restrict: Boolean): String {
         return if (restrict) {
@@ -38,9 +38,20 @@ object InteractionUtil {
     // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
     // "image_urls:" + illust.meta_pages[0].toString()
 
-    fun like(item: Illust, tagList: List<String>? = null, callback: () -> Unit = { }) =
+    fun like(
+        item: Illust,
+        tagList: List<String>? = null,
+        forcePrivate: Boolean = false,
+        callback: () -> Unit = { }
+    ) =
         MainScope().launchCatching(
-            { retrofit.api.postLikeIllust(item.id, visRestrictTag(item), tagList) }, {
+            {
+                retrofit.api.postLikeIllust(
+                    item.id,
+                    if (forcePrivate) visRestrictTag(true) else visRestrictTag(item),
+                    tagList
+                )
+            }, {
                 item.is_bookmarked = true
                 callback()
             }, {

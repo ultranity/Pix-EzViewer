@@ -6,8 +6,7 @@
     android:layout_margin="8dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="8dp"
-    android:orientation="vertical"
-    tools:targetApi="m">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/title"
@@ -32,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            tools:text="status" />
+            tools:text="progess" />
     </FrameLayout>
 
     <ProgressBar

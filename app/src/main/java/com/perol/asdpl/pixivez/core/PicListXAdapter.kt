@@ -64,10 +64,10 @@ class Payload(
  */
 // TODO: rename
 open class PicListXAdapter(
-    layoutResId: Int,
-    filter: PicsFilter
+    filter: PicsFilter,
+    layoutResId: Int = R.layout.view_recommand_item_s,
 ) :
-    PicListAdapter(layoutResId, filter) {
+    PicListAdapter(filter, layoutResId) {
     private val liveDataID = "likeLiveData".hashCode()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder = super.onCreateViewHolder(parent, viewType)

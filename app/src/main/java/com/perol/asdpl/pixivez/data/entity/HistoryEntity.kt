@@ -29,12 +29,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "search")
+@Entity(tableName = "search", indices = [androidx.room.Index(value = ["word"], unique = true)])
 class SearchHistoryEntity(
-    @ColumnInfo(name = "word")
     var word: String,
     @PrimaryKey(autoGenerate = true)
-    var Id: Int = 0
+    var id: Int = 0
 )
 /*@Entity(tableName = "search")
 class SearchHistoryEntity(

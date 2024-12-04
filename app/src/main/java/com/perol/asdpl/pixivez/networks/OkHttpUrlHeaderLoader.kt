@@ -35,17 +35,17 @@ import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
-import com.perol.asdpl.pixivez.networks.RestClient.imageProxySocket
-import okhttp3.OkHttpClient
 import java.io.InputStream
 
 class HeaderLoaderFactory : ModelLoaderFactory<String, InputStream> {
     private val modelCache = ModelCache<String, GlideUrl>(250)
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<String, InputStream> {
         // 添加拦截器到Glide
-        val builder = OkHttpClient.Builder().imageProxySocket().addInterceptor(ProgressInterceptor())
-        val okHttpClient = builder.build()
-        return OkHttpUrlHeaderLoader(OkHttpUrlLoader.Factory(okHttpClient).build(multiFactory), modelCache)
+        // val builder = OkHttpClient.Builder().imageProxySocket().addInterceptor(ProgressInterceptor())
+        // val okHttpClient = builder.build()
+        return OkHttpUrlHeaderLoader(
+            OkHttpUrlLoader.Factory(RestClient.imageHttpClient).build(multiFactory), modelCache
+        )
     }
 
     override fun teardown() { /* nothing to free */

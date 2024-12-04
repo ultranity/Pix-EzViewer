@@ -27,12 +27,13 @@ package com.perol.asdpl.pixivez.services
 
 import com.perol.asdpl.pixivez.data.model.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.data.model.BookMarkTagsResponse
-import com.perol.asdpl.pixivez.data.model.IllustCommentsResponse
+import com.perol.asdpl.pixivez.data.model.CommentsResponse
 import com.perol.asdpl.pixivez.data.model.IllustDetailResponse
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.data.model.IllustRecommendResponse
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
 import com.perol.asdpl.pixivez.data.model.PixivResponse
+import com.perol.asdpl.pixivez.data.model.PostCommentsResponse
 import com.perol.asdpl.pixivez.data.model.SearchIllustResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.SpotlightResponse
@@ -49,6 +50,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Streaming
 import retrofit2.http.Url
@@ -271,20 +273,48 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("offset") offset: Int? = null,
     ): ListUserResponse
 
-    @GET("/v1/illust/comments")
+    @GET("/v3/illust/comments")
     suspend fun getIllustComments(
         @Query("illust_id") pid: Int,
         @Query("offset") offset: Int? = null,
         @Query("include_total_comments") include_total_comments: Boolean? = false
-    ): IllustCommentsResponse
+    ): CommentsResponse
+
+    @GET("/v3/novel/comments")
+    suspend fun getNovelComments(
+        @Query("novel_id") novel_id: Int,
+        @Query("offset") offset: Int? = null,
+        @Query("include_total_comments") include_total_comments: Boolean? = false
+    ): CommentsResponse
+
+    @GET("/v2/{type}/comment/replies")
+    suspend fun getReplyComments(
+        @Path("type") type: String,
+        @Query("comment_id") comment_id: Long,
+    ): CommentsResponse
 
     @FormUrlEncoded
     @POST("/v1/illust/comment/add")
     suspend fun postIllustComment(
-        @Field("illust_id") illust_id: Int,
+        @Field("illust_id") pid: Int,
         @Field("comment") comment: String,
-        @Field("parent_comment_id") parent_comment_id: Int?
-    ): ResponseBody
+        @Field("parent_comment_id") parent_comment_id: Int? = null,
+    ): PostCommentsResponse
+
+    @FormUrlEncoded
+    @POST("/v1/novel/comment/add")
+    suspend fun postNovelComment(
+        @Field("novel_id") novel_id: Int,
+        @Field("comment") comment: String,
+        @Field("parent_comment_id") parent_comment_id: Int? = null,
+    ): PostCommentsResponse
+
+    @FormUrlEncoded
+    @POST("/v1/{type}/comment/delete")
+    suspend fun deleteComment(
+        @Path("type") type: String,
+        @Field("comment_id") comment_id: Int,
+    )
 
     @GET
     suspend fun getUrl(

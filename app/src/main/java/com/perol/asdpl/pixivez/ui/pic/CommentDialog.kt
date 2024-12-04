@@ -42,6 +42,7 @@ import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.databinding.DialogCommentBinding
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.argument
 import com.perol.asdpl.pixivez.objects.argumentNullable
@@ -63,7 +64,7 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
         lifecycleScope.launchCatching({
             retrofit.api.getIllustComments(pid, 0, true)
         }, {
-            Toasty.longToast("${it.comments.size}/${it.total_comments} comments in total")
+            ToastQ.post("${it.comments.size}/${it.total_comments} comments in total")
             commentAdapter.setNewInstance(it.comments)
             nextUrl = it.next_url
             binding.button.isEnabled = true
@@ -83,17 +84,14 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
         }, {
             lifecycleScope.launchCatching({ retrofit.api.getIllustComments(pid) }, {
                 commentAdapter.setNewInstance(it.comments)
-                Toasty.success(requireContext(), R.string.comment_successful).show()
+                Toasty.success(requireContext(), R.string.comment_successful)
                 binding.edittextComment.setText("")
                 parent_comment_id = 1
                 binding.edittextComment.hint = ""
             }, { e ->
                 when ((e as HttpException).response()!!.code()) {
                     403 -> {
-                        Toasty.warning(
-                            requireContext(),
-                            getString(R.string.rate_limited)
-                        ).show()
+                        Toasty.warning(requireContext(), R.string.rate_limited)
                     }
 
                     404 -> {

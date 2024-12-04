@@ -23,7 +23,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.manager
+package com.perol.asdpl.pixivez.ui.manager
 
 import android.annotation.SuppressLint
 import com.arialyy.aria.core.Aria
@@ -77,22 +77,15 @@ class DownloadTaskAdapter :
                             Aria.download(context).load(data[position].id).cancel()
                         }
                     }
-                    val taskList = Aria.download(this).taskList
-                    if (taskList?.isNotEmpty() == true) {
-                        this@DownloadTaskAdapter.setNewInstance(taskList.asReversed())
-                    }
+//                    val taskList = Aria.download(this).taskList
+//                    if (taskList?.isNotEmpty() == true) {
+//                        this@DownloadTaskAdapter.setNewInstance(taskList.asReversed())
+//                    }
                 }
             }
             true
         }
     }
-
-    /*override fun onItemViewHolderCreated(
-        viewHolder: BaseViewHolder,
-        viewType: Int
-    ) { // 绑定 view
-        val binding = ItemDownloadTaskBinding.bind(viewHolder.itemView)
-    }*/
 
     private fun Int.toIEntityString(): String {
         return when (this) {
@@ -143,7 +136,8 @@ class DownloadTaskAdapter :
             context.getString(R.string.fractional, item.currentProgress, item.fileSize)
         try {
             val illustD = gson.decodeFromString<IllustD>(item.str)
-            binding.title.text = illustD.title
+            binding.title.text =
+                if (illustD.part != -1) "${illustD.title}_${illustD.part}" else illustD.title
             binding.status.text = item.state.toIEntityString()
         } catch (e: Exception) {
             e.printStackTrace()

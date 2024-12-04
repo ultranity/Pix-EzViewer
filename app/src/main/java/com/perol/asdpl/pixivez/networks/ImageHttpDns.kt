@@ -25,6 +25,8 @@
 package com.perol.asdpl.pixivez.networks
 
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.services.Works.pre
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,17 +35,33 @@ import java.net.InetAddress
 
 object ImageHttpDns : Dns {
 
+    var shuffleIP = pre.getBoolean("shuffleIP", true)
     private val addressList = mutableListOf<InetAddress>()
     private val defaultList = listOf(
         "210.140.92.145",
         "210.140.92.140",
         "210.140.92.137",
     ).map { InetAddress.getByName(it) }
+    const val IPListPattern =
+        "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(,\\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*\$"
+    val ipPattern = Regex(IPListPattern)
+    lateinit var customIPs: MutableList<String>
+    private val customList
+        get() = customIPs.map { InetAddress.getByName(it) }
 
+    fun setCustomIPs(string: String?) {
+        customIPs = string?.takeIf(ipPattern::matches)
+            ?.split(",")?.map { it.trim() }?.toMutableList() ?: mutableListOf<String>()
+    }
+
+    init {
+        setCustomIPs(PxEZApp.instance.pre.getString("customIPs", null))
+    }
     override fun lookup(hostname: String): List<InetAddress> {
-        if (addressList.isNotEmpty()) return addressList
+        if (customList.isNotEmpty()) return if (shuffleIP) customList.shuffled() else customList
+        if (defaultList.isNotEmpty()) return if (shuffleIP) defaultList.shuffled() else defaultList
+        //TODO: dns is now disabled
         CoroutineScope(Dispatchers.IO).launch {
-
             try {
                 val response = ServiceFactory.CFDNS.lookup(hostname)
                 addressList.addAll(response)

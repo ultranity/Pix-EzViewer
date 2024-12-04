@@ -24,7 +24,7 @@ object ClipBoardUtil {
         val clipData = ClipData.newPlainText(label, text)
         clipboardManager.setPrimaryClip(clipData)
         if (showHint) {
-            Toasty.info(context, text).show()
+            Toasty.info(context, text)
         }
     }
 

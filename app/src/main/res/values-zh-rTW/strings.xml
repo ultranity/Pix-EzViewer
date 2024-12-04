@@ -18,7 +18,7 @@
     <string name="login_help_md"># TroubleShoot幫助\n\n如果你登錄時提示\n\n```shell\n http 400 bad request\n```\n\n請嘗試以下步驟\n1. 確保應用是最新的，到google </string>
     <string name="follow">關注</string>
     <string name="following">關注中</string>
-    <string name="following_private">(關注中)</string>
+    <string name="following_private">(悄悄關注)</string>
     <string name="click">點擊</string>
     <string name="support_string">反饋郵箱：Pix-Ez@outlook.com 歡迎通過github 反饋及star 也可以通過關於頁面跳轉請我喝杯咖啡</string>
     <string name="current_developer">當前開發者</string>
@@ -253,7 +253,6 @@
     <string name="action_export">導出</string>
     <string name="action_import">導入</string>
     <string name="mirror">鏡像</string>
-    <string name="url">URL</string>
     <string name="format">格式</string>
     <string name="mirror_link_hint">URL中設置的i.pximg.net鏡像網站，如i.pixiv.cat，original.img.pixivic.net等</string>
     <string name="params_desc">original參數,包括{time}/{illustid}_p{part}{type}</string>

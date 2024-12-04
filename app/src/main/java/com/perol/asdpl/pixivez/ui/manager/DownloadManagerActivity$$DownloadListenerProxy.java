@@ -1,4 +1,4 @@
-package com.perol.asdpl.pixivez.manager;
+package com.perol.asdpl.pixivez.ui.manager;
 
 import com.arialyy.aria.core.scheduler.AptNormalTaskListener;
 import com.arialyy.aria.core.task.DownloadTask;

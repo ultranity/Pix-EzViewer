@@ -1,5 +1,6 @@
 package com.perol.asdpl.pixivez.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,6 +10,8 @@ class UserEntity(
     var username: String,
     var useremail: String,
     var ispro: Boolean,
+    @ColumnInfo(defaultValue = "0")
+    var x_restrict: Int,
     var userimage: String,
     var Device_token: String,
     var Refresh_token: String,

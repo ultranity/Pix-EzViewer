@@ -25,7 +25,6 @@
 
 package com.perol.asdpl.pixivez.ui.search
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -83,7 +82,7 @@ class SearchActivity : RinkActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             val word = data.getStringExtra("word")
             binding.searchviewText.setQuery(word, false)
         } else if (intent.extras != null) {

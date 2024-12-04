@@ -126,7 +126,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                         ) { _, _ -> }
 
                         withContext(Dispatchers.Main) {
-                            Toasty.info(imageView.context, "Saved").show()
+                            Toasty.info(imageView.context, "Saved")
                         }
                     }
                 }

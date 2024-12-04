@@ -45,7 +45,7 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toasty.error(requireContext(), "你好像没有安装微信").show()
+            Toasty.error(requireContext(), "你好像没有安装微信")
         }
     }
 
@@ -61,7 +61,7 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toasty.error(requireContext(), "你好像没有安装支付宝").show()
+            Toasty.error(requireContext(), "你好像没有安装支付宝")
         }
     }
 

@@ -12,6 +12,19 @@
         android:text="@string/dns_proxy" />
 
     <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/force_IP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dns_proxy"
+        android:text="@string/ip_download" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/shuffle_IP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/force_IP"
+        android:text="@string/ip_shuffle" />
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/mirror_link_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,6 +43,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/mirror_link_download"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/ip"
+        android:text="@string/ip" />
+
+    <EditText
+        android:id="@+id/ipInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mirror_link_download"
+        android:layout_toEndOf="@+id/ip"
+        android:hint="@string/i_pximg_net_ip_list"
+        android:importantForAutofill="no"
+        android:inputType="textUri|textNoSuggestions" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ipInput"
         android:layout_marginBottom="8dp"
         android:id="@+id/text"
         android:text="@string/url" />
@@ -38,7 +70,7 @@
         android:id="@+id/urlInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mirror_link_download"
+        android:layout_below="@+id/ipInput"
         android:layout_toEndOf="@+id/text"
         android:hint="@string/i_pximg_net"
         android:importantForAutofill="no"

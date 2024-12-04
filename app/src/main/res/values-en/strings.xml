@@ -254,7 +254,6 @@
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
     <string name="mirror">Mirror</string>
-    <string name="url">URL</string>
     <string name="format">format</string>
     <string name="mirror_link_hint">i.pximg.net mirror website set in the URL, such as i.pixiv.cat, original.img.pixivic.net, etc.</string>
     <string name="params_desc">Original parameters, same to {time}/{illustid}_p{part}{type}</string>
@@ -312,4 +311,9 @@
     <string name="max_sanity">max sanity</string>
     <string name="check_clipboard">check if clipboard contains pid</string>
     <string name="go_to_detail">go to detail</string>
+    <string name="ip_download">Force DNS Solving</string>
+    <string name="block_user">Block User</string>
+    <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, seperate with \",\"</string>
+    <string name="ip_shuffle">Load Balancing</string>
+    <string name="restrict_sanity">sanity threshold for x restrict</string>
 </resources>

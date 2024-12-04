@@ -36,12 +36,12 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.KotlinUtil.transformIf
 import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onItemClick
 import com.perol.asdpl.pixivez.base.setItems
+import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.databinding.ViewTagsItemBinding
 import com.perol.asdpl.pixivez.objects.UpToTopListener
@@ -52,7 +52,14 @@ import kotlinx.serialization.Serializable
 
 class HelloTrendingFragment : LazyFragment() {
     private val titles by lazy { resources.getStringArray(R.array.mode_list).toList() }
-    private val isR18on by lazy { PxEZApp.instance.pre.getBoolean("r18on", false) }
+    private val restrictLevel by lazy {
+        if (!PxEZApp.instance.pre.getBoolean(
+                "r18on",
+                false
+            ) or (AppDataRepo.currentUser.x_restrict == 0)
+        ) 5
+        else if (AppDataRepo.currentUser.x_restrict == 1) 1 else 0
+    }
 
     @Serializable
     class TagsBindingItem(val name: String, var index: Int) :
@@ -75,7 +82,7 @@ class HelloTrendingFragment : LazyFragment() {
     private lateinit var titleModels: List<TagsBindingItem>
 
     override fun loadData() {
-        val adapter = RankingMAdapter(this, isR18on)
+        val adapter = RankingMAdapter(this, restrictLevel)
         binding.viewpager.adapter = adapter
 
         //fix: 旋转后tab选择错误: viewpager.adapter设置后恢复正确的currentItem
@@ -135,7 +142,7 @@ class HelloTrendingFragment : LazyFragment() {
             savedInstanceState.getBooleanArray("selected")
                 ?.forEachIndexed { i, it -> titleModels[i].isSelected = it }
         } ?: run {
-            titleModels = titles.transformIf(isR18on.not()) { dropLast(5) }.mapIndexed { i, it ->
+            titleModels = titles.dropLast(restrictLevel).mapIndexed { i, it ->
                 TagsBindingItem(it, i).apply { isSelected = true }
             }
         }

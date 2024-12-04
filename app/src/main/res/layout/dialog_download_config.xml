@@ -22,10 +22,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_gravity="center"
+        android:layout_gravity="end"
         android:defaultValue="2"
-        android:entries="@array/reply_entries"
-        android:entryValues="@array/reply_values"
+        android:entries="@array/thread_num_entries"
+        android:entryValues="@array/thread_num_entries"
         android:spinnerMode="dialog" />
 
     <View
@@ -48,9 +48,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_gravity="center"
+        android:layout_gravity="end"
         android:defaultValue="2"
-        android:entries="@array/reply_entries"
-        android:entryValues="@array/reply_values"
+        android:entries="@array/thread_num_entries"
+        android:entryValues="@array/thread_num_entries"
         android:spinnerMode="dialog" />
 </LinearLayout>

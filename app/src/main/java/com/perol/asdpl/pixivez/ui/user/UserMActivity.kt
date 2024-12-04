@@ -44,7 +44,9 @@ import com.chrynan.parcelable.core.getParcelableExtra
 import com.chrynan.parcelable.core.putExtra
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
@@ -56,6 +58,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.UserCacheRepo
 import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.view.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.view.AutoTabLayoutMediator
 import com.perol.asdpl.pixivez.view.loadBGImage
@@ -63,16 +66,30 @@ import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
 class UserMActivity : RinkActivity() {
     companion object {
-        fun start(context: Context, id: Int, options: Bundle? = null) {
+        fun start(context: Context, id: Int, options: Bundle? = null, skipBlock: Boolean = false) {
+            if (!skipBlock && id in BlockViewModel.getBlockUIDs()) {
+                Snackbar.make(
+                    (context as Activity).findViewById(android.R.id.content),
+                    context.getString(R.string.view_user_blocked, id),
+                    Snackbar.LENGTH_SHORT
+                ).setAction(R.string.confirm) {
+                    start(context, id, options, true)
+                }.show()
+                return
+            }
             val intent = Intent(context, UserMActivity::class.java).setAction("user.id.start")
-            intent.putExtra("uid", id)
+            intent.putExtra(if (UserCacheRepo.get(id) != null) "userid" else "uid", id)
             context.startActivity(intent, options)
         }
+
+        fun start(context: Context, user: User, options: Bundle? = null) =
+            start(context, user.id, options)
 
         fun start(context: Context, options: Bundle? = null) {
             val intent = Intent(context, UserMActivity::class.java).setAction("user.start")
@@ -85,13 +102,6 @@ class UserMActivity : RinkActivity() {
             intent.putExtra("user", user.toUser())
             context.startActivity(intent, options)
         }
-
-        fun start(context: Context, user: User, options: Bundle? = null) {
-            val intent = Intent(context, UserMActivity::class.java).setAction("user.start")
-            //intent.putExtra("user", user)
-            intent.putExtra("userid", user.id)
-            context.startActivity(intent, options)
-        }
     }
 
     var id: Int = 0
@@ -100,14 +110,14 @@ class UserMActivity : RinkActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null) {
             val selectedImage = data.data
             val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
             val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)
             c!!.moveToFirst()
             val columnIndex = c.getColumnIndex(filePathColumns[0])
             val imagePath = c.getString(columnIndex)
-            Toasty.info(this, R.string.uploading).show()
+            Toasty.info(this, R.string.uploading)
             viewModel.tryToChangeProfile(imagePath)
             c.close()
         }
@@ -190,16 +200,17 @@ class UserMActivity : RinkActivity() {
                 binding.fab.setText(if (it) R.string.following else R.string.follow)
             }
         }
-        viewModel.privateFollowed.observeAfterSet(this) {
-            if (user.is_followed)
-                binding.fab.setText(if (it) R.string.following_private else R.string.following)
+        viewModel.privateFollowed.observe(this) {
+            if (it != null)
+                if (user.is_followed)
+                    binding.fab.setText(if (it) R.string.following_private else R.string.following)
         }
 
         binding.fab.setOnClickListener {
             viewModel.onFabClick()
         }
         binding.fab.setOnLongClickListener {
-            Toasty.info(applicationContext, "Private...").show()
+            Toasty.info(applicationContext, "Private...")
             viewModel.onFabLongClick()
             true
         }
@@ -215,10 +226,10 @@ class UserMActivity : RinkActivity() {
                     when (which) {
                         0 -> {
                             val clipboard =
-                                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                             val clip: ClipData = ClipData.newPlainText("share Link", shareLink)
                             clipboard.setPrimaryClip(clip)
-                            Toasty.info(this@UserMActivity, R.string.copied).show()
+                            Toasty.info(this@UserMActivity, R.string.copied)
                         }
 
                         1 -> {
@@ -243,7 +254,7 @@ class UserMActivity : RinkActivity() {
                                 ) { _, _ -> }
 
                                 withContext(Dispatchers.Main) {
-                                    Toasty.info(this@UserMActivity, R.string.saved).show()
+                                    Toasty.info(this@UserMActivity, R.string.saved)
                                 }
                             }
                         }
@@ -295,9 +306,22 @@ class UserMActivity : RinkActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finishAfterTransition()
+            R.id.action_block_user -> block()
             R.id.action_share -> share()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun block() {
+        MaterialDialogs(this).show {
+            setTitle(R.string.block_user)
+            confirmButton { dialog, _ ->
+                runBlocking(Dispatchers.IO) {
+                    BlockViewModel.insertBlockUser(id)
+                }
+            }
+            cancelButton()
+        }
     }
 
     private fun share() {

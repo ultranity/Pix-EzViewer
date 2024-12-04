@@ -32,6 +32,7 @@ import android.net.http.SslCertificate
 import android.net.http.SslError
 import android.os.Bundle
 import android.util.Base64
+import android.view.View
 import android.webkit.SslErrorHandler
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -52,6 +53,7 @@ import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
@@ -139,15 +141,13 @@ object WebviewDnsInterceptUtil {
         }
         try {
             val url = URL(url.toString())
-            var response = RestClient.pixivOkHttpClient.newCall(
+            var response = RestClient.imageHttpClient.newCall(
                 Request.Builder().get().url(url)
-                    .header("Host", url.host.toString())
                     .header("User-Agent", userAgentString).build()
             ).execute()
             if (!response.isSuccessful && !response.request.url.equals(url)) {
-                response = RestClient.pixivOkHttpClient.newCall(
+                response = RestClient.imageHttpClient.newCall(
                     Request.Builder().get().url(response.request.url)
-                        .header("Host", response.request.url.host)
                         .header("User-Agent", userAgentString).build()
                 ).execute()
             }
@@ -279,7 +279,12 @@ class OKWebViewActivity : RinkActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //set status bar fit system window
         binding = ActivityWebViewBinding.inflate(layoutInflater)
+        binding.rootContainer.fitsSystemWindows = true
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        if (ThemeUtil.isDarkMode(this)) window.statusBarColor = Color.TRANSPARENT
+
         mWebview = binding.webview
         setContentView(binding.root)
         val local = LanguageUtil.langToLocale(PxEZApp.language).language
@@ -453,6 +458,8 @@ class OKWebViewActivity : RinkActivity() {
                 "Invalid date",
                 "Unknown error"
             )
+
+            @SuppressLint("DefaultLocale")
             fun certificateToStr(certificate: SslCertificate?): String? {
                 if (certificate == null) {
                     return null
@@ -470,14 +477,9 @@ class OKWebViewActivity : RinkActivity() {
                 if (issueDate != null) {
                     s += String.format("Issued on: %tF %tT %tz\n", issueDate, issueDate, issueDate)
                 }
-                val expiryDate = certificate.validNotAfterDate
-                if (expiryDate != null) {
-                    s += String.format(
-                        "Expires on: %tF %tT %tz\n",
-                        expiryDate,
-                        expiryDate,
-                        expiryDate
-                    )
+                val expDate = certificate.validNotAfterDate
+                if (expDate != null) {
+                    s += String.format("Expires on: %tF %tT %tz\n", expDate, expDate, expDate)
                 }
                 return s
             }

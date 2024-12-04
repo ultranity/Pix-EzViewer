@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <!-- Guideline that separates list and detail view fragments when needed. -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline">
+        tools:layout_editor_absoluteY="21dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -20,7 +24,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
-                android:layout_marginTop="8dp"
                 android:iconifiedByDefault="false"
                 android:text="@string/searchhistory"
                 app:layout_constraintStart_toStartOf="parent"
@@ -28,29 +31,32 @@
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipgroup"
-                android:minHeight="100dp"
-                app:chipSpacing="2dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
-                app:layout_constraintTop_toBottomOf="@+id/textview1"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:minHeight="100dp"
+                app:chipSpacing="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textview1" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/clear_all"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="2dp"
+                android:layout_marginEnd="8dp"
                 android:text="@string/clearhistory"
                 app:chipIcon="@drawable/ic_action_del"
                 app:chipIconTint="?android:attr/textColorPrimary"
-                android:layout_gravity="center"
+                app:chipMinTouchTargetSize="30dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-    <!-- Guideline that separates list and detail view fragments when needed. -->
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"

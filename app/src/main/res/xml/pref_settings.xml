@@ -84,6 +84,14 @@
             app:key="R18Folder"
             app:defaultValue="false"
             app:title="@string/create_R18_folder"/>
+        <SeekBarPreference
+            app:key="restrictSanity"
+            app:defaultValue="7"
+            app:min="1"
+            android:max="7"
+            app:showSeekBarValue="true"
+            app:title="@string/max_sanity"
+            app:summary="@string/restrict_sanity" />
         <SwitchPreferenceCompat
             app:key="R18Private"
             app:defaultValue="true"
@@ -112,9 +120,9 @@
             app:useSimpleSummaryProvider="true" />
         <ListPreference
             android:entryValues="@array/quality_download_value"
-            app:defaultValue="0"
+            app:defaultValue="2"
             app:entries="@array/quality_download"
-            app:key="quality_download"
+            app:key="qualityDownload"
             app:title="@string/pic_quality_download"
             app:useSimpleSummaryProvider="true" />
         <ListPreference

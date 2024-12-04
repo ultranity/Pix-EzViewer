@@ -15,7 +15,17 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 sealed class Event {
-    data class BlockTagsChanged(val blockTags: Set<String>) : Event()
+    data class BlockTagsChanged(
+        val blockTags: Set<String>,
+        val diff: String? = null,
+        val add: Boolean = false
+    ) : Event()
+
+    data class BlockUsersChanged(
+        val blockUsers: Set<Int>,
+        val diff: Int? = null,
+        val add: Boolean = false
+    ) : Event()
 }
 
 /** to add ref: https://github.com/biubiuqiu0/flow-event-bus

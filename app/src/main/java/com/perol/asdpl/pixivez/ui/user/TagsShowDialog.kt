@@ -21,7 +21,7 @@ class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
 
     private var uid: Int by argument()
     private var index: Int by argument()
-    val viewModel: BookMarkTagViewModel by viewModels({ requireParentFragment() })
+    val viewModel: BookMarkTagViewModel by viewModels()
     var callback: Callback? = null
 
     fun interface Callback {
@@ -47,7 +47,7 @@ class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
             )
             this.dismiss()
         }
-        if (index!=0) binding.tablayout.selectTab(binding.tablayout.getTabAt(index))
+        binding.tablayout.selectTab(binding.tablayout.getTabAt(index))
         binding.tablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {}
 
@@ -61,7 +61,8 @@ class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
             }
         })
         viewModel.tags.observe(this){
-            if (it.isNullOrEmpty()) {
+            if (it == null) return@observe
+            if (it.isEmpty()) {
                 callback!!.onClick("", viewModel.pub)
                 this@TagsShowDialog.dismiss()
             }

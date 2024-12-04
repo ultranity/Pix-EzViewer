@@ -22,7 +22,7 @@
  * SOFTWARE
  */
 
-package com.perol.asdpl.pixivez.manager
+package com.perol.asdpl.pixivez.ui.manager
 
 import android.graphics.drawable.ColorDrawable
 import android.view.View

@@ -33,7 +33,7 @@ import kotlinx.serialization.Serializable
 class BookMarkTagsResponse(
     val bookmark_tags: MutableList<BookmarkTagsBean>,
     override val next_url: String?
-) : INext<MutableList<BookmarkTagsBean>> {
+) : INext<BookmarkTagsBean> {
     override fun data() = bookmark_tags
 
 }

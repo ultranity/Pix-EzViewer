@@ -39,10 +39,10 @@ import com.perol.asdpl.pixivez.services.Works
  *  simple Adapter for image item with save/like button
  */
 open class PicListBtnAdapter(
-    layoutResId: Int,
-    filter: PicsFilter
+    filter: PicsFilter,
+    layoutResId: Int = R.layout.view_recommand_item,
 ) :
-    PicListAdapter(layoutResId, filter) {
+    PicListAdapter(filter, layoutResId) {
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)

@@ -30,8 +30,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.build
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.objects.showInMain
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import kotlinx.coroutines.CoroutineScope
@@ -74,24 +74,40 @@ object RestClient {
             // .addHeader("Host", "https://app-api.pixiv.net")
             val request = requestBuilder.build()
             chain.proceed(request)
-        }).apiProxySocket()
-
-        return@lazy builder.build()
+        }).apiProxySocket().build()
     }
 
-    private val imageHttpClient: OkHttpClient
-        get() {
+    val downloadHttpClient: OkHttpClient by lazy {
+        val builder = OkHttpClient.Builder()
+        builder.addInterceptor(Interceptor { chain ->
+            val original = chain.request()
+            val requestBuilder = original.newBuilder()
+                .header("User-Agent", UA)
+                .header("referer", "https://www.pixiv.net/")
+                .header("host", "i.pximg.net")
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }).downloadProxySocket()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build()
+    }
+    val imageHttpClient: OkHttpClient by lazy {
             val builder = OkHttpClient.Builder()
             builder.addInterceptor(Interceptor { chain ->
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
-                    .addHeader("User-Agent", UA)
+                    .header("User-Agent", UA)
+                    .header("Accept-Language", "${local.language}_${local.country}")
+                    .header("Access-Control-Allow-Origin", "*")
                     .header("referer", "https://app-api.pixiv.net/")
+                    .header("Host", original.url.host.toString())
                 val request = requestBuilder.build()
                 chain.proceed(request)
-            }).imageProxySocket()
-
-            return builder.build()
+            }).imageProxySocket().addInterceptor(ProgressInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build()
         }
 
     val retrofitAppApi: Retrofit
@@ -177,7 +193,7 @@ object RestClient {
             when (HttpStatus.check(response.code)) {
                 HttpStatus.BadRequest, HttpStatus.Unauthorized -> {
                     if (response.message.contains(TOKEN_INVALID)) {
-                        Toasty.error(PxEZApp.instance, R.string.login_expired).showInMain()
+                        ToastQ.post(R.string.login_expired)
                     } else { //if (response.message.contains(TOKEN_ERROR)) {
                         CoroutineScope(Dispatchers.Main).launch {
                             Toasty.tokenRefreshing()
@@ -193,7 +209,9 @@ object RestClient {
 
                 HttpStatus.NotFound -> {
                     Log.d("404", response.message + response.body)
-                    Toasty.warning(PxEZApp.instance, "404 " + response.message).showInMain()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        ToastQ.post("404 " + response.message)
+                    }
                 }
 
                 HttpStatus.OK -> {
@@ -201,7 +219,10 @@ object RestClient {
                 }
 
                 else -> {
-                    Log.e("okhttp", request.toString() + "\n" + response.message)
+                    Log.e("okhttp", "${response.code}:$request\n${response.message}")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        ToastQ.post("${response.code}:$request\n${response.message}")
+                    }
                 }
             }
             return response
@@ -234,6 +255,18 @@ object RestClient {
                 val mirror = Works.mirrorLinkView(original.url.toString())
                 requestBuilder.url(mirror)
                 // Log.d("mirrorLinkView","Request ${original.url} to $mirror")
+                it.proceed(requestBuilder.build())
+            }
+        }
+        proxySocket(imageDns)
+    }
+    private fun OkHttpClient.Builder.downloadProxySocket() = apply {
+        if (Works.mirrorForDownload) {
+            addInterceptor {
+                val original = it.request()
+                val requestBuilder = original.newBuilder()
+                val mirror = Works.mirrorLinkDownload(original.url.toString())
+                requestBuilder.url(mirror)
                 it.proceed(requestBuilder.build())
             }
         }

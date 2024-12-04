@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.ui
 
 import android.Manifest
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -61,8 +60,6 @@ import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.databinding.AppMainBinding
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
-import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
-import com.perol.asdpl.pixivez.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.objects.LARGE_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -71,6 +68,8 @@ import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.account.LoginActivity
 import com.perol.asdpl.pixivez.ui.home.HelloMainViewPager
+import com.perol.asdpl.pixivez.ui.manager.DownloadManagerActivity
+import com.perol.asdpl.pixivez.ui.manager.ImgManagerActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.search.SearchActivity
 import com.perol.asdpl.pixivez.ui.search.SearchResultActivity
@@ -265,7 +264,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toasty.warning(applicationContext, R.string.again_to_exit).show()
+                Toasty.warning(applicationContext, R.string.again_to_exit)
                 exitTime = System.currentTimeMillis()
             } else {
                 finish()
@@ -315,7 +314,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
         //if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S)
         if (PxEZApp.instance.pre.getBoolean("check_clipboard", false))
             this.window.decorView.post(Runnable {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 if (!clipboard.hasPrimaryClip()) return@Runnable
                 val clipData = clipboard.primaryClip
                 if (null != clipData && clipData.itemCount > 0) {
@@ -374,7 +373,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 it.remove()
             }
         }
-        if (list.size == 0) {
+        if (list.isEmpty()) {
             return
         }
         val permissions = list.toTypedArray()
@@ -397,7 +396,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     }
                 }
                 if (reRequest) {
-                    Toasty.error(this, R.string.permission_denied).show()
+                    Toasty.error(this, R.string.permission_denied)
                 }
             }
 

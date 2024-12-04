@@ -86,7 +86,7 @@
             android:exported="true"
             android:resizeableActivity="true"
             android:theme="@style/AppThemeBase.NoActionBar"
-            tools:targetApi="24" />
+            tools:ignore="UnusedAttribute" />
         <activity android:name=".ui.account.NewUserActivity" />
         <activity
             android:name=".ui.account.LoginActivity"
@@ -94,9 +94,9 @@
         <activity
             android:name=".ui.user.UserMActivity"
             android:exported="true" />
-        <activity android:name=".manager.DownloadManagerActivity" />
+        <activity android:name=".ui.manager.DownloadManagerActivity" />
         <activity
-            android:name=".manager.ImgManagerActivity"
+            android:name=".ui.manager.ImgManagerActivity"
             android:exported="true" />
         <activity android:name=".ui.WebViewActivity" />
         <activity android:name=".ui.OKWebViewActivity" />

@@ -67,8 +67,9 @@ open class PicListFilterKV(tag: String) : KVData(tag) {
         kv.commit()
     }
 
-    var max_sanity by int("max_sanity", 8)
-
+    var localSanity by int("max_sanity", 7)
+    val maxSanity: Int
+        get() = localSanity.coerceAtMost(PxEZApp.restrictSanity)
     var minLike by int("minLike", 0)
     var minViewed by int("minViewed", 0)
     var minLikeRate by int("minLikeRate", 0)
@@ -109,9 +110,10 @@ fun xorCondition(showTrue: Boolean, showFalse: Boolean, bool: Boolean): Boolean 
 
 class PicsFilter(tag: String) : PicListFilterKV(tag) {
     var blockTags: Set<String>? = null
-    var blockUser: Set<Int>? = null
-    fun needHide(item: Illust): Boolean =
-        xorCondition(showPrivate, showPublic, item.x_restrict == 1) ||
+    var blockUsers: Set<Int>? = null
+    fun needHide(item: Illust, checkBlock: Boolean = false, checkSanity: Boolean = true): Boolean =
+        (checkBlock && needBlock(item)) || (checkSanity && blockSanity(item)) ||
+                xorCondition(showPrivate, showPublic, item.restricted) ||
                 xorCondition(showBookmarked, showNotBookmarked, item.is_bookmarked) ||
                 xorCondition(showFollowed, showNotFollowed, item.user.is_followed) ||
                 xorCondition(showDownloaded, showNotDownloaded, FileUtil.isDownloaded(item)) ||
@@ -121,24 +123,21 @@ class PicsFilter(tag: String) : PicListFilterKV(tag) {
 
     fun needBlock(item: Illust): Boolean {
         if (blockTags.isNullOrEmpty()) {
-            if (blockUser.isNullOrEmpty()) {
+            if (blockUsers.isNullOrEmpty()) {
                 return false
             }
         } else {
-            val tags = item.tags.map { it.name }
-            if (tags.isNotEmpty()) {
-                for (i in tags) {
-                    if (blockTags!!.contains(i)) {
-                        return true
-                    }
-                }
+            if (item.tags.map { it.name }
+                    .any { blockTags!!.contains(it) }) {
+                return true
             }
         }
-        return blockUser?.contains(item.user.id) == true
+        return blockUsers?.contains(item.user.id) == true
     }
 
     fun blockSanity(item: Illust): Boolean {
-        return ((max_sanity != 8) && (item.sanity_level > max_sanity))
+        return item.sanity > maxSanity
+        //return ((maxSanity != 7) && ((item.x_restrict + item.sanity_level) > maxSanity))
     }
 }
 
@@ -159,12 +158,12 @@ class FilterViewModel : ViewModel() {
 
     fun applyConfig() = filter.applyConfig()
     fun getAdapter() = if (modeCollect) {
-        DownPicListAdapter(R.layout.view_ranking_item_s, filter)
+        DownPicListAdapter(filter)
     } else when (adapterType.value) {
-        ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(R.layout.view_recommand_item, filter)
-        ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(R.layout.view_ranking_item, filter)
-        ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(R.layout.view_recommand_item_s, filter)
-        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(R.layout.view_ranking_item_s, filter)
+        ADAPTER_TYPE.PIC_BTN -> PicListBtnAdapter(filter)
+        ADAPTER_TYPE.PIC_USER_BTN -> PicListBtnUserAdapter(filter)
+        ADAPTER_TYPE.PIC_LIKE -> PicListXAdapter(filter)
+        ADAPTER_TYPE.PIC_USER_LIKE -> PicListXUserAdapter(filter)
     }
 }
 
@@ -191,7 +190,8 @@ fun showFilterDialog(
             dialog.toggleRestrict.visibility = View.VISIBLE
         }
         val filter = filterModel.filter
-        sliderSanity.value = filter.max_sanity.toFloat()
+        sliderSanity.valueTo = PxEZApp.restrictSanity.toFloat()
+        sliderSanity.value = filter.maxSanity.toFloat()
         sliderSpan.value = layoutManager.spanCount.toFloat()
         //filterModel.spanNum.value!!.toFloat()
         pairBtnFilter(showBlocked, filter::showBlocked)
@@ -230,7 +230,7 @@ fun showFilterDialog(
             propsMap.forEach {
                 it.second.set(it.first.isChecked)
             }
-            filterModel.filter.max_sanity = dialog.sliderSanity.value.toInt()
+            filterModel.filter.localSanity = dialog.sliderSanity.value.toInt()
             filterModel.applyConfig()
             val span = dialog.sliderSpan.value.toInt()
             layoutManager.spanCount = if (span == 0) filterModel.spanNum else span

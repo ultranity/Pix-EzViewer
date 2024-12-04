@@ -31,16 +31,19 @@ import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
 import com.perol.asdpl.pixivez.data.dao.BlockTagDao
+import com.perol.asdpl.pixivez.data.dao.BlockUserDao
 import com.perol.asdpl.pixivez.data.dao.UserDao
 import com.perol.asdpl.pixivez.data.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.data.entity.BlockUserEntity
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 
 @Database(
-    entities = [UserEntity::class, BlockTagEntity::class],
-    version = 7,
+    entities = [UserEntity::class, BlockTagEntity::class, BlockUserEntity::class],
+    version = 8,
     autoMigrations = [
-        AutoMigration(from = 6, to = 7, spec = AppDatabase.AutoMigration6to7::class)
+        AutoMigration(6, 7, AppDatabase.AutoMigration6to7::class)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -51,6 +54,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun blockTagDao(): BlockTagDao
+    abstract fun blockUserDao(): BlockUserDao
 
     companion object {
         @Volatile
@@ -61,12 +65,22 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
 
+        private val migration7to8 = Migration(7, 8) {
+            it.execSQL("ALTER TABLE `user` ADD COLUMN `x_restrict` INTEGER NOT NULL DEFAULT 0")
+            it.execSQL("CREATE TABLE IF NOT EXISTS `blockUser` (`uid` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`uid`))")
+            it.execSQL("ALTER TABLE `blockUser` ADD COLUMN `createdAt` INTEGER NOT NULL DEFAULT 0")
+            it.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_blockTag_name` ON `blockTag` (`name`)")
+            it.execSQL("ALTER TABLE search RENAME COLUMN Id TO id")
+            it.execSQL("DELETE FROM search WHERE id NOT IN (SELECT MIN(id) FROM search GROUP BY word)")
+            it.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_search_word` ON `search` (`word`)")
+        }
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "app.db"
-            ).fallbackToDestructiveMigrationOnDowngrade()
+            ).addMigrations(migration7to8)
+                .fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }
 }

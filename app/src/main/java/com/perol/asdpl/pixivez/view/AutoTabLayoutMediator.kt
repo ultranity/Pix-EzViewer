@@ -187,12 +187,11 @@ class AutoTabLayoutMediator(
      */
     private class TabLayoutOnPageChangeCallback(tabLayout: TabLayout) :
         OnPageChangeCallback() {
-        private val tabLayoutRef: WeakReference<TabLayout>
+        private val tabLayoutRef: WeakReference<TabLayout> = WeakReference(tabLayout)
         var previousScrollState = 0
         private var scrollState = 0
 
         init {
-            tabLayoutRef = WeakReference(tabLayout)
             reset()
         }
 

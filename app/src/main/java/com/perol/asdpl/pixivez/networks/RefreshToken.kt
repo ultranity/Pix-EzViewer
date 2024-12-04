@@ -53,7 +53,7 @@ class RefreshToken{
 
     fun refreshToken(block:(() -> Unit)?=null) {
         MainScope().launch {
-            Toasty.info(PxEZApp.instance, "refreshToken").show()
+            Toasty.info(PxEZApp.instance, "refreshToken")
             refreshToken(AppDataRepo.currentUser.Refresh_token)
             block?.invoke()
         }

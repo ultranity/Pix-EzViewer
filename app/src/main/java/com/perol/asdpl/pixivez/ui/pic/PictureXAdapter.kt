@@ -34,10 +34,8 @@ import android.content.DialogInterface.BUTTON_NEUTRAL
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.media.MediaScannerConnection
 import android.os.Build
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -46,7 +44,6 @@ import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.MimeTypeMap
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -75,6 +72,7 @@ import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.screenHeightPx
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -85,18 +83,14 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
-import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 // support double panel in wide screen device
 // if? save zip ugoira by default
@@ -110,6 +104,7 @@ class PictureXAdapter(
         initConfig()
     }
 
+    private var quality by Delegates.notNull<Int>()
     private lateinit var imageUrls: List<String>
     private lateinit var imageThumbnail: String
     val pre = PxEZApp.instance.pre
@@ -130,10 +125,9 @@ class PictureXAdapter(
 
 
     private fun initConfig() {
-        val quality = pre.getString("quality", "0")?.toInt() ?: 0
+        quality = pre.getString("quality", "0")?.toInt() ?: 0
         imageUrls = when (quality) {
             0 -> data.meta.map { it.medium }
-            1 -> data.meta.map { it.large }
             2 -> data.meta.map { it.original }
             else -> data.meta.map { it.large }
         }
@@ -315,7 +309,7 @@ class PictureXAdapter(
                 // gif
                 binding.imagebuttonDownload.setOnClickListener {
                     //TODO: separate logic
-                    gifPlay?.callOnClick()
+                    gifPlay.callOnClick()
                     showGIFDialog(illust)
                 }
             } else {
@@ -507,7 +501,7 @@ class PictureXAdapter(
                 setTitle(R.string.saveselectpic1)
                 setMessage(InteractionUtil.toDetailString(data))
                 confirmButton { _, _ ->
-                    Toasty.shortToast(R.string.join_download_queue)
+                    ToastQ.post(R.string.join_download_queue)
                     Works.imgD(data, position)
                 }
                 cancelButton()
@@ -529,7 +523,7 @@ class PictureXAdapter(
                                 }
                             }
                             confirmButton { _, _ ->
-                                Toasty.shortToast(R.string.join_download_queue)
+                                ToastQ.post(R.string.join_download_queue)
                                 mSelectedItems.map {
                                     Works.imgD(data, it)
                                 }
@@ -560,6 +554,13 @@ class PictureXAdapter(
         // (mContext as FragmentActivity).supportStartPostponedEnterTransition()
     }
 
+
+    fun setUserDataIsFollowed(it: Boolean) {
+        data.user.is_followed = it
+        notifyItemChanged(imageUrls.size)
+    }
+
+    // ---- GIF ----
     private fun setGifViewHolder(
         holder: RecyclerView.ViewHolder,
         position: Int
@@ -621,159 +622,103 @@ class PictureXAdapter(
             }
             true
         }
-        gifPlay?.setOnClickListener {
-            gifPlay?.visibility = View.GONE
-            Toasty.info(PxEZApp.instance, "Downloading...").show()
-            pictureXViewModel.viewModelScope.launchCatching({
-                pictureXViewModel.loadGif(data.id)
-            }, {
-                duration = it.ugoira_metadata.frames[0].delay
-                pictureXViewModel.downloadZip(
-                    it.ugoira_metadata.zip_urls.medium
-                )
-            }, {
-                CrashHandler.instance.d("gif ", "loading failed")
-                gifPlay?.visibility = View.VISIBLE
-            })
+        gifPlay.setOnClickListener {
+            if (gifPlay.visibility != View.GONE) {
+                gifPlay.visibility = View.GONE
+                Toasty.info(PxEZApp.instance, "Ugoira loading...")
+                pictureXViewModel.viewModelScope.launchCatching({
+                    pictureXViewModel.loadGif(data.id)
+                }, {
+                    when (max(quality, Works.qualityDownload)) {
+                        0 -> pictureXViewModel.downloadZip(
+                            it.zip_urls.medium
+                        )
+
+                        else -> pictureXViewModel.downloadZip(
+                            it.zip_urls.medium.replace("600x600", "1920x1080")
+                        )
+                        //2 -> pictureXViewModel.downloadUgoira(data, size)
+                    }
+                }, {
+                    CrashHandler.instance.d("gif ", "loading failed")
+                    gifPlay.visibility = View.VISIBLE
+                })
+            }
         }
     }
 
-    private var isEncoding = false
-
-    private val pathCachedGIF: String by lazy {
-        PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".gif"
-    }
+    //Don't use lateinit as it will be called afte reconstruct
+    private var gifProgressBar: CircularProgressIndicator? = null
+    private lateinit var gifPlay: View
+    var imageViewGif: AnimationView? = null
 
     private fun showGIFDialog(illust: Illust) {
-        val filePath =
-            PxEZApp.storepath + File.separatorChar +
-                    (if (PxEZApp.R18Folder && illust.x_restrict == 1) PxEZApp.R18FolderPath else "") +
-                    Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
+
+        fun saveGIF() {
+            if (!pictureXViewModel.isEncoding) {
+                pictureXViewModel.saveGIF()
+            } else {
+                Toasty.warning(PxEZApp.instance, R.string.already_encoding)
+            }
+        }
+
+        fun saveZIP() {
+            val filePath =
+                PxEZApp.storepath + File.separatorChar +
+                        (if (PxEZApp.R18Folder && illust.restricted) PxEZApp.R18FolderPath else "") +
+                        Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
+            val zipPath: String =
+                PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".zip"
+            val fileCachedZIP = File(zipPath)
+            if (fileCachedZIP.exists()) {
+                fileCachedZIP.copyTo(
+                    File("$filePath.zip"),
+                    overwrite = true
+                )
+                Toasty.info(PxEZApp.instance, R.string.save_zip_success)
+            } else {
+                Toasty.error(PxEZApp.instance, R.string.not_downloaded)
+            }
+        }
 
         MaterialDialogs(mContext).show {
             setTitle(R.string.choice)
             setItems(
                 arrayOf(
                     mContext.getString(R.string.savefirst),
+                    mContext.getString(R.string.ugoira),
                     mContext.getString(R.string.encode_gif),
-                    mContext.getString(R.string.save_zip)
+                    mContext.getString(R.string.save_zip),
+                    mContext.getString(R.string.all),
                 )
             ) { _, index ->
                 when (index) {
-                    0 -> Works.imageDownloadAll(illust)
-                    1 -> {
-                        if (!isEncoding) {
-                            isEncoding = true
-                            val fileGIF = File("$filePath.gif")
-                            fileGIF.parentFile?.mkdirs()// try make dir
-                            // TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
-                            MainScope().launchCatching(
-                                { encodingGif() }, {
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        File(pathCachedGIF).copyTo(fileGIF, true)
-                                        MediaScannerConnection.scanFile(
-                                            PxEZApp.instance,
-                                            arrayOf(fileGIF.path),
-                                            arrayOf(
-                                                MimeTypeMap.getSingleton()
-                                                    .getMimeTypeFromExtension(
-                                                        fileGIF.extension
-                                                    )
-                                            )
-                                        ) { _, _ -> }
-                                        isEncoding = false
-                                        File(pathCachedGIF).delete()
-                                        withContext(Dispatchers.Main) {
-                                            Toasty.success(
-                                                PxEZApp.instance,
-                                                R.string.savegifsuccess,
-                                            ).show()
-                                        }
-                                    }
-                                }, {
-                                    isEncoding = false
-                                    Toasty.error(PxEZApp.instance, R.string.savegifsuccesserr)
-                                        .show()
-                                })
-                        } else {
-                            Toasty.warning(PxEZApp.instance, R.string.already_encoding).show()
-                        }
-                    }
+                    0 -> Works.imgD(illust, 0)
+                    1 -> pictureXViewModel.downloadUgoira()
+                    2 -> saveGIF()
+                    3 -> saveZIP()
                     else -> {
-                        val zipPath: String =
-                            PxEZApp.instance.cacheDir.toString() + File.separatorChar + data.id + ".zip"
-                        val fileCachedZIP = File(zipPath)
-                        if (fileCachedZIP.exists()) {
-                            fileCachedZIP.copyTo(
-                                File("$filePath.zip"),
-                                overwrite = true
-                            )
-                            Toasty.info(PxEZApp.instance, R.string.save_zip_success).show()
-                        }
+                        /* pictureXViewModel.downloadUgoira()
+                         pictureXViewModel.zipUgoira()
+                         pictureXViewModel.convertGIFUgoira()*/
+                        Works.imgD(illust, 0)
+                        saveGIF()
+                        saveZIP()
                     }
                 }
             }
         }
     }
 
-    private suspend fun encodingGif() {
-        if (File(pathCachedGIF).exists()) {
-            return
-        }
-        val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
-        val listFiles = File(parentPath).listFiles()
-        if (listFiles.isNullOrEmpty()) {
-            throw RuntimeException("unzipped files not found")
-        }
-        if (listFiles.size < size) {
-            throw RuntimeException("something wrong in ugoira files")
-        }
-        // TODO: 合成进度条
-        // Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成").showInMain()
-        withContext(Dispatchers.Default) {
-            listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
-            val gifEncoder = GifEncoder()
-            for (i in listFiles.indices) {
-                if (listFiles[i].isFile) {
-                    val bitmap = BitmapFactory.decodeFile(listFiles[i].absolutePath)
-
-                    if (i == 0) {
-                        gifEncoder.init(
-                            bitmap.width,
-                            bitmap.height,
-                            pathCachedGIF,
-                            GifEncoder.EncodingType.ENCODING_TYPE_STABLE_HIGH_MEMORY
-                        )
-                    }
-                    gifEncoder.encodeFrame(bitmap, duration)
-                    CrashHandler.instance.d("progressset", i.toString())
-                }
-            }
-            gifEncoder.close()
-        }
-    }
-
-    var size = 1
-    var duration: Int = 50
-    private var gifProgressBar: CircularProgressIndicator? = null
-    private var gifPlay: View? = null
-    var imageViewGif: AnimationView? = null
     fun setProgress(progress: Int) {
-        if (gifProgressBar != null) {
-            gifProgressBar!!.setProgressCompat(progress, true)
-        }
-    }
-
-    fun setUserDataIsFollowed(it: Boolean) {
-        data.user.is_followed = it
-        notifyItemChanged(imageUrls.size)
+        gifProgressBar?.setProgressCompat(progress, true)
     }
 
     private var previewImageView: ImageView? = null
     fun setProgressComplete(it: Boolean) {
         gifProgressBar?.visibility = View.GONE
         if (!it) {
-            gifPlay?.visibility = View.VISIBLE
+            gifPlay.visibility = View.VISIBLE
             return
         }
         previewImageView?.visibility = View.GONE
@@ -785,10 +730,11 @@ class PictureXAdapter(
         imageViewGif?.onStartListener { }
         imageViewGif?.onEndListener { }
 
-        imageViewGif?.delayTime = duration.toLong()
+        imageViewGif?.delayTime = pictureXViewModel.duration.toLong()
         imageViewGif?.startAnimation(result)
     }
 
+    // ---- related ----
     val relatedPictureAdapter = SquareMediumAdapter(R.layout.view_relatedpic_item).also {
         it.isAutoLoadMore = false
         it.setOnItemClickListener { adapter, view, position ->

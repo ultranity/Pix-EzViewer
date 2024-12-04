@@ -34,36 +34,33 @@ import kotlinx.serialization.Serializable
  * @noinspection UnnecessaryUnicodeEscape
  */
 @Serializable
-class IllustCommentsResponse(
+class CommentsResponse(
     val total_comments: Int = 0,
-    val next_url: String?,
+    override val next_url: String?,
     val comments: MutableList<CommentsBean>,
     val comment_access_control: Int = 0
-) {
+) : INext<CommentsBean> {
+    override fun data() = comments
+}
 
-    /**
-     * id : 74774246
-     * comment : ty   -w-
-     * date : 2018-01-13T17:21:57+09:00
-     * user : {"id":20980424,"name":"方丈要吃肉(修行ing）","account":"1015453836","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg"}}
-     * parent_comment :{"id":74770901,"comment":"You painting WA2000 is so cute !","date":"2018-01-13T14:30:17+09:00","user":{"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}}
-     * parent_comment :{}
-     */
+/**
+ * {"comments":[{"id":185371586,"comment":"","date":"2024-10-11T01:08:47+09:00","user":{"id":1221297,"name":"C-WAVE","account":"bluewing_littlewing","profile_image_urls":{"medium":"https:\/\/i.pximg.net\/user-profile\/img\/2020\/10\/19\/02\/09\/53\/19533071_dffa55ff3e50022b335d625855ed59d2_170.jpg"}},"has_replies":false,"stamp":{"stamp_id":204,"stamp_url":"https:\/\/s.pximg.net\/common\/images\/stamp\/generated-stamps\/204_s.jpg?20180605"}}],"next_url":null,"comment_access_control":0}
+ */
+@Serializable
+class CommentsBean(
+    val id: Int = 0,
+    val comment: String,
+    val date: String,
+    val has_replies: Boolean = false, //TODO: new replies API
+    val stamp: Stamp? = null, //TODO: stamp view: https://github.com/CeuiLiSA/Pixiv-Shaft/blob/ee2afee674fb4c8a2871970427cf81bb8362292f/app/src/main/java/ceui/pixiv/ui/comments/CommentHolder.kt#L59
+    val user: UserBean,
+) {
     @Serializable
-    class CommentsBean(
-        val id: Int = 0,
-        val comment: String,
-        val date: String,
-        val user: UserBean,
-        val parent_comment: ParentCommentBean
+    class Stamp(
+        val stamp_id: Long = 0,
+        val stamp_url: String? = null,
     )
 
-    /**
-     * id : 20980424
-     * name : 方丈要吃肉(修行ing）
-     * account : 1015453836
-     * profile_image_urls : {"medium":"https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg"}
-     */
     @Serializable
     class UserBean(
         val id: Int = 0,
@@ -72,21 +69,12 @@ class IllustCommentsResponse(
         val profile_image_urls: CommentProfileImageUrls
     )
 
-    /**
-     * id : 74770901
-     * comment : You painting WA2000 is so cute !
-     * date : 2018-01-13T14:30:17+09:00
-     * user : {"id":4866052,"name":"塩からす","account":"sa1ty9","profile_image_urls":{"medium":"https://i.pximg.net/user-profile/img/2018/01/05/00/35/46/13649713_dac36c983345d7b7946931ee42d4d32d_170.jpg"}}
-     */
-    @Serializable
-    class ParentCommentBean(
-        val id: Int = 0,
-        val comment: String?,
-        val date: String?,
-        val user: UserBean?,
-        //val parent_comment: ParentCommentBean
-    )
 }
+
+@Serializable
+data class PostCommentsResponse(
+    val comment: CommentsBean? = null,
+)
 
 /**
  * medium : https://i.pximg.net/user-profile/img/2017/10/05/19/56/20/13307506_0f98c48babaac8ceb11673464ad40ad3_170.jpg

@@ -47,7 +47,7 @@ import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.ActivityLoginBinding
 import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RefreshToken
-import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.ui.MainActivity
 import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.settings.FirstInfoDialog
@@ -164,13 +164,13 @@ class LoginActivity : RinkActivity() {
                 confirmButton { dialog, which ->
                     val token = getInputField(dialog).text.toString()
                     if (token.isEmpty()) {
-                        Toasty.shortToast(R.string.refresh_token_fail)
+                        ToastQ.post(R.string.refresh_token_fail)
                         return@confirmButton
                     }
                     lifecycleScope.launchCatching({
                         RefreshToken.getInstance().refreshToken(token, true)
                     }, {
-                        Toasty.shortToast(R.string.login_success)
+                        ToastQ.post(R.string.login_success)
                         Intent(this@LoginActivity, MainActivity::class.java)
                             .setAction("login.success").apply {
                                 // 避免循环添加账号导致相同页面嵌套。或者在添加账号（登录）成功时回到账号列表页面而不是导航至新的主页
@@ -178,7 +178,7 @@ class LoginActivity : RinkActivity() {
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                 // Or launchMode = "singleTop|singleTask"
                             }.let { startActivity(it) }
-                    }, { Toasty.shortToast(R.string.refresh_token_fail) }, Dispatchers.Main)
+                    }, { ToastQ.post(R.string.refresh_token_fail) }, Dispatchers.Main)
                 }
                 cancelButton()
                 //TODO: token login help

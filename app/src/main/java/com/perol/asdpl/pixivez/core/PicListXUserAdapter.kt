@@ -48,8 +48,9 @@ import com.perol.asdpl.pixivez.view.NiceImageView
  *  simple Adapter for image item with user imageView and heart icon
  */
 class PicListXUserAdapter(
-    layoutResId: Int, filter: PicsFilter
-) : PicListXAdapter(layoutResId, filter) {
+    filter: PicsFilter,
+    layoutResId: Int = R.layout.view_ranking_item_s,
+) : PicListXAdapter(filter, layoutResId) {
 
     /*override fun viewPicsOptions(view: View, illust: Illust): Bundle {
         return viewOptions(this, view, illust)

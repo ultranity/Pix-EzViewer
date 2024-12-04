@@ -31,15 +31,21 @@ import com.perol.asdpl.pixivez.core.PicListFragment
 import com.perol.asdpl.pixivez.core.TAG_TYPE
 import com.perol.asdpl.pixivez.objects.WeakValueHashMap
 
-class RankingMAdapter(fragment: Fragment, private var isR18on: Boolean) :
+class RankingMAdapter(fragment: Fragment, private val restrictLevel: Int = 0) :
     FragmentStateAdapter(fragment) {
 
-    private val modeList = arrayOf(
+    private val modeList = mutableListOf(
         "day", "day_male", "day_female", "day_ai", "week_original", "week_rookie", "week", "month",
-        "day_manga", "day_r18", "day_male_r18", "day_female_r18", "week_r18", "week_r18g"
-    )
+        "day_manga"
+    ).apply {
+        if (restrictLevel <= 1) {
+            addAll(listOf("day_r18", "day_male_r18", "day_female_r18", "week_r18"))
+            if (restrictLevel == 0) add("week_r18g")
+        }
+    }
 
-    override fun getItemCount() = if (isR18on) modeList.size else modeList.size - 5
+
+    override fun getItemCount() = modeList.size
 
     //TODO: LRU cache
     val fragments = WeakValueHashMap<Int, PicListFragment>(3)

@@ -1,0 +1,14 @@
+## 2.1.0.
+- [x] Feature: support custom IP and random IP load balancing
+- [x] Feature: support limit level filtering, provide fuzzy view
+- [x] Feature: Support blocking specific users
+- [x] Feature: Settings added: option to automatically show related illusts (or manually click to load)
+- [x] Optim: http error prompts error code
+- [x] Optim: download list import and export
+- [x] Optim: navigation bar color
+- [x] Fix: clipboard function exception when string are too long
+- [x] Fix: Network access exception
+- [x] Fix: Blocked Content Showed in History
+- [x] Fix: Abnormal toast display process
+- [x] Fix: Preliminary fix for comment display exception
+- [x] Optim: code cleanup and other tweaks

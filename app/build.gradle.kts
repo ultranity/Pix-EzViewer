@@ -46,14 +46,14 @@ plugins {
 }
 android {
     namespace = "com.perol.asdpl.pixivez"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.perol.asdpl.play.pixivez"
         minSdk = 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 29
-        versionCode = 200
-        versionName = "2.0.0"
+        versionCode = 210
+        versionName = "2.1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true

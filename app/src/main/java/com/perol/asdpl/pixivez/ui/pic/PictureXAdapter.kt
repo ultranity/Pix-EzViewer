@@ -108,15 +108,15 @@ class PictureXAdapter(
     private lateinit var imageUrls: List<String>
     private lateinit var imageThumbnail: String
     val pre = PxEZApp.instance.pre
-    private lateinit var mListen: () -> Unit
+    private lateinit var mOnLoadListen: () -> Unit
     private lateinit var mViewCommentListen: () -> Unit
     private lateinit var mUserPicLongClick: () -> Unit
     fun setUserPicLongClick(listener: () -> Unit) {
         this.mUserPicLongClick = listener
     }
 
-    fun setListener(listener: () -> Unit) {
-        this.mListen = listener
+    fun setOnLoadListener(listener: () -> Unit) {
+        this.mOnLoadListen = listener
     }
 
     fun setViewCommentListen(listener: () -> Unit) {
@@ -473,7 +473,7 @@ class PictureXAdapter(
                                 target: Target<Drawable>,
                                 isFirstResource: Boolean
                             ): Boolean {
-                                mListen.invoke()
+                                mOnLoadListen.invoke()
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                                 return false
                             }
@@ -485,7 +485,7 @@ class PictureXAdapter(
                                 dataSource: DataSource,
                                 isFirstResource: Boolean
                             ): Boolean {
-                                mListen.invoke()
+                                mOnLoadListen.invoke()
                                 (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                                 return false
                             }
@@ -593,7 +593,7 @@ class PictureXAdapter(
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    mListen.invoke()
+                    mOnLoadListen.invoke()
                     if (position == 0) {
                         (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                     }
@@ -607,7 +607,7 @@ class PictureXAdapter(
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    mListen.invoke()
+                    mOnLoadListen.invoke()
                     if (position == 0) {
                         (mContext as FragmentActivity).supportStartPostponedEnterTransition()
                     }

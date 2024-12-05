@@ -346,4 +346,5 @@
     <string name="ip_shuffle">负载均衡</string>
     <string name="restrict_sanity">等效 private 阈值</string>
     <string name="view_user_blocked">User %1$d blocked, 确定打开么？</string>
+    <string name="auto_load_related_illust">自动加载相关推荐图片</string>
 </resources>

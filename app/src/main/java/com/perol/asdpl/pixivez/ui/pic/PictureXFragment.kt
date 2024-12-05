@@ -76,6 +76,9 @@ class PictureXFragment : BaseFragment() {
 
     private var illustid by Delegates.notNull<Int>()
     private var illustobj: Illust? = null
+
+    private val pre = PxEZApp.instance.pre
+    private val autoLoadRelated by lazy { pre.getBoolean("AutoLoadRelatedIllust", true) }
     private lateinit var pictureXViewModel: PictureXViewModel
     override fun loadData() {
 //        val item = activity?.intent?.extras
@@ -90,7 +93,7 @@ class PictureXFragment : BaseFragment() {
     override fun onDestroy() {
         pictureXAdapter?.imageViewGif?.visibility = View.INVISIBLE
         _binding = null
-        pictureXAdapter?.setListener { }
+        pictureXAdapter?.setOnLoadListener { }
         pictureXAdapter?.setViewCommentListen { }
         pictureXAdapter?.setUserPicLongClick { }
         super.onDestroy()
@@ -232,7 +235,7 @@ class PictureXFragment : BaseFragment() {
         }
 
         pictureXAdapter = PictureXAdapter(pictureXViewModel, requireContext()).apply {
-            setListener {
+            setOnLoadListener {
                 // activity?.supportStartPostponedEnterTransition()
                 //TODO: why need scrollToPosition?
                 if (!hasMoved) {
@@ -240,7 +243,8 @@ class PictureXFragment : BaseFragment() {
                     (binding.recyclerview.layoutManager as LinearLayoutManager?)
                         ?.scrollToPositionWithOffset(0, 0)
                 }
-                pictureXViewModel.getRelated()
+                if (autoLoadRelated)
+                    pictureXViewModel.getRelated()
             }
             setViewCommentListen {
                 CommentDialog.newInstance(illustid)

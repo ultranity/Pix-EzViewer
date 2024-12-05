@@ -316,4 +316,5 @@
     <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, seperate with \",\"</string>
     <string name="ip_shuffle">Load Balancing</string>
     <string name="restrict_sanity">sanity threshold for x restrict</string>
+    <string name="auto_load_related_illust">Autoload related Illust</string>
 </resources>

@@ -70,6 +70,10 @@
             app:key="ShowDownloadToast"
             app:defaultValue="true"
             app:title="@string/show_download_toast" />
+        <SwitchPreferenceCompat
+            app:key="AutoLoadRelatedIllust"
+            app:defaultValue="true"
+            app:title="@string/auto_load_related_illust" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Selection">
         <Preference

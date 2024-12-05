@@ -26,12 +26,14 @@
 package com.perol.asdpl.pixivez.base
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.transition.platform.MaterialArcMotion
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -47,6 +49,9 @@ abstract class RinkActivity : AppCompatActivity() {
 
     @SuppressLint("InternalInsetResource")
     private fun getNavigationBarHeight(): Int {
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            return window.decorView.rootWindowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+//        }
         val resourceId: Int = this.resources.getIdentifier(
             "navigation_bar_height",
             "dimen",
@@ -89,12 +94,25 @@ abstract class RinkActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LanguageUtil.setLanguage(this, PxEZApp.language)
         ThemeUtil.themeInit(this)
-        if (getNavigationBarHeight() < 88) {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            show(WindowInsetsCompat.Type.statusBars())
+            isAppearanceLightStatusBars = !ThemeUtil.isDarkMode(this@RinkActivity)
+            isAppearanceLightNavigationBars = !ThemeUtil.isDarkMode(this@RinkActivity)
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        }
+        window.statusBarColor = ThemeUtil.getColorPrimary(this)
+        if ((getNavigationBarHeight() < 88) or !PxEZApp.instance.pre.getBoolean(
+                "bottomAppbar",
+                true
+            )
+        ) {
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             // window.decorView.fitsSystemWindows = true
-            window.navigationBarColor = Color.TRANSPARENT
-            window.statusBarColor = ThemeUtil.getColorPrimary(this)
+            window.navigationBarColor = resources.getColor(android.R.color.transparent)
+        } else {
+            window.navigationBarColor = ThemeUtil.getColorPrimary(this)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode =

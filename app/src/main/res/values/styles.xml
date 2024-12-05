@@ -42,8 +42,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="badgeTextColor">@color/yellow</item>
-        <item name="android:navigationBarColor">?attr/colorPrimary</item>
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <!-- enable window content transitions -->
         <item name="android:windowActivityTransitions">true</item>

@@ -110,9 +110,14 @@ class ThemeFragment : PreferenceFragmentCompat() {
     }
 
     private fun snackbarApplyConfig() {
-        Snackbar.make(requireView(), getString(R.string.title_change_theme), Snackbar.LENGTH_SHORT)
-            .setAction(R.string.restart_now) {
-                PxEZApp.ActivityCollector.recreate()
-            }.show()
+        val snackbar = Snackbar.make(
+            requireView(),
+            getString(R.string.title_change_theme),
+            Snackbar.LENGTH_SHORT
+        )
+        snackbar.setAction(R.string.restart_now) {
+            PxEZApp.ActivityCollector.recreate()
+            snackbar.dismiss()
+        }.show()
     }
 }

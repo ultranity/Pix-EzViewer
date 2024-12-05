@@ -245,10 +245,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun snackbarRestart() {
-        Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
-            .setAction(R.string.restart_now) {
-                PxEZApp.ActivityCollector.recreate()
-            }.show()
+        val snackbar =
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+        snackbar.setAction(R.string.restart_now) {
+            PxEZApp.ActivityCollector.recreate()
+            snackbar.dismiss()
+        }.show()
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -65,6 +65,7 @@ import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.objects.screenWidthDp
+import com.perol.asdpl.pixivez.services.AppUpdater
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.account.LoginActivity
 import com.perol.asdpl.pixivez.ui.home.HelloMainViewPager
@@ -361,6 +362,9 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                     // }
                 }
             })
+        if (AppUpdater.need_check_update) {
+            AppUpdater.checkUpgrade(this, binding.root)
+        }
     }
 
     private fun checkAndRequestPermissions(permissionList: ArrayList<String>) {

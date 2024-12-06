@@ -321,7 +321,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             "check" -> {
-                AppUpdater.checkUpgrade(requireActivity(), requireView())
+                AppUpdater.checkUpgrade(requireActivity(), true)
             }
 
             "storepath1" -> {

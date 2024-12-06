@@ -363,7 +363,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             })
         if (AppUpdater.need_check_update) {
-            AppUpdater.checkUpgrade(this, binding.root)
+            AppUpdater.checkUpgrade(this)
         }
     }
 

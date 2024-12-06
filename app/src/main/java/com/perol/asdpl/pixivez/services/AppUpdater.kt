@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.util.Log
-import android.view.View
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
@@ -71,7 +70,7 @@ object AppUpdater {
     val need_check_update: Boolean
         get() = System.currentTimeMillis() - last_check_update > 1000 * 60 * 60 * 24
 
-    fun checkUpgrade(activity: Activity, view: View) {
+    fun checkUpgrade(activity: Activity, force: Boolean = false) {
         if (isNetworkAvailable()) {
             last_check_update = System.currentTimeMillis()
             thread {
@@ -82,12 +81,16 @@ object AppUpdater {
                         ToastQ.post(R.string.update_failed)
                         return@runOnUiThread
                     }
+                    if (!newUpdateAvailable && !force) {
+                        ToastQ.post(R.string.no_update)
+                        return@runOnUiThread
+                    }
                     // obtain an instance of Markwon
                     val markwon = Markwon.create(activity)
                     val title = activity.getString(
                         if (newUpdateAvailable) R.string.update_available
                         else R.string.no_update
-                    ) + "|" + data.name + "|" + data.createdAt
+                    ) + "|" + data.name + "\n" + data.createdAt
                     MaterialDialogs(activity).show {
                         setTitle(title)
                         setMessage(markwon.toMarkdown(

@@ -1,0 +1,18 @@
+## 2.1.1
+- [x] Feature: support custom IP and random IP load balancing
+- [x] Feature: support limit level filtering, provide fuzzy view
+- [x] Feature: custom layout persistence
+- [x] Feature: Support for blocking specific users
+- [x] Feature: Settings added: load related illusts as optional (need click to load manually)
+- [x] Optim: http error prompts error code
+- [x] Optim: download list import and export
+- [x] Optim: update check logic
+- [x] Optim: navigation bar color
+- [x] Fixed: wide preview loading issue
+- [x] Fix: clipboard function exception when string are too long
+- [x] Fix: Home page pixivision header disappears after customizing layout
+- [x] Fix: Network access exception
+- [x] Fix: Blocked content shown in history
+- [x] Fix: Abnormal toast display process
+- [x] Fix: Preliminary fix for comment viewing issues
+- [x] Optim: code cleanup and other tweaks

@@ -31,6 +31,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelStoreOwner
@@ -333,7 +334,9 @@ open class PicListFragment : Fragment() {
     }
 
     open fun configAdapter(renew: Boolean = true) {
+        var headers: List<View>? = null
         if (renew) {
+            headers = picListAdapter.headerLayout?.children?.toList()
             picListAdapter.removeAllHeaderView()
         } else {
             if (::picListAdapter.isInitialized) {
@@ -343,7 +346,8 @@ open class PicListFragment : Fragment() {
         }
         picListAdapter = filterModel.getAdapter()
         //TODO: decouple header view
-        picListAdapter.addHeaderView(headerBinding.root)
+        headers?.forEach { picListAdapter.addHeaderView(it) }
+            ?: picListAdapter.addHeaderView(headerBinding.root)
         //binding.recyclerview.swapAdapter(picListAdapter, true)
         binding.recyclerview.adapter = picListAdapter
     }

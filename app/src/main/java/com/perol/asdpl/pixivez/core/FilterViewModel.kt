@@ -67,6 +67,7 @@ open class PicListFilterKV(tag: String) : KVData(tag) {
         kv.commit()
     }
 
+    var adapterType by int("adapter_type", -1)
     var localSanity by int("max_sanity", 7)
     val maxSanity: Int
         get() = localSanity.coerceAtMost(PxEZApp.restrictSanity)
@@ -152,7 +153,9 @@ class FilterViewModel : ViewModel() {
         filter = PicsFilter(TAG)
         if (!PxEZApp.instance.pre.getBoolean("r18on", false))
             filter.showPrivate = false
-        if (TAG_TYPE.isUserContent(TAG))
+        if (filter.adapterType >= 0)
+            adapterType.overrideValue(ADAPTER_TYPE.entries[filter.adapterType])
+        else if (TAG_TYPE.isUserContent(TAG))
             adapterType.overrideValue(ADAPTER_TYPE.PIC_LIKE)
     }
 
@@ -227,22 +230,31 @@ fun showFilterDialog(
     return MaterialDialog(context).show {
         customView(view = dialog.root, scrollable = true)
         positiveButton {
+            var changed = false
             propsMap.forEach {
-                it.second.set(it.first.isChecked)
+                if (it.first.isChecked != it.second.get()) {
+                    it.second.set(it.first.isChecked)
+                    changed = true
+                }
             }
+            if (filterModel.filter.localSanity != dialog.sliderSanity.value.toInt())
+                changed = true
             filterModel.filter.localSanity = dialog.sliderSanity.value.toInt()
-            filterModel.applyConfig()
-            val span = dialog.sliderSpan.value.toInt()
-            layoutManager.spanCount = if (span == 0) filterModel.spanNum else span
             val adapterVersion =
                 ADAPTER_TYPE.entries[dialog.showSaveBtn.isChecked * 2 + dialog.showUserImg.isChecked]
+            val span = dialog.sliderSpan.value.toInt()
+            layoutManager.spanCount = if (span == 0) filterModel.spanNum else span
             if (filterModel.adapterType.checkUpdate(adapterVersion)) {
                 val data = picListFragment.picListAdapter.mData
                 picListFragment.configAdapter()
                 picListFragment.picListAdapter.initData(data)
-            } else {
+                //Note: keep default behavior if not specified
+                filterModel.filter.adapterType = adapterVersion.ordinal
+            }
+            if (changed) {
                 picListFragment.picListAdapter.resetFilterFlag()
             }
+            filterModel.applyConfig()
         }
         negativeButton(R.string.sort_by) {
             MaterialDialogs(context).show {

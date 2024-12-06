@@ -66,9 +66,8 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
         private val migration7to8 = Migration(7, 8) {
-            it.execSQL("ALTER TABLE `user` ADD COLUMN IF NOT EXISTS `x_restrict` INTEGER NOT NULL DEFAULT 0")
-            it.execSQL("CREATE TABLE IF NOT EXISTS `blockUser` (`uid` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`uid`))")
-            it.execSQL("ALTER TABLE `blockUser` ADD COLUMN IF NOT EXISTS `createdAt` INTEGER NOT NULL DEFAULT 0")
+            it.execSQL("ALTER TABLE `user` ADD COLUMN `x_restrict` INTEGER NOT NULL DEFAULT 0")
+            it.execSQL("CREATE TABLE IF NOT EXISTS `blockUser` (`uid` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`uid`))")
             it.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_blockTag_name` ON `blockTag` (`name`)")
         }
         private fun buildDatabase(context: Context) =

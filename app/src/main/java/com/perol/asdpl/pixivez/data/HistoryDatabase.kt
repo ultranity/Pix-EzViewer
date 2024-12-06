@@ -28,6 +28,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import com.perol.asdpl.pixivez.data.dao.SearchHistoryDao
 import com.perol.asdpl.pixivez.data.dao.ViewHistoryDao
 import com.perol.asdpl.pixivez.data.entity.HistoryEntity
@@ -35,7 +36,7 @@ import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
 
 @Database(
     entities = [SearchHistoryEntity::class, HistoryEntity::class],
-    version = 1
+    version = 2
 )
 abstract class HistoryDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
@@ -52,12 +53,18 @@ abstract class HistoryDatabase : RoomDatabase() {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
 
+        private val migration1to2 = Migration(1, 2) {
+            it.execSQL("ALTER TABLE search RENAME COLUMN Id TO id")
+            it.execSQL("DELETE FROM search WHERE id NOT IN (SELECT MIN(id) FROM search GROUP BY word)")
+            it.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_search_word` ON `search` (`word`)")
+        }
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
                 HistoryDatabase::class.java,
                 "history.db"
-            ).fallbackToDestructiveMigrationOnDowngrade()
+            ).addMigrations(migration1to2)
+                .fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }
 }

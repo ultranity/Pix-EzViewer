@@ -3,6 +3,7 @@ package com.perol.asdpl.pixivez.core
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.Int
 import com.perol.asdpl.pixivez.base.KotlinUtil.alsoIf
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
 import com.perol.asdpl.pixivez.base.UtilFunc.compute
@@ -328,9 +330,15 @@ abstract class PicListAdapter(
             return
         }
         showItemView(holder.itemView)
-        // if (!context.resources.configuration.orientation==ORIENTATION_LANDSCAPE)
+        val needSmall = if (quality == 1) {
+            (1.0 * item.height / item.width > 3) || (1.0 * item.width / item.height > 4)
+        } else {
+            item.height > 1800
+        }
+        val needFullSpan = !needSmall and ((1.0 * item.width / item.height) >
+                ((context.resources.configuration.orientation == ORIENTATION_LANDSCAPE).Int() * 2 + 2.1))
         if (!blockedFlag[pos])
-            setFullSpan(holder, (1.0 * item.width / item.height > 2.1))
+            setFullSpan(holder, needFullSpan)
 
         val numLayout = holder.getView<TextView>(R.id.textview_num)
         if (item.type == "ugoira") {
@@ -359,11 +367,6 @@ abstract class PicListAdapter(
 
         // Load Images
         mainImage.setTag(R.id.tag_first, item.meta[0].medium)
-        val needSmall = if (quality == 1) {
-            (1.0 * item.height / item.width > 3) || (item.width / item.height > 4)
-        } else {
-            item.height > 1800
-        }
         val loadUrl = if (needSmall) {
             item.meta[0].square_medium
         } else {

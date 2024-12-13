@@ -267,7 +267,7 @@ class PictureXFragment : BaseFragment() {
                     override fun isSpanGroupIndexCacheEnabled(): Boolean = true
                     override fun getSpanSize(position: Int): Int {
                         if (pictureXAdapter!!.getItemViewType(position) ==
-                            PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+                            PictureXAdapter.ITEM_TYPE.ITEM_TYPE_RELATED.ordinal
                         )
                             return 2
                         return 1

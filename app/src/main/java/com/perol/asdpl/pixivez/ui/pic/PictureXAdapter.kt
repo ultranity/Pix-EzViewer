@@ -377,9 +377,9 @@ class PictureXAdapter(
                 return BlankViewHolder(view)
             }
 
-            ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal -> {
+            ITEM_TYPE.ITEM_TYPE_RELATED.ordinal -> {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.view_picturex_relative, parent, false)
+                    .inflate(R.layout.view_picturex_related, parent, false)
                 return RelatedHolder(view)
             }
 
@@ -399,7 +399,7 @@ class PictureXAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             imageUrls.size -> ITEM_TYPE.ITEM_TYPE_DETAIL.ordinal
-            imageUrls.size + 1 -> ITEM_TYPE.ITEM_TYPE_RELATIVE.ordinal
+            imageUrls.size + 1 -> ITEM_TYPE.ITEM_TYPE_RELATED.ordinal
             imageUrls.size + 2 -> ITEM_TYPE.ITEM_TYPE_BLANK.ordinal
 
             else -> {
@@ -416,7 +416,7 @@ class PictureXAdapter(
         ITEM_TYPE_PICTURE,
         ITEM_TYPE_BLANK,
         ITEM_TYPE_DETAIL,
-        ITEM_TYPE_RELATIVE,
+        ITEM_TYPE_RELATED,
         ITEM_TYPE_GIF
     }
 

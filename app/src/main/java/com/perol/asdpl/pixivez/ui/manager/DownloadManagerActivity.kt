@@ -23,7 +23,6 @@ import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityDownloadManagerBinding
 import com.perol.asdpl.pixivez.databinding.DialogDownloadConfigBinding
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
-import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.services.Works.option
@@ -251,10 +250,7 @@ class DownloadManagerActivity : RinkActivity() {
                                                             if (dot - 4 > 0) dot - 4 else 0
                                                         )?.value ?: "0"
                                                     ).toIntOrNull()
-                                            if (pid != null && part != null && !FileUtil.isDownloaded(
-                                                    pid
-                                                )
-                                            ) {
+                                            if (pid != null && part != null) {
                                                 Works.imgD(pid, part)
                                                 Thread.sleep(300)
                                             }

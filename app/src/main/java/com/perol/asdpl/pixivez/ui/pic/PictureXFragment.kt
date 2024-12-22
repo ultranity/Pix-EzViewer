@@ -148,6 +148,7 @@ class PictureXFragment : BaseFragment() {
         loadIllust(illust)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initViewModel() {
         pictureXViewModel.illustDetail.observe(viewLifecycleOwner) {
             binding.progressView.visibility = View.GONE
@@ -171,9 +172,16 @@ class PictureXFragment : BaseFragment() {
             }
         }
 
+        fun blockFilter(xes: MutableList<Illust>): List<Illust> = xes.filterNot { illust ->
+            BlockViewModel.getBlockUIDs().contains(illust.user.id) || run {
+                val blockTags = BlockViewModel.getBlockTagString()
+                firstCommonTags(blockTags, illust.tags) != null
+            }
+        }
+
         pictureXViewModel.related.observe(viewLifecycleOwner) {
             if (it != null) {
-                pictureXAdapter!!.relatedPictureAdapter.setNewInstance(it)
+                pictureXAdapter!!.relatedPictureAdapter.setNewInstance(blockFilter(it).toMutableList())
                 pictureXAdapter!!.relatedPictureAdapter.setOnLoadMoreListener {
                     pictureXViewModel.onLoadMoreRelated()
                 }
@@ -183,7 +191,7 @@ class PictureXFragment : BaseFragment() {
         }
         pictureXViewModel.relatedAdded.observe(viewLifecycleOwner) {
             if (it != null) {
-                pictureXAdapter!!.relatedPictureAdapter.addData(it)
+                pictureXAdapter!!.relatedPictureAdapter.addData(blockFilter(it))
             } else {
                 pictureXAdapter!!.relatedPictureAdapter.loadMoreFail()
             }

@@ -107,6 +107,16 @@ object RestClient {
             }).imageProxySocket().addInterceptor(ProgressInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
+                //add callback if timeout
+                .addNetworkInterceptor {
+                    try {
+                        it.proceed(it.request())
+                    } catch (e: Exception) {
+                        Log.e("imageHttpClient", e.message, e)
+                        ImageHttpDns.checkIPConnection()
+                        throw e
+                    }
+                }
                 .build()
         }
 

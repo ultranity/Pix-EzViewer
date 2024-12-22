@@ -281,8 +281,8 @@
     <string name="format">格式</string>
     <string name="mirror_link_hint">URL中设置的i.pximg.net镜像网站，如i.pixiv.cat，original.img.pixivic.net等</string>
     <string name="params_desc">original参数,包括{time}/{illustid}_p{part}{type}</string>
-    <string name="mirror_link_download">下载时启用镜像</string>
-    <string name="mirror_link_view">浏览时启用镜像</string>
+    <string name="mirror_link_download">下载时镜像</string>
+    <string name="mirror_link_view">浏览时镜像</string>
     <string name="i_pximg_net" translatable="false">i.pximg.net</string>
     <string name="icon_draw_by">你主人(探姬);HK流星(MD)绘制</string>
     <string name="set_mirror">点击可设置镜像站</string>
@@ -347,4 +347,5 @@
     <string name="restrict_sanity">等效 private 阈值</string>
     <string name="view_user_blocked">User %1$d blocked, 确定打开么？</string>
     <string name="auto_load_related_illust">自动加载相关推荐图片</string>
+    <string name="refreshDNS">刷新DNS</string>
 </resources>

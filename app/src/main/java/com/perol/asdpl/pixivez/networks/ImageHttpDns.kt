@@ -25,6 +25,7 @@
 package com.perol.asdpl.pixivez.networks
 
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works.pre
 import kotlinx.coroutines.CoroutineScope
@@ -37,30 +38,64 @@ object ImageHttpDns : Dns {
 
     var shuffleIP = pre.getBoolean("shuffleIP", true)
     private val addressList = mutableListOf<InetAddress>()
-    private val defaultList = listOf(
-        "210.140.92.145",
-        "210.140.92.149",
-        "210.140.92.144",
+    private var defaultList = listOf(
+        "203.137.29.47",
+        "210.140.139.129",
+        "210.140.139.133",
+        "210.140.139.137",
     ).map { InetAddress.getByName(it) }
     const val IPListPattern =
         "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(,\\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*\$"
     val ipPattern = Regex(IPListPattern)
     lateinit var customIPs: MutableList<String>
-    private val customList
-        get() = customIPs.map { InetAddress.getByName(it) }
+    private var customList: List<InetAddress> = listOf()
 
     fun setCustomIPs(string: String?) {
         customIPs = string?.takeIf(ipPattern::matches)
             ?.split(",")?.map { it.trim() }?.toMutableList() ?: mutableListOf<String>()
+        customList = customIPs.map { InetAddress.getByName(it) }
     }
 
     init {
+        addressList.addAll(defaultList)
         setCustomIPs(PxEZApp.instance.pre.getString("customIPs", null))
+        addressList.addAll(customList)
+        checkIPConnection()
+    }
+
+    private var lastCheckTime = 0L
+    fun checkIPConnection() {
+        if (System.currentTimeMillis() - lastCheckTime < 60000) return
+        lastCheckTime = System.currentTimeMillis()
+        CoroutineScope(Dispatchers.IO).launch {
+            addressList.removeAll {
+                try {
+                    !it.isReachable(5000)
+                } catch (e: Exception) {
+                    CrashHandler.instance.e("ImageHttpDns", "$it is not reachable", e)
+                    true
+                }
+            }
+        }
+    }
+
+    fun fetchIPs() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = ServiceFactory.CFDNS.lookup("i.pximg.net")
+                addressList.addAll(response)
+                //customIPs.addAll(response.mapNotNull { it.hostAddress })
+            } catch (e: Exception) {
+                CrashHandler.instance.e("ImageHttpDns", "i.pximg.net DNS fetch failed", e)
+            }
+        }
     }
     override fun lookup(hostname: String): List<InetAddress> {
-        if (customList.isNotEmpty()) return if (shuffleIP) customList.shuffled() else customList
-        if (defaultList.isNotEmpty()) return if (shuffleIP) defaultList.shuffled() else defaultList
-        //TODO: dns is now disabled
+        if (addressList.isNotEmpty())
+            return if (shuffleIP) addressList.shuffled() else addressList
+        CoroutineScope(Dispatchers.Main).launch {
+            ToastQ.post("All default IP failed, fallback to CF DNS")
+        }
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = ServiceFactory.CFDNS.lookup(hostname)
@@ -80,6 +115,7 @@ object ImageHttpDns : Dns {
 
         return addressList.ifEmpty {
             addressList.addAll(defaultList)
+            addressList.addAll(customList)
             addressList
         }
     }

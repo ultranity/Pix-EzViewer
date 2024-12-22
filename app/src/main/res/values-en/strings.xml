@@ -317,4 +317,5 @@
     <string name="ip_shuffle">Load Balancing</string>
     <string name="restrict_sanity">sanity threshold for x restrict</string>
     <string name="auto_load_related_illust">Autoload related Illust</string>
+    <string name="refreshDNS">Refresh DNS</string>
 </resources>

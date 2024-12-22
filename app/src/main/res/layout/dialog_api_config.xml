@@ -39,6 +39,14 @@
         android:layout_toEndOf="@+id/mirror_link_download"
         android:text="@string/mirror_link_view" />
 
+    <Button
+        android:id="@+id/refreshDNS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dns_proxy"
+        android:layout_toEndOf="@+id/mirror_link_view"
+        android:text="@string/refreshDNS" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

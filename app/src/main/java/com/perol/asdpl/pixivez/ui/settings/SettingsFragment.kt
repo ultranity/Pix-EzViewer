@@ -479,6 +479,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
             }
         })
+        binding.refreshDNS.setOnClickListener {
+            ImageHttpDns.fetchIPs()
+            ImageHttpDns.checkIPConnection()
+        }
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
         val urlInputEditable = formatInput.editableText

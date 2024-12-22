@@ -31,7 +31,8 @@ object ServiceFactory {
         //useAlternativeNames = false
     }
 
-    val CFDNS = DnsOverHttps("https://dns.pub") // Or https://1.0.0.1/.
+    // Or "https://dns.cloudflare.com/.well-known/dns-query"
+    val CFDNS = DnsOverHttps("https://1.1.1.1/dns-query?ct=application/dns-udpwireformat")
     private fun DnsOverHttps(url: String): DnsOverHttps {
         return DnsOverHttps.Builder()
             .client(OkHttpClient())

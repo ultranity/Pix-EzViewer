@@ -323,9 +323,14 @@ class UserMActivity : RinkActivity() {
         MaterialDialogs(this).show {
             setTitle(R.string.block_user)
             confirmButton { dialog, _ ->
+                //stop current fragment first to prevent recycler view crash
+                binding.viewpager.adapter = null
+                supportFragmentManager.fragments.forEach { it.onStop() }
+                supportFragmentManager.fragments.clear()
                 runBlocking(Dispatchers.IO) {
                     BlockViewModel.insertBlockUser(id)
                 }
+                finishAfterTransition()
             }
             cancelButton()
         }

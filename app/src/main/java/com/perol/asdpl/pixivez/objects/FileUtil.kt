@@ -100,10 +100,6 @@ class FileInfo(val file: File) {
         }
 }
 
-interface OnclickInterfaceFile {
-    fun itemClick(position: Int)
-}
-
 object FileUtil {
     val sdCardPath: String
         get() = Environment.getExternalStorageDirectory().absolutePath
@@ -248,42 +244,15 @@ object FileUtil {
         return dirs
     }
 
-    fun deleteFile(path: String) {
-        val file = File(path)
-        if (file.exists()) {
-            file.delete()
-        }
-    }
-
-    fun pasteFile(targetDir: String, file: File): Int {
-        val newFile = File(targetDir, file.name)
-        if (newFile.exists()) {
-            // Toasty.error(this,newPath+" already exists");
-            return 1
-        }
-        else {
-            try {
-                file.copyTo(newFile)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        return 0 // OK
-    }
-
-    fun pasteDir(targetDir: String, dir: File) {
-        val newDir = File(targetDir, dir.name)
-        dir.copyRecursively(newDir, false)
-    }
-
-    private fun extraPath(path: String): List<String>? {
+    private fun getExtraPath(path: String): List<String>? {
         File(path).let { file ->
             if (file.exists()) {
-                return@extraPath file.readLines()
+                return@getExtraPath file.readLines()
             }
         }
         return null
     }
+
     private fun bitSetFileLog(path: String): RoaringBitmap? {
         val rr = RoaringBitmap()
         val file = File(path)
@@ -297,7 +266,7 @@ object FileUtil {
         return rr
     }
     private fun writeBitSetFileLog(rr: RoaringBitmap, path: String) {
-        val file = File("$path.bak")
+        val file = File("$path.tmp")
         val stream = DataOutputStream(FileOutputStream(file))
         rr.serialize(stream)
         stream.close()
@@ -312,8 +281,8 @@ object FileUtil {
         ListLog = bitSetFileLog(PxEZApp.storepath + File.separator + "roaringbit.data")
             ?: bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "roaringbit.data")
             ?: RoaringBitmap()
-        extraPath = extraPath(PxEZApp.storepath + File.separator + "path.txt")
-            ?: extraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt")
+        extraPath = getExtraPath(PxEZApp.storepath + File.separator + "path.txt")
+            ?: getExtraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt")
             ?: listOf()
         var fileList =
             getGroupList(PxEZApp.storepath, true).mapNotNull { it.pid }.sorted().toIntArray()
@@ -330,29 +299,6 @@ object FileUtil {
             writeBitSetFileLog(ListLog, PxEZApp.storepath + File.separator + "roaringbit.data")
         }
         // fileList.forEach {ListLog.add(it)}
-    }
-    fun haveLog(): Boolean {
-        return (
-            (
-                (
-                    bitSetFileLog(PxEZApp.storepath + File.separator + "roaringbit.data")
-                        ?: bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "roaringbit.data")
-                    )
-                    != null
-                )
-            )
-    }
-    fun haveExtraPath(): Boolean {
-        return (
-            (
-                (
-                    extraPath(PxEZApp.storepath + File.separator + "path.txt") ?: extraPath(
-                        Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt"
-                    )
-                        )
-                        != null
-                    )
-                )
     }
 
     fun isDownloaded(illust: Illust): Boolean {

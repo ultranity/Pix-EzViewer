@@ -86,14 +86,14 @@ class UserMViewModel : BaseViewModel() {
 
     fun onFabLongClick() {
         val user = userDetail.value!!.user
-        if (!follow.value!!) {
+        if (privateFollowed.value != true) {
             InteractionUtil.follow(user, true) {
                 follow.value = true
                 privateFollowed.value = true
             }
         } else {
-            InteractionUtil.unfollow(user) {
-                follow.value = false
+            InteractionUtil.follow(user, false) {
+                follow.value = true
                 privateFollowed.value = false
             }
         }

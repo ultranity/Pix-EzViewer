@@ -197,7 +197,14 @@ class UserMActivity : RinkActivity() {
                     if (it) R.drawable.ic_check_white_24dp
                     else R.drawable.ic_add_white_24dp
                 )
-                binding.fab.setText(if (it) R.string.following else R.string.follow)
+                if (user.is_followed)
+                    binding.fab.setText(
+                        if (viewModel.privateFollowed.value == true)
+                            R.string.following_private else R.string.following
+                    )
+                else
+                    binding.fab.setText(R.string.follow)
+
             }
         }
         viewModel.privateFollowed.observe(this) {

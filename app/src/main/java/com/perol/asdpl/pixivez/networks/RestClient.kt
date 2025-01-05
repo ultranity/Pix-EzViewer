@@ -146,17 +146,10 @@ object RestClient {
         }).apply {
             level = HttpLoggingInterceptor.Level.BODY
         }*/
-    class HeaderInterceptor(private val host: String) : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response {
-            return headerInject(host, chain)
-        }
 
-    }
-
-    private fun headerInject(host: String, chain: Interceptor.Chain): Response {
+    private fun authHeaderInject(host: String, chain: Interceptor.Chain): Response {
         val isoDate = ISO8601DATETIMEFORMAT.format(Date())
         val original = chain.request()
-        val Authorization = AppDataRepo.currentUser.Authorization
         val request = original.newBuilder()
             .header("User-Agent", UA)
             .header("App-OS", App_OS)
@@ -164,12 +157,23 @@ object RestClient {
             .header("App-Version", App_Version)
             .header("Accept-Language", "${local.language}_${local.country}")
             .header("Host", host)
-            .header("Authorization", Authorization)
+            .apply {
+                if (AppDataRepo.userInited()) {
+                    header("Authorization", AppDataRepo.currentUser.Authorization)
+                }
+            }
             .header("X-Client-Time", isoDate)
             .header("X-Client-Hash", encode("$isoDate$HashSalt"))
             .build()
         return chain.proceed(request)
     }
+
+    class AuthHeaderInterceptor(private val host: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            return authHeaderInject(host, chain)
+        }
+    }
+
     enum class HttpStatus(val code: Int) {
         OK(200),
         BadRequest(400),
@@ -187,10 +191,9 @@ object RestClient {
         }
     }
 
-    private const val TOKEN_ERROR = "Error occurred at the OAuth process"
     private const val TOKEN_INVALID = "Invalid refresh token"
 
-    class AuthInterceptor(private val host: String) : Interceptor {
+    class AuthUpdateInterceptor(private val host: String) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val response = try {
@@ -213,7 +216,7 @@ object RestClient {
                                 .refreshToken(AppDataRepo.currentUser.Refresh_token)
                         }
                         response.closeQuietly()
-                        return headerInject(host, chain)
+                        return authHeaderInject(host, chain)
                     }
                 }
 
@@ -245,9 +248,9 @@ object RestClient {
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
-            addInterceptor(HeaderInterceptor(host))
+            addInterceptor(AuthHeaderInterceptor(host))
             // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
-            if (needAuth) addInterceptor(AuthInterceptor(host))
+            if (needAuth) addInterceptor(AuthUpdateInterceptor(host))
             apiProxySocket()
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)

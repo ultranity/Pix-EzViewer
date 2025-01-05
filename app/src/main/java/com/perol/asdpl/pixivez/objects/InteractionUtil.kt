@@ -11,16 +11,8 @@ import kotlinx.coroutines.MainScope
 
 object InteractionUtil {
     private val retrofit: RetrofitRepository = RetrofitRepository.getInstance()
-
-    fun need_restrict(item: Illust) = (PxEZApp.R18Private && item.restricted)
-    fun visRestrictTag(item: Illust): String = visRestrictTag(need_restrict(item))
-    fun visRestrictTag(restrict: Boolean): String {
-        return if (restrict) {
-            "private"
-        } else {
-            "public"
-        }
-    }
+    fun visRestrictTag(item: Illust): String = visRestrictTag(PxEZApp.R18Private && item.isR18)
+    fun visRestrictTag(restrict: Boolean): String = if (restrict) "private" else "public"
 
     fun toDetailString(it: Illust, caption: Boolean = true) =
         "${it.title} \n" +
@@ -81,7 +73,7 @@ object InteractionUtil {
      * set private flag by check if need_restrict
      */
     inline fun follow(item: Illust, noinline callback: () -> Unit) {
-        follow(item.user, need_restrict(item), callback)
+        follow(item.user, item.restricted, callback)
     }
 
     fun follow(user: User, private: Boolean = false, callback: () -> Unit) =
@@ -98,10 +90,6 @@ object InteractionUtil {
                 true
             )
         })
-
-    inline fun unfollow(item: Illust, noinline callback: () -> Unit) {
-        unfollow(item.user, callback)
-    }
 
     fun unfollow(user: User, callback: () -> Unit) = MainScope().launchCatching({
         retrofit.api.postUnfollowUser(user.id)

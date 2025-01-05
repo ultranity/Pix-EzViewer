@@ -113,7 +113,7 @@ object Works {
                     .toLegal()
             )
             .replace("{account}", illust.user.account.toLegal())
-            .replace("{R18}", if (illust.restricted) "R18" else "")
+            .replace("{R18}", if (illust.isR18) "R18" else "")
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
         if (part != null && part < illust.meta.size) {
@@ -131,7 +131,7 @@ object Works {
         } else { //error config
             throw Error("part $part while illust.meta.size ${illust.meta.size}")
         }
-        if (R18Folder && illust.restricted) {
+        if (R18Folder && illust.isR18) {
             filename = "？$filename"
         }
 

@@ -151,6 +151,8 @@ data class IllustX(
             // if (PxEZApp.restrictSanity ==7) return x_restrict >= 1 else
             return sanity > PxEZApp.restrictSanity
         }
+    val isR18: Boolean
+        get() = x_restrict > 0
     var is_bookmarked: Boolean = false
         set(value) {
             val updated = field != value

@@ -53,6 +53,7 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ProfileImageUrls
 import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.UpToTopListener
@@ -241,7 +242,7 @@ class UserMActivity : RinkActivity() {
 
                         1 -> {
                             CoroutineScope(Dispatchers.IO).launch {
-                                val f = Glide.with(this@UserMActivity).asFile()
+                                val f = Glide.with(this@UserMActivity).downloadOnly()
                                     .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
                                     .submit()
                                 val file = f.get()
@@ -249,7 +250,7 @@ class UserMActivity : RinkActivity() {
                                     PxEZApp.storepath,
                                     "user_${viewModel.userDetail.value!!.user.id}.png"
                                 )
-                                file.copyTo(target, overwrite = true)
+                                FileUtil.move(file, target)
                                 MediaScannerConnection.scanFile(
                                     PxEZApp.instance,
                                     arrayOf(target.path),

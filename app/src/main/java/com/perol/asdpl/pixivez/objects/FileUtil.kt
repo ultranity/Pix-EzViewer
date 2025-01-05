@@ -24,6 +24,7 @@
 package com.perol.asdpl.pixivez.objects
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Environment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
@@ -37,7 +38,8 @@ import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -186,7 +188,16 @@ object FileUtil {
         }
         return list
     }
-
+    fun move(src: File, dest: File): () -> Unit {
+        //TODO: returned compatCheck can be removed after minAPI>26
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Files.move(src.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            return {}
+        } else {
+            src.copyTo(dest, true)
+            return { src.delete() }
+        }
+    }
     /**
      * 格式转换应用大小 单位"B,KB,MB,GB"
      */

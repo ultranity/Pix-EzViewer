@@ -28,9 +28,7 @@ package com.perol.asdpl.pixivez.view
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.PixelFormat
-import android.graphics.PorterDuff
 import android.graphics.RectF
 import android.os.Handler
 import android.os.HandlerThread
@@ -42,8 +40,7 @@ import kotlin.math.max
 // Pixiv动图的帧动画解决方案，如果需要拿去用把Copyright带上或者提一下我的id吧，研究了挺久的
 class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
 
-    private val drawPool: MutableList<String> =
-        ArrayList()
+    private val drawPool: MutableList<String> = ArrayList()
     private val handlerThread = HandlerThread("UgoiraView")
     private var needToDraw = false
     private var isSurfaceCreated = false
@@ -121,7 +118,7 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
         val canvas = holder.lockCanvas()
         if (canvas != null) {
             bitmap.let {
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                 val react = RectF(
                     this@AnimationView.left.toFloat(),
                     this@AnimationView.top.toFloat(),
@@ -164,13 +161,16 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
             onEnd()
         }
     }
-
+    var targetBitmap: Bitmap? = null
     private fun draw(path: String) {
         val canvas = holder.lockCanvas()
         if (canvas != null) {
-            val targetBitmap = BitmapFactory.decodeFile(path)
+            targetBitmap = BitmapFactory.decodeFile(path, BitmapFactory.Options().apply {
+                inMutable = true
+                inBitmap = targetBitmap
+            })
             targetBitmap?.let {
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                 val react = RectF(
                     this@AnimationView.left.toFloat(),
                     this@AnimationView.top.toFloat(),

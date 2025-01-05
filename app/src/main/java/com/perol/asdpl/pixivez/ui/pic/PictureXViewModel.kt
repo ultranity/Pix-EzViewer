@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.ui.pic
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
@@ -38,6 +39,7 @@ import com.perol.asdpl.pixivez.data.model.BookmarkDetailBean
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataBean
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -52,6 +54,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.lingala.zip4j.ZipFile
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 class PictureXViewModel : BaseViewModel() {
     val illustDetail = MutableLiveData<Illust?>()
@@ -80,22 +84,21 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun zipUgoira() {
-        val cachedZipPath = "${PxEZApp.instance.cacheDir.path}/${illust.id}_original.zip"
-        val fileCachedZIP = File(cachedZipPath)
-        val zipPath = "$pathUgoira.zip"
-        if (File(zipPath).exists()) {
+        val fileCachedZIP = File("${fileCachedUgoria.path}_original.zip")
+        val fileZIP = File("${filePath}_original.zip")
+        if (fileZIP.exists()) {
             ToastQ.post(R.string.alreadysaved)
             return
         }
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                ZipFile(cachedZipPath).addFolder(File(pathUgoira))
+                ZipFile(fileCachedZIP).addFolder(fileCachedUgoria)
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastQ.post("zip Failed")
                 fileCachedZIP.delete()
             }
-            fileCachedZIP.copyTo(File(zipPath), true)
+            FileUtil.move(fileCachedZIP, fileZIP)
         }
     }
 
@@ -104,32 +107,46 @@ class PictureXViewModel : BaseViewModel() {
         ToastQ.post("convertGIFUgoira not implemented yet...")
     }
 
-    val pathUgoira by lazy {
-        fileGIF.path.substringBeforeLast(".")
+    val filePath by lazy {
+        PxEZApp.storepath + File.separatorChar +
+                (if (PxEZApp.R18Folder && illust.isR18) PxEZApp.R18FolderPath else "") +
+                Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
     }
-    val fileGIF by lazy {
-        val filePath =
-            PxEZApp.storepath + File.separatorChar +
-                    (if (PxEZApp.R18Folder && illust.restricted) PxEZApp.R18FolderPath else "") +
-                    Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
-        val fileGIF = File("$filePath.gif")
-        fileGIF.parentFile?.mkdirs()// try make dir
-        fileGIF
+    val fileZIP by lazy { File("$filePath.zip") }
+    val fileGIF by lazy { File("$filePath.gif") }
+    val fileCachedUgoria by lazy {
+        File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id)
     }
-    val pathCachedGIF by lazy {
+    val fileCachedZIP by lazy {
+        File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".zip")
+    }
+    val fileCachedGIF by lazy {
         File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".gif")
+    }
+
+    fun saveZIP() {
+        if (File("$filePath.zip").exists()) {
+            ToastQ.post("${PxEZApp.instance.getString(R.string.alreadysaved)}:${fileZIP.path}")
+            return
+        }
+        if ((downloadUgoiraZipSuccess.value == true) && fileCachedZIP.exists()) {
+            FileUtil.move(fileCachedZIP, fileZIP)
+            Toasty.info(PxEZApp.instance, R.string.save_zip_success)
+        } else {
+            Toasty.error(PxEZApp.instance, R.string.not_downloaded)
+        }
     }
 
     fun saveGIF() {
         if (fileGIF.exists()) {
-            ToastQ.post(R.string.alreadysaved)
+            ToastQ.post("${PxEZApp.instance.getString(R.string.alreadysaved)}:${fileGIF.path}")
             return
         }
         // TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
         PxEZApp.instance.applicationScope.launchCatching(
             { encodingGif() }, {
                 CoroutineScope(Dispatchers.IO).launch {
-                    pathCachedGIF.copyTo(fileGIF, true)
+                    FileUtil.move(fileCachedGIF, fileGIF)
                     MediaScannerConnection.scanFile(
                         PxEZApp.instance,
                         arrayOf(fileGIF.path),
@@ -141,7 +158,6 @@ class PictureXViewModel : BaseViewModel() {
                         )
                     ) { _, _ -> }
                     isEncoding = false
-                    pathCachedGIF.delete()
                     withContext(Dispatchers.Main) {
                         Toasty.success(PxEZApp.instance, R.string.savegifsuccess)
                     }
@@ -154,83 +170,174 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     suspend fun encodingGif() {
-        if (pathCachedGIF.exists()) {
-            return
-        }
-        val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + illust.id
-        val listFiles = File(parentPath).listFiles()
+        val listFiles = fileCachedUgoria.listFiles()
         if (listFiles.isNullOrEmpty()) {
             throw RuntimeException("unzipped files not found")
         }
-        // if (listFiles.size < size) {
-        //     throw RuntimeException("something wrong in ugoira files")
-        // }
+        if (listFiles.size < ugoiraDetail.value!!.frames.size) {
+            throw RuntimeException("something wrong in ugoira files")
+        }
         // TODO: 合成进度条
         // Toasty.info(PxEZApp.instance, "约有${listFiles.size}张图片正在合成").showInMain()
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
-            val gifEncoder = GifEncoder()
+            val gifEncoder =
+                GifEncoder().apply { setThreadCount(Runtime.getRuntime().availableProcessors()) }
             //gifEncoder.encode(PxEZApp.instance, pathCachedGIF.path, listFiles.map { it.path })
-            val bitmap = BitmapFactory.decodeFile(listFiles[0].absolutePath)
-            val option = BitmapFactory.Options().apply {
-                inBitmap = bitmap
-            }
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            var bitmap = BitmapFactory.decodeFile(listFiles[0].absolutePath, options)
             gifEncoder.init(
-                bitmap.width,
-                bitmap.height,
-                pathCachedGIF.path,
+                options.outWidth,
+                options.outHeight,
+                fileCachedGIF.path,
                 GifEncoder.EncodingType.ENCODING_TYPE_STABLE_HIGH_MEMORY
             )
-            CrashHandler.instance.d("gif progress", "0/${listFiles.size}")
-            for (i in 1..listFiles.size) {
-                val bitmap = BitmapFactory.decodeFile(listFiles[i].absolutePath, option)
+            for (i in listFiles.indices) {
+                bitmap = BitmapFactory.decodeFile(
+                    listFiles[i].absolutePath,
+                    BitmapFactory.Options().apply {
+                        inBitmap = bitmap
+                        inMutable = true
+                    })
+                if (bitmap == null) {
+                    throw RuntimeException("bitmap decode failed")
+                }
                 gifEncoder.encodeFrame(bitmap, duration)
                 CrashHandler.instance.d("gif progress", "$i/${listFiles.size}")
+            }
+            gifEncoder.close()
+            CrashHandler.instance.d(
+                "gif done",
+                "${listFiles.size}, ${FileUtil.getSize(fileCachedGIF.length().toFloat())}"
+            )
+        }
+    }
+
+
+    // Load images from a zip file
+    fun loadImagesFromZip(zipFile: File): Sequence<Bitmap> {
+        val zipInputStream = ZipInputStream(zipFile.inputStream())
+        var entry: ZipEntry?
+        var bitmap: Bitmap? = null
+        return sequence {
+            while (zipInputStream.nextEntry.also { entry = it } != null) {
+                if (!entry!!.isDirectory) {
+                    // Decode the image from the zip stream and invoke the callback
+                    val opt = BitmapFactory.Options().apply {
+                        inMutable = true
+                        inBitmap = bitmap
+                    }
+                    bitmap = BitmapFactory.decodeStream(zipInputStream, null, opt)
+                    yield(bitmap!!)
+                }
+                zipInputStream.closeEntry()
+            }
+            zipInputStream.close()
+        }
+    }
+
+    fun loadZipAsSeq(zipFile: File, cyclic: Boolean = false): Sequence<Bitmap> {
+        val zipInputStream = ZipInputStream(zipFile.inputStream())
+        val entries = mutableListOf<ByteArray>()
+        var entry: ZipEntry?
+        var bitmap: Bitmap? = null
+        return sequence {
+            while (zipInputStream.nextEntry.also { entry = it } != null) {
+                if (!entry!!.isDirectory) {
+                    entries.add(zipInputStream.readBytes())
+                }
+                zipInputStream.closeEntry()
+            }
+            zipInputStream.close()
+            while (true) {
+                entries.forEach {
+                    bitmap = BitmapFactory.decodeByteArray(
+                        it,
+                        0,
+                        it.size,
+                        BitmapFactory.Options().apply {
+                            inMutable = true
+                            inBitmap = bitmap
+                        })
+                    yield(bitmap!!)
+                }
+                if (!cyclic) break
             }
         }
     }
 
-    fun downloadZip(mediaURL: String) {
-        val zipPath =
-            "${PxEZApp.instance.cacheDir.path}/${illust.id}.zip"
-        val file = File(zipPath)
-        if (file.exists()) {
+    suspend fun encodeGIFfromZIP() = withContext(Dispatchers.Default) {
+        val file = if (fileZIP.exists()) {
+            fileZIP
+        } else if (fileCachedZIP.exists()) {
+            fileCachedZIP
+        } else {
+            throw RuntimeException("zip file not found")
+        }
+        val gifEncoder =
+            GifEncoder().apply { setThreadCount(Runtime.getRuntime().availableProcessors()) }
+        var inited = false
+        var size = 0
+        loadImagesFromZip(file).forEach { bitmap ->
+            if (!inited) {
+                gifEncoder.init(
+                    bitmap.width,
+                    bitmap.height,
+                    fileCachedGIF.path,
+                    GifEncoder.EncodingType.ENCODING_TYPE_STABLE_HIGH_MEMORY
+                )
+                inited = true
+            }
+            gifEncoder.encodeFrame(bitmap, duration)
+            size++
+        }
+        gifEncoder.close()
+        CrashHandler.instance.d(
+            "gif done",
+            "${size}, ${FileUtil.getSize(fileCachedGIF.length().toFloat())}"
+        )
+    }
+
+    fun loadUgoiraZip(mediaURL: String) {
+        if (fileCachedUgoria.exists() && fileCachedUgoria.listFiles()!!.size == ugoiraDetail.value!!.frames.size) {
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadUgoiraZipSuccess.value = true
+            }
+            return
+        }
+        if (fileCachedZIP.exists()) {
             CoroutineScope(Dispatchers.Default).launch {
                 try {
-                    ZipFile(file).extractAll(
-                        PxEZApp.instance.cacheDir.path + File.separatorChar + illust.id
-                    )
+                    ZipFile(fileCachedZIP).extractAll(fileCachedUgoria.path)
                     withContext(Dispatchers.Main) {
                         downloadUgoiraZipSuccess.value = true
                     }
                 } catch (e: Exception) {
                     ToastQ.post("Unzip Failed")
-                    File(PxEZApp.instance.cacheDir.path + File.separatorChar + illust.id).deleteRecursively()
-                    file.delete()
-                    reDownLoadUgoiraZip(mediaURL)
+                    fileCachedUgoria.deleteRecursively()
+                    fileCachedZIP.delete()
+                    reLoadUgoiraZip(mediaURL)
                 }
             }
         } else {
-            reDownLoadUgoiraZip(mediaURL)
+            reLoadUgoiraZip(mediaURL)
         }
     }
 
-    suspend fun loadGif(id: Int) = withContext(Dispatchers.Main) {
+    suspend fun loadUgoiraMetadata(id: Int) = withContext(Dispatchers.Main) {
         val resp = retrofit.api.getUgoiraMetadata(id)
         ugoiraDetail.value = resp.ugoira_metadata
         resp.ugoira_metadata
     }
 
-    private fun reDownLoadUgoiraZip(mediaURL: String) {
-        val zipPath = "${PxEZApp.instance.cacheDir}/${illust.id}.zip"
-        val file = File(zipPath)
+    private fun reLoadUgoiraZip(mediaURL: String) {
         progress.value = 0
         CoroutineScope(Dispatchers.IO).launchCatching({
             CrashHandler.instance.d("GIF", mediaURL)
             retrofit.gif.getGIFFile(mediaURL)
         }, { response ->
             val inputStream = response.byteStream()
-            val output = file.outputStream()
+            val output = fileCachedZIP.outputStream()
             CrashHandler.instance.d("GIF", "----------")
             val totalLen = response.contentLength()
             var bytesCopied: Long = 0
@@ -248,9 +355,7 @@ class PictureXViewModel : BaseViewModel() {
             inputStream.close()
             output.close()
             CrashHandler.instance.d("GIF", "++++${progress.value}++++")
-            ZipFile(file).extractAll(
-                PxEZApp.instance.cacheDir.path + File.separatorChar + illust.id
-            )
+            ZipFile(fileCachedZIP).extractAll(fileCachedUgoria.path)
             launchUI {
                 downloadUgoiraZipSuccess.value = true
             }
@@ -267,13 +372,13 @@ class PictureXViewModel : BaseViewModel() {
         likeIllust.value = illust.is_bookmarked
     }
 
-    fun firstGet(illust_id: Int) {
+    fun firstGet(pid: Int) {
         CoroutineScope(Dispatchers.IO).launchCatching({
-            retrofit.api.getIllust(illust_id)
+            retrofit.api.getIllust(pid)
         }, {
             firstGet(it.illust)
         }, {
-            Toasty.warning(PxEZApp.instance, "Failed pid:$illust_id ${it.message}")
+            Toasty.warning(PxEZApp.instance, "Failed pid:$pid ${it.message}")
             illustDetail.value = null
         })
     }
@@ -326,8 +431,7 @@ class PictureXViewModel : BaseViewModel() {
 
     fun likeUser() {
         val user = illust.user
-        val need_follow = !user.is_followed
-        if (need_follow)
+        if (!user.is_followed)
             InteractionUtil.follow(user) {
                 followUser.value = true
             }

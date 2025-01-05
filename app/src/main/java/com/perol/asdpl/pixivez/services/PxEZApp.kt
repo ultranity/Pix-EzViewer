@@ -73,7 +73,7 @@ class PxEZApp : Application() {
                         if (needCreateFold) "${name}_${illustD.userId}" else "",
                     sourceFile.name.removePrefix("？")
                 )
-                sourceFile.copyTo(targetFile, overwrite = true)
+                val compatCheck = FileUtil.move(sourceFile, targetFile)
                 MediaScannerConnection.scanFile(
                     this,
                     arrayOf(targetFile.path),
@@ -83,8 +83,8 @@ class PxEZApp : Application() {
                     )
                 ) { _, _ ->
                     FileUtil.ListLog.add(illustD.id)
+                    compatCheck()
                 }
-                sourceFile.delete()
 
                 if (ShowDownloadToast) {
                     Toasty.success(this, "${title}${getString(R.string.savesuccess)}")

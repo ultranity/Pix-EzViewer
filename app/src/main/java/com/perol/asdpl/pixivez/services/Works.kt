@@ -182,8 +182,7 @@ object Works {
             filename.removePrefix("？")
         )
         try {
-            file.copyTo(targetFile, overwrite = true)
-            file.delete()
+            val compatCheck = FileUtil.move(file, targetFile)
             if (PxEZApp.ShowDownloadToast) {
                 ToastQ.post(R.string.savesuccess)
             }
@@ -195,6 +194,7 @@ object Works {
                 )
             ) { _, _ ->
                 FileUtil.ListLog.add(illust.id)
+                compatCheck()
             }
         } catch (e: Exception) {
             e.printStackTrace()

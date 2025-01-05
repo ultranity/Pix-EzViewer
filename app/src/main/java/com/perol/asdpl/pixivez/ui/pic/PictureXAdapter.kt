@@ -627,14 +627,14 @@ class PictureXAdapter(
                 gifPlay.visibility = View.GONE
                 Toasty.info(PxEZApp.instance, "Ugoira loading...")
                 pictureXViewModel.viewModelScope.launchCatching({
-                    pictureXViewModel.loadGif(data.id)
+                    pictureXViewModel.loadUgoiraMetadata(data.id)
                 }, {
                     when (max(quality, Works.qualityDownload)) {
-                        0 -> pictureXViewModel.downloadZip(
+                        0 -> pictureXViewModel.loadUgoiraZip(
                             it.zip_urls.medium
                         )
 
-                        else -> pictureXViewModel.downloadZip(
+                        else -> pictureXViewModel.loadUgoiraZip(
                             it.zip_urls.medium.replace("600x600", "1920x1080")
                         )
                         //2 -> pictureXViewModel.downloadUgoira(data, size)
@@ -662,25 +662,6 @@ class PictureXAdapter(
             }
         }
 
-        fun saveZIP() {
-            val filePath =
-                PxEZApp.storepath + File.separatorChar +
-                        (if (PxEZApp.R18Folder && illust.restricted) PxEZApp.R18FolderPath else "") +
-                        Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
-            val zipPath: String =
-                PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".zip"
-            val fileCachedZIP = File(zipPath)
-            if (fileCachedZIP.exists()) {
-                fileCachedZIP.copyTo(
-                    File("$filePath.zip"),
-                    overwrite = true
-                )
-                Toasty.info(PxEZApp.instance, R.string.save_zip_success)
-            } else {
-                Toasty.error(PxEZApp.instance, R.string.not_downloaded)
-            }
-        }
-
         MaterialDialogs(mContext).show {
             setTitle(R.string.choice)
             setItems(
@@ -696,14 +677,14 @@ class PictureXAdapter(
                     0 -> Works.imgD(illust, 0)
                     1 -> pictureXViewModel.downloadUgoira()
                     2 -> saveGIF()
-                    3 -> saveZIP()
+                    3 -> pictureXViewModel.saveZIP()
                     else -> {
                         /* pictureXViewModel.downloadUgoira()
                          pictureXViewModel.zipUgoira()
                          pictureXViewModel.convertGIFUgoira()*/
                         Works.imgD(illust, 0)
                         saveGIF()
-                        saveZIP()
+                        pictureXViewModel.saveZIP()
                     }
                 }
             }

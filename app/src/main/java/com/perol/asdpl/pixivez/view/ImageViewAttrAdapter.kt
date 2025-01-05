@@ -42,6 +42,7 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.dp
@@ -106,7 +107,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                 setView(view)
                 setPositiveButton(R.string.download) { _, _ ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        val f = Glide.with(imageView).asFile()
+                        val f = Glide.with(imageView).downloadOnly()
                             .load(url)
                             .submit()
                         val file = f.get()
@@ -114,7 +115,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                             PxEZApp.storepath,
                             "user_${url.substringAfterLast("/")}"
                         )
-                        file.copyTo(target, overwrite = true)
+                        FileUtil.move(file, target)
                         MediaScannerConnection.scanFile(
                             PxEZApp.instance,
                             arrayOf(target.path),

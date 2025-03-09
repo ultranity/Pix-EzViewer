@@ -178,7 +178,8 @@ open class PicListFragment : Fragment() {
             if (it != null) {
                 picListAdapter.initData(onDataLoadedListener(it))
                 //TODO: IllustCacheRepo.register(this, picListAdapter.mData)
-                binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
+                if (it.isNotEmpty())
+                    binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
             } else {
                 if (picListAdapter.mData.isEmpty()) //show error only if first load
                     picListAdapter.showEmptyView(true)

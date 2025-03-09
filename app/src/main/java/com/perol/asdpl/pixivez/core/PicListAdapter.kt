@@ -161,13 +161,13 @@ abstract class PicListAdapter(
     }
 
     fun notifyFilterChanged() {
-        if (mBoundViewHolders.isEmpty()) {
+        if (mData.isEmpty() or mBoundViewHolders.isEmpty()) {
             notifyDataSetChanged()
         } else {
             //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
             //notifyItemRangeChanged(headerLayoutCount, filtered.last)
             mBoundViewHolders.forEach {
-                notifyItemChanged(it.position + headerLayoutCount)
+                notifyItemChanged(it.position)
             }
         }
     }
@@ -249,7 +249,7 @@ abstract class PicListAdapter(
         )
         val illust = adapter.data[position]
         val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust) else null
-        PictureActivity.start(context, illust.id, position, 30, options)
+        PictureActivity.start(context, illust.id, position, options = options)
     }
 
     open fun viewPicsOptions(view: View, illust: Illust): Bundle {

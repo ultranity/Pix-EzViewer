@@ -56,6 +56,9 @@ enum class TAG_TYPE {
     companion object {
         @JvmStatic
         fun check(value: String): TAG_TYPE {
+            // WARN: Dangerous magic here: we use TAG of fragment to define special behavior
+            // and use Else for those not specified.
+            // This should be replaced by using Enum Directly in the future.
             return try {
                 TAG_TYPE.valueOf(value)
             } catch (e: Exception) {

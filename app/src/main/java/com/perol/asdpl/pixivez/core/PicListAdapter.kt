@@ -45,8 +45,6 @@ import com.perol.asdpl.pixivez.view.ResizeTransformation
 import jp.wasabeef.glide.transformations.gpu.PixelationFilterTransformation
 import java.util.BitSet
 import java.util.WeakHashMap
-import kotlin.math.max
-import kotlin.math.min
 
 
 /**
@@ -238,15 +236,14 @@ abstract class PicListAdapter(
     }
 
     fun viewPics(adapter: PicListAdapter, view: View, position: Int) {
-        DataHolder.setIllustList(
-            adapter.data.subList(
-                max(position - 30, 0),
-                min(
-                    adapter.data.size,
-                    max(position - 30, 0) + 60
-                )
-            ).toList()
-        )
+        DataHolder.setIllustList(adapter.data)
+//      DataHolder.setIllustList(adapter.data.subList(
+//                max(position - 30, 0),
+//                min(
+//                    adapter.data.size,
+//                    max(position - 30, 0) + 60
+//                )
+//            ).toList())
         val illust = adapter.data[position]
         val options = if (PxEZApp.animationEnable) viewPicsOptions(view, illust) else null
         PictureActivity.start(context, illust.id, position, options = options)

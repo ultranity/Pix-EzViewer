@@ -208,11 +208,13 @@
             android:contentDescription="@string/download" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.zhy.view.flowlayout.TagFlowLayout
-        android:id="@+id/tagFlowlayout"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/tag_group"
+        app:chipSpacing="1dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp" />
+        android:layout_margin="4dp" />
+
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

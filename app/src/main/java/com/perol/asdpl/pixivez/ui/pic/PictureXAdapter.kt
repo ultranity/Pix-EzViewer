@@ -46,7 +46,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -57,6 +56,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.chip.Chip
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
@@ -83,8 +83,6 @@ import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
-import com.zhy.view.flowlayout.FlowLayout
-import com.zhy.view.flowlayout.TagAdapter
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.math.max
@@ -264,30 +262,26 @@ class PictureXAdapter(
                 }
             }
 
-            binding.tagFlowlayout.adapter = object : TagAdapter<Tag>(illust.tags) {
-                @SuppressLint("SetTextI18n")
-                override fun getView(parent: FlowLayout, position: Int, t: Tag): View {
-                    val tv = LayoutInflater.from(mContext)
-                        .inflate(R.layout.picture_tag, parent, false)
-                    val name = tv.findViewById<TextView>(R.id.name)
-                    val translateName = tv.findViewById<TextView>(R.id.translated_name)
-                    name.text = "#${t.name} "
-                    if (!t.translated_name.isNullOrBlank()) {
-                        translateName.visibility = View.VISIBLE
-                        translateName.text = t.translated_name
+            binding.tagGroup.removeAllViews()
+            illust.tags.forEach { tag ->
+                val chip = Chip(mContext).apply {
+                    text = "#${tag.name}"
+                    setEnsureMinTouchTargetSize(false)
+                    if (!tag.translated_name.isNullOrBlank()) {
+                        text = "$text|${tag.translated_name}"
                     }
-                    if (t.name == "R-18" || t.name == "R-18G") {
-                        name.setTextColor(Color.RED)
+                    if (tag.name == "R-18" || tag.name == "R-18G") {
+                        setTextColor(Color.RED)
                     }
-                    tv.setOnClickListener {
-                        SearchActivity.start(mContext, t.name) //illust.tags[position]
+                    setOnClickListener {
+                        SearchActivity.start(mContext, tag.name)
                     }
-                    tv.setOnLongClickListener {
-                        showBlockTagDialog(mContext, t)
+                    setOnLongClickListener {
+                        showBlockTagDialog(mContext, tag)
                         true
                     }
-                    return tv
                 }
+                binding.tagGroup.addView(chip)
             }
             binding.imagebuttonShare.setOnClickListener {
                 val textIntent = Intent(Intent.ACTION_SEND)

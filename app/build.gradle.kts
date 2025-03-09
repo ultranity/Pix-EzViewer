@@ -243,7 +243,7 @@ dependencies {
     implementation(libs.zip4j)
     implementation(libs.androidndkgif)
 
-    implementation(libs.flowlayout.lib)
+    //implementation(libs.flowlayout.lib)
     //implementation("com.youth.banner:banner:1.4.10")
     //implementation("io.github.youth5201314:banner:2.2.2")
     //implementation(libs.loopinglayout) replace with RepeatLayoutManager

@@ -26,7 +26,6 @@ import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.services.Works
-import com.perol.asdpl.pixivez.view.NiceImageView
 import java.util.BitSet
 
 
@@ -52,7 +51,7 @@ class DownPicListAdapter(
         val payload = payloads[0] as Payload
         when (payload.type) {
             "bookmarked" -> {
-                setUILike(item.is_bookmarked, holder.getView<NiceImageView>(R.id.imageview_like))
+                setUILike(item.is_bookmarked, holder)
             }
 
             "checked" -> {
@@ -63,7 +62,7 @@ class DownPicListAdapter(
     }
 }
 
-class SelectDownloadViewModel : PicListViewModel()
+//class SelectDownloadViewModel : PicListViewModel()
 
 class SelectDownloadFragment : PicListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {

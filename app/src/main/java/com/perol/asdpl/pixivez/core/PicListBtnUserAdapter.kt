@@ -44,6 +44,12 @@ class PicListBtnUserAdapter(
     //    return PicListXUserAdapter.viewOptions(this, view, illust)
     //}
 
+    override val withUser: Boolean = true
+
+    override fun setUIFollow(status: Boolean, holder: BaseViewHolder) {
+        setUIFollow(status, holder.getView(R.id.imageview_user))
+    }
+
     override fun setUIFollow(status: Boolean, position: Int) {
         (getViewByAdapterPosition(
             position, R.id.imageview_user

@@ -58,7 +58,9 @@ class UserX(
     fun addBinder(key: String, binder: MutableLiveData<Boolean>) {
         binders[binder] = key
     }
-
+    fun removeBinder(binder: MutableLiveData<Boolean>) {
+        binders.remove(binder)
+    }
     var is_followed: Boolean = false
         set(value) {
             val updated = field != value

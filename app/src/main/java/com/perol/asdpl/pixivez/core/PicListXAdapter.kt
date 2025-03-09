@@ -27,13 +27,10 @@ package com.perol.asdpl.pixivez.core
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -68,66 +65,47 @@ open class PicListXAdapter(
     layoutResId: Int = R.layout.view_recommand_item_s,
 ) :
     PicListAdapter(filter, layoutResId) {
-    private val liveDataID = "likeLiveData".hashCode()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val holder = super.onCreateViewHolder(parent, viewType)
-        val likeLiveData = DMutableLiveData(lastValue = false, onlyIfChanged = true)
-        likeLiveData.observeAfterSet(parent.context as LifecycleOwner) {
-            holder.getView<NiceImageView>(R.id.imageview_like).apply {
-                setUILike(it, this)
-            }
-        }
-        holder.itemView.setTag(liveDataID, likeLiveData)
-        return holder
-    }
 
     override fun convert(holder: BaseViewHolder, item: Illust) {
-        (holder.itemView.getTag(liveDataID) as DMutableLiveData<Boolean>?)?.let {
-            (holder.itemView.getTag(illustID) as Illust?)?.removeBinder(it)
-            it.triggerValue(item.is_bookmarked)
-            item.addBinder("${item.id}|${this.hashCode()}", it)
-        }
         super.convert(holder, item)
+        val likeView = holder.getView<NiceImageView>(R.id.imageview_like)
         if (PxEZApp.CollectMode == 1) {
-            holder.getView<NiceImageView>(R.id.imageview_like).apply {
-                setOnClickListener {
-                    // download
-                    setBorderColor(colorPrimaryDark)
-                    Works.imageDownloadAll(item)
-                    // set like
-                    if (!item.is_bookmarked) {
-                        InteractionUtil.like(item, null) {
-                            //setUILike(true, this)
-                        }
+            likeView.setOnClickListener {
+                // download
+                likeView.setBorderColor(colorPrimaryDark)
+                Works.imageDownloadAll(item)
+                // set like
+                if (!item.is_bookmarked) {
+                    InteractionUtil.like(item, null) {
+                        //setUILike(true, likeView)
                     }
                 }
             }
         }
         else {
-            holder.getView<NiceImageView>(R.id.imageview_like).apply {
-                setOnClickListener {
-                    if (item.is_bookmarked) {
-                        InteractionUtil.unlike(item) {
-                            //setUILike(false, this)
-                        }
+            likeView.setOnClickListener {
+                if (item.is_bookmarked) {
+                    InteractionUtil.unlike(item) {
+                        //setUILike(false, likeView)
                     }
-                    else {
-                        InteractionUtil.like(item, null) {
-                            //setUILike(true, this)
-                        }
+                } else {
+                    InteractionUtil.like(item, null) {
+                        //setUILike(true, likeView)
                     }
-                }
-                setOnLongClickListener {
-                    setUIDownload(1, this)
-                    Works.imageDownloadAll(item)
-                    true
                 }
             }
+            likeView.setOnLongClickListener {
+                setUIDownload(1, likeView)
+                Works.imageDownloadAll(item)
+                true
+            }
         }
-        holder.getView<NiceImageView>(R.id.imageview_like).apply {
-            //setUILike(item.is_bookmarked, this)
-            setUIDownload(if (FileUtil.isDownloaded(item)) 2 else 0, this)
-        }
+        //setUILike(item.is_bookmarked, likeView)
+        setUIDownload(if (FileUtil.isDownloaded(item)) 2 else 0, likeView)
+    }
+
+    override fun setUILike(status: Boolean, holder: BaseViewHolder) {
+        setUILike(status, holder.getView(R.id.imageview_like))
     }
 
     override fun setUILike(status: Boolean, position: Int) {

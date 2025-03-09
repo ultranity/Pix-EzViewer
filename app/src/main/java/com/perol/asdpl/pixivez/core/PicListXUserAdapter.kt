@@ -30,14 +30,11 @@ import android.app.ActivityOptions
 import android.graphics.drawable.Drawable
 import android.util.Pair
 import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -55,6 +52,10 @@ class PicListXUserAdapter(
     /*override fun viewPicsOptions(view: View, illust: Illust): Bundle {
         return viewOptions(this, view, illust)
     }*/
+    override val withUser: Boolean = true
+    override fun setUIFollow(status: Boolean, holder: BaseViewHolder) {
+        setUIFollow(status, holder.getView(R.id.imageview_user))
+    }
 
     override fun setUIFollow(status: Boolean, position: Int) {
         (getViewByAdapterPosition(
@@ -67,25 +68,12 @@ class PicListXUserAdapter(
         badgeUIFollow(this, status, user)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val holder = super.onCreateViewHolder(parent, viewType)
-        val followLiveData = DMutableLiveData(false, true)
-        followLiveData.observeAfterSet(parent.context as LifecycleOwner) {
-            holder.getView<NiceImageView>(R.id.imageview_user).apply {
-                setUIFollow(it, this)
-            }
-        }
-        holder.itemView.setTag(followDataID, followLiveData)
-        return holder
-    }
-
     override fun convert(holder: BaseViewHolder, item: Illust) {
         super.convert(holder, item)
         convertUser(this, holder, item)
     }
 
     companion object {
-        private val followDataID = "followLiveData".hashCode()
         fun convertUser(picListAdapter: PicListAdapter, holder: BaseViewHolder, illust: Illust) {
             val user = illust.user
             val imageViewUser = holder.getView<NiceImageView>(R.id.imageview_user)
@@ -132,10 +120,6 @@ class PicListXUserAdapter(
                 })
 
             //picListAdapter.setUIFollow(user.is_followed, imageViewUser)
-            (holder.itemView.getTag(followDataID) as DMutableLiveData<Boolean>?)?.let {
-                it.triggerValue(user.is_followed)
-                user.addBinder("${illust.id}-${this.hashCode()}", it)
-            }
         }
 
         fun badgeUIFollow(picListAdapter: PicListAdapter, status: Boolean, user: NiceImageView) {

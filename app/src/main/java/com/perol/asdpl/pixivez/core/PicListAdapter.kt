@@ -9,11 +9,13 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
@@ -23,6 +25,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.DMutableLiveData
 import com.perol.asdpl.pixivez.base.KotlinUtil.Int
 import com.perol.asdpl.pixivez.base.KotlinUtil.alsoIf
 import com.perol.asdpl.pixivez.base.LBaseQuickAdapter
@@ -62,6 +65,9 @@ abstract class PicListAdapter(
     var colorTransparent: Int = ThemeUtil.halftrans
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
+    protected open val withUser = false
+    protected val likeDataID = "likeLiveData".hashCode()
+    protected val followDataID = "followLiveData".hashCode()
 
     var mData: MutableList<Illust> = arrayListOf()
 
@@ -316,9 +322,38 @@ abstract class PicListAdapter(
         ) == true
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        val holder = super.onCreateViewHolder(parent, viewType)
+        val likeLiveData = DMutableLiveData(lastValue = false, onlyIfChanged = true)
+        likeLiveData.observeAfterSet(parent.context as LifecycleOwner) {
+            setUILike(it, holder)
+        }
+        holder.itemView.setTag(likeDataID, likeLiveData)
+        if (withUser) {
+            val followLiveData = DMutableLiveData(lastValue = false, onlyIfChanged = true)
+            followLiveData.observeAfterSet(parent.context as LifecycleOwner) {
+                setUIFollow(it, holder)
+            }
+            holder.itemView.setTag(followDataID, followLiveData)
+        }
+        return holder
+    }
+
     protected val illustID = "illust".hashCode()
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseViewHolder, item: Illust) {
+        (holder.itemView.getTag(likeDataID) as DMutableLiveData<Boolean>?)?.let {
+            (holder.itemView.getTag(illustID) as Illust?)?.removeBinder(it)
+            it.triggerValue(item.is_bookmarked)
+            item.addBinder("${item.id}|${this.hashCode()}", it)
+        }
+        if (withUser) {
+            (holder.itemView.getTag(followDataID) as DMutableLiveData<Boolean>?)?.let {
+                (holder.itemView.getTag(illustID) as Illust?)?.user?.removeBinder(it)
+                it.triggerValue(item.user.is_followed)
+                item.user.addBinder("${item.id}-${this.hashCode()}", it)
+            }
+        }
         holder.itemView.setTag(illustID, item)
         holder.itemView.setTag(adapterID, this)
         val pos = holder.bindingAdapterPosition - headerLayoutCount
@@ -406,7 +441,7 @@ abstract class PicListAdapter(
         val payload = payloads[0] as Payload
         when (payload.type) {
             "bookmarked" -> {
-                setUILike(item.is_bookmarked, holder.getView<NiceImageView>(R.id.imageview_like))
+                setUILike(item.is_bookmarked, holder)
             }
 
             "followed" -> {
@@ -467,6 +502,9 @@ abstract class PicListAdapter(
     fun getViewByAdapterPosition(position: Int, @IdRes viewId: Int): View? {
         return getViewByPosition(position + headerLayoutCount, viewId)
     }
+
+    open fun setUILike(status: Boolean, holder: BaseViewHolder) {}
+    open fun setUIFollow(status: Boolean, holder: BaseViewHolder) {}
 
     open fun setUILike(status: Boolean, position: Int) {}
     open fun setUIFollow(status: Boolean, position: Int) {}

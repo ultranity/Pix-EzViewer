@@ -29,6 +29,7 @@ import android.view.View
 import com.chad.brvah.viewholder.BaseViewHolder
 import com.google.android.material.button.MaterialButton
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.KotlinUtil.Int
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -48,59 +49,58 @@ open class PicListBtnAdapter(
         super.convert(holder, item)
 
         holder.setText(R.id.title, item.title)
-
-        holder.setTextColor(
-            R.id.save,
-            if (FileUtil.isDownloaded(item)) {
-                badgeTextColor
-            }
-            else {
-                colorPrimary
-            }
-        )
+        val likeBtn = holder.getView<MaterialButton>(R.id.like)
+        val saveBtn = holder.getView<MaterialButton>(R.id.save)
+        setUIDownload(FileUtil.isDownloaded(item).Int(), saveBtn)
 
         if (PxEZApp.CollectMode == 1) {
-            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
+            saveBtn.setOnClickListener {
                 holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
                 if (!item.is_bookmarked) {
                     InteractionUtil.like(item, null) {
-                        holder.getView<MaterialButton>(R.id.like).setTextColor(badgeTextColor)
+                        setUILike(true, likeBtn)
                     }
                 }
             }
-        }
-        else {
-            holder.getView<MaterialButton>(R.id.save).setOnClickListener {
-                holder.setTextColor(R.id.save, colorPrimaryDark)
+        } else {
+            saveBtn.setOnClickListener {
+                setUIDownload(1, it)
                 Works.imageDownloadAll(item)
             }
         }
 
-        holder.getView<MaterialButton>(R.id.like).apply {
-            setOnClickListener { v ->
-                if (!item.is_bookmarked) {
-                    InteractionUtil.like(item, null) {
-                        setUILike(true, v)
-                    }
+        likeBtn.setOnClickListener { v ->
+            if (!item.is_bookmarked) {
+                InteractionUtil.like(item, null) {
+                    //setUILike(true, v)
                 }
-                else {
-                    InteractionUtil.unlike(item) {
-                        setUILike(false, v)
-                    }
+            } else {
+                InteractionUtil.unlike(item) {
+                    //setUILike(false, v)
                 }
             }
-            setUILike(item.is_bookmarked, this)
         }
+        likeBtn.setOnLongClickListener { v ->
+            InteractionUtil.like(item, forcePrivate = true) {
+                //setUILike(true, v)
+            }
+            true
+        }
+        //setUILike(item.is_bookmarked, likeBtn)
+    }
+
+    override fun setUILike(status: Boolean, holder: BaseViewHolder) {
+        setUILike(status, holder.getView(R.id.like))
     }
 
     override fun setUILike(status: Boolean, position: Int) {
         (
-            getViewByAdapterPosition(
-                position,
-                R.id.like
-            ) as MaterialButton?
-            )?.let { setUILike(status, it) }
+                getViewByAdapterPosition(
+                    position,
+                    R.id.like
+                ) as MaterialButton?
+                )?.let { setUILike(status, it) }
     }
 
     override fun setUILike(status: Boolean, view: View) {
@@ -110,11 +110,11 @@ open class PicListBtnAdapter(
 
     override fun setUIDownload(status: Int, position: Int) {
         (
-            getViewByAdapterPosition(
-                position,
-                R.id.save
-            ) as MaterialButton?
-            )?.let { setUIDownload(status, it) }
+                getViewByAdapterPosition(
+                    position,
+                    R.id.save
+                ) as MaterialButton?
+                )?.let { setUIDownload(status, it) }
     }
 
     override fun setUIDownload(status: Int, view: View) {
@@ -123,9 +123,11 @@ open class PicListBtnAdapter(
             0 -> { // not downloaded
                 save.setTextColor(colorPrimary)
             }
+
             1 -> { // Downloading
                 save.setTextColor(colorPrimaryDark)
             }
+
             2 -> { // Downloaded
                 save.setTextColor(badgeTextColor)
             }

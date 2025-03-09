@@ -131,7 +131,8 @@ class PictureXAdapter(
             2 -> data.meta.map { it.original }
             else -> data.meta.map { it.large }
         }
-        val needSmall = if (quality == 1) {
+        val needSmall = (mContext as FragmentActivity).intent
+            .getBooleanExtra(PictureActivity.ARG_ThumbHint, false) or if (quality == 1) {
             (data.height / data.width > 3) || (data.width / data.height >= 3)
         } else {
             data.height > 1800
@@ -464,7 +465,7 @@ class PictureXAdapter(
                                 (minPercentage * data.width).roundToInt(),
                                 (minPercentage * data.height).roundToInt()
                             )
-                            .centerCrop()
+                            .centerCrop() // necessary for preventing image distortion after loading
                             .listener(object : RequestListener<Drawable> {
 
                             override fun onLoadFailed(
@@ -474,7 +475,7 @@ class PictureXAdapter(
                                 isFirstResource: Boolean
                             ): Boolean {
                                 mOnLoadListen.invoke()
-                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
                                 return false
                             }
 
@@ -486,7 +487,7 @@ class PictureXAdapter(
                                 isFirstResource: Boolean
                             ): Boolean {
                                 mOnLoadListen.invoke()
-                                (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
                                 return false
                             }
                             })
@@ -551,7 +552,7 @@ class PictureXAdapter(
         if (position == 0 && PxEZApp.animationEnable) {
             mainImage.transitionName = "mainimage"
         }
-        // (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
     }
 
 
@@ -594,9 +595,9 @@ class PictureXAdapter(
                     isFirstResource: Boolean
                 ): Boolean {
                     mOnLoadListen.invoke()
-                    if (position == 0) {
-                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                    }
+//                    if (position == 0) {
+//                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+//                    }
                     return false
                 }
 
@@ -608,9 +609,9 @@ class PictureXAdapter(
                     isFirstResource: Boolean
                 ): Boolean {
                     mOnLoadListen.invoke()
-                    if (position == 0) {
-                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                    }
+//                    if (position == 0) {
+//                        (mContext as FragmentActivity).supportStartPostponedEnterTransition()
+//                    }
                     return false
                 }
             })
@@ -722,8 +723,8 @@ class PictureXAdapter(
             val data = adapter.data as MutableList<Illust>
             DataHolder.setIllustList(data)
             PictureActivity.start(
-                mContext, data[position].id, position, position,
-                ActivityOptions.makeSceneTransitionAnimation(
+                mContext, data[position].id, position, squareThumbHint = true,
+                options = ActivityOptions.makeSceneTransitionAnimation(
                     mContext as Activity,
                     Pair(view, "shared_element_container")
                     //Pair(mainimage, "mainimage")

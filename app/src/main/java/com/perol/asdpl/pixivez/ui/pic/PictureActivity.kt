@@ -40,7 +40,6 @@ import com.perol.asdpl.pixivez.databinding.ActivityPictureBinding
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlin.math.max
 
 
 class PictureActivity : RinkActivity() {
@@ -49,16 +48,17 @@ class PictureActivity : RinkActivity() {
         private const val ARG_ILLUSTID = "illustid"
         private const val ARG_ILLUSTIDLIST = "illustidlist"
         private const val ARG_POSITION = "position"
+        const val ARG_ThumbHint = "SquareThumbHint"
         fun start(
             context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id },
             options: Bundle? = null
         ) {
-            val bundle = Bundle()
-            bundle.putIntArray(ARG_ILLUSTIDLIST, arrayList)
-            bundle.putInt(ARG_ILLUSTID, id)
+            val extras = Bundle()
+            extras.putIntArray(ARG_ILLUSTIDLIST, arrayList)
+            extras.putInt(ARG_ILLUSTID, id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
-            intent.putExtras(bundle)
+            intent.putExtras(extras)
             context.startActivity(intent, options)
         }
 
@@ -66,15 +66,18 @@ class PictureActivity : RinkActivity() {
             context: Context,
             id: Int,
             position: Int,
-            limit: Int = 30,
+            //limit: Int = 30,
+            squareThumbHint: Boolean = false,
             options: Bundle? = null
         ) {
-            val bundle = Bundle()
-            bundle.putInt(ARG_POSITION, position - max(position - limit, 0))
-            bundle.putInt(ARG_ILLUSTID, id)
+            val extras = Bundle()
+            // bundle.putInt(ARG_POSITION, position - max(position - limit, 0))
+            extras.putInt(ARG_POSITION, position)
+            extras.putInt(ARG_ILLUSTID, id)
+            if (squareThumbHint) extras.putBoolean(ARG_ThumbHint, true)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
-            intent.putExtras(bundle)
+            intent.putExtras(extras)
             context.startActivity(intent, options)
         }
 
@@ -82,12 +85,12 @@ class PictureActivity : RinkActivity() {
             context: Context,
             illust: Illust,
         ) {
-            val bundle = Bundle()
-            bundle.putParcelable(ARG_ILLUSTOBJ, illust)
-            bundle.putInt(ARG_ILLUSTID, illust.id)
+            val extras = Bundle()
+            extras.putParcelable(ARG_ILLUSTOBJ, illust)
+            extras.putInt(ARG_ILLUSTID, illust.id)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
-            intent.putExtras(bundle)
+            intent.putExtras(extras)
             context.startActivity(intent)
         }
     }

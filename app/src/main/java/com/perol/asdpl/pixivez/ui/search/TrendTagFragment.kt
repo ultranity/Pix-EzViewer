@@ -93,7 +93,10 @@ class TrendTagFragment : Fragment() {
             } else null
             PictureActivity.start(
                 requireContext(),
-                trendTagAdapter.data[position].illust.id, position, options = options
+                trendTagAdapter.data[position].illust.id,
+                position,
+                squareThumbHint = true,
+                options = options
             )
             true
         }

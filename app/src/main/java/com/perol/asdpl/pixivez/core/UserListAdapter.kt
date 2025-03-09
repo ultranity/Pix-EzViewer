@@ -131,6 +131,7 @@ class UserListAdapter(layoutResId: Int) :
                     context,
                     userShowIllustAdapter.data[position].id,
                     position,
+                    squareThumbHint = true,
                     options = options
                 )
             }

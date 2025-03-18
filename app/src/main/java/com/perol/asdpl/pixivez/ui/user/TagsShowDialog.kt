@@ -62,10 +62,10 @@ class TagsShowDialog : BaseDialogFragment<ViewTagsShowBinding>() {
         })
         viewModel.tags.observe(this){
             if (it == null) return@observe
-            if (it.isEmpty()) {
-                callback!!.onClick("", viewModel.pub)
-                this@TagsShowDialog.dismiss()
-            }
+            // if (it.isEmpty()) {
+            //     callback!!.onClick("", viewModel.pub)
+            //     this@TagsShowDialog.dismiss()
+            // }
             tagsShowAdapter.setNewInstance(it)
         }
         viewModel.tagsAdded.observe(this) {

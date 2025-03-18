@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.INext
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,7 +82,7 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
                 nextUrl?.value = it.next_url
             } catch (e: Exception) { //Error
                 target.value = null
-                e.printStackTrace()
+                CrashHandler.instance.e("subscribeNext", e.message.toString(), e)
                 onError?.invoke(e)
             } finally {
                 //Completed

@@ -1,62 +1,50 @@
 [versions]
-agp = "8.7.3"
-brv = "1.4.3"
+agp = "8.9.0"
 annotation = "1.9.1"
-databindingRuntime = "8.7.0"
+databindingRuntime = "8.9.0"
 fastadapter = "5.7.0"
 fastkvJava = "1.2.7"
-kotlin = "2.0.21"
-ksp = "2.0.20-1.0.25"
+kotlin = "2.1.20"
+ksp = "2.1.20-1.0.31"
 aboutlibraries = "11.2.3"
 androidndkgif = "1.0.1"
 appcompat = "1.7.0"
-aria = "3.8.12"
 blockcanary = "0.0.5"
-brvah = "3.0.14"
 cardview = "1.0.0"
 colorPicker = "2.3"
-constraintlayout = "2.2.0"
+constraintlayout = "2.2.1"
 androidxCore = "1.15.0"
 dragSelectRecyclerview = "2.4.0"
 flexbox = "3.0.0"
-flowlayoutLib = "1.1.2"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
 gpuimage = "2.1.0"
 jsoup = "1.18.2"
-junit = "4.13.2"
-junitVersion = "1.1.5"
 kotlinxSerializationJson = "1.7.3"
 lifecycleRuntimeKtx = "2.8.7"
-loopinglayout = "0.5.0"
 markwon = "4.6.2"
 material = "1.12.0"
 materialDialogs = "3.3.0"
-mmkvStatic = "1.3.0"
-ktor = "3.0.1"
 okhttp3 = "4.12.0" #okhttp3系列组件版本最高到 4.4.1
 parcelableCore = "0.9.0"
 preferenceKtx = "1.2.1"
-recyclerview = "1.3.2"
+recyclerview = "1.4.0"
 retrofit = "2.11.0"
-retrofit2KotlinxSerializationConverter = "1.0.0"
+retrofitVersion = "2.9.0"
 roaringBitmap = "1.3.0"
 room = "2.6.1"
-rxandroid = "2.1.1"
-rxjava = "2.2.21"
-rxkotlin = "2.4.0"
 subsamplingScaleImageViewAndroidx = "3.10.0"
 swiperefreshlayout = "1.1.0"
 vectordrawable = "1.2.0"
 viewpager2 = "1.1.0"
-webkit = "1.12.1"
-workRuntimeKtx = "2.8.1"
+webkit = "1.13.0"
+workRuntimeKtx = "2.9.1"
 ketch = "2.0.5"
 zip4j = "2.11.5"
 junit-junit = "4.13.2"
 androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
-kotlinter = "3.15.0"
+kotlinter = "5.0.1"
 
 [libraries]
 aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "aboutlibraries" }
@@ -73,7 +61,7 @@ androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
+#androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
@@ -85,11 +73,11 @@ androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "w
 #androidx-work-multiprocess = { group = "androidx.work", name = "work-multiprocess", version.ref = "workRuntimeKtx" }
 #androidx-work-rxjava2 = { group = "androidx.work", name = "work-rxjava2", version.ref = "workRuntimeKtx" }
 #androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "workRuntimeKtx" }
-aria-core = { group = "com.arialyy.aria", name = "core", version.ref = "aria" }
+#aria-core = { group = "com.arialyy.aria", name = "core", version.ref = "aria" }
 blockcanary = { group = "io.github.knight-zxw", name = "blockcanary", version.ref = "blockcanary" }
 blockcanary-ui = { group = "io.github.knight-zxw", name = "blockcanary-ui", version.ref = "blockcanary" }
-brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
-brvah = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper", version.ref = "brvah" }
+#brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
+#brvah = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper", version.ref = "brvah" }
 colorPicker = { group = "com.github.Dhaval2404", name = "ColorPicker", version.ref = "colorPicker" }
 drag-select-recyclerview = { group = "com.afollestad", name = "drag-select-recyclerview", version.ref = "dragSelectRecyclerview" }
 fastadapter = { module = "com.mikepenz:fastadapter", version.ref = "fastadapter" }
@@ -97,13 +85,13 @@ fastadapter-extensions-binding = { module = "com.mikepenz:fastadapter-extensions
 fastadapter-extensions-diff = { module = "com.mikepenz:fastadapter-extensions-diff", version.ref = "fastadapter" }
 fastadapter-extensions-drag = { module = "com.mikepenz:fastadapter-extensions-drag", version.ref = "fastadapter" }
 fastadapter-extensions-utils = { module = "com.mikepenz:fastadapter-extensions-utils", version.ref = "fastadapter" }
-fastadapter-extensions-ui = { module = "com.mikepenz:fastadapter-extensions-ui", version.ref = "fastadapter" }
+#fastadapter-extensions-ui = { module = "com.mikepenz:fastadapter-extensions-ui", version.ref = "fastadapter" }
 fastadapter-extensions-swipe = { module = "com.mikepenz:fastadapter-extensions-swipe", version.ref = "fastadapter" }
 fastadapter-extensions-scroll = { module = "com.mikepenz:fastadapter-extensions-scroll", version.ref = "fastadapter" }
 fastadapter-extensions-paged = { module = "com.mikepenz:fastadapter-extensions-paged", version.ref = "fastadapter" }
 fastkv-java = { module = "io.github.billywei01:fastkv-java", version.ref = "fastkvJava" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
-flowlayout-lib = { group = "com.hyman", name = "flowlayout-lib", version.ref = "flowlayoutLib" }
+#flowlayout-lib = { group = "com.hyman", name = "flowlayout-lib", version.ref = "flowlayoutLib" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-annotations = { group = "com.github.bumptech.glide", name = "annotations", version.ref = "glide" }
 glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
@@ -114,7 +102,7 @@ jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 #kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-loopinglayout = { group = "com.github.beksomega", name = "loopinglayout", version.ref = "loopinglayout" }
+#loopinglayout = { group = "com.github.beksomega", name = "loopinglayout", version.ref = "loopinglayout" }
 markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material-dialogs-bottomsheets = { group = "com.afollestad.material-dialogs", name = "bottomsheets", version.ref = "materialDialogs" }
@@ -141,12 +129,12 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 #rxkotlin = { group = "io.reactivex.rxjava2", name = "rxkotlin", version.ref = "rxkotlin" }
 subsampling-scale-image-view-androidx = { group = "com.davemorrissey.labs", name = "subsampling-scale-image-view-androidx", version.ref = "subsamplingScaleImageViewAndroidx" }
 zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }
-io-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-io-ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
-io-ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktor" }
-io-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
-io-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-io-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+#io-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+#io-ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+#io-ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktor" }
+#io-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+#io-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+#io-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }

@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.data.model
 
+import android.text.Html
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
 import com.perol.asdpl.pixivez.objects.CopyFrom
@@ -177,6 +178,22 @@ data class IllustX(
         is_bookmarked = src.is_bookmarked
         visible = src.visible
     }
+
+    fun toDetailString(showCaption: Boolean = true) = "$title\n" +
+            "id:$id " + (if (showCaption) "caption:${Html.fromHtml(caption)}" else "") +
+            "\nuser:${user.name} account:${user.account}\n" +
+            "create_date:${create_date}\n" +
+            "width:${width} height:${height}\n" +
+            "tags:${tags}\n" +
+            "total_bookmarks:${total_bookmarks} total_view:${total_view}\n" +
+            "AI: ${AIType.entries[illust_ai_type]} book_style:${illust_book_style} tools:${tools}\n" +
+            "type:${type} page_count:${page_count}\n" +
+            "visible:${visible} is_muted:${is_muted} CAC:${comment_access_control}\n" +
+            "sanity_level:${sanity_level} restrict:${restrict} x_restrict:${x_restrict}"
+    // "meta_pages:" + illust.meta_pages.toString() + "\n" +
+    // "meta_single_page:" + illust.meta_single_page.toString() + "\n" +
+    // "image_urls:" + illust.meta_pages[0].toString()}
+
 }
 // workaround until https://github.com/Kotlin/kotlinx.serialization/issues/1169 fixed
 typealias Illust = @Serializable(with = MergeMetaIllustSerializer::class) IllustX

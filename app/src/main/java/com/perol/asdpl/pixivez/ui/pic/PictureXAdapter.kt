@@ -70,7 +70,6 @@ import com.perol.asdpl.pixivez.databinding.ViewPicturexSurfaceGifBinding
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -315,9 +314,8 @@ class PictureXAdapter(
             }
             binding.imagebuttonDownload.setOnLongClickListener {
                 // show detail of illust
-                val detailstring = InteractionUtil.toDetailString(illust, false)
                 MaterialDialogs(mContext).show {
-                    setMessage(detailstring)
+                    setMessage(illust.toDetailString(false))
                     setTitle("Detail")
                     confirmButton()
                 }
@@ -494,7 +492,7 @@ class PictureXAdapter(
         mainImage.setOnLongClickListener {
             MaterialDialogs(mContext).show {
                 setTitle(R.string.saveselectpic1)
-                setMessage(InteractionUtil.toDetailString(data))
+                setMessage(data.toDetailString())
                 confirmButton { _, _ ->
                     ToastQ.post(R.string.join_download_queue)
                     Works.imgD(data, position)

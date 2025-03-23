@@ -216,7 +216,7 @@ abstract class PicListAdapter(
                 // show detail of illust
                 (adapter.data as MutableList<Illust>)[position].let { item ->
                     MaterialAlertDialogBuilder(context as Activity)
-                        .setMessage(InteractionUtil.toDetailString(item))
+                        .setMessage(item.toDetailString())
                         .setTitle("Detail")
                         .setPositiveButton(R.string.save) { _, _ ->
                             Works.imageDownloadAll(item)

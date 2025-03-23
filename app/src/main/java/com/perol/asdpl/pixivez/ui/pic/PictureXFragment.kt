@@ -52,7 +52,6 @@ import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.objects.IllustCacheRepo
-import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.Event
@@ -356,7 +355,7 @@ class PictureXFragment : BaseFragment() {
         binding.jumpButton.setOnLongClickListener {
             val illust = pictureXViewModel.illustDetail.value!!
             MaterialDialogs(requireContext()).show {
-                setMessage(InteractionUtil.toDetailString(illust))
+                setMessage(illust.toDetailString())
                 setTitle("Detail")
                 setPositiveButton(R.string.setting) { _, _ ->
                     FragmentActivity.start(requireContext(), "Block")

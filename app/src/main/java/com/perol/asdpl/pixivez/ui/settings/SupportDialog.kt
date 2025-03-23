@@ -77,9 +77,9 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
                         .getMimeTypeFromExtension(
                             file.extension
                         )
-                )
-            ) { _, _ ->
-            }
+                ),
+                null
+            )
         }
     }
 

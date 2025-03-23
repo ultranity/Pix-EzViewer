@@ -123,8 +123,9 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                                 MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                                     target.extension
                                 )
-                            )
-                        ) { _, _ -> }
+                            ),
+                            null
+                        )
 
                         withContext(Dispatchers.Main) {
                             Toasty.info(imageView.context, "Saved")

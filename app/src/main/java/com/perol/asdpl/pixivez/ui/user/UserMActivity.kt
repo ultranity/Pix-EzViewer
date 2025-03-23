@@ -258,8 +258,9 @@ class UserMActivity : RinkActivity() {
                                         MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                                             target.extension
                                         )
-                                    )
-                                ) { _, _ -> }
+                                    ),
+                                    null
+                                )
 
                                 withContext(Dispatchers.Main) {
                                     Toasty.info(this@UserMActivity, R.string.saved)

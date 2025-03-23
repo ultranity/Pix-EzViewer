@@ -147,16 +147,18 @@ class PictureXViewModel : BaseViewModel() {
             { encodingGif() }, {
                 CoroutineScope(Dispatchers.IO).launch {
                     FileUtil.move(fileCachedGIF, fileGIF)
-                    MediaScannerConnection.scanFile(
-                        PxEZApp.instance,
-                        arrayOf(fileGIF.path),
-                        arrayOf(
-                            MimeTypeMap.getSingleton()
-                                .getMimeTypeFromExtension(
-                                    fileGIF.extension
-                                )
+                    if (!(illust.restricted || illust.isR18))
+                        MediaScannerConnection.scanFile(
+                            PxEZApp.instance,
+                            arrayOf(fileGIF.path),
+                            arrayOf(
+                                MimeTypeMap.getSingleton()
+                                    .getMimeTypeFromExtension(
+                                        fileGIF.extension
+                                    )
+                            ),
+                            null
                         )
-                    ) { _, _ -> }
                     isEncoding = false
                     withContext(Dispatchers.Main) {
                         Toasty.success(PxEZApp.instance, R.string.savegifsuccess)

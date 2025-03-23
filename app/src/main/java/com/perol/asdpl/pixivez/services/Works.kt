@@ -25,17 +25,14 @@
 
 package com.perol.asdpl.pixivez.services
 
-import android.content.SharedPreferences
 import android.media.MediaScannerConnection
 import android.webkit.MimeTypeMap
-import com.arialyy.aria.core.Aria
-import com.arialyy.aria.core.common.HttpOption
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
+import com.perol.asdpl.pixivez.data.model.ImageUrlsX
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataBean
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
-import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
@@ -44,9 +41,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
 fun String.toLegal(): String {
     return this.replace(Regex("[\\x00-\\x1f]"), "").replace("\t", "    ")
@@ -57,11 +54,12 @@ fun String.toLegal(): String {
 
 @Serializable
 class IllustD(
-    var id: Int = 0,
-    var part: Int = 0,
-    var userId: Int = 0,
-    var userName: String? = null,
-    var title: String? = null
+    val id: Int = 0,
+    val part: Int = -1,
+//    val userId: Int = 0,
+//    val userName: String? = null,
+    val restricted: Boolean = false,
+    val title: String? = null
 )
 
 fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: Int): String {
@@ -86,23 +84,14 @@ fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: I
 
 object Works {
 
-    val pre: SharedPreferences = PxEZApp.instance.pre
-    fun parseSaveFormat(illust: Illust, part: Int? = null): String {
-        return parseSaveFormat(
-            illust,
-            part,
-            PxEZApp.saveformat,
-            PxEZApp.TagSeparator,
-            PxEZApp.R18Folder
-        )
-    }
+    private val pre by lazy { PxEZApp.instance.pre }
+    private val ketch by lazy { PxEZApp.instance.ketch }
 
     fun parseSaveFormat(
         illust: Illust,
-        part: Int?,
-        saveformat: String,
-        TagSeparator: String,
-        R18Folder: Boolean
+        part: Int? = null,
+        saveformat: String = PxEZApp.saveformat,
+        TagSeparator: String = PxEZApp.TagSeparator
     ): String {
         val url: String
         var filename = saveformat.replace("{illustid}", illust.id.toString())
@@ -123,18 +112,12 @@ object Works {
                 if (illust.meta.size > 10) part.toString().padStart(2, '0')
                 else part.toString()
             )
-        } else if (illust.meta.size == 1) {
+        } else { //if (illust.meta.size == 1) {
             url = getQualityUrl(illust)
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
-        } else { //error config
-            throw Error("part $part while illust.meta.size ${illust.meta.size}")
-        }
-        if (R18Folder && illust.isR18) {
-            filename = "？$filename"
-        }
-
+        }//throw Error("part $part while illust.meta.size ${illust.meta.size}")
         val type = when {
             url.contains("png") -> ".png"
             url.contains("jpeg") -> ".jpeg"
@@ -142,19 +125,25 @@ object Works {
         }
         filename = filename.replace("{type}", type)
         if (saveformat.contains("{tagsm")) {
-            filename = filename.replace("{tagsm}",
-                byteLimit(illust.tags.map { it.translated_name + "_" + it.name }
+            filename = filename.replace(
+                "{tagsm}",
+                byteLimit(
+                    illust.tags.map { it.translated_name + "_" + it.name }
                     .distinct().sortedBy { it.length },
                     illust.title,
                     TagSeparator,
-                    253 - filename.toByteArray().size)
+                    253 - filename.toByteArray().size
+                )
             )
         } else if (saveformat.contains("{tagso")) {
-            filename = filename.replace("{tagso}",
-                byteLimit(illust.tags.map { it.name }.distinct().sortedBy { it.length },
+            filename = filename.replace(
+                "{tagso}",
+                byteLimit(
+                    illust.tags.map { it.name }.distinct().sortedBy { it.length },
                     illust.title,
                     TagSeparator,
-                    253 - filename.toByteArray().size)
+                    253 - filename.toByteArray().size
+                )
             )
         } else if (saveformat.contains("{tags")) {
             val tags = illust.tags.map {
@@ -174,28 +163,30 @@ object Works {
         val name = illust.user.name.toLegal()
         val userid = illust.user.id
         val filename = parseSaveFormat(illust, part)
-        val needCreateFold = pre.getBoolean("needcreatefold", false)
         val targetFile = File(
-            "${PxEZApp.storepath}/" +
-                    (if (PxEZApp.R18Folder && filename.startsWith("？")) PxEZApp.R18FolderPath else "") +
-                    if (needCreateFold) "${name}_$userid" else "",
-            filename.removePrefix("？")
+            Path(
+                PxEZApp.storepath,
+                if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
+                if (pre.getBoolean("needcreatefold", false)) "${name}_$userid" else "",
+                filename
+            ).pathString
         )
         try {
             val compatCheck = FileUtil.move(file, targetFile)
             if (PxEZApp.ShowDownloadToast) {
                 ToastQ.post(R.string.savesuccess)
             }
-            MediaScannerConnection.scanFile(
-                PxEZApp.instance,
-                arrayOf(targetFile.path),
-                arrayOf(
-                    MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
-                )
-            ) { _, _ ->
-                FileUtil.ListLog.add(illust.id)
-                compatCheck()
-            }
+            if (!(illust.restricted || illust.isR18))
+                MediaScannerConnection.scanFile(
+                    PxEZApp.instance,
+                    arrayOf(targetFile.path),
+                    arrayOf(
+                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
+                    )
+                ) { _, _ ->
+                    FileUtil.ListLog.add(illust.id)
+                    compatCheck()
+                }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -225,64 +216,24 @@ object Works {
     }
 
     fun ugoiraDownloadAll(ugoira: Illust, ugoiraMetadata: UgoiraMetadataBean) {
-        val targetPath = "${PxEZApp.instance.cacheDir}${File.separator}${ugoira.id}"
-        val taskID = Aria.download(PxEZApp.instance)
-            .loadGroup(when (qualityDownload) {
-                0 -> ugoira.meta.map { it.medium }
-                1 -> ugoira.meta.map { it.large }
-                else -> ugoira.meta.map { it.original }
-            }.map { mirrorLinkDownload(it) })
-            .setDirPath(targetPath)
-            .setSubFileName(ugoiraMetadata.frames.map { it.file })
-            .setGroupAlias(ugoira.id.toString())
-            .unknownSize()
-            .option(option)
-            .create()
-        return
-        val name = ugoira.user.name.toLegal()
-        val title = ugoira.title.toLegal()
-        for (i in ugoira.meta.indices) {
-            var url = (
-                    if (ugoira.meta.size > 1) {
-                        getQualityUrl(ugoira, i)
-                    } else {
-                        getQualityUrl(ugoira)
-                    }
-                    )
-            /*val illustD = IllustD(
-                id = ugoira.id,
-                part = i,
-                userName = name,
-                userId = ugoira.user.id,
-                title = title
+        val path = Path(
+            PxEZApp.storepath,
+            if (PxEZApp.RestrictFolder && (ugoira.restricted || ugoira.isR18)) PxEZApp.RestrictFolderPath else "",
+            if (pre.getBoolean("needcreatefold", false))
+                "${ugoira.user.name.toLegal()}_${ugoira.user.id}" else "",
+            parseSaveFormat(ugoira).substringBeforeLast(".")
+        ).pathString
+        ugoira.meta.map { mirrorLinkDownload(qualityUrl(it)) }.forEach {
+            ketch.download(
+                it,
+                path,
+                it.substringAfterLast('/'),
+                tag = ugoira.id.toString(),
+                metaData = gson.encodeToString(ugoira)
             )
-            val illustDString  = gson.encodeToString(illustD)*/
-            // create json string without create object
-            val illustDString = buildJsonObject {
-                put("id", JsonPrimitive(ugoira.id))
-                put("part", JsonPrimitive(i))
-                put("userName", JsonPrimitive(name))
-                put("userId", JsonPrimitive(ugoira.user.id))
-                put("title", JsonPrimitive(title))
-            }.toString()
-            Aria.download(PxEZApp.instance)
-                .load(url) // 读取下载地址
-                .setFilePath(targetPath) // 设置文件保存的完整路径
-                .ignoreFilePathOccupy()
-                .setExtendField(illustDString)
-                .option(option)
-                .create()
         }
     }
 
-    val option by lazy {
-        HttpOption()
-            .apply {
-                addHeader("User-Agent", RestClient.UA)
-                addHeader("referer", "https://www.pixiv.net/")
-                addHeader("host", "i.pximg.net")
-            }
-    }
     var mirrorForView = pre.getBoolean("mirrorLinkView", false)
     var mirrorForDownload = pre.getBoolean("mirrorLinkDownload", false)
     const val opximg = "i.pximg.net"
@@ -323,20 +274,6 @@ object Works {
             .replace("{type}", type)
     }
 
-    fun mirror(illust: Illust, part: Int?, url: String): String {
-        var params = url.substringAfterLast(opximg).trimStart('/')
-        val pname = params.substringAfterLast('/')
-        params = params.substringBeforeLast('/')
-        // val illustid = pname.substringBeforeLast("_p").toIntOrNull()
-        // val part = pname.substringAfterLast("_p").substringBeforeLast(".").toIntOrNull()
-        val type = "." + pname.substringAfterLast(".")
-        return "https://" + mirrorFormat.replace("{host}", spximg)
-            .replace("{params}", params)
-            .replace("{illustid}", illust.id.toString())
-            .replace("{part}", part?.toString() ?: "0")
-            .replace("{type}", type)
-    }
-
     fun imgD(pid: Int, part: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             RetrofitRepository.getInstance().api.getIllust(pid).let {
@@ -358,12 +295,11 @@ object Works {
         val name = illust.user.name.toLegal()
         val title = illust.title.toLegal()
         val filename = parseSaveFormat(illust, part)
-        val needCreateFold = pre.getBoolean("needcreatefold", false)
-        val path = if (needCreateFold) {
-            "${PxEZApp.storepath}/${name}_${illust.user.id}"
-        } else {
-            PxEZApp.storepath
-        }
+        val path = Path(
+            PxEZApp.storepath,
+            if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
+            if (pre.getBoolean("needcreatefold", false)) "${name}_${illust.user.id}" else ""
+        ).pathString
         val targetFile = File(path, filename)
         if (targetFile.exists()) {
             ToastQ.post(R.string.alreadysaved)
@@ -372,28 +308,30 @@ object Works {
         val illustD = IllustD(
             id = illust.id,
             part = part ?: -1,
-            userName = name,
-            userId = illust.user.id,
+//            userName = name,
+//            userId = illust.user.id,
+            restricted = illust.restricted || illust.isR18,
             title = title
         )
-        val targetPath = "${PxEZApp.instance.cacheDir}${File.separator}$filename"
-        Aria.download(PxEZApp.instance)
-            .load(url) // 读取下载地址
-            .setFilePath(targetPath) // 设置文件保存的完整路径
-            .ignoreFilePathOccupy()
-            .setExtendField(gson.encodeToString(illustD))
-            .option(option)
-            .create()
+        ketch.download(
+            url,
+            path,
+            filename,
+            tag = illust.id.toString(),
+            metaData = gson.encodeToString(illustD)
+        )
     }
 
     var qualityDownload: Int = pre.getString("qualityDownload", "2")!!.toInt()
     private fun getQualityUrl(illust: Illust, part: Int = 0): String {
         //TODO if need: val part = part.coerceAtMost(illust.meta_pages.size - 1)
         val urls = illust.meta[part]
-        return when (qualityDownload) {
-            0 -> urls.medium
-            1 -> urls.large
-            else -> urls.original // 2
-        }
+        return qualityUrl(urls)
+    }
+
+    private fun qualityUrl(urls: ImageUrlsX): String = when (qualityDownload) {
+        0 -> urls.medium
+        1 -> urls.large
+        else -> urls.original // 2
     }
 }

@@ -179,7 +179,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             setDefaultValue(PxEZApp.saveformat)
             summary = PxEZApp.saveformat
         }
-        findPreference<Preference>("R18Folder")!!.summary = PxEZApp.R18FolderPath
+        findPreference<Preference>("R18Folder")!!.summary = PxEZApp.RestrictFolderPath
         findPreference<Preference>("version")!!.apply {
             try {
                 // ---get the package info---
@@ -206,7 +206,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreferenceCompat>("R18Folder")!!.setOnPreferenceChangeListener { preference, newValue ->
-            PxEZApp.R18Folder = newValue as Boolean
+            PxEZApp.RestrictFolder = newValue as Boolean
             true
         }
         findPreference<SwitchPreferenceCompat>("R18Private")!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -351,16 +351,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             "R18Folder" -> {
-                if (PxEZApp.R18Folder) {
+                if (PxEZApp.RestrictFolder) {
                     // onPreferenceTreeClick called after switch change
                     MaterialDialog(requireContext()).show {
                         title(R.string.block_tag)
                         message(R.string.R18_folder)
                         input(
-                            prefill = PxEZApp.R18FolderPath,
+                            prefill = PxEZApp.RestrictFolderPath,
                             hint = "xRestrict/"
                         ) { dialog, text ->
-                            PxEZApp.R18FolderPath =
+                            PxEZApp.RestrictFolderPath =
                                 if (text.isBlank()) {
                                     "xRestrict/"
                                 } else {
@@ -369,10 +369,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         }
                         positiveButton(R.string.save) { dialog ->
                             PxEZApp.instance.pre.edit {
-                                putString("R18FolderPath", PxEZApp.R18FolderPath)
+                                putString("R18FolderPath", PxEZApp.RestrictFolderPath)
                             }
                             findPreference<Preference>("R18Folder")!!.apply {
-                                summary = PxEZApp.R18FolderPath
+                                summary = PxEZApp.RestrictFolderPath
                             }
                         }
                         negativeButton(android.R.string.cancel)

@@ -26,10 +26,10 @@
 package com.perol.asdpl.pixivez.ui.manager
 
 import android.annotation.SuppressLint
-import com.arialyy.aria.core.Aria
-import com.arialyy.aria.core.download.DownloadEntity
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
+import com.ketch.DownloadModel
+import com.ketch.Status
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.databinding.ItemDownloadTaskBinding
@@ -37,44 +37,45 @@ import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.ViewBindingUtil.getBinding
 import com.perol.asdpl.pixivez.services.IllustD
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 
 @SuppressLint("CheckResult")
 class DownloadTaskAdapter :
-    BaseQuickAdapter<DownloadEntity, BaseViewHolder>(R.layout.item_download_task) {
+    BaseQuickAdapter<DownloadModel, BaseViewHolder>(R.layout.item_download_task) {
     init {
         this.setOnItemClickListener { adapter, view, position ->
             val item = data[position]
-            val illust = gson.decodeFromString<IllustD>(item.str)
+            val illust = gson.decodeFromString<IllustD>(item.metaData)
             PictureActivity.start(context, id = illust.id)
         }
         this.setOnItemLongClickListener { adapter, view, position ->
             val item = data[position]
+            //val illustD = gson.decodeFromString<IllustD>(item.metaData)
             MaterialDialogs(context).show {
+                //setTitle("${illustD.id}_${illustD.part}")
                 setTitle(item.fileName)
                 setItems(R.array.download_task_choice) { _, index ->
                     when (index) {
-                        0 -> {
-                            Aria.download(PxEZApp.instance)
-                                .load(item.url) // 读取下载地址
-                                .setFilePath(item.filePath) // 设置文件保存的完整路径
-                                .ignoreFilePathOccupy()
-                                .setExtendField(item.str)
-                                .option(Works.option)
-                                .create()
+                        0 -> MaterialDialogs(context).show {
+                            setTitle(item.fileName)
+                            setMessage(if (item.status == Status.FAILED) item.failureReason else item.metaData)
+                            setPositiveButton(R.string.ok) { _, _ -> }
                         }
-
                         1 -> {
-                            Aria.download(context).load(data[position].id).stop()
+                            PxEZApp.instance.ketch.retry(item.id)
                         }
 
                         2 -> {
-                            Aria.download(context).load(data[position].id).resume()
+                            PxEZApp.instance.ketch.pause(item.id)
                         }
 
                         3 -> {
-                            Aria.download(context).load(data[position].id).cancel()
+                            PxEZApp.instance.ketch.resume(item.id)
+                        }
+
+                        4 -> {
+                            //PxEZApp.instance.ketch.cancel(item.id)
+                            PxEZApp.instance.ketch.clearDb(item.id)
                         }
                     }
 //                    val taskList = Aria.download(this).taskList
@@ -87,58 +88,136 @@ class DownloadTaskAdapter :
         }
     }
 
-    private fun Int.toIEntityString(): String {
-        return when (this) {
-            0 -> {
-                "FAIL"
+    companion object {
+        private const val MAX_PERCENT = 100
+        private const val VALUE_60 = 60
+        private const val VALUE_3 = 3
+        private const val VALUE_300 = 300
+        private const val VALUE_500 = 500
+        private const val VALUE_1024 = 1024
+        private const val SEC_IN_MILLIS = 1000
+        private fun getTimeLeftText(
+            speedInBPerMs: Float,
+            progressPercent: Int,
+            lengthInBytes: Long
+        ): String {
+            if (speedInBPerMs == 0F) return ""
+            val speedInBPerSecond = speedInBPerMs * SEC_IN_MILLIS
+            val bytesLeft =
+                (lengthInBytes * (MAX_PERCENT - progressPercent) / MAX_PERCENT).toFloat()
+
+            val secondsLeft = bytesLeft / speedInBPerSecond
+            val minutesLeft = secondsLeft / VALUE_60
+            val hoursLeft = minutesLeft / VALUE_60
+
+            return when {
+                secondsLeft < VALUE_60 -> "%.0f s left".format(secondsLeft)
+                minutesLeft < VALUE_3 -> "%.0f mins %.0f s left".format(
+                    minutesLeft,
+                    secondsLeft % VALUE_60
+                )
+
+                minutesLeft < VALUE_60 -> "%.0f mins left".format(minutesLeft)
+                minutesLeft < VALUE_300 -> "%.0f hrs %.0f mins left".format(
+                    hoursLeft,
+                    minutesLeft % VALUE_60
+                )
+
+                else -> "%.0f hrs left".format(hoursLeft)
+            }
+        }
+
+        private fun getSpeedText(speedInBPerMs: Float): String {
+            var value = speedInBPerMs * SEC_IN_MILLIS
+            val units = arrayOf("B/s", "KB/s", "MB/s", "GB/s")
+            var unitIndex = 0
+
+            while (value >= VALUE_500 && unitIndex < units.size - 1) {
+                value /= VALUE_1024
+                unitIndex++
             }
 
-            1 -> "COMPLETE"
-            2 -> "STOP"
-            3 -> "WAIT"
-            4 -> "RUNNING"
-            5 -> {
-                "PRE"
+            return "%.2f %s".format(value, units[unitIndex])
+        }
+
+        private fun getTotalLengthText(lengthInBytes: Long): String {
+            var value = lengthInBytes.toFloat()
+            val units = arrayOf("B", "KB", "MB", "GB")
+            var unitIndex = 0
+
+            while (value >= VALUE_500 && unitIndex < units.size - 1) {
+                value /= VALUE_1024
+                unitIndex++
             }
 
-            6 -> {
-                "POST_PRE"
+            return "%.2f %s".format(value, units[unitIndex])
+        }
+
+        private fun getCompleteText(
+            status: Status,
+            speedInBPerMs: Float,
+            progress: Int,
+            length: Long
+        ): String {
+            if (status != Status.PROGRESS) {
+                return status.name
+            }
+            val timeLeftText = getTimeLeftText(speedInBPerMs, progress, length)
+            val speedText = getSpeedText(speedInBPerMs)
+
+            val parts = mutableListOf<String>()
+
+            if (timeLeftText.isNotEmpty()) {
+                parts.add(timeLeftText)
             }
 
-            7 -> {
-                "CANCEL"
+            if (speedText.isNotEmpty()) {
+                parts.add(speedText)
             }
 
-            else -> {
-                "OTHER"
-            }
+            return parts.joinToString(", ")
         }
     }
 
     @SuppressLint("SetTextI18n")
-    override fun convert(holder: BaseViewHolder, item: DownloadEntity, payloads: List<Any>) {
+    override fun convert(holder: BaseViewHolder, item: DownloadModel, payloads: List<Any>) {
         val binding = holder.getBinding(ItemDownloadTaskBinding::bind)
         if (payloads.isNotEmpty()) {
-            val thatItem = payloads[0] as DownloadEntity
-            binding.progress.max = thatItem.fileSize.toInt()
-            binding.progress.progress = thatItem.currentProgress.toInt()
+            val thatItem = payloads[0] as DownloadModel
+            binding.progress.progress = thatItem.progress
             binding.progressFont.text =
-                context.getString(R.string.fractional, thatItem.currentProgress, thatItem.fileSize)
+                item.progress.toString() + "%/" + getTotalLengthText(item.total)
+            binding.status.text = getCompleteText(
+                item.status,
+                item.speedInBytePerMs,
+                item.progress,
+                item.total
+            )
         }
     }
 
     @SuppressLint("SetTextI18n")
-    override fun convert(holder: BaseViewHolder, item: DownloadEntity) {
+    override fun convert(holder: BaseViewHolder, item: DownloadModel) {
         val binding = holder.getBinding(ItemDownloadTaskBinding::bind)
-        binding.progress.max = item.fileSize.toInt()
-        binding.progress.progress = item.currentProgress.toInt()
+        binding.progress.progress = item.progress
         binding.progressFont.text =
-            context.getString(R.string.fractional, item.currentProgress, item.fileSize)
+            context.getString(
+                R.string.fractional,
+                item.progress * item.total / 100, //TODO: add ketch feature
+                item.total
+            )
+        binding.progressFont.text =
+            item.progress.toString() + "%/" + getTotalLengthText(item.total)
+        binding.status.text = getCompleteText(
+            item.status,
+            item.speedInBytePerMs,
+            item.progress,
+            item.total
+        )
         try {
-            val illustD = gson.decodeFromString<IllustD>(item.str)
+            val illustD = gson.decodeFromString<IllustD>(item.metaData)
             binding.title.text =
-                if (illustD.part != -1) "${illustD.title}_${illustD.part}" else illustD.title
-            binding.status.text = item.state.toIEntityString()
+                if (illustD.part >= 0) "${illustD.title}_${illustD.part}" else "${illustD.title}"
         } catch (e: Exception) {
             e.printStackTrace()
         }

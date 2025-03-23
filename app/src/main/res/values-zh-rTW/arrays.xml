@@ -53,6 +53,7 @@
         <item>更換頭圖</item>
     </string-array>
     <string-array name="download_task_choice">
+        <item>詳情</item>
         <item>重試</item>
         <item>攢停</item>
         <item>恢復</item>

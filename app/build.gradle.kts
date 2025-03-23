@@ -156,7 +156,8 @@ android {
 
 
 dependencies {
-    implementation(project(":ketch"))
+    //implementation(project(":ketch"))
+    implementation(libs.ketch)
     implementation(project(":BRVAH"))
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
     implementation(libs.kotlin.stdlib)
@@ -236,7 +237,7 @@ dependencies {
 
     implementation(libs.aboutlibraries)
     implementation(libs.aboutlibraries.core)
-    implementation(libs.aria.core)
+    //implementation(libs.aria.core)
     //kapt("com.arialyy.aria:compiler:3.8.12")
     implementation(libs.markwon.core)
     implementation(libs.jsoup)

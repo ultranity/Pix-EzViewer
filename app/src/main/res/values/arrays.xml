@@ -102,6 +102,7 @@
         <item>更换头像</item>
     </string-array>
     <string-array name="download_task_choice">
+        <item>详情</item>
         <item>重试</item>
         <item>暂停</item>
         <item>恢复</item>

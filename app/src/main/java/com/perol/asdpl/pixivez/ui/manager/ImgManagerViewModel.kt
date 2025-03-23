@@ -95,7 +95,7 @@ class ImgManagerViewModel : BaseViewModel() {
                     val it = taskmap[rt.id]!!
                     it.file.illust = rt
                     it.file.target =
-                        Works.parseSaveFormat(rt, it.part, saveformat, TagSeparator, false)
+                        Works.parseSaveFormat(rt, it.part, saveformat, TagSeparator)
                     it.file.checked = (it.file.target != it.file.name)
                     //CrashHandler.instance.d("imgMgr","get"+it.pid+"p"+it.part+"check"+it.file.checked )
                     if (rename_once) {

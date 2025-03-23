@@ -109,8 +109,8 @@ class PictureXViewModel : BaseViewModel() {
 
     val filePath by lazy {
         PxEZApp.storepath + File.separatorChar +
-                (if (PxEZApp.R18Folder && illust.isR18) PxEZApp.R18FolderPath else "") +
-                Works.parseSaveFormat(illust).substringBeforeLast(".").removePrefix("？")
+                (if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "") +
+                File.separatorChar + Works.parseSaveFormat(illust).substringBeforeLast(".")
     }
     val fileZIP by lazy { File("$filePath.zip") }
     val fileGIF by lazy { File("$filePath.gif") }

@@ -27,7 +27,6 @@ package com.perol.asdpl.pixivez.networks
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.services.Works.pre
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +35,7 @@ import java.net.InetAddress
 
 object ImageHttpDns : Dns {
 
-    var shuffleIP = pre.getBoolean("shuffleIP", true)
+    var shuffleIP = PxEZApp.instance.pre.getBoolean("shuffleIP", true)
     private val addressList = mutableListOf<InetAddress>()
     private var defaultList = listOf(
         "203.137.29.47",

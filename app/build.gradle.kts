@@ -156,8 +156,8 @@ android {
 
 
 dependencies {
-    //implementation(project(":ketch"))
-    implementation(libs.ketch)
+    implementation(project(":ketch"))
+    //implementation(libs.ketch)
     implementation(project(":BRVAH"))
     implementation(fileTree(mapOf("include" to listOf("*.*"), "dir" to "libs")))
     implementation(libs.kotlin.stdlib)

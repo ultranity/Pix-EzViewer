@@ -16,4 +16,5 @@ pluginManagement {
 rootProject.name = "Pix-EzViewer"
 include(":app")
 include(":ketch")
+project(":ketch").projectDir = file("Ketch/ketch")
 include(":BRVAH")

@@ -216,8 +216,7 @@ class DownloadTaskAdapter :
         )
         try {
             val illustD = gson.decodeFromString<IllustD>(item.metaData)
-            binding.title.text =
-                if (illustD.part >= 0) "${illustD.title}_${illustD.part}" else "${illustD.title}"
+            binding.title.text = "${illustD.title}_${illustD.pString()}"
         } catch (e: Exception) {
             e.printStackTrace()
         }

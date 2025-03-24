@@ -120,7 +120,7 @@ class PxEZApp : Application() {
                                 withContext(Dispatchers.Main) {
                                     Toasty.success(
                                         this@PxEZApp,
-                                        "${illustD.title} p${illustD.part}${getString(R.string.savesuccess)}"
+                                        "${illustD.title} ${illustD.pString()}${getString(R.string.savesuccess)}"
                                     )
                                 }
                             }

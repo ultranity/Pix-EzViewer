@@ -60,7 +60,9 @@ class IllustD(
 //    val userName: String? = null,
     val restricted: Boolean = false,
     val title: String? = null
-)
+) {
+    fun pString() = if (part == -1) "" else "p$part"
+}
 
 fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: Int): String {
     var result = tags.mapNotNull {

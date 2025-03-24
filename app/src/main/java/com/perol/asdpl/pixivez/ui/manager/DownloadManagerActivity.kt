@@ -72,7 +72,6 @@ class DownloadManagerActivity : RinkActivity() {
         return true
     }
 
-    @SuppressLint("CheckResult")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
@@ -114,7 +113,7 @@ class DownloadManagerActivity : RinkActivity() {
 
             R.id.action_finished_cancel -> {
                 PxEZApp.instance.applicationScope.launch {
-                    ketch.getAllDownloads().filter { it.status == Status.SUCCESS }.forEach {
+                    ketch.getDownloadModelByStatus(Status.SUCCESS).forEach {
                         ketch.clearDb(it.id, false)
                     }
                 }
@@ -129,114 +128,116 @@ class DownloadManagerActivity : RinkActivity() {
             }
 
             R.id.action_export -> {
-                MaterialDialog(this).show {
-                    folderChooser(
-                        initialDirectory = File(PxEZApp.storepath),
-                        allowFolderCreation = true,
-                        context = context
-                    ) { _, folder ->
-                        MaterialDialog(context).show {
-                            listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    File(folder.absolutePath + File.separatorChar + "download.log")
-                                        .writer().let { writer ->
-                                            ketch.getAllDownloads().forEach {
-                                                when (index) {
-                                                    0 -> {
-                                                        writer.appendLine(it.fileName)
-                                                        writer.appendLine(it.url)
-                                                        writer.appendLine(it.metaData)
-                                                    }
+                showExportDialog()
+            }
 
-                                                    1 -> {
-                                                        writer.appendLine(
-                                                            it.url.substringAfterLast(
-                                                                "/"
-                                                            )
-                                                        )
-                                                    }
+            R.id.action_import -> {
+                showImportDialog()
+            }
+        }
+        return true
+    }
 
-                                                    2 -> {
-                                                        writer.appendLine(gson.encodeToString(it))
-                                                    }
-                                                }
-                                            }
-                                            writer.flush()
-                                            writer.close()
+    @SuppressLint("CheckResult")
+    private fun showExportDialog() = MaterialDialog(this).show {
+        folderChooser(
+            initialDirectory = File(PxEZApp.storepath),
+            allowFolderCreation = true,
+            context = context
+        ) { _, folder ->
+            MaterialDialog(context).show {
+                listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        File(folder.absolutePath + File.separatorChar + "download.log")
+                            .writer().let { writer ->
+                                ketch.getAllDownloads().forEach {
+                                    when (index) {
+                                        0 -> {
+                                            writer.appendLine(it.fileName)
+                                            writer.appendLine(it.url)
+                                            writer.appendLine(it.metaData)
                                         }
+
+                                        1 -> {
+                                            writer.appendLine(it.url.substringAfterLast("/"))
+                                        }
+
+                                        2 -> {
+                                            writer.appendLine(gson.encodeToString(it))
+                                        }
+                                    }
                                 }
+                                writer.flush()
+                                writer.close()
                             }
-                        }
                     }
                 }
             }
-            R.id.action_import -> {
-                MaterialDialog(this).show {
-                    fileChooser(
-                        initialDirectory = File(PxEZApp.storepath),
-                        filter = { it.isDirectory || it.extension == "log" },
-                        context = context
-                    ) { _, file ->
-                        MaterialDialog(context).show {
-                            listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
-                                if (index == 0) {
-                                    file.readLines().chunked(3).forEach {
-                                        val illust = gson.decodeFromString<IllustD>(it[2])
-                                        //  val filename = it[0]
-                                        //  val url = it[1]
-                                        //  val path = Path(
-                                        //      PxEZApp.storepath,
-                                        //      if (PxEZApp.RestrictFolder && illust.restricted) PxEZApp.RestrictFolderPath else "",
-                                        //      if (PxEZApp.instance.pre.getBoolean("needcreatefold", false)) "${illust.userName}_${illust.userId}" else ""
-                                        //  ).pathString
-                                        //  ketch.download(
-                                        //      url,
-                                        //      path,
-                                        //      filename,
-                                        //      tag = illust.id.toString(),
-                                        //      metaData = it[2]
-                                        //  )
-                                        Works.imgD(illust.id, illust.part)
-                                    }
-                                } else file.readLines().forEach {
-                                    when (index) {
-                                        1 -> {
-                                            val pid = (
-                                                    Regex("(?<=(pid)?_?)(\\d{7,9})")
-                                                        .find(it)?.value ?: ""
-                                                    ).toIntOrNull()
-                                            val dot = it.lastIndexOf(".")
-                                            val part = (
-                                                    Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
-                                                        .find(
-                                                            it, //TODO: if necessary?
-                                                            if (dot - 4 > 0) dot - 4 else 0
-                                                        )?.value ?: "0"
-                                                    ).toIntOrNull()
-                                            if (pid != null && part != null) {
-                                                Works.imgD(pid, part)
-                                                // Thread.sleep(300)
-                                            }
-                                        }
+        }
+    }
 
-                                        2 -> gson.decodeFromString<DownloadModel>(it).let { it ->
-                                            ketch.download(
-                                                it.url,
-                                                it.path,
-                                                it.fileName,
-                                                it.tag,
-                                                it.metaData,
-                                            )
-                                        }
-                                    }
+    @SuppressLint("CheckResult")
+    private fun showImportDialog() = MaterialDialog(this).show {
+        fileChooser(
+            initialDirectory = File(PxEZApp.storepath),
+            filter = { it.isDirectory || it.extension == "log" },
+            context = context
+        ) { _, file ->
+            MaterialDialog(context).show {
+                listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
+                    if (index == 0) {
+                        file.readLines().chunked(3).forEach {
+                            val illust = gson.decodeFromString<IllustD>(it[2])
+                            //  val filename = it[0]
+                            //  val url = it[1]
+                            //  val path = Path(
+                            //      PxEZApp.storepath,
+                            //      if (PxEZApp.RestrictFolder && illust.restricted) PxEZApp.RestrictFolderPath else "",
+                            //      if (PxEZApp.instance.pre.getBoolean("needcreatefold", false)) "${illust.userName}_${illust.userId}" else ""
+                            //  ).pathString
+                            //  ketch.download(
+                            //      url,
+                            //      path,
+                            //      filename,
+                            //      tag = illust.id.toString(),
+                            //      metaData = it[2]
+                            //  )
+                            Works.imgD(illust.id, illust.part)
+                        }
+                    } else file.readLines().forEach {
+                        when (index) {
+                            1 -> {
+                                val pid = (
+                                        Regex("(?<=(pid)?_?)(\\d{7,9})").find(it)?.value ?: ""
+                                        ).toIntOrNull()
+                                val dot = it.lastIndexOf(".")
+                                val part = (
+                                        Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
+                                            .find(
+                                                it, //TODO: if necessary?
+                                                if (dot - 4 > 0) dot - 4 else 0
+                                            )?.value ?: "0"
+                                        ).toIntOrNull()
+                                if (pid != null && part != null) {
+                                    Works.imgD(pid, part)
+                                    // Thread.sleep(300)
                                 }
+                            }
+
+                            2 -> gson.decodeFromString<DownloadModel>(it).let { it ->
+                                ketch.download(
+                                    it.url,
+                                    it.path,
+                                    it.fileName,
+                                    it.tag,
+                                    it.metaData,
+                                )
                             }
                         }
                     }
                 }
             }
         }
-        return true
     }
 
     private fun refreshList() {

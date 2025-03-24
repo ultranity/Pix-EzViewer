@@ -185,10 +185,10 @@ dependencies {
     implementation(libs.flexbox)
     implementation(libs.material)
 
-    /*/ (Java only)
-    //implementation(libs.androidx.work.runtime)
     // Kotlin + coroutines
     implementation(libs.androidx.work.runtime.ktx)
+    /*/ (Java only)
+    //implementation(libs.androidx.work.runtime)
     // optional - RxJava2 support
     implementation(libs.androidx.work.rxjava2)
     // optional - GCMNetworkManager support

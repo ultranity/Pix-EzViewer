@@ -35,6 +35,7 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import androidx.work.WorkManager
 import com.ketch.Ketch
 import com.ketch.Status
 import com.perol.asdpl.pixivez.R
@@ -65,7 +66,6 @@ class PxEZApp : Application() {
     }
 
     val applicationScope = CoroutineScope(Dispatchers.IO + SupervisorJob() + exceptionHandler)
-
     lateinit var ketch: Ketch
     override fun onCreate() {
         super.onCreate()
@@ -75,6 +75,7 @@ class PxEZApp : Application() {
         applicationScope.launch {
             AppDataRepo.getUser()
         }
+        val workManager = WorkManager.getInstance(this) //todo: config download concurrency
         ketch = Ketch.builder().setOkHttpClient(downloadHttpClient).build(this)
 
         applicationScope.launch {

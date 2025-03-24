@@ -103,7 +103,7 @@ class FileInfo(val file: File) {
 }
 
 object FileUtil {
-    val sdCardPath: String
+    val storagePath: String
         get() = Environment.getExternalStorageDirectory().absolutePath
 
     const val T_DIR = 0
@@ -288,12 +288,12 @@ object FileUtil {
     var ListLog = RoaringBitmap()
 
     // lateinit var localLog:RoaringBitmap
-    private fun getFileList() {
+    fun getFileList() {
         ListLog = bitSetFileLog(PxEZApp.storepath + File.separator + "roaringbit.data")
-            ?: bitSetFileLog(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "roaringbit.data")
+            ?: bitSetFileLog(storagePath + File.separator + "PxEz" + File.separator + "roaringbit.data")
             ?: RoaringBitmap()
         extraPath = getExtraPath(PxEZApp.storepath + File.separator + "path.txt")
-            ?: getExtraPath(Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz" + File.separator + "path.txt")
+            ?: getExtraPath(storagePath + File.separator + "PxEz" + File.separator + "path.txt")
             ?: listOf()
         var fileList =
             getGroupList(PxEZApp.storepath, true).mapNotNull { it.pid }.sorted().toIntArray()

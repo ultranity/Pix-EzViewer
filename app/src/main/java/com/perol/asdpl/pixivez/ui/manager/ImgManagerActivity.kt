@@ -42,6 +42,9 @@ import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -56,6 +59,10 @@ class ImgManagerActivity : RinkActivity() {
         setContentView(binding.root)
         initView()
         initBind()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            FileUtil.getFileList()
+        }
     }
 
     private val imgManagerAdapter = ImgManagerAdapter(R.layout.view_imgmanager_item)

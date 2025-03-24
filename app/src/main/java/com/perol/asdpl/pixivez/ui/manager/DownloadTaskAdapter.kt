@@ -61,27 +61,15 @@ class DownloadTaskAdapter :
                             setMessage(if (item.status == Status.FAILED) item.failureReason else item.metaData)
                             setPositiveButton(R.string.ok) { _, _ -> }
                         }
-                        1 -> {
-                            PxEZApp.instance.ketch.retry(item.id)
-                        }
-
-                        2 -> {
-                            PxEZApp.instance.ketch.pause(item.id)
-                        }
-
-                        3 -> {
-                            PxEZApp.instance.ketch.resume(item.id)
-                        }
-
+                        1 -> PxEZApp.instance.ketch.retry(item.id)
+                        2 -> PxEZApp.instance.ketch.pause(item.id)
+                        3 -> PxEZApp.instance.ketch.resume(item.id)
                         4 -> {
                             //PxEZApp.instance.ketch.cancel(item.id)
-                            PxEZApp.instance.ketch.clearDb(item.id)
+                            // use clear to del temp file if not finished
+                            PxEZApp.instance.ketch.clearDb(item.id, item.status != Status.SUCCESS)
                         }
                     }
-//                    val taskList = Aria.download(this).taskList
-//                    if (taskList?.isNotEmpty() == true) {
-//                        this@DownloadTaskAdapter.setNewInstance(taskList.asReversed())
-//                    }
                 }
             }
             true

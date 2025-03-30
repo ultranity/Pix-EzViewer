@@ -14,7 +14,7 @@
         <Preference
             app:key="about_feedback_telegram"
             app:title="Telegram"
-            app:summary="https://t.me/PixEzViewer"/>
+            app:summary="https://t.me/PixEz_Viewer"/>
         <Preference
             app:key="about_feedback_qq"
             app:title="QQ group"

@@ -3,7 +3,6 @@ package com.perol.asdpl.pixivez.base
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
@@ -119,8 +118,7 @@ object UtilFunc {
 
     fun View.rotate() {
         rotation = 0F
-        ViewCompat.animate(this)
-            .rotation(360F)
+        animate().rotation(360F)
             .withLayer()
             .setDuration(1000)
             .setInterpolator(AccelerateDecelerateInterpolator())

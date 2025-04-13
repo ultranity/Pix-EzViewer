@@ -9,8 +9,8 @@
 * view history, download history
 * one-click collection mode
 * multi-user support
-* aria multi thread downloader
-* anti dns-pollution support
+* multi thread downloader
+* anti dns-pollution&DoH support
 * custom API endpoint config
 * custom file naming (save the information such as tags)
 * local image pid detection & batch rename

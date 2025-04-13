@@ -84,7 +84,7 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun zipUgoira() {
-        val fileCachedZIP = File("${fileCachedUgoria.path}_original.zip")
+        val fileCachedZIP = File("${fileCachedUgoira.path}_original.zip")
         val fileZIP = File("${filePath}_original.zip")
         if (fileZIP.exists()) {
             ToastQ.post(R.string.alreadysaved)
@@ -92,7 +92,7 @@ class PictureXViewModel : BaseViewModel() {
         }
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                ZipFile(fileCachedZIP).addFolder(fileCachedUgoria)
+                ZipFile(fileCachedZIP).addFolder(fileCachedUgoira)
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastQ.post("zip Failed")
@@ -112,7 +112,7 @@ class PictureXViewModel : BaseViewModel() {
     }
     val fileZIP by lazy { File("$filePath.zip") }
     val fileGIF by lazy { File("$filePath.gif") }
-    val fileCachedUgoria by lazy {
+    val fileCachedUgoira by lazy {
         File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id)
     }
     val fileCachedZIP by lazy {
@@ -276,7 +276,7 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun loadUgoiraZip(mediaURL: String) {
-        //if (fileCachedUgoria.exists() && fileCachedUgoria.listFiles()!!.size == ugoiraDetail.value!!.frames.size)
+        //if (fileCachedUgoira.exists() && fileCachedUgoira.listFiles()!!.size == ugoiraDetail.value!!.frames.size)
         val file = if (fileZIP.exists()) fileZIP else fileCachedZIP
         if (file.exists() && ZipFile(file).isValidZipFile) {
             CoroutineScope(Dispatchers.Main).launch {
@@ -310,7 +310,7 @@ class PictureXViewModel : BaseViewModel() {
             output.close()
             CrashHandler.instance.d("GIF", "++++${progress.value}++++")
             FileUtil.move(fileCachedZIPTemp, fileCachedZIP)
-            //ZipFile(fileCachedZIPTemp).extractAll(fileCachedUgoria.path)
+            //ZipFile(fileCachedZIPTemp).extractAll(fileCachedUgoira.path)
             launchUI {
                 downloadUgoiraZipSuccess.value = true
             }

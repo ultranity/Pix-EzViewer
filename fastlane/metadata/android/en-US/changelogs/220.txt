@@ -1,0 +1,15 @@
+## 2.2.0
+- Feature: (Warn! downloading task list will lost after upgrading) change download lib to Ketch
+- Feature: load&save Ugoira&GIF without unzip
+- Feature: Download original Ugoira images
+- Feature: (Experimental) export settings
+- Fix: Crash when no login user exist
+- Fix: Crash when search result is empty
+- Fix: tag filter dialog disappear #96
+- Fix: BounceEdgeEffect stuck #78
+- Optim: reuse Okhttp client for download & view images
+- Optim: x_restrict logic
+- Optim: load downloaded images from local if available
+- Optim: Thumbnail loading logic
+- Optim: flowlayout& androidndkgif
+- Optim: code cleanup and other tweaks

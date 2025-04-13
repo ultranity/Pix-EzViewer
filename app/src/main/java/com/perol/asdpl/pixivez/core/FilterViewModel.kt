@@ -264,7 +264,7 @@ fun showFilterDialog(
                         context.getString(R.string.bookmark),
                         context.getString(R.string.view),
                         context.getString(R.string.view_comment),
-                        context.getString(R.string.origin)
+                        context.getString(R.string.create_time)
                     )
                 ) { _, index ->
                     val sorted = when (index) { //in-place sort
@@ -272,6 +272,7 @@ fun showFilterDialog(
                         1 -> picListFragment.picListAdapter.data.sortedBy { it.total_bookmarks }
                         2 -> picListFragment.picListAdapter.data.sortedBy { it.total_view }
                         3 -> picListFragment.picListAdapter.data.sortedBy { it.total_comments }
+                        4 -> picListFragment.picListAdapter.data.sortedBy { it.create_date }
                         else -> null
                     }
 

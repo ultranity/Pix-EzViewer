@@ -108,9 +108,7 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     val filePath by lazy {
-        PxEZApp.storepath + File.separatorChar +
-                (if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "") +
-                File.separatorChar + Works.parseSaveFormat(illust).substringBeforeLast(".")
+        Works.getDownloadPath(illust, Works.parseSaveFormat(illust).substringBeforeLast("."))
     }
     val fileZIP by lazy { File("$filePath.zip") }
     val fileGIF by lazy { File("$filePath.gif") }
@@ -119,6 +117,9 @@ class PictureXViewModel : BaseViewModel() {
     }
     val fileCachedZIP by lazy {
         File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".zip")
+    }
+    val fileCachedZIPTemp by lazy {
+        File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".zip.tmp")
     }
     val fileCachedGIF by lazy {
         File(PxEZApp.instance.cacheDir.toString() + File.separatorChar + illust.id + ".gif")
@@ -144,7 +145,7 @@ class PictureXViewModel : BaseViewModel() {
         }
         // TODO: Works.imageDownloadWithFile(illust, resourceFile!!, position)
         PxEZApp.instance.applicationScope.launchCatching(
-            { encodingGif() }, {
+            { encodeGIFfromZIP() }, {
                 CoroutineScope(Dispatchers.IO).launch {
                     FileUtil.move(fileCachedGIF, fileGIF)
                     if (!(illust.restricted || illust.isR18))
@@ -171,8 +172,7 @@ class PictureXViewModel : BaseViewModel() {
             })
     }
 
-    suspend fun encodingGif() {
-        val listFiles = fileCachedUgoria.listFiles()
+    suspend fun encodeGIF(listFiles: ArrayList<File>?) {
         if (listFiles.isNullOrEmpty()) {
             throw RuntimeException("unzipped files not found")
         }
@@ -215,7 +215,6 @@ class PictureXViewModel : BaseViewModel() {
         }
     }
 
-
     // Load images from a zip file
     fun loadImagesFromZip(zipFile: File): Sequence<Bitmap> {
         val zipInputStream = ZipInputStream(zipFile.inputStream())
@@ -235,36 +234,6 @@ class PictureXViewModel : BaseViewModel() {
                 zipInputStream.closeEntry()
             }
             zipInputStream.close()
-        }
-    }
-
-    fun loadZipAsSeq(zipFile: File, cyclic: Boolean = false): Sequence<Bitmap> {
-        val zipInputStream = ZipInputStream(zipFile.inputStream())
-        val entries = mutableListOf<ByteArray>()
-        var entry: ZipEntry?
-        var bitmap: Bitmap? = null
-        return sequence {
-            while (zipInputStream.nextEntry.also { entry = it } != null) {
-                if (!entry!!.isDirectory) {
-                    entries.add(zipInputStream.readBytes())
-                }
-                zipInputStream.closeEntry()
-            }
-            zipInputStream.close()
-            while (true) {
-                entries.forEach {
-                    bitmap = BitmapFactory.decodeByteArray(
-                        it,
-                        0,
-                        it.size,
-                        BitmapFactory.Options().apply {
-                            inMutable = true
-                            inBitmap = bitmap
-                        })
-                    yield(bitmap!!)
-                }
-                if (!cyclic) break
-            }
         }
     }
 
@@ -300,46 +269,29 @@ class PictureXViewModel : BaseViewModel() {
         )
     }
 
-    fun loadUgoiraZip(mediaURL: String) {
-        if (fileCachedUgoria.exists() && fileCachedUgoria.listFiles()!!.size == ugoiraDetail.value!!.frames.size) {
-            CoroutineScope(Dispatchers.Main).launch {
-                downloadUgoiraZipSuccess.value = true
-            }
-            return
-        }
-        if (fileCachedZIP.exists()) {
-            CoroutineScope(Dispatchers.Default).launch {
-                try {
-                    ZipFile(fileCachedZIP).extractAll(fileCachedUgoria.path)
-                    withContext(Dispatchers.Main) {
-                        downloadUgoiraZipSuccess.value = true
-                    }
-                } catch (e: Exception) {
-                    ToastQ.post("Unzip Failed")
-                    fileCachedUgoria.deleteRecursively()
-                    fileCachedZIP.delete()
-                    reLoadUgoiraZip(mediaURL)
-                }
-            }
-        } else {
-            reLoadUgoiraZip(mediaURL)
-        }
-    }
-
     suspend fun loadUgoiraMetadata(id: Int) = withContext(Dispatchers.Main) {
         val resp = retrofit.api.getUgoiraMetadata(id)
         ugoiraDetail.value = resp.ugoira_metadata
         resp.ugoira_metadata
     }
 
-    private fun reLoadUgoiraZip(mediaURL: String) {
+    fun loadUgoiraZip(mediaURL: String) {
+        //if (fileCachedUgoria.exists() && fileCachedUgoria.listFiles()!!.size == ugoiraDetail.value!!.frames.size)
+        val file = if (fileZIP.exists()) fileZIP else fileCachedZIP
+        if (file.exists() && ZipFile(file).isValidZipFile) {
+            CoroutineScope(Dispatchers.Main).launch {
+                downloadUgoiraZipSuccess.value = true
+            }
+            return
+        }
         progress.value = 0
         CoroutineScope(Dispatchers.IO).launchCatching({
             CrashHandler.instance.d("GIF", mediaURL)
             retrofit.gif.getGIFFile(mediaURL)
         }, { response ->
             val inputStream = response.byteStream()
-            val output = fileCachedZIP.outputStream()
+            fileCachedZIPTemp.delete()
+            val output = fileCachedZIPTemp.outputStream()
             CrashHandler.instance.d("GIF", "----------")
             val totalLen = response.contentLength()
             var bytesCopied: Long = 0
@@ -357,7 +309,8 @@ class PictureXViewModel : BaseViewModel() {
             inputStream.close()
             output.close()
             CrashHandler.instance.d("GIF", "++++${progress.value}++++")
-            ZipFile(fileCachedZIP).extractAll(fileCachedUgoria.path)
+            FileUtil.move(fileCachedZIPTemp, fileCachedZIP)
+            //ZipFile(fileCachedZIPTemp).extractAll(fileCachedUgoria.path)
             launchUI {
                 downloadUgoiraZipSuccess.value = true
             }

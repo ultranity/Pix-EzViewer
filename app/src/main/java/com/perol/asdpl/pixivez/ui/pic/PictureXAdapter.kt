@@ -83,7 +83,6 @@ import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.runBlocking
-import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -696,16 +695,16 @@ class PictureXAdapter(
             return
         }
         previewImageView?.visibility = View.GONE
-        val parentPath = PxEZApp.instance.cacheDir.path + File.separatorChar + data.id
-        val parentFile = File(parentPath)
-        val listFiles = parentFile.listFiles()!!
-        listFiles.sortWith { o1, o2 -> o1.name.compareTo(o2.name) }
-        val result = listFiles.map { it.path }
         imageViewGif?.onStartListener { }
         imageViewGif?.onEndListener { }
 
         imageViewGif?.delayTime = pictureXViewModel.duration.toLong()
-        imageViewGif?.startAnimation(result)
+        val fileZIP =
+            if (pictureXViewModel.fileZIP.exists()) pictureXViewModel.fileZIP else pictureXViewModel.fileCachedZIP
+        imageViewGif?.startAnimation(fileZIP.path)
+//        val result = File(PxEZApp.instance.cacheDir.path + File.separatorChar + data.id).listFiles()!!
+//            .sortedWith { o1, o2 -> o1.name.compareTo(o2.name) }.map { it.path }
+//        imageViewGif?.startAnimation(result)
     }
 
     // ---- related ----

@@ -35,10 +35,13 @@ import android.os.HandlerThread
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlin.math.max
 
 // Pixiv动图的帧动画解决方案，如果需要拿去用把Copyright带上或者提一下我的id吧，研究了挺久的
-class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
+open class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     private val drawPool: MutableList<String> = ArrayList()
     private val handlerThread = HandlerThread("UgoiraView")
@@ -47,19 +50,17 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     private var painterHandler: Handler? = null
     var delayTime: Long = 50
+    private var loadingZIP = false
 
     constructor(context: Context?) : super(context) {
         init()
     }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(
-        context,
-        attrs
-    ) {
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         init()
     }
 
-    private fun init() {
+    protected fun init() {
         holder?.addCallback(this)
         holder?.setFormat(PixelFormat.TRANSLUCENT)
         handlerThread.start()
@@ -82,7 +83,16 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
         pathListRGB: List<String>
     ) {
         drawPool.clear()
+        loadingZIP = false
         drawPool.addAll(pathListRGB)
+        painterHandler = Handler(handlerThread.looper)
+        painterHandler?.post(this)
+    }
+
+    fun startAnimation(pathZipRGB: String) {
+        drawPool.clear()
+        loadingZIP = true
+        drawPool.add(pathZipRGB)
         painterHandler = Handler(handlerThread.looper)
         painterHandler?.post(this)
     }
@@ -133,15 +143,14 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     override fun run() {
         post { onStart() }
-        var i = 0
+
+        val iter = loadBitSequence().iterator()
         while (true) {
             if (needToDraw) {
                 try {
                     val preTime = System.currentTimeMillis()
-                    draw(drawPool[i])
+                    draw(iter)
                     val duration = System.currentTimeMillis() - preTime
-                    i++
-                    if (i == drawPool.count()) i = 0
                     Thread.sleep(
                         max(
                             0,
@@ -162,6 +171,71 @@ class AnimationView : SurfaceView, SurfaceHolder.Callback, Runnable {
         }
     }
     var targetBitmap: Bitmap? = null
+    fun loadZipAsSeq(zipFile: File, cyclic: Boolean = false): Sequence<Bitmap> {
+        val zipInputStream = ZipInputStream(zipFile.inputStream())
+        val entries = mutableListOf<ByteArray>()
+        var entry: ZipEntry?
+        var bitmap: Bitmap? = null
+        return sequence {
+            while (zipInputStream.nextEntry.also { entry = it } != null) {
+                if (!entry!!.isDirectory) {
+                    entries.add(zipInputStream.readBytes())
+                }
+                zipInputStream.closeEntry()
+            }
+            zipInputStream.close()
+            while (true) {
+                entries.forEach {
+                    bitmap = BitmapFactory.decodeByteArray(
+                        it,
+                        0,
+                        it.size,
+                        BitmapFactory.Options().apply {
+                            inMutable = true
+                            inBitmap = bitmap
+                        })
+                    yield(bitmap!!)
+                }
+                if (!cyclic) break
+            }
+        }
+    }
+
+    private fun loadBitSequence(): Sequence<Bitmap?> {
+        if (loadingZIP)
+            return loadZipAsSeq(File(drawPool[0]), true)
+        return sequence {
+            while (true) {
+                for (path in drawPool) {
+                    yield(
+                        BitmapFactory.decodeFile(path, BitmapFactory.Options().apply {
+                            inMutable = true
+                            inBitmap = targetBitmap
+                        })
+                    )
+                }
+            }
+        }
+    }
+
+    private fun draw(bitmapIter: Iterator<Bitmap?>) {
+        val canvas = holder.lockCanvas()
+        if (canvas != null) {
+            targetBitmap = bitmapIter.next()
+            targetBitmap?.let {
+                //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                val react = RectF(
+                    this@AnimationView.left.toFloat(),
+                    this@AnimationView.top.toFloat(),
+                    this@AnimationView.width.toFloat(),
+                    this@AnimationView.height.toFloat()
+                )
+                canvas.drawBitmap(it, null, react, null)
+            }
+            holder.unlockCanvasAndPost(canvas)
+        }
+    }
+
     private fun draw(path: String) {
         val canvas = holder.lockCanvas()
         if (canvas != null) {

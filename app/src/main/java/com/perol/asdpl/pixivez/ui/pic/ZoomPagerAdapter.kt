@@ -118,40 +118,67 @@ class ZoomPagerAdapter(
             return@setOnTouchListener gestureDetector.onTouchEvent(event)
         }
 
-        Glide.with(context).asFile().load(origin!![position])
-            .apply(RequestOptions().onlyRetrieveFromCache(true))
-            .into(object : CustomTarget<File>() {
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    // super.onLoadFailed(errorDrawable)
-                    Glide.with(context).asFile()
-                        .load(preview!![position])
-                        .apply(RequestOptions().onlyRetrieveFromCache(true))
-                        .into(object : CustomTarget<File>() {
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                            }
+        fun loadFromResource(resource: File, origin: Boolean = false) {
+            //CrashHandler.instance.d("origin","from cache")
+            // buttonOrigin.visibility =View.GONE
+            binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
+            resourceFile = resource
+            if (origin)
+                binding.progressbarOrigin.visibility = View.GONE
+        }
 
-                            override fun onResourceReady(
-                                resource: File,
-                                transition: Transition<in File>?
-                            ) {
-                                //CrashHandler.instance.d("origin","load preview")
-                                binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
-                                resourceFile = resource
-                            }
-                        })
-                }
+        fun tryLoadCache() {
+            Glide.with(context).asFile().load(origin!![position])
+                .apply(RequestOptions().onlyRetrieveFromCache(true))
+                .into(object : CustomTarget<File>() {
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        Glide.with(context).asFile()
+                            .load(preview!![position])
+                            .apply(RequestOptions().onlyRetrieveFromCache(true))
+                            .into(object : CustomTarget<File>() {
+                                override fun onLoadCleared(placeholder: Drawable?) {
+                                }
 
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
+                                override fun onResourceReady(
+                                    resource: File,
+                                    transition: Transition<in File>?
+                                ) {
+                                    loadFromResource(resource, false)
+                                }
+                            })
+                    }
 
-                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    //CrashHandler.instance.d("origin","from cache")
-                    // buttonOrigin.visibility =View.GONE
-                    binding.photoviewZoom.setImage(ImageSource.uri(Uri.fromFile(resource)))
-                    resourceFile = resource
-                    binding.progressbarOrigin.visibility = View.GONE
-                }
-            })
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                    override fun onResourceReady(
+                        resource: File,
+                        transition: Transition<in File>?
+                    ) {
+                        loadFromResource(resource, true)
+                    }
+                })
+        }
+
+        val file = File(Works.getDownloadPath(illust, Works.parseSaveFormat(illust, position)))
+        if (file.exists()) {
+            Glide.with(context).asFile()
+                .load(file)
+                .into(object : CustomTarget<File>() {
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        tryLoadCache()
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                        loadFromResource(resource, true)
+                    }
+                })
+        } else {
+            tryLoadCache()
+        }
         // buttonOrigin.setOnClickListener {
         //    buttonOrigin.visibility =View.GONE
         binding.progressbarOrigin.visibility = View.VISIBLE

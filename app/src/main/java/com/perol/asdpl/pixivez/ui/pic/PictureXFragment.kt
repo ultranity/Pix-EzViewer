@@ -262,7 +262,7 @@ class PictureXFragment : BaseFragment() {
             }
         }
         binding.recyclerview.adapter = pictureXAdapter
-        binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.5F)
+        binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory(0.3F)
         pictureXAdapter!!.setInstance(it)
         if (screenWidthDp() > 840) { //double pannel in wide screen
             binding.recyclerview.layoutManager = GridLayoutManager(

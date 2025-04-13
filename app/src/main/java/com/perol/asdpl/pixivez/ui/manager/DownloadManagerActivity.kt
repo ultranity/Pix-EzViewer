@@ -190,11 +190,7 @@ class DownloadManagerActivity : RinkActivity() {
                             val illust = gson.decodeFromString<IllustD>(it[2])
                             //  val filename = it[0]
                             //  val url = it[1]
-                            //  val path = Path(
-                            //      PxEZApp.storepath,
-                            //      if (PxEZApp.RestrictFolder && illust.restricted) PxEZApp.RestrictFolderPath else "",
-                            //      if (PxEZApp.instance.pre.getBoolean("needcreatefold", false)) "${illust.userName}_${illust.userId}" else ""
-                            //  ).pathString
+                            //  val path = Works.getDownloadPath(illust)
                             //  ketch.download(
                             //      url,
                             //      path,

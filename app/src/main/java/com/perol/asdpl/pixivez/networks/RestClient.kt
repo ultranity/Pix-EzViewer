@@ -87,7 +87,7 @@ object RestClient {
                 .header("host", "i.pximg.net")
             val request = requestBuilder.build()
             chain.proceed(request)
-        }).downloadProxySocket()
+        }).imageProxySocket()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .build()
@@ -104,7 +104,7 @@ object RestClient {
                     .header("Host", original.url.host.toString())
                 val request = requestBuilder.build()
                 chain.proceed(request)
-            }).imageProxySocket().addInterceptor(ProgressInterceptor())
+            }).imageProxySocket(Works.apiMirror).addInterceptor(ProgressInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 //add callback if timeout
@@ -260,26 +260,14 @@ object RestClient {
     }
 
     private fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
-    fun OkHttpClient.Builder.imageProxySocket() = apply {
-        if (Works.mirrorForView) {
+    fun OkHttpClient.Builder.imageProxySocket(mirror: Boolean = true) = apply {
+        if (mirror) {
             addInterceptor {
                 val original = it.request()
                 val requestBuilder = original.newBuilder()
-                val mirror = Works.mirrorLinkView(original.url.toString())
+                val mirror = Works.mirrorLink(original.url.toString())
                 requestBuilder.url(mirror)
-                // Log.d("mirrorLinkView","Request ${original.url} to $mirror")
-                it.proceed(requestBuilder.build())
-            }
-        }
-        proxySocket(imageDns)
-    }
-    private fun OkHttpClient.Builder.downloadProxySocket() = apply {
-        if (Works.mirrorForDownload) {
-            addInterceptor {
-                val original = it.request()
-                val requestBuilder = original.newBuilder()
-                val mirror = Works.mirrorLinkDownload(original.url.toString())
-                requestBuilder.url(mirror)
+                // Log.d("mirrorAPI","Request ${original.url} to $mirror")
                 it.proceed(requestBuilder.build())
             }
         }

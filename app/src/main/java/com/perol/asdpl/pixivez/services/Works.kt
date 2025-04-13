@@ -61,9 +61,17 @@ class IllustD(
     val restricted: Boolean = false,
     val title: String? = null
 ) {
-    fun pString() = if (part == -1) "" else "p$part"
+    fun pString(prefix: String = "p") = if (part == -1) "" else "$prefix$part"
 }
 
+fun Illust.toIllustD(part: Int? = null) = IllustD(
+    id = id,
+    part = part ?: -1,
+//            userName = name,
+//            userId = user.id,
+    restricted = restricted || isR18,
+    title = title,
+)
 fun byteLimit(tags: List<String>, title: String, TagSeparator: String, blimit: Int): String {
     var result = tags.mapNotNull {
         if (!title.contains(it)
@@ -162,17 +170,8 @@ object Works {
     }
 
     fun imageDownloadWithFile(illust: Illust, file: File, part: Int?) {
-        val name = illust.user.name.toLegal()
-        val userid = illust.user.id
         val filename = parseSaveFormat(illust, part)
-        val targetFile = File(
-            Path(
-                PxEZApp.storepath,
-                if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
-                if (pre.getBoolean("needcreatefold", false)) "${name}_$userid" else "",
-                filename
-            ).pathString
-        )
+        val targetFile = File(getDownloadPath(illust, filename))
         try {
             val compatCheck = FileUtil.move(file, targetFile)
             if (PxEZApp.ShowDownloadToast) {
@@ -207,63 +206,58 @@ object Works {
             ToastQ.post(R.string.join_download_queue)
         }
         CoroutineScope(Dispatchers.IO).launch {
-            if (illust.meta.size == 1) {
-                imgD(illust, null) //hide _0 if is single image
-            } else {
-                for (i in illust.meta.indices) {
-                    imgD(illust, i)
-                }
+            for (i in illust.meta.indices) {
+                imgD(illust, i)
             }
         }
     }
 
     fun ugoiraDownloadAll(ugoira: Illust, ugoiraMetadata: UgoiraMetadataBean) {
-        val path = Path(
-            PxEZApp.storepath,
-            if (PxEZApp.RestrictFolder && (ugoira.restricted || ugoira.isR18)) PxEZApp.RestrictFolderPath else "",
-            if (pre.getBoolean("needcreatefold", false))
-                "${ugoira.user.name.toLegal()}_${ugoira.user.id}" else "",
-            parseSaveFormat(ugoira).substringBeforeLast(".")
-        ).pathString
-        ugoira.meta.map { mirrorLinkDownload(qualityUrl(it)) }.forEach {
+        val path = getDownloadPath(ugoira, parseSaveFormat(ugoira).substringBeforeLast("."))
+        ugoira.meta.map { mirrorLink(qualityUrl(it)) }.forEachIndexed { index, it ->
             ketch.download(
                 it,
                 path,
                 it.substringAfterLast('/'),
                 tag = ugoira.id.toString(),
-                metaData = gson.encodeToString(ugoira)
+                metaData = gson.encodeToString(ugoira.toIllustD(index))
             )
         }
     }
 
-    var mirrorForView = pre.getBoolean("mirrorLinkView", false)
-    var mirrorForDownload = pre.getBoolean("mirrorLinkDownload", false)
-    const val opximg = "i.pximg.net"
-    var mirrorURL = pre.getString("mirrorURL", opximg)!!
+    //val title = illust.title.toLegal()
+    fun getDownloadPath(illust: Illust, vararg subpaths: String): String = Path(
+        PxEZApp.storepath,
+        if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
+        if (pre.getBoolean("needcreatefold", false))
+            "${illust.user.name.toLegal()}_${illust.user.id}" else "",
+        *subpaths
+    ).pathString
+
+    var apiMirror = pre.getBoolean("enableMirror", false)
+    private const val I_PXIMG_NET = "i.pximg.net"
+    var mirrorURL = pre.getString("mirrorURL", I_PXIMG_NET)!!
     var mirrorFormat = pre.getString("mirrorFormat", "{host}/{params}")!!
-    var forceIP = pre.getBoolean("forceIP", true)
-    val spximg
-        get() = lookup(opximg)
-    var smirrorURL = lookup(mirrorURL)
+    var forceIP = pre.getBoolean("forceIP", false)
+    val spximg by lazy { lookup(I_PXIMG_NET) }
+    val smirrorURL by lazy { lookup(mirrorURL) }
     fun lookup(url: String): String {
-        return if (pre.getBoolean("dnsProxy", false) and forceIP) {
+        return if (forceIP and pre.getBoolean("dnsProxy", false)) {
             ImageHttpDns.lookup(url)[0].hostAddress!!
         } else {
             url
         }
     }
 
-    fun mirrorLinkView(url: String) = mirror(url, mirrorForView)
-    fun mirrorLinkDownload(url: String) = mirror(url, mirrorForDownload)
-    private fun mirror(url: String, mirror: Boolean = true): String {
-        if (!mirror) {
-            return url.replace(opximg, spximg)
+    fun mirrorLink(url: String): String {
+        if (forceIP) {
+            return url.replace(I_PXIMG_NET, spximg)
         }
         if (mirrorFormat == "{host}/{params}") {
-            return url.replace(opximg, smirrorURL)
+            return url.replace(I_PXIMG_NET, smirrorURL)
         }
 
-        var params = url.substringAfterLast(opximg)
+        var params = url.substringAfterLast(I_PXIMG_NET)
         val pname = params.substringAfterLast('/')
         params = params.trimStart('/').substringBeforeLast('/')
         val illustid = pname.substringBeforeLast("_p").toIntOrNull()
@@ -284,43 +278,29 @@ object Works {
         }
     }
 
-    fun imgD(illust: Illust, part: Int?) {
-        var url = (
-                if (part != null && illust.meta.size > 1) {
-                    getQualityUrl(illust, part)
-                } else {
-                    getQualityUrl(illust)
-                }
-                )
-        // url = mirror(illust, part, url)
-        url = mirrorLinkDownload(url)
-        val name = illust.user.name.toLegal()
-        val title = illust.title.toLegal()
+    fun imgD(illust: Illust, part: Int) {
+        val single = illust.meta.size == 1
+        var url = mirrorLink(
+            if (!single) {
+                getQualityUrl(illust, part)
+            } else {
+                getQualityUrl(illust)
+            }
+        )
+        val part = if (single) null else part.coerceAtLeast(0)
         val filename = parseSaveFormat(illust, part)
-        val path = Path(
-            PxEZApp.storepath,
-            if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
-            if (pre.getBoolean("needcreatefold", false)) "${name}_${illust.user.id}" else ""
-        ).pathString
+        val path = getDownloadPath(illust)
         val targetFile = File(path, filename)
         if (targetFile.exists()) {
             ToastQ.post(R.string.alreadysaved)
             return
         }
-        val illustD = IllustD(
-            id = illust.id,
-            part = part ?: -1,
-//            userName = name,
-//            userId = illust.user.id,
-            restricted = illust.restricted || illust.isR18,
-            title = title
-        )
         ketch.download(
             url,
             path,
             filename,
             tag = illust.id.toString(),
-            metaData = gson.encodeToString(illustD)
+            metaData = gson.encodeToString(illust.toIllustD(part))
         )
     }
 

@@ -36,11 +36,13 @@ import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
+import com.ketch.DownloadConfig
 import com.ketch.Ketch
 import com.ketch.Status
+import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.networks.RestClient.downloadHttpClient
+import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FastKVLogger
@@ -76,20 +78,22 @@ class PxEZApp : Application() {
             AppDataRepo.getUser()
         }
         val workManager = WorkManager.getInstance(this) //todo: config download concurrency
-        ketch = Ketch.builder().setOkHttpClient(downloadHttpClient).build(this)
+        ketch = Ketch.builder().setOkHttpClient(RestClient.imageHttpClient)
+            .enableLogs(BuildConfig.DEBUG)
+            .setDownloadConfig(DownloadConfig(renameWhenConflict = false)).build(this)
 
         applicationScope.launch {
             ketch.getAllDownloads().forEach {
                 when (it.status) {
                     //remove finished task entry
                     Status.SUCCESS, Status.CANCELLED -> {
-                        ketch.clearDb(it.id, false)
+                        ketch.clearDbX(it.id, false) //TODO: make this syncable
                     }
                     //and resume unfinished
                     Status.FAILED, Status.PAUSED -> {
                         if (pre.getBoolean("resume_unfinished_task", true)
                         ) {
-                            ketch.resume(it.id)
+                            ketch.resumeX(it.id)
                         }
                     }
 

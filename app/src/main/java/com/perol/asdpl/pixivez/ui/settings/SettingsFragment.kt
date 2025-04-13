@@ -162,7 +162,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
         findPreference<Preference>("APIConfig")!!.apply {
-            if (Works.mirrorForDownload || Works.mirrorForView) {
+            if (Works.apiMirror) {
                 summary = getString(R.string.mirror) + ":" + Works.mirrorURL
             }
             setOnPreferenceClickListener {
@@ -465,11 +465,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             binding.dnsProxy.isChecked = getBoolean("dnsProxy", false)
             binding.forceIP.isChecked = getBoolean("forceIP", true)
             binding.shuffleIP.isChecked = getBoolean("shuffleIP", true)
-            binding.mirrorLinkView.isChecked = getBoolean("mirrorLinkView", false)
-            binding.mirrorLinkDownload.isChecked = getBoolean("mirrorLinkDownload", false)
+            binding.apiMirror.isChecked = getBoolean("enableMirror", false)
         }
         binding.ipInput.setText(ImageHttpDns.customIPs.joinToString())
-        binding.ipInput.addTextChangedListener(afterTextChanged = { s -> //onTextChanged ={ s: CharSequence?, _,_,_->
+        binding.ipInput.addTextChangedListener(afterTextChanged = { s ->
             if (!s.isNullOrEmpty()) {
                 val isValid = ipPattern.matches(s)
                 if (isValid) {
@@ -482,6 +481,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         binding.refreshDNS.setOnClickListener {
             ImageHttpDns.fetchIPs()
             ImageHttpDns.checkIPConnection()
+        }
+        binding.refreshDNS.setOnLongClickListener {
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.dns_proxy)
+                setMessage(ImageHttpDns.addressList.joinToString { it.hostAddress })
+                confirmButton()
+            }
+            true
         }
         urlInput.setText(Works.mirrorURL)
         formatInput.setText(Works.mirrorFormat)
@@ -501,8 +508,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Works.forceIP = binding.forceIP.isChecked
                 ImageHttpDns.shuffleIP = binding.shuffleIP.isChecked
                 ImageHttpDns.setCustomIPs(binding.ipInput.text.toString())
-                Works.mirrorForView = binding.mirrorLinkView.isChecked
-                Works.mirrorForDownload = binding.mirrorLinkDownload.isChecked
+                Works.apiMirror = binding.apiMirror.isChecked
                 findPreference<Preference>("APIConfig")!!.apply {
                     summary = Works.mirrorURL + Works.mirrorFormat
                 }
@@ -513,8 +519,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putBoolean("forceIP", Works.forceIP)
                     putBoolean("shuffleIP", ImageHttpDns.shuffleIP)
                     putString("customIPs", ImageHttpDns.customIPs.joinToString())
-                    putBoolean("mirrorLinkView", Works.mirrorForView)
-                    putBoolean("mirrorLinkDownload", Works.mirrorForDownload)
+                    putBoolean("apiMirror", Works.apiMirror)
+                    putBoolean("enableMirror", Works.apiMirror)
                 }
                 Works.smirrorURL = Works.lookup(Works.mirrorURL)
                 snackbarForceRestart()

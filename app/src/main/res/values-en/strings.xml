@@ -257,8 +257,7 @@
     <string name="format">format</string>
     <string name="mirror_link_hint">i.pximg.net mirror website set in the URL, such as i.pixiv.cat, original.img.pixivic.net, etc.</string>
     <string name="params_desc">Original parameters, same to {time}/{illustid}_p{part}{type}</string>
-    <string name="mirror_link_download">Alt download API</string>
-    <string name="mirror_link_view">Alt browse API</string>
+    <string name="api_mirror">API Mirror</string>
     <string name="icon_draw_by">Drawing by:你主人(探姬);HK流星(MD) </string>
     <string name="set_mirror">Click to set the mirror website</string>
     <string name="login_expired">Login expired, please login again</string>

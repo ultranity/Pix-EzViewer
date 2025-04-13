@@ -36,7 +36,7 @@ import java.net.InetAddress
 object ImageHttpDns : Dns {
 
     var shuffleIP = PxEZApp.instance.pre.getBoolean("shuffleIP", true)
-    private val addressList = mutableListOf<InetAddress>()
+    internal val addressList = mutableListOf<InetAddress>()
     private var defaultList = listOf(
         "203.137.29.47",
         "210.140.139.129",

@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.fileChooser
@@ -37,6 +38,17 @@ class DownloadManagerActivity : RinkActivity() {
     private lateinit var binding: ActivityDownloadManagerBinding
     private lateinit var downloadTaskAdapter: DownloadTaskAdapter
     private val ketch by lazy { PxEZApp.instance.ketch }
+
+    internal class KetchDiffCallback : DiffUtil.ItemCallback<DownloadModel>() {
+        override fun areItemsTheSame(oldItem: DownloadModel, newItem: DownloadModel): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: DownloadModel, newItem: DownloadModel): Boolean {
+            return (oldItem == newItem)
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDownloadManagerBinding.inflate(layoutInflater)
@@ -45,19 +57,25 @@ class DownloadManagerActivity : RinkActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
         downloadTaskAdapter = DownloadTaskAdapter()
+        downloadTaskAdapter.setDiffCallback(KetchDiffCallback())
         binding.progressList.apply {
             adapter = downloadTaskAdapter
             layoutManager = LinearLayoutManager(context)
         }
         binding.downloadlistrefreshlayout.setOnRefreshListener {
-            refreshList()
-            binding.downloadlistrefreshlayout.isRefreshing = false
+            // refreshList() //TODO: fix list refresh
+            lifecycleScope.launch {
+                ketch.getDownloadModelByStatus(Status.FAILED).forEach {
+                    ketch.resume(it.id)
+                }
+                binding.downloadlistrefreshlayout.isRefreshing = false
+            }
         }
         refreshList()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 ketch.observeDownloads().flowOn(Dispatchers.IO).collect {
-                    downloadTaskAdapter.setList(it.asReversed())
+                    downloadTaskAdapter.setDiffNewData(it.asReversed().toMutableList())
                     binding.progress.text = getString(
                         R.string.fractional,
                         it.count { it.status != Status.SUCCESS }, it.size

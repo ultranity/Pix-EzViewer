@@ -33,6 +33,7 @@ import com.perol.asdpl.pixivez.data.dao.SearchHistoryDao
 import com.perol.asdpl.pixivez.data.dao.ViewHistoryDao
 import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.entity.SearchHistoryEntity
+import com.perol.asdpl.pixivez.services.PxEZApp
 
 @Database(
     entities = [SearchHistoryEntity::class, HistoryEntity::class],
@@ -67,4 +68,23 @@ abstract class HistoryDatabase : RoomDatabase() {
                 .fallbackToDestructiveMigrationOnDowngrade()
                 .build()
     }
+}
+
+object HistoryDataRepo {
+    private val appDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
+    suspend fun getSearchHistory(): List<SearchHistoryEntity> =
+        appDatabase.searchHistoryDao().getAll()
+
+    suspend fun insertSearchHistory(word: String) = appDatabase.searchHistoryDao().insert(word)
+    suspend fun deleteSearchHistory(word: String) = appDatabase.searchHistoryDao().delete(word)
+    suspend fun deleteAllSearchHistory() = appDatabase.searchHistoryDao().clear()
+
+    suspend fun getViewHistory(): List<HistoryEntity> = appDatabase.viewHistoryDao().getAll()
+    suspend fun insertViewHistory(historyEntity: HistoryEntity) =
+        appDatabase.viewHistoryDao().insert(historyEntity)
+
+    suspend fun deleteViewHistory(historyEntity: HistoryEntity) =
+        appDatabase.viewHistoryDao().delete(historyEntity)
+
+    suspend fun deleteAllViewHistory() = appDatabase.viewHistoryDao().clear()
 }

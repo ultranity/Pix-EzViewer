@@ -36,6 +36,7 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -48,9 +49,11 @@ import com.afollestad.materialdialogs.bottomsheets.BasicGridItem
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.files.fileChooser
 import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.BuildConfig
@@ -61,6 +64,7 @@ import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onLongClick
 import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.databinding.DialogApiConfigBinding
 import com.perol.asdpl.pixivez.databinding.DialogMeBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
@@ -70,11 +74,13 @@ import com.perol.asdpl.pixivez.networks.ImageHttpDns.ipPattern
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppUpdater
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.MainActivity
+import org.json.JSONObject
 import java.io.File
 import java.io.FilenameFilter
 
@@ -159,6 +165,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
         findPreference<Preference>("APIConfig")!!.apply {
@@ -230,6 +237,107 @@ class SettingsFragment : PreferenceFragmentCompat() {
             max = AppDataRepo.currentUser.x_restrict + 6
         }.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.restrictSanity = (newValue as Int)
+            true
+        }
+        findPreference<Preference>("backup")!!.setOnPreferenceClickListener {
+            MaterialDialog(requireContext()).show {
+                val data = mutableMapOf<String, Any>()
+                var selectedIndex: IntArray = intArrayOf()
+                title(R.string.setting)
+                val list = listItemsMultiChoice(
+                    R.array.backup_list,
+                    initialSelection = intArrayOf(1)
+                ) { _, indices, _ ->
+                    if (indices.contains(0)) {
+                        MaterialDialog(requireContext()).show {
+                            title(android.R.string.dialog_alert_title)
+                            message(R.string.token_warning)
+                            positiveButton(R.string.ok)
+                        }
+                        selectedIndex = indices
+                    }
+                }
+                positiveButton(R.string.action_export) {
+                    MaterialDialog(requireContext()).show {
+                        folderChooser(
+                            initialDirectory = File(PxEZApp.storepath),
+                            allowFolderCreation = true,
+                            context = context
+                        ) { _, folder ->
+                            for (i in selectedIndex) {
+                                when (i) {
+                                    0 -> data["token"] = AppDataRepo.export()
+                                    1 -> data["setting"] = PxEZApp.instance.pre.all
+                                    2 -> data["search"] =
+                                        HistoryDatabase.getInstance(context).searchHistoryDao()
+
+                                    3 -> data["view"] =
+                                        HistoryDatabase.getInstance(context).viewHistoryDao()
+
+                                    4 -> data["block"] = BlockViewModel.export()
+                                }
+                            }
+                            val jsonObject = JSONObject(data)
+                            try {
+                                val file =
+                                    File(folder.absolutePath + File.separatorChar + "PixEzViewer.config")
+                                val writer = file.writer()
+                                writer.write(jsonObject.toString())
+                                writer.close()
+                                ToastQ.post("Exported SharedPreferences to $file")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+                neutralButton(R.string.action_import) {
+                    MaterialDialog(requireContext()).show {
+                        fileChooser(
+                            initialDirectory = File(PxEZApp.storepath),
+                            filter = { it.isDirectory || it.extension == "config" },
+                            context = context
+                        ) { _, file ->
+                            try {
+                                val stringBuilder = StringBuilder()
+                                var character: Int
+                                while (file.reader().read().also { character = it } != -1) {
+                                    stringBuilder.append(character.toChar())
+                                }
+
+                                val jsonObject = JSONObject(stringBuilder.toString())
+
+                                for (i in selectedIndex) {
+                                    when (i) {
+                                        0 -> TODO()
+                                        1 -> {
+                                            val editor = PxEZApp.instance.pre.edit()
+                                            for (key in jsonObject.keys()) {
+                                                val value = jsonObject.get(key)
+                                                when (value) {
+                                                    is String -> editor.putString(key, value)
+                                                    is Int -> editor.putInt(key, value)
+                                                    is Boolean -> editor.putBoolean(key, value)
+                                                    is Long -> editor.putLong(key, value)
+                                                    is Float -> editor.putFloat(key, value)
+                                                }
+                                            }
+                                            editor.apply()
+                                        }
+
+                                        2 -> TODO("search")
+                                        3 -> TODO("view")
+                                        4 -> TODO("block")
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+                negativeButton(android.R.string.cancel)
+            }
             true
         }
     }
@@ -382,21 +490,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             "version" -> {
-                if (BuildConfig.FLAVOR == "play") {
-                    try {
-                        val uri =
-                            Uri.parse("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toasty.info(PxEZApp.instance, "no browser found")
-                    }
-                } else {
-                    val url = "https://github.com/ultranity/Pix-EzViewer"
-                    val uri = Uri.parse(url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    startActivity(intent)
-                }
+                val url = "https://github.com/ultranity/Pix-EzViewer"
+                val uri = url.toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
             }
 
             "icons" -> {
@@ -463,7 +560,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val formatInput = binding.formatInput
         PxEZApp.instance.pre.run {
             binding.dnsProxy.isChecked = getBoolean("dnsProxy", false)
-            binding.forceIP.isChecked = getBoolean("forceIP", true)
+            binding.forceIP.isChecked = getBoolean("forceIP", false)
             binding.shuffleIP.isChecked = getBoolean("shuffleIP", true)
             binding.apiMirror.isChecked = getBoolean("enableMirror", false)
         }
@@ -522,7 +619,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putBoolean("apiMirror", Works.apiMirror)
                     putBoolean("enableMirror", Works.apiMirror)
                 }
-                Works.smirrorURL = Works.lookup(Works.mirrorURL)
                 snackbarForceRestart()
             }
             negativeButton(android.R.string.cancel)

@@ -40,7 +40,7 @@ class HistoryViewModel : BaseViewModel() {
 
     fun first() {
         CoroutineScope(Dispatchers.IO).launch {
-            val history = historyDatabase.viewHistoryDao().getViewHistory() as MutableList
+            val history = historyDatabase.viewHistoryDao().getAll() as MutableList
             withContext(Dispatchers.Main) {
                 this@HistoryViewModel.history.value = history
             }

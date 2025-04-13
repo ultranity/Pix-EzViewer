@@ -22,88 +22,86 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
  */
+package com.perol.asdpl.pixivez.data
 
-package com.perol.asdpl.pixivez.data;
+import android.content.Context
+import android.content.SharedPreferences
+import com.perol.asdpl.pixivez.services.PxEZApp
 
-import android.content.Context;
-import android.content.SharedPreferences;
+class UserInfoSharedPreferences {
+    private val sp: SharedPreferences
+    private val FILE_NAME = "userinfo"
 
-import com.perol.asdpl.pixivez.services.PxEZApp;
-
-
-public class UserInfoSharedPreferences {
-
-    private final SharedPreferences sp;
-    private final String FILE_NAME = "userinfo";
-
-    public UserInfoSharedPreferences(Context context) {
-        sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+    constructor(context: Context) {
+        sp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
     }
 
-    public UserInfoSharedPreferences() {
-        sp = PxEZApp.instance.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-
+    constructor() {
+        sp = PxEZApp.instance.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
     }
 
-    private static final class InstanceHolder {
-        static final UserInfoSharedPreferences instance = new UserInfoSharedPreferences();//单例模式
+    private object InstanceHolder {
+        val instance: UserInfoSharedPreferences = UserInfoSharedPreferences() //单例模式
     }
 
-    public static UserInfoSharedPreferences getInstance() {
-        return InstanceHolder.instance;
+    val all
+        get() = sp.all
+
+    fun setString(key: String?, value: String?) {
+        sp.edit().putString(key, value).apply()
     }
 
-
-    public void setString(String key, String value) {
-        sp.edit().putString(key, value).apply();
+    fun getString(key: String?): String? {
+        return sp.getString(key, null)
     }
 
-    public String getString(String key) {
-        return sp.getString(key, null);
+    fun getString(key: String?, defValue: String?): String? {
+        return sp.getString(key, defValue)
     }
 
-    public String getString(String key, String defValue) {
-        return sp.getString(key, defValue);
+    fun setBoolean(key: String?, value: Boolean) {
+        sp.edit().putBoolean(key, value).apply()
     }
 
-    public void setBoolean(String key, boolean value) {
-        sp.edit().putBoolean(key, value).apply();
+    fun getBoolean(key: String?): Boolean {
+        return sp.getBoolean(key, false)
     }
 
-    public boolean getBoolean(String key) {
-        return sp.getBoolean(key, false);
+    fun getBoolean(key: String?, value: Boolean): Boolean {
+        return sp.getBoolean(key, value)
     }
 
-    public boolean getBoolean(String key, boolean value) {
-        return sp.getBoolean(key, value);
+    fun setInt(key: String?, value: Int) {
+        sp.edit().putInt(key, value).apply()
     }
 
-    public void setInt(String key, int value) {
-        sp.edit().putInt(key, value).apply();
+    fun setIntpp(key: String?) {
+        sp.edit().putInt(key, sp.getInt(key, 0)).apply()
     }
 
-    public void setIntpp(String key) {
-        sp.edit().putInt(key, sp.getInt(key, 0)).apply();
+    fun getInt(key: String?): Int {
+        return sp.getInt(key, 0)
     }
 
-    public int getInt(String key) {
-        return sp.getInt(key, 0);
+    fun getInt(key: String?, value: Int): Int {
+        return sp.getInt(key, value)
     }
 
-    public int getInt(String key, int value) {
-        return sp.getInt(key, value);
+    fun setLong(key: String?, value: Long) {
+        sp.edit().putLong(key, value).apply()
     }
 
-    public void setLong(String key, long value) {
-        sp.edit().putLong(key, value).apply();
+    fun getLong(key: String?): Long {
+        return sp.getLong(key, 0)
     }
 
-    public long getLong(String key) {
-        return sp.getLong(key, 0);
+    fun getLong(key: String?, value: Long): Long {
+        return sp.getLong(key, value)
     }
 
-    public long getLong(String key, long value) {
-        return sp.getLong(key, value);
+    companion object {
+        fun getInstance(): UserInfoSharedPreferences {
+            return InstanceHolder.instance
+        }
     }
-
 }

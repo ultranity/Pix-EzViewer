@@ -72,4 +72,8 @@ object BlockViewModel{
             FlowEventBus.post(Event.BlockUsersChanged(allUIDs!!, uid, true))
         }
     }
+
+    fun export(): Map<String, Set<Any>> {
+        return mapOf("blockTags" to getBlockTagString(), "blockUIDs" to getBlockUIDs())
+    }
 }

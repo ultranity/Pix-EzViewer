@@ -118,4 +118,11 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="backup_list">
+        <item>⚠登录信息⚠</item>
+        <item>应用设置</item>
+        <item>搜索历史</item>
+        <item>浏览历史</item>
+        <item>屏蔽列表</item>
+    </string-array>
 </resources>

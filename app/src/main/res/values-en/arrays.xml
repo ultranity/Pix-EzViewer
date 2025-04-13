@@ -64,4 +64,11 @@
         <item>set like on download</item>
         <item>Tap to download, like &amp; follow user; long press for pic details</item>
     </string-array>
+    <string-array name="backup_list">
+        <item>⚠Login Secret⚠</item>
+        <item>App settings</item>
+        <item>Search History</item>
+        <item>View History</item>
+        <item>Block list</item>
+    </string-array>
 </resources>

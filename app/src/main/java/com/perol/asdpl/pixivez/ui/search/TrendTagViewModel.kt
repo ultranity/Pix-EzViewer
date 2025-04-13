@@ -67,7 +67,7 @@ class TrendTagViewModel : BaseViewModel() {
 
     private fun reloadSearchHistory() {
         viewModelScope.launch {
-            val history = historyDatabase.searchHistoryDao().getSearchHistory()
+            val history = historyDatabase.searchHistoryDao().getAll()
                 .asReversed().map { it.word }.asMutableList()
             withContext(Dispatchers.Main) {
                 searchHistory.value = history
@@ -76,6 +76,6 @@ class TrendTagViewModel : BaseViewModel() {
     }
 
     fun deleteHistory(word: String) = CoroutineScope(Dispatchers.IO).launch {
-        historyDatabase.searchHistoryDao().deleteHistory(word)
+        historyDatabase.searchHistoryDao().delete(word)
     }
 }

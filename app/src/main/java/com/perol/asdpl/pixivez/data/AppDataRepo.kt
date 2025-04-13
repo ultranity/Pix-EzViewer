@@ -27,10 +27,11 @@ package com.perol.asdpl.pixivez.data
 
 import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.runBlocking
 
 object AppDataRepo {
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
-    val pre: UserInfoSharedPreferences = UserInfoSharedPreferences.getInstance()!!
+    val pre: UserInfoSharedPreferences = UserInfoSharedPreferences.getInstance()
     private var _currentUser: UserEntity? = null
     val currentUser: UserEntity
         get() = _currentUser!!
@@ -86,4 +87,10 @@ object AppDataRepo {
     }
 
     suspend fun findUser(id: Int): List<UserEntity> = appDatabase.userDao().findUsers(id)
+
+    fun export() {
+        return runBlocking {
+            mutableMapOf("users" to getAllUser(), "pre" to pre.all)
+        }
+    }
 }

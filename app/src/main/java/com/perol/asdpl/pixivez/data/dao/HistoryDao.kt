@@ -48,7 +48,7 @@ abstract class DownloadHistoryDao {
 interface SearchHistoryDao {
 
     @Query("SELECT * FROM search")
-    suspend fun getSearchHistory(): List<SearchHistoryEntity>
+    suspend fun getAll(): List<SearchHistoryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(query: SearchHistoryEntity)
@@ -67,7 +67,7 @@ interface SearchHistoryDao {
     suspend fun clear()
 
     @Query("DELETE FROM search WHERE word = (:word)")
-    suspend fun deleteHistory(word: String)
+    suspend fun delete(word: String)
 
     //@Delete(entity = SearchHistoryEntity::class)
     //suspend fun deleteHistory(word: String)
@@ -76,7 +76,7 @@ interface SearchHistoryDao {
 @Dao
 interface ViewHistoryDao {
     @Query("SELECT * FROM history ORDER BY modifiedAt DESC")
-    suspend fun getViewHistory(): List<HistoryEntity>
+    suspend fun getAll(): List<HistoryEntity>
 
     @Query("SELECT * FROM history where id=(:id) and isUser=(:isUser) LIMIT 1")
     suspend fun getEntity(id: Int, isUser: Boolean = false): HistoryEntity?

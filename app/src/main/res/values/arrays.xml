@@ -30,9 +30,9 @@
         <item>大图（高配）</item>
     </string-array>
     <string-array name="quality_download">
-        <item>原图（体积较大）</item>
         <item>中图（低画质）</item>
         <item>大图（中画质）</item>
+        <item>原图（体积较大）</item>
     </string-array>
 
     <string-array name="quality_value">

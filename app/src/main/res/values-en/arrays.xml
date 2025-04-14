@@ -16,13 +16,13 @@
         <item>myself</item>
     </string-array>
     <string-array name="quality">
-        <item>medium (fast)</item>
-        <item>high (slow)</item>
+        <item>medium(fast)</item>
+        <item>high(slow)</item>
     </string-array>
     <string-array name="quality_download">
-        <item>original (large)</item>
         <item>medium (very low quality)</item>
         <item>large (low quality)</item>
+        <item>original (large)</item>
     </string-array>
     <string-array name="mode_list">
         <item>day</item>

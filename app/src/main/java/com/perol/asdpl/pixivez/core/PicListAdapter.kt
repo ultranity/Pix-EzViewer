@@ -362,11 +362,7 @@ abstract class PicListAdapter(
             return
         }
         showItemView(holder.itemView)
-        val needSmall = if (quality == 1) {
-            (1.0 * item.height / item.width > 3) || (1.0 * item.width / item.height > 4)
-        } else {
-            item.height > 1800
-        }
+        val needSmall = Works.needSmall(item, quality)
         val needFullSpan = !needSmall and ((1.0 * item.width / item.height) >
                 ((context.resources.configuration.orientation == ORIENTATION_LANDSCAPE).Int() * 2 + 2.1))
         if (!blockedFlag[pos])

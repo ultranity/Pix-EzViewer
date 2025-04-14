@@ -311,9 +311,13 @@ object Works {
         return qualityUrl(urls)
     }
 
-    private fun qualityUrl(urls: ImageUrlsX): String = when (qualityDownload) {
+    fun qualityUrl(urls: ImageUrlsX): String = when (qualityDownload) {
         0 -> urls.medium
         1 -> urls.large
         else -> urls.original // 2
     }
+
+    fun needSmall(item: Illust, quality: Int) = (1.0 * item.height / item.width > 3) ||
+            (1.0 * item.width / item.height > 4) || (quality == 0 && item.height > 1800)
+
 }

@@ -122,17 +122,9 @@ class PictureXAdapter(
 
     private fun initConfig() {
         quality = pre.getString("quality", "0")?.toInt() ?: 0
-        imageUrls = when (quality) {
-            0 -> data.meta.map { it.medium }
-            2 -> data.meta.map { it.original }
-            else -> data.meta.map { it.large }
-        }
+        imageUrls = data.meta.map { Works.qualityUrl(it) }
         val needSmall = (mContext as FragmentActivity).intent
-            .getBooleanExtra(PictureActivity.ARG_ThumbHint, false) or if (quality == 1) {
-            (data.height / data.width > 3) || (data.width / data.height >= 3)
-        } else {
-            data.height > 1800
-        }
+            .getBooleanExtra(PictureActivity.ARG_ThumbHint, false) || Works.needSmall(data, quality)
         imageThumbnail = if (needSmall) {
             data.meta[0].square_medium
         } else {
@@ -459,28 +451,28 @@ class PictureXAdapter(
                             .centerCrop() // necessary for preventing image distortion after loading
                             .listener(object : RequestListener<Drawable> {
 
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: Target<Drawable>,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                mOnLoadListen.invoke()
-                                //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                                return false
-                            }
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    mOnLoadListen.invoke()
+                                    //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                    return false
+                                }
 
-                            override fun onResourceReady(
-                                resource: Drawable,
-                                model: Any,
-                                target: Target<Drawable>,
-                                dataSource: DataSource,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                mOnLoadListen.invoke()
-                                //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
-                                return false
-                            }
+                                override fun onResourceReady(
+                                    resource: Drawable,
+                                    model: Any,
+                                    target: Target<Drawable>,
+                                    dataSource: DataSource,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    mOnLoadListen.invoke()
+                                    //(mContext as FragmentActivity).supportStartPostponedEnterTransition()
+                                    return false
+                                }
                             })
                     )
                 } else this

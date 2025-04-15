@@ -6,7 +6,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.LocaleList
 import androidx.annotation.IntDef
-import java.util.*
+import java.util.Locale
 
 object LanguageUtil {
 
@@ -15,7 +15,7 @@ object LanguageUtil {
         val resources = context.resources
         val configuration = resources.configuration
         val displayMetrics = resources.displayMetrics
-        val newLocale = langToLocale(localeToLang(langToLocale(language)))
+        val newLocale = langToLocale(language)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.setLocale(newLocale)
             val localeList = LocaleList(newLocale)
@@ -35,17 +35,19 @@ object LanguageUtil {
     }
 
     fun localeToLang(local: Locale): Int {
-        return when (local.language) {
-            Locale.ENGLISH.language -> Language.ENGLISH
-            Locale.JAPANESE.language -> Language.JAPANESE
-            Locale.SIMPLIFIED_CHINESE.language -> Language.SIMPLIFIED_CHINESE
-            Locale.TRADITIONAL_CHINESE.language -> Language.TRADITIONAL_CHINESE
+        return when (local) {
+            Locale.ENGLISH -> Language.ENGLISH
+            Locale.JAPANESE -> Language.JAPANESE
+            Locale.SIMPLIFIED_CHINESE -> Language.SIMPLIFIED_CHINESE
+            Locale.TRADITIONAL_CHINESE -> Language.TRADITIONAL_CHINESE
             else -> Language.ENGLISH
         }
     }
 
-    fun getLocale(): Locale {
-        return langToLocale(Language.SYSTEM)
+    fun getLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        Resources.getSystem().configuration.locales[0]
+    } else {
+        Resources.getSystem().configuration.locale
     }
 
     fun getLang(): String {
@@ -59,19 +61,11 @@ object LanguageUtil {
 
     fun langToLocale(@Language language: Int): Locale {
         return when (language) {
-            Language.SYSTEM -> {
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Resources.getSystem().configuration.locales[0]
-                }
-                else {
-                    Resources.getSystem().configuration.locale
-                }
-            }
             Language.ENGLISH -> Locale.ENGLISH
             Language.JAPANESE -> Locale.JAPANESE
             Language.SIMPLIFIED_CHINESE -> Locale.SIMPLIFIED_CHINESE
             Language.TRADITIONAL_CHINESE -> Locale.TRADITIONAL_CHINESE
-            else -> Locale.SIMPLIFIED_CHINESE
+            else -> getLocale()
         }
     }
 

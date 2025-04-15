@@ -60,6 +60,7 @@
                 app:border_color='?attr/colorPrimary'
                 app:border_width="2.6dp"
                 app:is_circle="true"
+                android:hapticFeedbackEnabled="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

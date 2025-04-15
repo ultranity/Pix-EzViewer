@@ -42,6 +42,7 @@
         android:background="@drawable/round_ripple"
         tools:src="@mipmap/ic_noimage"
         android:translationX="-8dp"
+        android:hapticFeedbackEnabled="true"
         app:border_color="@color/transparent"
         app:border_width="2dp"
         app:is_circle="true" />

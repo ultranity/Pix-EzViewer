@@ -18,6 +18,7 @@
             android:layout_marginHorizontal="4dp"
             app:border_color='?attr/colorPrimary'
             app:border_width="4dp"
+            android:hapticFeedbackEnabled="true"
             app:is_circle="true" />
 
         <TextView

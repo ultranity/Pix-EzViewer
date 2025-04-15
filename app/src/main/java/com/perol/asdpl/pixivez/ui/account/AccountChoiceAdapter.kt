@@ -62,7 +62,7 @@ class AccountChoiceAdapter(layoutResId: Int, data: List<UserEntity>) :
             }
             setImageResource(
                 if (isCurrent) R.drawable.ic_check_black_24dp
-                else R.drawable.ic_close_black_24dp
+                else android.R.drawable.ic_menu_close_clear_cancel
             )
             //colorFilter = LightingColorFilter(Color.BLACK, Color.BLACK)
         }

@@ -206,8 +206,7 @@ class PictureXFragment : BaseFragment() {
             if (it) {
                 Glide.with(this).load(R.drawable.ic_love).into(binding.fab)
             } else {
-                //fixed: WTF? Glide加载的 ic_action_heart 会变成别的图标，似乎与 res id值=0x7f08009a有关
-                Glide.with(this).load(R.drawable.ic_heart).into(binding.fab)
+                Glide.with(this).load(R.drawable.ic_love_outline).into(binding.fab)
                 //binding.fab.setImageResource(R.drawable.ic_action_heart)
             }
         }

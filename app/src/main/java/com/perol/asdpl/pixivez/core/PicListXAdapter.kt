@@ -44,9 +44,7 @@ fun ImageView.setLike(context: Context, status: Boolean) {
         Glide.with(context).load(R.drawable.ic_love).into(this)
         // alpha = 0.9F
     } else {
-        //TODO: WTF? Glide加载的 ic_action_heart 会变成别的图标，似乎与 res id值=0x7f08009a有关
-        //setImageResource(R.drawable.ic_action_heart)
-        Glide.with(context).load(R.drawable.ic_heart).into(this)
+        Glide.with(context).load(R.drawable.ic_love_outline).into(this)
         // alpha = 0.8F
     }
 }

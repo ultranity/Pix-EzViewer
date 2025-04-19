@@ -16,16 +16,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_margin="8dp"
-            android:paddingHorizontal="10dp"
             android:id="@+id/filter_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/state_filter"
-            android:layout_gravity="center_horizontal"
-            style="@style/TextAppearance.AppCompat.Title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_gravity="center_vertical"
+            style="@style/TextAppearance.AppCompat.Title" />
 
         <Space
             android:layout_width="wrap_content"
@@ -36,6 +32,7 @@
             android:id="@+id/show_blocked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/show_block" />
 
         <Space
@@ -232,7 +229,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="@string/max_sanity"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -258,9 +255,8 @@
         android:id="@+id/span_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:text="@string/layout_config"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_vertical"
         style="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -321,14 +317,10 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
-        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="@string/span_num"
-        android:layout_gravity="center_horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="@string/span_num" />
     <com.google.android.material.slider.Slider
         android:id="@+id/slider_span"
         android:layout_width="wrap_content"

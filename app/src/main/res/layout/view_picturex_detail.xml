@@ -123,7 +123,7 @@
             app:layout_constraintTop_toTopOf="@+id/AI_text" />
 
         <TextView
-            android:id="@+id/textView23"
+            android:id="@+id/textView_total_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -134,15 +134,15 @@
             app:layout_constraintTop_toBottomOf="@id/textview11" />
 
         <TextView
-            android:id="@+id/textView_total_view"
+            android:id="@+id/total_view_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             tools:text="110"
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="true"
-            app:layout_constraintStart_toEndOf="@+id/textView23"
-            app:layout_constraintTop_toTopOf="@+id/textView23" />
+            app:layout_constraintStart_toEndOf="@+id/textView_total_view"
+            app:layout_constraintTop_toTopOf="@+id/textView_total_view" />
 
         <TextView
             android:id="@+id/textview_bookmarked"
@@ -150,8 +150,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/bookmark"
-            app:layout_constraintStart_toEndOf="@id/textView_total_view"
-            app:layout_constraintTop_toTopOf="@+id/textView23" />
+            app:layout_constraintStart_toEndOf="@id/total_view_num"
+            app:layout_constraintTop_toTopOf="@+id/total_view_num" />
 
         <TextView
             android:id="@+id/bookmarked_user_num"
@@ -164,7 +164,7 @@
             app:layout_constraintTop_toTopOf="@+id/textview_bookmarked" />
 
         <TextView
-            android:id="@+id/textView31"
+            android:id="@+id/textview_san"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -180,31 +180,29 @@
             tools:text='7'
             android:textColor="?attr/colorPrimary"
             android:textIsSelectable="false"
-            app:layout_constraintStart_toEndOf="@+id/textView31"
-            app:layout_constraintTop_toTopOf="@+id/textView31" />
+            app:layout_constraintStart_toEndOf="@+id/textview_san"
+            app:layout_constraintTop_toTopOf="@+id/textview_san" />
 
         <ImageButton
             android:id="@+id/imagebutton_share"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_action_share"
             app:layout_constraintEnd_toStartOf="@+id/imagebutton_download"
-            app:layout_constraintTop_toTopOf="@+id/textview_illust_id"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:tint="?android:attr/textColorPrimary"
             android:contentDescription="@string/share" />
         <ImageButton
             android:id="@+id/imagebutton_download"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_action_download"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textview_illust_id"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:tint="?android:attr/textColorPrimary"
             android:contentDescription="@string/download" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -216,11 +214,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp" />
 
-
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textview_caption"

@@ -157,7 +157,7 @@ class PictureXAdapter(
 
                 textviewIllustId.text = illust.id.toString()
                 pixelWxH.text = "${illust.width}X${illust.height}"
-                textViewTotalView.text = illust.total_view.toString()
+                totalViewNum.text = illust.total_view.toString()
                 bookmarkedUserNum.text = illust.total_bookmarks.toString()
                 san.text = illust.sanity_level.toString()
                 if (illust.sanity_level > 5) {

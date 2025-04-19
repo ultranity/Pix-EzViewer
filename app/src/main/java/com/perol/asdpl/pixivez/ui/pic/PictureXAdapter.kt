@@ -707,11 +707,13 @@ class PictureXAdapter(
             DataHolder.setIllustList(data)
             PictureActivity.start(
                 mContext, data[position].id, position, squareThumbHint = true,
-                options = ActivityOptions.makeSceneTransitionAnimation(
-                    mContext as Activity,
-                    Pair(view, "shared_element_container")
-                    //Pair(mainimage, "mainimage")
-                ).toBundle()
+                options = if (PxEZApp.animationEnable) {
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        mContext as Activity,
+                        Pair(view, "shared_element_container")
+                        //Pair(mainimage, "mainimage")
+                    ).toBundle()
+                } else null
             )
         }
     }

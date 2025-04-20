@@ -36,7 +36,6 @@ import com.perol.asdpl.pixivez.base.KotlinUtil.launchCatching
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.databinding.ActivitySpotlightBinding
-import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.Spotlight
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.launch
@@ -73,13 +72,12 @@ class SpotlightActivity : RinkActivity() {
             intent.data = contentUrl
             startActivity(intent)
         }
-        val local = LanguageUtil.langToLocale(PxEZApp.language)
         lifecycleScope.launchCatching({
             val builder = OkHttpClient.Builder()
             val okHttpClient = builder.build()
             val request = Request.Builder()
                 .url(pageUrl)
-                .addHeader("Accept-Language", "${local.language}_${local.country}")
+                .addHeader("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
                 .build()
             val response = okHttpClient.newCall(request).execute()
             val result = response.body!!.string()

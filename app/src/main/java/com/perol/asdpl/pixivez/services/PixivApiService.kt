@@ -32,11 +32,11 @@ import com.perol.asdpl.pixivez.data.model.IllustDetailResponse
 import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.data.model.IllustRecommendResponse
 import com.perol.asdpl.pixivez.data.model.ListUserResponse
-import com.perol.asdpl.pixivez.data.model.PixivResponse
 import com.perol.asdpl.pixivez.data.model.PostCommentsResponse
 import com.perol.asdpl.pixivez.data.model.SearchIllustResponse
 import com.perol.asdpl.pixivez.data.model.SearchUserResponse
 import com.perol.asdpl.pixivez.data.model.SpotlightResponse
+import com.perol.asdpl.pixivez.data.model.TagsListResponse
 import com.perol.asdpl.pixivez.data.model.TrendingtagResponse
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataResponse
 import com.perol.asdpl.pixivez.data.model.UserDetail
@@ -145,7 +145,7 @@ interface PixivApiService { //TODO: check filter=for_android
     @GET("/v2/search/autocomplete?merge_plain_keyword_results=true")
     suspend fun getSearchAutoCompleteKeywords(
         @Query("word") word: String?
-    ): PixivResponse
+    ): TagsListResponse
 
     @GET("/v1/trending-tags/illust") //?filter=for_android
     suspend fun getIllustTrendTags(
@@ -176,7 +176,7 @@ interface PixivApiService { //TODO: check filter=for_android
         @Query("word") word: String,
         @Query("search_target") search_target: String,
         @Query("duration") duration: String
-    ): PixivResponse
+    ): TagsListResponse
 
     @GET("/v1/search/user") //?filter=for_android
     suspend fun getSearchUser(

@@ -35,7 +35,6 @@ import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityWebViewBinding
 import com.perol.asdpl.pixivez.objects.CrashHandler
-import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
@@ -50,11 +49,11 @@ class WebViewActivity : RinkActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWebViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val local = LanguageUtil.langToLocale(PxEZApp.language).language
+        val lang = PxEZApp.locale.language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"
-        binding.webview.loadUrl(intent.getStringExtra("url")!!.replace("ja", local))
+        binding.webview.loadUrl(intent.getStringExtra("url")!!.replace("ja", lang))
         // binding.webview.title
         binding.webview.settings.blockNetworkImage = false
         binding.webview.settings.javaScriptEnabled = true

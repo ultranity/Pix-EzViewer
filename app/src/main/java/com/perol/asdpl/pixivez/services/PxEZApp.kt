@@ -154,9 +154,8 @@ class PxEZApp : Application() {
         if (pre.getBoolean("crashreport", true)) {
             CrashHandler.instance.init()
         }
-        locale = LanguageUtil.getLocale() // System locale
-        language = pre.getString("language", "-1")?.toIntOrNull()
-            ?: LanguageUtil.localeToLang(locale) // try to detect language from system locale if not configured
+
+        locale = LanguageUtil.langToLocale(pre.getString("language", "-1")!!.toInt())
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -229,9 +228,6 @@ class PxEZApp : Application() {
 
         @JvmStatic
         var locale: Locale = Locale.SIMPLIFIED_CHINESE
-
-        @JvmStatic
-        var language: Int = 0
 
         @JvmStatic
         var animationEnable: Boolean = false

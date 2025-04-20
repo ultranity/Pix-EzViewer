@@ -26,7 +26,7 @@ package com.perol.asdpl.pixivez.data.model
 
 import kotlinx.serialization.Serializable
 @Serializable
-class PixivResponse(
+class TagsListResponse(
     val tags: List<Tag>
 )
 

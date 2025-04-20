@@ -92,7 +92,7 @@ abstract class RinkActivity : AppCompatActivity() {
             duration = 250L
         }
         super.onCreate(savedInstanceState)
-        LanguageUtil.setLanguage(this, PxEZApp.language)
+        LanguageUtil.setLocale(this, PxEZApp.locale)
         ThemeUtil.themeInit(this)
         WindowCompat.getInsetsController(window, window.decorView).apply {
             show(WindowInsetsCompat.Type.statusBars())

@@ -1,6 +1,5 @@
 package com.perol.asdpl.pixivez.objects
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
@@ -10,21 +9,19 @@ import java.util.Locale
 
 object LanguageUtil {
 
-    @SuppressLint("AppBundleLocaleChanges")
-    fun setLanguage(context: Context, @Language language: Int) {
+    fun setLocale(context: Context, locale: Locale) {
         val resources = context.resources
         val configuration = resources.configuration
         val displayMetrics = resources.displayMetrics
-        val newLocale = langToLocale(language)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            configuration.setLocale(newLocale)
-            val localeList = LocaleList(newLocale)
+            configuration.setLocale(locale)
+            val localeList = LocaleList(locale)
             LocaleList.setDefault(localeList)
             configuration.setLocales(localeList)
             context.createConfigurationContext(configuration)
         }
         else {
-            configuration.setLocale(newLocale)
+            configuration.setLocale(locale)
             context.createConfigurationContext(configuration)
         }
         // https://developer.android.com/reference/android/content/res/Resources.html#updateConfiguration(android.content.res.Configuration,%20android.util.DisplayMetrics).
@@ -44,7 +41,7 @@ object LanguageUtil {
         }
     }
 
-    fun getLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    fun getSysLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Resources.getSystem().configuration.locales[0]
     } else {
         Resources.getSystem().configuration.locale
@@ -65,7 +62,7 @@ object LanguageUtil {
             Language.JAPANESE -> Locale.JAPANESE
             Language.SIMPLIFIED_CHINESE -> Locale.SIMPLIFIED_CHINESE
             Language.TRADITIONAL_CHINESE -> Locale.TRADITIONAL_CHINESE
-            else -> getLocale()
+            else -> getSysLocale()
         }
     }
 

@@ -29,7 +29,6 @@ import android.util.Log
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.ServiceFactory.build
-import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -52,13 +51,17 @@ import java.util.concurrent.TimeUnit
 object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
     private val imageDns by lazy { ImageHttpDns }
-    private val local = LanguageUtil.langToLocale(PxEZApp.language)
     private const val App_OS = "Android"
     private val App_OS_Version = android.os.Build.VERSION.RELEASE
     private const val App_Version = "7.13.3"
     val UA =
         "Pixiv${App_OS}App/#{App_Version} (${App_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
-    private val ISO8601DATETIMEFORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", local)
+    private val ISO8601DATETIMEFORMAT by lazy {
+        SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
+            PxEZApp.locale
+        )
+    }
     private const val HashSalt =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
     private val dnsProxy
@@ -68,7 +71,7 @@ object RestClient {
         builder.addInterceptor(Interceptor { chain ->
             val original = chain.request()
             val requestBuilder = original.newBuilder()
-                .header("Accept-Language", "${local.language}_${local.country}")
+                .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
                 .header("Access-Control-Allow-Origin", "*")
                 .header("referer", "https://app-api.pixiv.net/")
             // .addHeader("Host", "https://app-api.pixiv.net")
@@ -98,7 +101,7 @@ object RestClient {
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
                     .header("User-Agent", UA)
-                    .header("Accept-Language", "${local.language}_${local.country}")
+                    .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
                     .header("Access-Control-Allow-Origin", "*")
                     .header("referer", "https://app-api.pixiv.net/")
                     .header("Host", original.url.host.toString())
@@ -155,7 +158,7 @@ object RestClient {
             .header("App-OS", App_OS)
             .header("App-OS-Version", App_OS_Version)
             .header("App-Version", App_Version)
-            .header("Accept-Language", "${local.language}_${local.country}")
+            .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
             .header("Host", host)
             .apply {
                 if (AppDataRepo.userInited()) {

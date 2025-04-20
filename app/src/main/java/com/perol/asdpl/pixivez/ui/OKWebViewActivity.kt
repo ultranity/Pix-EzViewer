@@ -52,7 +52,6 @@ import com.perol.asdpl.pixivez.networks.RubyHttpXDns
 import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.objects.CrashHandler
-import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
@@ -287,11 +286,11 @@ class OKWebViewActivity : RinkActivity() {
 
         mWebview = binding.webview
         setContentView(binding.root)
-        val local = LanguageUtil.langToLocale(PxEZApp.language).language
+        val lang = PxEZApp.locale.language
 
 //        val additionalHttpHeaders = hashMapOf<String,String>("Accept-Language" to local.displayLanguage)
 //        "Accept-Language": "zh-CN"
-        mWebview.loadUrl(intent.getStringExtra("url")!!.replace("/ja/", "/$local/"))
+        mWebview.loadUrl(intent.getStringExtra("url")!!.replace("/ja/", "/$lang/"))
         // mWebview.title
         val settings = mWebview.settings
         settings.blockNetworkImage = false

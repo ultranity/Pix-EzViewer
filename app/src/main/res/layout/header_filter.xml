@@ -15,7 +15,6 @@
         android:layout_weight="1.5"
         app:icon="@drawable/ic_settings"
         app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +26,6 @@
         android:layout_weight="1"
         android:text="TAG"
         app:icon="@drawable/ic_action_tag"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </LinearLayout>

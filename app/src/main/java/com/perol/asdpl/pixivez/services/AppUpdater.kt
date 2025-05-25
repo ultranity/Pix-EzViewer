@@ -5,10 +5,11 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
@@ -65,7 +66,10 @@ object AppUpdater {
     var last_check_update = PxEZApp.instance.pre.getLong("last_check_update", 0)
         set(value) {
             field = value
-            PxEZApp.instance.pre.edit().putLong("last_check_update", value).apply()
+            PxEZApp.instance.pre.edit {
+                putLong("last_check_update", value)
+                putString("last_installed_version", BuildConfig.VERSION_NAME)
+            }
         }
     val need_check_update: Boolean
         get() = System.currentTimeMillis() - last_check_update > 1000 * 60 * 60 * 24
@@ -94,8 +98,7 @@ object AppUpdater {
                     MaterialDialogs(activity).show {
                         setTitle(title)
                         setMessage(markwon.toMarkdown(
-                            data.assets?.map { "[${it.name}](${it.browserDownloadURL})" }
-                                ?.joinToString("\n") + "\n" + data.body
+                            data.assets?.joinToString("\n") { "[${it.name}](${it.browserDownloadURL})" } + "\n" + data.body
                         )
                         )
                         setPositiveButton(R.string.download) { _, _ ->
@@ -115,7 +118,7 @@ object AppUpdater {
                     (it.name.contains("universal"))
         } ?: data.assets!![0]
 
-        val request = DownloadManager.Request(Uri.parse(asset.browserDownloadURL))
+        val request = DownloadManager.Request(asset.browserDownloadURL.toUri())
         val downloadManager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         request.setTitle("Downloading " + asset.name)
             .setMimeType("application/vnd.android.package-archive")

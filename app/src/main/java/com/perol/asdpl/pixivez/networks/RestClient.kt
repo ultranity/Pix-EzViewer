@@ -80,6 +80,7 @@ object RestClient {
         }).apiProxySocket().build()
     }
 
+    //private val httpCache = Cache(File(PxEZApp.instance.cacheDir, "http"), 256 * 1024 * 1024)
     val downloadHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         builder.addInterceptor(Interceptor { chain ->
@@ -90,38 +91,37 @@ object RestClient {
                 .header("host", "i.pximg.net")
             val request = requestBuilder.build()
             chain.proceed(request)
-        }).imageProxySocket()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
+        }).imageProxySocket()//.cache(httpCache)
+            .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
             .build()
     }
     val imageHttpClient: OkHttpClient by lazy {
-            val builder = OkHttpClient.Builder()
-            builder.addInterceptor(Interceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("User-Agent", UA)
-                    .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("referer", "https://app-api.pixiv.net/")
-                    .header("Host", original.url.host.toString())
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }).imageProxySocket(Works.apiMirror).addInterceptor(ProgressInterceptor())
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                //add callback if timeout
-                .addNetworkInterceptor {
-                    try {
-                        it.proceed(it.request())
-                    } catch (e: Exception) {
-                        Log.e("imageHttpClient", e.message, e)
-                        ImageHttpDns.checkIPConnection()
-                        throw e
-                    }
+        val builder = OkHttpClient.Builder()
+        builder.addInterceptor(Interceptor { chain ->
+            val original = chain.request()
+            val requestBuilder = original.newBuilder()
+                .header("User-Agent", UA)
+                .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("referer", "https://app-api.pixiv.net/")
+                .header("Host", original.url.host.toString())
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }).imageProxySocket(Works.apiMirror) //.cache(httpCache)
+            .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
+            .addInterceptor(ProgressInterceptor())
+            //add callback if timeout
+            .addNetworkInterceptor {
+                try {
+                    it.proceed(it.request())
+                } catch (e: Exception) {
+                    Log.e("imageHttpClient", e.message, e)
+                    ImageHttpDns.checkIPConnection()
+                    throw e
                 }
-                .build()
-        }
+            }
+            .build()
+    }
 
     val retrofitAppApi: Retrofit
         get() {

@@ -78,7 +78,7 @@ class PxEZApp : Application() {
             AppDataRepo.getUser()
         }
         val workManager = WorkManager.getInstance(this) //todo: config download concurrency
-        ketch = Ketch.builder().setOkHttpClient(RestClient.imageHttpClient)
+        ketch = Ketch.builder().setOkHttpClient(RestClient.downloadHttpClient)
             .enableLogs(BuildConfig.DEBUG)
             .setDownloadConfig(DownloadConfig(renameWhenConflict = false)).build(this)
 

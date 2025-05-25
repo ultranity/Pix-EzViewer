@@ -40,7 +40,7 @@ import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Random
 
 /**
  * Implementation of App Widget functionality.
@@ -89,7 +89,7 @@ class NewAppWidget : AppWidgetProvider() {
                 pixivApiService.walkthroughIllusts().let { resp ->
                     // Construct the RemoteViews object
                     val rand = Random()
-                    val randomnum = rand.nextInt(resp.illusts.size - 2)
+                    val randomnum = rand.nextInt(resp.illusts.size - 1)
                     val views = RemoteViews(context.packageName, R.layout.new_app_widget)
                     val bundle = Bundle()
                     bundle.putInt("illustid", resp.illusts[randomnum].id)

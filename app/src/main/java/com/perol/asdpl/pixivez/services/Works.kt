@@ -214,7 +214,8 @@ object Works {
 
     fun ugoiraDownloadAll(ugoira: Illust, ugoiraMetadata: UgoiraMetadataBean) {
         val path = getDownloadPath(ugoira, parseSaveFormat(ugoira).substringBeforeLast("."))
-        ugoira.meta.map { mirrorLink(qualityUrl(it)) }.forEachIndexed { index, it ->
+        ugoira.meta.map { mirrorLink(qualityUrl(it, qualityDownload)) }
+            .forEachIndexed { index, it ->
             ketch.download(
                 it,
                 path,
@@ -308,10 +309,10 @@ object Works {
     private fun getQualityUrl(illust: Illust, part: Int = 0): String {
         //TODO if need: val part = part.coerceAtMost(illust.meta_pages.size - 1)
         val urls = illust.meta[part]
-        return qualityUrl(urls)
+        return qualityUrl(urls, qualityDownload)
     }
 
-    fun qualityUrl(urls: ImageUrlsX): String = when (qualityDownload) {
+    fun qualityUrl(urls: ImageUrlsX, quality: Int): String = when (quality) {
         0 -> urls.medium
         1 -> urls.large
         else -> urls.original // 2

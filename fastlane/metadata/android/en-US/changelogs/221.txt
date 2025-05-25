@@ -1,0 +1,8 @@
+## 2.2.1
+- Fix: Download quality option text mismatch
+- Fix: View Pics quality settings not working
+- Fix: Language settings not working #100 #104
+- Fix: Zoom animation for related images can't be turned off #102
+- Optim: Japanese translation @waki285
+- Optim: UI and haptic feedback details #101 #103
+- Rollback: split download and view images Okhttp client to avoid blocking

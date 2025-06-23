@@ -45,7 +45,7 @@ import java.util.WeakHashMap
  * is_followed : false
  */
 @Serializable
-class UserX(
+data class UserX(
     var id: Int,
     var name: String,
     var account: String,

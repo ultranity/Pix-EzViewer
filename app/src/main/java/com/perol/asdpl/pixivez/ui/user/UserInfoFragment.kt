@@ -28,7 +28,6 @@ package com.perol.asdpl.pixivez.ui.user
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.util.Linkify
@@ -36,6 +35,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.postDelayed
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
@@ -44,6 +44,7 @@ import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.KotlinUtil.observeOnce
 import com.perol.asdpl.pixivez.base.LazyFragment
+import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.core.UserListFragment
 import com.perol.asdpl.pixivez.data.model.UserDetail
 import com.perol.asdpl.pixivez.databinding.FragmentUserInfoBinding
@@ -74,7 +75,7 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
         chip.contentDescription = hint
         if (!url.isNullOrBlank()) {
             chip.setOnClickListener {
-                val uri = Uri.parse(url)
+                val uri = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }
@@ -131,6 +132,17 @@ class UserInfoFragment : LazyFragment() { // Required empty public constructor
             }
         }
         loadBGImage(binding.imageviewUserBg, userDetail.profile.background_image_url)
+        binding.textviewUsername.text = userDetail.user.name
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.textviewUsername.tooltipText = userDetail.user.account
+        }
+        binding.textviewUsername.setOnClickListener {
+            MaterialDialogs(requireContext()).show {
+                setTitle(R.string.user_info)
+                setMessage(userDetail.toString())
+                setPositiveButton(R.string.ok) { _, _ -> }
+            }
+        }
         binding.textviewId.text = "ID:${userid}"
 
         binding.textviewFans.setOnClickListener {

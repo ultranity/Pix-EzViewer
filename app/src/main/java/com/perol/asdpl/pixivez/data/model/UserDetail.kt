@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
 //     "profile_publicity": {"gender":"public","region":"public","birth_day":"public","birth_year":"public","job":"public","pawoo":true}
 //     "workspace" : {"pc":"台式机","monitor":"Samsung SyncMaster2333","tool":"SAI、PhotshopCS6","scanner":"WIA CanoScan Lide 110","tablet":"Wacom Cintip 13HD","mouse":"","printer":"","desktop":"","music":"ACGのこと","desk":"","chair":"","comment":"","workspace_image_url":null}
 @Serializable
-class UserDetail(
+data class UserDetail(
     val user: User,
     val profile: ProfileBean,
     val profile_publicity: ProfilePublicityBean,
@@ -64,7 +64,7 @@ class UserDetail(
  * is_using_custom_profile_image : true
  */
 @Serializable
-class ProfileBean(
+data class ProfileBean(
     val webpage: String = "",
     val gender: String?,
     val birth: String?,
@@ -100,7 +100,7 @@ class ProfileBean(
  * pawoo : true
  */
 @Serializable
-class ProfilePublicityBean(
+data class ProfilePublicityBean(
     val gender: String,
     val region: String,
     val birth_day: String,
@@ -125,7 +125,7 @@ class ProfilePublicityBean(
  * workspace_image_url : null
  */
 @Serializable
-class WorkspaceBean(
+data class WorkspaceBean(
     val pc: String,
     val monitor: String,
     val tool: String,

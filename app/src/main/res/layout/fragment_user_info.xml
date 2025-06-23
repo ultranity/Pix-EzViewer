@@ -36,14 +36,24 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <com.google.android.material.chip.Chip
+                    android:id="@+id/textview_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textIsSelectable="true"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/textView1"
+                    app:layout_constraintStart_toEndOf="@+id/textView1"
+                    tools:text="User name" />
+
+                <com.google.android.material.chip.Chip
                     android:id="@+id/textview_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="ID"
                     android:textIsSelectable="true"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/textView1"
-                    app:layout_constraintStart_toEndOf="@+id/textView1"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/textview_username"
+                    app:layout_constraintStart_toEndOf="@+id/textview_username"
                     tools:ignore="HardcodedText" />
 
                 <com.google.android.material.chip.Chip

@@ -83,6 +83,7 @@ import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.runBlocking
+import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -437,7 +438,8 @@ class PictureXAdapter(
             //mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
             //TODO: check wh ratio and span size
         }
-        Glide.with(mContext).load(imageUrls[position])
+        val file = File(Works.getDownloadPath(data, Works.parseSaveFormat(data, position)))
+        Glide.with(mContext).load(if (file.exists()) file else imageUrls[position])
             .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
             .run {
                 if (position == 0) {

@@ -177,7 +177,7 @@ class UserMActivity : RinkActivity() {
             viewModel.getData(id)
         binding.viewpager.adapter = UserMPagerAdapter(this, id)
         //binding.viewpager.offscreenPageLimit = -1
-        val upToTopListener = UpToTopListener(this, supportFragmentManager)
+        val upToTopListener = UpToTopListener(supportFragmentManager)
         AutoTabLayoutMediator(binding.tablayout, binding.viewpager) { tab, position ->
             tab.text = getString(UserMPagerAdapter.getPageTitle(position))
         }.attach().setOnTabReSelectedStrategy { upToTopListener.onTabReselected(it) }
@@ -309,6 +309,10 @@ class UserMActivity : RinkActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_userx, menu)
+        // hide block user option if current user is self
+        if (AppDataRepo.isSelfPage(id)) {
+            menu.findItem(R.id.action_block_user).isVisible = false
+        }
         return true
     }
 

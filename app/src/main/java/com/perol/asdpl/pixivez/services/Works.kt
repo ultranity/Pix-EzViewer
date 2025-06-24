@@ -115,19 +115,20 @@ object Works {
             .replace("{R18}", if (illust.isR18) "R18" else "")
             .replace("{title}", illust.title.toLegal())
         // !illust.title.contains(it.name)
-        if (part != null && part < illust.meta.size) {
+        //assert(part < illust.meta.size) "part $part while illust.meta.size ${illust.meta.size}"
+        if (part != null && illust.meta.size > 1) {
             url = getQualityUrl(illust, part)
             filename = filename.replace(
                 "{part}",
                 if (illust.meta.size > 10) part.toString().padStart(2, '0')
                 else part.toString()
             )
-        } else { //if (illust.meta.size == 1) {
+        } else {
             url = getQualityUrl(illust)
             filename = filename.replace("_p{part}", "")
                 .replace("_{part}", "")
                 .replace("{part}", "")
-        }//throw Error("part $part while illust.meta.size ${illust.meta.size}")
+        }
         val type = when {
             url.contains("png") -> ".png"
             url.contains("jpeg") -> ".jpeg"
@@ -294,6 +295,7 @@ object Works {
         val targetFile = File(path, filename)
         if (targetFile.exists()) {
             ToastQ.post(R.string.alreadysaved)
+            FileUtil.ListLog.add(illust.id)
             return
         }
         ketch.download(

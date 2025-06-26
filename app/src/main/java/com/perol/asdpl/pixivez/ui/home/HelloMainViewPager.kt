@@ -36,15 +36,11 @@ class HelloMainViewPager(fragmentManager: FragmentManager) :
     FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getCount(): Int = 3
 
-    private val fragments = Array<Fragment?>(3) { null }
     override fun getItem(position: Int): Fragment {
-        if (fragments[position] == null) {
-            fragments[position] = when (position) {
-                0 -> HelloMRecomFragment.newInstance("r")
-                1 -> HelloTrendingFragment.newInstance("t")
-                else -> HelloMThFragment.newInstance("d")
-            }
+        return when (position) {
+            0 -> HelloMRecomFragment.newInstance("r")
+            1 -> HelloTrendingFragment.newInstance("t")
+            else -> HelloMThFragment.newInstance("d")
         }
-        return fragments[position]!!
-    }
+        }
 }

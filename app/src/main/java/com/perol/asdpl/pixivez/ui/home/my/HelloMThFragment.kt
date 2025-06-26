@@ -29,15 +29,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
+import com.perol.asdpl.pixivez.objects.UpToTopFragment
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.argument
 
 /**
  * Fragment of thread from User followed
  */
-class HelloMThFragment : LazyFragment() {
+class HelloMThFragment : UpToTopFragment() {
 
     private var TAG: String by argument()
     private lateinit var binding: FragmentHelloMainBinding
@@ -52,17 +52,18 @@ class HelloMThFragment : LazyFragment() {
 
     override fun loadData() {
         binding.tablayout.setupWithViewPager(binding.viewpager)
-        binding.viewpager.adapter =
-            HelloMThViewPager(this, childFragmentManager)
+        binding.viewpager.adapter = HelloMThViewPager(this, childFragmentManager)
+        binding.tablayout.clearOnTabSelectedListeners()
         binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
             binding.viewpager.setCurrentItem(it.position, false)
+            topTab = it
         })
+        topTab = binding.tablayout.getTabAt(binding.viewpager.currentItem)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(tag: String) =
-            HelloMThFragment().apply {
+        fun newInstance(tag: String) = HelloMThFragment().apply {
                 TAG = tag
             }
     }

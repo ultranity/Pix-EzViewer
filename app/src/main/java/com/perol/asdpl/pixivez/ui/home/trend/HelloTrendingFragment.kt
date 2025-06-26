@@ -31,12 +31,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.drag.IDraggable
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.base.onClick
 import com.perol.asdpl.pixivez.base.onItemClick
@@ -44,13 +44,14 @@ import com.perol.asdpl.pixivez.base.setItems
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.FragmentHelloTrendingBinding
 import com.perol.asdpl.pixivez.databinding.ViewTagsItemBinding
+import com.perol.asdpl.pixivez.objects.UpToTopFragment
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.dpf
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.view.NotCrossScrollableLinearLayoutManager
 import kotlinx.serialization.Serializable
 
-class HelloTrendingFragment : LazyFragment() {
+class HelloTrendingFragment : UpToTopFragment() {
     private val titles by lazy { resources.getStringArray(R.array.mode_list).toList() }
     private val restrictLevel by lazy {
         if (!PxEZApp.instance.pre.getBoolean(
@@ -80,14 +81,15 @@ class HelloTrendingFragment : LazyFragment() {
     }
 
     private lateinit var titleModels: List<TagsBindingItem>
+    private val adapter by lazy { RankingMAdapter(this, restrictLevel) }
+    override val fragmentGetter: (Int) -> Fragment? = { adapter.fragments[it] }
 
     override fun loadData() {
-        val adapter = RankingMAdapter(this, restrictLevel)
         binding.viewpager.adapter = adapter
 
         //fix: 旋转后tab选择错误: viewpager.adapter设置后恢复正确的currentItem
-        binding.tablayout.selectTab(binding.tablayout.getTabAt(binding.viewpager.currentItem))
-
+        topTab = binding.tablayout.getTabAt(binding.viewpager.currentItem)
+        binding.tablayout.selectTab(topTab)
         /* //do not use TabLayoutMediator to prevent wrong anim after overriding layout manager
         // after overriding layout manager: tab无法显示选择效果
         val upToTopListener = UpToTopListener(this)
@@ -98,10 +100,10 @@ class HelloTrendingFragment : LazyFragment() {
         */
         //binding.viewpager.isUserInputEnabled = false
         //binding.tablayout.setupWithViewPager(binding.viewpager)
-        binding.tablayout.addOnTabSelectedListener(UpToTopListener(
-            requireContext(),
-            { adapter.fragments[it] }) {
+        binding.tablayout.clearOnTabSelectedListeners()
+        binding.tablayout.addOnTabSelectedListener(UpToTopListener(fragmentGetter) {
             binding.viewpager.setCurrentItem(it.tag as Int, false)
+            topTab = it
         })
         binding.imageviewRank.setOnClickListener {
             MaterialDialogs(requireActivity()).show {
@@ -173,7 +175,7 @@ class HelloTrendingFragment : LazyFragment() {
         for (i in titleModels) {
             val tab = binding.tablayout.newTab()
             tab.text = i.name
-            tab.tag = i.index
+            tab.tag = i.index //important: mark tab position
             if (!i.isSelected) tab.view.visibility = View.GONE
             binding.tablayout.addTab(tab, false)
         }

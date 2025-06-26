@@ -93,7 +93,7 @@ class SearchResultActivity : RinkActivity() {
         binding.contentSearchResult.viewpager.adapter =
             SearchResultAdapter(this, supportFragmentManager, keyword)
         binding.tablayout.addOnTabSelectedListener(
-            UpToTopListener(this, supportFragmentManager) {
+            UpToTopListener(supportFragmentManager) {
                 binding.imagebuttonSection.visibility =
                     if (it.position == 0) View.VISIBLE else View.GONE
             }

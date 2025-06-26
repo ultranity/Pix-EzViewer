@@ -29,15 +29,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.databinding.FragmentHelloMainBinding
+import com.perol.asdpl.pixivez.objects.UpToTopFragment
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.argument
 
 /**
  * Main page Fragment with Recommended illusts and users
  */
-class HelloMRecomFragment : LazyFragment() {
+class HelloMRecomFragment : UpToTopFragment() {
 
     private var TAG: String by argument()
     private lateinit var binding: FragmentHelloMainBinding
@@ -51,12 +51,14 @@ class HelloMRecomFragment : LazyFragment() {
     }
 
     override fun loadData() {
-        binding.viewpager.adapter =
-            HelloMRecomViewPager(this, childFragmentManager)
+        binding.viewpager.adapter = HelloMRecomViewPager(this, childFragmentManager)
         binding.tablayout.setupWithViewPager(binding.viewpager)
+        binding.tablayout.clearOnTabSelectedListeners()
         binding.tablayout.addOnTabSelectedListener(UpToTopListener(this) {
             binding.viewpager.setCurrentItem(it.position, false)
+            topTab = it
         })
+        topTab = binding.tablayout.getTabAt(binding.viewpager.currentItem)
     }
 
     companion object {

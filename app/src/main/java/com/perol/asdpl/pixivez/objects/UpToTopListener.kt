@@ -1,19 +1,18 @@
 package com.perol.asdpl.pixivez.objects
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.base.LazyFragment
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class UpToTopListener(
-    val context: Context,
-    val fragmentGetter: (position: Int) -> Fragment?,
-    val tabReselected: (tab: TabLayout.Tab) -> Unit = {},
-    val tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
-    val tabSelected: (tab: TabLayout.Tab) -> Unit = {},
+    private val fragmentGetter: (position: Int) -> Fragment?,
+    private val tabReselected: (tab: TabLayout.Tab) -> Unit = {},
+    private val tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
+    private val tabSelected: (tab: TabLayout.Tab) -> Unit = {},
 ) : TabLayout.OnTabSelectedListener {
     constructor(
         contextFragment: Fragment,
@@ -21,18 +20,17 @@ class UpToTopListener(
         tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
         tabSelected: (tab: TabLayout.Tab) -> Unit = {},
     ) : this(
-        contextFragment.requireContext(), contextFragment.childFragmentManager,
+        contextFragment.childFragmentManager,
         tabReselected, tabUnSelected, tabSelected,
     )
 
     constructor(
-        context: Context,
         fragmentManager: FragmentManager,
         tabReselected: (tab: TabLayout.Tab) -> Unit = {},
         tabUnSelected: (tab: TabLayout.Tab) -> Unit = {},
         tabSelected: (tab: TabLayout.Tab) -> Unit = {},
     ) : this(
-        context, { fragmentManager.fragments[it] },
+        { fragmentManager.fragments[it] },
         tabReselected, tabUnSelected, tabSelected,
     )
 
@@ -51,4 +49,18 @@ class UpToTopListener(
 
     override fun onTabUnselected(tab: TabLayout.Tab) = tabUnSelected(tab)
     override fun onTabSelected(tab: TabLayout.Tab) = tabSelected(tab)
+}
+
+abstract class UpToTopFragment : LazyFragment() {
+    open val fragmentGetter: (position: Int) -> Fragment? = {
+        childFragmentManager.fragments[it]
+    }
+
+    var topTab: TabLayout.Tab? = null
+    fun upToTop() {
+        if (topTab == null) return
+        fragmentGetter(topTab!!.position)?.view
+            ?.findViewById<RecyclerView>(R.id.recyclerview)
+            ?.scrollToPosition(0)
+    }
 }

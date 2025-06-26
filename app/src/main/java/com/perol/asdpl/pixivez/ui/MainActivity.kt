@@ -42,12 +42,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
@@ -63,6 +62,7 @@ import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
 import com.perol.asdpl.pixivez.objects.LARGE_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.UpToTopFragment
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.objects.screenWidthDp
 import com.perol.asdpl.pixivez.services.AppUpdater
@@ -94,9 +94,9 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
      * drawer with an extended fab.
      */
     private fun updateNavigationViewLayout() {
-        //binding.contentView.fitsSystemWindows = true
-        val fab: FloatingActionButton? = null
-        val navFab: ExtendedFloatingActionButton? = null
+        // binding.contentView.fitsSystemWindows = true
+        // val fab: FloatingActionButton? = null
+        // val navFab: ExtendedFloatingActionButton? = null
         val screenWidthDp = screenWidthDp()
         if (screenWidthDp < MEDIUM_SCREEN_WIDTH_SIZE) {
             // Small screen
@@ -239,6 +239,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
+    private var tabTime = 0L
     private var exitTime = 0L
 
     private lateinit var binding: AppMainBinding
@@ -278,21 +279,33 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
         binding.navView.setNavigationItemSelectedListener(this)
         //initView()
         binding.tablayout.setupWithViewPager(binding.contentView)
-        binding.contentView.adapter = HelloMainViewPager(supportFragmentManager)
+        val helloMainViewPager = HelloMainViewPager(supportFragmentManager)
+        binding.contentView.adapter = helloMainViewPager
 
         binding.contentView.offscreenPageLimit =
             if (PxEZApp.instance.pre.getBoolean("refreshTab", false)) 0 else 3
 
         val position = PxEZApp.instance.pre.getString("firstpage", "0")?.toInt() ?: 0
         binding.tablayout.selectTab(binding.tablayout.getTabAt(position)!!)
-        if (binding.navRail.isVisible) binding.tablayout.addOnTabSelectedListener(object :
+        binding.tablayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // fetch the fragment and scroll to top
+                if (tab == null) return
+                if ((System.currentTimeMillis() - tabTime) > 3000) {
+                    Toasty.normal(this@MainActivity, R.string.back_to_the_top)
+                    tabTime = System.currentTimeMillis()
+                } else {
+                    (supportFragmentManager.fragments.getOrNull(tab.position) as UpToTopFragment?)?.upToTop()
+                }
+            }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
             override fun onTabSelected(tab: TabLayout.Tab) {
-                binding.navRail.selectedItemId = binding.navRail.menu.getItem(tab.position).itemId
+                if (binding.navRail.isVisible) {
+                    binding.navRail.selectedItemId = binding.navRail.menu[tab.position].itemId
+                }
             }
         })
         initNavDrawerHeader(
@@ -423,27 +436,6 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
         header.textView.text = user.useremail
     }
 
-    /* private inline fun initView() {
-        ifPxEZApp.instance.pre.getBoolean("refreshTab", true))
-            getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().replace(R.id.binding.contentView, it).commit()
-            }
-        else if (savedInstanceState == null){ //https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591
-            binding.tablayoutHellom.getTabAt(position)!!.select()
-            getFragmentContent(position).let {
-                supportFragmentManager.beginTransaction().add(R.id.binding.contentView, it).commit()
-                    curFragment = it
-                    fragments[position] = it
-                    //supportFragmentManager.fragments.forEach(){ it ->
-                    //    supportFragmentManager.beginTransaction().remove(it).commit()
-                    //}
-            }
-        }
-        else {
-            curFragment = supportFragmentManager.findFragmentById(R.id.binding.contentView)
-        }
-    }*/
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
         return true
@@ -470,7 +462,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 if (binding.navRail.isVisible) //action_search selection in navRail should be reset
                     binding.navRail.postDelayed(500) { //after onOptionsItemSelected
                         binding.navRail.selectedItemId =
-                            binding.navRail.menu.getItem(binding.tablayout.selectedTabPosition).itemId
+                            binding.navRail.menu[binding.tablayout.selectedTabPosition].itemId
                     }
                 SearchActivity.start(this)
                 true

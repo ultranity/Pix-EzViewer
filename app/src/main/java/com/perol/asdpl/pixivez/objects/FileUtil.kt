@@ -29,9 +29,6 @@ import android.os.Environment
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.roaringbitmap.RoaringBitmap
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -112,12 +109,6 @@ object FileUtil {
     const val SORT_NAME = 0
     const val SORT_DATE = 1
     const val SORT_SIZE = 2
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            getFileList()
-        }
-    }
 
     /**
      * 通过传入的路径,返回该路径下的所有的文件和文件夹列表

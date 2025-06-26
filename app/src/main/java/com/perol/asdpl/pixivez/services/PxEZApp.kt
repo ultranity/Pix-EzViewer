@@ -35,7 +35,6 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
-import androidx.work.WorkManager
 import com.ketch.DownloadConfig
 import com.ketch.Ketch
 import com.ketch.Status
@@ -77,7 +76,28 @@ class PxEZApp : Application() {
         applicationScope.launch {
             AppDataRepo.getUser()
         }
-        val workManager = WorkManager.getInstance(this) //todo: config download concurrency
+        FastKVConfig.setLogger(FastKVLogger())
+        FastKVConfig.setExecutor(Dispatchers.IO.asExecutor())
+        AppCompatDelegate.setDefaultNightMode(pre.getString("dark_mode", "-1")!!.toInt())
+        animationEnable = pre.getBoolean("animation", false)
+        ShowDownloadToast = pre.getBoolean("ShowDownloadToast", true)
+        CollectMode = pre.getString("CollectMode", "0")?.toInt() ?: 0
+        R18Private = pre.getBoolean("R18Private", true)
+        RestrictFolder = pre.getBoolean("R18Folder", false)
+        RestrictFolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
+        restrictSanity = pre.getInt("restrictSanity", 8)
+        TagSeparator = pre.getString("TagSeparator", "#")!!
+        storepath = pre.getString(
+            "storepath1",
+            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
+        )!!
+        saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
+        if (pre.getBoolean("crashreport", true)) {
+            CrashHandler.instance.init()
+        }
+        locale = LanguageUtil.langToLocale(pre.getString("language", "-1")!!.toInt())
+
+        //val workManager = WorkManager.getInstance(this) //todo: config download concurrency
         ketch = Ketch.builder().setOkHttpClient(RestClient.downloadHttpClient)
             .enableLogs(BuildConfig.DEBUG)
             .setDownloadConfig(DownloadConfig(renameWhenConflict = false)).build(this)
@@ -133,30 +153,9 @@ class PxEZApp : Application() {
                     }
                 }
         }
-        FastKVConfig.setLogger(FastKVLogger())
-        FastKVConfig.setExecutor(Dispatchers.Default.asExecutor())
-        AppCompatDelegate.setDefaultNightMode(
-            pre.getString("dark_mode", "-1")!!.toInt()
-        )
-        animationEnable = pre.getBoolean("animation", false)
-        ShowDownloadToast = pre.getBoolean("ShowDownloadToast", true)
-        CollectMode = pre.getString("CollectMode", "0")?.toInt() ?: 0
-        R18Private = pre.getBoolean("R18Private", true)
-        RestrictFolder = pre.getBoolean("R18Folder", false)
-        RestrictFolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
-        restrictSanity = pre.getInt("restrictSanity", 8)
-        TagSeparator = pre.getString("TagSeparator", "#")!!
-        storepath = pre.getString(
-            "storepath1",
-            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
-        )!!
-        saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
-        if (pre.getBoolean("crashreport", true)) {
-            CrashHandler.instance.init()
+        applicationScope.launch {
+            FileUtil.getFileList()
         }
-
-        locale = LanguageUtil.langToLocale(pre.getString("language", "-1")!!.toInt())
-
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityCollector.collect(activity)

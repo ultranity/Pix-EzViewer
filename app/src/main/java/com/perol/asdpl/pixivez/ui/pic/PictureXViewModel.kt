@@ -348,13 +348,9 @@ class PictureXViewModel : BaseViewModel() {
 
     fun fabClick() {
         if (!illust.is_bookmarked) {
-            InteractionUtil.like(illust, null) {
-                likeIllust.value = true
-            }
+            InteractionUtil.like(illust, null) //{ likeIllust.value = true }
         } else {
-            InteractionUtil.unlike(illust) {
-                likeIllust.value = false
-            }
+            InteractionUtil.unlike(illust) //{ likeIllust.value = false }
         }
     }
 
@@ -374,13 +370,9 @@ class PictureXViewModel : BaseViewModel() {
             val tagList =
                 tags.value?.tags?.mapNotNull { if (it.is_registered) it.name else null }
             if (private) illust.x_restrict = 1 //TODO: add setting for mark private => x_restrict=1
-            InteractionUtil.like(illust, tagList, private) {
-                likeIllust.value = true
-            }
+            InteractionUtil.like(illust, tagList, private) //{ likeIllust.value = true }
         } else {
-            InteractionUtil.unlike(illust) {
-                likeIllust.value = false
-            }
+            InteractionUtil.unlike(illust) //{ likeIllust.value = false }
         }
     }
 

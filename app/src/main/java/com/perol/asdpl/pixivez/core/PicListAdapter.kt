@@ -194,11 +194,11 @@ abstract class PicListAdapter(
                     Works.imageDownloadAll(item)
                     setUIDownload(1, position)
                     if (!item.is_bookmarked) {
-                        InteractionUtil.like(item) { setUILike(true, position) }
+                        InteractionUtil.like(item)
                     }
                     if (!item.user.is_followed) {
                         //todo: hint auto follow
-                        InteractionUtil.follow(item) { setUIFollow(true, position) }
+                        InteractionUtil.follow(item)
                     }
                 }
             }
@@ -223,10 +223,10 @@ abstract class PicListAdapter(
                             setUIDownload(1, position)
                         }
                         .setNeutralButton(R.string.like) { _, _ ->
-                            InteractionUtil.like(item) { setUILike(true, position) }
+                            InteractionUtil.like(item)
                         }
                         .setNegativeButton(R.string.follow) { _, _ ->
-                            InteractionUtil.follow(item) { setUIFollow(true, position) }
+                            InteractionUtil.follow(item)
                         }
                         .show()
                 }

@@ -46,6 +46,7 @@ open class DMutableLiveData<T>(var lastValue: T, val onlyIfChanged: Boolean = tr
         return lastValue
     }
 
+    // setValue with version increment and check for onlyIfChanged
     override fun setValue(value: T) {
         if (onlyIfChanged && value == lastValue) {
             return
@@ -55,10 +56,13 @@ open class DMutableLiveData<T>(var lastValue: T, val onlyIfChanged: Boolean = tr
         lastValue = value
     }
 
+    // Trigger value change without incrementing currentVersion
     fun triggerValue(value: T) {
         super.setValue(value)
+        lastValue = value
     }
 
+    // Override the value without incrementing currentVersion
     fun overrideValue(value: T) {
         lastValue = value
     }

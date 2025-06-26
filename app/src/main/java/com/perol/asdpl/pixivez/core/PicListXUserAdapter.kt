@@ -89,15 +89,9 @@ class PicListXUserAdapter(
             imageViewUser.setOnLongClickListener {
                 //val id = user.id
                 if (!user.is_followed) {
-                    InteractionUtil.follow(illust) {
-                        imageViewUser.setBorderColor(picListAdapter.badgeTextColor) // Color.YELLOW
-                        // imageViewUser.alpha = 0.9F
-                    }
+                    InteractionUtil.follow(illust)
                 } else {
-                    InteractionUtil.unfollow(user) {
-                        imageViewUser.setBorderColor(picListAdapter.colorPrimary)
-                        // imageViewUser.alpha = 0.5F
-                    }
+                    InteractionUtil.unfollow(user)
                 }
                 true
             }

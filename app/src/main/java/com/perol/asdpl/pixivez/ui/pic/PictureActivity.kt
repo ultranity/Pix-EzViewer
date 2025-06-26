@@ -159,7 +159,6 @@ class PictureActivity : RinkActivity() {
             }
         }
         binding.viewpagePicture.adapter = picturePagerAdapter
-        //TODO: illustList?.let { IllustCacheRepo.register(this, it) }
         binding.viewpagePicture.currentItem = nowPosition
         binding.viewpagePicture.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}

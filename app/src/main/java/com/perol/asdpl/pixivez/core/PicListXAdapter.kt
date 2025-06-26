@@ -74,22 +74,16 @@ open class PicListXAdapter(
                 Works.imageDownloadAll(item)
                 // set like
                 if (!item.is_bookmarked) {
-                    InteractionUtil.like(item, null) {
-                        //setUILike(true, likeView)
-                    }
+                    InteractionUtil.like(item, null)
                 }
             }
         }
         else {
             likeView.setOnClickListener {
                 if (item.is_bookmarked) {
-                    InteractionUtil.unlike(item) {
-                        //setUILike(false, likeView)
-                    }
+                    InteractionUtil.unlike(item)
                 } else {
-                    InteractionUtil.like(item, null) {
-                        //setUILike(true, likeView)
-                    }
+                    InteractionUtil.like(item, null)
                 }
             }
             likeView.setOnLongClickListener {
@@ -98,7 +92,6 @@ open class PicListXAdapter(
                 true
             }
         }
-        //setUILike(item.is_bookmarked, likeView)
         setUIDownload(if (FileUtil.isDownloaded(item)) 2 else 0, likeView)
     }
 

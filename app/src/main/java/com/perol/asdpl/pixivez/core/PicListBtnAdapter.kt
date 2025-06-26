@@ -58,9 +58,7 @@ open class PicListBtnAdapter(
                 holder.setTextColor(R.id.save, colorPrimaryDark)
                 Works.imageDownloadAll(item)
                 if (!item.is_bookmarked) {
-                    InteractionUtil.like(item, null) {
-                        setUILike(true, likeBtn)
-                    }
+                    InteractionUtil.like(item, null)
                 }
             }
         } else {
@@ -72,13 +70,9 @@ open class PicListBtnAdapter(
 
         likeBtn.setOnClickListener { v ->
             if (!item.is_bookmarked) {
-                InteractionUtil.like(item, null) {
-                    //setUILike(true, v)
-                }
+                InteractionUtil.like(item, null)
             } else {
-                InteractionUtil.unlike(item) {
-                    //setUILike(false, v)
-                }
+                InteractionUtil.unlike(item)
             }
         }
         likeBtn.setOnLongClickListener { v ->

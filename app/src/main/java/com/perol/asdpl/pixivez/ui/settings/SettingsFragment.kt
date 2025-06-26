@@ -73,6 +73,7 @@ import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.networks.ImageHttpDns.ipPattern
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -80,6 +81,8 @@ import com.perol.asdpl.pixivez.services.AppUpdater
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.ui.MainActivity
+import com.perol.asdpl.pixivez.ui.pic.PictureActivity
+import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import org.json.JSONObject
 import java.io.File
 import java.io.FilenameFilter
@@ -531,7 +534,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             "view_logs" -> {
                 MaterialDialogs(requireContext()).show {
                     setTitle("Logs")
-                    setItems(CrashHandler.instance.logs.map { LogsBindingItem(it.toString()) })
+                    setItems(CrashHandler.instance.logs.map { LogsBindingItem(it) })
                         .onClick { v, adapter, item, position ->
                             MaterialDialogs(requireContext()).show {
                                 setMessage(item.text)
@@ -541,6 +544,60 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             ClipBoardUtil.putTextIntoClipboard(requireContext(), item.text)
                             true
                         }
+                    setNegativeButton("Actions") { _, _ ->
+                        MaterialDialogs(requireContext()).show {
+                            setTitle("Failed Actions")
+                            setItems(InteractionUtil.failedActions.map {
+                                LogsBindingItem(it)
+                            }).onClick { v, adapter, item, position ->
+                                when (item.obj.second) {
+                                    "like", "unlike" -> {
+                                        val id = item.obj.first
+                                        PictureActivity.start(requireContext(), id, 0, false)
+//                                            val illust = IllustCacheRepo.get(id)
+//                                            if (illust != null) {
+//                                                if (item.obj.second == "like") {
+//                                                    InteractionUtil.like(illust)
+//                                                } else {
+//                                                    InteractionUtil.unlike(illust)
+//                                                }
+//                                                Toasty.success(requireContext(), "Action performed")
+//                                            } else {
+//                                                Toasty.error(requireContext(), "Illust not found")
+//                                            }
+                                    }
+
+                                    "follow", "unfollow" -> {
+                                        val id = item.obj.first
+                                        UserMActivity.start(requireContext(), id)
+//                                            val user = UserCacheRepo.get(id)
+//                                            if (user != null) {
+//                                                if (item.obj.second == "follow") {
+//                                                    InteractionUtil.follow(user) {
+//                                                        Toasty.success(requireContext(), "Followed ${user.name}")
+//                                                    }
+//                                                } else {
+//                                                    InteractionUtil.unfollow(user) {
+//                                                        Toasty.success(requireContext(), "Unfollowed ${user.name}")
+//                                                    }
+//                                                }
+//                                            } else {
+//                                                Toasty.error(requireContext(), "User not found")
+//                                            }
+                                    }
+
+                                    else -> {
+                                        Toasty.error(requireContext(), "Unknown action")
+                                    }
+                                }
+                                true
+                            }
+                            confirmButton()
+                            setNeutralButton(R.string.clearhistory) { _, _ ->
+                                InteractionUtil.failedActions.clear()
+                            }
+                        }
+                    }
                     confirmButton()
                     setNeutralButton(R.string.clearhistory) { _, _ ->
                         CrashHandler.instance.logs.clear()
@@ -722,9 +779,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 }
 
-class LogsBindingItem(val text: String) : BaseBindingItem<SimpleTextItemBinding>(), IDraggable {
+class LogsBindingItem<T>(val obj: T) : BaseBindingItem<SimpleTextItemBinding>(), IDraggable {
     override val type: Int = R.id.text
     override val isDraggable: Boolean = true
+    val text = obj.toString()
     override fun bindView(binding: SimpleTextItemBinding, payloads: List<Any>) {
         binding.text.text = text
     }

@@ -17,6 +17,7 @@ import com.perol.asdpl.pixivez.data.model.Tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
@@ -32,6 +33,7 @@ import org.roaringbitmap.RoaringBitmap
 import java.util.BitSet
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.pow
 
 object UtilFunc {
     fun <T> firstCommon(c1: Collection<T>, c2: Collection<T>): T? {
@@ -248,15 +250,23 @@ object KotlinUtil {
         crossinline onError: suspend(e: Exception) -> Unit,
         contextOnSuccess: CoroutineContext = Dispatchers.Main,
         contextOnError: CoroutineContext = Dispatchers.Main,
+        retryCount: Int = 0,
     ) {
-        try {
-            val it = block()
-            withContext(contextOnSuccess) {
-                onSuccess(it)
-            }
-        } catch (e: Exception) {
-            withContext(contextOnError) {
-                onError(e)
+        for (i in 0..retryCount) {
+            try {
+                val it = block()
+                withContext(contextOnSuccess) {
+                    onSuccess(it)
+                }
+                return
+            } catch (e: Exception) {
+                if (i == retryCount) {
+                    withContext(contextOnError) {
+                        onError(e)
+                    }
+                }
+                // Exponential backoff
+                delay((2.0).pow(i).toLong() * 1000)
             }
         }
     }
@@ -269,9 +279,10 @@ object KotlinUtil {
         contextOnSuccess: CoroutineContext = Dispatchers.Main,
         contextOnError: CoroutineContext = Dispatchers.Main,
         start: CoroutineStart = CoroutineStart.DEFAULT,
+        retryCount: Int = 0,
     ) {
         launch(context, start) {
-            KotlinUtil.launchCatching(block, onSuccess, onError, contextOnSuccess, contextOnError)
+            launchCatching(block, onSuccess, onError, contextOnSuccess, contextOnError, retryCount)
         }
     }
 

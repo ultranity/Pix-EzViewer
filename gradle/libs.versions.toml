@@ -1,14 +1,14 @@
 [versions]
-agp = "8.10.1"
+agp = "8.11.0"
 annotation = "1.9.1"
-databindingRuntime = "8.9.1"
+databindingRuntime = "8.11.0"
 fastadapter = "5.7.0"
 fastkvJava = "1.2.7"
-kotlin = "2.1.20"
-ksp = "2.1.20-1.0.31"
-aboutlibraries = "11.2.3"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
+aboutlibraries = "12.2.3"
 androidndkgif = "1.0.1"
-appcompat = "1.7.0"
+appcompat = "1.7.1"
 blockcanary = "0.0.5"
 cardview = "1.0.0"
 colorPicker = "2.3"
@@ -19,9 +19,9 @@ flexbox = "3.0.0"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
 gpuimage = "2.1.0"
-jsoup = "1.18.2"
-kotlinxSerializationJson = "1.7.3"
-lifecycleRuntimeKtx = "2.8.7"
+jsoup = "1.21.1"
+kotlinxSerializationJson = "1.9.0"
+lifecycleRuntimeKtx = "2.9.1"
 markwon = "4.6.2"
 material = "1.12.0"
 materialDialogs = "3.3.0"
@@ -29,21 +29,21 @@ okhttp3 = "4.12.0" #okhttp3系列组件版本最高到 4.4.1
 parcelableCore = "0.9.0"
 preferenceKtx = "1.2.1"
 recyclerview = "1.4.0"
-retrofit = "2.11.0"
+retrofit = "3.0.0"
 roaringBitmap = "1.3.0"
-room = "2.7.0"
+room = "2.7.2"
 subsamplingScaleImageViewAndroidx = "3.10.0"
 swiperefreshlayout = "1.1.0"
 vectordrawable = "1.2.0"
 viewpager2 = "1.1.0"
-webkit = "1.13.0"
-workRuntimeKtx = "2.10.0"
+webkit = "1.14.0"
+workRuntimeKtx = "2.10.2"
 ketch = "2.0.5"
 zip4j = "2.11.5"
 junit-junit = "4.13.2"
 androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
-kotlinter = "5.0.1"
+kotlinter = "5.1.1"
 
 [libraries]
 aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "aboutlibraries" }
@@ -137,7 +137,7 @@ zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }
 junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-ketch = { group = "com.github.khushpanchal", name = "Ketch", version.ref = "ketch" }
+#ketch = { group = "com.github.khushpanchal", name = "Ketch", version.ref = "ketch" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

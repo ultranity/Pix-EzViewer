@@ -1,0 +1,10 @@
+## 2.2.2
+- Fix: Image State Binder Override for RecycleView Holder
+- Fix: Double click back to top function after Activity resume
+- Fix: Update downloaded status for local files
+- Optim: Hide block button in user home
+- Optim: Downloaded markers start loading process
+- Optim: Load from local directly if image has been downloaded
+- Optim: Ketch Debug Log
+- Feat: Long press to view user details
+- Feat: Retry and logging when interaction requests fail

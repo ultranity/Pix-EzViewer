@@ -95,8 +95,8 @@ object ThemeUtil {
         R.style.primary20,
     )
     private val colorMap = HashMap<Int, Int>()
-    const val halftrans = 0x089a9a9a
-    const val transparent = 0x00000000
+    const val HALF_TRANS = 0x089a9a9a
+    const val TRANSPARENT = 0x00000000
     fun resetColor(context: Context) {
         colorMap.clear()
     }

@@ -1,3 +1,5 @@
+@file:Suppress("EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod")
+
 package com.chad.brvah.binder
 
 import android.content.Context
@@ -10,6 +12,7 @@ import com.chad.brvah.viewholder.BaseViewHolder
 /**
  * Binder 的基类
  */
+@Suppress("EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod")
 abstract class BaseItemBinder<T, VH : BaseViewHolder> {
 
     private val clickViewIds by lazy(LazyThreadSafetyMode.NONE) { ArrayList<Int>() }

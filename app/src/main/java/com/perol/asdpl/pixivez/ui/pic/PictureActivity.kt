@@ -48,7 +48,7 @@ class PictureActivity : RinkActivity() {
         private const val ARG_ILLUSTID = "illustid"
         private const val ARG_ILLUSTIDLIST = "illustidlist"
         private const val ARG_POSITION = "position"
-        const val ARG_ThumbHint = "SquareThumbHint"
+        const val ARG_THUMB_HINT = "SquareThumbHint"
         fun start(
             context: Context, id: Int, arrayList: IntArray? = IntArray(1) { id },
             options: Bundle? = null
@@ -74,7 +74,7 @@ class PictureActivity : RinkActivity() {
             // bundle.putInt(ARG_POSITION, position - max(position - limit, 0))
             extras.putInt(ARG_POSITION, position)
             extras.putInt(ARG_ILLUSTID, id)
-            if (squareThumbHint) extras.putBoolean(ARG_ThumbHint, true)
+            if (squareThumbHint) extras.putBoolean(ARG_THUMB_HINT, true)
             val intent =
                 Intent(context, PictureActivity::class.java).setAction("pic.view")
             intent.putExtras(extras)

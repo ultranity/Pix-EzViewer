@@ -5,9 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.text.Html.ImageGetter
 import android.widget.TextView
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
@@ -55,7 +57,7 @@ class GlideAssetsImageGetter(textView: TextView, private val folder: String = ""
             post {
                 Glide.with(context)
                     .asBitmap()
-                    .load(Uri.parse("file:///android_asset/" + (if (folder.isBlank()) "" else "$folder/") + source))
+                    .load(("file:///android_asset/" + (if (folder.isBlank()) "" else "$folder/") + source).toUri())
                     .into(drawable)
             }
         }
@@ -86,7 +88,7 @@ open class GlideImageGetter(textView: TextView) : ImageGetter {
 
     inner class BitmapDrawablePlaceholder : BitmapDrawable(
             container.get()?.resources,
-            Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        createBitmap(1, 1)
         ), Target<Bitmap> {
 
         var drawable: Drawable? = null
@@ -124,7 +126,7 @@ open class GlideImageGetter(textView: TextView) : ImageGetter {
         }
 
         override fun onResourceReady(bitmap: Bitmap, transition: Transition<in Bitmap>?) {
-            drawable = BitmapDrawable(container.get()!!.resources, bitmap)
+            drawable = bitmap.toDrawable(container.get()!!.resources)
         }
 
         override fun onLoadCleared(placeholderDrawable: Drawable?) {

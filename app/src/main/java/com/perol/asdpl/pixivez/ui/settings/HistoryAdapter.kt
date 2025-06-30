@@ -24,8 +24,8 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
-import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
@@ -39,7 +39,7 @@ class HistoryAdapter :
     override fun convert(holder: BaseViewHolder, item: HistoryEntity) {
         val imageView = holder.getView<ImageView>(R.id.item_img)
         Glide.with(imageView.context).load(item.thumb)
-            .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(imageView)
+            .placeholder(ThemeUtil.HALF_TRANS.toDrawable()).into(imageView)
         holder.setText(R.id.title, item.title)
         holder.setTextColor(
             R.id.title,

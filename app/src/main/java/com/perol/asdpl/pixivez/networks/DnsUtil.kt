@@ -1,6 +1,7 @@
 package com.perol.asdpl.pixivez.networks
 
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
@@ -13,19 +14,17 @@ import kotlin.math.roundToInt
 class DnsUtil {
     companion object {
         const val TAG = "DnsUtil"
-        const val google1 = "8.8.8.8"
-        const val cloudFlare = "1.1.1.1"
-        const val comcast = "4.2.2.1"
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun run() {
         CrashHandler.instance.d(TAG, "Starting Connection Tests...")
 
         runBlocking {
             val failurePercent = listOf(
-                cloudFlare,
-                google1,
-                comcast
+                "8.8.8.8",
+                "1.1.1.1",
+                "4.2.2.1",
             ).asFlow().flatMapMerge {
                 flow { emit(verify(it)) }
             }.toList()

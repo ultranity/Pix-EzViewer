@@ -34,6 +34,7 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
@@ -212,7 +213,7 @@ class SaucenaoActivity : RinkActivity() {
                 val url = el[i].attr("href")
                 CrashHandler.instance.d("w", url)
                 if (url.startsWith("https://www.pixiv.net/member_illust.php")) {
-                    Uri.parse(url).getQueryParameter("illust_id")
+                    url.toUri().getQueryParameter("illust_id")
                         ?.toIntOrNull()?.let { arrayList.add(it) }
                 } else if (url.startsWith("https://www.pixiv.net/artworks/")) {
                     url.replace("https://www.pixiv.net/artworks/", "")

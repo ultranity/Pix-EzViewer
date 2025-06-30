@@ -29,6 +29,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.net.toUri
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.data.model.ErrorResponse
@@ -51,7 +52,7 @@ class IntentActivity : RinkActivity() {
     companion object {
         fun start(context: Context, string: String) {
             val intent = Intent(context, IntentActivity::class.java).setAction("intent.action")
-            intent.data = Uri.parse(string)
+            intent.data = string.toUri()
             context.startActivity(intent)
         }
 

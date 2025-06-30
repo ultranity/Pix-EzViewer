@@ -26,10 +26,10 @@
 package com.perol.asdpl.pixivez.ui.pic
 
 import android.app.ActivityOptions
-import android.graphics.drawable.ColorDrawable
 import android.util.Pair
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -114,9 +114,7 @@ class CommentDialog : BaseDialogFragment<DialogCommentBinding>() {
         // params.height = screenHeightPx()/2
         window.attributes = params
         window.setBackgroundDrawable(
-            ColorDrawable(
-                ThemeUtil.getAttrColor(requireContext(), android.R.attr.colorBackground)
-            )
+            ThemeUtil.getAttrColor(requireContext(), android.R.attr.colorBackground).toDrawable()
         )
     }
 

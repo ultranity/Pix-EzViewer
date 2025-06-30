@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.perol.asdpl.pixivez.services.PxEZApp
 
 class UserInfoSharedPreferences {
@@ -44,11 +45,11 @@ class UserInfoSharedPreferences {
         val instance: UserInfoSharedPreferences = UserInfoSharedPreferences() //单例模式
     }
 
-    val all
+    val all: Map<String, *>
         get() = sp.all
 
     fun setString(key: String?, value: String?) {
-        sp.edit().putString(key, value).apply()
+        sp.edit { putString(key, value) }
     }
 
     fun getString(key: String?): String? {
@@ -60,7 +61,7 @@ class UserInfoSharedPreferences {
     }
 
     fun setBoolean(key: String?, value: Boolean) {
-        sp.edit().putBoolean(key, value).apply()
+        sp.edit { putBoolean(key, value) }
     }
 
     fun getBoolean(key: String?): Boolean {
@@ -72,11 +73,11 @@ class UserInfoSharedPreferences {
     }
 
     fun setInt(key: String?, value: Int) {
-        sp.edit().putInt(key, value).apply()
+        sp.edit { putInt(key, value) }
     }
 
     fun setIntpp(key: String?) {
-        sp.edit().putInt(key, sp.getInt(key, 0)).apply()
+        sp.edit { putInt(key, sp.getInt(key, 0)) }
     }
 
     fun getInt(key: String?): Int {

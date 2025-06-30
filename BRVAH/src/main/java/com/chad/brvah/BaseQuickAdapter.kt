@@ -14,6 +14,8 @@ import androidx.annotation.IdRes
 import androidx.annotation.IntRange
 import androidx.annotation.LayoutRes
 import androidx.annotation.NonNull
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -818,14 +820,14 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
      * @return Boolean
      */
     fun hasHeaderLayout(): Boolean {
-        return this::mHeaderLayout.isInitialized && mHeaderLayout.childCount > 0
+        return this::mHeaderLayout.isInitialized && mHeaderLayout.isNotEmpty()
     }
 
     fun removeHeaderView(header: View) {
         if (!hasHeaderLayout()) return
 
         mHeaderLayout.removeView(header)
-        if (mHeaderLayout.childCount == 0) {
+        if (mHeaderLayout.isEmpty()) {
             val position = headerViewPosition
             if (position != -1) {
                 notifyItemRemoved(position)
@@ -925,7 +927,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
         if (!hasFooterLayout()) return
 
         mFooterLayout.removeView(footer)
-        if (mFooterLayout.childCount == 0) {
+        if (mFooterLayout.isEmpty()) {
             val position = footerViewPosition
             if (position != -1) {
                 notifyItemRemoved(position)
@@ -944,7 +946,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
     }
 
     fun hasFooterLayout(): Boolean {
-        return this::mFooterLayout.isInitialized && mFooterLayout.childCount > 0
+        return this::mFooterLayout.isInitialized && mFooterLayout.isNotEmpty()
     }
 
     val footerViewPosition: Int
@@ -1048,7 +1050,7 @@ abstract class BaseQuickAdapter<T, VH : BaseViewHolder>
         if (!isUseEmpty) {
             return false
         }
-        if (!this::mEmptyLayout.isInitialized || mEmptyLayout.childCount == 0) {
+        if (!this::mEmptyLayout.isInitialized || mEmptyLayout.isEmpty()) {
             return false
         }
         return emptyViewStatus != EmptyViewStatus.Hide

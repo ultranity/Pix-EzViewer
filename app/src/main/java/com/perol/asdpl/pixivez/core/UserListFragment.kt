@@ -120,7 +120,7 @@ class UserListFragment : BaseVBFragment<FragmentListBinding>() {
         binding.recyclerview.apply {
             adapter = userListAdapter
             layoutManager =
-                GridLayoutManager(requireContext(), getMaxColumn(UserListAdapter.itemWidth))
+                GridLayoutManager(requireContext(), getMaxColumn(UserListAdapter.ITEM_WIDTH))
             addItemDecoration(AverageGridItemDecoration(UserListAdapter.itemWidthPx))
             // FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }

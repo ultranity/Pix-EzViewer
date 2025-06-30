@@ -26,11 +26,11 @@ package com.perol.asdpl.pixivez.core
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Checkable
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -294,7 +294,7 @@ fun showFilterDownloadDialog(context: Context) = MaterialDialog(context).show {
     }
     positiveButton(R.string.I_know) { }
     neutralButton(R.string.download) {
-        val uri = Uri.parse(context.getString(R.string.plink))
+        val uri = context.getString(R.string.plink).toUri()
         val intent = Intent(Intent.ACTION_VIEW, uri)
         context.startActivity(intent)
     }

@@ -26,8 +26,8 @@
 package com.perol.asdpl.pixivez.ui.home.pixivision
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +68,7 @@ class SpotlightActivity : RinkActivity() {
         binding.textViewDesc.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
-            val contentUrl = Uri.parse(pageUrl)
+            val contentUrl = pageUrl.toUri()
             intent.data = contentUrl
             startActivity(intent)
         }
@@ -95,7 +95,7 @@ class SpotlightActivity : RinkActivity() {
             for (url in urls) {
                 if (!url.contains("svg"))
                     if (url.startsWith("https://www.pixiv.net/member_illust.php")) {
-                        Uri.parse(url).getQueryParameter("illust_id")
+                        url.toUri().getQueryParameter("illust_id")
                             ?.toIntOrNull()?.let { reurls.add(it) }
                     } else if (url.startsWith("https://www.pixiv.net/artworks/")) {
                         url.replace("https://www.pixiv.net/artworks/", "")

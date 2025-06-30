@@ -38,7 +38,7 @@ import kotlin.reflect.KProperty
 enum class RESTRICT_TYPE {
     all,
     public,
-    private,
+    private
 }
 
 enum class TAG_TYPE {

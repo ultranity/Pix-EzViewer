@@ -41,6 +41,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
@@ -191,8 +192,8 @@ object WebviewDnsInterceptUtil {
     }
 
     fun getWebResourceFromUrl(url: String): WebResourceResponse? {
-        val scheme: String = Uri.parse(url).scheme!!.trim()
-        var ip: String? = Uri.parse(url).host?.let { RubyHttpXDns.lookup(it)[0].hostAddress }
+        val scheme: String = url.toUri().scheme!!.trim()
+        var ip: String? = url.toUri().host?.let { RubyHttpXDns.lookup(it)[0].hostAddress }
         if (ip.isNullOrBlank()) {
             CrashHandler.instance.d(TAG, "web log 不拦截：$url")
             return null

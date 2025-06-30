@@ -31,7 +31,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -414,7 +413,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         } else {
                             "https://www.bilibili.com/video/BV1E741137mf"
                         }
-                        val uri = Uri.parse(url)
+                        val uri = url.toUri()
                         val intent = Intent(Intent.ACTION_VIEW, uri)
                         startActivity(intent)
                     }
@@ -425,7 +424,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             "me0" -> {
                 val url = "https://github.com/ultranity"
-                val uri = Uri.parse(url)
+                val uri = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }

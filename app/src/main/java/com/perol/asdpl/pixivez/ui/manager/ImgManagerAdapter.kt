@@ -24,11 +24,11 @@
 
 package com.perol.asdpl.pixivez.ui.manager
 
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
@@ -42,7 +42,7 @@ class ImgManagerAdapter(layoutResId: Int) :
     override fun convert(holder: BaseViewHolder, item: FileInfo) {
         val icon = holder.getView<ImageView>(R.id.item_img)
         Glide.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
-            .placeholder(ColorDrawable(ThemeUtil.halftrans)).into(icon)
+            .placeholder(ThemeUtil.HALF_TRANS.toDrawable()).into(icon)
         // holder.getView<ConstraintLayout>(R.id.layout).background
         holder.getView<TextView>(R.id.item_name).text = item.name
         holder.getView<TextView>(R.id.item_pid).text = item.pid.toString()

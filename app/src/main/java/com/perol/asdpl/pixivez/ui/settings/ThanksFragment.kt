@@ -27,9 +27,9 @@ package com.perol.asdpl.pixivez.ui.settings
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.DrawableRes
+import androidx.core.net.toUri
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -143,7 +143,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
 
     private fun startActivityByUri(uri: String) {
         Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(uri)
+            data = uri.toUri()
         }.also {
             it.resolveActivity(requireContext().packageManager)?.run {
                 startActivity(it)

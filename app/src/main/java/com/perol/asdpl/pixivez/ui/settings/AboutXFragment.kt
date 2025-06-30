@@ -25,13 +25,13 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
+// import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import androidx.core.net.toUri
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.mikepenz.aboutlibraries.LibsBuilder
-// import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.services.PxEZApp
 
@@ -52,19 +52,19 @@ class AboutXFragment : PreferenceFragmentCompat() {
             }
             "about_feedback_telegram" -> {
                 val url = "https://t.me/PixEzViewer"
-                val uri = Uri.parse(url)
+                val uri = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }
             "about_feedback_qq" -> {
                 val url = "https://jq.qq.com/?_wv=1027&k=524mCLy"
-                val uri = Uri.parse(url)
+                val uri = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }
             "about_rate_github" -> {
                 val url = "https://github.com/ultranity/Pix-EzViewer"
-                val uri = Uri.parse(url)
+                val uri = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }

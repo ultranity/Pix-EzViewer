@@ -56,7 +56,7 @@ import kotlin.properties.Delegates
 class UserListAdapter(layoutResId: Int) :
     LBaseQuickAdapter<UserPreviewsBean, BaseViewHolder>(layoutResId) {
     companion object {
-        const val itemWidth: Int = 400
+        const val ITEM_WIDTH: Int = 400
         val itemWidthPx: Int = 400.dp
     }
 

@@ -1,5 +1,7 @@
 package com.perol.asdpl.pixivez.objects;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
@@ -119,6 +121,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
         return false;
     }
 
+    @NonNull
     @Override
     public Set<K> keySet() {
         processQueue();
@@ -131,6 +134,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
         return references.size();
     }
 
+    @NonNull
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         processQueue();
@@ -142,6 +146,7 @@ public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
         return entries;
     }
 
+    @NonNull
     public Collection<V> values() {
         processQueue();
 

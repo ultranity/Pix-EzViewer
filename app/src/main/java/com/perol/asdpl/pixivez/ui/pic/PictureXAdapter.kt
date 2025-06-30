@@ -125,7 +125,10 @@ class PictureXAdapter(
         quality = pre.getString("quality", "0")?.toInt() ?: 0
         imageUrls = data.meta.map { Works.qualityUrl(it, quality) }
         val needSmall = (mContext as FragmentActivity).intent
-            .getBooleanExtra(PictureActivity.ARG_ThumbHint, false) || Works.needSmall(data, quality)
+            .getBooleanExtra(PictureActivity.ARG_THUMB_HINT, false) || Works.needSmall(
+            data,
+            quality
+        )
         imageThumbnail = if (needSmall) {
             data.meta[0].square_medium
         } else {

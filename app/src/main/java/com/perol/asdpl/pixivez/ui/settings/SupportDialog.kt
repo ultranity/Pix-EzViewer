@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +15,7 @@ import android.text.style.ForegroundColorSpan
 import android.util.Base64
 import android.view.View
 import android.webkit.MimeTypeMap
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.perol.asdpl.pixivez.BuildConfig
@@ -100,7 +100,7 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
         val bindingWX = DialogWeixinUltranityBinding.inflate(layoutInflater)
         val spannableString =
             SpannableString(getString(R.string.support_static).format(totaldownloadcount))
-        val colorSpan = ForegroundColorSpan(Color.parseColor("#F44336"))
+        val colorSpan = ForegroundColorSpan("#F44336".toColorInt())
         if (!full) {
             bindingWX.qrCode.visibility = View.GONE
         }

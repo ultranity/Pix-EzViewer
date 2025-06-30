@@ -74,7 +74,7 @@ class UsersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerview.apply {
             layoutManager =
-                GridLayoutManager(requireContext(), getMaxColumn(UserListAdapter.itemWidth))
+                GridLayoutManager(requireContext(), getMaxColumn(UserListAdapter.ITEM_WIDTH))
             // FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
             //    .apply { justifyContent = JustifyContent.SPACE_AROUND }
             addItemDecoration(AverageGridItemDecoration(UserListAdapter.itemWidthPx))

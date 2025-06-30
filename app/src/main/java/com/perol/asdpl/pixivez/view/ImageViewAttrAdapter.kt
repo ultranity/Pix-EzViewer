@@ -26,12 +26,12 @@
 package com.perol.asdpl.pixivez.view
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
 import android.view.LayoutInflater
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -136,8 +136,8 @@ fun loadBGImage(imageView: ImageView, url: String?) {
         }
         Glide.with(imageView.context).load(url)
             .transition(withCrossFade())
-            .placeholder(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
-            .error(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
+            .placeholder(ThemeUtil.getColorPrimary(imageView.context).toDrawable())
+            .error(ThemeUtil.getColorPrimary(imageView.context).toDrawable())
             .into(object : ImageViewTarget<Drawable>(imageView) {
                 override fun setResource(resource: Drawable?) {
                     imageView.setImageDrawable(resource)
@@ -145,7 +145,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
             })
     } else {
         Glide.with(imageView.context)
-            .load(ColorDrawable(ThemeUtil.getColorPrimary(imageView.context)))
+            .load(ThemeUtil.getColorPrimary(imageView.context).toDrawable())
             .into(imageView)
     }
 }

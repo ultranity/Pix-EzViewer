@@ -29,6 +29,7 @@ import android.os.Build
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.withStyledAttributes
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.objects.dp
 
@@ -81,60 +82,60 @@ class NiceImageView @JvmOverloads constructor(
             : Path? = null
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.NiceImageView, 0, 0)
-        for (i in 0 until ta.indexCount) {
-            when (val attr = ta.getIndex(i)) {
-                R.styleable.NiceImageView_is_cover_src -> {
-                    isCoverSrc = ta.getBoolean(attr, isCoverSrc)
-                }
+        context.withStyledAttributes(attrs, R.styleable.NiceImageView, 0, 0) {
+            for (i in 0 until indexCount) {
+                when (val attr = getIndex(i)) {
+                    R.styleable.NiceImageView_is_cover_src -> {
+                        isCoverSrc = getBoolean(attr, isCoverSrc)
+                    }
 
-                R.styleable.NiceImageView_is_circle -> {
-                    isCircle = ta.getBoolean(attr, isCircle)
-                }
+                    R.styleable.NiceImageView_is_circle -> {
+                        isCircle = getBoolean(attr, isCircle)
+                    }
 
-                R.styleable.NiceImageView_border_width -> {
-                    borderWidth = ta.getDimensionPixelSize(attr, borderWidth)
-                }
+                    R.styleable.NiceImageView_border_width -> {
+                        borderWidth = getDimensionPixelSize(attr, borderWidth)
+                    }
 
-                R.styleable.NiceImageView_border_color -> {
-                    borderColor = ta.getColor(attr, borderColor)
-                }
+                    R.styleable.NiceImageView_border_color -> {
+                        borderColor = getColor(attr, borderColor)
+                    }
 
-                R.styleable.NiceImageView_inner_border_width -> {
-                    innerBorderWidth = ta.getDimensionPixelSize(attr, innerBorderWidth)
-                }
+                    R.styleable.NiceImageView_inner_border_width -> {
+                        innerBorderWidth = getDimensionPixelSize(attr, innerBorderWidth)
+                    }
 
-                R.styleable.NiceImageView_inner_border_color -> {
-                    innerBorderColor = ta.getColor(attr, innerBorderColor)
-                }
+                    R.styleable.NiceImageView_inner_border_color -> {
+                        innerBorderColor = getColor(attr, innerBorderColor)
+                    }
 
-                R.styleable.NiceImageView_corner_radius -> {
-                    cornerRadius = ta.getDimensionPixelSize(attr, cornerRadius)
-                }
+                    R.styleable.NiceImageView_corner_radius -> {
+                        cornerRadius = getDimensionPixelSize(attr, cornerRadius)
+                    }
 
-                R.styleable.NiceImageView_corner_top_left_radius -> {
-                    cornerTopLeftRadius = ta.getDimensionPixelSize(attr, cornerTopLeftRadius)
-                }
+                    R.styleable.NiceImageView_corner_top_left_radius -> {
+                        cornerTopLeftRadius = getDimensionPixelSize(attr, cornerTopLeftRadius)
+                    }
 
-                R.styleable.NiceImageView_corner_top_right_radius -> {
-                    cornerTopRightRadius = ta.getDimensionPixelSize(attr, cornerTopRightRadius)
-                }
+                    R.styleable.NiceImageView_corner_top_right_radius -> {
+                        cornerTopRightRadius = getDimensionPixelSize(attr, cornerTopRightRadius)
+                    }
 
-                R.styleable.NiceImageView_corner_bottom_left_radius -> {
-                    cornerBottomLeftRadius = ta.getDimensionPixelSize(attr, cornerBottomLeftRadius)
-                }
+                    R.styleable.NiceImageView_corner_bottom_left_radius -> {
+                        cornerBottomLeftRadius = getDimensionPixelSize(attr, cornerBottomLeftRadius)
+                    }
 
-                R.styleable.NiceImageView_corner_bottom_right_radius -> {
-                    cornerBottomRightRadius =
-                        ta.getDimensionPixelSize(attr, cornerBottomRightRadius)
-                }
+                    R.styleable.NiceImageView_corner_bottom_right_radius -> {
+                        cornerBottomRightRadius =
+                            getDimensionPixelSize(attr, cornerBottomRightRadius)
+                    }
 
-                R.styleable.NiceImageView_mask_color -> {
-                    maskColor = ta.getColor(attr, maskColor)
+                    R.styleable.NiceImageView_mask_color -> {
+                        maskColor = getColor(attr, maskColor)
+                    }
                 }
             }
         }
-        ta.recycle()
         borderRadii = FloatArray(8)
         srcRadii = FloatArray(8)
         borderRectF = RectF()

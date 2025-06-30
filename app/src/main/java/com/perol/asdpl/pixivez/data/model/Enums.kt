@@ -1,10 +1,10 @@
 package com.perol.asdpl.pixivez.data.model
 
 enum class Item {
-    illust,
-    manga,
-    novel,
-    ugoira,
+    Illust,
+    Manga,
+    Novel,
+    Ugoira,
 }
 
 enum class Restrict(val value: String) {

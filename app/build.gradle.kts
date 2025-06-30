@@ -23,6 +23,7 @@
  * SOFTWARE
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -129,12 +130,14 @@ android {
         viewBinding = true
         buildConfig = true
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_21
+        }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     lint {
         abortOnError = false
@@ -148,9 +151,9 @@ android {
         // - If the automatic registered android tasks are disabled, a similar thing can be achieved manually
         // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`
         // - the resulting file can for example be added as part of the SCM
-        registerAndroidTasks = false
+        android.registerAndroidTasks = false
         // Enable pretty printing for the generated JSON file
-        prettyPrint = false
+        export.prettyPrint = false
     }
 }
 

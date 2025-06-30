@@ -28,13 +28,13 @@ package com.perol.asdpl.pixivez.ui.account
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.perol.asdpl.pixivez.R
@@ -213,7 +213,7 @@ class LoginActivity : RinkActivity() {
 //        startActivity(intent)
         Snackbar.make(view, getString(R.string.registerclose), Snackbar.LENGTH_LONG)
             .setAction(R.string.view) {
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.pixiv.net")).also {
+                Intent(Intent.ACTION_VIEW, "https://accounts.pixiv.net".toUri()).also {
                     it.resolveActivity(packageManager)?.run {
                         startActivity(it)
                     }

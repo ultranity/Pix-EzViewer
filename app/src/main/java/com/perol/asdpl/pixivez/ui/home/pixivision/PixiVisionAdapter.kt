@@ -24,8 +24,8 @@
  */
 package com.perol.asdpl.pixivez.ui.home.pixivision
 
-import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -49,7 +49,7 @@ class PixiVisionAdapter(
             holder.getView<ImageView>(R.id.imageView_pixivision)
         Glide.with(context).load(item.thumbnail)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .placeholder(ColorDrawable(ThemeUtil.halftrans))
+            .placeholder(ThemeUtil.HALF_TRANS.toDrawable())
             .transition(DrawableTransitionOptions.withCrossFade()).into(imageView)
     }
 

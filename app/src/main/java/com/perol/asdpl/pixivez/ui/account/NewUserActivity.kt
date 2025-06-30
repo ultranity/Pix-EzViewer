@@ -32,7 +32,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.CookieSyncManager
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import com.perol.asdpl.pixivez.IntentActivity
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
@@ -50,7 +56,7 @@ class NewUserActivity : RinkActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             if (url.startsWith("pixiv://account/login")) {
-                val code = Uri.parse(url).getQueryParameter("code").toString()
+                val code = url.toUri().getQueryParameter("code").toString()
                 if (code.isBlank()) {
                     Toasty.error(applicationContext, R.string.error_unknown)
                     finish()

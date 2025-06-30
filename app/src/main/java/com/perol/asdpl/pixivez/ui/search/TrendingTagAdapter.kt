@@ -24,8 +24,8 @@
 
 package com.perol.asdpl.pixivez.ui.search
 
-import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.chad.brvah.BaseQuickAdapter
 import com.chad.brvah.viewholder.BaseViewHolder
@@ -40,7 +40,7 @@ class TrendingTagAdapter(data: MutableList<TrendTagsBean>?) :
         val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_trendingtag)
         Glide.with(imageView.context)
             .load(item.illust.meta[0].square_medium)
-            .placeholder(ColorDrawable(ThemeUtil.halftrans))
+            .placeholder(ThemeUtil.HALF_TRANS.toDrawable())
             .into(imageView)
     }
 }

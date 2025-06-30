@@ -43,9 +43,9 @@ object ImageHttpDns : Dns {
         "210.140.139.133",
         "210.140.139.137",
     ).map { InetAddress.getByName(it) }
-    const val IPListPattern =
+    const val IP_LIST_PATTERN =
         "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(,\\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*\$"
-    val ipPattern = Regex(IPListPattern)
+    val ipPattern = Regex(IP_LIST_PATTERN)
     lateinit var customIPs: MutableList<String>
     private var customList: List<InetAddress> = listOf()
 

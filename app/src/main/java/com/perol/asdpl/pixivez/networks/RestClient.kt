@@ -51,18 +51,18 @@ import java.util.concurrent.TimeUnit
 object RestClient {
     private val apiDns by lazy { RubyHttpXDns }
     private val imageDns by lazy { ImageHttpDns }
-    private const val App_OS = "Android"
+    private const val APP_OS = "Android"
     private val App_OS_Version = android.os.Build.VERSION.RELEASE
-    private const val App_Version = "7.13.3"
+    private const val APP_VER = "7.13.3"
     val UA =
-        "Pixiv${App_OS}App/#{App_Version} (${App_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
+        "Pixiv${APP_OS}App/#{App_Version} (${APP_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
     private val ISO8601DATETIMEFORMAT by lazy {
         SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
             PxEZApp.locale
         )
     }
-    private const val HashSalt =
+    private const val HASH_SALT =
         "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
     private val dnsProxy
         get() = PxEZApp.instance.pre.getBoolean("dnsProxy", false)
@@ -155,9 +155,9 @@ object RestClient {
         val original = chain.request()
         val request = original.newBuilder()
             .header("User-Agent", UA)
-            .header("App-OS", App_OS)
+            .header("App-OS", APP_OS)
             .header("App-OS-Version", App_OS_Version)
-            .header("App-Version", App_Version)
+            .header("App-Version", APP_VER)
             .header("Accept-Language", "${PxEZApp.locale.toLanguageTag()}")
             .header("Host", host)
             .apply {
@@ -166,7 +166,7 @@ object RestClient {
                 }
             }
             .header("X-Client-Time", isoDate)
-            .header("X-Client-Hash", encode("$isoDate$HashSalt"))
+            .header("X-Client-Hash", encode("$isoDate$HASH_SALT"))
             .build()
         return chain.proceed(request)
     }

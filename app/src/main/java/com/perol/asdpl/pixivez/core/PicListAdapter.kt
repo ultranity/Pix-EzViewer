@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
@@ -15,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -60,7 +60,7 @@ abstract class PicListAdapter(
 
     var colorPrimary: Int = R.color.colorPrimary
     var colorPrimaryDark: Int = R.color.colorPrimaryDark
-    var colorTransparent: Int = ThemeUtil.halftrans
+    var colorTransparent: Int = ThemeUtil.HALF_TRANS
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
     protected open val withUser = false
@@ -411,7 +411,7 @@ abstract class PicListAdapter(
             return
         }
         Glide.with(context).load(loadUrl).transition(withCrossFade())
-            .placeholder(ColorDrawable(ThemeUtil.halftrans))
+            .placeholder(ThemeUtil.HALF_TRANS.toDrawable())
             .error(ContextCompat.getDrawable(context, R.drawable.ai))
             .into(object : ImageViewTarget<Drawable>(mainImage) {
                 override fun setResource(resource: Drawable?) {

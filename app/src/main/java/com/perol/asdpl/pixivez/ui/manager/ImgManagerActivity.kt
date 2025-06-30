@@ -26,6 +26,7 @@ package com.perol.asdpl.pixivez.ui.manager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.LayoutMode
@@ -158,7 +159,7 @@ class ImgManagerActivity : RinkActivity() {
                     context = context
                 ) { _, folder ->
                     folder.absolutePath.let {
-                        viewModel.pre.edit().putString("ImgManagerPath", it).apply()
+                        viewModel.pre.edit { putString("ImgManagerPath", it) }
                         viewModel.path.value = it
                     }
                 }
@@ -186,8 +187,9 @@ class ImgManagerActivity : RinkActivity() {
                     viewModel.TagSeparator = "${tagSeparator.text}"
                     viewModel.pre.edit().putString("ImgManagerSaveFormat", viewModel.saveformat)
                         .apply()
-                    viewModel.pre.edit().putString("ImgManagerTagSeparator", viewModel.TagSeparator)
-                        .apply()
+                    viewModel.pre.edit {
+                        putString("ImgManagerTagSeparator", viewModel.TagSeparator)
+                    }
                     // if(getInfo){
                     getInfo = false
                     // }

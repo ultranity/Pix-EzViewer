@@ -304,9 +304,18 @@
     <string name="show_block">顯示占位過濾結果</string>
     <string name="recommend">推薦</string>
     <string name="harmonize_color">色彩和諧化</string>
+    <string name="harmonizeColorAPIAlert">色彩和谐化要求 Android 11/R+ (API 30+)</string>
     <string name="changeing_icon_tip">正在嘗試更換，等待啓動器刷新</string>
     <string name="max_sanity">San值保護</string>
     <string name="check_clipboard">複製id監測</string>
     <string name="go_to_detail">轉到詳情</string>
     <string name="view_cache_repo">運行快取</string>
+    <string name="ip_download">强制DNS解析</string>
+    <string name="i_pximg_net_ip_list">自定義i.pximg.net IP列表,用\",\"分隔</string>
+    <string name="ip_shuffle">負載均衡</string>
+    <string name="restrict_sanity">等效 private 閾值</string>
+    <string name="view_user_blocked">User %1$d 已被屏蔽, 確定打開麽？</string>
+    <string name="auto_load_related_illust">自動加載相關推薦圖片</string>
+    <string name="refreshDNS">刷新DNS</string>
+    <string name="block_user">屏蔽用戶</string>
 </resources>

@@ -312,9 +312,10 @@
     <string name="go_to_detail">go to detail</string>
     <string name="ip_download">Force DNS Solving</string>
     <string name="block_user">Block User</string>
-    <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, seperate with \",\"</string>
+    <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, separate with \",\"</string>
     <string name="ip_shuffle">Load Balancing</string>
     <string name="restrict_sanity">sanity threshold for x restrict</string>
+    <string name="view_user_blocked">User %1$d Blocked, continue？</string>
     <string name="auto_load_related_illust">Autoload related Illust</string>
     <string name="refreshDNS">Refresh DNS</string>
 </resources>

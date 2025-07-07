@@ -53,8 +53,8 @@ android {
         minSdk = 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 29
-        versionCode = 221
-        versionName = "2.2.1"
+        versionCode = 222
+        versionName = "2.2.2"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true

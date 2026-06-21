@@ -310,6 +310,9 @@
     <string name="check_clipboard">複製id監測</string>
     <string name="go_to_detail">轉到詳情</string>
     <string name="view_cache_repo">運行快取</string>
+    <string name="dns_mode">DNS 解析</string>
+    <string name="sni_mode">SNI 模式</string>
+    <string name="doh_provider_hint">DoH 服務商(留空=預設 Cloudflare)</string>
     <string name="ip_download">强制DNS解析</string>
     <string name="i_pximg_net_ip_list">自定義i.pximg.net IP列表,用\",\"分隔</string>
     <string name="ip_shuffle">負載均衡</string>

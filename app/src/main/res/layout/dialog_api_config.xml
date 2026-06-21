@@ -5,16 +5,78 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/api_net_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/dns_mode" />
+
+            <Spinner
+                android:id="@+id/dns_mode_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/doh_provider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/doh_provider_hint"
+            android:importantForAutofill="no"
+            android:inputType="textUri|textNoSuggestions" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/sni_mode" />
+
+            <Spinner
+                android:id="@+id/sni_mode_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/auto_sni"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auto_select_sni" />
+        </LinearLayout>
+    </LinearLayout>
+
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/dns_proxy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/api_net_box"
         android:text="@string/dns_proxy" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/shuffle_IP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/api_net_box"
         android:layout_toEndOf="@id/dns_proxy"
         android:text="@string/ip_shuffle" />
 
@@ -22,6 +84,7 @@
         android:id="@+id/refreshDNS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/api_net_box"
         android:layout_toEndOf="@+id/shuffle_IP"
         android:text="@string/refreshDNS" />
 

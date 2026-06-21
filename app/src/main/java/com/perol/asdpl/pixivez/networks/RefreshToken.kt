@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 class RefreshToken{
     companion object {
@@ -86,6 +88,13 @@ class RefreshToken{
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d("RefreshToken", e.message.toString(), e)
+            // 421 Misdirected Request:入口 IP / SNI 模式不对(非凭据失效)。吞掉不抛出 ——
+            // 否则刷新身份失败的异常会被 CrashHandler 当未捕获处理而退出进程,造成"进不去
+            // 设置改网络模式"的死锁。提示用户去设置切换后重试。
+            if (e is HttpException && e.code() == 421) {
+                ToastQ.post("421:连接被拒,请到 设置→连接设置 切换 DNS / SNI 模式后重试")
+                return@withLock
+            }
             Toasty.tokenRefreshed(e)
             throw e
         }

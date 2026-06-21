@@ -125,4 +125,14 @@
         <item>浏览历史</item>
         <item>屏蔽列表</item>
     </string-array>
+    <string-array name="dns_mode_entries">
+        <item>Pixiv 直连源站(空SNI 用)</item>
+        <item>DoH·Cloudflare(明文/ECH 用)</item>
+        <item>系统 DNS</item>
+    </string-array>
+    <string-array name="sni_mode_entries">
+        <item>替换 SNI=pixiv.me(墙内推荐)</item>
+        <item>空 SNI</item>
+        <item>明文 SNI(证书校验)</item>
+    </string-array>
 </resources>

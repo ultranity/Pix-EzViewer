@@ -77,7 +77,7 @@ object RestClient {
             // .addHeader("Host", "https://app-api.pixiv.net")
             val request = requestBuilder.build()
             chain.proceed(request)
-        }).apiProxySocket().build()
+        }).applyApiNetwork().build()
     }
 
     //private val httpCache = Cache(File(PxEZApp.instance.cacheDir, "http"), 256 * 1024 * 1024)
@@ -184,6 +184,7 @@ object RestClient {
         PaymentRequired(402),
         Forbidden(403),
         NotFound(404),
+        MisdirectedRequest(421),
         Else(-1);
 
         companion object {
@@ -230,6 +231,15 @@ object RestClient {
                     }
                 }
 
+                // 421:入口 IP/SNI 不对。不刷新(刷新无济于事)、不登出,只提示去设置切换,
+                // 避免陷入"刷新失败→退出→进不去设置"的死锁。
+                HttpStatus.MisdirectedRequest -> {
+                    Log.e("okhttp", "421 Misdirected: ${response.request.url}")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        ToastQ.post("421:入口被拒,请到 设置→连接设置 切换 DNS / SNI 模式")
+                    }
+                }
+
                 HttpStatus.OK -> {
                     response.message
                 }
@@ -254,7 +264,7 @@ object RestClient {
             addInterceptor(AuthHeaderInterceptor(host))
             // if (BuildConfig.DEBUG) addInterceptor(httpLoggingInterceptor)
             if (needAuth) addInterceptor(AuthUpdateInterceptor(host))
-            apiProxySocket()
+            applyApiNetwork()
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(20, TimeUnit.SECONDS)
@@ -262,7 +272,6 @@ object RestClient {
         return builder.build()
     }
 
-    private fun OkHttpClient.Builder.apiProxySocket() = proxySocket(apiDns)
     fun OkHttpClient.Builder.imageProxySocket(mirror: Boolean = true) = apply {
         if (mirror) {
             addInterceptor {

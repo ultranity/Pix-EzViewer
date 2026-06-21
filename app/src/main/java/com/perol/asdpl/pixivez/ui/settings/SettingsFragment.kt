@@ -32,6 +32,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -70,6 +71,14 @@ import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
 import com.perol.asdpl.pixivez.databinding.SimpleTextItemBinding
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.networks.ImageHttpDns.ipPattern
+import com.perol.asdpl.pixivez.networks.DnsMode
+import com.perol.asdpl.pixivez.networks.SniMode
+import com.perol.asdpl.pixivez.networks.DohConfig
+import com.perol.asdpl.pixivez.networks.SniReplaceConfig
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.InteractionUtil
@@ -619,6 +628,37 @@ class SettingsFragment : PreferenceFragmentCompat() {
             binding.shuffleIP.isChecked = getBoolean("shuffleIP", true)
             binding.apiMirror.isChecked = getBoolean("enableMirror", false)
         }
+        // ── API 连接:DNS 维度(系统/DoH)× SNI 维度(明文/空)解耦 ──
+        fun spinnerAdapter(arrayRes: Int) = ArrayAdapter.createFromResource(
+            requireContext(), arrayRes, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        val dnsOrder = DnsMode.displayOrder
+        binding.dnsModeSpinner.adapter = spinnerAdapter(R.array.dns_mode_entries)
+        binding.dnsModeSpinner.setSelection(dnsOrder.indexOf(DnsMode.current()).coerceAtLeast(0))
+
+        val sniOrder = SniMode.displayOrder
+        binding.sniModeSpinner.adapter = spinnerAdapter(R.array.sni_mode_entries)
+        binding.sniModeSpinner.setSelection(sniOrder.indexOf(SniMode.current()).coerceAtLeast(0))
+
+        binding.dohProvider.setText(DohConfig.provider())
+        // 自动选 SNI:读源站证书 SAN → 逐个实测(握手/421)→ 选当前网络可用的并落库,
+        // 同时把 DNS=直连源站、SNI=替换 选上,保存重启即生效。
+        binding.autoSni.setOnClickListener {
+            ToastQ.post("正在实测候选 SNI…")
+            lifecycleScope.launch(Dispatchers.IO) {
+                val picked = SniReplaceConfig.autoSelect()
+                withContext(Dispatchers.Main) {
+                    if (picked != null) {
+                        binding.dnsModeSpinner.setSelection(dnsOrder.indexOf(DnsMode.DIRECT).coerceAtLeast(0))
+                        binding.sniModeSpinner.setSelection(sniOrder.indexOf(SniMode.REPLACE).coerceAtLeast(0))
+                        ToastQ.post("已选 SNI=$picked,点保存并重启生效")
+                    } else {
+                        ToastQ.post("候选 SNI 均不可用,请检查网络 / 直连 IP")
+                    }
+                }
+            }
+        }
         binding.ipInput.setText(ImageHttpDns.customIPs.joinToString())
         binding.ipInput.addTextChangedListener(afterTextChanged = { s ->
             if (!s.isNullOrEmpty()) {
@@ -668,6 +708,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     putString("mirrorURL", Works.mirrorURL)
                     putString("mirrorFormat", Works.mirrorFormat)
                     putBoolean("dnsProxy", binding.dnsProxy.isChecked)
+                    putString(
+                        DnsMode.PREF_KEY,
+                        dnsOrder[binding.dnsModeSpinner.selectedItemPosition].code
+                    )
+                    putString(
+                        SniMode.PREF_KEY,
+                        sniOrder[binding.sniModeSpinner.selectedItemPosition].code
+                    )
+                    putString(
+                        DohConfig.PREF_KEY,
+                        binding.dohProvider.text.toString().trim().ifBlank { DohConfig.DEFAULT }
+                    )
                     putBoolean("forceIP", Works.forceIP)
                     putBoolean("shuffleIP", ImageHttpDns.shuffleIP)
                     putString("customIPs", ImageHttpDns.customIPs.joinToString())

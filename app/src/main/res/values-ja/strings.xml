@@ -311,6 +311,9 @@
     <string name="check_clipboard">クリップボードにPIDが入っているかチェック</string>
     <string name="go_to_detail">詳細表示</string>
     <string name="view_cache_repo">アプリキャッシュ</string>
+    <string name="dns_mode">DNS 解決</string>
+    <string name="sni_mode">SNI モード</string>
+    <string name="doh_provider_hint">DoH プロバイダ(空欄=既定 Cloudflare)</string>
     <string name="ip_download">DNS直接解決</string>
     <string name="i_pximg_net_ip_list">i.pximg.net のカスタムIPリスト (カンマ区切り)</string>
     <string name="ip_shuffle">IPシャッフル (ロードバランス)</string>

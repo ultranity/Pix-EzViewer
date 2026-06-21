@@ -310,6 +310,10 @@
     <string name="max_sanity">max sanity</string>
     <string name="check_clipboard">check if clipboard contains pid</string>
     <string name="go_to_detail">go to detail</string>
+    <string name="dns_mode">DNS resolver</string>
+    <string name="sni_mode">SNI mode</string>
+    <string name="doh_provider_hint">DoH provider (blank = default Cloudflare)</string>
+    <string name="auto_select_sni">Auto-pick SNI</string>
     <string name="ip_download">Force DNS Solving</string>
     <string name="block_user">Block User</string>
     <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, separate with \",\"</string>

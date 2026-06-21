@@ -71,4 +71,14 @@
         <item>View History</item>
         <item>Block list</item>
     </string-array>
+    <string-array name="dns_mode_entries">
+        <item>Pixiv origin direct (empty SNI)</item>
+        <item>DoH / Cloudflare (plain/ECH)</item>
+        <item>System DNS</item>
+    </string-array>
+    <string-array name="sni_mode_entries">
+        <item>Replace SNI = pixiv.me (GFW)</item>
+        <item>Empty SNI</item>
+        <item>Plaintext SNI (verified)</item>
+    </string-array>
 </resources>

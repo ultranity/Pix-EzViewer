@@ -14,12 +14,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.chad.brvah.viewholder.BaseViewHolder
@@ -63,6 +67,17 @@ abstract class PicListAdapter(
     var colorTransparent: Int = ThemeUtil.HALF_TRANS
     var badgeTextColor: Int = R.color.yellow
     private var quality = 0
+
+    // 瀑布流缩略图加载选项:按 cell 宽降采样(RESOURCE 缓存解码后的小图,滑回即取)
+    // + RGB_565(不透明缩略图减半内存),显著降低 fling 期的解码成本与内存抖动。
+    // cellWidth 在 onAttachedToRecyclerView 按列宽算定;未就绪时回退 SIZE_ORIGINAL。
+    private var cellWidth = 0
+    private val listImageOptions: RequestOptions
+        get() = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .let { if (cellWidth > 0) it.override(cellWidth) else it }
+
     protected open val withUser = false
     protected val likeDataID = "likeLiveData".hashCode()
     protected val followDataID = "followLiveData".hashCode()
@@ -261,9 +276,27 @@ abstract class PicListAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         //setFooterView(LayoutInflater.from(context).inflate(R.layout.foot_list, null))
-        setItemAnimation(AnimationType.ScaleIn)
-        animationEnable = PxEZApp.animationEnable
-        //recyclerView.setItemViewCacheSize(12)
+        // #6: 关闭 item 入场动画 —— 下滑时每行 ScaleIn 叠加动画/过度绘制,正是卡顿方向。
+        animationEnable = false
+        // #9: 列表整体尺寸稳定,固定可省 requestLayout;扩大缓存减少小幅回滚的重 bind/重解码。
+        recyclerView.setHasFixedSize(true)
+        recyclerView.setItemViewCacheSize(12)
+        // #1: 按列宽算缩略图降采样目标尺寸。
+        recyclerView.post {
+            val lm = recyclerView.layoutManager as? StaggeredGridLayoutManager
+            val span = lm?.spanCount ?: 1
+            if (recyclerView.width > 0) cellWidth = recyclerView.width / span
+            // #5: cell 定高后(见布局 constraintDimensionRatio)关闭跨列移动重排。
+            lm?.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        }
+        // #2: fling/拖动期间暂停 Glide,空闲再恢复 —— 避免为划过的行起解码任务抢主线程。
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
+                val g = Glide.with(context)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) g.resumeRequests()
+                else g.pauseRequests()
+            }
+        })
         loadMoreModule.preLoadNumber = 12
         stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
         headerWithEmptyEnable = true
@@ -385,6 +418,15 @@ abstract class PicListAdapter(
             numLayout.visibility = View.GONE
         }
         val mainImage = holder.getView<ImageView>(R.id.item_img)
+        // #4: 加载前按 item 原始宽高比给 cell 定高(仅 ConstraintLayout 布局),
+        // 图片到达不再触发重测/SGLM 跨列重排 —— 下滑多图同时解析时尤其明显。
+        (mainImage.layoutParams as? ConstraintLayout.LayoutParams)?.let { lp ->
+            if (item.width > 0 && item.height > 0) {
+                lp.dimensionRatio = "${item.width}:${item.height}"
+                lp.height = 0 // MATCH_CONSTRAINT:高度由宽度 × 比例决定
+                mainImage.layoutParams = lp
+            }
+        }
         if (blockedFlag[pos]) {
             Glide.with(context)
                 .load(R.drawable.ic_action_block).transition(withCrossFade())
@@ -404,13 +446,16 @@ abstract class PicListAdapter(
         if (blockSanity) { //show blur image
             Glide.with(context)
                 .load(loadUrl)
-                .transition(withCrossFade())
+                .apply(listImageOptions)
+                .dontAnimate()
                 .placeholder(R.drawable.h)
                 .transform(ResizeTransformation(8), PixelationFilterTransformation(4F))
                 .into(mainImage)
             return
         }
-        Glide.with(context).load(loadUrl).transition(withCrossFade())
+        Glide.with(context).load(loadUrl)
+            .apply(listImageOptions)
+            .dontAnimate()
             .placeholder(ThemeUtil.HALF_TRANS.toDrawable())
             .error(ContextCompat.getDrawable(context, R.drawable.ai))
             .into(object : ImageViewTarget<Drawable>(mainImage) {

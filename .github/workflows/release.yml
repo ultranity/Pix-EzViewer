@@ -1,0 +1,118 @@
+name: Release
+
+# ┌────────────────────────────────────────────────────────────────────────────┐
+# │ Release CI(最优实践 · tag 驱动 + GitHub Release):                          │
+# │   • push tag `v*` —— 推版本标签即出正式签名包并建 Release(单一事实来源)。  │
+# │   • workflow_dispatch —— 手动指定 tag 触发(应急/补发)。                    │
+# │                                                                              │
+# │ ⚠ 签名红线:必须用与历史版本【相同】的签名密钥(经 secrets 注入),          │
+# │   否则老用户覆盖升级会因签名不一致被系统拒绝。                               │
+# │   需在仓库 Settings → Secrets 配置:                                         │
+# │     SIGNING_KEYSTORE_BASE64 / SIGNING_STORE_PASSWORD                         │
+# │     SIGNING_KEY_ALIAS / SIGNING_KEY_PASSWORD                                 │
+# │   (base64 -w0 your.keystore 取 BASE64;别名/口令同历史发布)                 │
+# └────────────────────────────────────────────────────────────────────────────┘
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch: {} # 手动触发 = 干跑验证(构建 + 签名身份校验,不创建 Release)
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false # 发布过程不打断
+
+permissions:
+  contents: write # 创建 Release / 上传产物 / 必要时建 tag
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # 需要 Ketch 子模块(:ketch)
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 经 secrets 注入真实签名 —— 与历史版本一致是覆盖升级的前提。
+      # secrets 用 env 传入(不内联进命令行),避免泄漏到日志。
+      - name: Write release signing config from secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::缺少发布签名 secrets(SIGNING_KEYSTORE_BASE64 等)。必须使用与历史版本相同的签名,否则老用户无法升级安装。"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/release.keystore"
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/release.keystore"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > "$GITHUB_WORKSPACE/keystore.properties"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # git flavor 的 release 由 flavor 级 "config" 签名(即上面注入的真实 keystore)。
+      - name: Build signed release APK (git flavor)
+        run: ./gradlew assembleGitRelease --stacktrace
+
+      # 断言签名身份 == 历史发布密钥(ultrax.jks 的证书 SHA-256)。
+      # 不一致 → secrets 里的 keystore/别名/口令不对,直接 fail。
+      - name: Verify release signing identity
+        env:
+          EXPECTED_SHA256: ac182023392a85446594989058d8b91a0203c23042b2b2ca158dee8455dde348
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* 2>/dev/null | sort -V | tail -1)
+          apk=$(ls app/build/outputs/apk/git/release/*.apk | head -1)
+          echo "Verifying: $apk"
+          GOT=$("$BT/apksigner" verify --print-certs "$apk" \
+                | grep -i "certificate SHA-256 digest" | head -1 \
+                | grep -oE '[0-9a-fA-F]{64}' | tr 'A-F' 'a-f')
+          echo "signer cert SHA-256 = ${GOT:-<none>}"
+          echo "expected            = $EXPECTED_SHA256"
+          if [ "$GOT" != "$EXPECTED_SHA256" ]; then
+            echo "::error::签名身份不匹配!secrets 中的 keystore/别名/口令与历史发布密钥不一致,老用户将无法覆盖升级。"
+            exit 1
+          fi
+          echo "✅ 签名身份与历史发布一致"
+
+      # 上传签名后的 release APK 为产物(干跑 / tag-push 都上传),
+      # 便于在建 Release 之前就下载、用真实发布签名实测。
+      - name: Upload signed release APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixEz-release-signed-${{ github.run_number }}-${{ github.sha }}
+          path: app/build/outputs/apk/git/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Resolve tag name
+        id: meta
+        run: echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        if: ${{ github.event_name == 'push' }} # 仅 tag-push 发布;手动触发为干跑验证
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          draft: false
+          prerelease: ${{ contains(steps.meta.outputs.tag, '-') }}
+          generate_release_notes: true # 自动从上个 tag 以来的 PR/commit 生成发布说明
+          fail_on_unmatched_files: true
+          files: app/build/outputs/apk/git/release/*.apk

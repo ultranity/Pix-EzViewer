@@ -1,0 +1,92 @@
+name: Android Debug Build
+
+# ┌────────────────────────────────────────────────────────────────────────────┐
+# │ 触发方案(最优实践,面向「迭代 + 实测」场景):                              │
+# │   • workflow_dispatch —— 手动点「Run workflow」按需出 APK,可选 flavor。     │
+# │   • push(master/main + ci/** 工作分支)—— 每次提交自动产出可装测试包,       │
+# │     仅代码相关变更触发(忽略纯文档/资源说明)。                              │
+# │   • pull_request —— 合并前自动校验能否构建。                                 │
+# │ concurrency: 同一分支新推送自动取消旧运行,省 runner 时长。                  │
+# └────────────────────────────────────────────────────────────────────────────┘
+on:
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: "Product flavor to build"
+        type: choice
+        default: git
+        options: [git, libre]
+  push:
+    branches: [master, main, "ci/**", "fix/**"]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "fastlane/metadata/**"
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    branches: [master, main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # push / PR 无输入时默认 git flavor
+      FLAVOR: ${{ github.event.inputs.flavor || 'git' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # 需要 Ketch 子模块(:ketch)
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # debug 构建类型对所有 flavor 强制使用名为 "config" 的签名,
+      # 且 app/build.gradle.kts 在配置期就会读取 rootProject 的 keystore.properties。
+      # 此处生成一次性测试 keystore(零密钥即可出包)。
+      # 注意:每次运行密钥不同 → 签名不一致,覆盖安装前需先卸载旧版。
+      #       若需跨次升级安装,改用下方 secrets 方案(见末尾说明)。
+      - name: Generate throwaway signing keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore "$GITHUB_WORKSPACE/ci-debug.keystore" \
+            -alias ci -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass cicicici -keypass cicicici \
+            -dname "CN=PixEz CI, OU=CI, O=PixEz, L=NA, ST=NA, C=US"
+          cat > "$GITHUB_WORKSPACE/keystore.properties" <<EOF
+          storeFile=$GITHUB_WORKSPACE/ci-debug.keystore
+          storePassword=cicicici
+          keyAlias=ci
+          keyPassword=cicicici
+          EOF
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build ${{ env.FLAVOR }}Debug APK
+        run: ./gradlew "assemble${FLAVOR^}Debug" --stacktrace
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixEz-${{ env.FLAVOR }}-debug-${{ github.run_number }}-${{ github.sha }}
+          path: app/build/outputs/apk/**/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14

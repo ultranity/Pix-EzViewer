@@ -75,6 +75,7 @@ import com.perol.asdpl.pixivez.networks.DnsMode
 import com.perol.asdpl.pixivez.networks.SniMode
 import com.perol.asdpl.pixivez.networks.DohConfig
 import com.perol.asdpl.pixivez.networks.SniReplaceConfig
+import com.perol.asdpl.pixivez.networks.VerifyConfig
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -355,10 +356,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun snackbarForceRestart() {
         Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
             .setAction(R.string.restart_now) {
-                val intent =
-                    Intent(requireContext(), MainActivity::class.java).setAction("app.restart")
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                requireContext().startActivity(intent)
+                // 真正重启进程(而非 recreate Activity):网络相关单例(DohApiDns 懒加载、
+                // RestClient 的 eager Retrofit 客户端等)只在进程重建时才会按新配置重新初始化。
+                val ctx = requireContext().applicationContext
+                ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)
+                    ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    ?.let { ctx.startActivity(it) }
+                Runtime.getRuntime().exit(0)
             }.show()
     }
 
@@ -627,6 +631,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             binding.forceIP.isChecked = getBoolean("forceIP", false)
             binding.shuffleIP.isChecked = getBoolean("shuffleIP", true)
             binding.apiMirror.isChecked = getBoolean("enableMirror", false)
+            binding.verifyCert.isChecked = getBoolean(VerifyConfig.PREF_KEY, true)
         }
         // ── API 连接:DNS 维度(系统/DoH)× SNI 维度(明文/空)解耦 ──
         fun spinnerAdapter(arrayRes: Int) = ArrayAdapter.createFromResource(
@@ -646,13 +651,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // 同时把 DNS=直连源站、SNI=替换 选上,保存重启即生效。
         binding.autoSni.setOnClickListener {
             ToastQ.post("正在实测候选 SNI…")
-            lifecycleScope.launch(Dispatchers.IO) {
+            // viewLifecycleOwner 作用域:视图销毁即取消;回主线程后再确认仍 attached,
+            // 避免向已关闭对话框的视图写入。autoSelect 已把选中 host 落库(立即生效语义)。
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 val picked = SniReplaceConfig.autoSelect()
                 withContext(Dispatchers.Main) {
+                    if (!isAdded) return@withContext
                     if (picked != null) {
-                        binding.dnsModeSpinner.setSelection(dnsOrder.indexOf(DnsMode.DIRECT).coerceAtLeast(0))
-                        binding.sniModeSpinner.setSelection(sniOrder.indexOf(SniMode.REPLACE).coerceAtLeast(0))
-                        ToastQ.post("已选 SNI=$picked,点保存并重启生效")
+                        runCatching {
+                            binding.dnsModeSpinner.setSelection(dnsOrder.indexOf(DnsMode.DIRECT).coerceAtLeast(0))
+                            binding.sniModeSpinner.setSelection(sniOrder.indexOf(SniMode.REPLACE).coerceAtLeast(0))
+                        }
+                        ToastQ.post("已选 SNI=$picked(已应用),点保存并重启生效")
                     } else {
                         ToastQ.post("候选 SNI 均不可用,请检查网络 / 直连 IP")
                     }
@@ -720,6 +730,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         DohConfig.PREF_KEY,
                         binding.dohProvider.text.toString().trim().ifBlank { DohConfig.DEFAULT }
                     )
+                    putBoolean(VerifyConfig.PREF_KEY, binding.verifyCert.isChecked)
                     putBoolean("forceIP", Works.forceIP)
                     putBoolean("shuffleIP", ImageHttpDns.shuffleIP)
                     putString("customIPs", ImageHttpDns.customIPs.joinToString())

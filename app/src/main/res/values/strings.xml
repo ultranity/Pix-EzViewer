@@ -344,6 +344,7 @@
     <string name="sni_mode">SNI 模式</string>
     <string name="doh_provider_hint">DoH 服务商(留空=默认 Cloudflare)</string>
     <string name="auto_select_sni">自动选 SNI</string>
+    <string name="verify_cert">校验证书</string>
     <string name="ip_download">强制DNS解析</string>
     <string name="i_pximg_net_ip_list">自定义i.pximg.net IP列表,用\",\"分隔</string>
     <string name="ip_shuffle">负载均衡</string>

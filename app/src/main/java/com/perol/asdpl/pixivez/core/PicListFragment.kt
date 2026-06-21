@@ -55,6 +55,7 @@ import com.perol.asdpl.pixivez.ui.home.trend.CalendarViewModel
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.ui.user.TagsShowDialog
 import com.perol.asdpl.pixivez.view.BounceEdgeEffectFactory
+import com.perol.asdpl.pixivez.view.SafeStaggeredGridLayoutManager
 import kotlinx.coroutines.launch
 
 open class PicListFragment : Fragment() {
@@ -105,6 +106,14 @@ open class PicListFragment : Fragment() {
         _headerBinding = null
     }
 
+    override fun onPause() {
+        // 停掉惯性滑动:ViewFlinger 由 Choreographer 驱动,不随 tab 切走而停。
+        // 否则切走的 tab 其 RecyclerView 仍在逐帧 scroll,而切回时数据加载回调会全量
+        // 重置 adapter,两者在主线程相邻帧交错使 SGLM 的 mSpans 为 null -> recycleFromStart NPE。
+        _binding?.recyclerview?.stopScroll()
+        super.onPause()
+    }
+
     override fun onResume() {
         isLoaded = viewModel.data.value != null
         super.onResume()
@@ -149,7 +158,7 @@ open class PicListFragment : Fragment() {
         //viewModel.filterModel = filterModel
         filterModel.init(TAG)
         filterModel.spanNum = 2 * requireContext().resources.configuration.orientation
-        binding.recyclerview.layoutManager = StaggeredGridLayoutManager(
+        binding.recyclerview.layoutManager = SafeStaggeredGridLayoutManager(
             filterModel.spanNum,
             StaggeredGridLayoutManager.VERTICAL
         )

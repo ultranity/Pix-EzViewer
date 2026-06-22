@@ -6,21 +6,22 @@
 
 | 文件 | 职责 |
 |------|------|
-| `BypassRule.kt` | 数据模型:`BypassRule`(目标 IP 列表)+ `HostPattern`(Exact 精确匹配 / Suffix 点边界后缀匹配)。 |
+| `BypassRule.kt` | 数据模型:`BypassRule`(`ip: String?` 单个可选落点 IP,null 表示纯 DoH 解析)+ `HostPattern`(Exact 精确匹配 / Suffix 点边界后缀匹配)。 |
 | `CealingHostParser.kt` | 将 Cealing-Host JSON 格式解析为 `BypassRule` 列表。 |
 | `BypassRuleStore.kt` | 启动时加载 `assets/bypass/cealing-host.json` + 内置补充规则;`match(host)` 按最长后缀优先返回匹配规则。 |
-| `BypassResolver.kt` | 候选 IP = rule.ip ∪ DoH 查询;运行时探测可达性;对结果做正/负 TTL 缓存,返回 `Endpoint`。 |
-| `WebViewBypassInterceptor.kt` | `shouldInterceptRequest` 拦截管道:tracker 屏蔽 → pximg→imageHttpClient → 规则命中→解析→逐 Endpoint 重发 → 未命中返回 null。 |
+| `BypassResolver.kt` | 候选 IP = rule.ip(若非 null)+ DoH 查询;运行时探测可达性;对结果做正/负 TTL 缓存,返回 `Endpoint`。 |
+| `WebViewBypassInterceptor.kt` | `shouldInterceptRequest` 拦截管道:tracker 屏蔽 → 非 GET 放行 → pximg→imageHttpClient → 规则命中→解析→reissue → 未命中返回 null。 |
 
 ## 请求数据流
 
 ```
 WebView 请求
-  └─ WebViewBypassInterceptor.shouldInterceptRequest
-       ├─ [tracker] → 返回空响应(屏蔽)
-       ├─ [pximg]   → 直接走 imageHttpClient(已有直连 IP)
-       ├─ [规则命中] → BypassResolver.resolve → 逐 Endpoint 重发(共用 ReplaceSniSocketFactory)
-       └─ [其他]    → 返回 null(交由 WebView 默认处理)
+  └─ WebViewBypassInterceptor.intercept
+       ├─ [tracker]  → 返回空响应(屏蔽)
+       ├─ [非 GET]   → 返回 null(放行原生栈,无 body 无需 bypass)
+       ├─ [pximg]    → 直接走 imageHttpClient(已有直连 IP)
+       ├─ [规则命中] → BypassResolver.resolve → reissue(共用 ReplaceSniSocketFactory)
+       └─ [其他]     → 返回 null(交由 WebView 默认处理)
 ```
 
 ## 关键边界

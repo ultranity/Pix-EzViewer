@@ -30,7 +30,6 @@ Pixiv API 的鉴权、接口、图片与下载的 HTTP 栈。基于 OkHttp 4 + R
 | `RefreshToken.kt` | token 刷新/登录(经 `retrofitOauthSecure`)。 |
 | `Pkce.kt` | OAuth PKCE。 |
 | `RubySSLSocketFactory.kt` / `RubyX509TrustManager.kt` | 空 SNI 实现:用 `InetAddress` 重载建 SSLSocket(不发 SNI)。供 API 的 `SniMode.EMPTY` 与图片路径复用;信任全部仅在 `VerifyConfig` 关闭时启用。 |
-| `RubyHttpXDns.kt` | 旧版 API 直连 IP 表(图片/历史路径)。 |
 | `ImageHttpDns.kt` | 图片域名(i/s.pximg.net)的直连 IP 池 + 负载均衡。 |
 | `DnsUtil.kt` | 连通性自检。 |
 | `ProgressInterceptor.kt` / `OkHttpUrlHeaderLoader.kt` / `ResponseBodySerializer.kt` | 下载进度 / Glide 集成 / 响应序列化。 |

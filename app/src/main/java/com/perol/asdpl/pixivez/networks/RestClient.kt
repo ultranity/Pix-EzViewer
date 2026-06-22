@@ -49,7 +49,6 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object RestClient {
-    private val apiDns by lazy { RubyHttpXDns }
     private val imageDns by lazy { ImageHttpDns }
     private const val APP_OS = "Android"
     private val App_OS_Version = android.os.Build.VERSION.RELEASE
@@ -286,7 +285,7 @@ object RestClient {
         proxySocket(imageDns)
     }
 
-    private fun OkHttpClient.Builder.proxySocket(dns: Dns = apiDns): OkHttpClient.Builder {
+    private fun OkHttpClient.Builder.proxySocket(dns: Dns = imageDns): OkHttpClient.Builder {
         if (dnsProxy) {
             this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
                 .hostnameVerifier { _, _ -> true }

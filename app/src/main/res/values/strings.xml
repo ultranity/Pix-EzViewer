@@ -352,4 +352,11 @@
     <string name="view_user_blocked">User %1$d 已被屏蔽, 确定打开么？</string>
     <string name="auto_load_related_illust">自动加载相关推荐图片</string>
     <string name="refreshDNS">刷新DNS</string>
+
+    <!-- WebViewActivity browser chrome -->
+    <string name="refresh">刷新</string>
+    <string name="search_or_url">搜索或输入网址</string>
+    <string name="copy_link">复制链接</string>
+    <string name="open_in_browser">用外部浏览器打开</string>
+    <string name="forward">前进</string>
 </resources>

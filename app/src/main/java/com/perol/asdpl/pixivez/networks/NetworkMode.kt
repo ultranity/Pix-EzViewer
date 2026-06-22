@@ -326,6 +326,10 @@ object DohApiDns : Dns {
             fallback
         }
     }
+
+    /** 供 WebView bypass:对任意域名经 DoH 解析(失败回退空表)。 */
+    fun lookupPublic(host: String): List<InetAddress> =
+        try { doh.lookup(host) } catch (e: Exception) { emptyList() }
 }
 
 /*

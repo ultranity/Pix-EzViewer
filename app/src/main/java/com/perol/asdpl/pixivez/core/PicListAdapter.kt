@@ -177,10 +177,10 @@ abstract class PicListAdapter(
         if (mData.isEmpty() or mBoundViewHolders.isEmpty()) {
             notifyDataSetChanged()
         } else {
-            //TODO: filtered.forEach { notifyItemChanged(it) } 导致oom
-            //notifyItemRangeChanged(headerLayoutCount, filtered.last)
+            // 带 Payload("filter") → 走 convert(payloads) 的轻量路径(只重算过滤态+主图,
+            // 跳过 binder 重建;图片命中缓存即时绘制),避免全量 convert 重 bind。
             mBoundViewHolders.forEach {
-                notifyItemChanged(it.position)
+                notifyItemChanged(it.position, Payload("filter"))
             }
         }
     }
@@ -386,6 +386,13 @@ abstract class PicListAdapter(
         }
         holder.itemView.setTag(illustID, item)
         holder.itemView.setTag(adapterID, this)
+        bindFilterContent(holder, item)
+    }
+
+    // 过滤态 + 图片绑定:可见性 / block / sanity 模糊 / 张数角标 / 主图。
+    // 抽出以复用 —— filter 变更经 Payload("filter") 只重跑这部分,跳过上面的
+    // like/follow binder 与 tag 设置;图片走内存/RESOURCE 缓存即时命中,不重新解码。
+    private fun bindFilterContent(holder: BaseViewHolder, item: Illust) {
         val pos = holder.bindingAdapterPosition - headerLayoutCount
         //Alt1: on the flight test
         blockedFlag[pos] = filter.needBlock(item)
@@ -478,6 +485,12 @@ abstract class PicListAdapter(
         super.convert(holder, item, payloads)
         val payload = payloads[0] as Payload
         when (payload.type) {
+            "filter" -> {
+                // filter 变更:只重算可见性/block/sanity 并按需更新主图,
+                // 不重建 like/follow binder。
+                bindFilterContent(holder, item)
+            }
+
             "bookmarked" -> {
                 setUILike(item.is_bookmarked, holder)
             }

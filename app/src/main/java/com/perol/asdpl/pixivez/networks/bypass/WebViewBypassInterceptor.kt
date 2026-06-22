@@ -14,12 +14,12 @@ import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.RubySSLSocketFactory
 import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.networks.SniMode
+import com.perol.asdpl.pixivez.networks.SniReplaceConfig
 import com.perol.asdpl.pixivez.networks.systemTrustManagerOrNull
 import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.ByteArrayInputStream
-import java.net.InetAddress
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -45,19 +45,21 @@ class WebViewBypassInterceptor(private val ua: String) {
     }
 
     private fun clientFor(host: String, ep: Endpoint): OkHttpClient =
-        clientCache.getOrPut(host + "|" + ep.ip.hostAddress + "|" + ep.sni) {
+        clientCache.getOrPut(host + "|" + ep.ip.hostAddress + "|" + ep.sni + "|" + ep.verify) {
             val ip = ep.ip
             val b = OkHttpClient.Builder()
                 .dns(Dns { listOf(ip) })
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
             val factory = when (ep.sni) {
-                SniMode.REPLACE -> ReplaceSniSocketFactory(ep.frontSni!!)
+                SniMode.REPLACE -> ReplaceSniSocketFactory(ep.frontSni ?: SniReplaceConfig.host())
                 SniMode.EMPTY -> RubySSLSocketFactory()
                 SniMode.PLAIN -> null
             }
             if (factory != null) {
                 val tm = systemTrustManagerOrNull()
+                // 注:verify=true 配 REPLACE 时,默认主机名校验按 URL host 比对证书 SAN,
+                // 故替换 SNI 的前置域证书须覆盖目标 host,否则校验失败。
                 if (ep.verify && tm != null) b.sslSocketFactory(factory, tm)
                 else b.sslSocketFactory(factory, RubyX509TrustManager())
                     .hostnameVerifier { _, _ -> true }
@@ -69,7 +71,8 @@ class WebViewBypassInterceptor(private val ua: String) {
         try {
             val rb = Request.Builder().url(request.url.toString()).get()
                 .header("User-Agent", ua)
-            request.requestHeaders.forEach { (k, v) -> if (!k.equals("User-Agent", true)) rb.header(k, v) }
+            val skipHeaders = setOf("user-agent", "host", "accept-encoding")
+            request.requestHeaders.forEach { (k, v) -> if (k.lowercase() !in skipHeaders) rb.header(k, v) }
             val resp = client.newCall(rb.build()).execute()
             val type = resp.headers["content-type"]?.substringBefore(";")?.trim() ?: "text/html"
             WebResourceResponse(type, "UTF-8", resp.body?.byteStream()).also {

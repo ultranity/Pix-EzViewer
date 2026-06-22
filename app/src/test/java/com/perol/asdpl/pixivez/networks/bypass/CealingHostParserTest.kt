@@ -38,5 +38,6 @@ class CealingHostParserTest {
             """[ [["#*google*","$*google.com","*gstatic.com"],"g.cn","183.56.143.147"] ]"""
         )
         assertTrue(rules.single().match("www.gstatic.com") >= 0)
+        assertTrue(rules.single().match("accounts.google.com") >= 0)
     }
 }

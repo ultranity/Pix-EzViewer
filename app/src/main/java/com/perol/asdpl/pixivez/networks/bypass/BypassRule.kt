@@ -19,7 +19,7 @@ sealed class HostPattern {
     /** Cealing `*base`:任意前缀 + base 结尾(含 base 本身)。 */
     data class Suffix(val base: String) : HostPattern() {
         override fun match(host: String) =
-            if (host.equals(base, true) || host.endsWith(base, true)) base.length else -1
+            if (host.equals(base, true) || host.endsWith(".$base", true)) base.length else -1
     }
 }
 

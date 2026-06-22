@@ -24,7 +24,7 @@ object CealingHostParser {
         return root.mapNotNull { entry ->
             val arr = entry as? JsonArray ?: return@mapNotNull null
             if (arr.size < 3) return@mapNotNull null
-            val rawDomains = (arr[0] as JsonArray).map { it.jsonPrimitive.content }
+            val rawDomains = (arr[0] as? JsonArray ?: return@mapNotNull null).map { it.jsonPrimitive.content }
             val fakeSni = arr[1].jsonPrimitive.content.trim()
             val ip = arr[2].jsonPrimitive.content.trim()
             val patterns = rawDomains.mapNotNull(::toPattern)

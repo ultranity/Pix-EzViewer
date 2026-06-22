@@ -43,6 +43,7 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.networks.bypass.BypassRuleStore
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FastKVLogger
 import com.perol.asdpl.pixivez.objects.FileUtil
@@ -156,6 +157,7 @@ class PxEZApp : Application() {
         applicationScope.launch {
             FileUtil.getFileList()
         }
+        BypassRuleStore.init(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 ActivityCollector.collect(activity)

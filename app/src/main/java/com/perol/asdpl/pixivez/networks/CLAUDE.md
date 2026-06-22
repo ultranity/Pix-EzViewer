@@ -23,7 +23,7 @@ Pixiv API 的鉴权、接口、图片与下载的 HTTP 栈。基于 OkHttp 4 + R
 
 | 文件 | 职责 |
 |------|------|
-| `NetworkMode.kt` | **API 连接两轴模型**:`DnsMode`(direct/doh/system)× `SniMode`(replace/empty/plain)+ `VerifyConfig`(证书+主机名校验开关,默认开)+ `DohConfig`(默认 cloudflare-dns.com + bootstrap)+ `SniReplaceConfig`(替换 SNI 主机,默认 pixiv.me;`candidates()` 读 SAN、`autoSelect()` 逐个实测自动择优)+ `DohApiDns`(DoH→anycast)+ `PixivDirectDns`(源站直连 IP,IPv4 校验)+ `applyApiNetwork()`。 |
+| `NetworkMode.kt` | **API 连接两轴模型**:`DnsMode`(direct/doh/system)× `SniMode`(replace/empty/plain)+ `VerifyConfig`(证书+主机名校验开关,默认开)+ `DohConfig`(默认 cloudflare-dns.com + bootstrap)+ `SniReplaceConfig`(替换 SNI 主机,默认 pixiv.me;`candidates()` 读 SAN、`autoSelect()` 逐个实测自动择优)+ `DohApiDns`(DoH→anycast,`lookupPublic` 可查任意主机供 bypass 引擎复用)+ `PixivDirectDns`(源站直连 IP,IPv4 校验)+ `applyApiNetwork()`。 |
 | `ReplaceSniSocketFactory.kt` | 把 ClientHello 的 SNI 替换为指定主机(默认 pixiv.me)的 SSLSocketFactory;供 `SniMode.REPLACE` 用。 |
 | `RestClient.kt` | 各 Retrofit/OkHttp 客户端构建。API/鉴权走 `applyApiNetwork()`(含 421 显式处理);图片/下载走 `imageProxySocket()`。 |
 | `ServiceFactory.kt` | Retrofit 构建器 + `CFDNS`(经 1.1.1.1 的 DoH)。 |
@@ -33,6 +33,7 @@ Pixiv API 的鉴权、接口、图片与下载的 HTTP 栈。基于 OkHttp 4 + R
 | `ImageHttpDns.kt` | 图片域名(i/s.pximg.net)的直连 IP 池 + 负载均衡。 |
 | `DnsUtil.kt` | 连通性自检。 |
 | `ProgressInterceptor.kt` / `OkHttpUrlHeaderLoader.kt` / `ResponseBodySerializer.kt` | 下载进度 / Glide 集成 / 响应序列化。 |
+| `bypass/` | **WebView SNI 绕过子层**:Rule/Parser/Store/Resolver/Interceptor;详见 [`bypass/CLAUDE.md`](bypass/CLAUDE.md)。 |
 
 ## 两轴模型(`applyApiNetwork`)
 

@@ -338,6 +338,10 @@ object DohApiDns : Dns {
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 
+/** 供 bypass 复用系统信任链(校验开启时用);异常返回 null 退化为信任全部。 */
+fun systemTrustManagerOrNull(): javax.net.ssl.X509TrustManager? =
+    try { systemTrustManager } catch (e: Exception) { null }
+
 /** 系统默认信任链(校验开启时用,验证证书链到可信 CA)。 */
 private val systemTrustManager: X509TrustManager by lazy {
     val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())

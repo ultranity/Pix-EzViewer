@@ -204,6 +204,7 @@ dependencies {
     // optional - RxJava support for Room
     // implementation("androidx.room:room-rxjava2:$room")
     // Test helpers
+    testImplementation(libs.junit)
     testImplementation(libs.room.testing)
 
     // ViewModel and LiveData

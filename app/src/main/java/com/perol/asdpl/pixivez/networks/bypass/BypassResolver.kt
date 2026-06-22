@@ -35,6 +35,8 @@ fun interface Prober {
 object BypassResolver {
     private const val TTL_MS = 10 * 60 * 1000L
     private val cache = ConcurrentHashMap<String, Pair<Long, Endpoint>>()
+    private const val NEG_TTL_MS = 60 * 1000L   // 探测全败的负缓存,避免子请求风暴重复探测
+    private val negativeCache = ConcurrentHashMap<String, Long>()
 
     private val probeBase: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -62,13 +64,16 @@ object BypassResolver {
     fun resolve(host: String, rule: BypassRule): Endpoint? {
         val now = System.currentTimeMillis()
         cache[host]?.let { (at, ep) -> if (now - at < TTL_MS) return ep }
+        negativeCache[host]?.let { at -> if (now - at < NEG_TTL_MS) return null }
         val ips = buildList {
             rule.ip?.let { runCatching { add(InetAddress.getByName(it)) } }
             runCatching { addAll(DohApiDns.lookupPublic(host)) }
         }.distinct()
         val verify = VerifyConfig.enabled()
         val candidates = ips.map { Endpoint(it, rule.sni, rule.frontSni, verify) }
-        return pick(candidates, host, defaultProber)?.also { cache[host] = now to it }
+        val ep = pick(candidates, host, defaultProber)
+        if (ep != null) cache[host] = now to ep else negativeCache[host] = now
+        return ep
     }
 
     internal fun pick(candidates: List<Endpoint>, host: String, prober: Prober): Endpoint? =

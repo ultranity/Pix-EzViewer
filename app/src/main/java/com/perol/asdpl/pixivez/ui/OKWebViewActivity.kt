@@ -299,7 +299,11 @@ class OKWebViewActivity : RinkActivity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.databaseEnabled = true
-        settings.allowUniversalAccessFromFileURLs = true
+        // allowUniversalAccessFromFileURLs only takes effect when the
+        // WebView's main frame is a file:// URL. The activity is opened
+        // with an https Pixiv OK URL (see loadUrl above), so this flag is
+        // not load-bearing here. It is a CWE-200 sandbox-escape vector
+        // when left on, so drop it.
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         // settings.setAppCacheEnabled(true)
         WebviewDnsInterceptUtil.userAgentString = settings.userAgentString

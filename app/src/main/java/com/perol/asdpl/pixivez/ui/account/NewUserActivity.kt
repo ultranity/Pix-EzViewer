@@ -97,7 +97,11 @@ class NewUserActivity : RinkActivity() {
         webSettings.displayZoomControls = false
         webSettings.loadWithOverviewMode = true
         webSettings.useWideViewPort = true
-        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        // COMPATIBILITY_MODE keeps passive sub-resources (images, fonts)
+        // loading on the https Pixiv login page while blocking active
+        // mixed content like remote scripts. ALWAYS_ALLOW is the
+        // strictly less safe choice in the WebSettings javadoc.
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null)

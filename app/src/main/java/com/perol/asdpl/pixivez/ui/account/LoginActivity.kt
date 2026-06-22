@@ -49,7 +49,7 @@ import com.perol.asdpl.pixivez.networks.Pkce
 import com.perol.asdpl.pixivez.networks.RefreshToken
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.ui.MainActivity
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
+import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.settings.FirstInfoDialog
 import com.perol.asdpl.pixivez.ui.settings.SettingsActivity
 import io.noties.markwon.Markwon
@@ -135,7 +135,7 @@ class LoginActivity : RinkActivity() {
                     Pkce.getPkce().challenge + "&code_challenge_method=S256&client=pixiv-android"
             // WeissUtil.start()
             // WeissUtil.proxy()
-            val intent = Intent(this@LoginActivity, OKWebViewActivity::class.java)
+            val intent = Intent(this@LoginActivity, WebViewActivity::class.java)
                 .setAction("login.try")
             intent.putExtra("url", url)
             startActivity(intent)

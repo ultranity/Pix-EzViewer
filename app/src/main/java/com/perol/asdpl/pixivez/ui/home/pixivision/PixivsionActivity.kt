@@ -34,7 +34,6 @@ import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.base.factory.sharedViewModel
 import com.perol.asdpl.pixivez.databinding.ActivityPixivisionBinding
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
 
 class PixivsionActivity : RinkActivity() {
@@ -99,11 +98,7 @@ class PixivsionActivity : RinkActivity() {
         pixiVisionAdapter.setOnItemChildClickListener { adapter, view, position ->
             val intent = Intent(
                 this@PixivsionActivity,
-                if (PxEZApp.instance.pre.getBoolean("dnsProxy", false)) {
-                    OKWebViewActivity::class.java
-                } else {
-                    WebViewActivity::class.java
-                }
+                WebViewActivity::class.java
             ).setAction("your.custom.action")
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)

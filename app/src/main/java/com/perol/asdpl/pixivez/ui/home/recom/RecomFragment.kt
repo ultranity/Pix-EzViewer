@@ -51,7 +51,6 @@ import com.perol.asdpl.pixivez.data.model.IllustNext
 import com.perol.asdpl.pixivez.objects.dp
 import com.perol.asdpl.pixivez.objects.screenWidthPx
 import com.perol.asdpl.pixivez.services.PxEZApp
-import com.perol.asdpl.pixivez.ui.OKWebViewActivity
 import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixiVisionAdapter
 import com.perol.asdpl.pixivez.ui.home.pixivision.PixivisionModel
@@ -183,11 +182,7 @@ class RecomFragment : PicListFragment() {
         pixiVisionAdapter.setOnItemClickListener { adapter, view, position ->
             val intent = Intent(
                 context,
-                if (PxEZApp.instance.pre.getBoolean("dnsProxy", false)) {
-                    OKWebViewActivity::class.java
-                } else {
-                    WebViewActivity::class.java
-                }
+                WebViewActivity::class.java
             ).setAction("your.custom.action")
             intent.putExtra("url", pixiVisionAdapter.data[position].article_url)
             startActivity(intent)

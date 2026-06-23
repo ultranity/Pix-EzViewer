@@ -15,6 +15,7 @@ import com.perol.asdpl.pixivez.networks.RubyX509TrustManager
 import com.perol.asdpl.pixivez.networks.SniMode
 import com.perol.asdpl.pixivez.networks.SniReplaceConfig
 import com.perol.asdpl.pixivez.networks.VerifyConfig
+import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.net.InetAddress
@@ -53,7 +54,8 @@ object BypassResolver {
                 SniMode.EMPTY -> RubySSLSocketFactory()
                 SniMode.PLAIN -> null
             }
-            val b = probeBase.newBuilder().dns { listOf(ip) }
+            val b = probeBase.newBuilder()
+                .dns(object : Dns { override fun lookup(hostname: String) = listOf(ip) })
             if (factory != null) b.sslSocketFactory(factory, RubyX509TrustManager())
                 .hostnameVerifier { _, _ -> true }
             b.build().newCall(Request.Builder().url("https://$host/").head().build())

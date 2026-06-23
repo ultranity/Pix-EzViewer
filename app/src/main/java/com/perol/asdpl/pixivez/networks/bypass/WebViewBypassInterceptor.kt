@@ -49,7 +49,7 @@ class WebViewBypassInterceptor(private val ua: String) {
         clientCache.getOrPut(host + "|" + ep.ip.hostAddress + "|" + ep.sni + "|" + ep.verify) {
             val ip = ep.ip
             val b = OkHttpClient.Builder()
-                .dns(Dns { listOf(ip) })
+                .dns(object : Dns { override fun lookup(hostname: String) = listOf(ip) })
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
             val factory = when (ep.sni) {

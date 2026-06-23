@@ -139,9 +139,6 @@ class WebViewActivity : RinkActivity() {
                     if (newProgress in 1..99) View.VISIBLE else View.GONE
                 binding.progress.setProgressCompat(newProgress, true)
             }
-            override fun onReceivedTitle(view: WebView?, title: String?) {
-                binding.toolbar.title = title
-            }
         }
 
         webViewClient = object : WebViewClient() {

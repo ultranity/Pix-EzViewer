@@ -7,6 +7,7 @@
  */
 package com.perol.asdpl.pixivez.networks.bypass
 
+import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import com.perol.asdpl.pixivez.networks.ReplaceSniSocketFactory
@@ -74,9 +75,15 @@ class WebViewBypassInterceptor(private val ua: String) {
             val skipHeaders = setOf("user-agent", "host", "accept-encoding")
             request.requestHeaders.forEach { (k, v) -> if (k.lowercase() !in skipHeaders) rb.header(k, v) }
             val resp = client.newCall(rb.build()).execute()
+            // Set-Cookie 多值头无法在 Map<String,String> 里保留,提前注入 CookieManager
+            val cookieManager = CookieManager.getInstance()
+            resp.headers("Set-Cookie").forEach { cookieManager.setCookie(request.url.toString(), it) }
+
             val type = resp.headers["content-type"]?.substringBefore(";")?.trim() ?: "text/html"
             WebResourceResponse(type, "UTF-8", resp.body?.byteStream()).also {
                 it.responseHeaders = resp.headers.toMap().toMutableMap().apply {
+                    // 去掉已由 CookieManager 处理的 set-cookie,避免多值折叠丢失
+                    keys.removeIf { k -> k.lowercase() == "set-cookie" }
                     remove("access-control-allow-origin"); put("Access-Control-Allow-Origin", "*")
                 }
             }

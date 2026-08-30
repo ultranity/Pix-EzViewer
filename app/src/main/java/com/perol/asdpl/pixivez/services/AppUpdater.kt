@@ -56,8 +56,12 @@ object AppUpdater {
     private fun isNewUpdateAvailable(): Boolean? = try {
         val response = apiURL.readText()
         data = gson.decodeFromString<GithubResponse>(response)
-        val currentVersionName = BuildConfig.VERSION_NAME
-        data.tagName != currentVersionName
+        // Compare normalised versions. Release tags gained a "v" prefix at 2.2.3 (v2.2.3, v2.2.4,
+        // v2.2.5) while versionName never did (2.2.5), so a raw string compare reported "update
+        // available" to every user on 2.2.3+ even when fully up to date. Trailing "-suffix" from a
+        // local build (e.g. 2.2.5-debug) is dropped for the same reason.
+        val currentVersionName = BuildConfig.VERSION_NAME.substringBefore('-')
+        data.tagName.removePrefix("v") != currentVersionName
     } catch (e: Exception) {
         Log.e("AppUpdater", "Failed to check for updates", e)
         null

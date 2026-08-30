@@ -71,9 +71,15 @@ class UserMViewModel : BaseViewModel() {
         }
     }
 
+    // userDetail is null until the profile request completes, and the loader above swallows its
+    // exceptions, so a failed request leaves it null permanently. The FAB is wired up in onCreate
+    // and is clickable straight away, so the previous `userDetail.value!!` crashed the app on any
+    // tap before - or without - a successful load. Both handlers now no-op until the data exists.
+
     fun onFabClick() {
-        val user = userDetail.value!!.user
-        if (!follow.value!!) {
+        val user = userDetail.value?.user ?: return
+        // Null follow state is treated as "not following", matching the previous non-null path.
+        if (follow.value != true) {
             InteractionUtil.follow(user, false) //{ follow.value = true }
         } else {
             InteractionUtil.unfollow(user) //{ follow.value = false }
@@ -81,7 +87,7 @@ class UserMViewModel : BaseViewModel() {
     }
 
     fun onFabLongClick() {
-        val user = userDetail.value!!.user
+        val user = userDetail.value?.user ?: return
         val privateFollow = privateFollowed.value != true
         InteractionUtil.follow(user, privateFollow) { privateFollowed.value = privateFollow }
     }

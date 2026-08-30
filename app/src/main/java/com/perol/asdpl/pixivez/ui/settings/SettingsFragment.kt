@@ -275,29 +275,51 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             allowFolderCreation = true,
                             context = context
                         ) { _, folder ->
-                            for (i in selectedIndex) {
-                                when (i) {
-                                    0 -> data["token"] = AppDataRepo.export()
-                                    1 -> data["setting"] = PxEZApp.instance.pre.all
-                                    2 -> data["search"] =
-                                        HistoryDatabase.getInstance(context).searchHistoryDao()
+                            // Reading the history tables needs suspend DAO calls, and the file
+                            // write should not sit on the main thread either, so do both on IO.
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val db = HistoryDatabase.getInstance(context)
+                                for (i in selectedIndex) {
+                                    when (i) {
+                                        0 -> data["token"] = AppDataRepo.export()
+                                        1 -> data["setting"] = PxEZApp.instance.pre.all
+                                        // These two used to assign the Dao objects themselves, so
+                                        // the export wrote "...Dao_Impl@3f2a1b" instead of any
+                                        // rows. Read the rows, and map them to plain values:
+                                        // JSONObject stringifies types it does not recognise, so
+                                        // handing it entity instances would fail the same way.
+                                        2 -> data["search"] =
+                                            db.searchHistoryDao().getAll().map {
+                                                mapOf("word" to it.word, "id" to it.id)
+                                            }
 
-                                    3 -> data["view"] =
-                                        HistoryDatabase.getInstance(context).viewHistoryDao()
+                                        3 -> data["view"] =
+                                            db.viewHistoryDao().getAll().map {
+                                                mapOf(
+                                                    "id" to it.id,
+                                                    "title" to it.title,
+                                                    "thumb" to it.thumb,
+                                                    "isUser" to it.isUser,
+                                                    "count" to it.count,
+                                                    "createdAt" to it.createdAt,
+                                                    "modifiedAt" to it.modifiedAt
+                                                )
+                                            }
 
-                                    4 -> data["block"] = BlockViewModel.export()
+                                        4 -> data["block"] = BlockViewModel.export()
+                                    }
                                 }
-                            }
-                            val jsonObject = JSONObject(data)
-                            try {
-                                val file =
-                                    File(folder.absolutePath + File.separatorChar + "PixEzViewer.config")
-                                val writer = file.writer()
-                                writer.write(jsonObject.toString())
-                                writer.close()
-                                ToastQ.post("Exported SharedPreferences to $file")
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                                val jsonObject = JSONObject(data)
+                                try {
+                                    val file =
+                                        File(folder.absolutePath + File.separatorChar + "PixEzViewer.config")
+                                    val writer = file.writer()
+                                    writer.write(jsonObject.toString())
+                                    writer.close()
+                                    ToastQ.post("Exported SharedPreferences to $file")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
                         }
                     }

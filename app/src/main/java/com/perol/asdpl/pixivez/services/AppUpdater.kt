@@ -56,8 +56,7 @@ object AppUpdater {
     private fun isNewUpdateAvailable(): Boolean? = try {
         val response = apiURL.readText()
         data = gson.decodeFromString<GithubResponse>(response)
-        val currentVersionName = BuildConfig.VERSION_NAME
-        data.tagName != currentVersionName
+        AppVersionComparator.isRemoteNewer(BuildConfig.VERSION_NAME, data.tagName)
     } catch (e: Exception) {
         Log.e("AppUpdater", "Failed to check for updates", e)
         null

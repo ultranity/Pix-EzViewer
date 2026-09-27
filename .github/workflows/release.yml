@@ -42,6 +42,9 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          log-accepted-android-sdk-licenses: false
 
       # 经 secrets 注入真实签名 —— 与历史版本一致是覆盖升级的前提。
       # secrets 用 env 传入(不内联进命令行),避免泄漏到日志。
@@ -68,6 +71,9 @@ jobs:
         run: chmod +x ./gradlew
 
       # git flavor 的 release 由 flavor 级 "config" 签名(即上面注入的真实 keystore)。
+      - name: Run regression tests
+        run: ./gradlew :app:testGitDebugUnitTest --stacktrace
+
       - name: Build signed release APK (git flavor)
         run: ./gradlew assembleGitRelease --stacktrace
 

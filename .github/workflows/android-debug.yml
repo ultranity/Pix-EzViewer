@@ -57,6 +57,9 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          log-accepted-android-sdk-licenses: false
 
       # debug 构建类型对所有 flavor 强制使用名为 "config" 的签名,
       # 且 app/build.gradle.kts 在配置期就会读取 rootProject 的 keystore.properties。

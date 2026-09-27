@@ -41,6 +41,7 @@ import com.perol.asdpl.pixivez.data.model.UgoiraMetadataBean
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
@@ -323,8 +324,9 @@ class PictureXViewModel : BaseViewModel() {
     }
 
     fun firstGet(illust: Illust) {
-        illustDetail.value = illust
-        likeIllust.value = illust.is_bookmarked
+        val canonical = IllustCacheRepo.update(illust.id, illust)
+        illustDetail.value = canonical
+        likeIllust.value = canonical.is_bookmarked
     }
 
     fun firstGet(pid: Int) {

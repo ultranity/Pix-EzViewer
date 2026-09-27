@@ -171,24 +171,38 @@ class MetricWrapper<T : CopyFrom<T>>(
 }*/
 
 open class CacheRepo<T : CopyFrom<T>> {
-    private val objectStore = WeakValueLinkedHashMap<Int, T>(32)
+    private var objectStore = WeakValueLinkedHashMap<Int, T>(32)
 
+    @Synchronized
     fun getAll(): MutableList<T> {
         return objectStore.values.asMutableList()
     }
 
+    @Synchronized
     fun get(id: Int): T? {
         return objectStore[id]
     }
 
-    fun update(id: Int, t: T): T {
-        if (objectStore.containsKey(id))
-            objectStore[id]!!.copyFrom(t)
-        else
-            objectStore[id] = t
-        return objectStore[id]!!
+    @Synchronized
+    open fun update(id: Int, t: T): T {
+        // Hold a strong reference throughout the merge; the weak value can disappear
+        // between a containsKey check and a second lookup.
+        val cached = objectStore[id]
+        if (cached != null) {
+            if (cached !== t) cached.copyFrom(t)
+            return cached
+        }
+        objectStore[id] = t
+        return t
     }
 
+    @Synchronized
+    open fun clear() {
+        // Replace the store, including its weak-reference queue and iteration chain.
+        objectStore = WeakValueLinkedHashMap(32)
+    }
+
+    @Synchronized
     fun remove(id: Int) {
         objectStore.remove(id)
     }
@@ -202,34 +216,53 @@ open class CacheRepo<T : CopyFrom<T>> {
     }
 }
 
+/** A successful local action outranks unversioned API/navigation snapshots in this session. */
 object IllustCacheRepo : CacheRepo<Illust>() {
-    /* TODO: clean binders automatically
-    internal const val clearBindDelay: Long = 1000
-    internal val bindTargets = ArrayList<LifecycleOwner>()
-    val objIDStores = HashMap<String, Collection<Illust>>()
-    //val bindingListener = HashMap<Int, ArrayList<Unit>>()
-    fun register(host: LifecycleOwner, mData: Collection<Illust>) {
-        if (!bindTargets.contains(host)) {
-            bindTargets.add(host)
-            objIDStores[host.hashCode().toString()] = mData
-            host.lifecycle.addObserver(object : LifecycleEventObserver {
-                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if (event == Lifecycle.Event.ON_DESTROY) {
-                        host.lifecycle.removeObserver(this)
-                        bindTargets.remove(host)
-                        Timer().schedule(clearBindDelay) {
-                            if (bindTargets.isEmpty()) { // 如果当前没有关联对象
-                                //check if is restoring: https://blog.csdn.net/huweijian5/article/details/114575986
-                                if (isChangingConfigurations(source))
-                                    return@schedule
-                                objIDStores.remove(host.hashCode().toString())
-                            }
-                        }
-                    }
-                }
-            })
+    class BookmarkMutation internal constructor(internal val session: Long, internal val order: Long)
+    private data class ConfirmedBookmark(val value: Boolean, val order: Long)
+
+    private val confirmedBookmarks = HashMap<Int, ConfirmedBookmark>()
+    private var accountId: Int? = null
+    private var session = 0L
+    private var mutationOrder = 0L
+
+    @Synchronized
+    fun activateAccount(id: Int?) {
+        if (accountId != id) {
+            clear()
+            accountId = id
         }
-    }*/
+    }
+
+    @Synchronized
+    fun beginBookmarkMutation() = BookmarkMutation(session, ++mutationOrder)
+
+    /** Call only after the server accepted the action, never on an optimistic tap. */
+    @Synchronized
+    fun confirmBookmark(item: Illust, value: Boolean, mutation: BookmarkMutation): Boolean {
+        if (mutation.session != session) return false
+        val previous = confirmedBookmarks[item.id]
+        if (previous != null && previous.order > mutation.order) return false
+        confirmedBookmarks[item.id] = ConfirmedBookmark(value, mutation.order)
+        item.is_bookmarked = value
+        val cached = get(item.id)
+        if (cached == null) super.update(item.id, item) else cached.is_bookmarked = value
+        return true
+    }
+
+    @Synchronized
+    override fun update(id: Int, t: Illust): Illust {
+        confirmedBookmarks[id]?.let { t.is_bookmarked = it.value }
+        return super.update(id, t)
+    }
+
+    @Synchronized
+    override fun clear() {
+        super.clear()
+        confirmedBookmarks.clear()
+        // Ignore late successful callbacks from an account that is no longer active.
+        session++
+    }
 }
 
 //class UserDetailCacheRepo: CacheRepo<UserDetail>() {}

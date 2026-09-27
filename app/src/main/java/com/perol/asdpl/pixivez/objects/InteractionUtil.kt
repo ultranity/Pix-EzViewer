@@ -17,7 +17,8 @@ object InteractionUtil {
         tagList: List<String>? = null,
         forcePrivate: Boolean = false,
         callback: () -> Unit = { }
-    ) =
+    ) {
+        val mutation = IllustCacheRepo.beginBookmarkMutation()
         MainScope().launchCatching(
             {
                 retrofit.api.postLikeIllust(
@@ -26,8 +27,7 @@ object InteractionUtil {
                     tagList
                 )
             }, {
-                item.is_bookmarked = true
-                callback()
+                if (IllustCacheRepo.confirmBookmark(item, true, mutation)) callback()
             }, {
                 failedActions.add(Pair(item.id, "like"))
                 CrashHandler.instance.e(
@@ -38,21 +38,24 @@ object InteractionUtil {
                 )
             }, retryCount = 3
         )
+    }
 
-    fun unlike(item: Illust, callback: () -> Unit = { }) = MainScope().launchCatching({
-        retrofit.api.postUnlikeIllust(item.id)
-    }, {
-        item.is_bookmarked = false
-        callback()
-    }, {
-        failedActions.add(Pair(item.id, "unlike"))
-        CrashHandler.instance.e(
-            "interaction",
-            "failed to del bookmark ${item.id} ${item.title}",
-            it,
-            true
-        )
-    }, retryCount = 1)
+    fun unlike(item: Illust, callback: () -> Unit = { }) {
+        val mutation = IllustCacheRepo.beginBookmarkMutation()
+        MainScope().launchCatching({
+            retrofit.api.postUnlikeIllust(item.id)
+        }, {
+            if (IllustCacheRepo.confirmBookmark(item, false, mutation)) callback()
+        }, {
+            failedActions.add(Pair(item.id, "unlike"))
+            CrashHandler.instance.e(
+                "interaction",
+                "failed to del bookmark ${item.id} ${item.title}",
+                it,
+                true
+            )
+        }, retryCount = 1)
+    }
 
     /*
      * set private flag by check if need_restrict

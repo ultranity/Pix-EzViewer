@@ -30,6 +30,7 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.ComponentName
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.DialogInterface.BUTTON_NEUTRAL
 import android.content.Intent
 import android.content.pm.ResolveInfo
@@ -144,6 +145,15 @@ class PictureXAdapter(
         var binding: ViewPicturexDetailBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
+        fun refreshDownloadIndicator() {
+            val tint = if (FileUtil.isDownloaded(data)) {
+                ThemeUtil.getColorHighlight(mContext)
+            } else {
+                ThemeUtil.getTextColorPrimary(mContext)
+            }
+            binding.imagebuttonDownload.imageTintList = ColorStateList.valueOf(tint)
+        }
+
         @SuppressLint("SetTextI18n")
         fun updateWithPage(
             mContext: Context,
@@ -291,9 +301,7 @@ class PictureXAdapter(
                     )
                 )
             }
-            if (FileUtil.isDownloaded(illust)) {
-                binding.imagebuttonDownload.drawable.setTint(badgeTextColor)
-            }
+            refreshDownloadIndicator()
             if (illust.type == "ugoira") {
                 // gif
                 binding.imagebuttonDownload.setOnClickListener {
@@ -303,7 +311,8 @@ class PictureXAdapter(
                 }
             } else {
                 binding.imagebuttonDownload.setOnClickListener {
-                    binding.imagebuttonDownload.drawable.setTint(colorPrimaryDark)
+                    binding.imagebuttonDownload.imageTintList =
+                        ColorStateList.valueOf(colorPrimaryDark)
                     Works.imageDownloadAll(illust)
                 }
             }
@@ -409,6 +418,11 @@ class PictureXAdapter(
     }
 
     override fun getItemCount() = imageUrls.size + 3
+
+    fun refreshDownloadIndicator(recyclerView: RecyclerView) {
+        (recyclerView.findViewHolderForAdapterPosition(imageUrls.size) as? DetailViewHolder)
+            ?.refreshDownloadIndicator()
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val position = holder.bindingAdapterPosition

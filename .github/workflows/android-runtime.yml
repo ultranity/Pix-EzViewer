@@ -78,9 +78,13 @@ jobs:
           fi
           ls -l /dev/kvm
 
+          # Recent emulator and command-line tools may use different default AVD roots.
+          export ANDROID_AVD_HOME="$RUNNER_TEMP/pixez-avd"
+          mkdir -p "$ANDROID_AVD_HOME"
           echo no | avdmanager create avd \
             --force \
             --name "$AVD_NAME" \
+            --path "$ANDROID_AVD_HOME/$AVD_NAME.avd" \
             --package "system-images;android-35;google_apis;x86_64" \
             --device "pixel_2"
 
@@ -95,7 +99,10 @@ jobs:
             > "$RUNNER_TEMP/android-emulator.log" 2>&1 &
           echo $! > "$RUNNER_TEMP/android-emulator.pid"
 
-          timeout 120 adb wait-for-device
+          if ! timeout 120 adb wait-for-device; then
+            cat "$RUNNER_TEMP/android-emulator.log"
+            exit 1
+          fi
           booted=false
           for attempt in $(seq 1 60); do
             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
@@ -132,8 +139,8 @@ jobs:
         run: |
           set +e
           timeout 30 adb logcat -d -t 5000 > "$RUNNER_TEMP/android-logcat.txt" 2>&1
-          adb shell getprop > "$RUNNER_TEMP/android-getprop-final.txt" 2>&1
-          adb emu kill > "$RUNNER_TEMP/android-emu-kill.txt" 2>&1
+          timeout 15 adb shell getprop > "$RUNNER_TEMP/android-getprop-final.txt" 2>&1
+          timeout 15 adb emu kill > "$RUNNER_TEMP/android-emu-kill.txt" 2>&1
           if [[ -f "$RUNNER_TEMP/android-emulator.pid" ]]; then
             kill "$(cat "$RUNNER_TEMP/android-emulator.pid")" 2>/dev/null || true
           fi

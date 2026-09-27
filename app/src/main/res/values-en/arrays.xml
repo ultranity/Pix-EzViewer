@@ -73,11 +73,12 @@
     </string-array>
     <string-array name="dns_mode_entries">
         <item>Pixiv origin direct (empty SNI)</item>
-        <item>DoH / Cloudflare (plain/ECH)</item>
+        <item>DoH / Cloudflare (plain mode)</item>
         <item>System DNS</item>
     </string-array>
     <string-array name="sni_mode_entries">
-        <item>Replace SNI = pixiv.me (GFW)</item>
+        <item>ECH encrypted handshake (recommended)</item>
+        <item>Replace SNI (custom hostname)</item>
         <item>Empty SNI</item>
         <item>Plaintext SNI (verified)</item>
     </string-array>

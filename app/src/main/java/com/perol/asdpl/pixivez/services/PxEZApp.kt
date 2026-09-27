@@ -42,6 +42,7 @@ import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.networks.RestClient
+import com.perol.asdpl.pixivez.networks.migrateLegacyApiNetwork
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.networks.bypass.BypassRuleStore
 import com.perol.asdpl.pixivez.objects.CrashHandler
@@ -74,6 +75,7 @@ class PxEZApp : Application() {
         instance = this
         // LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
+        migrateLegacyApiNetwork(pre)
         applicationScope.launch {
             AppDataRepo.getUser()
         }

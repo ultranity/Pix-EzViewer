@@ -29,34 +29,23 @@ import android.util.Log
 import androidx.core.content.edit
 import com.perol.asdpl.pixivez.services.PxEZApp
 import okhttp3.Dns
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.dnsoverhttps.DnsOverHttps
 import java.net.InetAddress
 import java.security.KeyStore
 import java.security.cert.X509Certificate
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
-/*
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │ Pixiv 鉴权/接口连接 —— DNS × SNI 两维度(有耦合)                           │
- * │                                                                            │
- * │ 这些域名有两类入口,对"无 SNI"处理不同:                                   │
- * │   - Pixiv 自有源站(IDC Frontier/JP,如 210.140.139.x):nginx 直接服务,   │
- * │     接受无 SNI 并按 Host 路由 —— 直连它即绕开 Cloudflare 边缘;            │
- * │   - Cloudflare 共享 anycast(公共 DNS/DoH 返回,104.x/172.64.x):          │
- * │     无 SNI 时选不出证书 → TLS 握手失败。                                    │
- * │ 故两维度耦合(空/替换 SNI 须配源站):                                       │
- * │   • DNS 维度  —— 连哪类入口:DIRECT(Pixiv 源站)/ DoH(anycast)/ 系统   │
- * │   • SNI 维度  —— ClientHello 呈现:替换(pixiv.me)/ 空 / 明文(GFW RST)  │
- * │ 墙内可用 = DIRECT + 替换 SNI=pixiv.me(直连源站、SNI 不被 GFW 封、且其多-SAN │
- * │ 证书覆盖目标 Host 不致 421)。证书校验默认开([VerifyConfig]),异常网络可关。│
- * └──────────────────────────────────────────────────────────────────────────┘
+/* ECH is the default and supplies its own DNS/TLS profile. For legacy modes,
+ * DNS chooses the endpoint; SNI chooses its TLS virtual host. Public DoH may return
+ * shared Cloudflare edges which require the real SNI. Direct origin addresses can
+ * may accept empty SNI but still refuse HTTP access. A matching certificate SAN
+ * alone does NOT prevent HTTP 421.
+ * Keep TLS certificate/hostname verification enabled and verify routing separately.
  */
 
 /**
@@ -85,10 +74,13 @@ enum class DnsMode(val code: String) {
 
 /** SNI 模式:负责 TLS ClientHello 里如何呈现域名(对抗 GFW 的 SNI 封锁)。 */
 enum class SniMode(val code: String) {
+    /** Encrypted ClientHello with automatically refreshed Cloudflare ECH keys/edges. */
+    ECH("ech"),
+
     /**
      * 替换 SNI 为 [SniReplaceConfig] 主机(默认 pixiv.me)。
-     * 既避开空 SNI 在某些入口拿到不覆盖目标 Host 的默认证书而被判 421,
-     * 又避开明文 *.pixiv.net SNI 被 GFW 过滤 RST。须配 DnsMode.DIRECT。
+     * 须配 DnsMode.DIRECT;服务端可拒绝 SNI/Host 不一致并返回 421,
+     * 即使证书 SAN 同时覆盖两者也不能保证路由可用。
      */
     REPLACE("replace"),
 
@@ -101,9 +93,8 @@ enum class SniMode(val code: String) {
     companion object {
         const val PREF_KEY = "apiSniMode"
 
-        // 面向墙内:默认替换 SNI=pixiv.me(须配 DnsMode.DIRECT 直连 Pixiv 源站)。
-        val default = REPLACE
-        val displayOrder = listOf(REPLACE, EMPTY, PLAIN)
+        val default = ECH
+        val displayOrder = listOf(ECH, REPLACE, EMPTY, PLAIN)
         fun fromCode(code: String?) = entries.firstOrNull { it.code == code } ?: default
         fun current() = fromCode(PxEZApp.instance.pre.getString(PREF_KEY, default.code))
     }
@@ -123,8 +114,8 @@ object VerifyConfig {
  * ┌──────────────────────────────────────────────────────────────────────────┐
  * │ SniReplaceConfig —— 替换 SNI 主机 + 自适应自动选择。                        │
  * │                                                                            │
- * │ 同一张源站证书的所有 SAN 都能"授权"目标 Host(选中即不致 421),但 GFW 对   │
- * │ 不同 SNI 字符串封锁不一。故:读源站证书 SAN 列出候选 → 在本机逐个实测      │
+ * │ SAN 只证明证书覆盖,不保证 HTTP 路由。不同 SNI 字符串的可达性也不同。     │
+ * │ 读源站证书 SAN 列出候选 → 在本机逐个实测                                 │
  * │ (握手未被 RST、HTTP 非 421、且对端证书确为 Pixiv)→ 选第一个可用的。      │
  * └──────────────────────────────────────────────────────────────────────────┘
  */
@@ -149,13 +140,16 @@ object SniReplaceConfig {
             .dns(PixivDirectDns)
             .connectTimeout(6, TimeUnit.SECONDS)
             .readTimeout(6, TimeUnit.SECONDS)
+            .callTimeout(8, TimeUnit.SECONDS)
+            .followRedirects(false)
+            .connectionSpecs(listOf(ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .supportsTlsExtensions(false).build()))
             .build()
     }
 
     private fun probeClient(factory: SSLSocketFactory): OkHttpClient =
         probeBase.newBuilder()
-            .sslSocketFactory(factory, RubyX509TrustManager())
-            .hostnameVerifier { _, _ -> true }
+            .sslSocketFactory(factory, systemTrustManager)
             .build()
 
     private fun certIsPixiv(cert: X509Certificate?): Boolean {
@@ -219,7 +213,7 @@ object DohConfig {
     const val DEFAULT = "https://1dot1dot1dot1.cloudflare-dns.com"
 
     // 默认 DoH 主机(1dot1dot1dot1.cloudflare-dns.com)的入口 IP。
-    val DEFAULT_BOOTSTRAP = listOf("104.16.248.249", "104.16.249.249")
+    val DEFAULT_BOOTSTRAP = DohTransport.BOOTSTRAP_IPS
 
     fun provider(): String =
         PxEZApp.instance.pre.getString(PREF_KEY, DEFAULT)?.ifBlank { DEFAULT } ?: DEFAULT
@@ -235,7 +229,7 @@ object DohConfig {
 
     /** 仅默认服务商提供 bootstrap IP;自定义服务商需经系统 DNS 解析其主机。 */
     fun bootstrapIps(): List<InetAddress> =
-        if (provider().trim().removeSuffix("/") == DEFAULT)
+        if (DohTransport.usesDefaultHost(url()))
             DEFAULT_BOOTSTRAP.map { InetAddress.getByName(it) }
         else emptyList()
 }
@@ -288,48 +282,22 @@ object PixivDirectDns : Dns {
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 object DohApiDns : Dns {
-    private const val TAG = "DohApiDns"
-    private const val TTL_MS = 10 * 60 * 1000L
+    private val fallback = listOf("172.64.145.17", "104.18.42.239").map { InetAddress.getByName(it) }
 
-    // 冷启动 / DoH 失败时的兜底入口(Cloudflare anycast)。正常路径由 DoH 动态解析。
-    private val fallback: List<InetAddress> =
-        listOf("172.64.145.17", "104.18.42.239").map { InetAddress.getByName(it) }
-
-    private val cache = ConcurrentHashMap<String, Pair<Long, List<InetAddress>>>()
-
-    private val doh: DnsOverHttps by lazy {
-        val b = DnsOverHttps.Builder()
-            .client(OkHttpClient())
-            .url(DohConfig.url().toHttpUrl())
-            .post(true)
-            .resolvePrivateAddresses(false)
-            .resolvePublicAddresses(true)
-        DohConfig.bootstrapIps().takeIf { it.isNotEmpty() }?.let { b.bootstrapDnsHosts(it) }
-        b.build()
+    internal val transport: Dns by lazy {
+        val bootstrap = DohConfig.bootstrapIps()
+        DohTransport.create(DohConfig.url(), bootstrap, withoutSni = bootstrap.isNotEmpty())
     }
 
-    override fun lookup(hostname: String): List<InetAddress> {
-        if (hostname !in PixivApiHosts.HOSTS) return Dns.SYSTEM.lookup(hostname)
-        val now = System.currentTimeMillis()
-        cache[hostname]?.let { (at, ips) -> if (now - at < TTL_MS && ips.isNotEmpty()) return ips }
-        return try {
-            val fresh = doh.lookup(hostname)
-            if (fresh.isNotEmpty()) {
-                cache[hostname] = now to fresh
-                Log.d(TAG, "DoH $hostname -> ${fresh.joinToString { it.hostAddress ?: "" }}")
-                fresh
-            } else {
-                fallback
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "DoH lookup failed for $hostname, use fallback", e)
-            fallback
-        }
+    private val resolver by lazy {
+        RefreshingDns(DnsLookup { transport.lookup(it) }, { fallback }, { it in PixivApiHosts.HOSTS })
     }
 
-    /** 供 WebView bypass:对任意域名经 DoH 解析(失败回退空表)。 */
+    override fun lookup(hostname: String): List<InetAddress> = resolver.lookup(hostname)
+
+    /** WebView rules may query hosts beyond the API allowlist. */
     fun lookupPublic(host: String): List<InetAddress> =
-        try { doh.lookup(host) } catch (e: Exception) { emptyList() }
+        try { transport.lookup(host) } catch (_: Exception) { emptyList() }
 }
 
 /*
@@ -355,6 +323,9 @@ private val systemTrustManager: X509TrustManager by lazy {
  * verify=false:信任全部 + 跳过主机名校验(异常网络兜底,有 MITM 风险)。
  */
 private fun OkHttpClient.Builder.applySni(factory: SSLSocketFactory, verify: Boolean) = apply {
+    // Preserve chosen SNI on older Android adapters that overwrite it; also disables ALPN.
+    connectionSpecs(listOf(ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        .supportsTlsExtensions(false).build(), ConnectionSpec.CLEARTEXT))
     if (verify) {
         sslSocketFactory(factory, systemTrustManager)
     } else {
@@ -368,6 +339,10 @@ fun OkHttpClient.Builder.applyApiNetwork(
     sniMode: SniMode = SniMode.current(),
     verify: Boolean = VerifyConfig.enabled(),
 ): OkHttpClient.Builder = apply {
+    if (sniMode == SniMode.ECH) {
+        EchApiTransport.apply(this)
+        return@apply
+    }
     // ── DNS 维度:拿到正确 IP ──
     when (dnsMode) {
         DnsMode.DIRECT -> dns(PixivDirectDns)
@@ -379,5 +354,6 @@ fun OkHttpClient.Builder.applyApiNetwork(
         SniMode.REPLACE -> applySni(ReplaceSniSocketFactory(SniReplaceConfig.host()), verify)
         SniMode.EMPTY -> applySni(RubySSLSocketFactory(), verify)
         SniMode.PLAIN -> Unit // 默认 TLS:真实 SNI + 证书校验
+        SniMode.ECH -> error("ECH configured above")
     }
 }

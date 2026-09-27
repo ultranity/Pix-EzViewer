@@ -241,11 +241,11 @@ object Works {
     var mirrorURL = pre.getString("mirrorURL", I_PXIMG_NET)!!
     var mirrorFormat = pre.getString("mirrorFormat", "{host}/{params}")!!
     var forceIP = pre.getBoolean("forceIP", false)
-    val spximg by lazy { lookup(I_PXIMG_NET) }
-    val smirrorURL by lazy { lookup(mirrorURL) }
+    val spximg get() = lookup(I_PXIMG_NET)
+    val smirrorURL get() = lookup(mirrorURL)
     fun lookup(url: String): String {
         return if (forceIP and pre.getBoolean("dnsProxy", false)) {
-            ImageHttpDns.lookup(url)[0].hostAddress!!
+            ImageHttpDns.cachedForUrl(url).firstOrNull()?.hostAddress ?: url
         } else {
             url
         }

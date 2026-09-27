@@ -31,20 +31,9 @@ import javax.net.ssl.SNIHostName
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
-/*
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │ ReplaceSniSocketFactory —— 把 ClientHello 的 SNI 替换为指定主机名。        │
- * │                                                                            │
- * │ 用途:对已建立连接的 socket 套上 TLS,但 SNI 填一个【未被 GFW 封、且能让    │
- * │ 服务端选中覆盖目标 Host 的证书】的主机名(默认 pixiv.me)。                 │
- * │ - 避开空 SNI 在某些入口拿到不覆盖三段域名的默认证书而被判 421;            │
- * │ - 避开明文真实 SNI(*.pixiv.net)被 GFW SNI 过滤 RST。                      │
- * │                                                                            │
- * │ 实现:用「分层」重载复用 OkHttp 已连接的 socket(尊重其连接超时、不另起     │
- * │ 连接/不泄漏),peerHost 传对端 IP(IP 不会被当 SNI 自动发送),再显式把     │
- * │ serverNames 设为 sniHost。其余从零建 socket 的重载委托默认工厂(OkHttp     │
- * │ 不会调用它们;委托以免返回 null 造成 NPE)。                                │
- * └──────────────────────────────────────────────────────────────────────────┘
+/** Replaces SNI on OkHttp's existing connection. A matching certificate does not
+ * guarantee HTTP routing: the server can still reject SNI/Host mismatch with 421.
+ * The client must disable OkHttp TLS extensions to preserve the chosen SNI.
  */
 class ReplaceSniSocketFactory(private val sniHost: String) : SSLSocketFactory() {
 

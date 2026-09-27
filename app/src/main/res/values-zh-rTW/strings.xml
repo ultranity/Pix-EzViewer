@@ -313,6 +313,7 @@
     <string name="dns_mode">DNS 解析</string>
     <string name="sni_mode">SNI 模式</string>
     <string name="doh_provider_hint">DoH 服務商(留空=預設 Cloudflare)</string>
+    <string name="ech_mode_description">ECH 會自動解析 Pixiv API，並始終驗證憑證；DNS、DoH、SNI 與憑證設定已停用。</string>
     <string name="ip_download">强制DNS解析</string>
     <string name="i_pximg_net_ip_list">自定義i.pximg.net IP列表,用\",\"分隔</string>
     <string name="ip_shuffle">負載均衡</string>
@@ -334,4 +335,7 @@
     <string name="novel_line_space">行距</string>
     <string name="switch_to_novel">切換到小說模式</string>
     <string name="switch_to_illust">切換到插畫模式</string>
+    <string name="browser">瀏覽器</string>
+    <string name="novel_body_load_failed">正文載入失敗，請重試</string>
+    <string name="novel_retry">重試</string>
 </resources>

@@ -53,6 +53,7 @@ object BypassResolver {
                 SniMode.REPLACE -> ReplaceSniSocketFactory(frontSni ?: SniReplaceConfig.host())
                 SniMode.EMPTY -> RubySSLSocketFactory()
                 SniMode.PLAIN -> null
+                SniMode.ECH -> return@Prober false
             }
             val b = probeBase.newBuilder()
                 .dns(object : Dns { override fun lookup(hostname: String) = listOf(ip) })

@@ -345,6 +345,7 @@
     <string name="doh_provider_hint">DoH 服务商(留空=默认 Cloudflare)</string>
     <string name="auto_select_sni">自动选 SNI</string>
     <string name="verify_cert">校验证书</string>
+    <string name="ech_mode_description">ECH 会为 Pixiv API 自动解析并始终校验证书；DNS、DoH、SNI 与证书控件已停用。</string>
     <string name="ip_download">强制DNS解析</string>
     <string name="i_pximg_net_ip_list">自定义i.pximg.net IP列表,用\",\"分隔</string>
     <string name="ip_shuffle">负载均衡</string>
@@ -359,6 +360,7 @@
     <string name="copy_link">复制链接</string>
     <string name="open_in_browser">用外部浏览器打开</string>
     <string name="forward">前进</string>
+    <string name="browser">浏览器</string>
 
     <string name="novel">小说</string>
     <string name="novel_font_larger">增大字号</string>
@@ -373,4 +375,6 @@
     <string name="novel_line_space">行距</string>
     <string name="switch_to_novel">切换到小说模式</string>
     <string name="switch_to_illust">切换到插画模式</string>
+    <string name="novel_body_load_failed">正文加载失败，请重试</string>
+    <string name="novel_retry">重试</string>
 </resources>

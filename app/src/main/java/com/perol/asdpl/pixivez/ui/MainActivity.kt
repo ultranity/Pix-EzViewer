@@ -184,6 +184,14 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
                 FragmentActivity.start(this, TAG_TYPE.WalkThrough.name)
             }
 
+            R.id.nav_browser -> {
+                startActivity(
+                    Intent(this, WebViewActivity::class.java)
+                        .setAction("browser.start")
+                        .putExtra("url", "https://www.pixiv.net/")
+                )
+            }
+
             R.id.nav_novel_mode -> {
                 val cur = PxEZApp.instance.pre.getString("main_mode", "illust")
                 PxEZApp.instance.pre.edit {

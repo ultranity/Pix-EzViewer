@@ -1,9 +1,19 @@
 package com.perol.asdpl.pixivez.data.model
 
 import com.perol.asdpl.pixivez.base.EmptyAsNullJsonTransformingSerializer
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonObject
 
 // 字段对照 app-api 小说响应;非 id/图片/作者的元字段一律给默认值,
 // 兼容 recommend/rank/follow/search 等列表间的字段差异,防解析崩
@@ -77,9 +87,47 @@ class NovelWebResponse(
     val title: String = "",
     val text: String = "",
     val seriesNavigation: SeriesNavigation? = null,
+    @Serializable(with = NovelImageMapSerializer::class)
     val images: Map<String, NovelImage>? = null,
-    val illusts: Map<String, NovelIllustRef>? = null
+    @Serializable(with = NovelIllustMapSerializer::class)
+    val illusts: Map<String, NovelIllustRef?>? = null
 )
+
+/**
+ * The webview payload normally uses an object keyed by image/id. Some novels emit []
+ * for an empty collection instead. Treat only that exact empty array as an empty map;
+ * a non-empty array still reaches the map serializer and fails loudly rather than
+ * silently discarding references.
+ */
+private open class EmptyArrayAsEmptyMapSerializer<T>(
+    elementSerializer: KSerializer<T>,
+) : KSerializer<Map<String, T>?> {
+    private val delegate = MapSerializer(String.serializer(), elementSerializer).nullable
+
+    override val descriptor = delegate.descriptor
+
+    override fun serialize(encoder: Encoder, value: Map<String, T>?) {
+        if (encoder is JsonEncoder) {
+            encoder.encodeJsonElement(encoder.json.encodeToJsonElement(delegate, value))
+        } else {
+            delegate.serialize(encoder, value)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): Map<String, T>? {
+        if (decoder is JsonDecoder) {
+            val element = decoder.decodeJsonElement()
+            val normalized: JsonElement =
+                if (element is JsonArray && element.isEmpty()) JsonObject(emptyMap()) else element
+            return decoder.json.decodeFromJsonElement(delegate, normalized)
+        }
+        return delegate.deserialize(decoder)
+    }
+}
+
+private object NovelImageMapSerializer : EmptyArrayAsEmptyMapSerializer<NovelImage>(NovelImage.serializer())
+
+private object NovelIllustMapSerializer : EmptyArrayAsEmptyMapSerializer<NovelIllustRef?>(NovelIllustRef.serializer().nullable)
 
 @Serializable
 class NovelImage(val urls: NovelImageUrls = NovelImageUrls())
@@ -115,7 +163,7 @@ class NovelNaviItem(
     val title: String = ""
 )
 
-// GET /v1/novel/text 纯文本备选:webview 解析失败时 fallback,只取正文
+// Legacy GET /v1/novel/text response model; the reader uses /webview/v2/novel.
 @Serializable
 class NovelTextResponse(
     @SerialName("novel_text")

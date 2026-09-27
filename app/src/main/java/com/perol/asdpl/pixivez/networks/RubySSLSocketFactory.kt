@@ -26,37 +26,31 @@ package com.perol.asdpl.pixivez.networks
 
 import java.net.InetAddress
 import java.net.Socket
-import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
-class RubySSLSocketFactory : SSLSocketFactory() {
+/** Suppresses automatic SNI while reusing OkHttp's connected socket and timeout. */
+class RubySSLSocketFactory(
+    private val delegate: SSLSocketFactory = getDefault() as SSLSocketFactory,
+) : SSLSocketFactory() {
+    override fun getDefaultCipherSuites(): Array<String> = delegate.defaultCipherSuites
+    override fun getSupportedCipherSuites(): Array<String> = delegate.supportedCipherSuites
 
-    override fun getDefaultCipherSuites() = arrayOf<String>()
-
-    override fun getSupportedCipherSuites() = arrayOf<String>()
-
-    override fun createSocket(
-        socket: Socket?,
-        host: String?,
-        port: Int,
-        autoClose: Boolean
-    ): Socket {
-        val address = socket!!.inetAddress
-        // from Shaft: okhttp3 4.5.0 版本引入修改，okhttp3.internal.connection.RealConnection->isHealthy中，检查了rawSocket.isClosed状态
-        // 如果需要更新到高版本依然可用，注释下方行
-        //if (autoClose) socket.close()
-        //val sslSession = sslSocket.session
-        //Log.d("!", "$socket\nAddress: $address Host: ${address.hostAddress}, Protocol: ${sslSession.protocol}, PeerHost: ${sslSession.peerHost}, CipherSuite: ${sslSession.cipherSuite}.")
-        return (getDefault().createSocket(address, port) as SSLSocket).apply {
-            enabledProtocols = supportedProtocols
-        }
+    override fun createSocket(socket: Socket?, host: String?, port: Int, autoClose: Boolean): Socket {
+        requireNotNull(socket)
+        // A literal peer address avoids implicit SNI. OkHttp still verifies the URL hostname.
+        // Do not createSocket(address, port): that opens a second, unbounded TCP connection.
+        return delegate.createSocket(socket, socket.inetAddress.hostAddress, port, autoClose)
     }
 
-    override fun createSocket(host: String?, port: Int): Socket? = null
+    override fun createSocket(host: String?, port: Int): Socket =
+        delegate.createSocket(InetAddress.getByName(host), port)
 
-    override fun createSocket(host: String?, port: Int, localHost: InetAddress?, localPort: Int): Socket? = null
+    override fun createSocket(host: String?, port: Int, localHost: InetAddress?, localPort: Int): Socket =
+        delegate.createSocket(InetAddress.getByName(host), port, localHost, localPort)
 
-    override fun createSocket(address: InetAddress?, port: Int): Socket? = null
+    override fun createSocket(address: InetAddress?, port: Int): Socket =
+        delegate.createSocket(address, port)
 
-    override fun createSocket(address: InetAddress?, port: Int, localAddress: InetAddress?, localPort: Int): Socket? = null
+    override fun createSocket(address: InetAddress?, port: Int, localAddress: InetAddress?, localPort: Int): Socket =
+        delegate.createSocket(address, port, localAddress, localPort)
 }

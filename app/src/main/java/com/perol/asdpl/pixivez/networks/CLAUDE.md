@@ -1,59 +1,36 @@
-# networks/ —— 网络层
+# networks/ 网络层
 
-Pixiv API 的鉴权、接口、图片与下载的 HTTP 栈。基于 OkHttp 4 + Retrofit 3。
+API / OAuth 使用 OkHttp 4 + Retrofit 3。2.3.0 默认使用 ECH；没有 Cronet。
 
-## 核心矛盾:连通性与反审查
+## API ECH
 
-这些域名有两类入口,对"无 SNI"处理不同:
+- `EchApiTransport.kt`：通过 Conscrypt 2.7.0 提供 TLS 1.3 ECH，保留 OkHttp 的 HTTP/2、鉴权、超时与取消。
+- 仅 `app-api.pixiv.net`、`oauth.secure.pixiv.net`、`accounts.pixiv.net` 要求 ECH；保留真实 URL/Host，并由系统信任管理器 + OkHttp 验证真实目标证书。
+- 与 pixez-flutter 一致，从 `cloudflare-ech.com` 的 HTTPS DNS 记录获取 Cloudflare ECH 公钥与 IPv4 hints。AliDNS 主解析、Cloudflare 带 bootstrap 的严格验证 DoH 备用；每个解析请求限时 4 秒。解析客户端独立于 API 设置，不携带用户凭据。
+- `EchConfigCache.kt`：尊重 DNS TTL（上限一天）、同步共享刷新、失败退避 30 秒；最近有效配置最多保留一天。连接失败或 421 触发限频失效；本层仅对 IOException 重试 GET/HEAD 一次，不重放 POST，421 直接返回，不回退明文 SNI。
+- Conscrypt 2.7.0 的 engine socket 会包装 `X509ExtendedTrustManager` 并丢失 ECH policy。因此 `EchTrustManager` 必须保持普通 `X509TrustManager`，保留反射入口 `getNetworkSecurityPolicy()`（`@Keep`）。不能只设置 `setEchConfigList` 就认定 ECH 已开启。
+- `EchHandshakeInstrumentedTest` 直接检查 Android 发出的 ClientHello：outer SNI 必须是 `cloudflare-ech.com`，必须包含 ECH 扩展。升级 Conscrypt 时必须重跑。
+- ECH 模式自带 DNS、始终验证证书，设置页禁用旧 DNS/证书开关。此模式不使用旧 `apiDirectIPs`。
 
-- **Pixiv 自有源站**(IDC Frontier/JP,如 `210.140.139.x`,AS4694):nginx 直接服务,
-  接受无 SNI 并按 Host 路由 —— 直连它即绕开 Cloudflare 边缘。
-- **Cloudflare 共享 anycast**(公共 DNS/DoH 返回,`104.x`/`172.64.x`,AS13335):
-  无 SNI 时选不出证书 → TLS 握手失败;须带(替换/明文)SNI。
+## 旧模式与迁移
 
-故 DNS 与 SNI 两维度**有耦合**(空/替换 SNI 须配源站):
+`NetworkMode.kt` 保留 `DnsMode`（direct/doh/system）及 `SniMode`（ech/replace/empty/plain）。ECH 为默认；旧模式需按当前网络实际验证。
 
-- **DNS 维度** —— 连哪类入口:DIRECT(Pixiv 源站)/ DoH(anycast)/ 系统。
-- **SNI 维度** —— ClientHello 呈现:替换(pixiv.me)/ 空 / 明文(可被 GFW RST)。
+历史单一网络环境的手机排查记录（不是本次 2.3.0 验收）：源站 + pixiv.me 返回 421；源站 + 空 SNI 返回 403 HTML；真实明文 SNI 被重置。证书 SAN 同时覆盖多个主机不代表服务器允许 SNI/Host 不一致，403 也不代表内容加载成功。
 
-墙内可用组合 = **DIRECT(直连源站) + 替换 SNI=pixiv.me**(空 SNI 亦可,但部分入口
-默认证书不覆盖三段域名会 421);无墙/代理 = DoH + 明文。
+`ApiNetworkMigration.kt` 在 Application 初始化网络客户端前，仅一次迁移旧的内置 DIRECT + REPLACE/EMPTY 配置；显式自定义源站/SNI、SYSTEM/PLAIN 等配置保留。迁移标记写入后，用户仍可切回旧模式。设置保存后重启进程重建单例。
 
-## 文件职责
+`ReplaceSniSocketFactory` / `RubySSLSocketFactory` 在 OkHttp 已连接的 socket 上建立 TLS，不另开 TCP。旧模式禁用 TLS extensions，兼容会恢复 SNI 的旧 Android 适配器（Android 29+ 的 OkHttp 适配器不会覆盖 SNI，但此旧路径仍统一使用 HTTP/1.1）。ECH 保持 ALPN。
 
-| 文件 | 职责 |
-|------|------|
-| `NetworkMode.kt` | **API 连接两轴模型**:`DnsMode`(direct/doh/system)× `SniMode`(replace/empty/plain)+ `VerifyConfig`(证书+主机名校验开关,默认开)+ `DohConfig`(默认 cloudflare-dns.com + bootstrap)+ `SniReplaceConfig`(替换 SNI 主机,默认 pixiv.me;`candidates()` 读 SAN、`autoSelect()` 逐个实测自动择优)+ `DohApiDns`(DoH→anycast,`lookupPublic` 可查任意主机供 bypass 引擎复用)+ `PixivDirectDns`(源站直连 IP,IPv4 校验)+ `applyApiNetwork()`。 |
-| `ReplaceSniSocketFactory.kt` | 把 ClientHello 的 SNI 替换为指定主机(默认 pixiv.me)的 SSLSocketFactory;供 `SniMode.REPLACE` 用。 |
-| `RestClient.kt` | 各 Retrofit/OkHttp 客户端构建。API/鉴权走 `applyApiNetwork()`(含 421 显式处理);图片/下载走 `imageProxySocket()`。 |
-| `ServiceFactory.kt` | Retrofit 构建器 + `CFDNS`(经 1.1.1.1 的 DoH)。 |
-| `RefreshToken.kt` | token 刷新/登录(经 `retrofitOauthSecure`)。 |
-| `Pkce.kt` | OAuth PKCE。 |
-| `RubySSLSocketFactory.kt` / `RubyX509TrustManager.kt` | 空 SNI 实现:用 `InetAddress` 重载建 SSLSocket(不发 SNI)。供 API 的 `SniMode.EMPTY` 与图片路径复用;信任全部仅在 `VerifyConfig` 关闭时启用。 |
-| `ImageHttpDns.kt` | 图片域名(i/s.pximg.net)的直连 IP 池 + 负载均衡。 |
-| `DnsUtil.kt` | 连通性自检。 |
-| `ProgressInterceptor.kt` / `OkHttpUrlHeaderLoader.kt` / `ResponseBodySerializer.kt` | 下载进度 / Glide 集成 / 响应序列化。 |
-| `bypass/` | **WebView SNI 绕过子层**:Rule/Parser/Store/Resolver/Interceptor;详见 [`bypass/CLAUDE.md`](bypass/CLAUDE.md)。 |
+## 图片与普通 DoH
 
-## 两轴模型(`applyApiNetwork`)
+- `DohTransport.kt`：Cloudflare 域名端点 + bootstrap；无 SNI 优先、严格验证的常规 TLS 备用。自定义提供商必须 HTTPS。
+- `RefreshingDns.kt` / `ImageHttpDns.kt`：按主机缓存，5 分钟刷新、失败退避 60 秒、持久最近有效地址最多保留 24 小时；自定义地址 > 动态地址 > 内置备用地址。移除 ICMP 淘汰 IP。
+- `ImageDnsHosts.kt`：限定 pximg 域名，force-IP URL 失败时从原 Host 找回缓存键。其他主机交系统 DNS。
+- `Works.cachedForUrl` 路径仅读快照并启动后台刷新，不在 UI 线程等待 DNS。
+- `RestClient.kt`：API / OAuth 经 `applyApiNetwork()`；图片下载经 `imageProxySocket()`，不使用 ECH。`dnsProxy` 只影响图片。
+- `ServiceFactory.CFDNS` 与 API / WebView 共享严格验证 DoH。`bypass/` 是独立 WebView GET 拦截层，本次未重构网页登录。
 
-**DnsMode**(pref `apiDnsMode`,默认 `direct`)— 连哪类入口
-- `DIRECT`:Pixiv 自有源站([PixivDirectDns],硬编码 `210.140.139.x`,pref `apiDirectIPs` 可覆盖)。接受无 SNI;空-SNI 绕过落点。
-- `DOH`:经 `DohConfig`(默认 `cloudflare-dns.com` + bootstrap IP)→ Cloudflare anycast;配明文。
-- `SYSTEM`:系统 DNS。无墙 / 走代理 / VPN。
+## 验证
 
-**SniMode**(pref `apiSniMode`,默认 `replace`)
-- `REPLACE`:替换 SNI 为 `SniReplaceConfig`(默认 `pixiv.me`,pref `apiSniReplaceHost`,[ReplaceSniSocketFactory])。pixiv.me 不被 GFW 封,且其多-SAN 证书(含 oauth.secure 等)能授权目标 Host → 不致 421。**须配 `DIRECT`**。
-- `EMPTY`:空 SNI([RubySSLSocketFactory])。须配 `DIRECT`;部分入口默认证书不覆盖三段域名(如 oauth.secure)会 421。
-- `PLAIN`:明文真实 SNI + 证书校验。配 DoH/anycast;无墙 / 代理可用;墙内会被 SNI RST。
-
-**VerifyConfig**(pref `apiVerifyCert`,默认开):REPLACE/EMPTY 下是否做证书+主机名校验。
-默认开(源站多-SAN 证书可过校验,防 MITM);仅异常网络/入口需关(关=跳过主机名校验)。
-
-默认 **DIRECT + REPLACE(pixiv.me) + 校验开**(墙内可用)。网络/DoH 设置变更经设置保存后
-**真重启进程**(`snackbarForceRestart`)生效——单例按新配置重建。`PixivDirectDns` 硬编码源站
-IP(不在公共 DNS,会随 Pixiv 轮换,失效需更新或经 `apiDirectIPs` 覆盖)。
-
-设置入口:`SettingsFragment.showAPIConfigDialog()` 的「DNS 解析」「SNI 模式」下拉 +
-「DoH 服务商」输入框 +「校验证书」开关 +「自动选 SNI」按钮(读 SAN 逐个实测择优)。
-旧的 `dnsProxy` 开关现仅影响图片路径。
+JVM 测试验证缓存、解析、模式迁移、重试限制与旧 socket 行为。Android 测试覆盖实际 ECH ClientHello 与 ICU 小说正则。`PixivConnectivityInstrumentedTest` 必须显式传 `-e liveNetwork true`，在已有登录态的手机上使用正式客户端读取首页、刷新、小说详情和正文；不记录凭据或内容。

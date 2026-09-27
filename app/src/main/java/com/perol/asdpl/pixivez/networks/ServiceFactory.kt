@@ -3,10 +3,8 @@ package com.perol.asdpl.pixivez.networks
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -31,17 +29,8 @@ object ServiceFactory {
         //useAlternativeNames = false
     }
 
-    // Or "https://dns.cloudflare.com/.well-known/dns-query"
-    val CFDNS = DnsOverHttps("https://1.1.1.1/dns-query?ct=application/dns-udpwireformat")
-    private fun DnsOverHttps(url: String): DnsOverHttps {
-        return DnsOverHttps.Builder()
-            .client(OkHttpClient())
-            .url(url.toHttpUrl())
-            .post(true)
-            .resolvePrivateAddresses(false)
-            .resolvePublicAddresses(true)
-            .build()
-    }
+    // Use the same bootstrapped, certificate-verified resolver as API/WebView.
+    val CFDNS: okhttp3.Dns get() = DohApiDns.transport
 
     /**
      * API declarations([T]) must be interfaces.

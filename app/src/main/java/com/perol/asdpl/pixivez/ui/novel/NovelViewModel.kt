@@ -6,6 +6,7 @@ import com.perol.asdpl.pixivez.data.model.Novel
 import com.perol.asdpl.pixivez.data.model.NovelWebResponse
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,6 +18,8 @@ class NovelViewModel : BaseViewModel() {
     val chunks = MutableLiveData<List<NovelChunk>>()
     // is_bookmarked 在 Novel 中不可变,收藏态单独维护以便乐观更新
     val bookmarked = MutableLiveData(false)
+    val bodyLoading = MutableLiveData(false)
+    val bodyFailed = MutableLiveData(false)
 
     fun load(id: Int) {
         launchUI {
@@ -24,46 +27,52 @@ class NovelViewModel : BaseViewModel() {
                 val n = retrofit.api.getNovelDetail(id).novel
                 novel.value = n
                 bookmarked.value = n.is_bookmarked
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 CrashHandler.instance.e("novel", "detail $id failed", e)
                 novel.value = null
             }
         }
+        loadText(id)
+    }
+
+    fun loadText(id: Int) {
         launchUI {
-            val parsed = try {
+            bodyLoading.value = true
+            bodyFailed.value = false
+            try {
                 val html = withContext(Dispatchers.IO) {
-                    retrofit.api.getNovelText(id).string()
+                    retrofit.api.getNovelText(id).use { it.string() }
                 }
-                parseWebNovel(html)
-            } catch (e: Exception) {
-                CrashHandler.instance.e("novel", "text $id failed", e)
-                null
-            }
-            // webview 抽取失败时 fallback 到 /v1/novel/text 纯文本
-            val result = parsed ?: try {
-                val text = withContext(Dispatchers.IO) {
-                    retrofit.api.getNovelTextApi(id).novel_text
-                }
-                if (text.isNotBlank()) NovelWebResponse(id = id.toString(), text = text) else null
-            } catch (e: Exception) {
-                CrashHandler.instance.e("novel", "text fallback $id failed", e)
-                null
-            }
-            web.value = result
-            chunks.value = result?.let { w ->
-                withContext(Dispatchers.Default) {
+                val result = requireNotNull(parseWebNovel(html)) { "Novel payload missing" }
+                require(result.text.isNotBlank()) { "Novel body is empty" }
+                val parsedChunks = withContext(Dispatchers.Default) {
                     chunkNovel(
-                        w.text,
+                        result.text,
                         resolvePixiv = { pid ->
-                            w.illusts?.get(pid.toString())?.illust?.images
+                            result.illusts?.get(pid.toString())?.illust?.images
                                 ?.let { it.medium ?: it.original }
                         },
                         resolveUploaded = { iid ->
-                            w.images?.get(iid)?.urls?.let { it.mw480 ?: it.original }
+                            result.images?.get(iid)?.urls?.let { it.mw480 ?: it.original }
                         },
                     )
                 }
-            } ?: emptyList()
+                web.value = result
+                chunks.value = parsedChunks
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Do not hide a webview/JSON error behind a second /v1/novel/text
+                // request (which may return 404). Keep the original failure retryable.
+                CrashHandler.instance.e("novel", "body $id failed", e)
+                web.value = null
+                chunks.value = emptyList()
+                bodyFailed.value = true
+            } finally {
+                bodyLoading.value = false
+            }
         }
     }
 
@@ -83,7 +92,8 @@ class NovelViewModel : BaseViewModel() {
 
 // webview/v2/novel 返回 HTML,内嵌 `novel: {...}, isOwnWork`。
 // 懒惰匹配 `{.*?}` + isOwnWork 锚点回溯定位到正确的闭合括号;DOTALL 让 `.` 跨行。
-private val NOVEL_JSON = Regex("""novel:\s*(\{.*?}),\s*isOwnWork""", RegexOption.DOT_MATCHES_ALL)
+// Android Pattern delegates to ICU, where the literal closing brace must be escaped; the JDK accepts it unescaped.
+private val NOVEL_JSON = Regex("""novel:\s*(\{.*?\}),\s*isOwnWork""", RegexOption.DOT_MATCHES_ALL)
 
 fun parseWebNovel(html: String): NovelWebResponse? {
     val json = NOVEL_JSON.find(html)?.groupValues?.getOrNull(1) ?: return null
@@ -93,11 +103,10 @@ fun parseWebNovel(html: String): NovelWebResponse? {
 // pixiv 正文自有标记 → 纯文本(导出/纯文字场景用;阅读页走 NovelMarkup 图文管线)
 fun renderNovelText(raw: String): String =
     raw
-        .replace(Regex("""\[newpage]"""), "\n\n")
-        .replace(Regex("""\[chapter:(.*?)]"""), "\n$1\n")
-        .replace(Regex("""\[\[rb:(.*?)>(.*?)]]"""), "$1($2)")
-        .replace(Regex("""\[\[jumpuri:(.*?)>.*?]]"""), "$1")
-        .replace(Regex("""\[pixivimage:[^\]]*]"""), "")
-        .replace(Regex("""\[uploadedimage:[^\]]*]"""), "")
-        .replace(Regex("""\[jump:[^\]]*]"""), "")
-
+        .replace(Regex("""\[newpage\]"""), "\n\n")
+        .replace(Regex("""\[chapter:(.*?)\]"""), "\n$1\n")
+        .replace(Regex("""\[\[rb:(.*?)>(.*?)\]\]"""), "$1($2)")
+        .replace(Regex("""\[\[jumpuri:(.*?)>.*?\]\]"""), "$1")
+        .replace(Regex("""\[pixivimage:[^\]]*\]"""), "")
+        .replace(Regex("""\[uploadedimage:[^\]]*\]"""), "")
+        .replace(Regex("""\[jump:[^\]]*\]"""), "")

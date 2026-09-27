@@ -101,6 +101,7 @@ class PictureXFragment : BaseFragment() {
     override fun onResume() {
         isLoaded = pictureXViewModel.illustDetail.value != null
         super.onResume()
+        pictureXAdapter?.refreshDownloadIndicator(binding.recyclerview)
         pictureXAdapter?.imageViewGif?.startPlay()
     }
 

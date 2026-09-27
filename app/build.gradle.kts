@@ -53,8 +53,8 @@ android {
         minSdk = 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 29
-        versionCode = 226
-        versionName = "2.2.6"
+        versionCode = 230
+        versionName = "2.3.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         //vectorDrawables.useSupportLibrary = true
@@ -206,6 +206,10 @@ dependencies {
     // Test helpers
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    // Pin: ECH policy and ClientHello are verified by Android instrumentation tests.
+    implementation("org.conscrypt:conscrypt-android:2.7.0")
     testImplementation(libs.room.testing)
 
     // ViewModel and LiveData

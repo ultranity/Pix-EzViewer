@@ -48,6 +48,10 @@ jobs:
         with:
           submodules: recursive # 需要 Ketch 子模块(:ketch)
 
+      # Android uses ICU for regex; desktop JVM tests accept patterns Android rejects.
+      - name: Check novel parser with native ICU
+        run: python3 scripts/check_novel_regex.py
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:

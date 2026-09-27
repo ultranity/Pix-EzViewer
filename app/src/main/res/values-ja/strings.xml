@@ -314,6 +314,7 @@
     <string name="dns_mode">DNS 解決</string>
     <string name="sni_mode">SNI モード</string>
     <string name="doh_provider_hint">DoH プロバイダ(空欄=既定 Cloudflare)</string>
+    <string name="ech_mode_description">ECH は Pixiv API の DNS を自動設定し、常に証明書を検証します。DNS、DoH、SNI、証明書の設定は無効になります。</string>
     <string name="ip_download">DNS直接解決</string>
     <string name="i_pximg_net_ip_list">i.pximg.net のカスタムIPリスト (カンマ区切り)</string>
     <string name="ip_shuffle">IPシャッフル (ロードバランス)</string>
@@ -334,4 +335,7 @@
     <string name="novel_line_space">行間</string>
     <string name="switch_to_novel">小説モードへ切り替え</string>
     <string name="switch_to_illust">イラストモードへ切り替え</string>
+    <string name="browser">ブラウザ</string>
+    <string name="novel_body_load_failed">本文を読み込めませんでした。再試行してください。</string>
+    <string name="novel_retry">再試行</string>
 </resources>

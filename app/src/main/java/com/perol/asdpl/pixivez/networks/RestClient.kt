@@ -38,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Dns
+import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -109,16 +110,6 @@ object RestClient {
         }).imageProxySocket(Works.apiMirror) //.cache(httpCache)
             .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
             .addInterceptor(ProgressInterceptor())
-            //add callback if timeout
-            .addNetworkInterceptor {
-                try {
-                    it.proceed(it.request())
-                } catch (e: Exception) {
-                    Log.e("imageHttpClient", e.message, e)
-                    ImageHttpDns.checkIPConnection()
-                    throw e
-                }
-            }
             .build()
     }
 
@@ -282,6 +273,18 @@ object RestClient {
                 it.proceed(requestBuilder.build())
             }
         }
+        addInterceptor { chain ->
+            val host = ImageDnsHosts.origin(chain.request())
+            try {
+                chain.proceed(chain.request()).also { response ->
+                    if (dnsProxy && response.code == 421) ImageHttpDns.connectionFailed(host)
+                }
+            } catch (e: java.io.IOException) {
+                // Application interceptor includes connect/TLS failures, unlike a network interceptor.
+                if (dnsProxy) ImageHttpDns.connectionFailed(host)
+                throw e
+            }
+        }
         proxySocket(imageDns)
     }
 
@@ -289,6 +292,8 @@ object RestClient {
         if (dnsProxy) {
             this.sslSocketFactory(RubySSLSocketFactory(), RubyX509TrustManager())
                 .hostnameVerifier { _, _ -> true }
+            this.connectionSpecs(listOf(ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .supportsTlsExtensions(false).build(), ConnectionSpec.CLEARTEXT))
             this.dns(dns)
         }
         return this

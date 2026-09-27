@@ -32,6 +32,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -633,7 +634,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             binding.apiMirror.isChecked = getBoolean("enableMirror", false)
             binding.verifyCert.isChecked = getBoolean(VerifyConfig.PREF_KEY, true)
         }
-        // ── API 连接:DNS 维度(系统/DoH)× SNI 维度(明文/空)解耦 ──
+        // ── API 连接:ECH 自动模式，或 DNS(系统/DoH)× SNI(替换/空/明文) ──
         fun spinnerAdapter(arrayRes: Int) = ArrayAdapter.createFromResource(
             requireContext(), arrayRes, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
@@ -644,7 +645,37 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val sniOrder = SniMode.displayOrder
         binding.sniModeSpinner.adapter = spinnerAdapter(R.array.sni_mode_entries)
-        binding.sniModeSpinner.setSelection(sniOrder.indexOf(SniMode.current()).coerceAtLeast(0))
+        val initialSniIndex = sniOrder.indexOf(SniMode.current()).coerceAtLeast(0)
+        var selectedSniMode = sniOrder.getOrNull(initialSniIndex) ?: SniMode.default
+        var sniSelectionInitialized = false
+        fun updateSniControls(mode: SniMode, announce: Boolean) {
+            val ech = mode == SniMode.ECH
+            binding.dnsModeSpinner.isEnabled = !ech
+            binding.dohProvider.isEnabled = !ech
+            binding.autoSni.isEnabled = !ech
+            binding.verifyCert.isEnabled = !ech
+            if (ech) {
+                // ECH owns API DNS and always validates the server certificate.
+                binding.verifyCert.isChecked = true
+                if (announce) {
+                    ToastQ.post(getString(R.string.ech_mode_description))
+                }
+            }
+        }
+        binding.sniModeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                val mode = sniOrder.getOrNull(position) ?: return
+                val changed = mode != selectedSniMode
+                selectedSniMode = mode
+                updateSniControls(mode, announce = sniSelectionInitialized && changed)
+                sniSelectionInitialized = true
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+        binding.sniModeSpinner.setSelection(initialSniIndex)
+        updateSniControls(selectedSniMode, announce = false)
+        sniSelectionInitialized = true
 
         binding.dohProvider.setText(DohConfig.provider())
         // 自动选 SNI:读源站证书 SAN → 逐个实测(握手/421)→ 选当前网络可用的并落库,
@@ -682,7 +713,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         })
         binding.refreshDNS.setOnClickListener {
             ImageHttpDns.fetchIPs()
-            ImageHttpDns.checkIPConnection()
         }
         binding.refreshDNS.setOnLongClickListener {
             MaterialDialogs(requireContext()).show {

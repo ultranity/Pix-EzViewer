@@ -68,6 +68,7 @@ class NovelActivity : RinkActivity() {
         applyReaderTheme()
 
         initObserver()
+        binding.novelRetry.setOnClickListener { viewModel.loadText(novelId) }
         viewModel.load(novelId)
     }
 
@@ -90,6 +91,13 @@ class NovelActivity : RinkActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initObserver() {
+        viewModel.bodyLoading.observe(this) { loading ->
+            binding.novelLoading.visibility = if (loading) View.VISIBLE else View.GONE
+            binding.novelRetry.isEnabled = !loading
+        }
+        viewModel.bodyFailed.observe(this) { failed ->
+            binding.novelBodyError.visibility = if (failed) View.VISIBLE else View.GONE
+        }
         viewModel.novel.observe(this) {
             adapter.novel = it
             adapter.notifyItemChanged(0)
@@ -333,13 +341,17 @@ private class NovelReaderAdapter(
             is NovelToken.Plain -> sb.append(t.text)
             is NovelToken.Ruby -> sb.append("${t.base}(${t.rt})")
             is NovelToken.Chapter -> {
-                val start = sb.length
-                sb.append("\n${t.title}\n")
-                sb.setSpan(StyleSpan(Typeface.BOLD), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                sb.setSpan(RelativeSizeSpan(1.25f), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                val append = chapterSpanAppend(
+                    existingLength = sb.length,
+                    existingEndsWithNewline = sb.isNotEmpty() && sb.last() == '\n',
+                    title = t.title,
+                )
+                sb.append(append.text)
+                sb.setSpan(StyleSpan(Typeface.BOLD), append.start, append.endExclusive, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.setSpan(RelativeSizeSpan(1.25f), append.start, append.endExclusive, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 sb.setSpan(
                     AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),
-                    start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    append.start, append.endExclusive, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
             is NovelToken.JumpUri -> {

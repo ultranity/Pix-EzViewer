@@ -77,4 +77,32 @@ class NovelMarkupTest {
     @Test fun tokenize_keeps_malformed_marker_as_plain() {
         assertEquals(listOf(NovelToken.Plain("[chapter:未闭合")), tokenize("[chapter:未闭合"))
     }
+
+    @Test fun chapter_span_is_aligned_when_heading_follows_text() {
+        val before = "前文"
+        val append = chapterSpanAppend(
+            existingLength = before.length,
+            existingEndsWithNewline = before.endsWith('\n'),
+            title = "章节",
+        )
+        val rendered = before + append.text
+
+        assertEquals("前文\n章节\n", rendered)
+        assertEquals('\n', rendered[append.start - 1])
+        assertEquals('\n', rendered[append.endExclusive])
+    }
+
+    @Test fun chapter_span_does_not_add_duplicate_leading_newline() {
+        val before = "前文\n"
+        val append = chapterSpanAppend(
+            existingLength = before.length,
+            existingEndsWithNewline = before.endsWith('\n'),
+            title = "章节",
+        )
+        val rendered = before + append.text
+
+        assertEquals("前文\n章节\n", rendered)
+        assertEquals('\n', rendered[append.start - 1])
+        assertEquals('\n', rendered[append.endExclusive])
+    }
 }

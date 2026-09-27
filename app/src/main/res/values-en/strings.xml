@@ -315,6 +315,7 @@
     <string name="doh_provider_hint">DoH provider (blank = default Cloudflare)</string>
     <string name="auto_select_sni">Auto-pick SNI</string>
     <string name="verify_cert">Verify cert</string>
+    <string name="ech_mode_description">ECH resolves the Pixiv API automatically and always verifies certificates; DNS, DoH, SNI, and certificate controls are disabled.</string>
     <string name="ip_download">Force DNS Solving</string>
     <string name="block_user">Block User</string>
     <string name="i_pximg_net_ip_list">customize IP list for i.pximg.net, separate with \",\"</string>
@@ -336,4 +337,7 @@
     <string name="novel_line_space">Line spacing</string>
     <string name="switch_to_novel">Switch to novel mode</string>
     <string name="switch_to_illust">Switch to illust mode</string>
+    <string name="browser">Browser</string>
+    <string name="novel_body_load_failed">Could not load the novel text. Please retry.</string>
+    <string name="novel_retry">Retry</string>
 </resources>

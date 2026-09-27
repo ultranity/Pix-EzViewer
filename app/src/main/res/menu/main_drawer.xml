@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_star"
             android:title="@string/walk_through" />
         <item
+            android:id="@+id/nav_browser"
+            android:icon="@drawable/ic_action_search"
+            android:title="@string/browser" />
+        <item
             android:id="@+id/nav_novel_mode"
             android:icon="@drawable/ic_sync"
             android:title="@string/switch_to_novel" />

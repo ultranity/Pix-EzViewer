@@ -25,13 +25,25 @@ permissions:
   contents: write # 创建 Release / 上传产物 / 必要时建 tag
 
 jobs:
+  runtime:
+    name: Android runtime gate
+    uses: ./.github/workflows/android-runtime.yml
+    permissions:
+      contents: read
+
   release:
+    needs: runtime
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive # 需要 Ketch 子模块(:ketch)
+
+      # Android's Pattern implementation uses ICU; keep this release gate
+      # independent from the desktop JVM regex tests.
+      - name: Check novel parser with native ICU
+        run: python3 scripts/check_novel_regex.py
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4

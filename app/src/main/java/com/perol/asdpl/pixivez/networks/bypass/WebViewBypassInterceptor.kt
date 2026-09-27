@@ -56,6 +56,7 @@ class WebViewBypassInterceptor(private val ua: String) {
                 SniMode.REPLACE -> ReplaceSniSocketFactory(ep.frontSni ?: SniReplaceConfig.host())
                 SniMode.EMPTY -> RubySSLSocketFactory()
                 SniMode.PLAIN -> null
+                SniMode.ECH -> error("ECH is configured by the API transport, not legacy WebView rules")
             }
             if (factory != null) {
                 val tm = systemTrustManagerOrNull()

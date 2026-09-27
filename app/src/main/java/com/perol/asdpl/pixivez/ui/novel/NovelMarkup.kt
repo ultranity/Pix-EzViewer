@@ -16,7 +16,7 @@ sealed class NovelChunk {
     data class Image(override val page: Int, val url: String?, val illustId: Int?) : NovelChunk()
 }
 
-private val IMAGE_MARK = Regex("""\[pixivimage:(\d+)(?:-\d+)?]|\[uploadedimage:(\d+)]""")
+private val IMAGE_MARK = Regex("""\[pixivimage:(\d+)(?:-\d+)?\]|\[uploadedimage:(\d+)\]""")
 
 fun chunkNovel(
     raw: String,
@@ -72,8 +72,31 @@ sealed class NovelToken {
     data class JumpPage(val page: Int) : NovelToken()
 }
 
+/**
+ * Text appended for a chapter heading and the range that may receive heading
+ * spans. The leading newline separates the previous paragraph, while the span
+ * starts on the title so it cannot also align text that precedes the heading.
+ * Keeping this calculation here makes that invariant testable without Android.
+ */
+data class NovelChapterSpanAppend(
+    val text: String,
+    val start: Int,
+    val endExclusive: Int,
+)
+
+fun chapterSpanAppend(
+    existingLength: Int,
+    existingEndsWithNewline: Boolean,
+    title: String,
+): NovelChapterSpanAppend {
+    val leadingBreak = if (existingLength > 0 && !existingEndsWithNewline) "\n" else ""
+    val start = existingLength + leadingBreak.length
+    val text = leadingBreak + title + "\n"
+    return NovelChapterSpanAppend(text, start, start + title.length)
+}
+
 private val TOKEN_MARK = Regex(
-    """\[chapter:(.*?)]|\[\[rb:(.*?)>(.*?)]]|\[\[jumpuri:(.*?)>(.*?)]]|\[jump:(\d+)]""",
+    """\[chapter:(.*?)\]|\[\[rb:(.*?)>(.*?)\]\]|\[\[jumpuri:(.*?)>(.*?)\]\]|\[jump:(\d+)\]""",
     RegexOption.DOT_MATCHES_ALL
 )
 

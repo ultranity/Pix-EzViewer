@@ -24,7 +24,6 @@
 
 package com.perol.asdpl.pixivez.objects
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.widget.Toast
@@ -50,9 +49,9 @@ object ToastQ {
         extraBufferCapacity = Int.MAX_VALUE //避免挂起导致数据发送失败
     )
 
-    @SuppressLint("StaticFieldLeak")
-    private val lToast: Toast =
+    private val lToast: Toast by lazy {
         Toast.makeText(PxEZApp.instance, "", Toast.LENGTH_SHORT)
+    }
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
@@ -84,11 +83,14 @@ object ToastQ {
 }
 
 object Toasty {
-    private val refreshToast =
+    // First access is confined to the Main coroutines below. Token refresh may
+    // initialize this object on an OkHttp worker with no Looper.
+    private val refreshToast by lazy {
         Toast.makeText(PxEZApp.instance, R.string.token_expired, Toast.LENGTH_SHORT)
+    }
 
     fun tokenRefreshing() {
-        refreshToast.show()
+        CoroutineScope(Dispatchers.Main).launch { refreshToast.show() }
     }
 
     fun tokenRefreshed(e: Exception? = null) {

@@ -1,0 +1,162 @@
+name: Android Runtime Tests
+
+# API 35 emulator gate for the two account-free instrumentation tests.  The
+# workflow is reusable from release.yml and can also be run on demand while
+# iterating on the Android network/parser boundary.
+on:
+  workflow_call: {}
+  workflow_dispatch: {}
+
+concurrency:
+  group: android-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    name: API 35 x86_64 offline instrumentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout with Ketch submodule
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Android SDK API 35 emulator
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools emulator platforms;android-35 build-tools;35.0.0 system-images;android-35;google_apis;x86_64"
+          log-accepted-android-sdk-licenses: false
+
+      # app/build.gradle.kts requires keystore.properties even for debug
+      # configuration.  Runtime CI deliberately uses an ephemeral key and
+      # never receives the production release-signing secrets.
+      - name: Generate temporary test keystore
+        run: |
+          set -euo pipefail
+          keytool -genkeypair -v \
+            -keystore "$GITHUB_WORKSPACE/ci-runtime.keystore" \
+            -alias ci-runtime -keyalg RSA -keysize 2048 -validity 1 \
+            -storepass cicicici -keypass cicicici \
+            -dname "CN=PixEz Runtime CI, OU=CI, O=PixEz, L=NA, ST=NA, C=US"
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/ci-runtime.keystore"
+            echo "storePassword=cicicici"
+            echo "keyAlias=ci-runtime"
+            echo "keyPassword=cicicici"
+          } > "$GITHUB_WORKSPACE/keystore.properties"
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Create and boot API 35 x86_64 emulator
+        env:
+          AVD_NAME: pixez-api35-x86_64
+        run: |
+          set -euo pipefail
+          export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+
+          # Hosted Ubuntu normally exposes KVM to the runner group.  Repair
+          # only this ephemeral device node if the image's udev mode is too
+          # restrictive, then fail clearly if acceleration is still unusable.
+          if [[ -e /dev/kvm && ( ! -r /dev/kvm || ! -w /dev/kvm ) ]]; then
+            sudo chmod a+rw /dev/kvm || true
+          fi
+          if [[ ! -r /dev/kvm || ! -w /dev/kvm ]]; then
+            echo "::error::KVM is required for the API 35 x86_64 runtime gate, but /dev/kvm is not readable and writable."
+            exit 1
+          fi
+          ls -l /dev/kvm
+
+          # Recent emulator and command-line tools may use different default AVD roots.
+          export ANDROID_AVD_HOME="$RUNNER_TEMP/pixez-avd"
+          mkdir -p "$ANDROID_AVD_HOME"
+          echo no | avdmanager create avd \
+            --force \
+            --name "$AVD_NAME" \
+            --path "$ANDROID_AVD_HOME/$AVD_NAME.avd" \
+            --package "system-images;android-35;google_apis;x86_64" \
+            --device "pixel_2"
+
+          emulator -avd "$AVD_NAME" \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -no-snapshot \
+            -wipe-data \
+            -gpu swiftshader_indirect \
+            -accel on \
+            > "$RUNNER_TEMP/android-emulator.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/android-emulator.pid"
+
+          if ! timeout 120 adb wait-for-device; then
+            cat "$RUNNER_TEMP/android-emulator.log"
+            exit 1
+          fi
+          booted=false
+          for attempt in $(seq 1 60); do
+            boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+            boot_anim=$(adb shell getprop init.svc.bootanim 2>/dev/null | tr -d '\r' || true)
+            if [[ "$boot_completed" == "1" && "$boot_anim" == "stopped" ]]; then
+              booted=true
+              break
+            fi
+            sleep 5
+          done
+          if [[ "$booted" != true ]]; then
+            echo "::error::API 35 emulator did not finish booting within 300 seconds."
+            adb shell getprop 2>/dev/null | tee "$RUNNER_TEMP/android-getprop.txt" || true
+            exit 1
+          fi
+
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb shell input keyevent 82 || true
+
+      # The comma-separated class filter runs the three offline test methods
+      # in the two named classes and excludes all live/account instrumentation
+      # tests by construction.  Keep this as one invocation so the complete
+      # report remains together in the uploaded Gradle result.
+      - name: Run offline ECH and Android ICU instrumentation tests
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -Pandroid.testInstrumentationRunnerArguments.class=com.perol.asdpl.pixivez.networks.EchHandshakeInstrumentedTest,com.perol.asdpl.pixivez.ui.novel.NovelRegexInstrumentedTest \
+            :app:connectedGitDebugAndroidTest
+
+      - name: Collect emulator diagnostics
+        if: ${{ always() }}
+        run: |
+          set +e
+          timeout 30 adb logcat -d -t 5000 > "$RUNNER_TEMP/android-logcat.txt" 2>&1
+          timeout 15 adb shell getprop > "$RUNNER_TEMP/android-getprop-final.txt" 2>&1
+          timeout 15 adb emu kill > "$RUNNER_TEMP/android-emu-kill.txt" 2>&1
+          if [[ -f "$RUNNER_TEMP/android-emulator.pid" ]]; then
+            kill "$(cat "$RUNNER_TEMP/android-emulator.pid")" 2>/dev/null || true
+          fi
+
+      - name: Upload runtime reports and emulator logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-runtime-${{ github.run_number }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/android-emulator.log
+            ${{ runner.temp }}/android-logcat.txt
+            ${{ runner.temp }}/android-getprop.txt
+            ${{ runner.temp }}/android-getprop-final.txt
+            ${{ runner.temp }}/android-emu-kill.txt
+            app/build/outputs/androidTest-results/**
+            app/build/reports/androidTests/connected/**
+          if-no-files-found: warn
+          retention-days: 14

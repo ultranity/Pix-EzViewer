@@ -160,7 +160,8 @@ data class IllustX(
             if (updated) {
                 field = value
                 CoroutineScope(Dispatchers.Main).launch {
-                    binders.forEach { it.key.value = value }
+                    // An earlier IO-thread update may be queued behind a newer local action.
+                    binders.forEach { it.key.value = is_bookmarked }
                 }
             }
 

@@ -26,6 +26,8 @@
 package com.perol.asdpl.pixivez.data
 
 import com.perol.asdpl.pixivez.data.entity.UserEntity
+import com.perol.asdpl.pixivez.objects.IllustCacheRepo
+import com.perol.asdpl.pixivez.objects.UserCacheRepo
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
 
@@ -36,7 +38,9 @@ object AppDataRepo {
     val currentUser: UserEntity
         get() = _currentUser!!
 
-    fun setCurrentUser(user: UserEntity) {
+    fun setCurrentUser(user: UserEntity?) {
+        if (_currentUser?.userid != user?.userid) UserCacheRepo.clear()
+        IllustCacheRepo.activateAccount(user?.userid)
         _currentUser = user
     }
 
@@ -49,9 +53,10 @@ object AppDataRepo {
     suspend fun getUser(): UserEntity? {
         val result = appDatabase.userDao().getUsers()
         if (result.isEmpty()) {
+            setCurrentUser(null)
             return null
         }
-        _currentUser = if (result.size == 1) {
+        val selected = if (result.size == 1) {
             result[0]
         } else {
             val num = pre.getInt("usernum", 0)
@@ -61,6 +66,7 @@ object AppDataRepo {
                 result[num]
             }
         }
+        setCurrentUser(selected)
         return currentUser
     }
 
@@ -73,12 +79,12 @@ object AppDataRepo {
 
     suspend fun updateUser(query: UserEntity) {
         appDatabase.userDao().updateUser(query)
-        _currentUser = query
+        setCurrentUser(query)
     }
 
     suspend fun insertUser(query: UserEntity) {
         appDatabase.userDao().insert(query)
-        _currentUser = query
+        setCurrentUser(query)
     }
 
     suspend fun deleteUser(query: UserEntity) {

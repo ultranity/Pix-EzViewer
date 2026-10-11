@@ -3,17 +3,17 @@ package com.perol.asdpl.pixivez.ui.manager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.files.fileChooser
-import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.list.listItems
 import com.ketch.DownloadModel
 import com.ketch.Status
@@ -31,13 +31,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 class DownloadManagerActivity : RinkActivity() {
 
     private lateinit var binding: ActivityDownloadManagerBinding
     private lateinit var downloadTaskAdapter: DownloadTaskAdapter
     private val ketch by lazy { PxEZApp.instance.ketch }
+
+    private val formats = listOf("URL", "FILE", "INFO")
+    private var exportFormat = 0
+    private val exportLogLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
+            uri?.let { exportLog(it, exportFormat) }
+        }
+    private val importLogLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.let(::showImportDialog)
+        }
 
     internal class KetchDiffCallback : DiffUtil.ItemCallback<DownloadModel>() {
         override fun areItemsTheSame(oldItem: DownloadModel, newItem: DownloadModel): Boolean {
@@ -150,7 +160,7 @@ class DownloadManagerActivity : RinkActivity() {
             }
 
             R.id.action_import -> {
-                showImportDialog()
+                importLogLauncher.launch(arrayOf("text/*", "application/octet-stream"))
             }
         }
         return true
@@ -158,36 +168,28 @@ class DownloadManagerActivity : RinkActivity() {
 
     @SuppressLint("CheckResult")
     private fun showExportDialog() = MaterialDialog(this).show {
-        folderChooser(
-            initialDirectory = File(PxEZApp.storepath),
-            allowFolderCreation = true,
-            context = context
-        ) { _, folder ->
-            MaterialDialog(context).show {
-                listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        File(folder.absolutePath + File.separatorChar + "download.log")
-                            .writer().let { writer ->
-                                ketch.getAllDownloads().forEach {
-                                    when (index) {
-                                        0 -> {
-                                            writer.appendLine(it.fileName)
-                                            writer.appendLine(it.url)
-                                            writer.appendLine(it.metaData)
-                                        }
+        listItems(items = formats) { _, index, _ ->
+            exportFormat = index
+            exportLogLauncher.launch("download.log")
+        }
+    }
 
-                                        1 -> {
-                                            writer.appendLine(it.url.substringAfterLast("/"))
-                                        }
+    private fun exportLog(uri: Uri, format: Int) = CoroutineScope(Dispatchers.IO).launch {
+        contentResolver.openOutputStream(uri, "wt")!!.writer().use { writer ->
+            ketch.getAllDownloads().forEach {
+                when (format) {
+                    0 -> {
+                        writer.appendLine(it.fileName)
+                        writer.appendLine(it.url)
+                        writer.appendLine(it.metaData)
+                    }
 
-                                        2 -> {
-                                            writer.appendLine(gson.encodeToString(it))
-                                        }
-                                    }
-                                }
-                                writer.flush()
-                                writer.close()
-                            }
+                    1 -> {
+                        writer.appendLine(it.url.substringAfterLast("/"))
+                    }
+
+                    2 -> {
+                        writer.appendLine(gson.encodeToString(it))
                     }
                 }
             }
@@ -195,59 +197,52 @@ class DownloadManagerActivity : RinkActivity() {
     }
 
     @SuppressLint("CheckResult")
-    private fun showImportDialog() = MaterialDialog(this).show {
-        fileChooser(
-            initialDirectory = File(PxEZApp.storepath),
-            filter = { it.isDirectory || it.extension == "log" },
-            context = context
-        ) { _, file ->
-            MaterialDialog(context).show {
-                listItems(items = listOf("URL", "FILE", "INFO")) { _, index, _ ->
-                    if (index == 0) {
-                        file.readLines().chunked(3).forEach {
-                            val illust = gson.decodeFromString<IllustD>(it[2])
-                            //  val filename = it[0]
-                            //  val url = it[1]
-                            //  val path = Works.getDownloadPath(illust)
-                            //  ketch.download(
-                            //      url,
-                            //      path,
-                            //      filename,
-                            //      tag = illust.id.toString(),
-                            //      metaData = it[2]
-                            //  )
-                            Works.imgD(illust.id, illust.part)
+    private fun showImportDialog(uri: Uri) = MaterialDialog(this).show {
+        val lines = contentResolver.openInputStream(uri)!!.bufferedReader().use { it.readLines() }
+        listItems(items = formats) { _, index, _ ->
+            if (index == 0) {
+                lines.chunked(3).forEach {
+                    val illust = gson.decodeFromString<IllustD>(it[2])
+                    //  val filename = it[0]
+                    //  val url = it[1]
+                    //  val path = Works.downloadTarget(illust, filename)
+                    //  ketch.download(
+                    //      url,
+                    //      path,
+                    //      filename,
+                    //      tag = illust.id.toString(),
+                    //      metaData = it[2]
+                    //  )
+                    Works.imgD(illust.id, illust.part)
+                }
+            } else lines.forEach {
+                when (index) {
+                    1 -> {
+                        val pid = (
+                                Regex("(?<=(pid)?_?)(\\d{7,9})").find(it)?.value ?: ""
+                                ).toIntOrNull()
+                        val dot = it.lastIndexOf(".")
+                        val part = (
+                                Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
+                                    .find(
+                                        it, //TODO: if necessary?
+                                        if (dot - 4 > 0) dot - 4 else 0
+                                    )?.value ?: "0"
+                                ).toIntOrNull()
+                        if (pid != null && part != null) {
+                            Works.imgD(pid, part)
+                            // Thread.sleep(300)
                         }
-                    } else file.readLines().forEach {
-                        when (index) {
-                            1 -> {
-                                val pid = (
-                                        Regex("(?<=(pid)?_?)(\\d{7,9})").find(it)?.value ?: ""
-                                        ).toIntOrNull()
-                                val dot = it.lastIndexOf(".")
-                                val part = (
-                                        Regex("""(?<=_p?)([0-9]{1,2})(?=\.)""")
-                                            .find(
-                                                it, //TODO: if necessary?
-                                                if (dot - 4 > 0) dot - 4 else 0
-                                            )?.value ?: "0"
-                                        ).toIntOrNull()
-                                if (pid != null && part != null) {
-                                    Works.imgD(pid, part)
-                                    // Thread.sleep(300)
-                                }
-                            }
+                    }
 
-                            2 -> gson.decodeFromString<DownloadModel>(it).let { it ->
-                                ketch.download(
-                                    it.url,
-                                    it.path,
-                                    it.fileName,
-                                    it.tag,
-                                    it.metaData,
-                                )
-                            }
-                        }
+                    2 -> gson.decodeFromString<DownloadModel>(it).let { it ->
+                        ketch.download(
+                            it.url,
+                            it.path,
+                            it.fileName,
+                            it.tag,
+                            it.metaData,
+                        )
                     }
                 }
             }

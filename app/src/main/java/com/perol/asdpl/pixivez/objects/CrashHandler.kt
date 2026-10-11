@@ -32,6 +32,7 @@ import android.os.Looper
 import android.os.Process
 import android.util.Log
 import android.view.InflateException
+import android.widget.Toast
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.services.PxEZApp
 import java.io.File
@@ -129,7 +130,8 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     fun e(tag: String, msg: String, tr: Throwable? = null, toast: Boolean = false) {
         if (BuildConfig.DEBUG) logs.add(LogItem(tag, msg, tr))
         Log.e(tag, msg, tr)
-        if (toast) Toasty.error(PxEZApp.instance, msg + (tr?.message ?: ""))
+        // ToastQ: callers may be on worker threads without a Looper
+        if (toast) ToastQ.post(msg + (tr?.message?.let { ": $it" } ?: ""), Toast.LENGTH_LONG)
     }
 
     /**

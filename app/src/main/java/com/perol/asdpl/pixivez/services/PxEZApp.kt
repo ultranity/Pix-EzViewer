@@ -28,11 +28,8 @@ package com.perol.asdpl.pixivez.services
 import android.app.Activity
 import android.app.Application
 import android.content.SharedPreferences
-import android.media.MediaScannerConnection
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.ketch.DownloadConfig
@@ -49,6 +46,7 @@ import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FastKVLogger
 import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.Toasty
 import io.fastkv.FastKVConfig
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -59,7 +57,6 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.util.Locale
 
 class PxEZApp : Application() {
@@ -90,10 +87,7 @@ class PxEZApp : Application() {
         RestrictFolderPath = pre.getString("R18FolderPath", "xRestrict/")!!
         restrictSanity = pre.getInt("restrictSanity", 8)
         TagSeparator = pre.getString("TagSeparator", "#")!!
-        storepath = pre.getString(
-            "storepath1",
-            Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
-        )!!
+        Storage.init()
         saveformat = pre.getString("filesaveformat", "{illustid}({userid})_{title}_{part}{type}")!!
         if (pre.getBoolean("crashreport", true)) {
             CrashHandler.instance.init()
@@ -108,9 +102,16 @@ class PxEZApp : Application() {
         applicationScope.launch {
             ketch.getAllDownloads().forEach {
                 when (it.status) {
-                    //remove finished task entry
-                    Status.SUCCESS, Status.CANCELLED -> {
-                        ketch.clearDbX(it.id, false) //TODO: make this syncable
+                    //remove finished task entry, committing any download the last run left staged;
+                    //entries that fail to commit stay for the SUCCESS observer below to retry
+                    Status.SUCCESS -> {
+                        runCatching { Works.commitDownload(it) }
+                            .onSuccess { _ -> ketch.clearDbX(it.id, false) } //TODO: make this syncable
+                            .onFailure { e -> Log.e("PxEZApp", "commit ${it.id}", e) }
+                    }
+
+                    Status.CANCELLED -> {
+                        ketch.clearDbX(it.id, false)
                     }
                     //and resume unfinished
                     Status.FAILED, Status.PAUSED -> {
@@ -130,27 +131,22 @@ class PxEZApp : Application() {
                 .flowOn(Dispatchers.IO)
                 .collect {
                     it.filterNot { postprocessedSet.contains(it.id) }.forEach {
+                        postprocessedSet.add(it.id)
                         val illustD = gson.decodeFromString<IllustD>(it.metaData)
-                        val file = File(it.path, it.fileName)
-                        if (file.exists()) {
-                            if (!illustD.restricted)
-                                MediaScannerConnection.scanFile(
+                        try {
+                            Works.commitDownload(it) ?: return@forEach
+                        } catch (e: Exception) {
+                            CrashHandler.instance.e(
+                                "PxEZApp", "save ${it.fileName} failed", e, toast = true
+                            )
+                            return@forEach
+                        }
+                        if (ShowDownloadToast) {
+                            withContext(Dispatchers.Main) {
+                                Toasty.success(
                                     this@PxEZApp,
-                                    arrayOf(file.path),
-                                    arrayOf(
-                                        MimeTypeMap.getSingleton()
-                                            .getMimeTypeFromExtension(file.extension)
-                                    ), null
+                                    "${illustD.title} ${illustD.pString()}${getString(R.string.savesuccess)}"
                                 )
-                            postprocessedSet.add(it.id)
-                            FileUtil.ListLog.add(illustD.id)
-                            if (ShowDownloadToast) {
-                                withContext(Dispatchers.Main) {
-                                    Toasty.success(
-                                        this@PxEZApp,
-                                        "${illustD.title} ${illustD.pString()}${getString(R.string.savesuccess)}"
-                                    )
-                                }
                             }
                         }
                     }
@@ -214,9 +210,6 @@ class PxEZApp : Application() {
     }
 
     companion object {
-        @JvmStatic
-        var storepath = ""
-
         @JvmStatic
         var RestrictFolder: Boolean = false
 

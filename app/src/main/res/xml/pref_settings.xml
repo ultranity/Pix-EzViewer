@@ -77,7 +77,7 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="Selection">
         <Preference
-            app:key="storepath1"
+            app:key="storage_root"
             app:title="@string/savepath" />
         <SwitchPreferenceCompat
             app:key="needcreatefold"

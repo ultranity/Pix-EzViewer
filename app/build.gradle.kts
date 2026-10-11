@@ -302,7 +302,6 @@ dependencies {
 
     // Material Dialogs: https://github.com/afollestad/material-dialogs
     implementation(libs.material.dialogs.core)
-    implementation(libs.material.dialogs.files)
     implementation(libs.material.dialogs.bottomsheets)
     implementation(libs.material.dialogs.lifecycle)
     implementation(libs.material.dialogs.input)

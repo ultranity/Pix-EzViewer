@@ -30,9 +30,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
@@ -43,41 +44,40 @@ import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivitySaucenaoBinding
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.Toasty
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.SaucenaoService
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.Dns
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
-import java.io.File
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.InetAddress
 import java.util.Date
 
 class SaucenaoActivity : RinkActivity() {
 
-    private val IMAGE = 1
+    private val pickImage =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let(::search)
+        }
     private lateinit var binding: ActivitySaucenaoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySaucenaoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.fab.setOnClickListener {
-            val intent = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            )
-            startActivityForResult(intent, IMAGE)
+            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         val httpLoggingInterceptor = HttpLoggingInterceptor { message ->
             CrashHandler.instance.d(
@@ -125,83 +125,35 @@ class SaucenaoActivity : RinkActivity() {
             val type = intent.type
             if (action != null && type != null) {
                 if (action == Intent.ACTION_SEND && type.startsWith("image/")) {
-                    val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
-
-                    if (uri != null) {
-                        val parcelFileDescriptor =
-                            contentResolver.openFileDescriptor(uri, "r")
-                        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
-                        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-                        parcelFileDescriptor.close()
-                        val file = File(cacheDir, Date().time.toString() + ".jpg")
-                        val out = file.outputStream()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            image.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                            out.flush()
-                            out.close()
-                        }
-                        Toasty.success(this, R.string.saucenao_compress_success)
-                        val builder = MultipartBody.Builder()
-                        builder.setType(MultipartBody.FORM)
-                        /*val baos = ByteArrayOutputStream();
-                        if (file.length() > 10000000L) {
-                            val options = BitmapFactory.Options()
-                            options.inSampleSize = 4
-                            val decodeFile = BitmapFactory.decodeFile(path, options)
-                            builder.addFormDataPart("file", file.name, object : RequestBody() {
-                                override fun contentType(): MediaType? =
-                                    "image/jpeg".toMediaTypeOrNull()
-
-                                override fun writeTo(sink: BufferedSink) {
-                                    decodeFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                                }
-
-                            })
-                            CrashHandler.instance.d("bitmap", "large file")
-                        } else*/
-                        builder.addFormDataPart(
-                            "file",
-                            file.name,
-                            file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                        )
-                        lifecycleScope.launchCatching({ api.search(builder.build().part(0)) }, {
-                            Toasty.success(PxEZApp.instance, R.string.saucenao_upload_success)
-                            if (file.exists()) {
-                                file.delete()
-                            }
-                            tryToParseHtml(it.string())
-                        }, {
-                            Toasty.error(
-                                PxEZApp.instance,
-                                getString(R.string.saucenao_upload_error) + it.message
-                            )
-                            if (file.exists()) {
-                                file.delete()
-                            }
-                        })
-                    }
+                    intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)?.let(::search)
                 }
             }
         }
     }
 
     lateinit var api: SaucenaoService
-    private fun trySearch(path: String) {
-        Toasty.success(this, R.string.saucenao_compress_success)
-        val file = File(path)
-        val builder = MultipartBody.Builder()
-        builder.setType(MultipartBody.FORM)
-        val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        builder.addFormDataPart("file", file.name, body)
+
+    /** Re-encodes the picked/shared image as JPEG and uploads it. */
+    private fun search(uri: Uri) {
         lifecycleScope.launchCatching({
-            api.search(builder.build().part(0))
+            val jpeg = ByteArrayOutputStream().also { out ->
+                val image = Storage.openInput(uri).use { BitmapFactory.decodeStream(it) }
+                    ?: throw IOException("not an image: $uri")
+                image.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            }.toByteArray()
+            withContext(Dispatchers.Main) {
+                Toasty.success(this@SaucenaoActivity, R.string.saucenao_compress_success)
+            }
+            val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("file", "${Date().time}.jpg", jpeg.toRequestBody("image/jpeg".toMediaTypeOrNull()))
+                .build()
+            api.search(body.part(0))
         }, {
             Toasty.success(this, R.string.saucenao_upload_success)
             tryToParseHtml(it.string())
-        },
-            {
-                Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message)
-            })
+        }, {
+            Toasty.error(this, getString(R.string.saucenao_upload_error) + it.message)
+        })
     }
 
     private fun tryToParseHtml(string: String) {
@@ -254,22 +206,5 @@ class SaucenaoActivity : RinkActivity() {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    var path: String? = null
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE && resultCode == RESULT_OK && data != null) {
-            val selectedImage = data.data
-            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
-            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)
-            c!!.moveToFirst()
-            val columnIndex = c.getColumnIndex(filePathColumns[0])
-            val imagePath = c.getString(columnIndex)
-            trySearch(imagePath)
-            c.close()
-        }
     }
 }

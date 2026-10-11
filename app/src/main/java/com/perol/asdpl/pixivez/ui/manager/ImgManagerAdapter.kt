@@ -41,7 +41,7 @@ class ImgManagerAdapter(layoutResId: Int) :
 
     override fun convert(holder: BaseViewHolder, item: FileInfo) {
         val icon = holder.getView<ImageView>(R.id.item_img)
-        Glide.with(icon.context).load(item.icon.toIntOrNull() ?: item.icon)
+        Glide.with(icon.context).load(item.icon)
             .placeholder(ThemeUtil.HALF_TRANS.toDrawable()).into(icon)
         // holder.getView<ConstraintLayout>(R.id.layout).background
         holder.getView<TextView>(R.id.item_name).text = item.name

@@ -27,9 +27,7 @@ package com.perol.asdpl.pixivez.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.media.MediaScannerConnection
 import android.view.LayoutInflater
-import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.FragmentActivity
@@ -42,16 +40,14 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
-import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.dp
-import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 fun resourceIdToUri(context: Context, resourceId: Int): String =
     "android.resource://${context.packageName}/$resourceId"
@@ -111,21 +107,7 @@ fun loadBGImage(imageView: ImageView, url: String?) {
                             .load(url)
                             .submit()
                         val file = f.get()
-                        val target = File(
-                            PxEZApp.storepath,
-                            "user_${url.substringAfterLast("/")}"
-                        )
-                        FileUtil.move(file, target)
-                        MediaScannerConnection.scanFile(
-                            PxEZApp.instance,
-                            arrayOf(target.path),
-                            arrayOf(
-                                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                    target.extension
-                                )
-                            ),
-                            null
-                        )
+                        Storage.scan(Storage.copyIn(file, listOf("user_${url.substringAfterLast("/")}")))
 
                         withContext(Dispatchers.Main) {
                             Toasty.info(imageView.context, "Saved")

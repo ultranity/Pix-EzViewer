@@ -25,6 +25,7 @@
 
 package com.perol.asdpl.pixivez.ui.user
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.R
@@ -36,15 +37,16 @@ import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.data.model.UserDetail
 import com.perol.asdpl.pixivez.objects.InteractionUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class UserMViewModel : BaseViewModel() {
     val userDetail = MutableLiveData<UserDetail>()
@@ -92,14 +94,16 @@ class UserMViewModel : BaseViewModel() {
         InteractionUtil.follow(user, privateFollow) { privateFollowed.value = privateFollow }
     }
 
-    fun tryToChangeProfile(path: String) {
+    fun tryToChangeProfile(uri: Uri) {
         viewModelScope.launch {
             try {
-                val file = File(path)
+                val bytes = withContext(Dispatchers.IO) {
+                    Storage.openInput(uri).use { it.readBytes() }
+                }
                 val builder = MultipartBody.Builder()
                 builder.setType(MultipartBody.FORM)
-                val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                builder.addFormDataPart("profile_image", file.name, body)
+                val body = bytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+                builder.addFormDataPart("profile_image", Storage.displayName(uri), body)
                 retrofit.api.postUserProfileEdit(builder.build().part(0))
                     .let {
                         Toasty.info(PxEZApp.instance, R.string.upload_success)

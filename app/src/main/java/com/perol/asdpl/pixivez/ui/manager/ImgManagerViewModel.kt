@@ -24,6 +24,7 @@
 
 package com.perol.asdpl.pixivez.ui.manager
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -32,15 +33,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.objects.Entry
 import com.perol.asdpl.pixivez.objects.FileInfo
+import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.getFastKV
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import io.fastkv.FastKV
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 
 class RenameTask(fileInfo: FileInfo) {
@@ -51,7 +56,9 @@ class RenameTask(fileInfo: FileInfo) {
 //TODO: clear
 class ImgManagerViewModel : BaseViewModel() {
     val pre = PxEZApp.instance.pre
-    var path = MutableLiveData<String>()
+    /** current folder; [parents] holds the way back up */
+    val dir = MutableLiveData<Uri>()
+    private val parents = ArrayDeque<Uri>()
     var saveformat = pre.getString("ImgManagerSaveFormat", PxEZApp.saveformat)!!
     var TagSeparator = pre.getString("ImgManagerTagSeparator", PxEZApp.TagSeparator)!!
     var files: MutableList<FileInfo>? = null
@@ -61,6 +68,28 @@ class ImgManagerViewModel : BaseViewModel() {
     lateinit var adapter: ImgManagerAdapter
     lateinit var layoutManager: LinearLayoutManager
     val kv = getFastKV("ImgMgr")
+
+    fun open(child: Uri) {
+        parents.addLast(dir.value!!)
+        dir.value = child
+    }
+
+    fun up() {
+        dir.value = parents.removeLastOrNull() ?: return
+    }
+
+    /** Resets navigation to a new top folder. */
+    fun browse(top: Uri) {
+        parents.clear()
+        dir.value = top
+    }
+
+    /** Folders then pictures of [dir], led by a ".." entry below the top folder. */
+    fun list(dir: Uri): MutableList<FileInfo> {
+        val items = FileUtil.listDir(dir).toMutableList()
+        parents.lastOrNull()?.let { items.add(0, FileInfo(Entry(it, PARENT, true, 0, 0))) }
+        return items
+    }
 
     fun getInfo() = viewModelScope.launch {
         /*files!!.asFlow().map {
@@ -113,8 +142,10 @@ class ImgManagerViewModel : BaseViewModel() {
                 }
         }
         //CrashHandler.instance.d("imgMgr","all")
-        File(path.value + File.separatorChar + "rename.log")
-            .writeText(gson.encodeToString(task))
+        val log = gson.encodeToString(task)
+        withContext(Dispatchers.IO) {
+            Storage.write(listOf("rename.log"), from = dir.value!!) { it.write(log.toByteArray()) }
+        }
         taskmap.clear()
         launchUI {
             delay(200)
@@ -126,10 +157,9 @@ class ImgManagerViewModel : BaseViewModel() {
         if (it.file.name == it.file.target || it.file.target == null) {
             return
         }
-        val orig = File(it.file.path)
-        val tar = "${orig.parent}${File.separator}${it.file.target}"
-        it.file.name = it.file.target!!
-        File(it.file.path).renameTo(File(tar))
+        val target = it.file.target!!
+        it.file.uri = Storage.rename(it.file.uri, target) ?: return
+        it.file.name = target
         val preIndex = files!!.indexOf(it.file)
         launchUI {
             if (preIndex >= layoutManager.findFirstVisibleItemPosition() &&
@@ -158,6 +188,8 @@ class ImgManagerViewModel : BaseViewModel() {
         }.start()
     }
 }
+
+const val PARENT = ".."
 
 private inline fun <reified T : Any> FastKV.encode(key: String, target: T?) =
     putString(key, gson.encodeToString(target))

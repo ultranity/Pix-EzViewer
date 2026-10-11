@@ -62,6 +62,7 @@ import com.perol.asdpl.pixivez.databinding.AppMainBinding
 import com.perol.asdpl.pixivez.databinding.NavHeaderMainBinding
 import com.perol.asdpl.pixivez.objects.LARGE_SCREEN_WIDTH_SIZE
 import com.perol.asdpl.pixivez.objects.MEDIUM_SCREEN_WIDTH_SIZE
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.UpToTopFragment
 import com.perol.asdpl.pixivez.objects.dp
@@ -277,10 +278,15 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
             finish()
             return
         }
-        val permissionList = ArrayList<String>()
-        permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        checkAndRequestPermissions(permissionList)
+        // a SAF folder carries its own grant; only the legacy path needs storage permissions
+        if (!Storage.isSaf) {
+            checkAndRequestPermissions(
+                arrayListOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            )
+        }
         onBackPressedDispatcher.addCallback {
             if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)

@@ -106,7 +106,6 @@ markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "mark
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material-dialogs-bottomsheets = { group = "com.afollestad.material-dialogs", name = "bottomsheets", version.ref = "materialDialogs" }
 material-dialogs-core = { group = "com.afollestad.material-dialogs", name = "core", version.ref = "materialDialogs" }
-material-dialogs-files = { group = "com.afollestad.material-dialogs", name = "files", version.ref = "materialDialogs" }
 material-dialogs-input = { group = "com.afollestad.material-dialogs", name = "input", version.ref = "materialDialogs" }
 material-dialogs-lifecycle = { group = "com.afollestad.material-dialogs", name = "lifecycle", version.ref = "materialDialogs" }
 #mmkv-static = { group = "com.tencent", name = "mmkv-static", version.ref = "mmkvStatic" }

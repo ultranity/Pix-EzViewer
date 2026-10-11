@@ -25,17 +25,15 @@
 
 package com.perol.asdpl.pixivez.ui.settings
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
@@ -50,8 +48,6 @@ import com.afollestad.materialdialogs.bottomsheets.BasicGridItem
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.bottomsheets.gridItems
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.files.fileChooser
-import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
@@ -83,8 +79,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.perol.asdpl.pixivez.objects.ClipBoardUtil
 import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.InteractionUtil
 import com.perol.asdpl.pixivez.objects.LanguageUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.AppUpdater
@@ -98,7 +96,29 @@ import java.io.File
 import java.io.FilenameFilter
 
 class SettingsFragment : PreferenceFragmentCompat() {
-    private val storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val pickStorageRoot =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri ?: return@registerForActivityResult
+            try {
+                Storage.setRoot(uri)
+            } catch (e: SecurityException) {
+                CrashHandler.instance.e("Settings", "storage root rejected", e, toast = true)
+                return@registerForActivityResult
+            }
+            findPreference<Preference>(Storage.KEY_ROOT)!!.summary = Storage.displayPath
+            PxEZApp.instance.applicationScope.launch { FileUtil.getFileList() }
+        }
+
+    /** backup_list indices chosen in the backup dialog, consumed by the document pickers */
+    private var backupIndices = intArrayOf(1)
+    private val exportBackupLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+            uri?.let(::exportBackup)
+        }
+    private val importBackupLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.let(::importBackup)
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         defaultComponent =
@@ -191,10 +211,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        findPreference<Preference>("storepath1")!!.apply {
-            setDefaultValue(PxEZApp.storepath)
-            summary = PxEZApp.storepath
-        }
+        findPreference<Preference>(Storage.KEY_ROOT)!!.summary = Storage.displayPath
         findPreference<Preference>("filesaveformat")!!.apply {
             setDefaultValue(PxEZApp.saveformat)
             summary = PxEZApp.saveformat
@@ -253,104 +270,88 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         findPreference<Preference>("backup")!!.setOnPreferenceClickListener {
             MaterialDialog(requireContext()).show {
-                val data = mutableMapOf<String, Any>()
-                var selectedIndex: IntArray = intArrayOf()
                 title(R.string.setting)
-                val list = listItemsMultiChoice(
+                listItemsMultiChoice(
                     R.array.backup_list,
-                    initialSelection = intArrayOf(1)
+                    initialSelection = backupIndices,
+                    waitForPositiveButton = false
                 ) { _, indices, _ ->
-                    if (indices.contains(0)) {
+                    if (indices.contains(0) && !backupIndices.contains(0)) {
                         MaterialDialog(requireContext()).show {
                             title(android.R.string.dialog_alert_title)
                             message(R.string.token_warning)
                             positiveButton(R.string.ok)
                         }
-                        selectedIndex = indices
                     }
+                    backupIndices = indices
                 }
                 positiveButton(R.string.action_export) {
-                    MaterialDialog(requireContext()).show {
-                        folderChooser(
-                            initialDirectory = File(PxEZApp.storepath),
-                            allowFolderCreation = true,
-                            context = context
-                        ) { _, folder ->
-                            for (i in selectedIndex) {
-                                when (i) {
-                                    0 -> data["token"] = AppDataRepo.export()
-                                    1 -> data["setting"] = PxEZApp.instance.pre.all
-                                    2 -> data["search"] =
-                                        HistoryDatabase.getInstance(context).searchHistoryDao()
-
-                                    3 -> data["view"] =
-                                        HistoryDatabase.getInstance(context).viewHistoryDao()
-
-                                    4 -> data["block"] = BlockViewModel.export()
-                                }
-                            }
-                            val jsonObject = JSONObject(data)
-                            try {
-                                val file =
-                                    File(folder.absolutePath + File.separatorChar + "PixEzViewer.config")
-                                val writer = file.writer()
-                                writer.write(jsonObject.toString())
-                                writer.close()
-                                ToastQ.post("Exported SharedPreferences to $file")
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
+                    exportBackupLauncher.launch("PixEzViewer.config")
                 }
                 neutralButton(R.string.action_import) {
-                    MaterialDialog(requireContext()).show {
-                        fileChooser(
-                            initialDirectory = File(PxEZApp.storepath),
-                            filter = { it.isDirectory || it.extension == "config" },
-                            context = context
-                        ) { _, file ->
-                            try {
-                                val stringBuilder = StringBuilder()
-                                var character: Int
-                                while (file.reader().read().also { character = it } != -1) {
-                                    stringBuilder.append(character.toChar())
-                                }
-
-                                val jsonObject = JSONObject(stringBuilder.toString())
-
-                                for (i in selectedIndex) {
-                                    when (i) {
-                                        0 -> TODO()
-                                        1 -> {
-                                            val editor = PxEZApp.instance.pre.edit()
-                                            for (key in jsonObject.keys()) {
-                                                val value = jsonObject.get(key)
-                                                when (value) {
-                                                    is String -> editor.putString(key, value)
-                                                    is Int -> editor.putInt(key, value)
-                                                    is Boolean -> editor.putBoolean(key, value)
-                                                    is Long -> editor.putLong(key, value)
-                                                    is Float -> editor.putFloat(key, value)
-                                                }
-                                            }
-                                            editor.apply()
-                                        }
-
-                                        2 -> TODO("search")
-                                        3 -> TODO("view")
-                                        4 -> TODO("block")
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
+                    importBackupLauncher.launch(arrayOf("*/*"))
                 }
                 negativeButton(android.R.string.cancel)
             }
             true
+        }
+    }
+
+    private fun exportBackup(uri: Uri) {
+        val context = requireContext()
+        val data = mutableMapOf<String, Any>()
+        for (i in backupIndices) {
+            when (i) {
+                0 -> data["token"] = AppDataRepo.export()
+                1 -> data["setting"] = PxEZApp.instance.pre.all
+                2 -> data["search"] = HistoryDatabase.getInstance(context).searchHistoryDao()
+                3 -> data["view"] = HistoryDatabase.getInstance(context).viewHistoryDao()
+                4 -> data["block"] = BlockViewModel.export()
+            }
+        }
+        try {
+            context.contentResolver.openOutputStream(uri, "wt")!!.writer().use {
+                it.write(JSONObject(data).toString())
+            }
+            ToastQ.post("Exported SharedPreferences to ${Storage.filePath(uri) ?: uri}")
+        } catch (e: Exception) {
+            CrashHandler.instance.e("Settings", "export backup failed", e, toast = true)
+        }
+    }
+
+    private fun importBackup(uri: Uri) {
+        try {
+            val text = requireContext().contentResolver.openInputStream(uri)!!
+                .bufferedReader().use { it.readText() }
+            val jsonObject = JSONObject(text)
+            for (i in backupIndices) {
+                when (i) {
+                    0 -> TODO()
+                    1 -> {
+                        val editor = PxEZApp.instance.pre.edit()
+                        val settings = jsonObject.getJSONObject("setting")
+                        // a granted folder does not carry over to another install
+                        for (key in settings.keys()) {
+                            if (key == Storage.KEY_ROOT) continue
+                            val value = settings.get(key)
+                            when (value) {
+                                is String -> editor.putString(key, value)
+                                is Int -> editor.putInt(key, value)
+                                is Boolean -> editor.putBoolean(key, value)
+                                is Long -> editor.putLong(key, value)
+                                is Float -> editor.putFloat(key, value)
+                            }
+                        }
+                        editor.apply()
+                    }
+
+                    2 -> TODO("search")
+                    3 -> TODO("view")
+                    4 -> TODO("block")
+                }
+            }
+        } catch (e: Exception) {
+            CrashHandler.instance.e("Settings", "import backup failed", e, toast = true)
         }
     }
 
@@ -374,41 +375,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             PxEZApp.ActivityCollector.recreate()
             snackbar.dismiss()
         }.show()
-    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (resultCode == Activity.RESULT_OK) {
-//
-//            if (requestCode == 887) {
-//                val path = data!!.getStringExtra("path")
-//                PxEZApp.storepath = path
-//                PxEZApp.instance.pre.edit().putString("storepath1", PxEZApp.storepath).apply()
-//                findPreference<Preference>("storepath1")!!.apply {
-//                    summary = path
-//                }
-//
-//            }
-//
-//
-//        }
-//
-//    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (requireContext().allPermissionsGranted(storagePermissions)) {
-                showDirectorySelectionDialog()
-            } else {
-                Toasty.error(requireContext(), "Permissions not granted by the user")
-            }
-        }
     }
 
     @SuppressLint("CheckResult")
@@ -447,30 +413,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 AppUpdater.checkUpgrade(requireActivity(), true)
             }
 
-            "storepath1" -> {
-//                startActivityForResult(Intent(activity, PathProviderActivity::class.java), 887)
-
-                if (requireContext().allPermissionsGranted(storagePermissions)) {
-                    showDirectorySelectionDialog()
-                } else {
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
-                        storagePermissions,
-                        REQUEST_CODE_PERMISSIONS
-                    )
-                }
+            Storage.KEY_ROOT -> {
+                pickStorageRoot.launch(Storage.root.takeIf { Storage.isSaf })
             }
 
             "filesaveformat" -> {
-                if (requireContext().allPermissionsGranted(storagePermissions)) {
-                    showSaveFormatDialog()
-                } else {
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
-                        storagePermissions,
-                        REQUEST_CODE_PERMISSIONS
-                    )
-                }
+                showSaveFormatDialog()
             }
 
             "R18Folder" -> {
@@ -815,31 +763,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
-    private fun showDirectorySelectionDialog() {
-        MaterialDialog(requireContext()).show {
-            title(R.string.title_save_path)
-            folderChooser(
-                initialDirectory = File(PxEZApp.storepath),
-                allowFolderCreation = true,
-                context = context
-            ) { _, folder ->
-                with(folder.absolutePath) {
-                    PxEZApp.storepath = this
-                    PxEZApp.instance.pre.edit {
-                        putString("storepath1", PxEZApp.storepath)
-                    }
-                    findPreference<Preference>("storepath1")!!.apply {
-                        summary = this@with
-                    }
-                }
-            }
-            cornerRadius(2.0F)
-            negativeButton(android.R.string.cancel)
-            positiveButton(R.string.action_select)
-            lifecycleOwner(this@SettingsFragment)
-        }
-    }
-
     @SuppressLint("CheckResult")
     private fun showApplicationIconReplacementDialog() {
         val items = listOf(
@@ -861,14 +784,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun Context.allPermissionsGranted(permissions: Array<String>): Boolean =
-        permissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-
-    companion object {
-        private const val REQUEST_CODE_PERMISSIONS = 1
-    }
 }
 
 class LogsBindingItem<T>(val obj: T) : BaseBindingItem<SimpleTextItemBinding>(), IDraggable {

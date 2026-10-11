@@ -84,7 +84,6 @@ import com.perol.asdpl.pixivez.ui.user.UsersFragment
 import com.perol.asdpl.pixivez.view.AnimationView
 import com.perol.asdpl.pixivez.view.loadUserImage
 import kotlinx.coroutines.runBlocking
-import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -455,8 +454,8 @@ class PictureXAdapter(
             //mainImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
             //TODO: check wh ratio and span size
         }
-        val file = File(Works.getDownloadPath(data, Works.parseSaveFormat(data, position)))
-        Glide.with(mContext).load(if (file.exists()) file else imageUrls[position])
+        val saved = Works.findDownloaded(data, Works.parseSaveFormat(data, position))
+        Glide.with(mContext).load(saved?.uri ?: imageUrls[position])
             .placeholder(if (position % 2 == 1) R.color.transparent else R.color.halftrans)
             .run {
                 if (position == 0) {
@@ -710,9 +709,7 @@ class PictureXAdapter(
         imageViewGif?.onEndListener { }
 
         imageViewGif?.delayTime = pictureXViewModel.duration.toLong()
-        val fileZIP =
-            if (pictureXViewModel.fileZIP.exists()) pictureXViewModel.fileZIP else pictureXViewModel.fileCachedZIP
-        imageViewGif?.startAnimation(fileZIP.path)
+        imageViewGif?.startAnimation(pictureXViewModel.fileCachedZIP.path)
 //        val result = File(PxEZApp.instance.cacheDir.path + File.separatorChar + data.id).listFiles()!!
 //            .sortedWith { o1, o2 -> o1.name.compareTo(o2.name) }.map { it.path }
 //        imageViewGif?.startAnimation(result)

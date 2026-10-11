@@ -26,31 +26,43 @@ package com.perol.asdpl.pixivez.ui.manager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
-import androidx.core.content.edit
+import android.content.ContentResolver
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.RinkActivity
 import com.perol.asdpl.pixivez.databinding.ActivityImgManagerBinding
 import com.perol.asdpl.pixivez.databinding.DialogSaveFormatBinding
+import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.FileUtil
-import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 
 class ImgManagerActivity : RinkActivity() {
+    private val pickFolder =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri ?: return@registerForActivityResult
+            try {
+                Storage.grant(Storage.KEY_BROWSE_DIR, uri)
+            } catch (e: SecurityException) {
+                CrashHandler.instance.e("ImgManager", "folder rejected", e, toast = true)
+                return@registerForActivityResult
+            }
+            viewModel.browse(Storage.granted(Storage.KEY_BROWSE_DIR)!!)
+        }
     private lateinit var binding: ActivityImgManagerBinding
     private lateinit var viewModel: ImgManagerViewModel
 
@@ -81,35 +93,12 @@ class ImgManagerActivity : RinkActivity() {
         viewModel.adapter = imgManagerAdapter
         viewModel.layoutManager =
             binding.recyclerviewImgManager.layoutManager as LinearLayoutManager
-        viewModel.path.value = viewModel.pre.getString("ImgManagerPath", PxEZApp.storepath)!!
-        viewModel.path.observe(this) {
-            binding.swipeRefreshLayout.isRefreshing = true
-            Thread {
-                viewModel.files = FileUtil.getGroupList(
-                    it
-                )
-                // .filter{it.isPic()}.asMutableList()
-                viewModel.task = viewModel.files!!.map { RenameTask(it) }
-                runOnUiThread {
-                    binding.imgCount.text = viewModel.files!!.size.toString()
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    imgManagerAdapter.setNewInstance(viewModel.files)
-                }
-            }.start()
+        if (viewModel.dir.value == null) {
+            viewModel.browse(Storage.granted(Storage.KEY_BROWSE_DIR) ?: Storage.root)
         }
+        viewModel.dir.observe(this, ::load)
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Thread {
-                viewModel.files = FileUtil.getGroupList(
-                    viewModel.path.value!!
-                )
-                // .filter{it.isPic()}.asMutableList()
-                viewModel.task = viewModel.files!!.map { RenameTask(it) }
-                runOnUiThread {
-                    binding.imgCount.text = viewModel.files!!.size.toString()
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    imgManagerAdapter.setNewInstance(viewModel.files)
-                }
-            }.start()
+            load(viewModel.dir.value!!)
         }
         binding.swithFilter.isChecked = true
         binding.swithFilter.setOnCheckedChangeListener { compoundButton, state ->
@@ -120,6 +109,19 @@ class ImgManagerActivity : RinkActivity() {
             // viewModel.rename_once = state
             reset()
         }
+    }
+
+    private fun load(dir: Uri) {
+        binding.swipeRefreshLayout.isRefreshing = true
+        Thread {
+            viewModel.files = viewModel.list(dir)
+            viewModel.task = viewModel.files!!.map { RenameTask(it) }
+            runOnUiThread {
+                binding.imgCount.text = viewModel.files!!.size.toString()
+                binding.swipeRefreshLayout.isRefreshing = false
+                imgManagerAdapter.setNewInstance(viewModel.files)
+            }
+        }.start()
     }
 
     private fun reset() {
@@ -151,23 +153,7 @@ class ImgManagerActivity : RinkActivity() {
             }
         }
         binding.fabFolder.setOnClickListener {
-            MaterialDialog(this).show {
-                title(R.string.title_save_path)
-                folderChooser(
-                    initialDirectory = File(viewModel.path.value!!),
-                    allowFolderCreation = true,
-                    context = context
-                ) { _, folder ->
-                    folder.absolutePath.let {
-                        viewModel.pre.edit { putString("ImgManagerPath", it) }
-                        viewModel.path.value = it
-                    }
-                }
-                cornerRadius(2.0F)
-                negativeButton(android.R.string.cancel)
-                positiveButton(R.string.action_select)
-                lifecycleOwner(this@ImgManagerActivity)
-            }
+            pickFolder.launch(viewModel.dir.value?.takeIf { it.scheme == ContentResolver.SCHEME_CONTENT })
         }
         binding.fabSettings.setOnClickListener {
             // Setup custom view content
@@ -212,8 +198,8 @@ class ImgManagerActivity : RinkActivity() {
 
         imgManagerAdapter.setOnItemClickListener { _, _, position ->
             val file = viewModel.files!![position]
-            if (file.type == FileUtil.T_DIR) {
-                viewModel.path.value = file.path
+            if (file.isDirectory) {
+                if (file.name == PARENT) viewModel.up() else viewModel.open(file.uri)
             } else {
                 val pid = viewModel.files!![position].pid
                 if (pid != null) {

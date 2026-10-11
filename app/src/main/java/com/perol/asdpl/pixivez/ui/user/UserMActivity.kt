@@ -31,13 +31,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.MediaScannerConnection
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.MimeTypeMap
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.chrynan.parcelable.core.getParcelableExtra
@@ -53,12 +52,11 @@ import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.data.model.ProfileImageUrls
 import com.perol.asdpl.pixivez.data.model.User
 import com.perol.asdpl.pixivez.databinding.ActivityUserMBinding
-import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.objects.UpToTopListener
 import com.perol.asdpl.pixivez.objects.UserCacheRepo
-import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.ui.settings.BlockViewModel
 import com.perol.asdpl.pixivez.view.AppBarStateChangeListener
 import com.perol.asdpl.pixivez.view.AutoTabLayoutMediator
@@ -69,7 +67,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class UserMActivity : RinkActivity() {
     companion object {
@@ -106,23 +103,12 @@ class UserMActivity : RinkActivity() {
     }
 
     var id: Int = 0
-    private val SELECT_IMAGE = 2
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null) {
-            val selectedImage = data.data
-            val filePathColumns = arrayOf(MediaStore.Images.Media.DATA)
-            val c = contentResolver.query(selectedImage!!, filePathColumns, null, null, null)
-            c!!.moveToFirst()
-            val columnIndex = c.getColumnIndex(filePathColumns[0])
-            val imagePath = c.getString(columnIndex)
+    private val pickProfileImage =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri ?: return@registerForActivityResult
             Toasty.info(this, R.string.uploading)
-            viewModel.tryToChangeProfile(imagePath)
-            c.close()
+            viewModel.tryToChangeProfile(uri)
         }
-    }
 
     private val viewModel: UserMViewModel by viewModels()
     private lateinit var binding: ActivityUserMBinding
@@ -246,20 +232,11 @@ class UserMActivity : RinkActivity() {
                                     .load(viewModel.userDetail.value!!.user.profile_image_urls.medium)
                                     .submit()
                                 val file = f.get()
-                                val target = File(
-                                    PxEZApp.storepath,
-                                    "user_${viewModel.userDetail.value!!.user.id}.png"
-                                )
-                                FileUtil.move(file, target)
-                                MediaScannerConnection.scanFile(
-                                    PxEZApp.instance,
-                                    arrayOf(target.path),
-                                    arrayOf(
-                                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                                            target.extension
-                                        )
-                                    ),
-                                    null
+                                Storage.scan(
+                                    Storage.copyIn(
+                                        file,
+                                        listOf("user_${viewModel.userDetail.value!!.user.id}.png")
+                                    )
                                 )
 
                                 withContext(Dispatchers.Main) {
@@ -269,11 +246,9 @@ class UserMActivity : RinkActivity() {
                         }
 
                         else -> {
-                            val intent = Intent(
-                                Intent.ACTION_PICK,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            pickProfileImage.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                             )
-                            startActivityForResult(intent, SELECT_IMAGE)
                         }
                     }
                 }.show()

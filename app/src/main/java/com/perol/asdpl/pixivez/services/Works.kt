@@ -25,8 +25,8 @@
 
 package com.perol.asdpl.pixivez.services
 
-import android.media.MediaScannerConnection
-import android.webkit.MimeTypeMap
+import android.net.Uri
+import com.ketch.DownloadModel
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.RetrofitRepository
 import com.perol.asdpl.pixivez.data.model.Illust
@@ -34,7 +34,10 @@ import com.perol.asdpl.pixivez.data.model.ImageUrlsX
 import com.perol.asdpl.pixivez.data.model.UgoiraMetadataBean
 import com.perol.asdpl.pixivez.networks.ImageHttpDns
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
+import com.perol.asdpl.pixivez.objects.CrashHandler
+import com.perol.asdpl.pixivez.objects.Entry
 import com.perol.asdpl.pixivez.objects.FileUtil
+import com.perol.asdpl.pixivez.objects.Storage
 import com.perol.asdpl.pixivez.objects.ToastQ
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,8 +45,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import java.io.File
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 fun String.toLegal(): String {
     return this.replace(Regex("[\\x00-\\x1f]"), "").replace("\t", "    ")
@@ -170,27 +171,47 @@ object Works {
         return filename
     }
 
+    /** Saves an already fetched image (e.g. Glide's cache file) as a download. */
     fun imageDownloadWithFile(illust: Illust, file: File, part: Int?) {
-        val filename = parseSaveFormat(illust, part)
-        val targetFile = File(getDownloadPath(illust, filename))
-        try {
-            val compatCheck = FileUtil.move(file, targetFile)
-            if (PxEZApp.ShowDownloadToast) {
-                ToastQ.post(R.string.savesuccess)
-            }
-            if (!(illust.restricted || illust.isR18))
-                MediaScannerConnection.scanFile(
-                    PxEZApp.instance,
-                    arrayOf(targetFile.path),
-                    arrayOf(
-                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(targetFile.extension)
-                    )
-                ) { _, _ ->
-                    FileUtil.ListLog.add(illust.id)
-                    compatCheck()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                save(illust, downloadTarget(illust, parseSaveFormat(illust, part)), file)
+                FileUtil.ListLog.add(illust.id)
+                if (PxEZApp.ShowDownloadToast) {
+                    ToastQ.post(R.string.savesuccess)
                 }
-        } catch (e: Exception) {
-            e.printStackTrace()
+            } catch (e: Exception) {
+                CrashHandler.instance.e("Works", "save ${illust.id} failed", e, toast = true)
+            }
+        }
+    }
+
+    /** Copies [src] to [target] below the storage root, applying restricted-content rules. */
+    fun save(illust: Illust, target: List<String>, src: File): Uri =
+        save(target, src, illust.restricted || illust.isR18)
+
+    private fun save(target: List<String>, src: File, restricted: Boolean): Uri {
+        if (restricted && PxEZApp.RestrictFolder) {
+            Storage.ensureNoMedia(Storage.mkdirs(Storage.relPath(PxEZApp.RestrictFolderPath)))
+        }
+        return Storage.copyIn(src, target).also {
+            if (!restricted) Storage.scan(it)
+        }
+    }
+
+    /**
+     * Moves a finished Ketch download from [Storage.stagingRoot] to the same relative path
+     * below the storage root. Idempotent: returns null once the staged file is gone.
+     */
+    fun commitDownload(model: DownloadModel): Uri? {
+        val staged = File(model.path, model.fileName)
+        if (!staged.exists()) return null
+        val rel = staged.relativeTo(Storage.stagingRoot).invariantSeparatorsPath
+        if (rel.startsWith("..")) return null // not staged by us
+        val illustD = gson.decodeFromString<IllustD>(model.metaData)
+        return save(Storage.relPath(rel), staged, illustD.restricted).also {
+            staged.delete()
+            FileUtil.ListLog.add(illustD.id)
         }
     }
 
@@ -214,7 +235,9 @@ object Works {
     }
 
     fun ugoiraDownloadAll(ugoira: Illust, ugoiraMetadata: UgoiraMetadataBean) {
-        val path = getDownloadPath(ugoira, parseSaveFormat(ugoira).substringBeforeLast("."))
+        val path = stagingDir(
+            downloadTarget(ugoira, parseSaveFormat(ugoira).substringBeforeLast("."))
+        ).path
         ugoira.meta.map { mirrorLink(qualityUrl(it, qualityDownload)) }
             .forEachIndexed { index, it ->
             ketch.download(
@@ -227,14 +250,19 @@ object Works {
         }
     }
 
-    //val title = illust.title.toLegal()
-    fun getDownloadPath(illust: Illust, vararg subpaths: String): String = Path(
-        PxEZApp.storepath,
+    /** Path segments, relative to the storage root, of [filename] (which may contain `/`). */
+    fun downloadTarget(illust: Illust, filename: String): List<String> = Storage.relPath(
         if (PxEZApp.RestrictFolder && (illust.restricted || illust.isR18)) PxEZApp.RestrictFolderPath else "",
         if (pre.getBoolean("needcreatefold", false))
             "${illust.user.name.toLegal()}_${illust.user.id}" else "",
-        *subpaths
-    ).pathString
+        filename
+    )
+
+    /** The saved copy of [filename], if any; cheap for never-downloaded illusts. */
+    fun findDownloaded(illust: Illust, filename: String): Entry? =
+        if (FileUtil.isDownloaded(illust)) Storage.find(downloadTarget(illust, filename)) else null
+
+    private fun stagingDir(rel: List<String>) = rel.fold(Storage.stagingRoot, ::File)
 
     var apiMirror = pre.getBoolean("enableMirror", false)
     private const val I_PXIMG_NET = "i.pximg.net"
@@ -290,18 +318,16 @@ object Works {
             }
         )
         val part = if (single) null else part.coerceAtLeast(0)
-        val filename = parseSaveFormat(illust, part)
-        val path = getDownloadPath(illust)
-        val targetFile = File(path, filename)
-        if (targetFile.exists()) {
+        val target = downloadTarget(illust, parseSaveFormat(illust, part))
+        if (FileUtil.isDownloaded(illust) && Storage.find(target) != null) {
             ToastQ.post(R.string.alreadysaved)
             FileUtil.ListLog.add(illust.id)
             return
         }
         ketch.download(
             url,
-            path,
-            filename,
+            stagingDir(target.dropLast(1)).path,
+            target.last(),
             tag = illust.id.toString(),
             metaData = gson.encodeToString(illust.toIllustD(part))
         )

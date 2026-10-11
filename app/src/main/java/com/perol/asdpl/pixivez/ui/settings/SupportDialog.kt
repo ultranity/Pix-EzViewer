@@ -25,6 +25,7 @@ import com.perol.asdpl.pixivez.base.linear
 import com.perol.asdpl.pixivez.data.AppDataRepo
 import com.perol.asdpl.pixivez.databinding.DialogEmptyListBinding
 import com.perol.asdpl.pixivez.databinding.DialogWeixinUltranityBinding
+import com.perol.asdpl.pixivez.objects.FileUtil
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.PxEZApp
 import kotlinx.coroutines.runBlocking
@@ -94,7 +95,7 @@ class SupportDialog : BaseDialogFragment<DialogEmptyListBinding>() {
         )
         val totaldownloadcount = AppDataRepo.pre.getInt(
             "totaldownloadcount",
-            File(PxEZApp.storepath).list()?.size ?: 0
+            FileUtil.ListLog.cardinality
         )
 
         val bindingWX = DialogWeixinUltranityBinding.inflate(layoutInflater)

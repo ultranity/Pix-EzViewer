@@ -160,24 +160,17 @@ class ZoomPagerAdapter(
                 })
         }
 
-        val file = File(Works.getDownloadPath(illust, Works.parseSaveFormat(illust, position)))
-        if (file.exists()) {
-            Glide.with(context).asFile()
-                .load(file)
-                .into(object : CustomTarget<File>() {
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        tryLoadCache()
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-
-                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                        loadFromResource(resource, true)
-                    }
-                })
-        } else {
+        val saved = Works.findDownloaded(illust, Works.parseSaveFormat(illust, position))
+        if (saved == null) {
             tryLoadCache()
+        } else {
+            binding.photoviewZoom.setImage(ImageSource.uri(saved.uri))
+            // saved originals need no network fetch (and no long-press save)
+            if (Works.qualityDownload == 2) {
+                binding.progressbarOrigin.visibility = View.GONE
+                container.addView(binding.root)
+                return binding.root
+            }
         }
         // buttonOrigin.setOnClickListener {
         //    buttonOrigin.visibility =View.GONE

@@ -43,6 +43,7 @@ import com.perol.asdpl.pixivez.base.checkUpdate
 import com.perol.asdpl.pixivez.data.model.Illust
 import com.perol.asdpl.pixivez.databinding.FragmentListFabBinding
 import com.perol.asdpl.pixivez.databinding.HeaderFilterBinding
+import com.perol.asdpl.pixivez.networks.observeNetworkRecovery
 import com.perol.asdpl.pixivez.objects.CrashHandler
 import com.perol.asdpl.pixivez.objects.DataHolder
 import com.perol.asdpl.pixivez.objects.ToastQ
@@ -59,6 +60,13 @@ import com.perol.asdpl.pixivez.view.SafeStaggeredGridLayoutManager
 import kotlinx.coroutines.launch
 
 open class PicListFragment : Fragment() {
+    private enum class ListState {
+        Hidden,
+        Loading,
+        Failed,
+        Empty,
+    }
+
     companion object {
         @JvmStatic
         fun newInstance(
@@ -86,6 +94,8 @@ open class PicListFragment : Fragment() {
 
     private var _binding: FragmentListFabBinding? = null
     private var _headerBinding: HeaderFilterBinding? = null
+    private var listStateView: View? = null
+    private var loadAttempted = false
 
     // This property is only valid between onCreateView and onDestroyView.
     protected val binding get() = _binding!!
@@ -97,6 +107,7 @@ open class PicListFragment : Fragment() {
     ): View {
         _binding = FragmentListFabBinding.inflate(inflater, container, false)
         _headerBinding = HeaderFilterBinding.inflate(inflater)
+        listStateView = binding.root.findViewById(R.id.list_state)
         return binding.root
     }
 
@@ -104,6 +115,7 @@ open class PicListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
         _headerBinding = null
+        listStateView = null
     }
 
     override fun onPause() {
@@ -120,7 +132,7 @@ open class PicListFragment : Fragment() {
         CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition resume $isLoaded")
         if (!isLoaded) {
             isLoaded = true
-            viewModel.onLoadFirst()
+            requestFirstLoad()
             CrashHandler.instance.d("PicListFragment", "$TAG $tabPosition data reload")
         } else {
             //DataHolder.modifiedIllusts.forEach{
@@ -135,6 +147,50 @@ open class PicListFragment : Fragment() {
     }
 
     protected open val onDataAddedListener: (() -> Unit) = { updateHintText() }
+
+    private fun requestFirstLoad() {
+        if (viewModel.isRefreshing.value) return
+        loadAttempted = true
+        if (picListAdapter.mData.isEmpty()) {
+            showListState(ListState.Loading)
+        }
+        viewModel.onLoadFirst()
+    }
+
+    private fun showListState(state: ListState) {
+        val stateView = listStateView ?: return
+        val loading = stateView.findViewById<View>(R.id.list_state_loading)
+        val message = stateView.findViewById<android.widget.TextView>(R.id.list_state_message)
+        val retry = stateView.findViewById<View>(R.id.list_state_retry)
+        when (state) {
+            ListState.Hidden -> {
+                stateView.visibility = View.GONE
+            }
+
+            ListState.Loading -> {
+                stateView.visibility = View.VISIBLE
+                loading.visibility = View.VISIBLE
+                message.setText(R.string.loading)
+                retry.visibility = View.GONE
+            }
+
+            ListState.Failed -> {
+                stateView.visibility = View.VISIBLE
+                loading.visibility = View.GONE
+                message.setText(R.string.list_load_failed)
+                retry.visibility = View.VISIBLE
+                retry.isEnabled = true
+            }
+
+            ListState.Empty -> {
+                stateView.visibility = View.VISIBLE
+                loading.visibility = View.GONE
+                message.setText(R.string.list_empty)
+                retry.visibility = View.VISIBLE
+                retry.isEnabled = true
+            }
+        }
+    }
 
     open lateinit var picListAdapter: PicListAdapter
     protected open fun ownerProducer(): ViewModelStoreOwner {
@@ -182,16 +238,29 @@ open class PicListFragment : Fragment() {
         }
         viewModel.isRefreshing.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = it
+            if (it && picListAdapter.mData.isEmpty()) {
+                showListState(ListState.Loading)
+            }
+        }
+        binding.root.findViewById<View>(R.id.list_state_retry).setOnClickListener {
+            requestFirstLoad()
         }
         viewModel.data.observe(viewLifecycleOwner) {
             if (it != null) {
-                picListAdapter.initData(onDataLoadedListener(it))
+                val loaded = onDataLoadedListener(it)
+                picListAdapter.initData(loaded)
                 //TODO: IllustCacheRepo.register(this, picListAdapter.mData)
-                if (it.isNotEmpty())
+                if (loaded.isNotEmpty()) {
                     binding.recyclerview.edgeEffectFactory = BounceEdgeEffectFactory()
+                    showListState(ListState.Hidden)
+                } else {
+                    showListState(ListState.Empty)
+                }
             } else {
                 if (picListAdapter.mData.isEmpty()) //show error only if first load
-                    picListAdapter.showEmptyView(true)
+                    showListState(ListState.Failed)
+                else
+                    showListState(ListState.Hidden)
             }
             isLoaded = true
             viewModel.isRefreshing.value = false
@@ -199,6 +268,7 @@ open class PicListFragment : Fragment() {
         viewModel.dataAdded.observe(viewLifecycleOwner) {
             if (it != null) {
                 picListAdapter.addFilterData(it)
+                if (picListAdapter.mData.isNotEmpty()) showListState(ListState.Hidden)
                 onDataAddedListener.invoke()
             } else {
                 picListAdapter.loadMoreFail()
@@ -254,10 +324,22 @@ open class PicListFragment : Fragment() {
         //TODO: check 
         // binding.recyclerview.addItemDecoration(GridItemDecoration())
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onLoadFirst()
+            requestFirstLoad()
         }
         picListAdapter.setOnLoadMoreListener {
             viewModel.onLoadMore()
+        }
+        if (loadAttempted && viewModel.data.value == null && !viewModel.isRefreshing.value
+            && picListAdapter.mData.isEmpty()
+        ) {
+            showListState(ListState.Failed)
+        }
+        observeNetworkRecovery(viewLifecycleOwner, requireContext()) {
+            if (isLoaded && viewModel.data.value == null && picListAdapter.mData.isEmpty()
+                && !viewModel.isRefreshing.value
+            ) {
+                requestFirstLoad()
+            }
         }
     }
 
@@ -277,7 +359,7 @@ open class PicListFragment : Fragment() {
                             extraArgs!!["tag"] = tag
                             extraArgs!!["pub"] = public
                             headerBinding.imgBtnR.setText(if (public == "public") R.string.publics else R.string.privates)
-                            viewModel.onLoadFirst()
+                            requestFirstLoad()
                         }
                 }.show(childFragmentManager)
             }
@@ -287,7 +369,7 @@ open class PicListFragment : Fragment() {
             val shareModel: CalendarViewModel by viewModels(::ownerProducer)
             shareModel.picDateShare.value?.also { extraArgs!!["pickDate"] = it }
             shareModel.picDateShare.observe(viewLifecycleOwner) {
-                viewModel.onLoadFirst()
+                requestFirstLoad()
             }
             //TODO: RecycledViewPool 导致 list 间 item click/longclick事件 错误配置
             //binding.recyclerview.setRecycledViewPool(shareModel.pool)
@@ -328,7 +410,7 @@ open class PicListFragment : Fragment() {
             val restrictTypes = resources.getStringArray(R.array.restrict_type)
             viewModel.restrict.observe(viewLifecycleOwner) {
                 if (viewModel.restrict.currentVersion > 0)
-                    viewModel.onLoadFirst()
+                    requestFirstLoad()
                 headerBinding.imgBtnR.text = restrictTypes[viewModel.restrict.value.ordinal]
             }
             headerBinding.imgBtnR.setOnClickListener {

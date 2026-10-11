@@ -322,6 +322,9 @@
     <string name="view_user_blocked">ユーザー %1$d をブロックしています。表示しますか？</string>
     <string name="auto_load_related_illust">関連作品画像を自動読み込み</string>
     <string name="refreshDNS">DNSを更新</string>
+    <string name="list_load_failed">読み込みに失敗しました。通信を確認して再試行してください。</string>
+    <string name="list_empty">表示する内容がありません</string>
+    <string name="retry">再試行</string>
     <string name="novel">小説</string>
     <string name="novel_font_larger">文字を大きく</string>
     <string name="novel_font_smaller">文字を小さく</string>
@@ -338,4 +341,5 @@
     <string name="browser">ブラウザ</string>
     <string name="novel_body_load_failed">本文を読み込めませんでした。再試行してください。</string>
     <string name="novel_retry">再試行</string>
+    <string name="local_account_load_failed">保存したアカウントを読み込めませんでした。再試行してください。</string>
 </resources>

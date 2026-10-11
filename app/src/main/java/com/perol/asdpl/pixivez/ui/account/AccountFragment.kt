@@ -114,18 +114,7 @@ class AccountFragment : Fragment() {
             .setTitle("Token")
             .setMessage(R.string.token_warning)
             .setNeutralButton(R.string.refresh_token) { _, _ ->
-                if (BuildConfig.DEBUG) {
-                    AppDataRepo.currentUser.Authorization = "invalid_token"
-                    CoroutineScope(Dispatchers.Main).launch {
-                        AppDataRepo.updateUser(AppDataRepo.currentUser)
-                    }
-                } else {
-                    try {
-                        RefreshToken.getInstance().refreshToken()
-                    } catch (e: Exception) {
-                        ToastQ.post(R.string.refresh_token_fail)
-                    }
-                }
+                RefreshToken.getInstance().refreshToken()
             }
             .setNegativeButton("SHOW") { _, _ ->
                 MaterialAlertDialogBuilder(context)

@@ -240,6 +240,9 @@
     <string name="notsf_subtext">开发,测试,发布</string>
     <string name="like" translatable="false">LIKE</string>
     <string name="loading" tools:ignore="TypographyEllipsis">正在加载...</string>
+    <string name="list_load_failed">加载失败，请检查网络后重试</string>
+    <string name="list_empty">暂无内容</string>
+    <string name="retry">重试</string>
     <string name="needstatusbar_subtext">——v——</string>
     <string name="ultranity_subtext">编写开发调试(当前维护者)</string>
     <string name="notsf_subtext2">编写开发调试(原作者)</string>
@@ -377,4 +380,5 @@
     <string name="switch_to_illust">切换到插画模式</string>
     <string name="novel_body_load_failed">正文加载失败，请重试</string>
     <string name="novel_retry">重试</string>
+    <string name="local_account_load_failed">本地账号读取失败，请重试</string>
 </resources>

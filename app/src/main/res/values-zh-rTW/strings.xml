@@ -321,6 +321,9 @@
     <string name="view_user_blocked">User %1$d 已被屏蔽, 確定打開麽？</string>
     <string name="auto_load_related_illust">自動加載相關推薦圖片</string>
     <string name="refreshDNS">刷新DNS</string>
+    <string name="list_load_failed">載入失敗，請檢查網路後重試</string>
+    <string name="list_empty">暫無內容</string>
+    <string name="retry">重試</string>
     <string name="block_user">屏蔽用戶</string>
     <string name="novel">小說</string>
     <string name="novel_font_larger">增大字型</string>
@@ -338,4 +341,5 @@
     <string name="browser">瀏覽器</string>
     <string name="novel_body_load_failed">正文載入失敗，請重試</string>
     <string name="novel_retry">重試</string>
+    <string name="local_account_load_failed">本機帳號讀取失敗，請重試</string>
 </resources>

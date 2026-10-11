@@ -42,7 +42,6 @@ import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.internal.closeQuietly
 import retrofit2.Retrofit
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -55,7 +54,7 @@ object RestClient {
     private val App_OS_Version = android.os.Build.VERSION.RELEASE
     private const val APP_VER = "7.13.3"
     val UA =
-        "Pixiv${APP_OS}App/#{App_Version} (${APP_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
+        "Pixiv${APP_OS}App/$APP_VER (${APP_OS} ${App_OS_Version}; ${android.os.Build.MODEL})"
     private val ISO8601DATETIMEFORMAT by lazy {
         SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZZZZZ",
@@ -205,11 +204,12 @@ object RestClient {
                         CoroutineScope(Dispatchers.Main).launch {
                             Toasty.tokenRefreshing()
                         }
-                        runBlocking {
-                            RefreshToken.getInstance()
-                                .refreshToken(AppDataRepo.currentUser.Refresh_token)
+                        refreshAuthentication(response) {
+                            runBlocking {
+                                RefreshToken.getInstance()
+                                    .refreshToken(AppDataRepo.currentUser.Refresh_token)
+                            }
                         }
-                        response.closeQuietly()
                         return authHeaderInject(host, chain)
                     }
                 }

@@ -46,6 +46,8 @@ import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
@@ -267,17 +269,66 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
 
     private lateinit var binding: AppMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (AppDataRepo.userInited().not()) {
-            startActivity(
-                Intent(
-                    this@MainActivity,
-                    LoginActivity::class.java
-                ).setAction("login.try")
-            )
-            finish()
-            return
+        // Cold process restoration must not instantiate account-dependent fragments before
+        // the local account is loaded. Rebuild the home tabs after that read; warm recreation
+        // retains the normal FragmentManager state.
+        val accountReady = AppDataRepo.userInited()
+        super.onCreate(if (accountReady) savedInstanceState else null)
+        if (accountReady) {
+            initializeContent()
+        } else {
+            val progress = android.widget.ProgressBar(this).apply {
+                contentDescription = getString(R.string.loading)
+            }
+            setContentView(android.widget.FrameLayout(this).apply {
+                addView(progress, android.widget.FrameLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    android.view.Gravity.CENTER,
+                ))
+            })
+            awaitLocalUserAndInitialize()
         }
+    }
+
+    private fun awaitLocalUserAndInitialize(retry: Boolean = false) {
+        lifecycleScope.launch {
+            val result = if (retry) {
+                PxEZApp.instance.retryLocalUserInitialization().await()
+            } else {
+                PxEZApp.instance.awaitLocalUserInitialization().await()
+            }
+            lifecycle.withStarted {
+                if (isFinishing || isDestroyed) return@withStarted
+                result.fold(
+                    onSuccess = { user ->
+                        if (user == null) {
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java)
+                                .setAction("login.try"))
+                            finish()
+                        } else {
+                            initializeContent()
+                        }
+                    },
+                    onFailure = ::showLocalInitializationError,
+                )
+            }
+        }
+    }
+
+    private fun showLocalInitializationError(error: Throwable) {
+        if (isFinishing || isDestroyed) return
+        android.util.Log.e("MainActivity", "Local account initialization failed", error)
+        MaterialDialogs(this).show {
+            setTitle(R.string.local_account_load_failed)
+            setPositiveButton(R.string.retry) { _, _ -> awaitLocalUserAndInitialize(retry = true) }
+            setNegativeButton(android.R.string.cancel) { _, _ -> finish() }
+            setOnCancelListener { finish() }
+        }
+    }
+
+    private fun initializeContent() {
+        if (::binding.isInitialized || isFinishing || isDestroyed) return
         // a SAF folder carries its own grant; only the legacy path needs storage permissions
         if (!Storage.isSaf) {
             checkAndRequestPermissions(
@@ -365,6 +416,7 @@ class MainActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onResume() {
         super.onResume()
+        if (!::binding.isInitialized) return
         //if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S)
         if (PxEZApp.instance.pre.getBoolean("check_clipboard", false))
             this.window.decorView.post(Runnable {

@@ -238,6 +238,13 @@ class EchConfigCache(
         true
     }
 
+    /** A new connection must not inherit the offline connection's negative cache. */
+    fun onNetworkAvailable() = synchronized(monitor) {
+        retryAfterMs = null
+        lastFailure = null
+        lastInvalidatedAtMs = null
+    }
+
     private fun usableLastGood(timestamp: Long): EchConfig? {
         val savedAt = lastGoodAtMs ?: return null
         if (timestamp < savedAt || timestamp - savedAt > MAX_AGE_MS) return null

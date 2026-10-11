@@ -219,6 +219,9 @@
     <string name="change_to_first">change to first</string>
     <string name="notsf_subtext">Development, testing, release</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
+    <string name="list_load_failed">Could not load this list. Check your connection and retry.</string>
+    <string name="list_empty">No content</string>
+    <string name="retry">Retry</string>
     <string name="needstatusbar_subtext">For notched screens</string>
     <string name="ultranity_subtext">Current maintainer</string>
     <string name="notsf_subtext2">Original author</string>
@@ -340,4 +343,5 @@
     <string name="browser">Browser</string>
     <string name="novel_body_load_failed">Could not load the novel text. Please retry.</string>
     <string name="novel_retry">Retry</string>
+    <string name="local_account_load_failed">Could not load the local account. Please retry.</string>
 </resources>

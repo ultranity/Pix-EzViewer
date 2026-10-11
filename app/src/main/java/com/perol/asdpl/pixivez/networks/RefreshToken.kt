@@ -27,17 +27,16 @@ package com.perol.asdpl.pixivez.networks
 
 import android.util.Log
 import com.perol.asdpl.pixivez.data.AppDataRepo
-import com.perol.asdpl.pixivez.objects.ToastQ
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.OAuthSecureService
 import com.perol.asdpl.pixivez.services.PxEZApp
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 
 class RefreshToken{
     companion object {
@@ -59,6 +58,8 @@ class RefreshToken{
             try {
                 refreshToken(AppDataRepo.currentUser.Refresh_token)
                 block?.invoke()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 // 异步刷新失败不可向外传播(否则被 CrashHandler 当未捕获处理而退出进程);
                 // 仅记录,不执行成功回调。
@@ -91,17 +92,11 @@ class RefreshToken{
             AppDataRepo.pre.setLong("lastRefresh", lastRefresh)
             Toasty.tokenRefreshed()
             Log.d("init", "refreshToken end")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d("RefreshToken", e.message.toString(), e)
-            // 421 Misdirected Request:入口 IP / SNI 模式不对(非凭据失效)。
-            // 仅在【刷新已有会话】(!newToken)时吞掉并提示,避免异常被 CrashHandler 当
-            // 未捕获处理而退出进程、登出后进不去设置改模式的死锁。
-            // 登录(newToken=true)必须抛出 —— 否则调用方会把失败当成功(假登录)。
-            if (e is HttpException && e.code() == 421 && !newToken) {
-                ToastQ.post("421:连接被拒,请到 设置→连接设置 切换 DNS / SNI 模式后重试")
-                return@withLock
-            }
             Toasty.tokenRefreshed(e)
             throw e
         }

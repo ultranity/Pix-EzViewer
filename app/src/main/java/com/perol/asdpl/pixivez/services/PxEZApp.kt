@@ -38,6 +38,7 @@ import com.ketch.Status
 import com.perol.asdpl.pixivez.BuildConfig
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.data.AppDataRepo
+import com.perol.asdpl.pixivez.data.entity.UserEntity
 import com.perol.asdpl.pixivez.networks.RestClient
 import com.perol.asdpl.pixivez.networks.migrateLegacyApiNetwork
 import com.perol.asdpl.pixivez.networks.ServiceFactory.gson
@@ -51,6 +52,7 @@ import com.perol.asdpl.pixivez.objects.Toasty
 import io.fastkv.FastKVConfig
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
@@ -66,6 +68,9 @@ class PxEZApp : Application() {
     }
 
     val applicationScope = CoroutineScope(Dispatchers.IO + SupervisorJob() + exceptionHandler)
+    private val localUserInitialization = LocalInitializationGate<UserEntity?> {
+        AppDataRepo.getUser()
+    }
     lateinit var ketch: Ketch
     override fun onCreate() {
         super.onCreate()
@@ -73,9 +78,7 @@ class PxEZApp : Application() {
         // LeakCanary.install(this);
         pre = PreferenceManager.getDefaultSharedPreferences(this)
         migrateLegacyApiNetwork(pre)
-        applicationScope.launch {
-            AppDataRepo.getUser()
-        }
+        awaitLocalUserInitialization()
         FastKVConfig.setLogger(FastKVLogger())
         FastKVConfig.setExecutor(Dispatchers.IO.asExecutor())
         AppCompatDelegate.setDefaultNightMode(pre.getString("dark_mode", "-1")!!.toInt())
@@ -186,6 +189,12 @@ class PxEZApp : Application() {
             }
         })
     }
+
+    fun awaitLocalUserInitialization(): Deferred<Result<UserEntity?>> =
+        localUserInitialization.start(applicationScope)
+
+    fun retryLocalUserInitialization(): Deferred<Result<UserEntity?>> =
+        localUserInitialization.retry(applicationScope)
 
     object ActivityCollector {
         @JvmStatic

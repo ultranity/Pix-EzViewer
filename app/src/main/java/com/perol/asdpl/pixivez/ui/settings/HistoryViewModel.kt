@@ -25,11 +25,11 @@
 package com.perol.asdpl.pixivez.ui.settings
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.perol.asdpl.pixivez.base.BaseViewModel
 import com.perol.asdpl.pixivez.data.HistoryDatabase
 import com.perol.asdpl.pixivez.data.entity.HistoryEntity
 import com.perol.asdpl.pixivez.services.PxEZApp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,28 +38,86 @@ class HistoryViewModel : BaseViewModel() {
     val history = MutableLiveData<MutableList<HistoryEntity>>()
     private val historyDatabase = HistoryDatabase.getInstance(PxEZApp.instance)
 
+    // These used to run on bare CoroutineScope(Dispatchers.IO) objects, which are tied to nothing
+    // and are never cancelled: leaving the screen mid-query left the work running and still able
+    // to publish into LiveData. viewModelScope cancels with the ViewModel.
+
+    /** True while a page request is in flight, so scrolling cannot queue duplicate loads. */
+    private var loadingPage = false
+
+    /** Set once a short page comes back, meaning there is nothing older left to fetch. */
+    private var reachedEnd = false
+
     fun first() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val history = historyDatabase.viewHistoryDao().getAll() as MutableList
-            withContext(Dispatchers.Main) {
-                this@HistoryViewModel.history.value = history
+        viewModelScope.launch {
+            loadingPage = true
+            val loaded = withContext(Dispatchers.IO) {
+                historyDatabase.viewHistoryDao().getPage(PAGE_SIZE, 0).toMutableList()
             }
+            reachedEnd = loaded.size < PAGE_SIZE
+            history.value = loaded
+            loadingPage = false
+        }
+    }
+
+    /**
+     * Appends the next page. Called when the list is scrolled near its end, so the whole history
+     * remains reachable while only what has actually been scrolled to is ever held in memory.
+     */
+    fun loadMore() {
+        if (loadingPage || reachedEnd) return
+        val current = history.value ?: return
+        loadingPage = true
+        viewModelScope.launch {
+            val next = withContext(Dispatchers.IO) {
+                historyDatabase.viewHistoryDao().getPage(PAGE_SIZE, current.size)
+            }
+            // A page smaller than requested means the table is exhausted.
+            if (next.size < PAGE_SIZE) reachedEnd = true
+            if (next.isNotEmpty()) {
+                current.addAll(next)
+                // Re-emit the same instance so the observer rebinds; the adapter was handed this
+                // list, so its contents are already in step.
+                history.value = current
+            }
+            loadingPage = false
         }
     }
 
     fun clearHistory() {
-        CoroutineScope(Dispatchers.IO).launch {
-            historyDatabase.viewHistoryDao().clear()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                historyDatabase.viewHistoryDao().clear()
+            }
+            // Also empty the observed list; previously the cleared rows stayed on screen until
+            // the fragment happened to be recreated.
+            reachedEnd = true
+            history.value = mutableListOf()
         }
     }
 
     fun deleteSelect(i: Int, after: () -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            historyDatabase.viewHistoryDao().delete(history.value!![i])
-            withContext(Dispatchers.Main) {
-                history.value!!.removeAt(i)
-                after()
+        // Resolve the item on the caller's (main) thread and bounds-check it. The old code read
+        // history.value!![i] from an IO thread and would NPE/crash if the list was not loaded yet
+        // or the index had moved on.
+        val current = history.value ?: return
+        val item = current.getOrNull(i) ?: return
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                historyDatabase.viewHistoryDao().delete(item)
             }
+            // Mutated in place on purpose: the adapter was handed this same list instance, so this
+            // keeps it in step with the notifyItemRemoved(i) the caller issues in `after`.
+            current.removeAt(i)
+            after()
         }
+    }
+
+    companion object {
+        /** Rows fetched per page. The rest stay on disk until scrolling asks for them. */
+        const val PAGE_SIZE = 500
+
+        /** How close to the end of the list a scroll gets before the next page is requested. */
+        const val PREFETCH_DISTANCE = 30
     }
 }

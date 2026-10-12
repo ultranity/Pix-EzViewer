@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.base.MaterialDialogs
 import com.perol.asdpl.pixivez.databinding.FragmentHistoryBinding
@@ -33,16 +34,38 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        historyMViewModel.history.observe(requireActivity()) {
-            historyAdapter.setNewInstance(it)
-        }
-        historyMViewModel.first()
-
-        binding.recyclerview.layoutManager =
-            GridLayoutManager(requireContext(), 2 * resources.configuration.orientation)
+        val layoutManager = GridLayoutManager(requireContext(), 2 * resources.configuration.orientation)
+        binding.recyclerview.layoutManager = layoutManager
         historyAdapter = HistoryAdapter()
         binding.recyclerview.adapter = historyAdapter
         binding.recyclerview.smoothScrollToPosition(historyAdapter.data.size)
+
+        // Pull the next page in as the end of the list comes into view, so the full history stays
+        // reachable while only the rows actually scrolled to are ever held in memory. The
+        // ViewModel ignores requests while one is in flight or once the table is exhausted.
+        binding.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                if (layoutManager.findLastVisibleItemPosition() >=
+                    layoutManager.itemCount - HistoryViewModel.PREFETCH_DISTANCE
+                ) {
+                    historyMViewModel.loadMore()
+                }
+            }
+        })
+
+        // Observe on viewLifecycleOwner rather than the Activity. onViewCreated runs again on
+        // every view recreation (tab switch, rotation, back-navigation), and an Activity-scoped
+        // observer is never removed until the Activity dies - so each pass leaked another
+        // observer still holding the previous adapter, its ViewHolders and their ImageViews.
+        // The retained bitmaps starve Glide until it stops decoding and only the placeholder
+        // renders, i.e. previews "stop showing" after viewing a lot of images. Registering after
+        // historyAdapter is assigned also avoids the lateinit crash when LiveData delivers a
+        // retained value synchronously (rotating while on this screen).
+        historyMViewModel.history.observe(viewLifecycleOwner) {
+            historyAdapter.setNewInstance(it)
+        }
+        historyMViewModel.first()
         binding.fab.setOnClickListener {
             MaterialDialogs(requireContext()).show {
                 setTitle(R.string.clearhistory)

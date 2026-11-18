@@ -65,7 +65,7 @@ enum class DnsMode(val code: String) {
 
     companion object {
         const val PREF_KEY = "apiDnsMode"
-        val default = DIRECT
+        val default = SYSTEM
         val displayOrder = listOf(DIRECT, DOH, SYSTEM)
         fun fromCode(code: String?) = entries.firstOrNull { it.code == code } ?: default
         fun current() = fromCode(PxEZApp.instance.pre.getString(PREF_KEY, default.code))
@@ -93,7 +93,7 @@ enum class SniMode(val code: String) {
     companion object {
         const val PREF_KEY = "apiSniMode"
 
-        val default = ECH
+        val default = PLAIN
         val displayOrder = listOf(ECH, REPLACE, EMPTY, PLAIN)
         fun fromCode(code: String?) = entries.firstOrNull { it.code == code } ?: default
         fun current() = fromCode(PxEZApp.instance.pre.getString(PREF_KEY, default.code))

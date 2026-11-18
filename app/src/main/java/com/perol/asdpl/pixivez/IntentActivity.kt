@@ -45,6 +45,7 @@ import com.perol.asdpl.pixivez.ui.WebViewActivity
 import com.perol.asdpl.pixivez.ui.pic.PictureActivity
 import com.perol.asdpl.pixivez.ui.user.UserMActivity
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -180,7 +181,7 @@ class IntentActivity : RinkActivity() {
             RestClient.retrofitOauthSecureDirect.create(OAuthSecureService::class.java)
         Toasty.warning(PxEZApp.instance, R.string.try_to_login)
         try {
-            runBlocking {
+            runBlocking(Dispatchers.IO) {
                 oAuthSecureService.postAuthTokenX(code, Pkce.getPkce().verify).let {
                     val user = it.user.toUserEntity(it.refresh_token, it.access_token)
                     AppDataRepo.insertUser(user)

@@ -246,7 +246,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<SeekBarPreference>("restrictSanity")!!.apply {
-            max = AppDataRepo.currentUser.x_restrict + 6
+            max = if (AppDataRepo.userInited()) AppDataRepo.currentUser.x_restrict + 6 else 6
         }.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.restrictSanity = (newValue as Int)
             true
